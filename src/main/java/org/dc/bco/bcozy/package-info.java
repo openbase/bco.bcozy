@@ -20,4 +20,4 @@
 /**
  * Created by hoestreich on 11/4/15.
  */
-package de.citec.bcozy;
+package org.dc.bco.bcozy;

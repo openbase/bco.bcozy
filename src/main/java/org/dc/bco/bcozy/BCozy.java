@@ -16,7 +16,7 @@
  * along with BCozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
-package de.citec.bcozy;
+package org.dc.bco.bcozy;
 
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -32,11 +32,33 @@ import javafx.stage.Stage;
 public class BCozy extends Application {
 
     /**
+     * Application name.
+     */
+    public static final String APP_NAME = BCozy.class.getSimpleName().toLowerCase();
+
+    /**
      * Main Method starting JavaFX Environment.
+     *
      * @param args Arguments from commandline.
      */
     public static void main(final String... args) {
+
+// // TODO julian: please enable code after your commit!
+//        logger.info("Start " + APP_NAME + "...");
+//
+//        /* Setup JPService */
+//        JPService.setApplicationName(APP_NAME);
+//        JPService.registerProperty(JPDebugMode.class);
+//        JPService.parseAndExitOnError(args);
+//
+//        try {
         launch(args);
+//        } catch (InitializationException ex) {
+//            throw ExceptionPrinter
+//                    .printHistoryAndReturnThrowable(ex, logger, LogLevel.ERROR);
+//        }
+//        logger.info(APP_NAME + " successfully started.");
+
     }
 
     @Override
