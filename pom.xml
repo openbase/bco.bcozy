@@ -74,14 +74,6 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <configuration>
                     <executable>java</executable>
-                    <arguments>
-                        <argument>-classpath</argument>
-                        <classpath>
-                            <dependency>commons-io:commons-io</dependency>
-                            <dependency>commons-lang:commons-lang</dependency>
-                        </classpath>
-                        <argument>org.dc.bco.bcozy.BCozy</argument>
-                    </arguments>
                 </configuration>
                 <version>1.4.0</version>
             </plugin>

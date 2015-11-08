@@ -34,9 +34,18 @@ Support for eclipse might be provided in the future.
 ### Maven
 The general project setup was done with maven.
 
-Using the Maven exec plugin one can execute the project directly within IntelliJ Idea.
-For that create a Run/Debug Configuration from type Maven. Choose exec:exec for the
-command line entry (and add "Before launch:" Maven goal compiler:compile).
+Using the Maven exec plugin one can execute and debug the project directly within IntelliJ Idea.
+Therefor create a Run/Debug Configuration from type Maven. Set the command line entry as follows:
+
+```
+exec:java -Dexec.mainClass=org.dc.bco.bcozy.BCozy
+```
+
+Additionally add the following "Run Maven" goal in the "Before launch:"-section:
+
+```
+compiler:compile
+```
 
 ### Gradle
 In the future a gradle configuration will provided to allow generation of android apks.
