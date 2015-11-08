@@ -56,6 +56,21 @@
             <artifactId>fontawesomefx</artifactId>
             <version>8.6</version>
         </dependency>
+        <dependency>
+            <groupId>de.citec</groupId>
+            <artifactId>dm.remote</artifactId>
+            <version>0.6-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>de.citec</groupId>
+            <artifactId>lm.remote</artifactId>
+            <version>0.6-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>de.citec</groupId>
+            <artifactId>jul.extension.rst.processing</artifactId>
+            <version>0.4-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -277,6 +292,10 @@
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
+        </repository>
+        <repository>
+            <id>bone</id>
+            <url>http://bone.no-ip.biz:53538/nexus/content/repositories/releases/</url>
         </repository>
     </repositories>
 
