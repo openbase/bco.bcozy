@@ -103,7 +103,7 @@
     <module name="MultipleVariableDeclarations"/>
     <module name="OneStatementPerLine"/>
     <module name="LineLength">
-      <property name="max" value="90"/>
+      <property name="max" value="120"/>
       <property name="tabWidth" value="4"/>
     </module>
   </module>

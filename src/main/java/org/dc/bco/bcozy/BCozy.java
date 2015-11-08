@@ -99,19 +99,19 @@ public class BCozy extends Application {
 
     private void testLocationRegistry() throws InterruptedException {
         try {
-            LocationRegistryRemote locationRegistryRemote = new LocationRegistryRemote();
+            final LocationRegistryRemote locationRegistryRemote = new LocationRegistryRemote();
 
             locationRegistryRemote.init();
             locationRegistryRemote.activate();
-            List<LocationConfigType.LocationConfig> list = locationRegistryRemote.getLocationConfigs();
-            for (LocationConfigType.LocationConfig locationConfig : list) {
-                System.out.println(locationConfig.getLabel());
-                MetaConfigVariableProvider metaConfigVariableProvider =
+            final List<LocationConfigType.LocationConfig> list = locationRegistryRemote.getLocationConfigs();
+            for (final LocationConfigType.LocationConfig locationConfig : list) {
+                LOGGER.info(locationConfig.getLabel());
+                final MetaConfigVariableProvider metaConfigVariableProvider =
                         new MetaConfigVariableProvider("locationConfig", locationConfig.getMetaConfig());
                 try {
                     LOGGER.info("Found test entry: " + metaConfigVariableProvider.getValue("TEST_ENTRY"));
                 } catch (CouldNotPerformException e) {
-
+                    LOGGER.info("No test entry found");
                 }
             }
             locationRegistryRemote.shutdown();
