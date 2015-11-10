@@ -63,14 +63,15 @@ public class BCozy extends Application {
         /* Setup JPService */
         JPService.setApplicationName(APP_NAME);
         JPService.registerProperty(JPDebugMode.class);
-        JPService.parseAndExitOnError(args);
 
-        //try {
+        try {
+            JPService.parseAndExitOnError(args);
             launch(args);
-        //} catch (InitializationException ex) {
-        //    throw ExceptionPrinter
-        //            .printHistoryAndReturnThrowable(ex, LOGGER, LogLevel.ERROR);
-        //}
+        } catch (IllegalStateException ex) {
+//        } catch (Exception ex) {
+            ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
+            LOGGER.info(APP_NAME + " finished unexpected.");
+        }
         LOGGER.info(APP_NAME + " finished.");
 
     }
