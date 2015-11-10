@@ -294,8 +294,20 @@
             </snapshots>
         </repository>
         <repository>
-            <id>bone</id>
+            <id>bone-releases</id>
             <url>http://bone.no-ip.biz:53538/nexus/content/repositories/releases/</url>
+            <layout>default</layout>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+        <repository>
+            <id>bone-snapshots</id>
+            <url>http://bone.no-ip.biz:53538/nexus/content/repositories/snapshots/</url>
+            <layout>default</layout>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </repository>
     </repositories>
 
