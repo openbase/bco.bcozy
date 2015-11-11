@@ -1,40 +1,39 @@
 /**
  * ==================================================================
  *
- * This file is part of BCozy.
+ * This file is part of org.dc.bco.bcozy.
  *
- * BCozy is free software: you can redistribute it and modify
+ * org.dc.bco.bcozy is free software: you can redistribute it and modify
  * it under the terms of the GNU General Public License (Version 3)
  * as published by the Free Software Foundation.
  *
- * BCozy is distributed in the hope that it will be useful,
+ * org.dc.bco.bcozy is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with BCozy. If not, see <http://www.gnu.org/licenses/>.
+ * along with org.dc.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
 package org.dc.bco.bcozy;
 
 import de.citec.jps.core.JPService;
 import de.citec.jps.preset.JPDebugMode;
-import de.citec.jul.exception.CouldNotPerformException;
-import de.citec.jul.exception.printer.ExceptionPrinter;
-import de.citec.jul.exception.printer.LogLevel;
-import de.citec.jul.extension.rst.processing.MetaConfigVariableProvider;
-import de.citec.lm.remote.LocationRegistryRemote;
+//import de.citec.jul.exception.CouldNotPerformException;
+//import de.citec.jul.exception.printer.ExceptionPrinter;
+//import de.citec.jul.exception.printer.LogLevel;
+//import de.citec.jul.extension.rst.processing.MetaConfigVariableProvider;
+//import de.citec.lm.remote.LocationRegistryRemote;
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.spatial.LocationConfigType;
-
-import java.util.List;
+//import rst.spatial.LocationConfigType;
+//
+//import java.util.List;
 
 /**
  * Main Class of the BCozy Program.
@@ -82,43 +81,42 @@ public class BCozy extends Application {
         final int screenWidth = 400;
         final int screenHeight = 600;
         primaryStage.setTitle("BCozy");
-        final Button btn = new Button();
-        btn.setText("Say 'Hello World'");
-        btn.setOnAction(event -> LOGGER.info("Hello World!"));
 
         final StackPane root = new StackPane();
-        root.getChildren().add(btn);
+        final ForegroundPane foregroundPane = new ForegroundPane();
+        final BackgroundPane backgroundPane = new BackgroundPane();
+        root.getChildren().addAll(backgroundPane, foregroundPane);
         primaryStage.setScene(new Scene(root, screenWidth, screenHeight));
         primaryStage.show();
 
-        try {
-            testLocationRegistry();
-        } catch (InterruptedException e) {
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-        }
+//        try {
+//            testLocationRegistry();
+//        } catch (InterruptedException e) {
+//            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+//        }
     }
 
-    private void testLocationRegistry() throws InterruptedException {
-        try {
-            final LocationRegistryRemote locationRegistryRemote = new LocationRegistryRemote();
-
-            locationRegistryRemote.init();
-            locationRegistryRemote.activate();
-            final List<LocationConfigType.LocationConfig> list = locationRegistryRemote.getLocationConfigs();
-            for (final LocationConfigType.LocationConfig locationConfig : list) {
-                LOGGER.info(locationConfig.getLabel());
-                final MetaConfigVariableProvider metaConfigVariableProvider =
-                        new MetaConfigVariableProvider("locationConfig", locationConfig.getMetaConfig());
-                try {
-                    LOGGER.info("Found test entry: " + metaConfigVariableProvider.getValue("TEST_ENTRY"));
-                } catch (CouldNotPerformException e) {
-                    LOGGER.info("No test entry found");
-                }
-            }
-            locationRegistryRemote.shutdown();
-
-        } catch (CouldNotPerformException e) {
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-        }
-    }
+//    private void testLocationRegistry() throws InterruptedException {
+//        try {
+//            final LocationRegistryRemote locationRegistryRemote = new LocationRegistryRemote();
+//
+//            locationRegistryRemote.init();
+//            locationRegistryRemote.activate();
+//            final List<LocationConfigType.LocationConfig> list = locationRegistryRemote.getLocationConfigs();
+//            for (final LocationConfigType.LocationConfig locationConfig : list) {
+//                LOGGER.info(locationConfig.getLabel());
+//                final MetaConfigVariableProvider metaConfigVariableProvider =
+//                        new MetaConfigVariableProvider("locationConfig", locationConfig.getMetaConfig());
+//                try {
+//                    LOGGER.info("Found test entry: " + metaConfigVariableProvider.getValue("TEST_ENTRY"));
+//                } catch (CouldNotPerformException e) {
+//                    LOGGER.info("No test entry found");
+//                }
+//            }
+//            locationRegistryRemote.shutdown();
+//
+//        } catch (CouldNotPerformException e) {
+//            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+//        }
+//    }
 }

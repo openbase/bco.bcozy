@@ -16,8 +16,28 @@
  * along with org.dc.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
+package org.dc.bco.bcozy;
+
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 /**
- * Created by hoestreich on 11/4/15.
+ * Created by hoestreich on 11/10/15.
  */
-package org.dc.bco.bcozy;
+public class ContextMenu extends VBox {
+
+    /**
+     * Constructor for the ContextMenu.
+     * @param height Height
+     * @param width Width
+     */
+    public ContextMenu(final double height, final double width) {
+        final Rectangle placeholder;
+        placeholder = new Rectangle(width, height);
+        placeholder.setFill(Color.BLUE);
+        this.getChildren().add(placeholder);
+    }
+
+
+}

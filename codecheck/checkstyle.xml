@@ -28,13 +28,17 @@
     <module name="ConstantName"/>
     <module name="LocalFinalVariableName"/>
     <module name="LocalVariableName"/>
+    <module name="ConstantName">
+      <property name="format"
+                value="^log(ger)?|[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$"/>
+    </module>
     <module name="MemberName"/>
     <module name="MethodName"/>
     <module name="PackageName"/>
     <module name="ParameterName"/>
     <module name="StaticVariableName"/>
     <module name="TypeName"/>
-    <module name="AvoidStarImport"/>
+    <!--module name="AvoidStarImport"/-->
     <module name="IllegalImport"/>
     <module name="UnusedImports"/>
     <module name="MethodLength"/>
@@ -60,7 +64,7 @@
     <module name="LeftCurly"/>
     <module name="NeedBraces"/>
     <module name="RightCurly"/>
-    <module name="AvoidInlineConditionals"/>
+    <!--module name="AvoidInlineConditionals"/-->
     <module name="EmptyStatement"/>
     <module name="EqualsHashCode"/>
     <module name="IllegalInstantiation"/>

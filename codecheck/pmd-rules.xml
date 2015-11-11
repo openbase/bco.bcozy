@@ -3,7 +3,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name=""
     xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 http://pmd.sourceforge.net/ruleset_2_0_0.xsd">
 
-    <description>CSRA_RUI rules</description>
+    <description>BCozy rules</description>
 
     <!-- Files we want to scan -->
 
@@ -84,6 +84,7 @@
         <properties>
              <!-- Do not compute cyclomatic complexity for classes. We already have it for methods -->
              <property name="showClassesComplexity" value="false"/>
+             <property name="reportLevel" value="13"/>
              <!-- equals and hashCode are often complex and they require this... -->
              <property name="violationSuppressRegex" value=".*method '(equals|hashCode)'.*"/>
         </properties>
