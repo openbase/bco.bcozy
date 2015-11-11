@@ -49,6 +49,7 @@ public class BackgroundPane extends StackPane {
      * Constructor for the BackgroundPane.
      */
     public BackgroundPane() {
+        super();
 
         final Rectangle emptyHugeRectangle = new Rectangle(-(ZOOM_PANE_WIDTH / 2),
                                                      -(ZOOM_PANE_HEIGHT / 2),
@@ -94,18 +95,16 @@ public class BackgroundPane extends StackPane {
         locationViewContent = new Group(emptyHugeRectangle, room0, room1, room2, room3);
         final ScrollPane scrollPane = createZoomPane(locationViewContent);
 
-        final StackPane layout = new StackPane();
-        layout.getChildren().setAll(scrollPane);
+        this.getChildren().setAll(scrollPane);
 
         final BackgroundImage backgroundImage = new BackgroundImage(
                 new Image("blueprint.jpg"),
                 BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
                 BackgroundSize.DEFAULT);
-        layout.setBackground(new Background(backgroundImage));
+        this.setBackground(new Background(backgroundImage));
 
         this.centerScrollPaneToPoint(scrollPane, this.getCenterOfGroup(locationViewContent, true));
         this.addMouseEventHandlerToRoom(scrollPane, room0, room1, room2, room3);
-        this.getChildren().addAll(layout);
     }
 
     private ScrollPane createZoomPane(final Group group) {
