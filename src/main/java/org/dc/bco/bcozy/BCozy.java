@@ -26,16 +26,13 @@ import de.citec.jul.exception.printer.LogLevel;
 import de.citec.jul.extension.rst.processing.MetaConfigVariableProvider;
 import de.citec.lm.remote.LocationRegistryRemote;
 import javafx.application.Application;
-import javafx.scene.AmbientLight;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-//import rst.homeautomation.unit.AmbientLightType;
 import rst.homeautomation.unit.UnitConfigType;
-//import rst.spatial.LocationConfigType;
-//
+
 import java.util.List;
 
 import static rst.spatial.LocationConfigType.*;
@@ -90,6 +87,7 @@ public class BCozy extends Application {
         final StackPane root = new StackPane();
         final ForegroundPane foregroundPane = new ForegroundPane();
         final BackgroundPane backgroundPane = new BackgroundPane();
+
         root.getChildren().addAll(backgroundPane, foregroundPane);
         primaryStage.setScene(new Scene(root, screenWidth, screenHeight));
         primaryStage.show();
