@@ -36,6 +36,8 @@ public class MainMenu extends VBox {
         final Rectangle placeholder;
         placeholder = new Rectangle(width, height);
         placeholder.setFill(Color.DEEPSKYBLUE);
+        this.setPrefHeight(height);
+        this.setPrefWidth(width);
         this.getChildren().add(placeholder);
     }
 }

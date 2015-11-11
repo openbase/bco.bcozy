@@ -21,13 +21,14 @@ package org.dc.bco.bcozy;
 import de.citec.jps.core.JPService;
 import de.citec.jps.preset.JPDebugMode;
 //import de.citec.jul.exception.CouldNotPerformException;
-//import de.citec.jul.exception.printer.ExceptionPrinter;
-//import de.citec.jul.exception.printer.LogLevel;
+import de.citec.jul.exception.printer.ExceptionPrinter;
+import de.citec.jul.exception.printer.LogLevel;
 //import de.citec.jul.extension.rst.processing.MetaConfigVariableProvider;
 //import de.citec.lm.remote.LocationRegistryRemote;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,12 +79,12 @@ public class BCozy extends Application {
     @Override
     public void start(final Stage primaryStage) {
 
-        final int screenWidth = 400;
-        final int screenHeight = 600;
+        final double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
+        final double screenHeight = Screen.getPrimary().getVisualBounds().getHeight();
         primaryStage.setTitle("BCozy");
 
         final StackPane root = new StackPane();
-        final ForegroundPane foregroundPane = new ForegroundPane();
+        final ForegroundPane foregroundPane = new ForegroundPane(screenHeight, screenWidth);
         final BackgroundPane backgroundPane = new BackgroundPane();
         root.getChildren().addAll(backgroundPane, foregroundPane);
         primaryStage.setScene(new Scene(root, screenWidth, screenHeight));

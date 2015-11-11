@@ -33,12 +33,13 @@ public class ForegroundPane extends BorderPane {
     /**
      * Constructor for the ForegroundPane.
      */
-    public ForegroundPane() {
+    public ForegroundPane(final double height, final double width) {
         //CHECKSTYLE.OFF: MagicNumber
-        this.mainMenu = new MainMenu(400, 200);
-        this.contextMenu = new ContextMenu(400, 200);
-        this.menuHeader = new MenuHeader(50, 600);
-        this.infoFooter = new InfoFooter(20, 600);
+        this.mainMenu = new MainMenu(height-270, 250);
+        this.contextMenu = new ContextMenu(height-270, 200);
+        this.menuHeader = new MenuHeader(50, width);
+        this.infoFooter = new InfoFooter(20, width);
+        System.out.println("Height: " + height + "Width:" +  width);
         //CHECKSTYLE.ON: MagicNumber
 
         this.setTop(this.menuHeader);

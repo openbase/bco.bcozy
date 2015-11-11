@@ -36,6 +36,8 @@ public class InfoFooter extends HBox {
         final Rectangle placeholder;
         placeholder = new Rectangle(width, height);
         placeholder.setFill(Color.CADETBLUE);
+        this.setPrefHeight(height);
+        this.setPrefWidth(width);
         this.getChildren().add(placeholder);
     }
 }
