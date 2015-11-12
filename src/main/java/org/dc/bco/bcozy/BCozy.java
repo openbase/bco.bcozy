@@ -18,6 +18,7 @@
  */
 package org.dc.bco.bcozy;
 
+import de.citec.dal.remote.unit.AmbientLightRemote;
 import de.citec.jps.core.JPService;
 import de.citec.jps.preset.JPDebugMode;
 import de.citec.jul.exception.CouldNotPerformException;
@@ -33,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.homeautomation.unit.UnitConfigType;
 
+import java.awt.*;
 import java.util.List;
 
 import static rst.spatial.LocationConfigType.*;
@@ -123,6 +125,12 @@ public class BCozy extends Application {
 
             final List<UnitConfigType.UnitConfig> ambientLight  =
                     locationRegistryRemote.getUnitConfigsByLabel("TestUnit_0", controlConfig.getId());
+
+            final AmbientLightRemote remote = new AmbientLightRemote();
+            remote.init(ambientLight.get(0));
+            remote.activate();
+
+            remote.setColor(Color.blue);
             LOGGER.info("INFO: " + ambientLight.get(0).getId());
 
             locationRegistryRemote.shutdown();
