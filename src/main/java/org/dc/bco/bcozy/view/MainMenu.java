@@ -16,26 +16,26 @@
  * along with org.dc.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
-package org.dc.bco.bcozy;
+package org.dc.bco.bcozy.view;
 
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 /**
  * Created by hoestreich on 11/10/15.
  */
-public class InfoFooter extends HBox {
+public class MainMenu extends VBox {
 
     /**
-     * Constructor for the InfoFooter.
+     * Constructor for the MainMenu.
      * @param height Height
      * @param width Width
      */
-    public InfoFooter(final double height, final double width) {
+    public MainMenu(final double height, final double width) {
         final Rectangle placeholder;
         placeholder = new Rectangle(width, height);
-        placeholder.setFill(Color.CADETBLUE);
+        placeholder.setFill(Color.DEEPSKYBLUE);
         this.getChildren().add(placeholder);
     }
 }

@@ -30,6 +30,8 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import org.dc.bco.bcozy.view.location.LocationPane;
+import org.dc.bco.bcozy.view.ForegroundPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.homeautomation.unit.UnitConfigType;
@@ -88,7 +90,7 @@ public class BCozy extends Application {
 
         final StackPane root = new StackPane();
         final ForegroundPane foregroundPane = new ForegroundPane();
-        final BackgroundPane backgroundPane = new BackgroundPane();
+        final LocationPane backgroundPane = new LocationPane();
 
         root.getChildren().addAll(backgroundPane, foregroundPane);
         primaryStage.setScene(new Scene(root, screenWidth, screenHeight));

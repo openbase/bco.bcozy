@@ -16,7 +16,7 @@
  * along with org.dc.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
-package org.dc.bco.bcozy;
+package org.dc.bco.bcozy.view;
 
 import javafx.scene.layout.BorderPane;
 
