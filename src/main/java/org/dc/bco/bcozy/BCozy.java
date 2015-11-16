@@ -20,23 +20,17 @@ package org.dc.bco.bcozy;
 
 import de.citec.jps.core.JPService;
 import de.citec.jps.preset.JPDebugMode;
-import de.citec.jul.exception.CouldNotPerformException;
 import de.citec.jul.exception.printer.ExceptionPrinter;
 import de.citec.jul.exception.printer.LogLevel;
-import de.citec.jul.extension.rst.processing.MetaConfigVariableProvider;
-import de.citec.lm.remote.LocationRegistryRemote;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import org.dc.bco.bcozy.view.ForegroundPane;
+import org.dc.bco.bcozy.view.location.LocationPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.homeautomation.unit.UnitConfigType;
-
-import java.util.List;
-
-import static rst.spatial.LocationConfigType.*;
 
 /**
  * Main Class of the BCozy Program.
@@ -89,49 +83,12 @@ public class BCozy extends Application {
         final ForegroundPane foregroundPane = new ForegroundPane(screenHeight, screenWidth);
         foregroundPane.setMinHeight(root.getHeight());
         foregroundPane.setMinWidth(root.getWidth());
-        final BackgroundPane backgroundPane = new BackgroundPane();
+        final LocationPane backgroundPane = new LocationPane();
 
         root.getChildren().addAll(backgroundPane, foregroundPane);
         primaryStage.setScene(new Scene(root, screenWidth, screenHeight));
         primaryStage.show();
 
-        try {
-            testLocationRegistry();
-        } catch (InterruptedException e) {
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-        }
-    }
-
-    private void testLocationRegistry() throws InterruptedException {
-        try {
-            final LocationRegistryRemote locationRegistryRemote = new LocationRegistryRemote();
-
-            locationRegistryRemote.init();
-            locationRegistryRemote.activate();
-            final List<LocationConfig> list = locationRegistryRemote.getLocationConfigs();
-            for (final LocationConfig locationConfig : list) {
-                LOGGER.info(locationConfig.getLabel());
-                final MetaConfigVariableProvider metaConfigVariableProvider =
-                        new MetaConfigVariableProvider("locationConfig", locationConfig.getMetaConfig());
-                try {
-                    LOGGER.info("Found test entry: " + metaConfigVariableProvider.getValue("TEST_ENTRY"));
-                } catch (CouldNotPerformException e) {
-                    LOGGER.info("No test entry found");
-                }
-            }
-
-            //Example: How to control a light:
-            final LocationConfig controlConfig = locationRegistryRemote.getLocationConfigById("Control");
-
-
-            final List<UnitConfigType.UnitConfig> ambientLight  =
-                    locationRegistryRemote.getUnitConfigsByLabel("TestUnit_0", controlConfig.getId());
-            LOGGER.info("INFO: " + ambientLight.get(0).getId());
-
-            locationRegistryRemote.shutdown();
-
-        } catch (CouldNotPerformException e) {
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-        }
+        new ManagerConnector(foregroundPane);
     }
 }

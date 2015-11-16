@@ -16,7 +16,7 @@
  * along with org.dc.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
-package org.dc.bco.bcozy;
+package org.dc.bco.bcozy.view.location;
 
 import javafx.scene.Group;
 import javafx.scene.layout.*;
@@ -37,7 +37,7 @@ import javafx.util.Duration;
 /**
  * Created by hoestreich on 11/10/15.
  */
-public class BackgroundPane extends StackPane {
+public class LocationPane extends StackPane {
 
     private static final double ZOOM_PANE_WIDTH = 2000;
     private static final double ZOOM_PANE_HEIGHT = 2000;
@@ -46,9 +46,9 @@ public class BackgroundPane extends StackPane {
     private RoomPolygon selectedRoom;
 
     /**
-     * Constructor for the BackgroundPane.
+     * Constructor for the LocationPane.
      */
-    public BackgroundPane() {
+    public LocationPane() {
         super();
 
         final Rectangle emptyHugeRectangle = new Rectangle(-(ZOOM_PANE_WIDTH / 2),
@@ -98,7 +98,7 @@ public class BackgroundPane extends StackPane {
         this.getChildren().setAll(scrollPane);
 
         final BackgroundImage backgroundImage = new BackgroundImage(
-                new Image("blueprint.jpg"),
+                new Image("backgrounds/blueprint.jpg"),
                 BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
                 BackgroundSize.DEFAULT);
         this.setBackground(new Background(backgroundImage));
@@ -118,7 +118,7 @@ public class BackgroundPane extends StackPane {
         scroller.setContent(scrollContent);
         scroller.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scroller.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        scroller.getStylesheets().add("transparent_scrollpane.css");
+        scroller.getStylesheets().add("css/transparent_scrollpane.css");
 
         //TODO: what iiiiiis is good for?
         scroller.viewportBoundsProperty().addListener((observable, oldValue, newValue) -> {

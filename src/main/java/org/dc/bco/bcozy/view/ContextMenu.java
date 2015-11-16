@@ -16,28 +16,30 @@
  * along with org.dc.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
-package org.dc.bco.bcozy;
+package org.dc.bco.bcozy.view;
 
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 /**
  * Created by hoestreich on 11/10/15.
  */
-public class MenuHeader extends HBox {
+public class ContextMenu extends VBox {
 
     /**
-     * Constructor for the MenuHeader.
+     * Constructor for the ContextMenu.
      * @param height Height
      * @param width Width
      */
-    public MenuHeader(final double height, final double width) {
+    public ContextMenu(final double height, final double width) {
         final Rectangle placeholder;
         placeholder = new Rectangle(width, height);
-        placeholder.setFill(Color.CORNFLOWERBLUE);
-        this.setPrefHeight(height);
-        this.setPrefWidth(width);
+        placeholder.setFill(Color.BLUE);
+        this.setMinHeight(height);
+        this.setMinWidth(width);
         this.getChildren().add(placeholder);
     }
+
+
 }

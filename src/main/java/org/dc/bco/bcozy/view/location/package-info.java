@@ -16,28 +16,8 @@
  * along with org.dc.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
-package org.dc.bco.bcozy;
-
-import javafx.scene.layout.HBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 
 /**
- * Created by hoestreich on 11/10/15.
+ * Created by julian on 12.11.15.
  */
-public class InfoFooter extends HBox {
-
-    /**
-     * Constructor for the InfoFooter.
-     * @param height Height
-     * @param width Width
-     */
-    public InfoFooter(final double height, final double width) {
-        final Rectangle placeholder;
-        placeholder = new Rectangle(width, height);
-        placeholder.setFill(Color.CADETBLUE);
-        this.setPrefHeight(height);
-        this.setPrefWidth(width);
-        this.getChildren().add(placeholder);
-    }
-}
+package org.dc.bco.bcozy.view.location;

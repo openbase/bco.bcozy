@@ -16,7 +16,7 @@
  * along with org.dc.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
-package org.dc.bco.bcozy;
+package org.dc.bco.bcozy.view;
 
 import javafx.scene.layout.BorderPane;
 
@@ -41,7 +41,6 @@ public class ForegroundPane extends BorderPane {
         this.contextMenu = new ContextMenu(height - 90, 200);
         this.menuHeader = new MenuHeader(50, width);
         this.infoFooter = new InfoFooter(20, width);
-        System.out.println("Height: " + height + "Width:" +  width);
         //CHECKSTYLE.ON: MagicNumber
 
         this.setTop(this.menuHeader);
