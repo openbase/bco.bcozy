@@ -36,8 +36,8 @@ public class ContextMenu extends VBox {
         final Rectangle placeholder;
         placeholder = new Rectangle(width, height);
         placeholder.setFill(Color.BLUE);
-        this.setPrefHeight(height);
-        this.setPrefWidth(width);
+        this.setMinHeight(height);
+        this.setMinWidth(width);
         this.getChildren().add(placeholder);
     }
 

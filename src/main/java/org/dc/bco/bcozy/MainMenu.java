@@ -20,6 +20,9 @@ package org.dc.bco.bcozy;
 
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
 import javafx.scene.shape.Rectangle;
 
 /**
@@ -33,11 +36,13 @@ public class MainMenu extends VBox {
      * @param width Width
      */
     public MainMenu(final double height, final double width) {
-        final Rectangle placeholder;
-        placeholder = new Rectangle(width, height);
-        placeholder.setFill(Color.DEEPSKYBLUE);
-        this.setPrefHeight(height);
-        this.setPrefWidth(width);
-        this.getChildren().add(placeholder);
+        Stop[] stops = new Stop[] { new Stop(0.1f, Color.rgb(0, 0, 0, .8)), new Stop(0.8f, Color.rgb(0, 0, 0, .7)),
+                new Stop(0.9f, Color.rgb(0, 0, 0, .4)), new Stop(1.0f, Color.TRANSPARENT)};
+        LinearGradient linearGradient = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, stops);
+        Rectangle background = new Rectangle(0, 0, width, height);
+        background.setFill(linearGradient);
+        this.getChildren().add(background);
+        this.setMinHeight(height);
+        this.setMinWidth(width);
     }
 }

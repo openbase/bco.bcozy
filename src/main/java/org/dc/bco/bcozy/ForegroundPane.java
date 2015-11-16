@@ -32,11 +32,13 @@ public class ForegroundPane extends BorderPane {
 
     /**
      * Constructor for the ForegroundPane.
+     * @param height Height of the application window
+     * @param width Width of the application window
      */
     public ForegroundPane(final double height, final double width) {
         //CHECKSTYLE.OFF: MagicNumber
-        this.mainMenu = new MainMenu(height-270, 250);
-        this.contextMenu = new ContextMenu(height-270, 200);
+        this.mainMenu = new MainMenu(height - 90, 250);
+        this.contextMenu = new ContextMenu(height - 90, 200);
         this.menuHeader = new MenuHeader(50, width);
         this.infoFooter = new InfoFooter(20, width);
         System.out.println("Height: " + height + "Width:" +  width);

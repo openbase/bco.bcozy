@@ -87,6 +87,8 @@ public class BCozy extends Application {
 
         final StackPane root = new StackPane();
         final ForegroundPane foregroundPane = new ForegroundPane(screenHeight, screenWidth);
+        foregroundPane.setMinHeight(root.getHeight());
+        foregroundPane.setMinWidth(root.getWidth());
         final BackgroundPane backgroundPane = new BackgroundPane();
 
         root.getChildren().addAll(backgroundPane, foregroundPane);
