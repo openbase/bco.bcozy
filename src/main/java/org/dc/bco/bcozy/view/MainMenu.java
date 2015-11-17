@@ -40,6 +40,7 @@ public class MainMenu extends Pane {
      * @param width Width
      */
     public MainMenu(final double height, final double width) {
+
         //CHECKSTYLE.OFF: MagicNumber
         final Stop[] stops = new Stop[] { new Stop(0.1f, Color.rgb(0, 0, 0, .8)),
                 new Stop(0.8f, Color.rgb(0, 0, 0, .7)),
@@ -54,6 +55,7 @@ public class MainMenu extends Pane {
         this.setMinWidth(width);
 
         mainButton = new Button("Test Location Registry");
+        mainButton.getStyleClass().addAll("large-button", "visible-lg", "visible-md", "visible-sm", "visible-xs");
         this.getChildren().add(mainButton);
     }
 

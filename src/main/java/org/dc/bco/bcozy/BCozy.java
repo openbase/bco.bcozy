@@ -18,6 +18,9 @@
  */
 package org.dc.bco.bcozy;
 
+import com.guigarage.flatterfx.FlatterFX;
+import com.guigarage.flatterfx.FlatterInputType;
+import com.guigarage.responsive.ResponsiveHandler;
 import de.citec.jps.core.JPService;
 import de.citec.jps.preset.JPDebugMode;
 import de.citec.jul.exception.printer.ExceptionPrinter;
@@ -56,6 +59,7 @@ public class BCozy extends Application {
 
         LOGGER.info("Start " + APP_NAME + "...");
 
+        registerListeners();
         /* Setup JPService */
         JPService.setApplicationName(APP_NAME);
         JPService.registerProperty(JPDebugMode.class);
@@ -85,10 +89,41 @@ public class BCozy extends Application {
         foregroundPane.setMinWidth(root.getWidth());
         final LocationPane backgroundPane = new LocationPane();
 
+
+        FlatterFX.style(FlatterInputType.TOUCH);
+        FlatterFX.style();
         root.getChildren().addAll(backgroundPane, foregroundPane);
         primaryStage.setScene(new Scene(root, screenWidth, screenHeight));
+        primaryStage.getScene().getStylesheets().add(BCozy.class.getClassLoader().
+                getResource("css/skin.css").toExternalForm());
+        ResponsiveHandler.addResponsiveToWindow(primaryStage);
         primaryStage.show();
 
         new ManagerConnector(foregroundPane);
+    }
+
+    private static void registerListeners() {
+        LOGGER.info("Executing Registration of Listeners");
+        ResponsiveHandler.setOnDeviceTypeChanged((over, oldDeviceType, newDeviceType) -> {
+            switch (newDeviceType) {
+                case LARGE      : adjustToLargeDevice();        break;
+                case MEDIUM     : adjustToMediumDevice();       break;
+                case SMALL      : adjustToSmallDevice();        break;
+                case EXTRA_SMALL: adjustToExtremeSmallDevice(); break;
+                default : break;
+            }
+        });
+    }
+    private static void adjustToLargeDevice() {
+        LOGGER.info("Detected Large Device");
+    }
+    private static void adjustToMediumDevice() {
+        LOGGER.info("Detected Medium Device");
+    }
+    private static void adjustToSmallDevice() {
+        LOGGER.info("Detected Small Device");
+    }
+    private static void adjustToExtremeSmallDevice() {
+        LOGGER.info("Detected Extreme Small Device");
     }
 }

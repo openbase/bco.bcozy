@@ -47,6 +47,7 @@ public class ForegroundPane extends BorderPane {
         this.setLeft(this.mainMenu);
         this.setRight(this.contextMenu);
         this.setBottom(this.infoFooter);
+        this.setPickOnBounds(false);
     }
 
     /**
