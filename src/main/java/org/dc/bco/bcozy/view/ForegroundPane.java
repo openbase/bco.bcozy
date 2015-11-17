@@ -37,8 +37,8 @@ public class ForegroundPane extends BorderPane {
      */
     public ForegroundPane(final double height, final double width) {
         //CHECKSTYLE.OFF: MagicNumber
-        this.mainMenu = new MainMenu(height - 90, 250);
-        this.contextMenu = new ContextMenu(height - 90, 200);
+        this.mainMenu = new MainMenu(height - 90, 300);
+        this.contextMenu = new ContextMenu(height - 90, 300);
         this.menuHeader = new MenuHeader(50, width);
         this.infoFooter = new InfoFooter(20, width);
         //CHECKSTYLE.ON: MagicNumber

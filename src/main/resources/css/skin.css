@@ -1,106 +1,468 @@
-#java-one-image {
-    -fx-background-color: #436e90;
+/**** Flatter Theme from guigarage.com *********************************/
+.root {
+    -fx-text-base-color: rgb(252.0, 240.0, 237.0);
+    -fx-text-fill: -fx-text-base-color;
+
+     -dark: rgb(47.0, 52.0, 57.0);
+     -fx-background-color: -dark;
+
+    /*default font */
+    -fx-font-family: 'Helvetica Neue';
+    -fx-font-size: 25.0px;
+    -fx-font-weight: 600;
+    -fx-disabled-opacity: 0.6;
+
+    -custom-red: rgb(237.0, 68.0, 37.0);
+    -custom-blue: rgb(0.0, 184.0, 222.0);
+
+    -bluegrey-50: #ECEFF1;
+    -bluegrey-100: #CFD8DC;
+    -bluegrey-200: #B0BEC5;
+    -bluegrey-500: #607D8B;
+}
+
+.mnemonic-underline {
+    -fx-stroke: transparent;
+}
+
+.text {
+    -fx-font-smoothing-type: lcd;
+}
+
+.emoji-text {
+    -fx-fill: -fx-text-base-color;
+}
+
+.linear-gradient-left-to-right {
+    -fx-background-color: linear-gradient(to right, rgba(0,0,0,0.8) 80%, rgba(0,0,0,0.5) 90%, rgba(0,0,0,0.0) 100%);
+}
+
+.linear-gradient-right-to-left {
+    -fx-background-color: linear-gradient(to left, rgba(0,0,0,0.8) 80%, rgba(0,0,0,0.5) 90%, rgba(0,0,0,0.0) 100%);
+}
+
+.dropshadow-left-bg {
+    -fx-background-color: -bluegrey-200;
+    -fx-effect: dropshadow(gaussian, rgb(0.0, 0.0, 0.0, 0.3), 10.0, 0.0, -4.0, 0.0);
+}
+
+.dropshadow-right-bg {
+    -fx-background-color: -bluegrey-200;
+    -fx-effect: dropshadow(gaussian, rgb(0.0, 0.0, 0.0, 0.3), 10.0, 0.0, 4.0, 0.0);
+}
+
+.dropshadow-bottom-bg {
+    -fx-background-color: -bluegrey-50;
+    -fx-effect: dropshadow(gaussian, rgb(0.0, 0.0, 0.0, 0.3), 10.0, 0.0, 0.0, 4.0);
+}
+
+.dropshadow-top-bg {
+    -fx-background-color: -bluegrey-100;
+    -fx-effect: dropshadow(gaussian, rgb(0.0, 0.0, 0.0, 0.3), 10.0, 0.0, 0.0, -4.0);
+}
+
+/**** size variants **********************************************************/
+.size-variant-touch {
+    -fx-font-size: 9.0;
+}
+
+.size-variant-desktop {
+    -fx-font-size: 16.0;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * Label                                                                       *
+ *                                                                             *
+ ******************************************************************************/
+
+.label {
+    -fx-text-fill: -fx-text-base-color;
+}
+
+.label:disabled {
+    -fx-opacity: -fx-disabled-opacity;
+}
+
+.label:show-mnemonics > .mnemonic-underline {
+    -fx-stroke: -fx-text-base-color;
+}
+
+.text {
+    -fx-effect:dropshadow(gaussian, rgb(0.0, 0.0, 0.0, 0.2), 0.0, 0.0, 0.0, 1.0);
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * Button & ToggleButton                                                       *
+ *                                                                             *
+ ******************************************************************************/
+
+.toggle-button, .button{
+    -fx-background-color: -custom-red;
+    -fx-background-insets:  0.0;
+    -fx-background-radius: 2.0;
+    -fx-border-width: 0.0;
+    -fx-padding: 0.7em;
+    -fx-text-fill: -fx-text-base-color;
+    -fx-alignment: CENTER;
+    -fx-content-display: LEFT;
+}
+
+.toggle-button:focused,
+.button:focused,
+.button:default:focused {
+       -fx-background-color: derive(-custom-red, 50.0%);
+}
+
+.toggle-button:focused:selected {
+       -fx-background-color: derive(-custom-red, 50.0%), derive(-custom-red, -20.0%);
+       -fx-background-insets: 0.0, 0.2em;
+}
+
+.toggle-button:armed,
+.toggle-button:selected,
+.button:armed,
+.button:default:armed {
+     -fx-background-color: derive(-custom-red, -20.0%);
 }
 
 .large-button {
-    -flatter-red : #fd9415;
-    -fx-in-width: 80;
+    -custom-red : #fd9415;
+    -fx-min-width: 80;
 }
 .large-button:large-device {
     -fx-content-display : top;
     -fx-graphic-text-gap: 5;
+    -fx-font-size       : 18;
     -fx-padding         : 0.7em 0.9em 0.7em 0.9em;
 }
 .large-button:medium-device {
     -fx-graphic-text-gap: 5;
+    -fx-font-size       : 16;
     -fx-padding         : 0.7em 0.5em 0.7em 0.5em;
 }
 .large-button:small-device {
     -fx-graphic-text-gap: 5;
-    -fx-font-size       : 18;
+    -fx-font-size       : 14;
     -fx-padding         : 0.5em 0.4em 0.5em 0.4em;
 }
 .large-button:extreme-small-device {
     -visibility        : visible;
-    -fx-content-display: graphic-only;
+    -fx-font-size       : 10;
+    /*-fx-content-display: graphic-only;*/
     -fx-padding        : 0.3em;
 }
 
 
-.grid {
+/*******************************************************************************
+ *                                                                             *
+ * TextField & TextArea                                                        *
+ *                                                                             *
+ ******************************************************************************/
 
-}
-.grid:large-device {
-    -fx-hgap: 15;
-    -fx-vgap: 15;
-}
-.grid:medium-device {
-    -fx-hgap: 10;
-    -fx-vgap: 10;
-}
-.grid:small-device {
-    -fx-hgap: 6;
-    -fx-vgap: 6;
-}
-.grid:extreme-small-device {
-    -fx-hgap: 3;
-    -fx-vgap: 3;
+.text-area , .text-field {
+    -fx-background-color: white;
+    -fx-background-insets:  0.0;
+    -fx-background-radius: 2.0;
+    -fx-padding: 0.7em;
+    -fx-border-width: 0.0;
+    -fx-prompt-text-fill: derive(-dark, 50.0%);
+    -fx-highlight-fill: rgb(94.0, 203.0, 234.0);
 }
 
-
-#text-area {
-    -fx-pref-row-count: 50;
-    -fx-wrap-text     : true;
-}
-#text-area:large-device {
-    -fx-font-size: 20;
-}
-#text-area:medium-device {
-    -fx-font-size: 18;
-}
-#text-area:small-device {
-    -fx-font-size: 16;
-}
-#text-area:extreme-small-device {
-    -fx-font-size: 12;
-    visibility   : false;
+.text-area .text, .text-field > * > .text {
+    -fx-effect: null;
+    -fx-fill: -dark;
 }
 
-
-.small-button {
-    -flatter-red : #436e90;
-    -fx-min-width: 80;
-}
-.small-button:large-device {
-    -fx-content-display : top;
-    -fx-padding         : 0.7em 0.9em 0.7em 0.9em;
-}
-.small-button:medium-device {
-    -fx-padding         : 0.7em 0.5em 0.7em 0.5em;
-}
-.small-button:small-device {
-    -fx-font-size       : 18;
-    -fx-padding         : 0.5em 0.4em 0.5em 0.4em;
-}
-.small-button:extreme-small-device {
-    -visibility  : visible;
-    -fx-font-size: 12;
-    -fx-padding  : 1em;
+.text-area {
+    -fx-padding: 0.15em;
 }
 
-
-#main-pane {
-
+.text-area .content {
+    -fx-padding: 0.7em;
+    -fx-border-width: 0.0;
+    -fx-background-color: transparent;
 }
-#main-pane:large-device {
 
+.text-area:focused  .content {
+     -fx-background-color: transparent;
 }
-#main-pane:medium-device {
 
+.text-area:focused, .text-field:focused {
+    -fx-background-color: -custom-blue, derive(rgb(94.0, 203.0, 234.0), 80.0%);
+    -fx-background-insets: 0.0, 0.2em;
+    -fx-background-radius: 2.0;
 }
-#main-pane:small-device {
 
+.scroll-bar:vertical > .track-background,
+.scroll-bar:horizontal > .track-background{
+    -fx-background-color: derive(rgb(94.0, 203.0, 234.0), 50.0%);
+    -fx-background-insets: 0.0;
 }
-#main-pane:extreme-small-device {
-    -visibility: visible;
+
+.scroll-bar:vertical > .thumb,
+.scroll-bar:horizontal > .thumb {
+    -fx-background-color: -custom-blue;
+    -fx-background-insets: 0.0;
+    -fx-background-radius: 0.0;
+}
+
+.scroll-bar > .increment-button,
+.scroll-bar > .decrement-button,
+.scroll-bar:hover > .increment-button,
+.scroll-bar:hover > .decrement-button {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar > .increment-button > .increment-arrow,
+.scroll-bar > .decrement-button > .decrement-arrow {
+    -fx-background-color: white;
+}
+
+.scroll-bar > .track-background{
+    -fx-background-color:transparent;
+}
+
+
+
+/*******************************************************************************
+ *                                                                             *
+ * ComboBox                                                                    *
+ *                                                                             *
+ ******************************************************************************/
+ /*
+.combo-box-base {
+    -fx-skin: "com.guigarage.flatterfx.skin.FlatterComboBoxSkin";
+}*/
+
+.popup-overlay {
+    -fx-background-color: -custom-red;
+    -fx-border-color: -custom-red, rgb(255.0, 255.0, 255.0, 0.6);
+    -fx-border-width: 8.0;
+    -fx-background-radius:20.0;
+    -fx-border-radius:15.5, 15.5;
+}
+
+.title-bar {
+    -fx-padding: 10;
+}
+
+.title-bar .icon {
+    -fx-alignment: center-left;
+    -fx-effect:dropshadow(gaussian, rgb(0.0, 0.0, 0.0, 0.2), 0.0, 0.0, 0.0, 1.0);
+}
+
+.title-bar .title-label {
+    -fx-padding: 0 10 0 10;
+    -fx-alignment: center;
+    -fx-font-size: 36;
+    -fx-font-weight: bolder;
+}
+
+.content-area {
+    -fx-background-color: -dark;
+}
+
+
+.content-background {
+    -fx-background-color: -custom-red;
+    -fx-background-radius:0.0 0.0 11.0 11.0;
+    -fx-padding: 0 10 10 10;
+}
+
+
+/*******************************************************************************
+ *                                                                             *
+ * ChoiceBox                                                                   *
+ *                                                                             *
+ ******************************************************************************/
+.combo-box-base,
+.choice-box {
+    -fx-background-color: -custom-red;
+    -fx-background-insets:  0.0;
+    -fx-background-radius: 2.0;
+    -fx-border-width: 0.0;
+}
+
+.combo-box-base > .label,
+.choice-box > .label {
+    -fx-padding:0.7em 1.7em 0.7em 0.7em;
+}
+
+.combo-box-base > .arrow-button,
+.choice-box > .open-button {
+    -fx-padding: 1.2em 0.7em 1.2em 0.5em;
+    -fx-background-radius: 0.0 2.0 2.0 0.0;
+}
+
+.combo-box-base:focused,
+.choice-box:focused{
+    -fx-background-color: derive(-custom-red, 50.0%);
+}
+
+.combo-box-base > .arrow-button > .arrow,
+.choice-box > .open-button > .arrow {
+    -fx-background-color: white;
+    -fx-padding: 0.2em;
+    -fx-effect:dropshadow(gaussian, rgb(0.0, 0.0, 0.0, 0.2), 0.0, 0.0, 0.0, 1.0);
+}
+
+.context-menu {
+    -fx-background-color: rgb(255.0, 255.0, 255.0, 0.95);
+    -fx-background-radius: 2.0;
+}
+
+.context-menu .label {
+    -fx-text-fill: -dark;
+}
+
+.radio-menu-item:checked > .left-container > .radio,
+.check-menu-item:checked > .left-container > .check {
+    -fx-background-color: -dark;
+    -fx-shape: "m 269.9,233.66286 c 0.15,-0.12 1.97,1.7 2.54,3.1 2.3,-7.33 4.09,-9.1 6.79,-12.1 1.5,-0.25 2.4,-0.27 4.36,0.11 -7.1,5.8 -8.8,16.7 -9.9,17.8 l -0.75,0.02 c 0,0 -2.36,-5.24 -5.6,-7.38 -0.27,-0.17 0.02,-1.5 -0.2,-1.6 z";
+    -fx-padding: 0.68em 0.5em 0.0em 0.0em;
+    -fx-effect: dropshadow(gaussian, rgb(0.0, 0.0, 0.0, 0.2), 0.0, 0.0, 0.0, 1.0);
+}
+
+.radio-menu-item > .left-container > .radio,
+.check-menu-item > .left-container > .check {
+    -fx-background-color: transparent;
+    -fx-shape: "m 269.9,233.66286 c 0.15,-0.12 1.97,1.7 2.54,3.1 2.3,-7.33 4.09,-9.1 6.79,-12.1 1.5,-0.25 2.4,-0.27 4.36,0.11 -7.1,5.8 -8.8,16.7 -9.9,17.8 l -0.75,0.02 c 0,0 -2.36,-5.24 -5.6,-7.38 -0.27,-0.17 0.02,-1.5 -0.2,-1.6 z";
+    -fx-padding: 0.68em 0.68em 0.0em 0.0em;
+}
+
+.menu-item:focused {
+    -fx-background-color: rgb(94.0, 203.0, 234.0);
+}
+
+
+/*******************************************************************************
+ *                                                                             *
+ * CheckBox                                                                    *
+ *                                                                             *
+ ******************************************************************************/
+
+.check-box {
+    -fx-text-fill: -fx-text-base-color;
+}
+
+.check-box > .box,
+.check-box > .box.unfocused,
+.check-box:disabled > .box,
+.check-box:selected > .box,
+.check-box:indeterminate > .box {
+    -fx-background-radius: 2.0;
+    -fx-background-color: -fx-text-base-color;
+}
+
+.check-box:focused > .box {
+    -fx-background-color: -custom-blue, derive(rgb(94.0, 203.0, 234.0), 80.0%);
+    -fx-background-insets: 0.0, 0.15em;
+}
+
+.check-box:focused:armed > .box {
+    -fx-background-color: -custom-blue, derive(-fx-text-base-color, 80.0%);
+    -fx-background-insets: 0.0, 0.15em;
+}
+
+.check-box:selected > .box > .mark,
+.check-box:indeterminate > .box > .mark {
+    -fx-background-color: -dark;
+}
+
+.check-box:indeterminate > .box > .mark {
+    -fx-background-insets: -0.06em -0.17em -0.07em -0.17em;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * RadioButton                                                                 *
+ *                                                                             *
+ ******************************************************************************/
+
+.radio-button {
+    -fx-text-fill: -fx-text-base-color;
+}
+
+.radio-button > .radio,
+.radio-button > .radio.unfocused,
+.radio-button:disabled > .radio,
+.radio-button:selected > .radio {
+    -fx-background-color: -fx-text-base-color;
+    -fx-padding: 0.4em;
+}
+
+.radio-button:focused > .radio {
+    -fx-background-color: -custom-blue, derive(rgb(94.0, 203.0, 234.0), 80.0%);
+    -fx-background-insets: 0.0, 0.15em;
+    -fx-padding: 0.4em;
+}
+
+.radio-button:focused:armed > .radio {
+    -fx-background-color: -custom-blue, derive(-fx-text-base-color, 80.0%);
+    -fx-background-insets: 0.0, 0.15em;
+}
+
+.radio-button:selected > .radio > .dot {
+    -fx-background-color: -dark;
+}
+
+
+/*******************************************************************************
+ *                                                                             *
+ * ProgressBar                                                                 *
+ *                                                                             *
+ ******************************************************************************/
+
+.progress-bar > .track {
+    -fx-background-color: -fx-text-base-color;
+    -fx-background-radius: 2.0;
+    -fx-padding: 0.0;
+}
+
+.progress-bar > .bar {
+    -fx-background-color: -custom-blue;
+    -fx-background-radius: 2.0;
+    -fx-background-insets: 0.0;
+    -fx-border-width: 0.0;
+    -fx-effect: null;
+}
+
+.progress-bar:indeterminate > .bar {
+    -fx-background-color: derive(-custom-blue, 50.0%);
+    -fx-background-radius: 2.0;
+    -fx-background-insets: 0.0;
+    -fx-border-width: 0.0;
+    -fx-effect: null;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * ProgressIndicator                                                           *
+ *                                                                             *
+ ******************************************************************************/
+
+.progress-indicator > .determinate-indicator > .indicator {
+    -fx-background-color: rgb(255.0, 255.0, 255.0, 0.5);
+    -fx-padding: 0.0;
+}
+
+.progress-indicator > .determinate-indicator > .progress {
+    -fx-background-color:  -custom-blue,  derive(-custom-blue, 50.0%);
+    -fx-background-insets: 0.0, 0.4em;
+    -fx-padding: 1.0em;
+}
+
+.progress-indicator > .determinate-indicator > .percentage {
+    -fx-fill: white;
+    -fx-translate-y: -2.4em;
+    -fx-padding: 0.0;
+}
+
+.progress-indicator > .indeterminate-indicator > .segment {
+   -fx-background-color: rgb(0.0, 183.0, 221.0);
+   -fx-scale-x: 0.05em;
+   -fx-scale-y: 0.05em;
 }

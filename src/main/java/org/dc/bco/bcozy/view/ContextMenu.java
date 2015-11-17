@@ -18,14 +18,12 @@
  */
 package org.dc.bco.bcozy.view;
 
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.layout.Pane;
 
 /**
  * Created by hoestreich on 11/10/15.
  */
-public class ContextMenu extends VBox {
+public class ContextMenu extends Pane {
 
     /**
      * Constructor for the ContextMenu.
@@ -33,12 +31,11 @@ public class ContextMenu extends VBox {
      * @param width Width
      */
     public ContextMenu(final double height, final double width) {
-        final Rectangle placeholder;
-        placeholder = new Rectangle(width, height);
-        placeholder.setFill(Color.BLUE);
+
         this.setMinHeight(height);
         this.setMinWidth(width);
-        this.getChildren().add(placeholder);
+        //this.getStyleClass().add("linear-gradient-right-to-left");
+        this.getStyleClass().add("dropshadow-left-bg");
     }
 
 

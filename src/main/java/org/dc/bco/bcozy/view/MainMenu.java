@@ -22,11 +22,6 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.CycleMethod;
-import javafx.scene.paint.LinearGradient;
-import javafx.scene.paint.Stop;
-import javafx.scene.shape.Rectangle;
 
 /**
  * Created by hoestreich on 11/10/15.
@@ -41,18 +36,10 @@ public class MainMenu extends Pane {
      */
     public MainMenu(final double height, final double width) {
 
-        //CHECKSTYLE.OFF: MagicNumber
-        final Stop[] stops = new Stop[] { new Stop(0.1f, Color.rgb(0, 0, 0, .8)),
-                new Stop(0.8f, Color.rgb(0, 0, 0, .7)),
-                new Stop(0.9f, Color.rgb(0, 0, 0, .4)),
-                new Stop(1.0f, Color.TRANSPARENT)};
-        final LinearGradient linearGradient = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, stops);
-        //CHECKSTYLE.ON: MagicNumber
-        final Rectangle background = new Rectangle(width, height);
-        background.setFill(linearGradient);
-        this.getChildren().add(background);
         this.setMinHeight(height);
         this.setMinWidth(width);
+        //this.getStyleClass().add("linear-gradient-left-to-right");
+        this.getStyleClass().add("dropshadow-right-bg");
 
         mainButton = new Button("Test Location Registry");
         mainButton.getStyleClass().addAll("large-button", "visible-lg", "visible-md", "visible-sm", "visible-xs");

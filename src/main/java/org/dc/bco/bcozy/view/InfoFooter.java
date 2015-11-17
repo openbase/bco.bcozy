@@ -18,14 +18,12 @@
  */
 package org.dc.bco.bcozy.view;
 
-import javafx.scene.layout.HBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.layout.Pane;
 
 /**
  * Created by hoestreich on 11/10/15.
  */
-public class InfoFooter extends HBox {
+public class InfoFooter extends Pane {
 
     /**
      * Constructor for the InfoFooter.
@@ -33,11 +31,10 @@ public class InfoFooter extends HBox {
      * @param width Width
      */
     public InfoFooter(final double height, final double width) {
-        final Rectangle placeholder;
-        placeholder = new Rectangle(width, height);
-        placeholder.setFill(Color.CADETBLUE);
+
         this.setPrefHeight(height);
         this.setPrefWidth(width);
-        this.getChildren().add(placeholder);
+        this.getStyleClass().add("dropshadow-top-bg");
+
     }
 }

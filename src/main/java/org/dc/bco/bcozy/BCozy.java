@@ -18,8 +18,6 @@
  */
 package org.dc.bco.bcozy;
 
-import com.guigarage.flatterfx.FlatterFX;
-import com.guigarage.flatterfx.FlatterInputType;
 import com.guigarage.responsive.ResponsiveHandler;
 import de.citec.jps.core.JPService;
 import de.citec.jps.preset.JPDebugMode;
@@ -89,11 +87,17 @@ public class BCozy extends Application {
         foregroundPane.setMinWidth(root.getWidth());
         final LocationPane backgroundPane = new LocationPane();
 
-
-        FlatterFX.style(FlatterInputType.TOUCH);
-        FlatterFX.style();
         root.getChildren().addAll(backgroundPane, foregroundPane);
+
+        //CHECKSTYLE.OFF: MagicNumber
+        primaryStage.setMinHeight(foregroundPane.getMenuHeader().getMinHeight()
+                + foregroundPane.getInfoFooter().getMinHeight() + 300);
+        primaryStage.setMinWidth(foregroundPane.getMainMenu().getMinWidth()
+                + foregroundPane.getContextMenu().getMinWidth() + 300);
+        //CHECKSTYLE.ON: MagicNumber
+
         primaryStage.setScene(new Scene(root, screenWidth, screenHeight));
+
         primaryStage.getScene().getStylesheets().add(BCozy.class.getClassLoader().
                 getResource("css/skin.css").toExternalForm());
         ResponsiveHandler.addResponsiveToWindow(primaryStage);
