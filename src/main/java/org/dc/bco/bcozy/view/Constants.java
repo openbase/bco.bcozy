@@ -18,37 +18,17 @@
  */
 package org.dc.bco.bcozy.view;
 
-import javafx.scene.control.Label;
-import javafx.scene.layout.AnchorPane;
-
 /**
  * Created by hoestreich on 11/18/15.
  */
-public class RoomContextInfo extends AnchorPane {
-
-    private final Label roomInfo;
+public final class Constants {
+    /**
+     * Inset used for UI Elements.
+     */
+    public static final double INSETS = 10.0;
 
     /**
-     * Constructor for the RoomContextInfo UI Element.
+     * Private Constructor.
      */
-    public RoomContextInfo() {
-
-        roomInfo = new Label("No room selected.");
-
-        this.getChildren().add(roomInfo);
-        this.getStyleClass().add("dropshadow-bottom-bg");
-
-        this.setLeftAnchor(roomInfo, Constants.INSETS);
-        this.setRightAnchor(roomInfo, Constants.INSETS);
-        this.setTopAnchor(roomInfo, Constants.INSETS);
-        this.setBottomAnchor(roomInfo, Constants.INSETS);
-    }
-
-    /**
-     * Getter Method for the Label.
-     * @return label
-     */
-    public Label getRoomInfo() {
-        return roomInfo;
-    }
+    private Constants() { }
 }

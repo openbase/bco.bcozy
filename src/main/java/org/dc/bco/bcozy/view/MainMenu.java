@@ -24,12 +24,12 @@ package org.dc.bco.bcozy.view;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.AnchorPane;
 
 /**
  * Created by hoestreich on 11/10/15.
  */
-public class MainMenu extends Pane {
+public class MainMenu extends AnchorPane {
 
     private final Button mainButton;
     /**
@@ -47,6 +47,10 @@ public class MainMenu extends Pane {
         mainButton = new Button("Test Location Registry");
         mainButton.getStyleClass().addAll("large-button", "visible-lg", "visible-md", "visible-sm", "visible-xs");
         this.getChildren().add(mainButton);
+
+        this.setLeftAnchor(mainButton, Constants.INSETS);
+        this.setRightAnchor(mainButton, Constants.INSETS);
+        this.setTopAnchor(mainButton, Constants.INSETS);
         //this.setVisible(false);
     }
 

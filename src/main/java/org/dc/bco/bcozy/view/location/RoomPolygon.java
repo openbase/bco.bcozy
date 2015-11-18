@@ -29,11 +29,12 @@ public class RoomPolygon extends Polygon {
     private final double centerX;
     private final double centerY;
     private boolean selected;
-    private String roomName;
+    private final String roomName;
 
     /**
      * Constructor for the RoomPolygon.
      * @param points Points for the shape
+     * @param roomName Name for the room
      */
     public RoomPolygon(final String roomName, final double... points) {
         super(points);

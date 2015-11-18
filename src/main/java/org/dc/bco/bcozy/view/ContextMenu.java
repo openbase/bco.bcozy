@@ -18,12 +18,12 @@
  */
 package org.dc.bco.bcozy.view;
 
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.AnchorPane;
 
 /**
  * Created by hoestreich on 11/10/15.
  */
-public class ContextMenu extends VBox {
+public class ContextMenu extends AnchorPane {
 
     private final RoomContextInfo roomContextInfo;
 
@@ -40,6 +40,10 @@ public class ContextMenu extends VBox {
         this.getStyleClass().add("dropshadow-left-bg");
 
         roomContextInfo = new RoomContextInfo();
+        this.getChildren().add(roomContextInfo);
+        this.setLeftAnchor(roomContextInfo, Constants.INSETS);
+        this.setRightAnchor(roomContextInfo, Constants.INSETS);
+        this.setTopAnchor(roomContextInfo, Constants.INSETS);
     }
 
     /**

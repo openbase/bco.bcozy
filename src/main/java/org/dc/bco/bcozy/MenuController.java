@@ -21,7 +21,6 @@ package org.dc.bco.bcozy;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import org.dc.bco.bcozy.view.ForegroundPane;
-import org.dc.bco.bcozy.view.location.LocationPane;
 
 /**
  * Created by hoestreich on 11/18/15.
@@ -32,7 +31,7 @@ public class MenuController {
      * Constructor for the Menu Controller.
      * @param foregroundPane The pane where all menus are nested.
      */
-    public MenuController(final ForegroundPane foregroundPane, final LocationPane locationPane) {
+    public MenuController(final ForegroundPane foregroundPane) {
         foregroundPane.getMenuHeader().getMainMenuBtn().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(final ActionEvent event) {
@@ -43,7 +42,5 @@ public class MenuController {
                 }
             }
         });
-        locationPane.getSelectedRoom().getRoomName().
-        foregroundPane.getContextMenu().getRoomContextInfo()
     }
 }
