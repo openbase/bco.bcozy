@@ -104,6 +104,7 @@ public class BCozy extends Application {
         primaryStage.show();
 
         new ManagerConnector(foregroundPane);
+        new MenuController(foregroundPane);
     }
 
     private static void registerListeners() {

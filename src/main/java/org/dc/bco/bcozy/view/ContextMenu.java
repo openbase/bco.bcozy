@@ -18,12 +18,14 @@
  */
 package org.dc.bco.bcozy.view;
 
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 
 /**
  * Created by hoestreich on 11/10/15.
  */
-public class ContextMenu extends Pane {
+public class ContextMenu extends VBox {
+
+    private final RoomContextInfo roomContextInfo;
 
     /**
      * Constructor for the ContextMenu.
@@ -36,7 +38,15 @@ public class ContextMenu extends Pane {
         this.setMinWidth(width);
         //this.getStyleClass().add("linear-gradient-right-to-left");
         this.getStyleClass().add("dropshadow-left-bg");
+
+        roomContextInfo = new RoomContextInfo();
     }
 
-
+    /**
+     * Getter for the roomContextInfo Element.
+     * @return Element Instance
+     */
+    public RoomContextInfo getRoomContextInfo() {
+        return roomContextInfo;
+    }
 }

@@ -18,6 +18,9 @@
  */
 package org.dc.bco.bcozy.view;
 
+//import javafx.animation.KeyFrame;
+//import javafx.animation.KeyValue;
+//import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
@@ -44,6 +47,7 @@ public class MainMenu extends Pane {
         mainButton = new Button("Test Location Registry");
         mainButton.getStyleClass().addAll("large-button", "visible-lg", "visible-md", "visible-sm", "visible-xs");
         this.getChildren().add(mainButton);
+        //this.setVisible(false);
     }
 
     /**
@@ -52,5 +56,28 @@ public class MainMenu extends Pane {
      */
     public void addMainButtonEventHandler(final EventHandler<ActionEvent> eventHandler) {
         mainButton.setOnAction(eventHandler);
+    }
+
+    /**
+     * Method to make this menu visible.
+     * Animations should be added in the future
+     */
+    public void showMainMenu() {
+        this.setVisible(true);
+        //CHECKSTYLE.OFF: MagicNumber
+//        final Timeline timeline = new Timeline(
+//                new KeyFrame(javafx.util.Duration.ZERO, new KeyValue(this., 0)),
+//                new KeyFrame(javafx.util.Duration.millis(500), new KeyValue(this.opacityProperty(), 1))
+//        );
+        //CHECKSTYLE.ON: MagicNumber
+        //timeline.play();
+    }
+
+    /**
+     * Method to make this menu invisible.
+     * Animations should be added in the future
+     */
+    public void hideMainMenu() {
+        this.setVisible(false);
     }
 }

@@ -29,12 +29,13 @@ public class RoomPolygon extends Polygon {
     private final double centerX;
     private final double centerY;
     private boolean selected;
+    private String roomName;
 
     /**
      * Constructor for the RoomPolygon.
      * @param points Points for the shape
      */
-    public RoomPolygon(final double... points) {
+    public RoomPolygon(final String roomName, final double... points) {
         super(points);
         this.setFill(Color.TRANSPARENT);
         this.setStroke(Color.WHITE);
@@ -44,6 +45,7 @@ public class RoomPolygon extends Polygon {
         this.centerX = (super.getLayoutBounds().getMaxX() + super.getLayoutBounds().getMinX()) / 2;
         this.centerY = (super.getLayoutBounds().getMaxY() + super.getLayoutBounds().getMinY()) / 2;
         this.selected = false;
+        this.roomName = roomName;
     }
 
     /**
@@ -83,5 +85,13 @@ public class RoomPolygon extends Polygon {
             //CHECKSTYLE.ON: MagicNumber
             this.selected = true;
         }
+    }
+
+    /**
+     * Getter for the roomName.
+     * @return the roomName as a String
+     */
+    public String getRoomName() {
+        return roomName;
     }
 }

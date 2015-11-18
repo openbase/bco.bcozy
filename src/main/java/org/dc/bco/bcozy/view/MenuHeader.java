@@ -18,12 +18,21 @@
  */
 package org.dc.bco.bcozy.view;
 
+import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
+import de.jensd.fx.glyphs.GlyphsDude;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+//import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+
 
 /**
  * Created by hoestreich on 11/10/15.
  */
 public class MenuHeader extends HBox {
+
+    private final Button mainMenuBtn;
 
     /**
      * Constructor for the MenuHeader.
@@ -32,9 +41,25 @@ public class MenuHeader extends HBox {
      */
     public MenuHeader(final double height, final double width) {
 
+        final Text iconText = GlyphsDude.createIcon(FontAwesomeIcon.BARS, "2em");
+        //final Text iconText = GlyphsDude.createIcon(MaterialDesignIcon.BARCODE, "2em");
+        iconText.setFill(Color.RED);
+        this.mainMenuBtn = new Button();
+        this.mainMenuBtn.setGraphic(iconText);
+
+        this.getChildren().add(this.mainMenuBtn);
+
         this.setPrefHeight(height);
         this.setPrefWidth(width);
         this.getStyleClass().add("dropshadow-bottom-bg");
 
+    }
+
+    /**
+     * Getter Method for the mainMenuBtn.
+     * @return Button Instance.
+     */
+    public Button getMainMenuBtn() {
+        return mainMenuBtn;
     }
 }

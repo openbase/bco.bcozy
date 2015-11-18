@@ -62,26 +62,30 @@ public class LocationPane extends StackPane {
         //CHECKSTYLE.OFF: MagicNumber
         selectedRoom = new RoomPolygon(0.0, 0.0, 0.0, 0.0);
 
-        final RoomPolygon room0 = new RoomPolygon(50.0, 50.0,
+        final RoomPolygon room0 = new RoomPolygon("Room0",
+                50.0, 50.0,
                 100.0, 50.0,
                 100.0, 100.0,
                 80.0, 100.0,
                 80.0, 80.0,
                 50.0, 80.0);
 
-        final RoomPolygon room1 = new RoomPolygon(-10.0, -10.0,
+        final RoomPolygon room1 = new RoomPolygon("Room1",
+                -10.0, -10.0,
                 -10.0, 10.0,
                 30.0, 30.0,
                 30.0, -10.0);
 
-        final RoomPolygon room2 = new RoomPolygon(50.0, -20.0,
+        final RoomPolygon room2 = new RoomPolygon("Room2",
+                50.0, -20.0,
                 100.0, -20.0,
                 100.0, 30.0,
                 60.0, 30.0,
                 60.0, 10.0,
                 50.0, 10.0);
 
-        final RoomPolygon room3 = new RoomPolygon(-30.0, 50.0,
+        final RoomPolygon room3 = new RoomPolygon("Room3",
+                -30.0, 50.0,
                 -10.0, 70.0,
                 -10.0, 90.0,
                 -30.0, 110.0,
@@ -287,5 +291,9 @@ public class LocationPane extends StackPane {
         } else {
             scroller.setHvalue(scroller.getHmin());
         }
+    }
+
+    public RoomPolygon getSelectedRoom() {
+        return selectedRoom;
     }
 }

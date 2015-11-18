@@ -99,7 +99,7 @@
  ******************************************************************************/
 
 .toggle-button, .button{
-    -fx-background-color: -custom-red;
+    -fx-background-color: -bluegrey-500;
     -fx-background-insets:  0.0;
     -fx-background-radius: 2.0;
     -fx-border-width: 0.0;
@@ -112,11 +112,11 @@
 .toggle-button:focused,
 .button:focused,
 .button:default:focused {
-       -fx-background-color: derive(-custom-red, 50.0%);
+       -fx-background-color: derive(-bluegrey-500, 50.0%);
 }
 
 .toggle-button:focused:selected {
-       -fx-background-color: derive(-custom-red, 50.0%), derive(-custom-red, -20.0%);
+       -fx-background-color: derive(-bluegrey-500, 50.0%), derive(-bluegrey-500, -20.0%);
        -fx-background-insets: 0.0, 0.2em;
 }
 
@@ -124,11 +124,10 @@
 .toggle-button:selected,
 .button:armed,
 .button:default:armed {
-     -fx-background-color: derive(-custom-red, -20.0%);
+     -fx-background-color: derive(-bluegrey-500, -20.0%);
 }
 
 .large-button {
-    -custom-red : #fd9415;
     -fx-min-width: 80;
 }
 .large-button:large-device {
