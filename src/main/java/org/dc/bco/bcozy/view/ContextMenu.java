@@ -19,6 +19,9 @@
 package org.dc.bco.bcozy.view;
 
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
+import org.dc.bco.bcozy.model.ShutterInstance;
+import org.dc.bco.bcozy.view.devicepanes.ShutterPane;
 
 /**
  * Created by hoestreich on 11/10/15.
@@ -34,16 +37,24 @@ public class ContextMenu extends AnchorPane {
      */
     public ContextMenu(final double height, final double width) {
 
+        final VBox verticalLayout = new VBox(Constants.INSETS);
+
         this.setMinHeight(height);
         this.setMinWidth(width);
+
         //this.getStyleClass().add("linear-gradient-right-to-left");
         this.getStyleClass().add("dropshadow-left-bg");
 
         roomContextInfo = new RoomContextInfo();
-        this.getChildren().add(roomContextInfo);
-        this.setLeftAnchor(roomContextInfo, Constants.INSETS);
-        this.setRightAnchor(roomContextInfo, Constants.INSETS);
-        this.setTopAnchor(roomContextInfo, Constants.INSETS);
+        final ShutterPane shutterPane = new ShutterPane(new ShutterInstance("Shutter Living", 50.0));
+
+        verticalLayout.getChildren().addAll(roomContextInfo, shutterPane);
+        this.getChildren().add(verticalLayout);
+
+
+        this.setLeftAnchor(verticalLayout, Constants.INSETS);
+        this.setRightAnchor(verticalLayout, Constants.INSETS);
+        this.setTopAnchor(verticalLayout, Constants.INSETS);
     }
 
     /**

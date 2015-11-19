@@ -165,11 +165,18 @@ public class LocationPaneController {
                 centerScrollPaneToPointAnimated(scrollPane,
                         new Point2D(currentRoom.getCenterX(), currentRoom.getCenterY()),
                         locationViewContent, zoomPaneWidth, zoomPaneHeight);
-                if (!currentRoom.isSelected()) {
+                //TODO: this isn't very nice yet, will be improved if we have a model with the rooms
+                if (currentRoom.isSelected()) {
+                    locationPane.getSelectedRoom().toggleSelected();
+                    //CHECKSTYLE.OFF: MagicNumber
+                    locationPane.setSelectedRoom(new RoomPolygon("none", 0.0, 0.0, 0.0, 0.0));
+                    //CHECKSTYLE.ON: MagicNumber
+                    roomContextInfo.getRoomInfo().setText(locationPane.getSelectedRoom().getRoomName());
+                } else {
                     locationPane.getSelectedRoom().toggleSelected();
                     currentRoom.toggleSelected();
                     locationPane.setSelectedRoom(currentRoom);
-                    roomContextInfo.getRoomInfo().setText(currentRoom.getRoomName());
+                    roomContextInfo.getRoomInfo().setText(locationPane.getSelectedRoom().getRoomName());
                 }
             });
         }

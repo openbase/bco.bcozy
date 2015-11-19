@@ -130,9 +130,9 @@ public class LocationPane extends StackPane {
         scroller.getStylesheets().add("css/transparent_scrollpane.css");
 
         //TODO: what iiiiiis is good for?
-        scroller.viewportBoundsProperty().addListener((observable, oldValue, newValue) -> {
-            zoomPane.setMinSize(newValue.getWidth(), newValue.getHeight());
-        });
+//        scroller.viewportBoundsProperty().addListener((observable, oldValue, newValue) -> {
+//            zoomPane.setMinSize(newValue.getWidth(), newValue.getHeight());
+//        });
 
         //CHECKSTYLE.OFF: MagicNumber
         scroller.setPrefViewportWidth(800);
