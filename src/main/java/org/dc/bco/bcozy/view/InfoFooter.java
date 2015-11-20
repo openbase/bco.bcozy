@@ -18,23 +18,38 @@
  */
 package org.dc.bco.bcozy.view;
 
-import javafx.scene.layout.Pane;
+import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
 
 /**
  * Created by hoestreich on 11/10/15.
  */
-public class InfoFooter extends Pane {
+public class InfoFooter extends AnchorPane {
 
+    private final Label mouseOverText;
     /**
      * Constructor for the InfoFooter.
      * @param height Height
      * @param width Width
      */
     public InfoFooter(final double height, final double width) {
-
+        this.mouseOverText = new Label();
+        this.mouseOverText.getStyleClass().add("small-label");
+        this.getChildren().add(mouseOverText);
         this.setPrefHeight(height);
         this.setPrefWidth(width);
         this.getStyleClass().add("dropshadow-top-bg");
+        this.setLeftAnchor(mouseOverText, Constants.INSETS);
+        this.setRightAnchor(mouseOverText, Constants.INSETS);
 
     }
+
+    /**
+     * Getter for the actual mouseOverLabel.
+     * @return the actual text which is set as a string
+     */
+    public Label getMouseOverText() {
+        return mouseOverText;
+    }
+
 }

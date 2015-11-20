@@ -40,6 +40,12 @@ public class DevicePane extends VBox {
         this.deviceName = new Label(deviceName);
         this.deviceContent = deviceContent;
         this.setSpacing(Constants.INSETS / 2);
-        this.getChildren().addAll(new PaneElement(this.deviceContent), new PaneElement(this.deviceName));
+        this.setFillWidth(true);
+        final PaneElement deviceContentPane = new PaneElement(this.deviceContent);
+        final PaneElement deviceNamePane = new PaneElement(this.deviceName);
+
+        deviceContentPane.setFillWidth(true);
+        deviceNamePane.setFillWidth(true);
+        this.getChildren().addAll(deviceContentPane, deviceNamePane);
     }
 }

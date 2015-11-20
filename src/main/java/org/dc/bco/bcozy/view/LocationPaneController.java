@@ -59,7 +59,7 @@ public class LocationPaneController {
         this.addMouseEventHandlerToRoom(locationPane.getScrollPane(), locationPane,
                 locationPane.getLocationViewContent(), locationPane.getZoomPaneWidth(),
                 locationPane.getZoomPaneHeight(), locationPane.getRooms(),
-                foregroundPane.getContextMenu().getRoomContextInfo());
+                foregroundPane);
     }
 
     /**
@@ -157,7 +157,7 @@ public class LocationPaneController {
     private void addMouseEventHandlerToRoom(final ScrollPane scrollPane, final LocationPane locationPane,
                                             final Group locationViewContent, final double zoomPaneWidth,
                                             final double zoomPaneHeight, final List<RoomPolygon> rooms,
-                                            final RoomContextInfo roomContextInfo) {
+                                            final ForegroundPane foregroundPane) {
         for (final RoomPolygon currentRoom : rooms) {
             currentRoom.setOnMouseClicked(event -> {
                 event.consume();
@@ -171,13 +171,23 @@ public class LocationPaneController {
                     //CHECKSTYLE.OFF: MagicNumber
                     locationPane.setSelectedRoom(new RoomPolygon("none", 0.0, 0.0, 0.0, 0.0));
                     //CHECKSTYLE.ON: MagicNumber
-                    roomContextInfo.getRoomInfo().setText(locationPane.getSelectedRoom().getRoomName());
+                    foregroundPane.getContextMenu().getRoomContextInfo().getRoomInfo()
+                            .setText(locationPane.getSelectedRoom().getRoomName());
                 } else {
                     locationPane.getSelectedRoom().toggleSelected();
                     currentRoom.toggleSelected();
                     locationPane.setSelectedRoom(currentRoom);
-                    roomContextInfo.getRoomInfo().setText(locationPane.getSelectedRoom().getRoomName());
+                    foregroundPane.getContextMenu().getRoomContextInfo().getRoomInfo()
+                            .setText(locationPane.getSelectedRoom().getRoomName());
                 }
+            });
+            currentRoom.setOnMouseEntered(event -> {
+                event.consume();
+                foregroundPane.getInfoFooter().getMouseOverText().setText(currentRoom.getRoomName());
+            });
+            currentRoom.setOnMouseExited(event -> {
+                event.consume();
+                foregroundPane.getInfoFooter().getMouseOverText().setText("");
             });
         }
     }

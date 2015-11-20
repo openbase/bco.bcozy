@@ -95,6 +95,7 @@ public class BCozy extends Application {
                 + foregroundPane.getInfoFooter().getMinHeight() + 300);
         primaryStage.setMinWidth(foregroundPane.getMainMenu().getMinWidth()
                 + foregroundPane.getContextMenu().getMinWidth() + 300);
+        primaryStage.setHeight(screenHeight);
         //CHECKSTYLE.ON: MagicNumber
 
         primaryStage.setScene(new Scene(root, screenWidth, screenHeight));

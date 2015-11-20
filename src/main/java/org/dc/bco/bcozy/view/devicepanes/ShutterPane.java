@@ -22,17 +22,14 @@ import javafx.geometry.Orientation;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import org.controlsfx.control.PlusMinusSlider;
 import org.dc.bco.bcozy.model.ShutterInstance;
-import org.dc.bco.bcozy.view.Constants;
 
 /**
  * Created by hoestreich on 11/19/15.
  */
-public class ShutterPane extends Pane {
+public class ShutterPane extends VBox {
 
     /**
      * Constructor for a ShutterPane.
@@ -40,6 +37,8 @@ public class ShutterPane extends Pane {
      */
     public ShutterPane(final ShutterInstance shutterInstance) {
         final DevicePane devicePane = new DevicePane(shutterInstance.getShutterName(), initContent(shutterInstance));
+        devicePane.setFillWidth(true);
+        this.setFillWidth(true);
         this.getChildren().add(devicePane);
     }
 
@@ -48,9 +47,9 @@ public class ShutterPane extends Pane {
      * @param shutterInstance the shutter instance for which a gui should be created
      * @return
      */
-    private HBox initContent(final ShutterInstance shutterInstance) {
-        final HBox horizontalLayout = new HBox(Constants.INSETS);
-        final VBox verticalLayout = new VBox(Constants.INSETS);
+    private BorderPane initContent(final ShutterInstance shutterInstance) {
+        final BorderPane borderPane = new BorderPane();
+        final BorderPane verticalLayout = new BorderPane();
         //TODO: Implement Icon class which adapts its size depending on the window size (responsive)
         final Label actualValue = new Label("Aktueller Wert: " + Double.toString(shutterInstance.getOpeningRatio()));
         final Image imageIcon = new Image(getClass().getResourceAsStream("/icons/shutter.png"));
@@ -60,10 +59,13 @@ public class ShutterPane extends Pane {
         imageViewIcon.setFitWidth(64);
         //CHECKSTYLE.ON: MagicNumber
 
-        verticalLayout.getChildren().addAll(imageViewIcon, actualValue);
         final PlusMinusSlider control = new PlusMinusSlider();
         control.setOrientation(Orientation.VERTICAL);
-        horizontalLayout.getChildren().addAll(verticalLayout, control);
-        return horizontalLayout;
+        verticalLayout.setTop(imageViewIcon);
+        verticalLayout.setBottom(actualValue);
+
+        borderPane.setLeft(verticalLayout);
+        borderPane.setRight(control);
+        return borderPane;
     }
 }

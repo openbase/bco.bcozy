@@ -23,7 +23,6 @@ import javafx.scene.layout.HBox;
 import de.jensd.fx.glyphs.GlyphsDude;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 //import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
 
@@ -42,8 +41,6 @@ public class MenuHeader extends HBox {
     public MenuHeader(final double height, final double width) {
 
         final Text iconText = GlyphsDude.createIcon(FontAwesomeIcon.BARS, "2em");
-        //final Text iconText = GlyphsDude.createIcon(MaterialDesignIcon.BARCODE, "2em");
-        iconText.setFill(Color.RED);
         this.mainMenuBtn = new Button();
         this.mainMenuBtn.setGraphic(iconText);
 

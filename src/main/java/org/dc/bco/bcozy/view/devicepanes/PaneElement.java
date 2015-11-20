@@ -18,14 +18,15 @@
  */
 package org.dc.bco.bcozy.view.devicepanes;
 
+import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import org.dc.bco.bcozy.view.Constants;
 
 /**
  * Created by hoestreich on 11/19/15.
  */
-public class PaneElement extends AnchorPane {
+public class PaneElement extends VBox {
 
     /**
      * Constructor for a Pane Element to guarantee a similar layout for all gui elements.
@@ -33,10 +34,12 @@ public class PaneElement extends AnchorPane {
      */
     public PaneElement(final Node content) {
         this.getStyleClass().add("dropshadow-bottom-bg");
-        this.setLeftAnchor(content, Constants.INSETS);
-        this.setRightAnchor(content, Constants.INSETS);
-        this.setTopAnchor(content, Constants.INSETS);
-        this.setBottomAnchor(content, Constants.INSETS);
+        this.setPadding(new Insets(Constants.INSETS, Constants.INSETS, Constants.INSETS, Constants.INSETS));
+        this.setFillWidth(true);
+//        this.setLeftAnchor(content, Constants.INSETS);
+//        this.setRightAnchor(content, Constants.INSETS);
+//        this.setTopAnchor(content, Constants.INSETS);
+//        this.setBottomAnchor(content, Constants.INSETS);
         this.getChildren().add(content);
     }
 }

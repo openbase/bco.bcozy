@@ -76,6 +76,10 @@
  *                                                                             *
  ******************************************************************************/
 
+.small-label {
+    -fx-font-size: 14.0;
+}
+
 .label {
     -fx-text-fill: -fx-text-base-color;
 }
@@ -99,32 +103,36 @@
  ******************************************************************************/
 
 .toggle-button, .button{
-    -fx-background-color: -bluegrey-500;
+    -fx-background-color: -bluegrey-50;
     -fx-background-insets:  0.0;
-    -fx-background-radius: 2.0;
+    /*-fx-background-radius: 2.0;*/
     -fx-border-width: 0.0;
-    -fx-padding: 0.7em;
+    /*-fx-padding: 0.7em;*/
     -fx-text-fill: -fx-text-base-color;
     -fx-alignment: CENTER;
     -fx-content-display: LEFT;
+    -fx-border-radius: 0px;
+    -fx-background-radius: 0px;
 }
 
 .toggle-button:focused,
 .button:focused,
 .button:default:focused {
-       -fx-background-color: derive(-bluegrey-500, 50.0%);
+       -fx-background-color: derive(-bluegrey-50, 50.0%);
+    -fx-background-insets:  0.0;
 }
 
 .toggle-button:focused:selected {
-       -fx-background-color: derive(-bluegrey-500, 50.0%), derive(-bluegrey-500, -20.0%);
-       -fx-background-insets: 0.0, 0.2em;
+       -fx-background-color: derive(-bluegrey-50, 50.0%), derive(-bluegrey-50, -20.0%);
+    -fx-background-insets:  0.0;
 }
 
 .toggle-button:armed,
 .toggle-button:selected,
 .button:armed,
 .button:default:armed {
-     -fx-background-color: derive(-bluegrey-500, -20.0%);
+     -fx-background-color: derive(-bluegrey-50, -20.0%);
+    -fx-background-insets:  0.0;
 }
 
 .large-button {
@@ -190,22 +198,24 @@
 }
 
 .text-area:focused, .text-field:focused {
-    -fx-background-color: -custom-blue, derive(rgb(94.0, 203.0, 234.0), 80.0%);
+    -fx-background-color: -bluegrey-50, derive(-bluegrey-50, 80.0%);
     -fx-background-insets: 0.0, 0.2em;
     -fx-background-radius: 2.0;
 }
 
 .scroll-bar:vertical > .track-background,
 .scroll-bar:horizontal > .track-background{
-    -fx-background-color: derive(rgb(94.0, 203.0, 234.0), 50.0%);
+    -fx-background-color: derive(-bluegrey-100, 50.0%);
     -fx-background-insets: 0.0;
+    -fx-padding:3px;
 }
 
 .scroll-bar:vertical > .thumb,
 .scroll-bar:horizontal > .thumb {
-    -fx-background-color: -custom-blue;
+    -fx-background-color: -bluegrey-500;
     -fx-background-insets: 0.0;
     -fx-background-radius: 0.0;
+    -fx-padding:3px;
 }
 
 .scroll-bar > .increment-button,
@@ -213,15 +223,18 @@
 .scroll-bar:hover > .increment-button,
 .scroll-bar:hover > .decrement-button {
     -fx-background-color: transparent;
+    -fx-padding:3px;
 }
 
 .scroll-bar > .increment-button > .increment-arrow,
 .scroll-bar > .decrement-button > .decrement-arrow {
     -fx-background-color: white;
+    -fx-padding:3px;
 }
 
 .scroll-bar > .track-background{
-    -fx-background-color:transparent;
+    -fx-background-color: transparent;
+    -fx-padding:3px;
 }
 
 

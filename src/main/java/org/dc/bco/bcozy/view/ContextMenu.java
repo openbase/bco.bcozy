@@ -18,6 +18,8 @@
  */
 package org.dc.bco.bcozy.view;
 
+import javafx.geometry.Insets;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import org.dc.bco.bcozy.model.ShutterInstance;
@@ -29,6 +31,7 @@ import org.dc.bco.bcozy.view.devicepanes.ShutterPane;
 public class ContextMenu extends AnchorPane {
 
     private final RoomContextInfo roomContextInfo;
+    private final ContextSortingPane contextSortingPane;
 
     /**
      * Constructor for the ContextMenu.
@@ -37,24 +40,48 @@ public class ContextMenu extends AnchorPane {
      */
     public ContextMenu(final double height, final double width) {
 
-        final VBox verticalLayout = new VBox(Constants.INSETS);
-
         this.setMinHeight(height);
         this.setMinWidth(width);
 
-        //this.getStyleClass().add("linear-gradient-right-to-left");
-        this.getStyleClass().add("dropshadow-left-bg");
+        final ScrollPane verticalScrollPane = new ScrollPane();
+        verticalScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        verticalScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+
+        final VBox verticalOuterLayout = new VBox(Constants.INSETS);
+
+        final VBox verticalInnerLayout = new VBox(Constants.INSETS);
 
         roomContextInfo = new RoomContextInfo();
+        contextSortingPane = new ContextSortingPane(this.getMinWidth() + (Constants.INSETS * 2));
+
+        //TODO: Replace with automatic content generation based on the actual selection (in the locationpane)
         final ShutterPane shutterPane = new ShutterPane(new ShutterInstance("Shutter Living", 50.0));
+        final ShutterPane shutterPane1 = new ShutterPane(new ShutterInstance("Shutter Kitchen", 0.0));
+        final ShutterPane shutterPane2 = new ShutterPane(new ShutterInstance("Shutter Sports", 100.0));
+        final ShutterPane shutterPane3 = new ShutterPane(new ShutterInstance("Shutter Control", 100.0));
 
-        verticalLayout.getChildren().addAll(roomContextInfo, shutterPane);
-        this.getChildren().add(verticalLayout);
+        verticalInnerLayout.getChildren().addAll(shutterPane, shutterPane1, shutterPane2, shutterPane3);
+        verticalScrollPane.setContent(verticalInnerLayout);
+        verticalInnerLayout.setFillWidth(true);
+        verticalInnerLayout.setPadding(
+                new Insets(Constants.INSETS, Constants.INSETS, Constants.INSETS, Constants.INSETS));
+        //TODO: Somehow it won't just fill the remaining size in the VBox - Fix this somehow...
+        //CHECKSTYLE.OFF: MagicNumber
+        verticalScrollPane.setPrefHeight(height - 200.0);
+        //CHECKSTYLE.ON: MagicNumber
+        verticalOuterLayout.getChildren().addAll(roomContextInfo, contextSortingPane, verticalScrollPane);
 
+        this.getChildren().add(verticalOuterLayout);
 
-        this.setLeftAnchor(verticalLayout, Constants.INSETS);
-        this.setRightAnchor(verticalLayout, Constants.INSETS);
-        this.setTopAnchor(verticalLayout, Constants.INSETS);
+        this.setLeftAnchor(verticalOuterLayout, Constants.INSETS);
+        this.setRightAnchor(verticalOuterLayout, Constants.INSETS);
+        this.setTopAnchor(verticalOuterLayout, Constants.INSETS);
+        this.setBottomAnchor(verticalOuterLayout, Constants.INSETS);
+
+        //CHECKSTYLE.OFF: MultipleStringLiterals
+        verticalScrollPane.getStyleClass().add("dropshadow-left-bg");
+        this.getStyleClass().add("dropshadow-left-bg");
+        //CHECKSTYLE.ON: MultipleStringLiterals
     }
 
     /**
