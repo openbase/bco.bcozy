@@ -26,6 +26,23 @@ public final class Constants {
      * Inset used for UI Elements.
      */
     public static final double INSETS = 10.0;
+    /**
+     * The size for a big size icon.
+     */
+    public static final double BIGICON = 128.0;
+    /**
+     * The size for a mid size icon.
+     */
+    public static final double MIDDLEICON = 64.0;
+    /**
+     * The size for a small size icon.
+     */
+    public static final double SMALLICON = 32.0;
+
+    /**
+     * The max width for a main menu pane.
+     */
+    public static final double MAXMENUWIDTH = 280.0;
 
     /**
      * Private Constructor.

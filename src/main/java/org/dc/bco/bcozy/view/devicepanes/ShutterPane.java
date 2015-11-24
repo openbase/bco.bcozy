@@ -25,6 +25,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import org.controlsfx.control.PlusMinusSlider;
 import org.dc.bco.bcozy.model.ShutterInstance;
+import org.dc.bco.bcozy.view.Constants;
 
 /**
  * Created by hoestreich on 11/19/15.
@@ -54,10 +55,8 @@ public class ShutterPane extends VBox {
         final Label actualValue = new Label("Aktueller Wert: " + Double.toString(shutterInstance.getOpeningRatio()));
         final Image imageIcon = new Image(getClass().getResourceAsStream("/icons/shutter.png"));
         final ImageView imageViewIcon = new ImageView(imageIcon);
-        //CHECKSTYLE.OFF: MagicNumber
-        imageViewIcon.setFitHeight(64);
-        imageViewIcon.setFitWidth(64);
-        //CHECKSTYLE.ON: MagicNumber
+        imageViewIcon.setFitHeight(Constants.MIDDLEICON);
+        imageViewIcon.setFitWidth(Constants.MIDDLEICON);
 
         final PlusMinusSlider control = new PlusMinusSlider();
         control.setOrientation(Orientation.VERTICAL);

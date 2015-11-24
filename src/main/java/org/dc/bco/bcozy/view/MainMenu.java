@@ -25,6 +25,8 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
+import org.dc.bco.bcozy.view.mainmenupanes.UserPane;
 
 /**
  * Created by hoestreich on 11/10/15.
@@ -32,6 +34,7 @@ import javafx.scene.layout.AnchorPane;
 public class MainMenu extends AnchorPane {
 
     private final Button mainButton;
+    private final UserPane userPane;
     /**
      * Constructor for the MainMenu.
      * @param height Height
@@ -41,16 +44,22 @@ public class MainMenu extends AnchorPane {
 
         this.setMinHeight(height);
         this.setMinWidth(width);
-        //this.getStyleClass().add("linear-gradient-left-to-right");
         this.getStyleClass().add("dropshadow-right-bg");
+
+        final VBox verticalLayout = new VBox(Constants.INSETS);
+
+        userPane = new UserPane();
 
         mainButton = new Button("Test Location Registry");
         mainButton.getStyleClass().addAll("large-button", "visible-lg", "visible-md", "visible-sm", "visible-xs");
-        this.getChildren().add(mainButton);
 
-        this.setLeftAnchor(mainButton, Constants.INSETS);
-        this.setRightAnchor(mainButton, Constants.INSETS);
-        this.setTopAnchor(mainButton, Constants.INSETS);
+        verticalLayout.getChildren().addAll(userPane, mainButton);
+        this.getChildren().add(verticalLayout);
+
+        this.setLeftAnchor(verticalLayout, Constants.INSETS);
+        this.setRightAnchor(verticalLayout, Constants.INSETS);
+        this.setTopAnchor(verticalLayout, Constants.INSETS);
+        this.setBottomAnchor(verticalLayout, Constants.INSETS);
         //this.setVisible(false);
     }
 
@@ -60,6 +69,14 @@ public class MainMenu extends AnchorPane {
      */
     public void addMainButtonEventHandler(final EventHandler<ActionEvent> eventHandler) {
         mainButton.setOnAction(eventHandler);
+    }
+
+    /**
+     * Getter for the UserPane.
+     * @return the instance of the userPane
+     */
+    public UserPane getUserPane() {
+        return userPane;
     }
 
     /**

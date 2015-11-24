@@ -16,28 +16,8 @@
  * along with org.dc.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
-package org.dc.bco.bcozy.view.devicepanes;
-
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
-import javafx.scene.layout.VBox;
-import org.dc.bco.bcozy.view.Constants;
 
 /**
- * Created by hoestreich on 11/19/15.
+ * Created by julian on 12.11.15.
  */
-public class PaneElement extends VBox {
-
-    /**
-     * Constructor for a Pane Element to guarantee a similar layout for all gui elements.
-     * @param content the content which should be placed within this pane.
-     */
-    public PaneElement(final Node content) {
-        this.getStyleClass().add("dropshadow-bottom-bg");
-        this.setPadding(new Insets(Constants.INSETS, Constants.INSETS, Constants.INSETS, Constants.INSETS));
-        this.setFillWidth(true);
-        this.setAlignment(Pos.CENTER);
-        this.getChildren().add(content);
-    }
-}
+package org.dc.bco.bcozy.controller;

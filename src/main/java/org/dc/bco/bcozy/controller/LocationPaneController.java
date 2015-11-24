@@ -16,7 +16,7 @@
  * along with org.dc.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
-package org.dc.bco.bcozy.view;
+package org.dc.bco.bcozy.controller;
 
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
@@ -30,6 +30,7 @@ import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
+import org.dc.bco.bcozy.view.ForegroundPane;
 import org.dc.bco.bcozy.view.location.LocationPane;
 import org.dc.bco.bcozy.view.location.RoomPolygon;
 
