@@ -17,7 +17,14 @@
         <plugin.pmd.version>3.5</plugin.pmd.version>
         <plugin.javadoc.version>2.10.3</plugin.javadoc.version>
         <failOnStyleError>true</failOnStyleError>
-        <rsb.version>[0.12,0.13-SNAPSHOT)</rsb.version>
+        <jul.version>0.5-SNAPSHOT</jul.version>
+        <rem.version>0.7-SNAPSHOT</rem.version>
+        <dal.version>0.6-SNAPSHOT</dal.version>
+        <rsb.version>[0.12,0.13-SNAPSHOT)</rsb.version> 
+        <rst.sandbox.artifact>rst-sandbox-csra-ha-paramite</rst.sandbox.artifact>
+        <rst.sandbox.version>0.12-SNAPSHOT</rst.sandbox.version>
+        <rst.stable.artifact>rst-csra-ha-paramite</rst.stable.artifact>
+        <rst.stable.version>0.12-SNAPSHOT</rst.stable.version>
     </properties>
 
     <dependencies>
@@ -54,22 +61,22 @@
         <dependency>
             <groupId>de.citec</groupId>
             <artifactId>dm.remote</artifactId>
-            <version>0.6-SNAPSHOT</version>
+            <version>${rem.version}</version>
         </dependency>
         <dependency>
             <groupId>de.citec</groupId>
             <artifactId>lm.remote</artifactId>
-            <version>0.6-SNAPSHOT</version>
+            <version>${rem.version}</version>
         </dependency>
         <dependency>
             <groupId>de.citec</groupId>
             <artifactId>jul.extension.rst.processing</artifactId>
-            <version>0.4-SNAPSHOT</version>
+            <version>${jul.version}</version>
         </dependency>
         <dependency>
             <groupId>de.citec</groupId>
             <artifactId>dal.remote</artifactId>
-            <version>0.5-SNAPSHOT</version>
+            <version>${dal.version}</version>
         </dependency>
     </dependencies>
 
