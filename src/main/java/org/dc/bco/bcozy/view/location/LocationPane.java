@@ -18,18 +18,19 @@
  */
 package org.dc.bco.bcozy.view.location;
 
+import javafx.geometry.Point2D;
 import javafx.scene.Group;
-import javafx.scene.layout.*;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import org.dc.bco.bcozy.view.ForegroundPane;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by hoestreich on 11/10/15.
+ *
  */
 public class LocationPane extends StackPane {
 
@@ -42,68 +43,29 @@ public class LocationPane extends StackPane {
     private ScrollPane scroller;
     private StackPane zoomPane;
     private final ScrollPane scrollPane;
-    private final List<RoomPolygon> rooms;
+    private final ForegroundPane foregroundPane;
+    private final LocationPaneDesktopControls locationPaneDesktopControls;
 
     /**
      * Constructor for the LocationPane.
+     *
+     * @param foregroundPane The foregroundPane
      */
-    public LocationPane() {
+    public LocationPane(final ForegroundPane foregroundPane) {
         super();
 
+        this.foregroundPane = foregroundPane;
+
         final Rectangle emptyHugeRectangle = new Rectangle(-(ZOOM_PANE_WIDTH / 2),
-                                                     -(ZOOM_PANE_HEIGHT / 2),
+                -(ZOOM_PANE_HEIGHT / 2),
                 ZOOM_PANE_WIDTH,
                 ZOOM_PANE_HEIGHT);
         emptyHugeRectangle.setFill(Color.TRANSPARENT);
 
         //Dummy Room
-
-        //CHECKSTYLE.OFF: MagicNumber
         selectedRoom = new RoomPolygon("none", 0.0, 0.0, 0.0, 0.0);
 
-        final RoomPolygon room0 = new RoomPolygon("Room0",
-                50.0, 50.0,
-                100.0, 50.0,
-                100.0, 100.0,
-                80.0, 100.0,
-                80.0, 80.0,
-                50.0, 80.0);
-
-        final RoomPolygon room1 = new RoomPolygon("Room1",
-                -10.0, -10.0,
-                -10.0, 10.0,
-                30.0, 30.0,
-                30.0, -10.0);
-
-        final RoomPolygon room2 = new RoomPolygon("Room2",
-                50.0, -20.0,
-                100.0, -20.0,
-                100.0, 30.0,
-                60.0, 30.0,
-                60.0, 10.0,
-                50.0, 10.0);
-
-        final RoomPolygon room3 = new RoomPolygon("Room3",
-                -30.0, 50.0,
-                -10.0, 70.0,
-                -10.0, 90.0,
-                -30.0, 110.0,
-                -50.0, 110.0,
-                -70.0, 90.0,
-                -70.0, 70.0,
-                -50.0, 50.0);
-
-        //CHECKSTYLE.ON: MagicNumber
-
-        locationViewContent = new Group(emptyHugeRectangle, room0, room1, room2, room3);
-
-        //TODO: Should the rooms be part of the model?
-        rooms = new ArrayList<RoomPolygon>();
-        rooms.add(room0);
-        rooms.add(room1);
-        rooms.add(room2);
-        rooms.add(room3);
-
+        locationViewContent = new Group(emptyHugeRectangle);
         scrollPane = createZoomPane(locationViewContent);
 
         this.getChildren().setAll(scrollPane);
@@ -114,6 +76,28 @@ public class LocationPane extends StackPane {
                 BackgroundSize.DEFAULT);
         this.setBackground(new Background(backgroundImage));
 
+        this.locationPaneDesktopControls = new LocationPaneDesktopControls(this, this.foregroundPane);
+
+    }
+
+    /**
+     * Adds a room to the location Pane and use the controls to add a mouse event handler.
+     *
+     * @param roomID The room id
+     * @param vertices A list of vertices which defines the shape of the room
+     */
+    public void addRoom(final String roomID, final List<Point2D> vertices) {
+        double[] points = new double[vertices.size() * 2];
+
+        for (int i = 0; i < vertices.size(); i++) {
+            points[i * 2] = vertices.get(i).getX();
+            points[i * 2 + 1] = vertices.get(i).getY();
+        }
+
+        final RoomPolygon newRoom = new RoomPolygon(roomID, points);
+
+        locationViewContent.getChildren().add(newRoom);
+        locationPaneDesktopControls.addMouseEventHandlerToRoom(newRoom);
     }
 
     private ScrollPane createZoomPane(final Group group) {
@@ -212,13 +196,5 @@ public class LocationPane extends StackPane {
      */
     public void setSelectedRoom(final RoomPolygon selectedRoom) {
         this.selectedRoom = selectedRoom;
-    }
-
-    /**
-     * Getter for the roomList.
-     * @return roomList
-     */
-    public List<RoomPolygon> getRooms() {
-        return rooms;
     }
 }

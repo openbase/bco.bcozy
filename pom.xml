@@ -20,7 +20,7 @@
         <jul.version>0.5-SNAPSHOT</jul.version>
         <rem.version>0.7-SNAPSHOT</rem.version>
         <dal.version>0.6-SNAPSHOT</dal.version>
-        <rsb.version>[0.12,0.13-SNAPSHOT)</rsb.version> 
+        <rsb.version>[0.12,0.13-SNAPSHOT)</rsb.version>
         <rst.sandbox.artifact>rst-sandbox-csra-ha-paramite</rst.sandbox.artifact>
         <rst.sandbox.version>0.12-SNAPSHOT</rst.sandbox.version>
         <rst.stable.artifact>rst-csra-ha-paramite</rst.stable.artifact>
@@ -191,7 +191,7 @@
                     <rulesets>
                         <ruleset>${project.basedir}/codecheck/pmd-rules.xml</ruleset>
                     </rulesets>
-                    <failOnViolation>${failOnStyleError}</failOnViolation>
+                    <failOnViolation>false</failOnViolation>
                     <verbose>true</verbose>
                 </configuration>
                 <executions>
