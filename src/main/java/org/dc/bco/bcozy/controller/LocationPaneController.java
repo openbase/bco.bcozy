@@ -172,13 +172,13 @@ public class LocationPaneController {
                     //CHECKSTYLE.OFF: MagicNumber
                     locationPane.setSelectedRoom(new RoomPolygon("none", 0.0, 0.0, 0.0, 0.0));
                     //CHECKSTYLE.ON: MagicNumber
-                    foregroundPane.getContextMenu().getRoomContextInfo().getRoomInfo()
+                    foregroundPane.getContextMenu().getRoomInfo()
                             .setText(locationPane.getSelectedRoom().getRoomName());
                 } else {
                     locationPane.getSelectedRoom().toggleSelected();
                     currentRoom.toggleSelected();
                     locationPane.setSelectedRoom(currentRoom);
-                    foregroundPane.getContextMenu().getRoomContextInfo().getRoomInfo()
+                    foregroundPane.getContextMenu().getRoomInfo()
                             .setText(locationPane.getSelectedRoom().getRoomName());
                 }
             });

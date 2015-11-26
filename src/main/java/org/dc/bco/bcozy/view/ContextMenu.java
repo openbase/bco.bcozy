@@ -19,8 +19,11 @@
 package org.dc.bco.bcozy.view;
 
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import org.dc.bco.bcozy.model.ShutterInstance;
 import org.dc.bco.bcozy.view.devicepanes.ShutterPane;
@@ -30,8 +33,9 @@ import org.dc.bco.bcozy.view.devicepanes.ShutterPane;
  */
 public class ContextMenu extends AnchorPane {
 
-    private final RoomContextInfo roomContextInfo;
     private final ContextSortingPane contextSortingPane;
+    private final Label roomInfo;
+
 
     /**
      * Constructor for the ContextMenu.
@@ -42,17 +46,23 @@ public class ContextMenu extends AnchorPane {
 
         this.setMinHeight(height);
         this.setMinWidth(width);
+        this.setPrefHeight(height);
+        //this.setPrefWidth(width);
+        this.setMaxWidth(Double.MAX_VALUE);
+
+        roomInfo = new Label("No room selected.");
 
         final ScrollPane verticalScrollPane = new ScrollPane();
         verticalScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         verticalScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
-        final VBox verticalOuterLayout = new VBox(Constants.INSETS);
+        final VBox verticalOuterLayout = new VBox();
 
-        final VBox verticalInnerLayout = new VBox(Constants.INSETS);
+        final VBox verticalInnerLayout = new VBox();
 
-        roomContextInfo = new RoomContextInfo();
-        contextSortingPane = new ContextSortingPane(this.getMinWidth() + (Constants.INSETS * 2));
+        //TODO: This just won't scale on full width :((((
+        contextSortingPane = new ContextSortingPane(width + Constants.INSETS * 4);
+        contextSortingPane.setMaxWidth(Double.MAX_VALUE);
 
         //TODO: Replace with automatic content generation based on the actual selection (in the locationpane)
         final ShutterPane shutterPane = new ShutterPane(new ShutterInstance("Shutter Living", 50.0));
@@ -63,32 +73,47 @@ public class ContextMenu extends AnchorPane {
         verticalInnerLayout.getChildren().addAll(shutterPane, shutterPane1, shutterPane2, shutterPane3);
         verticalScrollPane.setContent(verticalInnerLayout);
         verticalInnerLayout.setFillWidth(true);
-        verticalInnerLayout.setPadding(
-                new Insets(Constants.INSETS, Constants.INSETS, Constants.INSETS, Constants.INSETS));
+//        verticalInnerLayout.setPadding(
+//                new Insets(Constants.INSETS, Constants.INSETS, Constants.INSETS, Constants.INSETS));
         //TODO: Somehow it won't just fill the remaining size in the VBox - Fix this somehow...
+        // "However, the maximum size of a ScrollPane object is unbounded because typically you do want them to
+        // grow to fill their spaces." http://docs.oracle.com/javase/8/javafx/layout-tutorial/size_align.htm#JFXLY133
+
         //CHECKSTYLE.OFF: MagicNumber
-        verticalScrollPane.setPrefHeight(height - 200.0);
+        verticalScrollPane.setMaxHeight(height - 200.0);
+        verticalScrollPane.setMaxWidth(Double.MAX_VALUE);
         //CHECKSTYLE.ON: MagicNumber
-        verticalOuterLayout.getChildren().addAll(roomContextInfo, contextSortingPane, verticalScrollPane);
+
+        verticalOuterLayout.getChildren().addAll(roomInfo, contextSortingPane, verticalScrollPane);
+        verticalOuterLayout.setFillWidth(true);
+        verticalOuterLayout.setAlignment(Pos.CENTER);
+        VBox.setVgrow(contextSortingPane, Priority.ALWAYS);
+        verticalOuterLayout.setPadding(
+                new Insets(Constants.INSETS, Constants.INSETS, Constants.INSETS, Constants.INSETS));
+
 
         this.getChildren().add(verticalOuterLayout);
 
-        this.setLeftAnchor(verticalOuterLayout, Constants.INSETS);
-        this.setRightAnchor(verticalOuterLayout, Constants.INSETS);
-        this.setTopAnchor(verticalOuterLayout, Constants.INSETS);
-        this.setBottomAnchor(verticalOuterLayout, Constants.INSETS);
+//        this.setLeftAnchor(verticalOuterLayout, Constants.INSETS);
+//        this.setRightAnchor(verticalOuterLayout, Constants.INSETS);
+//        this.setTopAnchor(verticalOuterLayout, Constants.INSETS);
+//        this.setBottomAnchor(verticalOuterLayout, Constants.INSETS);
 
         //CHECKSTYLE.OFF: MultipleStringLiterals
-        verticalScrollPane.getStyleClass().add("dropshadow-left-bg");
+        verticalScrollPane.getStyleClass().add("padding");
+        verticalOuterLayout.getStyleClass().add("padding");
         this.getStyleClass().add("dropshadow-left-bg");
+        this.getStyleClass().add("floating-box");
+        this.getStyleClass().add("context-menu");
+        this.getStyleClass().add("padding");
         //CHECKSTYLE.ON: MultipleStringLiterals
     }
 
     /**
-     * Getter for the roomContextInfo Element.
-     * @return Element Instance
+     * Getter Method for the Label.
+     * @return label
      */
-    public RoomContextInfo getRoomContextInfo() {
-        return roomContextInfo;
+    public Label getRoomInfo() {
+        return roomInfo;
     }
 }

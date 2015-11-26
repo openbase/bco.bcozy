@@ -18,6 +18,7 @@
  */
 package org.dc.bco.bcozy.view;
 
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 
@@ -35,10 +36,12 @@ public class InfoFooter extends AnchorPane {
     public InfoFooter(final double height, final double width) {
         this.mouseOverText = new Label();
         this.mouseOverText.getStyleClass().add("small-label");
+        this.mouseOverText.setAlignment(Pos.CENTER);
         this.getChildren().add(mouseOverText);
         this.setPrefHeight(height);
         this.setPrefWidth(width);
         this.getStyleClass().add("dropshadow-top-bg");
+        this.getStyleClass().add("info-footer");
         this.setLeftAnchor(mouseOverText, Constants.INSETS);
         this.setRightAnchor(mouseOverText, Constants.INSETS);
 

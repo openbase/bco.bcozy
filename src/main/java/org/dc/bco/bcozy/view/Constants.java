@@ -33,7 +33,7 @@ public final class Constants {
     /**
      * The size for a mid size icon.
      */
-    public static final double MIDDLEICON = 64.0;
+    public static final double MIDDLEICON = 48.0;
     /**
      * The size for a small size icon.
      */
@@ -43,6 +43,17 @@ public final class Constants {
      * The max width for a main menu pane.
      */
     public static final double MAXMENUWIDTH = 280.0;
+
+    /**
+     * The insets for a icon.
+     */
+    public static final double ICONINSETS = 15.0;
+
+    /**
+     * The value for a full rotation.
+     */
+    public static final double FULLROTATION = 360.0;
+
 
     /**
      * Private Constructor.

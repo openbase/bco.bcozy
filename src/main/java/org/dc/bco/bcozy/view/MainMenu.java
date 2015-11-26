@@ -23,18 +23,20 @@ package org.dc.bco.bcozy.view;
 //import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import org.dc.bco.bcozy.view.mainmenupanes.UserPane;
 
 /**
  * Created by hoestreich on 11/10/15.
  */
-public class MainMenu extends AnchorPane {
+public class MainMenu extends StackPane {
 
     private final Button mainButton;
     private final UserPane userPane;
+    private final FloatingButton mainMenuFloatingButton;
     /**
      * Constructor for the MainMenu.
      * @param height Height
@@ -45,6 +47,9 @@ public class MainMenu extends AnchorPane {
         this.setMinHeight(height);
         this.setMinWidth(width);
         this.getStyleClass().add("dropshadow-right-bg");
+        this.getStyleClass().add("floating-box");
+        this.getStyleClass().add("main-menu");
+        this.getStyleClass().add("padding");
 
         final VBox verticalLayout = new VBox(Constants.INSETS);
 
@@ -52,15 +57,14 @@ public class MainMenu extends AnchorPane {
 
         mainButton = new Button("Test Location Registry");
         mainButton.getStyleClass().addAll("large-button", "visible-lg", "visible-md", "visible-sm", "visible-xs");
-
+        verticalLayout.setPadding(new Insets(0.0, Constants.SMALLICON / 2, 0.0, 0.0));
         verticalLayout.getChildren().addAll(userPane, mainButton);
-        this.getChildren().add(verticalLayout);
 
-        this.setLeftAnchor(verticalLayout, Constants.INSETS);
-        this.setRightAnchor(verticalLayout, Constants.INSETS);
-        this.setTopAnchor(verticalLayout, Constants.INSETS);
-        this.setBottomAnchor(verticalLayout, Constants.INSETS);
-        //this.setVisible(false);
+        mainMenuFloatingButton = new FloatingButton("/icons/mainmenu.png");
+        this.getChildren().addAll(verticalLayout, mainMenuFloatingButton);
+        this.setAlignment(mainMenuFloatingButton, Pos.TOP_RIGHT);
+        this.setMargin(mainMenuFloatingButton, new Insets(Constants.SMALLICON, 0, 0, 0));
+        mainMenuFloatingButton.translateXProperty().set(Constants.SMALLICON);
     }
 
     /**
@@ -69,6 +73,14 @@ public class MainMenu extends AnchorPane {
      */
     public void addMainButtonEventHandler(final EventHandler<ActionEvent> eventHandler) {
         mainButton.setOnAction(eventHandler);
+    }
+
+    /**
+     * Getter for the main menu button.
+     * @return the instance of the main menu button
+     */
+    public FloatingButton getMainMenuFloatingButton() {
+        return mainMenuFloatingButton;
     }
 
     /**
@@ -84,14 +96,7 @@ public class MainMenu extends AnchorPane {
      * Animations should be added in the future
      */
     public void showMainMenu() {
-        this.setVisible(true);
-        //CHECKSTYLE.OFF: MagicNumber
-//        final Timeline timeline = new Timeline(
-//                new KeyFrame(javafx.util.Duration.ZERO, new KeyValue(this., 0)),
-//                new KeyFrame(javafx.util.Duration.millis(500), new KeyValue(this.opacityProperty(), 1))
-//        );
-        //CHECKSTYLE.ON: MagicNumber
-        //timeline.play();
+        this.setTranslateX(-Constants.INSETS);
     }
 
     /**
@@ -99,6 +104,6 @@ public class MainMenu extends AnchorPane {
      * Animations should be added in the future
      */
     public void hideMainMenu() {
-        this.setVisible(false);
+        this.setTranslateX(Constants.INSETS);
     }
 }
