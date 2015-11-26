@@ -191,7 +191,7 @@
                     <rulesets>
                         <ruleset>${project.basedir}/codecheck/pmd-rules.xml</ruleset>
                     </rulesets>
-                    <failOnViolation>${failOnStyleError}</failOnViolation>
+                    <failOnViolation>false</failOnViolation>
                     <verbose>true</verbose>
                 </configuration>
                 <executions>

@@ -28,9 +28,9 @@ import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import org.dc.bco.bcozy.controller.LocationController;
 import org.dc.bco.bcozy.controller.MainMenuController;
 import org.dc.bco.bcozy.view.ForegroundPane;
-import org.dc.bco.bcozy.controller.LocationPaneController;
 import org.dc.bco.bcozy.view.location.LocationPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,7 +87,7 @@ public class BCozy extends Application {
         final ForegroundPane foregroundPane = new ForegroundPane(screenHeight, screenWidth);
         foregroundPane.setMinHeight(root.getHeight());
         foregroundPane.setMinWidth(root.getWidth());
-        final LocationPane backgroundPane = new LocationPane();
+        final LocationPane backgroundPane = new LocationPane(foregroundPane);
 
         root.getChildren().addAll(backgroundPane, foregroundPane);
 
@@ -107,8 +107,8 @@ public class BCozy extends Application {
         primaryStage.show();
 
         new ManagerConnector(foregroundPane);
-        new LocationPaneController(backgroundPane, foregroundPane);
         new MainMenuController(foregroundPane);
+        new LocationController(backgroundPane);
     }
 
     private static void registerListeners() {
