@@ -73,8 +73,6 @@ public class ContextMenu extends AnchorPane {
         verticalInnerLayout.getChildren().addAll(shutterPane, shutterPane1, shutterPane2, shutterPane3);
         verticalScrollPane.setContent(verticalInnerLayout);
         verticalInnerLayout.setFillWidth(true);
-//        verticalInnerLayout.setPadding(
-//                new Insets(Constants.INSETS, Constants.INSETS, Constants.INSETS, Constants.INSETS));
         //TODO: Somehow it won't just fill the remaining size in the VBox - Fix this somehow...
         // "However, the maximum size of a ScrollPane object is unbounded because typically you do want them to
         // grow to fill their spaces." http://docs.oracle.com/javase/8/javafx/layout-tutorial/size_align.htm#JFXLY133
@@ -88,24 +86,14 @@ public class ContextMenu extends AnchorPane {
         verticalOuterLayout.setFillWidth(true);
         verticalOuterLayout.setAlignment(Pos.CENTER);
         VBox.setVgrow(contextSortingPane, Priority.ALWAYS);
-        verticalOuterLayout.setPadding(
-                new Insets(Constants.INSETS, Constants.INSETS, Constants.INSETS, Constants.INSETS));
-
 
         this.getChildren().add(verticalOuterLayout);
 
-//        this.setLeftAnchor(verticalOuterLayout, Constants.INSETS);
-//        this.setRightAnchor(verticalOuterLayout, Constants.INSETS);
-//        this.setTopAnchor(verticalOuterLayout, Constants.INSETS);
-//        this.setBottomAnchor(verticalOuterLayout, Constants.INSETS);
-
         //CHECKSTYLE.OFF: MultipleStringLiterals
-        verticalScrollPane.getStyleClass().add("padding");
-        verticalOuterLayout.getStyleClass().add("padding");
-        this.getStyleClass().add("dropshadow-left-bg");
-        this.getStyleClass().add("floating-box");
-        this.getStyleClass().add("context-menu");
-        this.getStyleClass().add("padding");
+        verticalInnerLayout.getStyleClass().addAll("padding-large");
+        verticalScrollPane.getStyleClass().addAll("padding-large");
+        verticalOuterLayout.getStyleClass().addAll("padding-large");
+        this.getStyleClass().addAll("dropshadow-left-bg", "floating-box", "context-menu", "padding-large");
         //CHECKSTYLE.ON: MultipleStringLiterals
     }
 

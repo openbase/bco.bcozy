@@ -46,10 +46,6 @@ public class MainMenu extends StackPane {
 
         this.setMinHeight(height);
         this.setMinWidth(width);
-        this.getStyleClass().add("dropshadow-right-bg");
-        this.getStyleClass().add("floating-box");
-        this.getStyleClass().add("main-menu");
-        this.getStyleClass().add("padding");
 
         final VBox verticalLayout = new VBox(Constants.INSETS);
 
@@ -65,6 +61,7 @@ public class MainMenu extends StackPane {
         this.setAlignment(mainMenuFloatingButton, Pos.TOP_RIGHT);
         this.setMargin(mainMenuFloatingButton, new Insets(Constants.SMALLICON, 0, 0, 0));
         mainMenuFloatingButton.translateXProperty().set(Constants.SMALLICON);
+        this.getStyleClass().addAll("dropshadow-right-bg", "floating-box", "main-menu", "padding-large");
     }
 
     /**

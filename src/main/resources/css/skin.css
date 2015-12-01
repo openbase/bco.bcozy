@@ -64,10 +64,16 @@
     -fx-padding: 5 5 5 5;
 }
 
-.padding {
+
+
+.padding-large {
     -fx-padding: 10.0 10.0 10.0 10.0;
 }
-.padding {
+.padding-small {
+    -fx-padding: 5.0 5.0 5.0 5.0;
+}
+
+.insets {
     -fx-background-insets:  10.0, 10.0, 10.0, 10.0;
 }
 
@@ -88,6 +94,7 @@
     -fx-background-radius: 50%;
     -fx-effect: dropshadow(gaussian, rgba(0.0, 0.0, 0.0, 0.3), 10.0, 0.0, -4.0, 4.0);
 }
+
 
 /**** size variants **********************************************************/
 .size-variant-touch {

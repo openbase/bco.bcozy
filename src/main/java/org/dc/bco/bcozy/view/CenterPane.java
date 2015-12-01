@@ -49,9 +49,11 @@ public class CenterPane extends StackPane {
 
         final VBox verticalLayout = new VBox(Constants.INSETS);
         verticalLayout.getChildren().addAll(settings, temperature, movement);
+        verticalLayout.getStyleClass().addAll("padding-small");
 
         viewSwitcher = new PopOver(verticalLayout);
         viewSwitcher.setArrowLocation(PopOver.ArrowLocation.BOTTOM_CENTER);
+        viewSwitcher.getStyleClass().addAll("floating-box");
 
         activeBtn = settings;
         //TODO: Implement switching action in external controller
