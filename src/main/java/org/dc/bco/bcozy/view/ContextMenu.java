@@ -25,8 +25,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import org.dc.bco.bcozy.model.ShutterInstance;
-import org.dc.bco.bcozy.view.devicepanes.ShutterPane;
+import org.dc.bco.bcozy.view.devicepanes.TitledPanes;
 
 /**
  * Created by hoestreich on 11/10/15.
@@ -65,12 +64,25 @@ public class ContextMenu extends AnchorPane {
         contextSortingPane.setMaxWidth(Double.MAX_VALUE);
 
         //TODO: Replace with automatic content generation based on the actual selection (in the locationpane)
-        final ShutterPane shutterPane = new ShutterPane(new ShutterInstance("Shutter Living", 50.0));
+       /* final ShutterPane shutterPane = new ShutterPane(new ShutterInstance("Shutter Living", 50.0));
         final ShutterPane shutterPane1 = new ShutterPane(new ShutterInstance("Shutter Kitchen", 0.0));
         final ShutterPane shutterPane2 = new ShutterPane(new ShutterInstance("Shutter Sports", 100.0));
         final ShutterPane shutterPane3 = new ShutterPane(new ShutterInstance("Shutter Control", 100.0));
-
         verticalInnerLayout.getChildren().addAll(shutterPane, shutterPane1, shutterPane2, shutterPane3);
+*/
+
+
+        final String[] string = new String[1];
+        string[0] = "Shutter1";
+        //string[1] = "Shutter2";
+
+        final TitledPanes titledPanes = new TitledPanes(string);
+        verticalInnerLayout.getChildren().add(titledPanes);
+
+
+
+
+
         verticalScrollPane.setContent(verticalInnerLayout);
         verticalInnerLayout.setFillWidth(true);
 //        verticalInnerLayout.setPadding(

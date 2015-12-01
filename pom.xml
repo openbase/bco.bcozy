@@ -51,7 +51,7 @@
         <dependency>
             <groupId>org.controlsfx</groupId>
             <artifactId>controlsfx</artifactId>
-            <version>8.40.9</version>
+            <version>8.40.10</version>
         </dependency>
         <dependency>
             <groupId>de.jensd</groupId>
@@ -77,6 +77,11 @@
             <groupId>de.citec</groupId>
             <artifactId>dal.remote</artifactId>
             <version>${dal.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>de.codecentric.centerdevice</groupId>
+            <artifactId>javafxsvg</artifactId>
+            <version>1.0.0</version>
         </dependency>
     </dependencies>
 
