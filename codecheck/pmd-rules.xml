@@ -23,6 +23,7 @@
     <rule ref="rulesets/java/design.xml">
         <exclude name="SimplifyBooleanReturns" />
         <exclude name="SingularField" />
+        <exclude name="ConstructorCallsOverridableMethod" />
     </rule>
     <rule ref="rulesets/java/finalizers.xml" />
     <rule ref="rulesets/java/imports.xml" />

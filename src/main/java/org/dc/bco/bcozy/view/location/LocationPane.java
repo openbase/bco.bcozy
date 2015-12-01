@@ -25,6 +25,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.ForegroundPane;
 
 import java.util.List;
@@ -83,17 +84,30 @@ public class LocationPane extends StackPane {
     /**
      * Adds a room to the location Pane and use the controls to add a mouse event handler.
      *
+     * If a room with the same id already exists, it will be overwritten.
+     *
      * @param roomID The room id
      * @param vertices A list of vertices which defines the shape of the room
      */
     public void addRoom(final String roomID, final List<Point2D> vertices) {
-        double[] points = new double[vertices.size() * 2];
+        // TODO: Remove room with same ID
+//        for (Node node : locationViewContent.getChildren()) {
+//            if (node instanceof RoomPolygon) {
+//                if (((RoomPolygon) node).getRoomName().equals(roomID)) {
+//                    locationViewContent.getChildren().remove(node);
+//                }
+//            }
+//        }
 
+        // Fill the list of vertices into an array of points
+        double[] points = new double[vertices.size() * 2];
         for (int i = 0; i < vertices.size(); i++) {
-            points[i * 2] = vertices.get(i).getX();
-            points[i * 2 + 1] = vertices.get(i).getY();
+            // TODO: X and Y are swapped in the world of the csra... make it more generic...
+            points[i * 2] = vertices.get(i).getY() * Constants.METERTOPIXEL;
+            points[i * 2 + 1] = vertices.get(i).getX() * Constants.METERTOPIXEL;
         }
 
+        // Create a new RoomPolygon, add a mouse event handler and paste it into the viewContent
         final RoomPolygon newRoom = new RoomPolygon(roomID, points);
 
         locationViewContent.getChildren().add(newRoom);
@@ -113,10 +127,9 @@ public class LocationPane extends StackPane {
         scroller.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scroller.getStylesheets().add("css/transparent_scrollpane.css");
 
-        //TODO: what iiiiiis is good for?
-//        scroller.viewportBoundsProperty().addListener((observable, oldValue, newValue) -> {
-//            zoomPane.setMinSize(newValue.getWidth(), newValue.getHeight());
-//        });
+        scroller.viewportBoundsProperty().addListener((observable, oldValue, newValue) -> {
+            zoomPane.setMinSize(newValue.getWidth(), newValue.getHeight());
+        });
 
         //CHECKSTYLE.OFF: MagicNumber
         scroller.setPrefViewportWidth(800);
