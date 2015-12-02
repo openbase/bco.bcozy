@@ -36,12 +36,12 @@
         <dependency>
             <groupId>rsb</groupId>
             <artifactId>${rst.sandbox.artifact}</artifactId>
-            <version>${rsb.version}</version>
+            <version>${rst.sandbox.version}</version>
         </dependency>
         <dependency>
             <groupId>rsb</groupId>
             <artifactId>${rst.stable.artifact}</artifactId>
-            <version>${rsb.version}</version>
+            <version>${rst.stable.version}</version>
         </dependency>
         <dependency>
             <groupId>com.guigarage</groupId>
