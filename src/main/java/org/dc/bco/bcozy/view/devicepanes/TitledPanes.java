@@ -48,8 +48,9 @@ public class TitledPanes extends VBox {
         this.getChildren().add(vBox);
     }
 
-
     private TitledPane singleTitledPane(final String unitTypeName) {
+
+        //TODO Hint: class ImageEffect.java expects color value of the unit xyz
 
         final TitledPane titledPane;
         final TilePane tilePane;
@@ -58,13 +59,8 @@ public class TitledPanes extends VBox {
         tilePane.setPrefColumns(1);
         tilePane.setPadding(new Insets(0, 0, 0, 0));
 
-        //final ShutterPane shutterPane = new ShutterPane(new ShutterInstance("Shutter Living", 50.0));
-        //final ShutterPane shutterPane1 = new ShutterPane(new ShutterInstance("Shutter Kitchen", 0.0));
-        //final ShutterPane shutterPane2 = new ShutterPane(new ShutterInstance("Shutter Sports", 100.0));
-        //final ShutterPane shutterPane3 = new ShutterPane(new ShutterInstance("Shutter Control", 100.0));
         final LightBulbPane lightBulbPane = new LightBulbPane();
 
-        //tilePane.getChildren().addAll(shutterPane, shutterPane1, shutterPane2, shutterPane3, widgetPaneElement);
         tilePane.getChildren().add(lightBulbPane);
 
         titledPane = new TitledPane();

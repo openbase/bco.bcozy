@@ -18,23 +18,30 @@
  */
 package org.dc.bco.bcozy.view.devicepanes;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
-import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TitledPane;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.StrokeType;
 import org.controlsfx.control.ToggleSwitch;
+import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.ImageEffect;
 
 /**
@@ -42,8 +49,12 @@ import org.dc.bco.bcozy.view.ImageEffect;
  */
 public class LightBulbPane extends VBox {
 
+    //TODO all rectangles/areas with borders?
+
+    private static final String WHITE = "white";
+
     /**
-     *
+     * Constructor creates lightBulb widget.
      */
     public LightBulbPane() {
 
@@ -52,25 +63,14 @@ public class LightBulbPane extends VBox {
         final Button lightBulb = new Button();
         lightBulb.setBackground(Background.EMPTY);
 
-        final Image bottomImage = new Image("/icons/lightbulb_mask.svg");
-        final Image topImage = new Image("/icons/lightbulb.svg", 512, 512, false, false);
-
-
-        final ImageView lightOff = new ImageView(topImage);
-
-        //lightOff.setTranslateX(-lightOff.getFitWidth()/2);
-        //lightOff.setTranslateY(-lightOff.getFitHeight()/2);
-        //lightOff.setScaleX(0.1);
-        //lightOff.setScaleY(0.1);
-        //lightOff.setTranslateX(lightOff.getFitWidth()/20);
-        //lightOff.setTranslateY(lightOff.getFitHeight()/20);
-        lightOff.setClip(new ImageView(topImage));
-
+        final Image bottomImage = new Image("/icons/lightbulb_mask.png");
+        final Image topImage = new Image("/icons/lightbulb.png");
         final Group imageEffect = new ImageEffect().imageBlendEffect(bottomImage, topImage, Color.YELLOW);
 
-        final TitledPane titledPane = widgetPaneElement(lightOff, imageEffect, "Lightbulb");
+        final TitledPane titledPane = widgetPaneElement(topImage, imageEffect, "Lightbulb 1");
+        final TitledPane titledPane2 = widgetPaneElement(topImage, imageEffect, "Lightbulb 2");
 
-        this.getChildren().add(titledPane);
+        this.getChildren().addAll(titledPane, titledPane2);
     }
 
     /**
@@ -78,138 +78,236 @@ public class LightBulbPane extends VBox {
      * @param imageOff Off Icon
      * @param imageOn On Icon
      * @param title Title of the widget
-     * @return widgetPane TitlePane is the whole widget
+     * @return widgetLightPane
      */
-    public TitledPane widgetPaneElement(final ImageView imageOff, final Group imageOn, final String title) {
+    public TitledPane widgetPaneElement(final Image imageOff, final Group imageOn, final String title) {
 
-        final TitledPane widgetPane = new TitledPane();
-        widgetPane.getStyleClass().add("widgetPane");
+        final TitledPane widgetLightPane;
+        final ToggleSwitch toggleSwitch;
+        final ImageView lightOff;
+        final BorderPane borderPane;
+        final HBox hBox;
+        final Pane colorContainer;
+        final Pane colorRectBrightness;
+        final Pane colorHue;
+        final Pane colorBar;
+        final Circle circle;
+        final Rectangle rectangle;
 
-        final ToggleSwitch toggleSwitch = new ToggleSwitch();
+        final DoubleProperty hueValue = new SimpleDoubleProperty(-1);
+        final DoubleProperty saturation = new SimpleDoubleProperty(-1);
+        final DoubleProperty brightness = new SimpleDoubleProperty(-1);
 
-        //imageOff.setFitHeight(400);
-        //imageOff.setFitWidth(400);
+        //button
+        toggleSwitch = new ToggleSwitch();
 
-        final BorderPane borderPane = new BorderPane();
+        //image
+        lightOff = new ImageView(imageOff);
+        lightOff.setClip(new ImageView(imageOff));
+        lightOff.setFitHeight(Constants.MIDDLEICON);
+        lightOff.setFitWidth(Constants.MIDDLEICON);
 
-        borderPane.setLeft(imageOff);
-        //TODO change image
+        //borderPane for header of titledPane as "graphic"
+        borderPane = new BorderPane();
+        borderPane.setLeft(lightOff);
         borderPane.setCenter(new Label(title));
-        //Label label = new Label(" ");
-        //borderPane.setCenter(label);
         borderPane.setRight(toggleSwitch);
-        widgetPane.setGraphic(borderPane);
-
-
-
-
-        final BorderPane borderPane1 = new BorderPane();
-
-        final ColorPicker colorPicker = new ColorPicker();
-        colorPicker.setValue(Color.BLUE);
-
-        borderPane1.setLeft(colorPicker);
-
-        //final PaneElement paneElement = new PaneElement(borderPane1);
-
-
-        //...
-
-        final HBox hBox = new HBox();
-
-        final Pane colorRectangleContainer = new StackPane();
-        final DoubleProperty hueProperty = new SimpleDoubleProperty(-1);
-
 
         //CHECKSTYLE.OFF: MagicNumber
-        // color rectangle wide: hue/saturation
-        final Pane colorRectangleWide = new Pane();
-        //TODO size generic...
-        colorRectangleWide.setPrefSize(200, 200);
-        colorRectangleWide.setBackground(new Background(new BackgroundFill(new LinearGradient(0, 0, 1, 0, true,
-                CycleMethod.NO_CYCLE, new Stop(0, Color.rgb(255, 255, 255, 1)),
-                new Stop(1, Color.rgb(255, 255, 255, 0))), CornerRadii.EMPTY, Insets.EMPTY)));
 
-        // color rectangle high: hue/saturation
-        final Pane colorRectangleHigh = new Pane();
-        //TODO size generic...
-        colorRectangleHigh.setPrefSize(200, 200);
-        colorRectangleHigh.setBackground(new Background(new BackgroundFill(new LinearGradient(0, 0, 0, 1, true,
-                CycleMethod.NO_CYCLE, new Stop(0, Color.rgb(0, 0, 0, 0)), new Stop(1, Color.rgb(0, 0, 0, 1))),
-                CornerRadii.EMPTY, Insets.EMPTY)));
+        //mouse event for saturation & brightness rectangle
+        final EventHandler<MouseEvent> rectangleSatBrightMouseHandler = event -> {
+            final double xMouse = event.getX();
+            final double yMouse = event.getY();
+            saturation.set(clamp(xMouse / 200) * 100);
+            brightness.set(100 - (clamp(yMouse / 200) * 100));
+        };
 
-        final Pane colorHue = new Pane();
+        //color rectangle high: lightness/brightness
+        colorRectBrightness = brightnessRect();
+        colorRectBrightness.setOnMousePressed(rectangleSatBrightMouseHandler);
+        colorRectBrightness.setOnMouseDragged(rectangleSatBrightMouseHandler);
+
+        //saturation & brightness depend on hue value
+        colorHue = new Pane();
         colorHue.backgroundProperty().bind(new ObjectBinding<Background>() {
             {
-                bind(hueProperty);
+                bind(hueValue);
             }
 
             @Override protected Background computeValue() {
-                return new Background(new BackgroundFill(Color.hsb(hueProperty.getValue(), 1.0, 1.0),
+                return new Background(new BackgroundFill(Color.hsb(hueValue.getValue(), 1.0, 1.0),
                         CornerRadii.EMPTY, Insets.EMPTY));
             }
         });
 
-        // create the colorbar
-        double offset;
-        Stop[] stop = new Stop[255];
-        for (int i = 0; i < 255; i++) {
-            offset = (double) ((1.0 / 255) * i);
-            final int hue = (int) ((i / 255.0) * 360);
-            stop[i] = new Stop(offset, Color.hsb(hue, 1.0, 1.0));
-        }
+        //mouse event for colorBar
+        final EventHandler<MouseEvent> colorBarMouseHandler = event -> {
+            final double yMouse = event.getY();
+            hueValue.set(clamp(yMouse / 200) * 360);
+        };
 
-        final LinearGradient hueLinearGradient = new LinearGradient(0f, 0f, 0f, 1f, true, CycleMethod.REFLECT, stop);
+        //circle as selector for colorRectangleContainer
+        circle = circleSelector();
+        circle.layoutXProperty().bind(saturation.divide(100).multiply(200));
+        circle.layoutYProperty().bind(Bindings.subtract(1, brightness.divide(100)).
+                multiply(200));
 
-        final Pane colorBar = new Pane();
-        //TODO size generic...
-        colorBar.setPrefSize(20, 200);
-        colorBar.setBackground(new Background(new BackgroundFill(hueLinearGradient, CornerRadii.EMPTY,
-                Insets.EMPTY)));
+        //container/stackPane for saturation/brightness area
+        colorContainer = new StackPane();
+        colorContainer.getChildren().addAll(colorHue, saturationRect(), colorRectBrightness);
+        colorContainer.setPadding(new Insets(0, 10, 0, 10));
+        colorContainer.getChildren().add(circle);
 
+        //rectangle as selector for colorBar
+        rectangle = rectangleSelector();
+        rectangle.layoutYProperty().bind(hueValue.divide(360).multiply(200));
 
-        // new color Area
-        final Pane newColorArea = new Pane();
-        newColorArea.setPrefSize(100, 100);
-        newColorArea.setPadding(new Insets(0, 0, 0, 0));
-        //TODO get color value
-        newColorArea.setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY,
-                Insets.EMPTY)));
-
-        // old color Area
-        final Pane oldColorArea = new Pane();
-        oldColorArea.setPrefSize(100, 100);
-        oldColorArea.setPadding(new Insets(0, 0, 0, 0));
-        //TODO get color value
-        oldColorArea.setBackground(new Background(new BackgroundFill(Color.BLUE, CornerRadii.EMPTY,
-                Insets.EMPTY)));
-
-        final VBox vBox = new VBox();
-        vBox.getChildren().addAll(oldColorArea, newColorArea);
-
-
-
-
-
-
-        //TODO all rectangles/areas with borders?
-
-        colorRectangleContainer.getChildren().addAll(colorHue, colorRectangleWide, colorRectangleHigh);
-        colorRectangleContainer.setPadding(new Insets(0, 10, 0, 10));
+        //create the colorBar
+        colorBar = colorBarCreator();
+        colorBar.setOnMousePressed(colorBarMouseHandler);
+        colorBar.setOnMouseDragged(colorBarMouseHandler);
+        colorBar.getChildren().add(rectangle);
         colorBar.setPadding(new Insets(0, 10, 0, 10));
-        vBox.setPadding(new Insets(0, 10, 0, 10));
 
+        //hBox includes color elements (colorContainer & colorBar)
+        hBox = new HBox();
         hBox.setPadding(new Insets(0, 10, 0, 10));
-        hBox.getChildren().addAll(colorRectangleContainer, colorBar, vBox);
-        //...
+        hBox.getChildren().addAll(colorContainer, colorBar);
 
-        //final ShutterPane shutterPane = new ShutterPane(new ShutterInstance("Shutter Living", 50.0));
-        widgetPane.setContent(hBox);
-        //CHECKSTYLE.ON: MagicNumber
+        //whole widget
+        widgetLightPane = new TitledPane();
+        widgetLightPane.getStyleClass().add("widgetPane");
+        widgetLightPane.setGraphic(borderPane);
+        widgetLightPane.setContent(hBox);
 
-
-        return widgetPane;
+        return widgetLightPane;
     }
 
+    /**
+     * Method computes a part of the linear gradient of hue value.
+     * @param value ratio of mouse coordinate and element height.
+     * @return value of ratio as 0/1/input value.
+     */
+    static double clamp(final double value) {
+        return value < 0 ? 0 : value > 1 ? 1 : value;
+    }
 
+    /**
+     * Method creates a linear gradient for hue value.
+     * @return new LinearGradient with properties of hue value.
+     */
+    private static LinearGradient hueGradient() {
+        double offset;
+        int hue;
+        Stop[] stop = new Stop[255];
+
+        for (int i = 0; i < 255; i++) {
+            offset = (double) ((1.0 / 255) * i);
+            hue = (int) ((i / 255.0) * 360);
+            stop[i] = new Stop(offset, Color.hsb(hue, 1.0, 1.0));
+        }
+        return new LinearGradient(0f, 0f, 0f, 1f, true, CycleMethod.NO_CYCLE, stop);
+    }
+
+    /**
+     * Method creates a circle shape as visual selector in saturation/brightness area.
+     * @return circle shape with settings.
+     */
+    private Circle circleSelector() {
+        final Circle circle = new Circle(10, Color.web(WHITE, 0.0));
+
+        circle.setMouseTransparent(true);
+        circle.setTranslateX(10);
+        circle.setStrokeType(StrokeType.OUTSIDE);
+        circle.setStroke(Color.web(WHITE, 1.0));
+        circle.setStrokeWidth(2.0);
+        circle.setCache(true);
+        circle.setManaged(false);
+        circle.setEffect(shadowMaker());
+
+        return circle;
+    }
+
+    /**
+     * Method creates a rectangle shape as visual selector in hue area.
+     * @return rectangle shape with settings.
+     */
+    private Rectangle rectangleSelector() {
+        final Rectangle rectangle = new Rectangle(colorBarCreator().getPrefWidth() + 10.0, 10.0,
+                Color.web(WHITE, 0.0));
+
+        rectangle.setMouseTransparent(true);
+        rectangle.setTranslateX(-(rectangle.getWidth() - colorBarCreator().getPrefWidth()) / 2);
+        rectangle.setTranslateY(-rectangle.getHeight() / 2);
+        rectangle.setStrokeType(StrokeType.OUTSIDE);
+        rectangle.setStroke(Color.web(WHITE, 1.0));
+        rectangle.setStrokeWidth(2.0);
+        rectangle.setCache(true);
+        rectangle.setManaged(false);
+        rectangle.setEffect(shadowMaker());
+
+        return rectangle;
+    }
+
+    /**
+     * Method creates a shadow effect.
+     * @return dropShadow with settings.
+     */
+    private DropShadow shadowMaker() {
+        final DropShadow dropShadow = new DropShadow();
+
+        dropShadow.setOffsetX(1.0);
+        dropShadow.setOffsetY(1.0);
+        dropShadow.setColor(Color.BLACK);
+
+        return dropShadow;
+    }
+
+    /**
+     * Method creates a pane for the colorBar (hue area).
+     * @return colorBar with settings.
+     */
+    private Pane colorBarCreator() {
+        final Pane colorBar = new Pane();
+
+        //TODO size generic...
+        colorBar.setPrefSize(20, 200);
+        colorBar.setBackground(new Background(new BackgroundFill(hueGradient(), CornerRadii.EMPTY, Insets.EMPTY)));
+
+        return colorBar;
+    }
+
+    /**
+     * Method creates a pane for the saturation rectangle (piece of the colorContainer).
+     * @return colorRectSaturation is a colored shape (linear gradient of saturation).
+     */
+    private Pane saturationRect() {
+        final Pane colorRectSaturation = new Pane();
+
+        //TODO size generic...
+        colorRectSaturation.setPrefSize(200, 200);
+        colorRectSaturation.setBackground(new Background(new BackgroundFill(new LinearGradient(0, 0, 1, 0, true,
+                CycleMethod.NO_CYCLE, new Stop(0, Color.rgb(255, 255, 255, 1)),
+                new Stop(1, Color.rgb(255, 255, 255, 0))), CornerRadii.EMPTY, Insets.EMPTY)));
+
+        return colorRectSaturation;
+    }
+
+    /**
+     * Method creates a pane for the brightness rectangle (piece of the colorContainer).
+     * @return colorRectBrightness is a colored shape (linear gradient of brightness).
+     */
+    private Pane brightnessRect() {
+        final Pane colorRectBrightness = new Pane();
+
+        //TODO size generic...
+        colorRectBrightness.setPrefSize(200, 200);
+        colorRectBrightness.setBackground(new Background(new BackgroundFill(new LinearGradient(0, 0, 0, 1, true,
+                CycleMethod.NO_CYCLE, new Stop(0, Color.rgb(0, 0, 0, 0)), new Stop(1, Color.rgb(0, 0, 0, 1))),
+                CornerRadii.EMPTY, Insets.EMPTY)));
+
+        return colorRectBrightness;
+    }
+    //CHECKSTYLE.ON: MagicNumber
 }

@@ -37,7 +37,7 @@ public class ImageEffect {
     private ImageView topView;
 
     /**
-     * Method to create an image group with blend effect.
+     * Method creates an image group with blend effect.
      *
      * @param bottom Bottom image of the icon
      * @param top Top image of the icon

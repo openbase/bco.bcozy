@@ -72,8 +72,7 @@ public class ContextMenu extends AnchorPane {
 
 
         final String[] string = new String[1];
-        string[0] = "Shutter1";
-        //string[1] = "Shutter2";
+        string[0] = "Lightbulbs";
 
         final TitledPanes titledPanes = new TitledPanes(string);
         verticalInnerLayout.getChildren().add(titledPanes);
