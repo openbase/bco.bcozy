@@ -35,12 +35,12 @@
         </dependency>
         <dependency>
             <groupId>rsb</groupId>
-            <artifactId>rst-sandbox</artifactId>
+            <artifactId>${rst.sandbox.artifact}</artifactId>
             <version>${rsb.version}</version>
         </dependency>
         <dependency>
             <groupId>rsb</groupId>
-            <artifactId>rst</artifactId>
+            <artifactId>${rst.stable.artifact}</artifactId>
             <version>${rsb.version}</version>
         </dependency>
         <dependency>
