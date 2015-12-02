@@ -33,6 +33,7 @@ public class CenterPane extends StackPane {
     private final FloatingButton temperature;
     private final FloatingButton movement;
     private final FloatingButton fullscreen;
+    private final ClockLabel clock;
 
     private final FloatingButton activeBtn;
 
@@ -45,6 +46,7 @@ public class CenterPane extends StackPane {
         temperature = new FloatingButton("/icons/thermometer.png");
         movement = new FloatingButton("/icons/observe.png");
         fullscreen = new FloatingButton("/icons/fullscreen.png");
+        clock = new ClockLabel();
         this.setPickOnBounds(false);
 
         final VBox verticalLayout = new VBox(Constants.INSETS);
@@ -59,9 +61,10 @@ public class CenterPane extends StackPane {
         //TODO: Implement switching action in external controller
 
         activeBtn.setOnAction(event -> viewSwitcher.show(activeBtn));
-        this.getChildren().addAll(activeBtn, fullscreen);
+        this.getChildren().addAll(activeBtn, fullscreen, clock);
         this.setAlignment(activeBtn, Pos.BOTTOM_RIGHT);
         this.setAlignment(fullscreen, Pos.TOP_RIGHT);
+        this.setAlignment(clock, Pos.TOP_CENTER);
         activeBtn.translateYProperty().set(-Constants.INSETS);
         fullscreen.translateYProperty().set(Constants.INSETS);
     }

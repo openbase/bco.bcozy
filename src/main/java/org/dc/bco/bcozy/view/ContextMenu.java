@@ -18,7 +18,6 @@
  */
 package org.dc.bco.bcozy.view;
 
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -61,7 +60,7 @@ public class ContextMenu extends AnchorPane {
         final VBox verticalInnerLayout = new VBox();
 
         //TODO: This just won't scale on full width :((((
-        contextSortingPane = new ContextSortingPane(width + Constants.INSETS * 4);
+        contextSortingPane = new ContextSortingPane(width + Constants.INSETS);
         contextSortingPane.setMaxWidth(Double.MAX_VALUE);
 
         //TODO: Replace with automatic content generation based on the actual selection (in the locationpane)
