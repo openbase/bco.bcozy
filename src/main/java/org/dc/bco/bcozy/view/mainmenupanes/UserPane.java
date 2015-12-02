@@ -43,6 +43,9 @@ public class UserPane extends VBox {
     private final Button loginBtn;
     private final Button backBtn;
     private final Button logoutBtn;
+    private final TextField nameTxt;
+    private final PasswordField passwordField;
+    private final Label loggedInUserLbl;
 
     /**
      * Enum to control the display state.
@@ -67,9 +70,9 @@ public class UserPane extends VBox {
 
         // Case: Login active
         final Label nameLbl = new Label("Name:");
-        final TextField nameTxt = new TextField();
+        nameTxt = new TextField();
         final Label pwLbl = new Label("Password:");
-        final PasswordField passwordField = new PasswordField();
+        passwordField = new PasswordField();
         loginBtn = new Button("Login");
         final Image backIcon = new Image(getClass().getResourceAsStream("/icons/back.png"));
         final ImageView imageViewBackIcon = new ImageView(backIcon);
@@ -91,7 +94,7 @@ public class UserPane extends VBox {
         loggedInUserIconImageView.setFitWidth(Constants.BIGICON);
         loggedInUserPane = new PaneElement(loggedInUserIconImageView);
         loggedInUserPane.setMaxWidth(Constants.MAXMENUWIDTH);
-        final Label loggedInUserLbl = new Label("Timo");
+        loggedInUserLbl = new Label("");
         final Image logoutIcon = new Image(getClass().getResourceAsStream("/icons/logout.png"));
         final ImageView imageViewLogoutIcon = new ImageView(logoutIcon);
         imageViewLogoutIcon.setFitWidth(Constants.SMALLICON);
@@ -130,9 +133,7 @@ public class UserPane extends VBox {
      * Getter for the back button to abort a login.
      * @return instance of the button
      */
-    public Button getBackBtn() {
-        return backBtn;
-    }
+    public Button getBackBtn() { return backBtn; }
 
     /**
      * Getter for the logout which logs out the current user.
@@ -141,6 +142,24 @@ public class UserPane extends VBox {
     public Button getLogoutBtn() {
         return logoutBtn;
     }
+
+    /**
+     * Getter for the name textfield.
+     * @return instance of the textfield
+     */
+    public TextField getNameTxt() { return nameTxt; }
+
+    /**
+     * Getter for the passwordfield.
+     * @return instance of the passwordfield
+     */
+    public PasswordField getPasswordField() { return passwordField; }
+
+    /**
+     * Getter for the Label that displays the currently user.
+     * @return instance of the label
+     */
+    public Label getLoggedInUserLbl() { return loggedInUserLbl; }
 
     /**
      * GUI Method to switch the displayed panes.
