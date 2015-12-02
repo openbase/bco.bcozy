@@ -52,7 +52,7 @@ public class MainMenu extends StackPane {
 
         userPane = new UserPane();
 
-        mainButton = new Button("Test Location Registry");
+        mainButton = new Button("Init RegistryRemotes");
         locationButton = new Button("Fetch Location");
 
         //CHECKSTYLE.OFF: MultipleStringLiterals

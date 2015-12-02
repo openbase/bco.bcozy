@@ -55,7 +55,8 @@ public class LocationController {
 
     private final ForegroundPane foregroundPane;
     private final LocationPane locationPane;
-    private final LocationRegistryRemote locationRegistryRemote;
+    private final RemotePool remotePool;
+    private LocationRegistryRemote locationRegistryRemote;
 
     private TransformReceiver receiver;
 
@@ -66,14 +67,16 @@ public class LocationController {
      *
      * @param foregroundPane the foreground pane
      * @param locationPane the location pane
+     * @param remotePool the remotePool
      *
      * @throws InstantiationException This exception will be thrown if no LocationRegistryRemote could be instantiated
      */
-    public LocationController(final ForegroundPane foregroundPane, final LocationPane locationPane)
+    public LocationController(final ForegroundPane foregroundPane, final LocationPane locationPane,
+                              final RemotePool remotePool)
             throws InstantiationException {
         this.foregroundPane = foregroundPane;
         this.locationPane = locationPane;
-        this.locationRegistryRemote = new LocationRegistryRemote();
+        this.remotePool = remotePool;
         this.roomInstanceMap = new HashMap<>();
 
         try {
@@ -108,10 +111,9 @@ public class LocationController {
         List<LocationConfigType.LocationConfig> list;
 
         try {
-            locationRegistryRemote.init();
-            locationRegistryRemote.activate();
+            locationRegistryRemote = remotePool.getLocationRegistryRemote();
             list = locationRegistryRemote.getLocationConfigs();
-        } catch (InterruptedException | CouldNotPerformException e) {
+        } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
             list = new ArrayList<>();
         }
@@ -165,10 +167,7 @@ public class LocationController {
                     ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
                     LOGGER.warn("Could not gather transformation for room: " + locationConfig.getId());
                 }
-
             }
         }
-
-        locationRegistryRemote.shutdown();
     }
 }

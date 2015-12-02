@@ -31,6 +31,7 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.dc.bco.bcozy.controller.LocationController;
 import org.dc.bco.bcozy.controller.MainMenuController;
+import org.dc.bco.bcozy.controller.RemotePool;
 import org.dc.bco.bcozy.view.ForegroundPane;
 import org.dc.bco.bcozy.view.location.LocationPane;
 import org.slf4j.Logger;
@@ -107,12 +108,14 @@ public class BCozy extends Application {
         ResponsiveHandler.addResponsiveToWindow(primaryStage);
         primaryStage.show();
 
-        new ManagerConnector(foregroundPane);
         new MainMenuController(foregroundPane);
+
+        //instantiate RemotePool
+        final RemotePool remotePool = new RemotePool(foregroundPane);
 
         //instantiate LocationController
         try {
-            new LocationController(foregroundPane, backgroundPane);
+            new LocationController(foregroundPane, backgroundPane, remotePool);
         } catch (InstantiationException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
