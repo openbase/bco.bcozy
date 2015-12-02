@@ -56,6 +56,18 @@ public final class Constants {
 
 
     /**
+     * The relation between meters and pixels.
+     */
+    public static final double METERTOPIXEL = 30.0;
+
+
+    /**
+     * The stroke width of the rooms.
+     */
+    public static final double ROOMSTROKEWIDTH = 1.0;
+
+
+    /**
      * Private Constructor.
      */
     private Constants() { }

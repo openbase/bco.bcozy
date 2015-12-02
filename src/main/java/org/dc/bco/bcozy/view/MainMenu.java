@@ -35,6 +35,7 @@ import org.dc.bco.bcozy.view.mainmenupanes.UserPane;
 public class MainMenu extends StackPane {
 
     private final Button mainButton;
+    private final Button locationButton;
     private final UserPane userPane;
     private final FloatingButton mainMenuFloatingButton;
     /**
@@ -52,9 +53,15 @@ public class MainMenu extends StackPane {
         userPane = new UserPane();
 
         mainButton = new Button("Test Location Registry");
+        locationButton = new Button("Fetch Location");
+
+        //CHECKSTYLE.OFF: MultipleStringLiterals
         mainButton.getStyleClass().addAll("large-button", "visible-lg", "visible-md", "visible-sm", "visible-xs");
+        locationButton.getStyleClass().addAll("large-button", "visible-lg", "visible-md", "visible-sm", "visible-xs");
+        //CHECKSTYLE.ON: MultipleStringLiterals
+
         verticalLayout.setPadding(new Insets(0.0, Constants.SMALLICON / 2, 0.0, 0.0));
-        verticalLayout.getChildren().addAll(userPane, mainButton);
+        verticalLayout.getChildren().addAll(userPane, mainButton, locationButton);
 
         mainMenuFloatingButton = new FloatingButton("/icons/mainmenu.png");
         this.getChildren().addAll(verticalLayout, mainMenuFloatingButton);
@@ -70,6 +77,14 @@ public class MainMenu extends StackPane {
      */
     public void addMainButtonEventHandler(final EventHandler<ActionEvent> eventHandler) {
         mainButton.setOnAction(eventHandler);
+    }
+
+    /**
+     * Configure the LocationButton.
+     * @param eventHandler EventHandler
+     */
+    public void addLocationButtonEventHandler(final EventHandler<ActionEvent> eventHandler) {
+        locationButton.setOnAction(eventHandler);
     }
 
     /**

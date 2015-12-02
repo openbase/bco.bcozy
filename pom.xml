@@ -51,7 +51,7 @@
         <dependency>
             <groupId>org.controlsfx</groupId>
             <artifactId>controlsfx</artifactId>
-            <version>8.40.9</version>
+            <version>8.40.10</version>
         </dependency>
         <dependency>
             <groupId>de.jensd</groupId>
@@ -83,6 +83,11 @@
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-project-info-reports-plugin</artifactId>
             <version>2.8.1</version>
+        </dependency>
+        <dependency>
+            <groupId>de.codecentric.centerdevice</groupId>
+            <artifactId>javafxsvg</artifactId>
+            <version>1.0.0</version>
         </dependency>
     </dependencies>
 

@@ -21,6 +21,7 @@ package org.dc.bco.bcozy;
 import com.guigarage.responsive.ResponsiveHandler;
 import de.citec.jps.core.JPService;
 import de.citec.jps.preset.JPDebugMode;
+import de.citec.jul.exception.InstantiationException;
 import de.citec.jul.exception.printer.ExceptionPrinter;
 import de.citec.jul.exception.printer.LogLevel;
 import javafx.application.Application;
@@ -108,7 +109,13 @@ public class BCozy extends Application {
 
         new ManagerConnector(foregroundPane);
         new MainMenuController(foregroundPane);
-        new LocationController(backgroundPane);
+
+        //instantiate LocationController
+        try {
+            new LocationController(foregroundPane, backgroundPane);
+        } catch (InstantiationException e) {
+            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+        }
     }
 
     private static void registerListeners() {

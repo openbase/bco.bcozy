@@ -20,9 +20,10 @@ package org.dc.bco.bcozy.view.location;
 
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
+import org.dc.bco.bcozy.view.Constants;
 
 /**
- * Created by julian on 05.11.15.
+ *  A Polygon that can be selected and has a RoomName.
  */
 public class RoomPolygon extends Polygon {
 
@@ -41,7 +42,7 @@ public class RoomPolygon extends Polygon {
         this.setFill(Color.TRANSPARENT);
         this.setStroke(Color.WHITE);
         //CHECKSTYLE.OFF: MagicNumber
-        this.setStrokeWidth(2.5);
+        this.setStrokeWidth(Constants.ROOMSTROKEWIDTH);
         //CHECKSTYLE.ON: MagicNumber
         this.centerX = (super.getLayoutBounds().getMaxX() + super.getLayoutBounds().getMinX()) / 2;
         this.centerY = (super.getLayoutBounds().getMaxY() + super.getLayoutBounds().getMinY()) / 2;
