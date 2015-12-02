@@ -16,7 +16,7 @@
  * along with org.dc.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
-package org.dc.bco.bcozy.controller;
+package org.dc.bco.bcozy.view.location;
 
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
@@ -31,22 +31,24 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 import org.dc.bco.bcozy.view.ForegroundPane;
-import org.dc.bco.bcozy.view.location.LocationPane;
-import org.dc.bco.bcozy.view.location.RoomPolygon;
-
-import java.util.List;
 
 /**
- * Created by hoestreich on 11/18/15.
+ *
  */
-public class LocationPaneController {
+public class LocationPaneDesktopControls {
+
+    private final LocationPane locationPane;
+    private final ForegroundPane foregroundPane;
 
     /**
-     * Constructor for the LocationPaneController.
+     * Constructor for the LocationPaneDesktopControls.
      * @param locationPane the Pane to control.
      * @param foregroundPane the foreground Pane with the menu structure.
      */
-    public LocationPaneController(final LocationPane locationPane, final ForegroundPane foregroundPane) {
+    public LocationPaneDesktopControls(final LocationPane locationPane, final ForegroundPane foregroundPane) {
+        this.locationPane = locationPane;
+        this.foregroundPane = foregroundPane;
+
         configureScrollContent(locationPane.getScrollContent(), locationPane.getScroller());
         configureZoomPane(locationPane.getZoomPane(), locationPane.getLocationViewContent(),
                 locationPane.getScrollContent(), locationPane.getScroller());
@@ -57,10 +59,10 @@ public class LocationPaneController {
                 locationPane.getLocationViewContent(),
                 locationPane.getZoomPaneWidth(), locationPane.getZoomPaneHeight());
 
-        this.addMouseEventHandlerToRoom(locationPane.getScrollPane(), locationPane,
-                locationPane.getLocationViewContent(), locationPane.getZoomPaneWidth(),
-                locationPane.getZoomPaneHeight(), locationPane.getRooms(),
-                foregroundPane);
+//        this.addMouseEventHandlerToRoom(locationPane.getScrollPane(), locationPane,
+//                locationPane.getLocationViewContent(), locationPane.getZoomPaneWidth(),
+//                locationPane.getZoomPaneHeight(), locationPane.getRooms(),
+//                foregroundPane);
     }
 
     /**
@@ -155,42 +157,49 @@ public class LocationPaneController {
         }
     }
 
-    private void addMouseEventHandlerToRoom(final ScrollPane scrollPane, final LocationPane locationPane,
-                                            final Group locationViewContent, final double zoomPaneWidth,
-                                            final double zoomPaneHeight, final List<RoomPolygon> rooms,
-                                            final ForegroundPane foregroundPane) {
-        for (final RoomPolygon currentRoom : rooms) {
-            currentRoom.setOnMouseClicked(event -> {
-                event.consume();
 
-                centerScrollPaneToPointAnimated(scrollPane,
-                        new Point2D(currentRoom.getCenterX(), currentRoom.getCenterY()),
-                        locationViewContent, zoomPaneWidth, zoomPaneHeight);
-                //TODO: this isn't very nice yet, will be improved if we have a model with the rooms
-                if (currentRoom.isSelected()) {
-                    locationPane.getSelectedRoom().toggleSelected();
-                    //CHECKSTYLE.OFF: MagicNumber
-                    locationPane.setSelectedRoom(new RoomPolygon("none", 0.0, 0.0, 0.0, 0.0));
-                    //CHECKSTYLE.ON: MagicNumber
-                    foregroundPane.getContextMenu().getRoomContextInfo().getRoomInfo()
-                            .setText(locationPane.getSelectedRoom().getRoomName());
-                } else {
-                    locationPane.getSelectedRoom().toggleSelected();
-                    currentRoom.toggleSelected();
-                    locationPane.setSelectedRoom(currentRoom);
-                    foregroundPane.getContextMenu().getRoomContextInfo().getRoomInfo()
-                            .setText(locationPane.getSelectedRoom().getRoomName());
-                }
-            });
-            currentRoom.setOnMouseEntered(event -> {
-                event.consume();
-                foregroundPane.getInfoFooter().getMouseOverText().setText(currentRoom.getRoomName());
-            });
-            currentRoom.setOnMouseExited(event -> {
-                event.consume();
-                foregroundPane.getInfoFooter().getMouseOverText().setText("");
-            });
-        }
+    /**
+     * Adds a mouse eventHandler to the room.
+     *
+     * @param room The room
+     */
+    public void addMouseEventHandlerToRoom(final RoomPolygon room) {
+        final ScrollPane scrollPane = this.locationPane.getScrollPane();
+        final Group locationViewContent = this.locationPane.getLocationViewContent();
+        final double zoomPaneWidth = this.locationPane.getZoomPaneWidth();
+        final double zoomPaneHeight = this.locationPane.getZoomPaneHeight();
+
+
+        room.setOnMouseClicked(event -> {
+            event.consume();
+
+            centerScrollPaneToPointAnimated(scrollPane,
+                    new Point2D(room.getCenterX(), room.getCenterY()),
+                    locationViewContent, zoomPaneWidth, zoomPaneHeight);
+            //TODO: this isn't very nice yet, will be improved if we have a model with the rooms
+            if (room.isSelected()) {
+                locationPane.getSelectedRoom().toggleSelected();
+                //CHECKSTYLE.OFF: MagicNumber
+                locationPane.setSelectedRoom(new RoomPolygon("none", 0.0, 0.0, 0.0, 0.0));
+                //CHECKSTYLE.ON: MagicNumber
+                foregroundPane.getContextMenu().getRoomInfo()
+                        .setText(locationPane.getSelectedRoom().getRoomName());
+            } else {
+                locationPane.getSelectedRoom().toggleSelected();
+                room.toggleSelected();
+                locationPane.setSelectedRoom(room);
+                foregroundPane.getContextMenu().getRoomInfo()
+                        .setText(locationPane.getSelectedRoom().getRoomName());
+            }
+        });
+        room.setOnMouseEntered(event -> {
+            event.consume();
+            foregroundPane.getInfoFooter().getMouseOverText().setText(room.getRoomName());
+        });
+        room.setOnMouseExited(event -> {
+            event.consume();
+            foregroundPane.getInfoFooter().getMouseOverText().setText("");
+        });
     }
 
 

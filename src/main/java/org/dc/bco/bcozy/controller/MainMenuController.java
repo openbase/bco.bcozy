@@ -18,7 +18,6 @@
  */
 package org.dc.bco.bcozy.controller;
 
-
 import org.dc.bco.bcozy.view.ForegroundPane;
 import org.dc.bco.bcozy.view.mainmenupanes.UserPane;
 
@@ -37,6 +36,7 @@ public class MainMenuController {
         foregroundPane.getMainMenu().getUserPane().getLoginBtn().setOnAction(event -> loginUser(foregroundPane));
         foregroundPane.getMainMenu().getUserPane().getLogoutBtn().setOnAction(event -> logoutUser(foregroundPane));
         foregroundPane.getMainMenu().getUserPane().getBackBtn().setOnAction(event -> logoutUser(foregroundPane));
+        foregroundPane.getMainMenu().getMainMenuFloatingButton().setOnAction(event -> showHideMainMenu(foregroundPane));
     }
 
     private void setLoginPane(final ForegroundPane foregroundPane) {
@@ -49,5 +49,14 @@ public class MainMenuController {
 
     private void logoutUser(final ForegroundPane foregroundPane) {
         foregroundPane.getMainMenu().getUserPane().setState(UserPane.State.NOLOGIN);
+    }
+    private void showHideMainMenu(final ForegroundPane foregroundPane) {
+        //TODO: Resize the pain correctly
+        if (foregroundPane.getMainMenu().isVisible()) {
+            foregroundPane.getMainMenu().hideMainMenu();
+        } else {
+            foregroundPane.getMainMenu().showMainMenu();
+        }
+
     }
 }

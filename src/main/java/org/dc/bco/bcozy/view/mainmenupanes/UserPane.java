@@ -133,7 +133,9 @@ public class UserPane extends VBox {
      * Getter for the back button to abort a login.
      * @return instance of the button
      */
-    public Button getBackBtn() { return backBtn; }
+    public Button getBackBtn() {
+        return backBtn;
+    }
 
     /**
      * Getter for the logout which logs out the current user.
@@ -147,19 +149,25 @@ public class UserPane extends VBox {
      * Getter for the name textfield.
      * @return instance of the textfield
      */
-    public TextField getNameTxt() { return nameTxt; }
+    public TextField getNameTxt() {
+        return nameTxt;
+    }
 
     /**
      * Getter for the passwordfield.
      * @return instance of the passwordfield
      */
-    public PasswordField getPasswordField() { return passwordField; }
+    public PasswordField getPasswordField() {
+        return passwordField;
+    }
 
     /**
      * Getter for the Label that displays the currently user.
      * @return instance of the label
      */
-    public Label getLoggedInUserLbl() { return loggedInUserLbl; }
+    public Label getLoggedInUserLbl() {
+        return loggedInUserLbl;
+    }
 
     /**
      * GUI Method to switch the displayed panes.

@@ -18,39 +18,39 @@
  */
 package org.dc.bco.bcozy.view;
 
+import javafx.geometry.Insets;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
+import org.controlsfx.control.SegmentedButton;
 
 /**
  * Created by hoestreich on 11/20/15.
  */
-public class ContextSortingPane extends Pane {
+public class ContextSortingPane extends SegmentedButton {
 
     /**
      * Constructor for a Pane with Toogle Buttons.
-     * @param width the width, of the parent
+     * @param width width of the parent
      */
     public ContextSortingPane(final double width) {
-
-        final HBox horizontalLayout = new HBox(1.0);
-        horizontalLayout.getStyleClass().add("dropshadow-bottom-bg");
-        horizontalLayout.setStyle("-fx-background-color: #BDBDBD");
 
         final ToggleGroup toggleGroup = new ToggleGroup();
         final ToggleButton locationBtn = new ToggleButton("Location");
         locationBtn.setToggleGroup(toggleGroup);
-        locationBtn.setMinWidth((width / 2) + Constants.INSETS * 2);
+        locationBtn.setMaxWidth(Double.MAX_VALUE);
+        locationBtn.setPrefWidth(width / 2);
         final ToggleButton functionBtn = new ToggleButton("Function");
         functionBtn.setToggleGroup(toggleGroup);
-        functionBtn.setMinWidth(((width / 2) + Constants.INSETS * 2) - 1.0);
+        functionBtn.setMaxWidth(Double.MAX_VALUE);
+        functionBtn.setPrefWidth(width / 2);
         //CHECKSTYLE.OFF: MultipleStringLiterals
         locationBtn.getStyleClass().addAll("visible-lg", "visible-md", "visible-sm", "visible-xs");
         functionBtn.getStyleClass().addAll("visible-lg", "visible-md", "visible-sm", "visible-xs");
         //CHECKSTYLE.ON: MultipleStringLiterals
-        horizontalLayout.getChildren().addAll(locationBtn, functionBtn);
-
-        this.getChildren().add(horizontalLayout);
+        this.setToggleGroup(toggleGroup);
+        this.getButtons().addAll(locationBtn, functionBtn);
+        this.setMaxWidth(Double.MAX_VALUE);
+        //this.setPrefWidth(width);
+        this.setPadding(new Insets(Constants.INSETS, Constants.INSETS, Constants.INSETS, Constants.INSETS));
     }
 }

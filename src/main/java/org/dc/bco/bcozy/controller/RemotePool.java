@@ -45,8 +45,8 @@ public class RemotePool {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BCozy.class);
 
-    private HashMap<Class, HashMap<String, DALRemoteService>> deviceHash;
-    private HashMap<String, HashMap<String, DALRemoteService>> locationHash;
+    private final Map<Class, HashMap<String, DALRemoteService>> deviceHash;
+    private final Map<String, HashMap<String, DALRemoteService>> locationHash;
     private LocationRegistryRemote locationRegistryRemote;
     private DeviceRegistryRemote deviceRegistryRemote;
 
@@ -66,8 +66,10 @@ public class RemotePool {
             deviceRegistryRemote = new DeviceRegistryRemote();
             deviceRegistryRemote.init();
             deviceRegistryRemote.activate();
-        } catch (Exception e) {
-            throw new de.citec.jul.exception.InstantiationException(this, e);
+        } catch (CouldNotPerformException e) {
+            throw new InstantiationException(this, e);
+        } catch (InterruptedException e) {
+            throw new InstantiationException(this, e);
         }
     }
 
@@ -96,7 +98,7 @@ public class RemotePool {
 
                 final UnitConfigType.UnitConfig currentUnitConfig = deviceRegistryRemote.getUnitConfigById(unitId);
                 LOGGER.info("INFO: " + unitId);
-                DALRemoteService currentDalRemoteService =
+                final DALRemoteService currentDalRemoteService =
                         unitRemoteFactoryInterface.createAndInitUnitRemote(currentUnitConfig);
 
                 if (!deviceHash.containsKey(currentDalRemoteService.getClass())) {
@@ -148,13 +150,13 @@ public class RemotePool {
      */
     public List<DALRemoteService> getUnitRemotesOfLocation(
             final String locationId) {
-        List<DALRemoteService> unitRemoteList = new ArrayList<>();
-        HashMap<String, DALRemoteService> unitRemoteHashOfLocation = locationHash.get(locationId);
+        final List<DALRemoteService> unitRemoteList = new ArrayList<>();
+        final Map<String, DALRemoteService> unitRemoteHashOfLocation = locationHash.get(locationId);
 
         final Iterator<Map.Entry<String, DALRemoteService>> unitIterator =
                 unitRemoteHashOfLocation.entrySet().iterator();
         while (unitIterator.hasNext()) {
-            Map.Entry<String, DALRemoteService> currentEntry = unitIterator.next();
+            final Map.Entry<String, DALRemoteService> currentEntry = unitIterator.next();
             unitRemoteList.add(currentEntry.getValue());
         }
 
@@ -170,13 +172,13 @@ public class RemotePool {
      */
     public <Remote extends DALRemoteService> List<Remote>  getUnitRemotesOfLocationByClass(
             final String locationId, final Class<? extends Remote> remoteClass) {
-        List<Remote> unitRemoteList = new ArrayList<>();
-        HashMap<String, DALRemoteService> unitRemoteHashOfLocation = locationHash.get(locationId);
+        final List<Remote> unitRemoteList = new ArrayList<>();
+        final Map<String, DALRemoteService> unitRemoteHashOfLocation = locationHash.get(locationId);
 
         final Iterator<Map.Entry<String, DALRemoteService>> unitIterator =
                 unitRemoteHashOfLocation.entrySet().iterator();
         while (unitIterator.hasNext()) {
-            Map.Entry<String, DALRemoteService> currentEntry = unitIterator.next();
+            final Map.Entry<String, DALRemoteService> currentEntry = unitIterator.next();
             if (currentEntry.getValue().getClass() == remoteClass) {
                 unitRemoteList.add((Remote) currentEntry.getValue());
             }

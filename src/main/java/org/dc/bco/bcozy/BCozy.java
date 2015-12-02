@@ -21,6 +21,7 @@ package org.dc.bco.bcozy;
 import com.guigarage.responsive.ResponsiveHandler;
 import de.citec.jps.core.JPService;
 import de.citec.jps.preset.JPDebugMode;
+import de.citec.jul.exception.InstantiationException;
 import de.citec.jul.exception.printer.ExceptionPrinter;
 import de.citec.jul.exception.printer.LogLevel;
 import javafx.application.Application;
@@ -28,10 +29,9 @@ import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import org.dc.bco.bcozy.controller.LocationController;
 import org.dc.bco.bcozy.controller.MainMenuController;
-import org.dc.bco.bcozy.controller.MenuController;
 import org.dc.bco.bcozy.view.ForegroundPane;
-import org.dc.bco.bcozy.controller.LocationPaneController;
 import org.dc.bco.bcozy.view.location.LocationPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,13 +88,13 @@ public class BCozy extends Application {
         final ForegroundPane foregroundPane = new ForegroundPane(screenHeight, screenWidth);
         foregroundPane.setMinHeight(root.getHeight());
         foregroundPane.setMinWidth(root.getWidth());
-        final LocationPane backgroundPane = new LocationPane();
+        final LocationPane backgroundPane = new LocationPane(foregroundPane);
 
         root.getChildren().addAll(backgroundPane, foregroundPane);
 
         //CHECKSTYLE.OFF: MagicNumber
-        primaryStage.setMinHeight(foregroundPane.getMenuHeader().getMinHeight()
-                + foregroundPane.getInfoFooter().getMinHeight() + 300);
+//        primaryStage.setMinHeight(foregroundPane.getMenuHeader().getMinHeight()
+//                + foregroundPane.getInfoFooter().getMinHeight() + 300);
         primaryStage.setMinWidth(foregroundPane.getMainMenu().getMinWidth()
                 + foregroundPane.getContextMenu().getMinWidth() + 300);
         primaryStage.setHeight(screenHeight);
@@ -108,9 +108,14 @@ public class BCozy extends Application {
         primaryStage.show();
 
         new ManagerConnector(foregroundPane);
-        new MenuController(foregroundPane);
-        new LocationPaneController(backgroundPane, foregroundPane);
         new MainMenuController(foregroundPane);
+
+        //instantiate LocationController
+        try {
+            new LocationController(foregroundPane, backgroundPane);
+        } catch (InstantiationException e) {
+            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+        }
     }
 
     private static void registerListeners() {

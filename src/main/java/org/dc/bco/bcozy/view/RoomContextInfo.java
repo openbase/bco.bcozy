@@ -44,11 +44,4 @@ public class RoomContextInfo extends AnchorPane {
         this.setBottomAnchor(roomInfo, Constants.INSETS);
     }
 
-    /**
-     * Getter Method for the Label.
-     * @return label
-     */
-    public Label getRoomInfo() {
-        return roomInfo;
-    }
 }
