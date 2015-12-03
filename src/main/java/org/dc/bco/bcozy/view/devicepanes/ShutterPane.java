@@ -37,10 +37,10 @@ public class ShutterPane extends VBox {
      * @param shutterInstance the shutterInstance which should be controlled / observed with this pane
      */
     public ShutterPane(final ShutterInstance shutterInstance) {
-        final DevicePane devicePane = new DevicePane(shutterInstance.getShutterName(), initContent(shutterInstance));
-        devicePane.setFillWidth(true);
+        //final UnitPane devicePane = new UnitPane(shutterInstance.getShutterName(), initContent(shutterInstance));
+        //devicePane.setFillWidth(true);
         this.setFillWidth(true);
-        this.getChildren().add(devicePane);
+        //this.getChildren().add(devicePane);
     }
 
     /**

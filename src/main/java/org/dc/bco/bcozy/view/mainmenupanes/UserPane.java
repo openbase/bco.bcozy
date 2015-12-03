@@ -27,7 +27,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import org.dc.bco.bcozy.view.Constants;
-import org.dc.bco.bcozy.view.devicepanes.PaneElement;
 
 /**
  * Created by hoestreich on 11/24/15.

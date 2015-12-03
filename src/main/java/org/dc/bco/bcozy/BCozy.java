@@ -21,6 +21,7 @@ package org.dc.bco.bcozy;
 import com.guigarage.responsive.ResponsiveHandler;
 import de.citec.jps.core.JPService;
 import de.citec.jps.preset.JPDebugMode;
+//import de.citec.jul.exception.CouldNotPerformException;
 import de.citec.jul.exception.InstantiationException;
 import de.citec.jul.exception.printer.ExceptionPrinter;
 import de.citec.jul.exception.printer.LogLevel;
@@ -29,6 +30,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import org.dc.bco.bcozy.controller.ContextMenuController;
 import org.dc.bco.bcozy.controller.LocationController;
 import org.dc.bco.bcozy.controller.MainMenuController;
 import org.dc.bco.bcozy.controller.RemotePool;
@@ -112,6 +114,18 @@ public class BCozy extends Application {
 
         //instantiate RemotePool
         final RemotePool remotePool = new RemotePool(foregroundPane);
+        final ContextMenuController contextMenuController = new ContextMenuController(foregroundPane, remotePool);
+
+        //Uncomment for contextMenu Test
+        /*
+        try {
+            remotePool.initRegistryRemotes();
+            remotePool.fillHashes();
+            contextMenuController.setContextMenuDevicePanes("Living");
+        } catch (CouldNotPerformException | InterruptedException e) {
+            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+        }
+        */
 
         //instantiate LocationController
         try {

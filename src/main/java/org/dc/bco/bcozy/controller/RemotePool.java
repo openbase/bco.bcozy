@@ -261,7 +261,7 @@ public class RemotePool {
      * @throws CouldNotPerformException CouldNotPerformException
      */
     @SuppressWarnings("unchecked")
-    public <Remote extends DALRemoteService> List<Remote>  getUnitRemotesOfLocationAndClass(
+    public <Remote extends DALRemoteService> List<Remote> getUnitRemoteListOfLocationAndClass(
             final String locationId, final Class<? extends Remote> remoteClass) throws CouldNotPerformException {
         checkInit();
 

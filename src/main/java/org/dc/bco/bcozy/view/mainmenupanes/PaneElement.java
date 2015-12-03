@@ -16,7 +16,7 @@
  * along with org.dc.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
-package org.dc.bco.bcozy.view.devicepanes;
+package org.dc.bco.bcozy.view.mainmenupanes;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;

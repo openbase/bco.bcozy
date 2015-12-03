@@ -18,6 +18,9 @@
  */
 package org.dc.bco.bcozy.view.devicepanes;
 
+import de.citec.dal.remote.unit.AmbientLightRemote;
+import de.citec.dal.remote.unit.DALRemoteService;
+import de.citec.jul.exception.CouldNotPerformException;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.DoubleProperty;
@@ -45,20 +48,20 @@ import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.ImageEffect;
 
 /**
- * Created by agatting on 25.11.15.
+ * Created on 03.12.15.
  */
-public class LightBulbPane extends VBox {
-
-    //TODO all rectangles/areas with borders?
+public class AmbientLightPane extends TitledPane implements UnitPane {
 
     private static final String WHITE = "white";
 
-    /**
-     * Constructor creates lightBulb widget.
-     */
-    public LightBulbPane() {
+    private final AmbientLightRemote ambientLightRemote;
 
-        //SvgImageLoaderFactory.install();
+    /**
+     * Constructor for the AmbientLightPane.
+     * @param ambientLightRemote ambientLightRemote
+     */
+    public AmbientLightPane(final DALRemoteService ambientLightRemote) {
+        this.ambientLightRemote = (AmbientLightRemote) ambientLightRemote;
 
         final Button lightBulb = new Button();
         lightBulb.setBackground(Background.EMPTY);
@@ -67,36 +70,22 @@ public class LightBulbPane extends VBox {
         final Image topImage = new Image("/icons/lightbulb.png");
         final Group imageEffect = new ImageEffect().imageBlendEffect(bottomImage, topImage, Color.YELLOW);
 
-        final TitledPane titledPane = widgetPaneElement(topImage, imageEffect, "Lightbulb 1");
-        final TitledPane titledPane2 = widgetPaneElement(topImage, imageEffect, "Lightbulb 2");
+        String id = null;
+        try {
+            id = this.ambientLightRemote.getData().getLabel();
+        } catch (CouldNotPerformException e) {
+            e.printStackTrace();
+            id = "UnknownID";
+        }
 
-        this.getChildren().addAll(titledPane, titledPane2);
+        initTitle(topImage, imageEffect, id);
+        initContent();
     }
 
-    /**
-     *
-     * @param imageOff Off Icon
-     * @param imageOn On Icon
-     * @param title Title of the widget
-     * @return widgetLightPane
-     */
-    public TitledPane widgetPaneElement(final Image imageOff, final Group imageOn, final String title) {
-
-        final TitledPane widgetLightPane;
+    private void initTitle(final Image imageOff, final Group imageOn, final String title) {
         final ToggleSwitch toggleSwitch;
         final ImageView lightOff;
         final BorderPane borderPane;
-        final HBox hBox;
-        final Pane colorContainer;
-        final Pane colorRectBrightness;
-        final Pane colorHue;
-        final Pane colorBar;
-        final Circle circle;
-        final Rectangle rectangle;
-
-        final DoubleProperty hueValue = new SimpleDoubleProperty(-1);
-        final DoubleProperty saturation = new SimpleDoubleProperty(-1);
-        final DoubleProperty brightness = new SimpleDoubleProperty(-1);
 
         //button
         toggleSwitch = new ToggleSwitch();
@@ -112,6 +101,23 @@ public class LightBulbPane extends VBox {
         borderPane.setLeft(lightOff);
         borderPane.setCenter(new Label(title));
         borderPane.setRight(toggleSwitch);
+
+        this.getStyleClass().add("widgetPane");
+        this.setGraphic(borderPane);
+    }
+
+    private void initContent() {
+        final HBox hBox;
+        final Pane colorContainer;
+        final Pane colorRectBrightness;
+        final Pane colorHue;
+        final Pane colorBar;
+        final Circle circle;
+        final Rectangle rectangle;
+
+        final DoubleProperty hueValue = new SimpleDoubleProperty(-1);
+        final DoubleProperty saturation = new SimpleDoubleProperty(-1);
+        final DoubleProperty brightness = new SimpleDoubleProperty(-1);
 
         //CHECKSTYLE.OFF: MagicNumber
 
@@ -175,13 +181,7 @@ public class LightBulbPane extends VBox {
         hBox.setPadding(new Insets(0, 10, 0, 10));
         hBox.getChildren().addAll(colorContainer, colorBar);
 
-        //whole widget
-        widgetLightPane = new TitledPane();
-        widgetLightPane.getStyleClass().add("widgetPane");
-        widgetLightPane.setGraphic(borderPane);
-        widgetLightPane.setContent(hBox);
-
-        return widgetLightPane;
+        this.setContent(hBox);
     }
 
     /**
@@ -310,4 +310,9 @@ public class LightBulbPane extends VBox {
         return colorRectBrightness;
     }
     //CHECKSTYLE.ON: MagicNumber
+
+    @Override
+    public DALRemoteService getDALRemoteService() {
+        return ambientLightRemote;
+    }
 }
