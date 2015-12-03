@@ -137,8 +137,9 @@ public class MainMenu extends StackPane {
      */
     public void minimizeMainMenu() {
         this.maximized = false;
-        this.setMinHeight(height / 3);
-        this.setMinWidth(width / 3);
+        //TODO: This will be implemented soon.
+        this.setMinHeight(height / 2);
+        this.setMinWidth(width / 2);
         this.getChildren().clear();
         this.getChildren().addAll(mainMenuFloatingButton);
     }

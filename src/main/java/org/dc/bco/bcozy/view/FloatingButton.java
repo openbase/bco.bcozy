@@ -54,7 +54,11 @@ public class FloatingButton extends Button {
         super.setGraphic(imageView);
     }
 
-    public void changeIcon(final String imagePath){
+    /**
+     * Method to change the icon of a floating button.
+     * @param imagePath the path for the new icon
+     */
+    public void changeIcon(final String imagePath) {
         selected = new Image(getClass().getResourceAsStream(imagePath));
         imageView = new ImageView(selected);
         imageView.setFitHeight(Constants.MIDDLEICON);
