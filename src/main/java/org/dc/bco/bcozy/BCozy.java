@@ -29,6 +29,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import org.dc.bco.bcozy.controller.CenterPaneController;
 import org.dc.bco.bcozy.controller.LocationController;
 import org.dc.bco.bcozy.controller.MainMenuController;
 import org.dc.bco.bcozy.controller.RemotePool;
@@ -109,6 +110,7 @@ public class BCozy extends Application {
         primaryStage.show();
 
         new MainMenuController(foregroundPane);
+        new CenterPaneController(foregroundPane);
 
         //instantiate RemotePool
         final RemotePool remotePool = new RemotePool(foregroundPane);

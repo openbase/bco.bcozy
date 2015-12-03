@@ -64,8 +64,6 @@
     -fx-padding: 5 5 5 5;
 }
 
-
-
 .padding-large {
     -fx-padding: 10.0 10.0 10.0 10.0;
 }
@@ -93,6 +91,7 @@
     -fx-alignment: CENTER;
     -fx-background-radius: 50%;
     -fx-effect: dropshadow(gaussian, rgba(0.0, 0.0, 0.0, 0.3), 10.0, 0.0, -4.0, 4.0);
+    -fx-padding: 15.0 15.0 15.0 15.0;
 }
 
 

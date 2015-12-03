@@ -52,10 +52,10 @@ public class MainMenuController {
     }
     private void showHideMainMenu(final ForegroundPane foregroundPane) {
         //TODO: Resize the pain correctly
-        if (foregroundPane.getMainMenu().isVisible()) {
-            foregroundPane.getMainMenu().hideMainMenu();
+        if (foregroundPane.getMainMenu().isMaximized()) {
+            foregroundPane.getMainMenu().minimizeMainMenu();
         } else {
-            foregroundPane.getMainMenu().showMainMenu();
+            foregroundPane.getMainMenu().maximizeMainMenu();
         }
 
     }

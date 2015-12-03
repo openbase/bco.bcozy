@@ -68,18 +68,13 @@ public class ContextMenu extends AnchorPane {
         final ShutterPane shutterPane2 = new ShutterPane(new ShutterInstance("Shutter Sports", 100.0));
         final ShutterPane shutterPane3 = new ShutterPane(new ShutterInstance("Shutter Control", 100.0));
         verticalInnerLayout.getChildren().addAll(shutterPane, shutterPane1, shutterPane2, shutterPane3);
-*/
-
+        */
 
         final String[] string = new String[1];
         string[0] = "Lightbulbs";
 
         final TitledPanes titledPanes = new TitledPanes(string);
         verticalInnerLayout.getChildren().add(titledPanes);
-
-
-
-
 
         verticalScrollPane.setContent(verticalInnerLayout);
         verticalInnerLayout.setFillWidth(true);

@@ -19,8 +19,8 @@
 package org.dc.bco.bcozy.view;
 
 import javafx.geometry.Pos;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.StackPane;
 import org.controlsfx.control.PopOver;
 
 /**
@@ -29,43 +29,82 @@ import org.controlsfx.control.PopOver;
 public class CenterPane extends StackPane {
 
     private final PopOver viewSwitcher;
-    private final FloatingButton settings;
-    private final FloatingButton temperature;
-    private final FloatingButton movement;
+    private final FloatingButton popUpParent;
+    private final FloatingButton popUpChildTop;
+    private final FloatingButton popUpChildBottom;
     private final FloatingButton fullscreen;
     private final ClockLabel clock;
-
-    private final FloatingButton activeBtn;
+    private final VBox verticalLayout;
 
     /**
      * Constructor for the center pane.
      */
     public CenterPane() {
 
-        settings = new FloatingButton("/icons/settings.png");
-        temperature = new FloatingButton("/icons/thermometer.png");
-        movement = new FloatingButton("/icons/observe.png");
+        popUpParent = new FloatingButton("/icons/settings.png");
+        popUpChildTop = new FloatingButton("/icons/thermometer.png");
+        popUpChildBottom = new FloatingButton("/icons/observe.png");
         fullscreen = new FloatingButton("/icons/fullscreen.png");
         clock = new ClockLabel();
-        this.setPickOnBounds(false);
 
-        final VBox verticalLayout = new VBox(Constants.INSETS);
-        verticalLayout.getChildren().addAll(settings, temperature, movement);
-        verticalLayout.getStyleClass().addAll("padding-small");
+        verticalLayout = new VBox(Constants.INSETS);
+        verticalLayout.getChildren().addAll(popUpChildTop, popUpChildBottom);
 
         viewSwitcher = new PopOver(verticalLayout);
         viewSwitcher.setArrowLocation(PopOver.ArrowLocation.BOTTOM_CENTER);
-        viewSwitcher.getStyleClass().addAll("floating-box");
 
-        activeBtn = settings;
-        //TODO: Implement switching action in external controller
-
-        activeBtn.setOnAction(event -> viewSwitcher.show(activeBtn));
-        this.getChildren().addAll(activeBtn, fullscreen, clock);
-        this.setAlignment(activeBtn, Pos.BOTTOM_RIGHT);
+        this.getChildren().addAll(popUpParent, fullscreen, clock);
+        this.setAlignment(popUpParent, Pos.BOTTOM_RIGHT);
         this.setAlignment(fullscreen, Pos.TOP_RIGHT);
         this.setAlignment(clock, Pos.TOP_CENTER);
-        activeBtn.translateYProperty().set(-Constants.INSETS);
+        popUpParent.translateYProperty().set(-Constants.INSETS);
         fullscreen.translateYProperty().set(Constants.INSETS);
+        //CHECKSTYLE.OFF: MultipleStringLiterals
+        verticalLayout.getStyleClass().addAll("padding-small");
+        viewSwitcher.getStyleClass().addAll("floating-box");
+        this.getStyleClass().addAll("padding-small");
+        //CHECKSTYLE.ON: MultipleStringLiterals
+
     }
+
+    /**
+     * Getter for the fullscreen button.
+     * @return FloatingButton instance
+     */
+    public FloatingButton getFullscreen() {
+        return fullscreen;
+    }
+
+    /**
+     * Getter for the popUpChildBottom button.
+     * @return FloatingButton instance
+     */
+    public FloatingButton getPopUpChildBottom() {
+        return popUpChildBottom;
+    }
+
+    /**
+     * Getter for the popUpChildTop button.
+     * @return FloatingButton instance
+     */
+    public FloatingButton getPopUpChildTop() {
+        return popUpChildTop;
+    }
+
+    /**
+     * Getter for the popUpParent button.
+     * @return FloatingButton instance
+     */
+    public FloatingButton getPopUpParent() {
+        return popUpParent;
+    }
+
+    /**
+     * Getter for the PopOver pane.
+     * @return PopOver instance
+     */
+    public PopOver getViewSwitcher() {
+        return viewSwitcher;
+    }
+
 }
