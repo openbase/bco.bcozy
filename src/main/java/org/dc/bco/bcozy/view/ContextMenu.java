@@ -61,7 +61,6 @@ public class ContextMenu extends VBox {
 
         verticalScrollPane.setFitToWidth(true);
         verticalScrollPane.setContent(titledPaneContainer);
-
         //CHECKSTYLE.OFF: MagicNumber
         //verticalScrollPane.setMaxHeight(height - 200.0);
         //CHECKSTYLE.ON: MagicNumber

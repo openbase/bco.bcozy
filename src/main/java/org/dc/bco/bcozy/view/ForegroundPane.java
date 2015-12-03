@@ -70,12 +70,12 @@ public class ForegroundPane extends BorderPane {
     }
 
     /**
-     * Getter for the menu header (top).
-     * @return MenuHeader (HBox)
+     * Getter for the center pane.
+     * @return CenterPane
      */
-//    public MenuHeader getMenuHeader() {
-//        return menuHeader;
-//    }
+    public CenterPane getCenterPane() {
+        return centerPane;
+    }
 
     /**
      * Getter for the info footer (bottom).

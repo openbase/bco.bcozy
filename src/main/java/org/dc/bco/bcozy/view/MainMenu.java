@@ -38,6 +38,11 @@ public class MainMenu extends StackPane {
     private final Button locationButton;
     private final UserPane userPane;
     private final FloatingButton mainMenuFloatingButton;
+    private final VBox verticalLayout;
+    private final double height;
+    private final double width;
+    private boolean maximized;
+
     /**
      * Constructor for the MainMenu.
      * @param height Height
@@ -45,10 +50,13 @@ public class MainMenu extends StackPane {
      */
     public MainMenu(final double height, final double width) {
 
+        this.height = height;
+        this.width = width;
+        this.maximized = true;
         this.setMinHeight(height);
         this.setMinWidth(width);
 
-        final VBox verticalLayout = new VBox(Constants.INSETS);
+        verticalLayout = new VBox(Constants.INSETS);
 
         userPane = new UserPane();
 
@@ -104,18 +112,35 @@ public class MainMenu extends StackPane {
     }
 
     /**
+     * Getter for the current display state.
+     * @return true if maximzed, false if minimized
+     */
+    public boolean isMaximized() {
+        return maximized;
+    }
+
+    /**
      * Method to make this menu visible.
      * Animations should be added in the future
      */
-    public void showMainMenu() {
-        this.setTranslateX(-Constants.INSETS);
+    public void maximizeMainMenu() {
+        this.maximized = true;
+        this.setMinHeight(height);
+        this.setMinWidth(width);
+        this.getChildren().clear();
+        this.getChildren().addAll(verticalLayout, mainMenuFloatingButton);
     }
 
     /**
      * Method to make this menu invisible.
      * Animations should be added in the future
      */
-    public void hideMainMenu() {
-        this.setTranslateX(Constants.INSETS);
+    public void minimizeMainMenu() {
+        this.maximized = false;
+        //TODO: This will be implemented soon.
+        this.setMinHeight(height / 2);
+        this.setMinWidth(width / 2);
+        this.getChildren().clear();
+        this.getChildren().addAll(mainMenuFloatingButton);
     }
 }
