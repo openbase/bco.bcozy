@@ -28,12 +28,12 @@ import de.citec.jul.exception.printer.LogLevel;
 import de.citec.lm.remote.LocationRegistryRemote;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import org.dc.bco.bcozy.BCozy;
 import org.dc.bco.bcozy.view.ForegroundPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.homeautomation.unit.UnitConfigType;
 import rst.spatial.LocationConfigType;
+import rst.homeautomation.unit.UnitTemplateType.UnitTemplate.UnitType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,13 +41,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.TreeMap;
+
+
 
 /**
  * Created by tmichalski on 25.11.15.
  */
 public class RemotePool {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BCozy.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RemotePool.class);
 
     private final ForegroundPane foregroundPane;
 
@@ -250,6 +253,32 @@ public class RemotePool {
         }
 
         return unitRemoteList;
+    }
+
+    /**
+     * Returns a Map of all DALRemoteServices of the given Location sorted by their UnitType.
+     * @param locationId locationId
+     * @return the Map of DALRemoteServices
+     */
+    public Map<UnitType, List<DALRemoteService>> getUnitRemoteMapOfLocation(final String locationId) {
+        final Map<UnitType, List<DALRemoteService>> unitRemoteMap = new TreeMap<>();
+
+        final UnitType[] unitTypes = UnitType.values();
+
+        for (final UnitType type : unitTypes) {
+            try {
+                final Class<? extends DALRemoteService> remote = UnitRemoteFactory.loadUnitRemoteClass(type);
+                final List<DALRemoteService> unitRemoteList =
+                        this.getUnitRemoteListOfLocationAndClass(locationId, remote);
+                if (!unitRemoteList.isEmpty()) {
+                    unitRemoteMap.put(type, unitRemoteList);
+                }
+            } catch (CouldNotPerformException e) {
+                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+            }
+        }
+
+        return unitRemoteMap;
     }
 
     /**

@@ -19,12 +19,14 @@
 
 package org.dc.bco.bcozy.controller;
 
-import de.citec.dal.remote.unit.AmbientLightRemote;
 import de.citec.dal.remote.unit.DALRemoteService;
 import de.citec.jul.exception.CouldNotPerformException;
 import org.dc.bco.bcozy.view.ForegroundPane;
+import rst.homeautomation.unit.UnitTemplateType.UnitTemplate.UnitType;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by timo on 03.12.15.
@@ -49,13 +51,18 @@ public class ContextMenuController {
      * @throws CouldNotPerformException CouldNotPerformException
      */
     public void setContextMenuDevicePanes(final String locationID) throws CouldNotPerformException {
-        // TODO: Erweitern damit wirklich alle Units erstellt werden.
-        final List<DALRemoteService> unitRemoteListOfLocation =
-                remotePool.getUnitRemoteListOfLocationAndClass(locationID, AmbientLightRemote.class);
+        final Map<UnitType, List<DALRemoteService>> unitRemoteMap =
+                remotePool.getUnitRemoteMapOfLocation(locationID);
 
-        if (!unitRemoteListOfLocation.isEmpty()) {
-            foregroundPane.getContextMenu().getTitledPaneContainer().createAndAddNewTitledPane("AmbientLight",
-                    unitRemoteListOfLocation);
+        final Iterator<Map.Entry<UnitType, List<DALRemoteService>>> entryIterator =
+                unitRemoteMap.entrySet().iterator();
+
+        while (entryIterator.hasNext()) {
+            final Map.Entry<UnitType, List<DALRemoteService>> nextEntry =
+                    entryIterator.next();
+
+            foregroundPane.getContextMenu().getTitledPaneContainer().createAndAddNewTitledPane(
+                    nextEntry.getKey(), nextEntry.getValue());
         }
     }
 }

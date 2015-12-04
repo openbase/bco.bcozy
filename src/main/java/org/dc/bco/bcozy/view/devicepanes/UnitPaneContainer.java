@@ -24,6 +24,7 @@ import de.citec.dal.remote.unit.RollershutterRemote;
 import javafx.geometry.Insets;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.VBox;
+import rst.homeautomation.unit.UnitTemplateType.UnitTemplate.UnitType;
 
 import java.util.Iterator;
 import java.util.List;
@@ -37,10 +38,10 @@ public class UnitPaneContainer extends TitledPane {
 
     /**
      * Constructor for the UnitPaneContainer.
-     * @param unitType unitType
+     * @param unitTypeName unitTypeName
      */
-    public UnitPaneContainer(final String unitType) {
-        this.setText(unitType);
+    public UnitPaneContainer(final String unitTypeName) {
+        this.setText(unitTypeName);
         this.setPadding(new Insets(0, 0, 0, 0));
 
         vBox = new VBox();
@@ -57,15 +58,26 @@ public class UnitPaneContainer extends TitledPane {
 
     /**
      * Takes a List of DALRemoteService and creates new UnitPanes for each.
+     * @param unitType unitType
      * @param dalRemoteServiceList dalRemoteServiceList
      */
-    public void createAndAddNewUnitPanes(final List<DALRemoteService> dalRemoteServiceList) {
-        final Iterator<DALRemoteService> dalRemoteServiceIterator = dalRemoteServiceList.iterator();
-        while (dalRemoteServiceIterator.hasNext()) {
-            final DALRemoteService dalRemoteService = dalRemoteServiceIterator.next();
-            final AmbientLightPane ambientLightPane = new AmbientLightPane(dalRemoteService);
+    public void createAndAddNewUnitPanes(final UnitType unitType, final List<DALRemoteService> dalRemoteServiceList) {
+        if (unitType.equals(UnitType.AMBIENT_LIGHT)) {
+            final Iterator<DALRemoteService> dalRemoteServiceIterator = dalRemoteServiceList.iterator();
+            while (dalRemoteServiceIterator.hasNext()) {
+                final DALRemoteService dalRemoteService = dalRemoteServiceIterator.next();
+                final AmbientLightPane ambientLightPane = new AmbientLightPane(dalRemoteService);
 
-            vBox.getChildren().add(ambientLightPane);
+                vBox.getChildren().add(ambientLightPane);
+            }
+        } else if (unitType.equals(UnitType.ROLLERSHUTTER)) {
+            final Iterator<DALRemoteService> dalRemoteServiceIterator = dalRemoteServiceList.iterator();
+            while (dalRemoteServiceIterator.hasNext()) {
+                final DALRemoteService dalRemoteService = dalRemoteServiceIterator.next();
+                final RollershutterPane rollershutterPane = new RollershutterPane(dalRemoteService);
+
+                vBox.getChildren().add(rollershutterPane);
+            }
         }
     }
 }

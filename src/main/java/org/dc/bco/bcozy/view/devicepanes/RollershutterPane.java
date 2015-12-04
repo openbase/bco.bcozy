@@ -21,6 +21,8 @@ package org.dc.bco.bcozy.view.devicepanes;
 import de.citec.dal.remote.unit.DALRemoteService;
 import de.citec.dal.remote.unit.RollershutterRemote;
 import de.citec.jul.exception.CouldNotPerformException;
+import de.citec.jul.exception.printer.ExceptionPrinter;
+import de.citec.jul.exception.printer.LogLevel;
 import javafx.geometry.Orientation;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -28,11 +30,15 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import org.controlsfx.control.PlusMinusSlider;
 import org.dc.bco.bcozy.view.Constants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by hoestreich on 11/19/15.
  */
 public class RollershutterPane extends UnitPane {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(RollershutterPane.class);
 
     private final RollershutterRemote rollershutterRemote;
     private final Image imageIcon;
@@ -48,7 +54,7 @@ public class RollershutterPane extends UnitPane {
         try {
             super.setUnitLabel(this.rollershutterRemote.getData().getLabel());
         } catch (CouldNotPerformException e) {
-            e.printStackTrace();
+            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
             super.setUnitLabel("UnknownID");
         }
 

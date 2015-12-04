@@ -21,6 +21,8 @@ package org.dc.bco.bcozy.view.devicepanes;
 import de.citec.dal.remote.unit.AmbientLightRemote;
 import de.citec.dal.remote.unit.DALRemoteService;
 import de.citec.jul.exception.CouldNotPerformException;
+import de.citec.jul.exception.printer.ExceptionPrinter;
+import de.citec.jul.exception.printer.LogLevel;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.DoubleProperty;
@@ -45,11 +47,15 @@ import javafx.scene.shape.StrokeType;
 import org.controlsfx.control.ToggleSwitch;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.ImageEffect;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created on 03.12.15.
  */
 public class AmbientLightPane extends UnitPane {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AmbientLightPane.class);
 
     private static final String WHITE = "white";
 
@@ -75,7 +81,7 @@ public class AmbientLightPane extends UnitPane {
         try {
             super.setUnitLabel(this.ambientLightRemote.getData().getLabel());
         } catch (CouldNotPerformException e) {
-            e.printStackTrace();
+            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
             super.setUnitLabel("UnknownID");
         }
 

@@ -124,7 +124,7 @@ public class BCozy extends Application {
             remotePool.initRegistryRemotes();
             remotePool.fillHashes();
             contextMenuController.setContextMenuDevicePanes("Living");
-        } catch (CouldNotPerformException | InterruptedException e) {
+        } catch (InterruptedException | CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
         */
