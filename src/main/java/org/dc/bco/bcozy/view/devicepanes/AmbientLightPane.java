@@ -30,7 +30,6 @@ import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TitledPane;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -50,11 +49,14 @@ import org.dc.bco.bcozy.view.ImageEffect;
 /**
  * Created on 03.12.15.
  */
-public class AmbientLightPane extends TitledPane implements UnitPane {
+public class AmbientLightPane extends UnitPane {
 
     private static final String WHITE = "white";
 
     private final AmbientLightRemote ambientLightRemote;
+    private final Image bottomImage;
+    private final Image topImage;
+    private final Group imageEffect;
 
     /**
      * Constructor for the AmbientLightPane.
@@ -66,23 +68,23 @@ public class AmbientLightPane extends TitledPane implements UnitPane {
         final Button lightBulb = new Button();
         lightBulb.setBackground(Background.EMPTY);
 
-        final Image bottomImage = new Image("/icons/lightbulb_mask.png");
-        final Image topImage = new Image("/icons/lightbulb.png");
-        final Group imageEffect = new ImageEffect().imageBlendEffect(bottomImage, topImage, Color.YELLOW);
+        bottomImage = new Image("/icons/lightbulb_mask.png");
+        topImage    = new Image("/icons/lightbulb.png");
+        imageEffect = new ImageEffect().imageBlendEffect(bottomImage, topImage, Color.YELLOW);
 
-        String id = null;
         try {
-            id = this.ambientLightRemote.getData().getLabel();
+            super.setUnitLabel(this.ambientLightRemote.getData().getLabel());
         } catch (CouldNotPerformException e) {
             e.printStackTrace();
-            id = "UnknownID";
+            super.setUnitLabel("UnknownID");
         }
 
-        initTitle(topImage, imageEffect, id);
+        initTitle();
         initContent();
     }
 
-    private void initTitle(final Image imageOff, final Group imageOn, final String title) {
+    @Override
+    protected void initTitle() {
         final ToggleSwitch toggleSwitch;
         final ImageView lightOff;
         final BorderPane borderPane;
@@ -91,22 +93,23 @@ public class AmbientLightPane extends TitledPane implements UnitPane {
         toggleSwitch = new ToggleSwitch();
 
         //image
-        lightOff = new ImageView(imageOff);
-        lightOff.setClip(new ImageView(imageOff));
+        lightOff = new ImageView(topImage);
+        lightOff.setClip(new ImageView(topImage));
         lightOff.setFitHeight(Constants.MIDDLEICON);
         lightOff.setFitWidth(Constants.MIDDLEICON);
 
         //borderPane for header of titledPane as "graphic"
         borderPane = new BorderPane();
         borderPane.setLeft(lightOff);
-        borderPane.setCenter(new Label(title));
+        borderPane.setCenter(new Label(super.getUnitLabel()));
         borderPane.setRight(toggleSwitch);
 
         this.getStyleClass().add("widgetPane");
         this.setGraphic(borderPane);
     }
 
-    private void initContent() {
+    @Override
+    protected void initContent() {
         final HBox hBox;
         final Pane colorContainer;
         final Pane colorRectBrightness;

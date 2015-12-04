@@ -20,6 +20,7 @@ package org.dc.bco.bcozy.view.devicepanes;
 
 import de.citec.dal.remote.unit.AmbientLightRemote;
 import de.citec.dal.remote.unit.DALRemoteService;
+import de.citec.dal.remote.unit.RollershutterRemote;
 import javafx.geometry.Insets;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.VBox;
@@ -50,7 +51,8 @@ public class UnitPaneContainer extends TitledPane {
         final AmbientLightPane ambientLightPane = new AmbientLightPane(new AmbientLightRemote());
         final AmbientLightPane ambientLightPane1 = new AmbientLightPane(new AmbientLightRemote());
         final AmbientLightPane ambientLightPane2 = new AmbientLightPane(new AmbientLightRemote());
-        vBox.getChildren().addAll(ambientLightPane, ambientLightPane1, ambientLightPane2);
+        final RollershutterPane rollershutterPane = new RollershutterPane(new RollershutterRemote());
+        vBox.getChildren().addAll(ambientLightPane, ambientLightPane1, ambientLightPane2, rollershutterPane);
     }
 
     /**

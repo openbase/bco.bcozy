@@ -53,7 +53,9 @@ public class ContextMenuController {
         final List<DALRemoteService> unitRemoteListOfLocation =
                 remotePool.getUnitRemoteListOfLocationAndClass(locationID, AmbientLightRemote.class);
 
-        foregroundPane.getContextMenu().getTitledPaneContainer().createAndAddNewTitledPane("AmbientLight",
-                unitRemoteListOfLocation);
+        if (!unitRemoteListOfLocation.isEmpty()) {
+            foregroundPane.getContextMenu().getTitledPaneContainer().createAndAddNewTitledPane("AmbientLight",
+                    unitRemoteListOfLocation);
+        }
     }
 }

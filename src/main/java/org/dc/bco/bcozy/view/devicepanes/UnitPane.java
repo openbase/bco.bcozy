@@ -19,14 +19,44 @@
 package org.dc.bco.bcozy.view.devicepanes;
 
 import de.citec.dal.remote.unit.DALRemoteService;
+import javafx.scene.control.TitledPane;
 
 /**
  * Created by tmichalski on 03.12.15.
  */
-public interface UnitPane {
+public abstract class UnitPane extends TitledPane {
+
+    private String unitLabel;
+
+    /**
+     * Getter for unitLabel.
+     * @return unitLabel
+     */
+    public String getUnitLabel() {
+        return unitLabel;
+    }
+
+    /**
+     * Setter for unitLabel.
+     * @param unitLabel unitLabel
+     */
+    public void setUnitLabel(final String unitLabel) {
+        this.unitLabel = unitLabel;
+    }
+
     /**
      * Returns the DALRemoteService.
      * @return DALRemoteService
      */
-    DALRemoteService getDALRemoteService();
+    abstract DALRemoteService getDALRemoteService();
+
+    /**
+     * Initialize the TitlePane.
+     */
+    abstract void initTitle();
+
+    /**
+     * Initialize the ContentPane.
+     */
+    abstract void initContent();
 }
