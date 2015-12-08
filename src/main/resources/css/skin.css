@@ -538,25 +538,26 @@
  ******************************************************************************/
 
 .progress-bar > .track {
-    -fx-background-color: -fx-text-base-color;
-    -fx-background-radius: 2.0;
-    -fx-padding: 0.0;
+    -fx-background-color: lightgray;
+    -fx-max-height: 18;
+    -fx-background-radius: 0.0;
+    -fx-padding: 2.0;
+    -fx-pref-height: 18;
+    -fx-pref-width: 150;
 }
 
 .progress-bar > .bar {
-    -fx-background-color: -custom-blue;
-    -fx-background-radius: 2.0;
-    -fx-background-insets: 0.0;
-    -fx-border-width: 0.0;
-    -fx-effect: null;
-}
-
-.progress-bar:indeterminate > .bar {
-    -fx-background-color: derive(-custom-blue, 50.0%);
-    -fx-background-radius: 2.0;
-    -fx-background-insets: 0.0;
-    -fx-border-width: 0.0;
-    -fx-effect: null;
+    -fx-max-height: 16;
+    -fx-pref-height: 16;
+    -fx-pref-width: 150;
+    -fx-background-color: linear-gradient(
+            from 0px .75em to .75em 0px,
+            repeat,
+            slategrey 0%,
+            slategrey 49%,
+            derive(slategrey, 30%) 50%,
+            derive(slategrey, 30%) 99%
+    );
 }
 
 /*******************************************************************************
