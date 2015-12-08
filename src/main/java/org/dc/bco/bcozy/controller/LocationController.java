@@ -91,7 +91,7 @@ public class LocationController {
         vertices.add(new Point2D(10, 140));
         //CHECKSTYLE.ON: MagicNumber
 
-        this.locationPane.addRoom("Blub", vertices);
+        this.locationPane.addRoom("Blub", vertices, false);
     }
 
     /**
@@ -122,14 +122,13 @@ public class LocationController {
         //check which location have a shape
         for (final LocationConfigType.LocationConfig locationConfig : list) {
             if (locationConfig.getPlacementConfig().hasShape()) {
-                LOGGER.info(locationConfig.getId() + " has a shape!");
-
                 RoomInstance newRoom;
                 if (roomInstanceMap.containsKey(locationConfig.getId())) {
                     newRoom = roomInstanceMap.get(locationConfig.getId());
                     newRoom.deleteAllVertices();
                 } else {
                     newRoom = new RoomInstance(locationConfig.getId());
+                    newRoom.setRoot(locationConfig.getRoot());
                 }
 
                 try {
@@ -151,7 +150,7 @@ public class LocationController {
                         newRoom.addVertex(vertex);
                     }
 
-                    locationPane.addRoom(locationConfig.getId(), newRoom.getVertices());
+                    locationPane.addRoom(locationConfig.getId(), newRoom.getVertices(), newRoom.isRoot());
                 } catch (TransformerException e) {
                     ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
                     LOGGER.warn("Could not gather transformation for room: " + locationConfig.getId());

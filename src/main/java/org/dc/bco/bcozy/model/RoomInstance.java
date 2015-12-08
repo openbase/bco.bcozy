@@ -32,6 +32,7 @@ public class RoomInstance {
 
     private final List<Point2D> shape;
     private final String roomID;
+    private boolean isRoot;
 
     /**
      * The constructor.
@@ -41,6 +42,7 @@ public class RoomInstance {
     public RoomInstance(final String roomID) {
         this.shape = new ArrayList<>();
         this.roomID = roomID;
+        this.isRoot = false;
     }
 
     /**
@@ -92,5 +94,22 @@ public class RoomInstance {
      */
     public void deleteAllVertices() {
         shape.clear();
+    }
+
+    /**
+     *
+     * @return Returns the isRoot parameter.
+     */
+    public boolean isRoot() {
+        return isRoot;
+    }
+
+    /**
+     * Sets the isRoot parameter.
+     *
+     * @param isRoot is root
+     */
+    public void setRoot(boolean isRoot) {
+        this.isRoot = isRoot;
     }
 }

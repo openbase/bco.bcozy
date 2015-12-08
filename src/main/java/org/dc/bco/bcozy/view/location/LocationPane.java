@@ -89,7 +89,7 @@ public class LocationPane extends StackPane {
      * @param roomID The room id
      * @param vertices A list of vertices which defines the shape of the room
      */
-    public void addRoom(final String roomID, final List<Point2D> vertices) {
+    public void addRoom(final String roomID, final List<Point2D> vertices, final boolean isRoot) {
         // TODO: Remove room with same ID
 //        for (Node node : locationViewContent.getChildren()) {
 //            if (node instanceof RoomPolygon) {
@@ -111,7 +111,13 @@ public class LocationPane extends StackPane {
         final RoomPolygon newRoom = new RoomPolygon(roomID, points);
 
         locationViewContent.getChildren().add(newRoom);
-        locationPaneDesktopControls.addMouseEventHandlerToRoom(newRoom);
+
+        if (!isRoot) {
+            locationPaneDesktopControls.addMouseEventHandlerToRoom(newRoom);
+        } else {
+            newRoom.setMouseTransparent(true);
+        }
+
     }
 
     private ScrollPane createZoomPane(final Group group) {
