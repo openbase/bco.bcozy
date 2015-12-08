@@ -78,7 +78,8 @@ public class RemotePool {
                 try {
                     initRegistryRemotes();
                     //fillHashes();
-                } catch (InterruptedException | CouldNotPerformException | TransformerFactory.TransformerFactoryException e) {
+                } catch (InterruptedException | CouldNotPerformException
+                        | TransformerFactory.TransformerFactoryException e) {
                     ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
                 }
             }
@@ -107,7 +108,8 @@ public class RemotePool {
      * @throws InterruptedException InterruptedException
      * @throws TransformerFactory.TransformerFactoryException TransformerFactoryException
      */
-    public void initRegistryRemotes() throws CouldNotPerformException, InterruptedException, TransformerFactory.TransformerFactoryException {
+    public void initRegistryRemotes() throws CouldNotPerformException, InterruptedException,
+            TransformerFactory.TransformerFactoryException {
         if (isInit) {
             LOGGER.info("INFO: RegistryRemotes were already initialized.");
             return;

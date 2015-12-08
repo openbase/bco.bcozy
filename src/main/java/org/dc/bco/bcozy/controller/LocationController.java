@@ -134,7 +134,8 @@ public class LocationController {
                 try {
                     // Get the transformation for the current room
                     final Transform transform =
-                            remotePool.getTransformReceiver().lookupTransform(rootId, locationConfig.getId(), System.currentTimeMillis());
+                            remotePool.getTransformReceiver()
+                                    .lookupTransform(rootId, locationConfig.getId(), System.currentTimeMillis());
 
                     // Get the shape of the room
                     final List<Vec3DDoubleType.Vec3DDouble> shape =

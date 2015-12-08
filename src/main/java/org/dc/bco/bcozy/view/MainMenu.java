@@ -26,7 +26,10 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import org.dc.bco.bcozy.view.mainmenupanes.ConnectionPane;
 import org.dc.bco.bcozy.view.mainmenupanes.UserPane;
 
 /**
@@ -34,13 +37,21 @@ import org.dc.bco.bcozy.view.mainmenupanes.UserPane;
  */
 public class MainMenu extends StackPane {
 
-    private final Button initRemoteButton, fetchLocationButton, fillHashesButton;
+    private final Button initRemoteButton;
+    private final Button fetchLocationButton;
+    private final Button fillHashesButton;
     private final UserPane userPane;
     private final FloatingButton mainMenuFloatingButton;
     private final VBox verticalLayout;
+    private final VBox verticalLayoutSmall;
     private final double height;
     private final double width;
     private boolean maximized;
+    private final Image logoImage;
+    private final ImageView logoView;
+    private final Image logoImageSmall;
+    private final ImageView logoViewSmall;
+    private final ConnectionPane connectionPane;
 
     /**
      * Constructor for the MainMenu.
@@ -56,6 +67,10 @@ public class MainMenu extends StackPane {
         this.setMinWidth(width);
 
         verticalLayout = new VBox(Constants.INSETS);
+        verticalLayout.setAlignment(Pos.TOP_CENTER);
+
+        verticalLayoutSmall = new VBox(Constants.INSETS);
+        verticalLayoutSmall.setAlignment(Pos.TOP_CENTER);
 
         userPane = new UserPane();
 
@@ -63,21 +78,46 @@ public class MainMenu extends StackPane {
         fetchLocationButton = new Button("Fetch Location");
         fillHashesButton = new Button("Fill Hashes");
 
-        //CHECKSTYLE.OFF: MultipleStringLiterals
-        initRemoteButton.getStyleClass().addAll("large-button", "visible-lg", "visible-md", "visible-sm", "visible-xs");
-        fetchLocationButton.getStyleClass().addAll("large-button", "visible-lg", "visible-md", "visible-sm", "visible-xs");
-        fillHashesButton.getStyleClass().addAll("large-button", "visible-lg", "visible-md", "visible-sm", "visible-xs");
-        //CHECKSTYLE.ON: MultipleStringLiterals
+        logoImage = new Image(getClass().getResourceAsStream("/icons/bcozy.png"));
+        logoView = new ImageView(logoImage);
+        logoView.setSmooth(true);
+        logoView.setFitWidth(Constants.MAXLOGOWIDTH);
+        logoView.setPreserveRatio(true);
 
-        verticalLayout.setPadding(new Insets(0.0, Constants.SMALLICON / 2, 0.0, 0.0));
-        verticalLayout.getChildren().addAll(userPane, initRemoteButton, fetchLocationButton, fillHashesButton);
+        logoImageSmall = new Image(getClass().getResourceAsStream("/icons/bc.png"));
+        logoViewSmall = new ImageView(logoImageSmall);
+        logoViewSmall.setSmooth(true);
+        logoViewSmall.setFitWidth(Constants.MIDDLEICON);
+        logoViewSmall.setPreserveRatio(true);
+
+        connectionPane = new ConnectionPane();
+
+        //verticalLayout.setPadding(new Insets(0.0, Constants.SMALLICON / 2, 0.0, 0.0));
+        verticalLayout.getChildren()
+                .addAll(logoView, userPane, initRemoteButton, fetchLocationButton, fillHashesButton, connectionPane);
+
+        //verticalLayoutSmall.setPadding(new Insets(0.0, Constants.SMALLICON / 2, 0.0, 0.0));
+        verticalLayoutSmall.getChildren()
+                .addAll(logoViewSmall);
 
         mainMenuFloatingButton = new FloatingButton("/icons/mainmenu.png");
+
         this.getChildren().addAll(verticalLayout, mainMenuFloatingButton);
         this.setAlignment(mainMenuFloatingButton, Pos.TOP_RIGHT);
         this.setMargin(mainMenuFloatingButton, new Insets(Constants.SMALLICON, 0, 0, 0));
         mainMenuFloatingButton.translateXProperty().set(Constants.SMALLICON);
+
+        //CHECKSTYLE.OFF: MultipleStringLiterals
+        initRemoteButton.getStyleClass().addAll("large-button", "visible-lg", "visible-md", "visible-sm", "visible-xs");
+        fetchLocationButton.getStyleClass()
+                .addAll("large-button", "visible-lg", "visible-md", "visible-sm", "visible-xs");
+        fillHashesButton.getStyleClass().addAll("large-button", "visible-lg", "visible-md", "visible-sm", "visible-xs");
+
+        verticalLayout.getStyleClass().addAll("padding-large");
+        verticalLayoutSmall.getStyleClass().addAll("padding-small");
+
         this.getStyleClass().addAll("dropshadow-right-bg", "floating-box", "main-menu", "padding-large");
+        //CHECKSTYLE.ON: MultipleStringLiterals
     }
 
     /**
@@ -136,6 +176,7 @@ public class MainMenu extends StackPane {
         this.maximized = true;
         this.setMinHeight(height);
         this.setMinWidth(width);
+        this.verticalLayout.getChildren().add(connectionPane);
         this.getChildren().clear();
         this.getChildren().addAll(verticalLayout, mainMenuFloatingButton);
     }
@@ -149,7 +190,8 @@ public class MainMenu extends StackPane {
         //TODO: This will be implemented soon.
         this.setMinHeight(height / 2);
         this.setMinWidth(width / 2);
+        this.verticalLayoutSmall.getChildren().add(connectionPane);
         this.getChildren().clear();
-        this.getChildren().addAll(mainMenuFloatingButton);
+        this.getChildren().addAll(verticalLayoutSmall, mainMenuFloatingButton);
     }
 }

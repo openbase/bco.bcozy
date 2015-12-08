@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="512.45599"
+   height="512"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="connection.svg"
+   inkscape:export-filename="/home/hendrik/git-repos/bcozy/src/main/resources/icons/connection-problem.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.98994948"
+     inkscape:cx="521.16054"
+     inkscape:cy="408.39341"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer4"
+     showgrid="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:window-width="1920"
+     inkscape:window-height="1149"
+     inkscape:window-x="0"
+     inkscape:window-y="25"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-98.311928,-88.369279)"
+     style="display:inline">
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3021"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"><flowRegion
+         id="flowRegion3023"><rect
+           id="rect3025"
+           width="40"
+           height="177.14285"
+           x="325.71429"
+           y="193.42857" /></flowRegion><flowPara
+         id="flowPara3027" /></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3039"
+       style="font-style:normal;font-weight:normal;font-size:422.91363525px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+       transform="matrix(0.94506323,0,0,0.94506323,18.534349,60.085902)"><flowRegion
+         id="flowRegion3041"><rect
+           id="rect3043"
+           width="2362.554"
+           height="1403.6567"
+           x="98.338654"
+           y="-44.986065" /></flowRegion><flowPara
+         id="flowPara4151"></flowPara></flowRoot>  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Upload"
+     style="display:inline">
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3039-2"
+       style="font-style:normal;font-weight:normal;font-size:422.91363525px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+       transform="matrix(0.23348007,0,0,0.23348007,302.37408,369.75444)"><flowRegion
+         id="flowRegion3041-9"><rect
+           id="rect3043-1"
+           width="2362.554"
+           height="1403.6567"
+           x="98.338654"
+           y="-44.986065" /></flowRegion><flowPara
+         id="flowPara4179"></flowPara></flowRoot>  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="Download"
+     style="display:inline">
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3039-2-1"
+       style="font-style:normal;font-weight:normal;font-size:422.91363525px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+       transform="matrix(0.23348007,0,0,0.23348007,385.52909,395.505)"><flowRegion
+         id="flowRegion3041-9-4"><rect
+           id="rect3043-1-5"
+           width="2362.554"
+           height="1403.6567"
+           x="98.338654"
+           y="-44.986065" /></flowRegion><flowPara
+         id="flowPara4179-83"></flowPara></flowRoot>  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer4"
+     inkscape:label="Successful"
+     style="display:inline">
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3039-2-4"
+       style="font-style:normal;font-weight:normal;font-size:422.91363525px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+       transform="matrix(0.28475889,0,0,0.28475889,361.99741,-2.8222201)"><flowRegion
+         id="flowRegion3041-9-2"><rect
+           id="rect3043-1-8"
+           width="2362.554"
+           height="1403.6567"
+           x="98.338654"
+           y="-44.986065" /></flowRegion><flowPara
+         id="flowPara4236"></flowPara></flowRoot>  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer5"
+     inkscape:label="Problem"
+     style="display:inline">
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3039-2-4-8"
+       style="font-style:normal;font-weight:normal;font-size:120.42842102px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+       transform="translate(390,18.775722)"><flowRegion
+         id="flowRegion3041-9-2-1"><rect
+           id="rect3043-1-8-2"
+           width="672.75824"
+           height="399.70374"
+           x="0.00021725379"
+           y="-34.408043" /></flowRegion><flowPara
+         id="flowPara4236-3"></flowPara></flowRoot>  </g>
+</svg>

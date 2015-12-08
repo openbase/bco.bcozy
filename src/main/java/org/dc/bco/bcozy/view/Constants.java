@@ -45,6 +45,11 @@ public final class Constants {
     public static final double MAXMENUWIDTH = 280.0;
 
     /**
+     * The max width for a main menu pane.
+     */
+    public static final double MAXLOGOWIDTH = 175.0;
+
+    /**
      * The insets for a icon.
      */
     public static final double ICONINSETS = 15.0;
@@ -74,6 +79,30 @@ public final class Constants {
      */
     public static final double STANDARDTEXTSIZE = 14.0;
 
+    /**
+     * The opacity value for fully transparent = invisible.
+     */
+    public static final double FULLYTRANSPARENT = 0.0;
+
+    /**
+     * The opacity value for fully opaque = visible.
+     */
+    public static final double NOTRANSPARENCY = 1.0;
+
+    /**
+     * The opacity value for nearly opaque style.
+     */
+    public static final double NEARLYTRANSPARENT = 0.3;
+
+    /**
+     * The duration for a pretty fast fade animation.
+     */
+    public static final double FASTFADEDURATION = 100.0;
+
+    /**
+     * The duration for a glowing fade animation.
+     */
+    public static final double GLOWINGFADEDURATION = 1000.0;
     /**
      * Private Constructor.
      */

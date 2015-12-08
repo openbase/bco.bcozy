@@ -75,6 +75,9 @@
 .insets {
     -fx-background-insets:  10.0, 10.0, 10.0, 10.0;
 }
+.insets-small {
+    -fx-background-insets:  5.0, 5.0, 5.0, 5.0;
+}
 
 .main-menu {
     -fx-background-insets:  10.0, 0.0, 10.0, 10.0;
