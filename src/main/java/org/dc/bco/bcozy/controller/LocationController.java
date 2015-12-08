@@ -75,7 +75,7 @@ public class LocationController {
         this.remotePool = remotePool;
         this.roomInstanceMap = new HashMap<>();
 
-        this.foregroundPane.getMainMenu().addLocationButtonEventHandler(event -> connectLocationRemote());
+        this.foregroundPane.getMainMenu().addFetchLocationButtonEventHandler(event -> connectLocationRemote());
     }
 
     /**

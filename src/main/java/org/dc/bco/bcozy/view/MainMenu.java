@@ -34,8 +34,7 @@ import org.dc.bco.bcozy.view.mainmenupanes.UserPane;
  */
 public class MainMenu extends StackPane {
 
-    private final Button mainButton;
-    private final Button locationButton;
+    private final Button initRemoteButton, fetchLocationButton, fillHashesButton;
     private final UserPane userPane;
     private final FloatingButton mainMenuFloatingButton;
     private final VBox verticalLayout;
@@ -60,16 +59,18 @@ public class MainMenu extends StackPane {
 
         userPane = new UserPane();
 
-        mainButton = new Button("Init RegistryRemotes");
-        locationButton = new Button("Fetch Location");
+        initRemoteButton = new Button("Init RegistryRemotes");
+        fetchLocationButton = new Button("Fetch Location");
+        fillHashesButton = new Button("Fill Hashes");
 
         //CHECKSTYLE.OFF: MultipleStringLiterals
-        mainButton.getStyleClass().addAll("large-button", "visible-lg", "visible-md", "visible-sm", "visible-xs");
-        locationButton.getStyleClass().addAll("large-button", "visible-lg", "visible-md", "visible-sm", "visible-xs");
+        initRemoteButton.getStyleClass().addAll("large-button", "visible-lg", "visible-md", "visible-sm", "visible-xs");
+        fetchLocationButton.getStyleClass().addAll("large-button", "visible-lg", "visible-md", "visible-sm", "visible-xs");
+        fillHashesButton.getStyleClass().addAll("large-button", "visible-lg", "visible-md", "visible-sm", "visible-xs");
         //CHECKSTYLE.ON: MultipleStringLiterals
 
         verticalLayout.setPadding(new Insets(0.0, Constants.SMALLICON / 2, 0.0, 0.0));
-        verticalLayout.getChildren().addAll(userPane, mainButton, locationButton);
+        verticalLayout.getChildren().addAll(userPane, initRemoteButton, fetchLocationButton, fillHashesButton);
 
         mainMenuFloatingButton = new FloatingButton("/icons/mainmenu.png");
         this.getChildren().addAll(verticalLayout, mainMenuFloatingButton);
@@ -80,19 +81,27 @@ public class MainMenu extends StackPane {
     }
 
     /**
-     * Configure the MainButton.
+     * Configure the initRemoteButton.
      * @param eventHandler EventHandler
      */
-    public void addMainButtonEventHandler(final EventHandler<ActionEvent> eventHandler) {
-        mainButton.setOnAction(eventHandler);
+    public void addInitRemoteButtonEventHandler(final EventHandler<ActionEvent> eventHandler) {
+        initRemoteButton.setOnAction(eventHandler);
     }
 
     /**
-     * Configure the LocationButton.
+     * Configure the fetchLocationButton.
      * @param eventHandler EventHandler
      */
-    public void addLocationButtonEventHandler(final EventHandler<ActionEvent> eventHandler) {
-        locationButton.setOnAction(eventHandler);
+    public void addFetchLocationButtonEventHandler(final EventHandler<ActionEvent> eventHandler) {
+        fetchLocationButton.setOnAction(eventHandler);
+    }
+
+    /**
+     * Configure the fillHashesButton.
+     * @param eventHandler EventHandler
+     */
+    public void addFillHashesButtonEventHandler(final EventHandler<ActionEvent> eventHandler) {
+        fillHashesButton.setOnAction(eventHandler);
     }
 
     /**

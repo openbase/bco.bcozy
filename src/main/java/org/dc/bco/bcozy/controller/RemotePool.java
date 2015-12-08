@@ -72,13 +72,24 @@ public class RemotePool {
     public RemotePool(final ForegroundPane foregroundPane) {
         this.foregroundPane = foregroundPane;
 
-        this.foregroundPane.getMainMenu().addMainButtonEventHandler(new EventHandler<ActionEvent>() {
+        this.foregroundPane.getMainMenu().addInitRemoteButtonEventHandler(new EventHandler<ActionEvent>() {
             @Override
             public void handle(final ActionEvent event) {
                 try {
                     initRegistryRemotes();
                     //fillHashes();
                 } catch (InterruptedException | CouldNotPerformException | TransformerFactory.TransformerFactoryException e) {
+                    ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                }
+            }
+        });
+
+        this.foregroundPane.getMainMenu().addFillHashesButtonEventHandler(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(final ActionEvent event) {
+                try {
+                    fillHashes();
+                } catch (CouldNotPerformException e) {
                     ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
                 }
             }
