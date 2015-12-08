@@ -20,6 +20,7 @@ package org.dc.bco.bcozy.view;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.AnchorPane;
 
 /**
@@ -28,6 +29,7 @@ import javafx.scene.layout.AnchorPane;
 public class InfoFooter extends AnchorPane {
 
     private final Label mouseOverText;
+    private final ProgressBar progressBar;
     /**
      * Constructor for the InfoFooter.
      * @param height Height
@@ -37,13 +39,15 @@ public class InfoFooter extends AnchorPane {
         this.mouseOverText = new Label();
         this.mouseOverText.getStyleClass().add("small-label");
         this.mouseOverText.setAlignment(Pos.CENTER);
-        this.getChildren().add(mouseOverText);
+        this.progressBar = new ProgressBar(-1.0);
+        this.progressBar.setVisible(false);
+        this.getChildren().addAll(mouseOverText, progressBar);
         this.setPrefHeight(height);
         this.setPrefWidth(width);
         this.getStyleClass().add("dropshadow-top-bg");
         this.getStyleClass().add("info-footer");
         this.setLeftAnchor(mouseOverText, Constants.INSETS);
-        this.setRightAnchor(mouseOverText, Constants.INSETS);
+        this.setRightAnchor(progressBar, Constants.INSETS);
 
     }
 
@@ -55,4 +59,11 @@ public class InfoFooter extends AnchorPane {
         return mouseOverText;
     }
 
+    /**
+     * Getter for the progressBar.
+     * @return an instance of the progress bar.
+     */
+    public ProgressBar getProgressBar() {
+        return progressBar;
+    }
 }

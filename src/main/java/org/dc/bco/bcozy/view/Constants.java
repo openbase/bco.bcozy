@@ -54,18 +54,25 @@ public final class Constants {
      */
     public static final double FULLROTATION = 360.0;
 
+    /**
+     * The value for a full rotation.
+     */
+    public static final double TRIGGERDISTANCE = 200.0;
 
     /**
      * The relation between meters and pixels.
      */
     public static final double METERTOPIXEL = 30.0;
 
-
     /**
      * The stroke width of the rooms.
      */
     public static final double ROOMSTROKEWIDTH = 1.0;
 
+    /**
+     * The standard text size to be used when loading a new font.
+     */
+    public static final double STANDARDTEXTSIZE = 14.0;
 
     /**
      * Private Constructor.

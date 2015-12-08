@@ -18,10 +18,12 @@
  */
 package org.dc.bco.bcozy.view;
 
+import javafx.geometry.Orientation;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import org.controlsfx.control.HiddenSidesPane;
 import org.dc.bco.bcozy.view.devicepanes.TitledPaneContainer;
 
 /**
@@ -51,9 +53,20 @@ public class ContextMenu extends VBox {
 
         final ScrollPane verticalScrollPane = new ScrollPane();
         verticalScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        verticalScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        verticalScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
-        //TODO: This just won't scale on full width :((((
+        final ScrollBar scrollBar = new ScrollBar();
+        scrollBar.setOrientation(Orientation.VERTICAL);
+        final HiddenSidesPane hiddenSidesPane = new HiddenSidesPane();
+        hiddenSidesPane.setContent(verticalScrollPane);
+        hiddenSidesPane.setRight(scrollBar);
+        hiddenSidesPane.setTriggerDistance(Constants.TRIGGERDISTANCE);
+
+        scrollBar.maxProperty().bind(verticalScrollPane.vmaxProperty());
+        scrollBar.minProperty().bind(verticalScrollPane.vminProperty());
+
+        verticalScrollPane.vvalueProperty().bindBidirectional(scrollBar.valueProperty());
+
         contextSortingPane = new ContextSortingPane(width + Constants.INSETS);
         contextSortingPane.setMaxWidth(Double.MAX_VALUE);
 
@@ -61,12 +74,12 @@ public class ContextMenu extends VBox {
 
         verticalScrollPane.setFitToWidth(true);
         verticalScrollPane.setContent(titledPaneContainer);
-        //CHECKSTYLE.OFF: MagicNumber
-        //verticalScrollPane.setMaxHeight(height - 200.0);
-        //CHECKSTYLE.ON: MagicNumber
+        //TODO: Find a nicer way to scroll the size of the scroll bar thumb
+        scrollBar.setVisibleAmount(0.25);
+        //scrollBar.visibleAmountProperty().bind();
 
-        this.getChildren().addAll(roomInfo, contextSortingPane, verticalScrollPane);
-        VBox.setVgrow(contextSortingPane, Priority.ALWAYS);
+        this.getChildren().addAll(roomInfo, contextSortingPane, hiddenSidesPane);
+        //VBox.setVgrow(contextSortingPane, Priority.ALWAYS);
 
         //CHECKSTYLE.OFF: MultipleStringLiterals
         this.getStyleClass().addAll("dropshadow-left-bg", "context-menu", "padding-large");

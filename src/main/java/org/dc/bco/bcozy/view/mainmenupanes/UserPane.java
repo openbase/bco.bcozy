@@ -28,6 +28,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import org.dc.bco.bcozy.view.Constants;
 
+import java.util.Locale;
+import java.util.ResourceBundle;
+
 /**
  * Created by hoestreich on 11/24/15.
  */
@@ -56,6 +59,9 @@ public class UserPane extends VBox {
      */
     public UserPane() {
 
+        final ResourceBundle languageBundle = ResourceBundle
+                .getBundle("languages.languages", new Locale("de", "DE"));
+
         // Case: No user logged in
         final Image icon = new Image(getClass().getResourceAsStream("/icons/user_fa.png"));
         final ImageView userIconImageView = new ImageView(icon);
@@ -63,16 +69,16 @@ public class UserPane extends VBox {
         userIconImageView.setFitWidth(Constants.BIGICON);
         userIcon = new PaneElement(userIconImageView);
         userIcon.setMaxWidth(Constants.MAXMENUWIDTH);
-        openLoginBtn = new Button("Open Login");
+        openLoginBtn = new Button(languageBundle.getString("startLogin"));
         login = new PaneElement(openLoginBtn);
         login.setMaxWidth(Constants.MAXMENUWIDTH);
 
         // Case: Login active
-        final Label nameLbl = new Label("Name:");
+        final Label nameLbl = new Label(languageBundle.getString("username"));
         nameTxt = new TextField();
-        final Label pwLbl = new Label("Password:");
+        final Label pwLbl = new Label(languageBundle.getString("password"));
         passwordField = new PasswordField();
-        loginBtn = new Button("Login");
+        loginBtn = new Button(languageBundle.getString("login"));
         final Image backIcon = new Image(getClass().getResourceAsStream("/icons/back.png"));
         final ImageView imageViewBackIcon = new ImageView(backIcon);
         imageViewBackIcon.setFitWidth(Constants.SMALLICON);

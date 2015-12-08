@@ -7,8 +7,9 @@
      -fx-background-color: -dark;
 
     /*default font */
-    -fx-font-family: 'Helvetica Neue';
-    -fx-font-size: 25.0px;
+    /*-fx-font-family: 'Helvetica Neue';*/
+    -fx-font-family: 'Roboto Regular';
+    -fx-font-size: 18.0px;
     -fx-font-weight: 600;
     -fx-disabled-opacity: 0.6;
 
@@ -101,7 +102,7 @@
 }
 
 .size-variant-desktop {
-    -fx-font-size: 16.0;
+    -fx-font-size: 12.0;
 }
 
 /*******************************************************************************
@@ -168,29 +169,39 @@
      -fx-background-color: derive(-bluegrey-50, -20.0%);
     -fx-background-insets:  0.0;
 }
-
+.toggle-switch .thumb {
+    -fx-background-radius: 0.0em;
+}
+.toggle-switch .thumb-area{
+    -fx-background-radius: 0.0;
+    -fx-background-color: indianred;
+}
+.toggle-switch:selected .thumb-area{
+    -fx-background-radius: 0.0;
+    -fx-background-color: limegreen;
+}
 .large-button {
     -fx-min-width: 80;
 }
 .large-button:large-device {
     -fx-content-display : top;
     -fx-graphic-text-gap: 5;
-    -fx-font-size       : 18;
+    -fx-font-size       : 14;
     -fx-padding         : 0.7em 0.9em 0.7em 0.9em;
 }
 .large-button:medium-device {
     -fx-graphic-text-gap: 5;
-    -fx-font-size       : 16;
+    -fx-font-size       : 12;
     -fx-padding         : 0.7em 0.5em 0.7em 0.5em;
 }
 .large-button:small-device {
     -fx-graphic-text-gap: 5;
-    -fx-font-size       : 14;
+    -fx-font-size       : 10;
     -fx-padding         : 0.5em 0.4em 0.5em 0.4em;
 }
 .large-button:extreme-small-device {
     -visibility        : visible;
-    -fx-font-size       : 10;
+    -fx-font-size       : 8;
     /*-fx-content-display: graphic-only;*/
     -fx-padding        : 0.3em;
 }
@@ -232,21 +243,21 @@
 }
 
 .text-area:focused, .text-field:focused {
-    -fx-background-color: -bluegrey-50, derive(-bluegrey-50, 80.0%);
+    -fx-background-color: derive(-bluegrey-50, 80.0%);
     -fx-background-insets: 0.0, 0.2em;
     -fx-background-radius: 2.0;
 }
 
 .scroll-bar:vertical > .track-background,
 .scroll-bar:horizontal > .track-background{
-    -fx-background-color: derive(-bluegrey-100, 50.0%);
+    -fx-background-color: transparent;
     -fx-background-insets: 0.0;
     -fx-padding:3px;
 }
 
 .scroll-bar:vertical > .thumb,
 .scroll-bar:horizontal > .thumb {
-    -fx-background-color: -bluegrey-500;
+    -fx-background-color: derive(-bluegrey-50, 80.0%);
     -fx-background-insets: 0.0;
     -fx-background-radius: 0.0;
     -fx-padding:3px;
@@ -257,18 +268,26 @@
 .scroll-bar:hover > .increment-button,
 .scroll-bar:hover > .decrement-button {
     -fx-background-color: transparent;
-    -fx-padding:3px;
+    -fx-padding:5px;
 }
 
 .scroll-bar > .increment-button > .increment-arrow,
 .scroll-bar > .decrement-button > .decrement-arrow {
-    -fx-background-color: white;
-    -fx-padding:3px;
+    -fx-background-color: darkgray;
+    -fx-padding:5px;
 }
-
 .scroll-bar > .track-background{
     -fx-background-color: transparent;
-    -fx-padding:3px;
+    /*-fx-padding:3px;*/
+    -fx-padding:0;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane {
+    -fx-background-color: transparent;
 }
 
 .plus-minus-slider {

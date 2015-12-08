@@ -28,6 +28,7 @@ import de.citec.jul.exception.printer.LogLevel;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
+import javafx.scene.text.Font;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.dc.bco.bcozy.controller.ContextMenuController;
@@ -35,6 +36,7 @@ import org.dc.bco.bcozy.controller.CenterPaneController;
 import org.dc.bco.bcozy.controller.LocationController;
 import org.dc.bco.bcozy.controller.MainMenuController;
 import org.dc.bco.bcozy.controller.RemotePool;
+import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.ForegroundPane;
 import org.dc.bco.bcozy.view.location.LocationPane;
 import org.slf4j.Logger;
@@ -78,11 +80,14 @@ public class BCozy extends Application {
             LOGGER.info(APP_NAME + " finished unexpected.");
         }
         LOGGER.info(APP_NAME + " finished.");
-
     }
 
     @Override
     public void start(final Stage primaryStage) {
+
+        // load the tron font.
+        Font.loadFont(BCozy.class.getClassLoader().getResource("fonts/Roboto-Thin.ttf").toExternalForm(),
+                Constants.STANDARDTEXTSIZE);
 
         final double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
         final double screenHeight = Screen.getPrimary().getVisualBounds().getHeight();
@@ -116,7 +121,7 @@ public class BCozy extends Application {
 
         //instantiate RemotePool
         final RemotePool remotePool = new RemotePool(foregroundPane);
-        final ContextMenuController contextMenuController = new ContextMenuController(foregroundPane, remotePool);
+        new ContextMenuController(foregroundPane, remotePool);
 
         //Uncomment for contextMenu Test
         /*

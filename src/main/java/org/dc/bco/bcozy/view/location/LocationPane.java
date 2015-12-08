@@ -125,7 +125,7 @@ public class LocationPane extends StackPane {
         scroller.setContent(scrollContent);
         scroller.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scroller.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        scroller.getStylesheets().add("css/transparent_scrollpane.css");
+        //scroller.getStylesheets().add("css/transparent_scrollpane.css");
 
         scroller.viewportBoundsProperty().addListener((observable, oldValue, newValue) -> {
             zoomPane.setMinSize(newValue.getWidth(), newValue.getHeight());
