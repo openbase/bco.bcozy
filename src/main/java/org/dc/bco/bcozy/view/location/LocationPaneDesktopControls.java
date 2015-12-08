@@ -31,11 +31,15 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 import org.dc.bco.bcozy.view.ForegroundPane;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  */
 public class LocationPaneDesktopControls {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(LocationPaneDesktopControls.class);
 
     private final LocationPane locationPane;
     private final ForegroundPane foregroundPane;
@@ -119,6 +123,25 @@ public class LocationPaneDesktopControls {
         });
     }
 
+    private void scaleFitRoom(final StackPane zoomPane, final Group group, final Group scrollContent,
+                              final ScrollPane scroller, final RoomPolygon room) {
+        final Point2D scrollOffset = figureScrollOffset(scrollContent, scroller);
+
+        LOGGER.warn("getZoomPaneHeight: " + this.locationPane.getZoomPaneHeight());
+        LOGGER.warn("room.prefHeight: " + room.prefHeight(0));
+
+        double xScale = (this.locationPane.getWidth() / room.prefWidth(0)) * 0.3;
+        double yScale = (this.locationPane.getHeight() / room.prefHeight(0)) * 0.5;
+
+        double scale = (xScale < yScale) ? xScale : yScale;
+        double scaleFactor = scale / group.getScaleX();
+
+        group.setScaleX(scale);
+        group.setScaleY(scale);
+
+        repositionScroller(scrollContent, scroller, scaleFactor, scrollOffset);
+    }
+
     private Point2D figureScrollOffset(final Node scrollContent, final ScrollPane scroller) {
         final double extraWidth = scrollContent.getLayoutBounds().getWidth() - scroller.getViewportBounds().getWidth();
         final double hScrollProportion = (scroller.getHvalue() - scroller.getHmin())
@@ -157,6 +180,19 @@ public class LocationPaneDesktopControls {
         }
     }
 
+    /**
+     * ZoomFit the locationPane to the root.
+     */
+    public void zoomFit() {
+        //TODO: handle case where no root room exists
+        scaleFitRoom(locationPane.getZoomPane(), locationPane.getLocationViewContent(),
+                locationPane.getScrollContent(), locationPane.getScroller(), locationPane.getRootRoom());
+        centerScrollPaneToPointAnimated(locationPane.getScrollPane(),
+                new Point2D(locationPane.getRootRoom().getCenterX(), locationPane.getRootRoom().getCenterY()),
+                locationPane.getLocationViewContent(), locationPane.getZoomPaneWidth(),
+                locationPane.getZoomPaneHeight());
+    }
+
 
     /**
      * Adds a mouse eventHandler to the room.
@@ -173,19 +209,24 @@ public class LocationPaneDesktopControls {
         room.setOnMouseClicked(event -> {
             event.consume();
 
-            centerScrollPaneToPointAnimated(scrollPane,
-                    new Point2D(room.getCenterX(), room.getCenterY()),
-                    locationViewContent, zoomPaneWidth, zoomPaneHeight);
             //TODO: this isn't very nice yet, will be improved if we have a model with the rooms
             if (room.isSelected()) {
                 locationPane.getSelectedRoom().toggleSelected();
-                //CHECKSTYLE.OFF: MagicNumber
+                scaleFitRoom(locationPane.getZoomPane(), locationPane.getLocationViewContent(),
+                        locationPane.getScrollContent(), locationPane.getScroller(), locationPane.getRootRoom());
+                centerScrollPaneToPointAnimated(scrollPane,
+                        new Point2D(locationPane.getRootRoom().getCenterX(), locationPane.getRootRoom().getCenterY()),
+                        locationViewContent, zoomPaneWidth, zoomPaneHeight);
                 locationPane.setSelectedRoom(new RoomPolygon("none", 0.0, 0.0, 0.0, 0.0));
-                //CHECKSTYLE.ON: MagicNumber
                 foregroundPane.getContextMenu().getRoomInfo()
-                        .setText(locationPane.getSelectedRoom().getRoomName());
+                        .setText(locationPane.getRootRoom().getRoomName());
             } else {
                 locationPane.getSelectedRoom().toggleSelected();
+                scaleFitRoom(locationPane.getZoomPane(), locationPane.getLocationViewContent(),
+                        locationPane.getScrollContent(), locationPane.getScroller(), room);
+                centerScrollPaneToPointAnimated(scrollPane,
+                        new Point2D(room.getCenterX(), room.getCenterY()),
+                        locationViewContent, zoomPaneWidth, zoomPaneHeight);
                 room.toggleSelected();
                 locationPane.setSelectedRoom(room);
                 foregroundPane.getContextMenu().getRoomInfo()

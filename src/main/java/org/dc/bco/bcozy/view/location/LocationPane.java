@@ -39,7 +39,7 @@ public class LocationPane extends StackPane {
     private static final double ZOOM_PANE_HEIGHT = 2000;
 
     private final Group locationViewContent;
-    private RoomPolygon selectedRoom;
+    private RoomPolygon selectedRoom, rootRoom;
     private Group scrollContent;
     private ScrollPane scroller;
     private StackPane zoomPane;
@@ -116,6 +116,7 @@ public class LocationPane extends StackPane {
             locationPaneDesktopControls.addMouseEventHandlerToRoom(newRoom);
         } else {
             newRoom.setMouseTransparent(true);
+            this.rootRoom = newRoom;
         }
 
     }
@@ -215,5 +216,20 @@ public class LocationPane extends StackPane {
      */
     public void setSelectedRoom(final RoomPolygon selectedRoom) {
         this.selectedRoom = selectedRoom;
+    }
+
+    /**
+     * Getter for the rootRoom.
+     * @return rootRoom
+     */
+    public RoomPolygon getRootRoom() {
+        return rootRoom;
+    }
+
+    /**
+     * ZoomFits to the root if available.
+     */
+    public void zoomFit() {
+        this.locationPaneDesktopControls.zoomFit();
     }
 }

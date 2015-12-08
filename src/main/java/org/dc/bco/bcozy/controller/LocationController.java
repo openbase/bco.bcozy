@@ -161,5 +161,7 @@ public class LocationController {
                 }
             }
         }
+
+        locationPane.zoomFit();
     }
 }
