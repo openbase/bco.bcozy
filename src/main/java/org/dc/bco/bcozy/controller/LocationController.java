@@ -31,9 +31,7 @@ import org.dc.bco.bcozy.view.location.LocationPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rct.Transform;
-import rct.TransformReceiver;
 import rct.TransformerException;
-import rct.TransformerFactory;
 import rst.math.Vec3DDoubleType;
 import rst.spatial.LocationConfigType;
 
@@ -58,8 +56,6 @@ public class LocationController {
     private final RemotePool remotePool;
     private LocationRegistryRemote locationRegistryRemote;
 
-    private TransformReceiver receiver;
-
     private final Map<String, RoomInstance> roomInstanceMap;
 
     /**
@@ -78,12 +74,6 @@ public class LocationController {
         this.locationPane = locationPane;
         this.remotePool = remotePool;
         this.roomInstanceMap = new HashMap<>();
-
-        try {
-            this.receiver = TransformerFactory.getInstance().createTransformReceiver();
-        } catch (TransformerFactory.TransformerFactoryException e) {
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-        }
 
         this.foregroundPane.getMainMenu().addLocationButtonEventHandler(event -> connectLocationRemote());
     }
@@ -129,11 +119,10 @@ public class LocationController {
             }
         }
 
-        //check which children have a shape
+        //check which location have a shape
         for (final LocationConfigType.LocationConfig locationConfig : list) {
-            if (childList.toString().contains(locationConfig.getId())
-                    && locationConfig.getPlacementConfig().hasShape()) {
-                LOGGER.info(locationConfig.getId() + " is first child and has a shape!");
+            if (locationConfig.getPlacementConfig().hasShape()) {
+                LOGGER.info(locationConfig.getId() + " has a shape!");
 
                 RoomInstance newRoom;
                 if (roomInstanceMap.containsKey(locationConfig.getId())) {
@@ -146,7 +135,7 @@ public class LocationController {
                 try {
                     // Get the transformation for the current room
                     final Transform transform =
-                            receiver.lookupTransform(rootId, locationConfig.getId(), System.currentTimeMillis());
+                            remotePool.getTransformReceiver().lookupTransform(rootId, locationConfig.getId(), System.currentTimeMillis());
 
                     // Get the shape of the room
                     final List<Vec3DDoubleType.Vec3DDouble> shape =
@@ -166,6 +155,9 @@ public class LocationController {
                 } catch (TransformerException e) {
                     ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
                     LOGGER.warn("Could not gather transformation for room: " + locationConfig.getId());
+                } catch (CouldNotPerformException e) {
+                    ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                    LOGGER.warn("TransformReceiver was not properly initialized.");
                 }
             }
         }

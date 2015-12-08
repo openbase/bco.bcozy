@@ -31,6 +31,8 @@ import javafx.event.EventHandler;
 import org.dc.bco.bcozy.view.ForegroundPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rct.TransformReceiver;
+import rct.TransformerFactory;
 import rst.homeautomation.unit.UnitConfigType;
 import rst.spatial.LocationConfigType;
 import rst.homeautomation.unit.UnitTemplateType.UnitTemplate.UnitType;
@@ -58,12 +60,13 @@ public class RemotePool {
     private final Map<String, HashMap<String, DALRemoteService>> locationMap;
     private LocationRegistryRemote locationRegistryRemote;
     private DeviceRegistryRemote deviceRegistryRemote;
+    private TransformReceiver transformReceiver;
 
     private boolean isInit;
 
     /**
      * Constructor for the Remotecontroller.
-     * @throws InstantiationException InstantiationException
+     *
      * @param foregroundPane ForegroundPane
      */
     public RemotePool(final ForegroundPane foregroundPane) {
@@ -74,8 +77,8 @@ public class RemotePool {
             public void handle(final ActionEvent event) {
                 try {
                     initRegistryRemotes();
-                    fillHashes();
-                } catch (InterruptedException | CouldNotPerformException e) {
+                    //fillHashes();
+                } catch (InterruptedException | CouldNotPerformException | TransformerFactory.TransformerFactoryException e) {
                     ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
                 }
             }
@@ -91,8 +94,9 @@ public class RemotePool {
      * Initiate RegistryRemotes.
      * @throws CouldNotPerformException CouldNotPerformException
      * @throws InterruptedException InterruptedException
+     * @throws TransformerFactory.TransformerFactoryException TransformerFactoryException
      */
-    public void initRegistryRemotes() throws CouldNotPerformException, InterruptedException {
+    public void initRegistryRemotes() throws CouldNotPerformException, InterruptedException, TransformerFactory.TransformerFactoryException {
         if (isInit) {
             LOGGER.info("INFO: RegistryRemotes were already initialized.");
             return;
@@ -108,6 +112,14 @@ public class RemotePool {
             deviceRegistryRemote.activate();
         } catch (CouldNotPerformException | InterruptedException e) {
             locationRegistryRemote.shutdown();
+            throw e;
+        }
+
+        try {
+            this.transformReceiver = TransformerFactory.getInstance().createTransformReceiver();
+        } catch (TransformerFactory.TransformerFactoryException e) {
+            locationRegistryRemote.shutdown();
+            deviceRegistryRemote.shutdown();
             throw e;
         }
 
@@ -313,6 +325,7 @@ public class RemotePool {
      * Shut down all DALRemotes and the RegistryRemotes.
      */
     public void shutdownAllRemotes() {
+        //TODO: somehow not shutting down properly?!
         final Iterator<Map.Entry<Class, HashMap<String, DALRemoteService>>> classIterator =
                 deviceMap.entrySet().iterator();
         while (classIterator.hasNext()) {
@@ -324,12 +337,25 @@ public class RemotePool {
             }
         }
 
-        if (locationRegistryRemote.isActive()) {
-            locationRegistryRemote.shutdown();
+        try {
+            if (locationRegistryRemote.isActive()) {
+                LOGGER.info("Shutting down locationRegistryRemote...");
+                locationRegistryRemote.shutdown();
+            }
+        } catch (NullPointerException e) {
+            LOGGER.info("No locationRegistryRemote to shutdown...");
         }
-        if (deviceRegistryRemote.isActive()) {
-            deviceRegistryRemote.shutdown();
+
+        try {
+            if (deviceRegistryRemote.isActive()) {
+                LOGGER.info("Shutting down deviceRegistryRemote...");
+                deviceRegistryRemote.shutdown();
+            }
+        } catch (NullPointerException e) {
+            LOGGER.info("No deviceRegistryRemote to shutdown...");
         }
+
+        TransformerFactory.killInstance();
 
         isInit = false;
     }
@@ -354,5 +380,16 @@ public class RemotePool {
         checkInit();
 
         return locationRegistryRemote;
+    }
+
+    /**
+     * Returns the TransformReceiver.
+     * @return TransformReceiver
+     * @throws CouldNotPerformException CouldNotPerformException
+     */
+    public TransformReceiver getTransformReceiver() throws CouldNotPerformException {
+        checkInit();
+
+        return transformReceiver;
     }
 }

@@ -140,6 +140,8 @@ public class BCozy extends Application {
         } catch (InstantiationException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
+
+        primaryStage.setOnCloseRequest(event -> remotePool.shutdownAllRemotes());
     }
 
     private static void registerListeners() {

@@ -57,6 +57,7 @@ public class CenterPane extends StackPane {
         this.setAlignment(popUpParent, Pos.BOTTOM_RIGHT);
         this.setAlignment(fullscreen, Pos.TOP_RIGHT);
         this.setAlignment(clock, Pos.TOP_CENTER);
+        this.setPickOnBounds(false);
         popUpParent.translateYProperty().set(-Constants.INSETS);
         fullscreen.translateYProperty().set(Constants.INSETS);
         //CHECKSTYLE.OFF: MultipleStringLiterals
