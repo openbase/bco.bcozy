@@ -47,17 +47,15 @@ public class ImageEffect {
      */
     public Group imageBlendEffect(final Image bottom, final Image top, final Color color) {
 
-        //SvgImageLoaderFactory.install();
-
         bottomView = new ImageView(bottom);
         bottomView.setScaleX(SCALE);
         bottomView.setScaleY(SCALE);
-        bottomView.setClip(new ImageView(bottom));
+        //bottomView.setClip(new ImageView(bottom));
 
         topView = new ImageView(top);
         topView.setScaleX(SCALE);
         topView.setScaleY(SCALE);
-        topView.setClip(new ImageView(top));
+        //topView.setClip(new ImageView(top));
 
         //color property
         final ColorAdjust monochrome = new ColorAdjust();

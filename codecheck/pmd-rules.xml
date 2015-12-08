@@ -97,4 +97,14 @@
              <property name="violationSuppressRegex" value=".*method (equals|hashCode)\(\).*"/>
         </properties>
     </rule>
+    <rule ref="rulesets/java/codesize.xml/TooManyMethods">
+        <properties>
+            <property name="maxmethods" value="20" />
+        </properties>
+    </rule>
+    <rule ref="rulesets/java/codesize.xml/ExcessiveMethodLength">
+        <properties>
+            <property name="minimum" value="200" />
+        </properties>
+    </rule>
 </ruleset>

@@ -48,8 +48,6 @@ import org.dc.bco.bcozy.view.ImageEffect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-//import java.util.List;
-
 /**
  * Created on 03.12.15.
  */
@@ -89,6 +87,9 @@ public class AmbientLightPane extends UnitPane {
         initContent();
     }
 
+    /**
+     * Method creates the header content of the titledPane.
+     */
     @Override
     protected void initTitle() {
         final ToggleSwitch toggleSwitch;
@@ -100,7 +101,6 @@ public class AmbientLightPane extends UnitPane {
 
         //image
         lightOff = new ImageView(topImage);
-        lightOff.setClip(new ImageView(topImage));
         lightOff.setFitHeight(Constants.MIDDLEICON);
         lightOff.setFitWidth(Constants.MIDDLEICON);
 
@@ -110,19 +110,22 @@ public class AmbientLightPane extends UnitPane {
         borderPane.setCenter(new Label(super.getUnitLabel()));
         borderPane.setRight(toggleSwitch);
 
-        this.getStyleClass().add("widgetPane");
+        this.getStyleClass().add("widget-pane");
         this.setGraphic(borderPane);
     }
 
+    /**
+     * Method creates the body content of the titledPane.
+     */
     @Override
     protected void initContent() {
         final HBox hBox;
         final Pane colorContainer;
-        final Pane colorRectBrightness;
         final Pane colorHue;
-        final Pane colorBar;
         final Circle circle;
-        final Rectangle rectangle;
+        final Rectangle rectangleSelector;
+        final Pane colorCircleContainer;
+        final Shape hollowCircle;
 
         final DoubleProperty hueValue = new SimpleDoubleProperty(-1);
         final DoubleProperty saturation = new SimpleDoubleProperty(-1);
@@ -131,17 +134,18 @@ public class AmbientLightPane extends UnitPane {
         //CHECKSTYLE.OFF: MagicNumber
 
         //mouse event for saturation & brightness rectangle
-        final EventHandler<MouseEvent> rectangleSatBrightMouseHandler = event -> {
+        final EventHandler<MouseEvent> colorContainerMouseHandler = event -> {
             final double xMouse = event.getX();
             final double yMouse = event.getY();
             saturation.set(clamp(xMouse / 150) * 100);
             brightness.set(100 - (clamp(yMouse / 150) * 100));
         };
 
-        //color rectangle high: lightness/brightness
-        colorRectBrightness = brightnessRect();
-        colorRectBrightness.setOnMousePressed(rectangleSatBrightMouseHandler);
-        colorRectBrightness.setOnMouseDragged(rectangleSatBrightMouseHandler);
+        //TODO implement set color (hueValue, saturation, brightness) from ambientlight unit
+
+        final EventHandler<MouseEvent> sendingColorHandler = event -> {
+            //TODO implement color (hueValue, saturation, brightness) sending to ambientlight unit
+        };
 
         //saturation & brightness depend on hue value
         colorHue = new Pane();
@@ -156,12 +160,6 @@ public class AmbientLightPane extends UnitPane {
             }
         });
 
-        //mouse event for colorBar
-        final EventHandler<MouseEvent> colorBarMouseHandler = event -> {
-            final double yMouse = event.getY();
-            hueValue.set(clamp(yMouse / 150) * 360);
-        };
-
         //circle as selector for colorRectangleContainer
         circle = circleSelector();
         circle.layoutXProperty().bind(saturation.divide(100).multiply(150));
@@ -170,94 +168,62 @@ public class AmbientLightPane extends UnitPane {
 
         //container/stackPane for saturation/brightness area
         colorContainer = new StackPane();
-        colorContainer.getChildren().addAll(colorHue, saturationRect(), colorRectBrightness);
+        colorContainer.getChildren().addAll(colorHue, saturationRect(), brightnessRect());
+        colorContainer.setOnMousePressed(colorContainerMouseHandler);
+        colorContainer.setOnMouseDragged(colorContainerMouseHandler);
+        colorContainer.setOnMouseReleased(sendingColorHandler);
         colorContainer.setPadding(new Insets(0, 10, 0, 10));
         colorContainer.getChildren().add(circle);
 
-        //rectangle as selector for colorBar
-        rectangle = rectangleSelector();
-        rectangle.layoutYProperty().bind(hueValue.divide(360).multiply(150));
-
-        //create the colorBar
-        colorBar = colorBarCreator();
-        colorBar.setOnMousePressed(colorBarMouseHandler);
-        colorBar.setOnMouseDragged(colorBarMouseHandler);
-        colorBar.getChildren().add(rectangle);
-        colorBar.setPadding(new Insets(0, 10, 0, 10));
-
-        //circle colorBar
-        double offset1;
-        int hue1;
-        Stop[] stop1 = new Stop[255];
-
-        for (int i = 0; i < 255; i++) {
-            offset1 = (double) ((1.0 / 255) * i);
-            hue1 = (int) ((i / 255.0) * 360);
-            stop1[i] = new Stop(offset1, Color.hsb(hue1, 1.0, 1.0));
-        }
-
-
-        final Circle circleBig = new Circle(75);
-        final Circle circleLittle = new Circle(50);
-
-        final Shape shape = Path.subtract(circleBig, circleLittle);
-
-        final ImagePattern imagePattern = new ImagePattern(getImage(150, 150, stop1));
-        shape.setFill(imagePattern);
-
-        final Rectangle rectangleForCircle = rectangleSelector();
-
-        rectangleForCircle.setLayoutX(75);
-        rectangleForCircle.setLayoutY(75);
+        //rectangle as color selector
+        rectangleSelector = rectangleSelector();
 
         final EventHandler<MouseEvent> colorCircleMouseHandler = event -> {
-            double yMouse = event.getY();
-            double xMouse = event.getX();
+            double yMouse = event.getY() + 75;
+            double xMouse = event.getX() + 75;
 
-            xMouse += 75;
-            yMouse += 75;
-
-            double angle = (Math.toDegrees(Math.atan2(yMouse - 75.0, 75.0 - xMouse)) + 450.0) % 360.0;
+            double angle = (Math.toDegrees(Math.atan2(yMouse - 75.0, 75.0 - xMouse)) + 90.0) % 360.0;
             angle = 360 - angle;
 
             hueValue.set(angle);
 
-            rectangleForCircle.setY(0);
+            rectangleSelector.setY(0);
             final int rectX = (int) Math.round(75 + 62 * Math.cos(Math.toRadians((angle + 270) % 360)));
             final int rectY = (int) Math.round(75 + 62 * Math.sin(Math.toRadians((angle + 270) % 360)));
-            rectangleForCircle.setLayoutX(rectX);
-            rectangleForCircle.setLayoutY(rectY);
-
-            rectangleForCircle.setRotate(angle);
+            rectangleSelector.setLayoutX(rectX);
+            rectangleSelector.setLayoutY(rectY);
+            rectangleSelector.setRotate(angle);
         };
 
-        shape.setLayoutX(75);
-        shape.setLayoutY(75);
-        shape.setOnMousePressed(colorCircleMouseHandler);
-        shape.setOnMouseDragged(colorCircleMouseHandler);
+        //hollow circle with color spectrum
+        hollowCircle = hollowCircle(75, 50);
+        hollowCircle.setOnMousePressed(colorCircleMouseHandler);
+        hollowCircle.setOnMouseDragged(colorCircleMouseHandler);
+        hollowCircle.setOnMouseReleased(sendingColorHandler);
 
-        final Pane pane = new Pane();
-        pane.setPrefSize(150, 150);
-        pane.getChildren().addAll(shape, rectangleForCircle);
+        //pane to set color circle and color selector
+        colorCircleContainer = new Pane();
+        colorCircleContainer.setPrefSize(150, 150);
+        colorCircleContainer.getChildren().addAll(hollowCircle, rectangleSelector);
 
-        //hBox includes color elements (colorContainer & colorBar)
+        //hBox includes color elements (colorContainer & pane)
         hBox = new HBox();
         hBox.setPadding(new Insets(0, 10, 0, 10));
-        hBox.getChildren().addAll(colorContainer, pane);
+        hBox.getChildren().addAll(colorContainer, colorCircleContainer);
 
         this.setContent(hBox);
     }
 
     /**
-     *
-     * @param width width
-     * @param height width
-     * @param stops stops
-     * @return WritableImage
+     * Method creates an writableImage with the color spectrum directed towards the center of the image.
+     * @param width width of the image.
+     * @param height height of the image.
+     * @param stops stops represents the color angle of the hsv color space.
+     * @return WritableImage is a custom graphical image with color spectrum.
      */
-    public Image getImage(final int width, final int height, final Stop[] stops) {
-        final WritableImage raster = new WritableImage(width, height);
-        final PixelWriter pixelWriter = raster.getPixelWriter();
+    public Image colorSpectrumImage(final int width, final int height, final Stop... stops) {
+        final WritableImage writableImage = new WritableImage(width, height);
+        final PixelWriter pixelWriter = writableImage.getPixelWriter();
         Color color = Color.TRANSPARENT;
         final Point2D center = new Point2D(width / 2, height / 2);
         for (int y = 0; y < height; y++) {
@@ -286,45 +252,52 @@ public class AmbientLightPane extends UnitPane {
                 pixelWriter.setColor(x, y, color);
             }
         }
-        return raster;
-    }
-
-    private Color interpolateColor(final Color colorOne, final Color colorTwo, final double frac) {
-        double red   = colorOne.getRed() + (colorTwo.getRed() - colorOne.getRed()) * frac;
-        double green = colorOne.getGreen() + (colorTwo.getGreen() - colorOne.getGreen()) * frac;
-        double blue  = colorOne.getBlue() + (colorTwo.getBlue() - colorOne.getBlue()) * frac;
-        double alpha = colorOne.getOpacity() + (colorTwo.getOpacity() - colorOne.getOpacity()) * frac;
-        red   = red < 0 ? 0 : (red > 1 ? 1 : red);
-        green = green < 0 ? 0 : (green > 1 ? 1 : green);
-        blue  = blue < 0 ? 0 : (blue > 1 ? 1 : blue);
-        alpha = alpha < 0 ? 0 : (alpha > 1 ? 1 : alpha);
-        return Color.color(red, green, blue, alpha);
+        return writableImage;
     }
 
     /**
-     * Method computes a part of the linear gradient of hue value.
+     * Method interpolates two color pixel to get a color with new dues or rather a color transition.
+     * @param colorOne first color pixel.
+     * @param colorTwo next color pixel.
+     * @param fraction fraction of the new color.
+     * @return Color.
+     */
+    private Color interpolateColor(final Color colorOne, final Color colorTwo, final double fraction) {
+        double red   = colorOne.getRed() + (colorTwo.getRed() - colorOne.getRed()) * fraction;
+        double green = colorOne.getGreen() + (colorTwo.getGreen() - colorOne.getGreen()) * fraction;
+        double blue  = colorOne.getBlue() + (colorTwo.getBlue() - colorOne.getBlue()) * fraction;
+        double opacity = colorOne.getOpacity() + (colorTwo.getOpacity() - colorOne.getOpacity()) * fraction;
+        red = clamp(red);
+        green = clamp(green);
+        blue = clamp(blue);
+        opacity = clamp(opacity);
+        return Color.color(red, green, blue, opacity);
+    }
+
+    /**
+     * Method checks input to ensure a value between zero and one.
      * @param value ratio of mouse coordinate and element height.
-     * @return value of ratio as 0/1/input value.
+     * @return value between zero and one.
      */
     static double clamp(final double value) {
         return value < 0 ? 0 : value > 1 ? 1 : value;
     }
 
     /**
-     * Method creates a linear gradient for hue value.
-     * @return new LinearGradient with properties of hue value.
+     * Method creates a Stop array for hue calculation.
+     * @return stops includes hsv hue.
      */
-    private static LinearGradient hueGradient() {
+    private Stop[] hueStops() {
         double offset;
         int hue;
-        Stop[] stop = new Stop[255];
+        Stop[] stops = new Stop[255];
 
         for (int i = 0; i < 255; i++) {
-            offset = (double) ((1.0 / 255) * i);
+            offset = (1.0 / 255) * i;
             hue = (int) ((i / 255.0) * 360);
-            stop[i] = new Stop(offset, Color.hsb(hue, 1.0, 1.0));
+            stops[i] = new Stop(offset, Color.hsb(hue, 1.0, 1.0));
         }
-        return new LinearGradient(0f, 0f, 0f, 1f, true, CycleMethod.NO_CYCLE, stop);
+        return stops;
     }
 
     /**
@@ -351,12 +324,13 @@ public class AmbientLightPane extends UnitPane {
      * @return rectangle shape with settings.
      */
     private Rectangle rectangleSelector() {
-        final Rectangle rectangle = new Rectangle(15.0, 25.0,
-                Color.web(WHITE, 0.0));
+        final Rectangle rectangle = new Rectangle(15.0, 25.0, Color.web(WHITE, 0.0));
 
         rectangle.setMouseTransparent(true);
         rectangle.setTranslateX(-15 / 2);
         rectangle.setTranslateY(-25 / 2);
+        rectangle.setLayoutX(75);
+        rectangle.setLayoutY(75);
         rectangle.setY(-62);
         rectangle.setStrokeType(StrokeType.OUTSIDE);
         rectangle.setStroke(Color.web(WHITE, 1.0));
@@ -380,20 +354,6 @@ public class AmbientLightPane extends UnitPane {
         dropShadow.setColor(Color.BLACK);
 
         return dropShadow;
-    }
-
-    /**
-     * Method creates a pane for the colorBar (hue area).
-     * @return colorBar with settings.
-     */
-    private Pane colorBarCreator() {
-        final Pane colorBar = new Pane();
-
-        //TODO size generic...
-        colorBar.setPrefSize(20, 150);
-        colorBar.setBackground(new Background(new BackgroundFill(hueGradient(), CornerRadii.EMPTY, Insets.EMPTY)));
-
-        return colorBar;
     }
 
     /**
@@ -427,6 +387,27 @@ public class AmbientLightPane extends UnitPane {
 
         return colorRectBrightness;
     }
+
+    /**
+     * Method creates a hollow circle of a tall and small circle with the color spectrum as filled image.
+     * @param circleTallRadius is the tall circle radius
+     * @param circleSmallRadius is the small circle radius.
+     * @return hollowCircle is a shape.
+     */
+    private Shape hollowCircle(final int circleTallRadius, final int circleSmallRadius) {
+        final Circle circleTall = new Circle(circleTallRadius);
+        final Circle circleSmall = new Circle(circleSmallRadius);
+        final Shape hollowCircle = Path.subtract(circleTall, circleSmall);
+        final Stop[] hueFraction = hueStops();
+        final ImagePattern imagePattern = new ImagePattern(colorSpectrumImage(150, 150, hueFraction));
+
+        hollowCircle.setLayoutX(75);
+        hollowCircle.setLayoutY(75);
+        hollowCircle.setFill(imagePattern);
+
+        return hollowCircle;
+    }
+
     //CHECKSTYLE.ON: MagicNumber
 
     @Override
