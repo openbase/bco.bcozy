@@ -40,6 +40,7 @@ public class MainMenu extends StackPane {
     private final Button initRemoteButton;
     private final Button fetchLocationButton;
     private final Button fillHashesButton;
+    private final Button fillContextMenuButton;
     private final UserPane userPane;
     private final FloatingButton mainMenuFloatingButton;
     private final VBox verticalLayout;
@@ -77,6 +78,7 @@ public class MainMenu extends StackPane {
         initRemoteButton = new Button("Init RegistryRemotes");
         fetchLocationButton = new Button("Fetch Location");
         fillHashesButton = new Button("Fill Hashes");
+        fillContextMenuButton = new Button("Fill ContextMenu");
 
         logoImage = new Image(getClass().getResourceAsStream("/icons/bcozy.png"));
         logoView = new ImageView(logoImage);
@@ -94,7 +96,8 @@ public class MainMenu extends StackPane {
 
         //verticalLayout.setPadding(new Insets(0.0, Constants.SMALLICON / 2, 0.0, 0.0));
         verticalLayout.getChildren()
-                .addAll(logoView, userPane, initRemoteButton, fetchLocationButton, fillHashesButton, connectionPane);
+                .addAll(logoView, userPane, initRemoteButton, fetchLocationButton,
+                        fillHashesButton, fillContextMenuButton, connectionPane);
 
         //verticalLayoutSmall.setPadding(new Insets(0.0, Constants.SMALLICON / 2, 0.0, 0.0));
         verticalLayoutSmall.getChildren()
@@ -112,6 +115,8 @@ public class MainMenu extends StackPane {
         fetchLocationButton.getStyleClass()
                 .addAll("large-button", "visible-lg", "visible-md", "visible-sm", "visible-xs");
         fillHashesButton.getStyleClass().addAll("large-button", "visible-lg", "visible-md", "visible-sm", "visible-xs");
+        fillContextMenuButton.getStyleClass()
+                .addAll("large-button", "visible-lg", "visible-md", "visible-sm", "visible-xs");
 
         verticalLayout.getStyleClass().addAll("padding-large");
         verticalLayoutSmall.getStyleClass().addAll("padding-small");
@@ -142,6 +147,14 @@ public class MainMenu extends StackPane {
      */
     public void addFillHashesButtonEventHandler(final EventHandler<ActionEvent> eventHandler) {
         fillHashesButton.setOnAction(eventHandler);
+    }
+
+    /**
+     * Configure the fillContextMenuButton.
+     * @param eventHandler EventHandler
+     */
+    public void addFillContextMenuButtonEventHandler(final EventHandler<ActionEvent> eventHandler) {
+        fillContextMenuButton.setOnAction(eventHandler);
     }
 
     /**

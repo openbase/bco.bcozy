@@ -21,7 +21,6 @@ package org.dc.bco.bcozy;
 import com.guigarage.responsive.ResponsiveHandler;
 import de.citec.jps.core.JPService;
 import de.citec.jps.preset.JPDebugMode;
-//import de.citec.jul.exception.CouldNotPerformException;
 import de.citec.jul.exception.InstantiationException;
 import de.citec.jul.exception.printer.ExceptionPrinter;
 import de.citec.jul.exception.printer.LogLevel;
@@ -124,17 +123,6 @@ public class BCozy extends Application {
         //instantiate RemotePool
         remotePool = new RemotePool(foregroundPane);
         new ContextMenuController(foregroundPane, remotePool);
-
-        //Uncomment for contextMenu Test
-        /*
-        try {
-            remotePool.initRegistryRemotes();
-            remotePool.fillHashes();
-            contextMenuController.setContextMenuDevicePanes("Living");
-        } catch (InterruptedException | CouldNotPerformException e) {
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-        }
-        */
 
         //instantiate LocationController
         try {

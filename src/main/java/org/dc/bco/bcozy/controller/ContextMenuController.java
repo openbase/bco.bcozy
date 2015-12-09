@@ -21,7 +21,13 @@ package org.dc.bco.bcozy.controller;
 
 import de.citec.dal.remote.unit.DALRemoteService;
 import de.citec.jul.exception.CouldNotPerformException;
+import de.citec.jul.exception.printer.ExceptionPrinter;
+import de.citec.jul.exception.printer.LogLevel;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import org.dc.bco.bcozy.view.ForegroundPane;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rst.homeautomation.unit.UnitTemplateType.UnitTemplate.UnitType;
 
 import java.util.Iterator;
@@ -32,6 +38,8 @@ import java.util.Map;
  * Created by timo on 03.12.15.
  */
 public class ContextMenuController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ContextMenuController.class);
+
     private final ForegroundPane foregroundPane;
     private final RemotePool remotePool;
 
@@ -43,6 +51,17 @@ public class ContextMenuController {
     public ContextMenuController(final ForegroundPane foregroundPane, final RemotePool remotePool) {
         this.foregroundPane = foregroundPane;
         this.remotePool = remotePool;
+
+        this.foregroundPane.getMainMenu().addFillContextMenuButtonEventHandler(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(final ActionEvent event) {
+                try {
+                    setContextMenuDevicePanes("81b9efa4-2dc9-432e-b47c-1d73021ff0f3");
+                } catch (CouldNotPerformException e) {
+                    ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                }
+            }
+        });
     }
 
     /**
