@@ -32,30 +32,24 @@ import javafx.scene.paint.Color;
  */
 public class ImageEffect {
 
-    private static final double SCALE = 0.1;
     private ImageView bottomView;
     private ImageView topView;
 
-    /**
-     * Method creates an image group with blend effect.
-     *
-     * @param bottom Bottom image of the icon
-     * @param top Top image of the icon
-     * @param color Current adjusted color
-     *
-     * @return imageEffect Image with blend effect of type Group
-     */
-    public Group imageBlendEffect(final Image bottom, final Image top, final Color color) {
+    public ImageEffect() {
+
+    }
+
+    public final Group effectGroup(final Image bottom, final Image top, final Color color) {
 
         bottomView = new ImageView(bottom);
-        bottomView.setScaleX(SCALE);
-        bottomView.setScaleY(SCALE);
-        //bottomView.setClip(new ImageView(bottom));
+        bottomView.setFitHeight(Constants.MIDDLE_ICON);
+        bottomView.setFitWidth(Constants.MIDDLE_ICON);
+        bottomView.setSmooth(true);
 
         topView = new ImageView(top);
-        topView.setScaleX(SCALE);
-        topView.setScaleY(SCALE);
-        //topView.setClip(new ImageView(top));
+        topView.setFitHeight(Constants.MIDDLE_ICON);
+        topView.setFitWidth(Constants.MIDDLE_ICON);
+        topView.setSmooth(true);
 
         //color property
         final ColorAdjust monochrome = new ColorAdjust();

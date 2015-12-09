@@ -37,7 +37,7 @@ public class FloatingButton extends Button {
      */
     public FloatingButton(final String imagePath) {
         selected = new Image(getClass()
-                .getResourceAsStream(imagePath), Constants.MIDDLEICON, Constants.MIDDLEICON, true, true);
+                .getResourceAsStream(imagePath), Constants.MIDDLE_ICON, Constants.MIDDLE_ICON, true, true);
         imageView = new ImageView(selected);
         this.getStyleClass().clear();
         this.getStyleClass().add("floating-button");
@@ -45,7 +45,7 @@ public class FloatingButton extends Button {
         this.getChildren().add(imageView);
 
         final RotateTransition rotate = new RotateTransition(Duration.seconds(0.5), imageView);
-        rotate.setByAngle(Constants.FULLROTATION);
+        rotate.setByAngle(Constants.FULL_ROTATION);
         rotate.setCycleCount(1);
         rotate.setInterpolator(Interpolator.LINEAR);
 
@@ -61,8 +61,8 @@ public class FloatingButton extends Button {
     public void changeIcon(final String imagePath) {
         selected = new Image(getClass().getResourceAsStream(imagePath));
         imageView = new ImageView(selected);
-        imageView.setFitHeight(Constants.MIDDLEICON);
-        imageView.setFitWidth(Constants.MIDDLEICON);
+        imageView.setFitHeight(Constants.MIDDLE_ICON);
+        imageView.setFitWidth(Constants.MIDDLE_ICON);
         super.setGraphic(imageView);
     }
 

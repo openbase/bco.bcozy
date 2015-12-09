@@ -89,7 +89,7 @@ public class MainMenu extends StackPane {
         logoImageSmall = new Image(getClass().getResourceAsStream("/icons/bc.png"));
         logoViewSmall = new ImageView(logoImageSmall);
         logoViewSmall.setSmooth(true);
-        logoViewSmall.setFitWidth(Constants.MIDDLEICON);
+        logoViewSmall.setFitWidth(Constants.MIDDLE_ICON);
         logoViewSmall.setPreserveRatio(true);
 
         connectionPane = new ConnectionPane();
@@ -107,8 +107,9 @@ public class MainMenu extends StackPane {
 
         this.getChildren().addAll(verticalLayout, mainMenuFloatingButton);
         this.setAlignment(mainMenuFloatingButton, Pos.TOP_RIGHT);
-        this.setMargin(mainMenuFloatingButton, new Insets(Constants.SMALLICON, 0, 0, 0));
-        mainMenuFloatingButton.translateXProperty().set(Constants.SMALLICON);
+
+        this.setMargin(mainMenuFloatingButton, new Insets(Constants.SMALL_ICON, 0, 0, 0));
+        mainMenuFloatingButton.translateXProperty().set(Constants.SMALL_ICON);
 
         //CHECKSTYLE.OFF: MultipleStringLiterals
         initRemoteButton.getStyleClass().addAll("large-button", "visible-lg", "visible-md", "visible-sm", "visible-xs");

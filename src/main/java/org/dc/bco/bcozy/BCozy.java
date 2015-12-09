@@ -88,7 +88,7 @@ public class BCozy extends Application {
 
         // load the tron font.
         Font.loadFont(BCozy.class.getClassLoader().getResource("fonts/Roboto-Thin.ttf").toExternalForm(),
-                Constants.STANDARDTEXTSIZE);
+                Constants.STANDARD_TEXT_SIZE);
 
         final double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
         final double screenHeight = Screen.getPrimary().getVisualBounds().getHeight();
