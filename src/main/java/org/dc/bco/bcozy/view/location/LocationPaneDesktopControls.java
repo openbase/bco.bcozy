@@ -124,7 +124,7 @@ public class LocationPaneDesktopControls {
     }
 
     private void scaleFitRoom(final StackPane zoomPane, final Group group, final Group scrollContent,
-                              final ScrollPane scroller, final RoomPolygon room) {
+                              final ScrollPane scroller, final LocationPolygon room) {
         final Point2D scrollOffset = figureScrollOffset(scrollContent, scroller);
 
         double xScale = (this.locationPane.getWidth() / room.prefWidth(0)) * 0.3;
@@ -196,7 +196,7 @@ public class LocationPaneDesktopControls {
      *
      * @param room The room
      */
-    public void addMouseEventHandlerToRoom(final RoomPolygon room) {
+    public void addMouseEventHandlerToRoom(final LocationPolygon room) {
         final ScrollPane scrollPane = this.locationPane.getScrollPane();
         final Group locationViewContent = this.locationPane.getLocationViewContent();
         final double zoomPaneWidth = this.locationPane.getZoomPaneWidth();
@@ -214,9 +214,9 @@ public class LocationPaneDesktopControls {
                 centerScrollPaneToPointAnimated(scrollPane,
                         new Point2D(locationPane.getRootRoom().getCenterX(), locationPane.getRootRoom().getCenterY()),
                         locationViewContent, zoomPaneWidth, zoomPaneHeight);
-                locationPane.setSelectedRoom(new RoomPolygon("none", 0.0, 0.0, 0.0, 0.0));
+                locationPane.setSelectedRoom(new LocationPolygon("none", "none", LocationPolygon.LocationType.ZONE, 0.0, 0.0, 0.0, 0.0));
                 foregroundPane.getContextMenu().getRoomInfo()
-                        .setText(locationPane.getRootRoom().getRoomName());
+                        .setText(locationPane.getRootRoom().getLabel());
             } else {
                 locationPane.getSelectedRoom().toggleSelected();
                 scaleFitRoom(locationPane.getZoomPane(), locationPane.getLocationViewContent(),
@@ -227,12 +227,12 @@ public class LocationPaneDesktopControls {
                 room.toggleSelected();
                 locationPane.setSelectedRoom(room);
                 foregroundPane.getContextMenu().getRoomInfo()
-                        .setText(locationPane.getSelectedRoom().getRoomName());
+                        .setText(locationPane.getSelectedRoom().getLabel());
             }
         });
         room.setOnMouseEntered(event -> {
             event.consume();
-            foregroundPane.getInfoFooter().getMouseOverText().setText(room.getRoomName());
+            foregroundPane.getInfoFooter().getMouseOverText().setText(room.getLabel());
         });
         room.setOnMouseExited(event -> {
             event.consume();

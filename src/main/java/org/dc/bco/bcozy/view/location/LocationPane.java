@@ -41,7 +41,7 @@ public class LocationPane extends StackPane {
     private static final double ZOOM_PANE_HEIGHT = 2000;
 
     private final Group locationViewContent;
-    private RoomPolygon selectedRoom, rootRoom;
+    private LocationPolygon selectedRoom, rootRoom;
     private Group scrollContent;
     private ScrollPane scroller;
     private StackPane zoomPane;
@@ -68,7 +68,7 @@ public class LocationPane extends StackPane {
         emptyHugeRectangle.setFill(Color.TRANSPARENT);
 
         //Dummy Room
-        selectedRoom = new RoomPolygon("none", 0.0, 0.0, 0.0, 0.0);
+        selectedRoom = new LocationPolygon("none", "none", LocationPolygon.LocationType.ZONE, 0.0, 0.0, 0.0, 0.0);
         selectedRoomId = new SimpleStringProperty("none");
 
         locationViewContent = new Group(emptyHugeRectangle);
@@ -97,8 +97,8 @@ public class LocationPane extends StackPane {
     public void addRoom(final String roomID, final List<Point2D> vertices, final boolean isRoot) {
         // TODO: Remove room with same ID
 //        for (Node node : locationViewContent.getChildren()) {
-//            if (node instanceof RoomPolygon) {
-//                if (((RoomPolygon) node).getRoomName().equals(roomID)) {
+//            if (node instanceof LocationPolygon) {
+//                if (((LocationPolygon) node).getLabel().equals(roomID)) {
 //                    locationViewContent.getChildren().remove(node);
 //                }
 //            }
@@ -112,8 +112,8 @@ public class LocationPane extends StackPane {
             points[i * 2 + 1] = vertices.get(i).getX() * Constants.METER_TO_PIXEL;
         }
 
-        // Create a new RoomPolygon, add a mouse event handler and paste it into the viewContent
-        final RoomPolygon newRoom = new RoomPolygon(roomID, points);
+        // Create a new LocationPolygon, add a mouse event handler and paste it into the viewContent
+        final TilePolygon newRoom = new TilePolygon(roomID, roomID, points);
 
         locationViewContent.getChildren().add(newRoom);
 
@@ -171,7 +171,7 @@ public class LocationPane extends StackPane {
      * Getter for selectedRoom.
      * @return selectedRoom
      */
-    public RoomPolygon getSelectedRoom() {
+    public LocationPolygon getSelectedRoom() {
         return selectedRoom;
     }
 
@@ -219,16 +219,16 @@ public class LocationPane extends StackPane {
      * Setter for selectedRoom.
      * @param selectedRoom Room to select
      */
-    public void setSelectedRoom(final RoomPolygon selectedRoom) {
+    public void setSelectedRoom(final LocationPolygon selectedRoom) {
         this.selectedRoom = selectedRoom;
-        this.selectedRoomId.set(selectedRoom.getRoomName());
+        this.selectedRoomId.set(selectedRoom.getLabel());
     }
 
     /**
      * Getter for the rootRoom.
      * @return rootRoom
      */
-    public RoomPolygon getRootRoom() {
+    public LocationPolygon getRootRoom() {
         return rootRoom;
     }
 

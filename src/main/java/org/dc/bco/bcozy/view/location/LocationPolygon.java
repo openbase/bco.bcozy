@@ -25,29 +25,34 @@ import org.dc.bco.bcozy.view.Constants;
 /**
  *  A Polygon that can be selected and has a RoomName.
  */
-public class RoomPolygon extends Polygon {
+public class LocationPolygon extends Polygon {
 
+    /**
+     * Enumeration for the different types of locations.
+     */
+    public enum LocationType { ZONE, REGION, TILE }
+
+    private LocationType locationType;
     private final double centerX;
     private final double centerY;
     private boolean selected;
-    private final String roomName;
+    private final String label;
+    private final String id;
 
     /**
-     * Constructor for the RoomPolygon.
+     * Constructor for the LocationPolygon.
      * @param points Points for the shape
-     * @param roomName Name for the room
+     * @param label Name for the room
      */
-    public RoomPolygon(final String roomName, final double... points) {
+    public LocationPolygon(final String label, final String id,
+                           final LocationType locationType, final double... points) {
         super(points);
-        this.setFill(Color.TRANSPARENT);
-        this.setStroke(Color.WHITE);
-        //CHECKSTYLE.OFF: MagicNumber
-        this.setStrokeWidth(Constants.ROOM_STROKE_WIDTH);
-        //CHECKSTYLE.ON: MagicNumber
         this.centerX = (super.getLayoutBounds().getMaxX() + super.getLayoutBounds().getMinX()) / 2;
         this.centerY = (super.getLayoutBounds().getMaxY() + super.getLayoutBounds().getMinY()) / 2;
         this.selected = false;
-        this.roomName = roomName;
+        this.label = label;
+        this.id = id;
+        this.locationType = locationType;
     }
 
     /**
@@ -75,7 +80,7 @@ public class RoomPolygon extends Polygon {
     }
 
     /**
-     * Toggle the selection of the RoomPolygon.
+     * Toggle the selection of the LocationPolygon.
      */
     public void toggleSelected() {
         if (this.selected) {
@@ -90,10 +95,10 @@ public class RoomPolygon extends Polygon {
     }
 
     /**
-     * Getter for the roomName.
-     * @return the roomName as a String
+     * Getter for the label.
+     * @return the label as a String
      */
-    public String getRoomName() {
-        return roomName;
+    public String getLabel() {
+        return label;
     }
 }
