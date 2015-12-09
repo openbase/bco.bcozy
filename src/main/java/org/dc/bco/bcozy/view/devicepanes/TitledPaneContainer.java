@@ -33,15 +33,6 @@ import java.util.List;
 public class TitledPaneContainer extends VBox {
 
     /**
-     * Constructor for the TitledPaneContainer.
-     */
-    public TitledPaneContainer() {
-        //This is only for test purpose!!
-        final UnitPaneContainer unitPaneContainer = new UnitPaneContainer("AmbientLight");
-        this.getChildren().add(unitPaneContainer);
-    }
-
-    /**
      * Takes a List of DALRemoteServices and a unitType and creates a new UnitPaneContainer.
      * @param unitType unitType
      * @param dalRemoteServiceList dalRemoteServiceList
