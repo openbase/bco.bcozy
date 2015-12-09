@@ -127,9 +127,6 @@ public class LocationPaneDesktopControls {
                               final ScrollPane scroller, final RoomPolygon room) {
         final Point2D scrollOffset = figureScrollOffset(scrollContent, scroller);
 
-        LOGGER.warn("getZoomPaneHeight: " + this.locationPane.getZoomPaneHeight());
-        LOGGER.warn("room.prefHeight: " + room.prefHeight(0));
-
         double xScale = (this.locationPane.getWidth() / room.prefWidth(0)) * 0.3;
         double yScale = (this.locationPane.getHeight() / room.prefHeight(0)) * 0.5;
 

@@ -57,6 +57,8 @@ public class BCozy extends Application {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(BCozy.class);
 
+    private RemotePool remotePool;
+
     /**
      * Main Method starting JavaFX Environment.
      *
@@ -120,7 +122,7 @@ public class BCozy extends Application {
         new CenterPaneController(foregroundPane);
 
         //instantiate RemotePool
-        final RemotePool remotePool = new RemotePool(foregroundPane);
+        remotePool = new RemotePool(foregroundPane);
         new ContextMenuController(foregroundPane, remotePool);
 
         //Uncomment for contextMenu Test
@@ -140,8 +142,13 @@ public class BCozy extends Application {
         } catch (InstantiationException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
+    }
 
-        primaryStage.setOnCloseRequest(event -> remotePool.shutdownAllRemotes());
+    @Override
+    public void stop() throws Exception {
+        super.stop();
+        remotePool.shutdownAllRemotes(); //TODO mpohling: not shutting down properly
+        System.exit(0);
     }
 
     private static void registerListeners() {

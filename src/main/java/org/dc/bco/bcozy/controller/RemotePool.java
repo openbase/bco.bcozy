@@ -351,25 +351,20 @@ public class RemotePool {
         }
 
         try {
-            if (locationRegistryRemote.isActive()) {
-                LOGGER.info("Shutting down locationRegistryRemote...");
-                locationRegistryRemote.shutdown();
-            }
+            LOGGER.info("Shutting down locationRegistryRemote...");
+            locationRegistryRemote.shutdown();
         } catch (NullPointerException e) {
             LOGGER.info("No locationRegistryRemote to shutdown...");
         }
 
         try {
-            if (deviceRegistryRemote.isActive()) {
-                LOGGER.info("Shutting down deviceRegistryRemote...");
-                deviceRegistryRemote.shutdown();
-            }
+            LOGGER.info("Shutting down deviceRegistryRemote...");
+            deviceRegistryRemote.shutdown();
         } catch (NullPointerException e) {
             LOGGER.info("No deviceRegistryRemote to shutdown...");
         }
 
-        TransformerFactory.killInstance();
-
+        TransformerFactory.killInstance(); //TODO mpohling: how to shutdown transformer factory?
         isInit = false;
     }
 
