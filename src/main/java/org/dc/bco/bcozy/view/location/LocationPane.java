@@ -18,6 +18,8 @@
  */
 package org.dc.bco.bcozy.view.location;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.control.ScrollPane;
@@ -47,6 +49,8 @@ public class LocationPane extends StackPane {
     private final ForegroundPane foregroundPane;
     private final LocationPaneDesktopControls locationPaneDesktopControls;
 
+    private final SimpleStringProperty selectedRoomId;
+
     /**
      * Constructor for the LocationPane.
      *
@@ -65,6 +69,7 @@ public class LocationPane extends StackPane {
 
         //Dummy Room
         selectedRoom = new RoomPolygon("none", 0.0, 0.0, 0.0, 0.0);
+        selectedRoomId = new SimpleStringProperty("none");
 
         locationViewContent = new Group(emptyHugeRectangle);
         scrollPane = createZoomPane(locationViewContent);
@@ -216,6 +221,7 @@ public class LocationPane extends StackPane {
      */
     public void setSelectedRoom(final RoomPolygon selectedRoom) {
         this.selectedRoom = selectedRoom;
+        this.selectedRoomId.set(selectedRoom.getRoomName());
     }
 
     /**
@@ -231,5 +237,23 @@ public class LocationPane extends StackPane {
      */
     public void zoomFit() {
         this.locationPaneDesktopControls.zoomFit();
+    }
+
+    /**
+     * Adds a change listener to the selectedRoomID property.
+     *
+     * @param changeListener The change Listener
+     */
+    public void addSelectedRoomIdListener(final ChangeListener<? super String> changeListener) {
+        selectedRoomId.addListener(changeListener);
+    }
+
+    /**
+     * Remove the specified change listener from the selectedRoomID property.
+     *
+     * @param changeListener The change Listener
+     */
+    public void removeSelectedRoomIdListener(final ChangeListener<? super String> changeListener) {
+        selectedRoomId.removeListener(changeListener);
     }
 }
