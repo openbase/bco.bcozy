@@ -35,7 +35,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
@@ -46,7 +46,6 @@ import javafx.scene.paint.*;
 import javafx.scene.shape.*;
 import org.controlsfx.control.ToggleSwitch;
 import org.dc.bco.bcozy.view.Constants;
-import org.dc.bco.bcozy.view.ImageEffect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.homeautomation.unit.AmbientLightType.AmbientLight;
@@ -63,7 +62,7 @@ public class AmbientLightPane extends UnitPane {
     private final AmbientLightRemote ambientLightRemote;
     private final Image bottomImage;
     private final Image topImage;
-    private final Group imageEffect;
+    private final BorderPane borderPane;
 
     private final Observer<AmbientLight> observer;
 
@@ -79,7 +78,7 @@ public class AmbientLightPane extends UnitPane {
 
         bottomImage = new Image("/icons/lightbulb_mask.png");
         topImage    = new Image("/icons/lightbulb.png");
-        imageEffect = new ImageEffect().imageBlendEffect(bottomImage, topImage, Color.YELLOW);
+
 
         observer = new Observer<AmbientLight>() {
             @Override
@@ -98,6 +97,9 @@ public class AmbientLightPane extends UnitPane {
             super.setUnitLabel("UnknownID");
         }
 
+        borderPane = new BorderPane();
+        this.setGraphic(borderPane);
+
         initTitle();
         initContent();
     }
@@ -109,24 +111,22 @@ public class AmbientLightPane extends UnitPane {
     protected void initTitle() {
         final ToggleSwitch toggleSwitch;
         final ImageView lightOff;
-        final BorderPane borderPane;
 
         //button
         toggleSwitch = new ToggleSwitch();
 
         //image
         lightOff = new ImageView(topImage);
-        lightOff.setFitHeight(Constants.MIDDLEICON);
-        lightOff.setFitWidth(Constants.MIDDLEICON);
+        lightOff.setFitHeight(Constants.SMALL_ICON);
+        lightOff.setFitWidth(Constants.SMALL_ICON);
+        lightOff.setSmooth(true);
 
         //borderPane for header of titledPane as "graphic"
-        borderPane = new BorderPane();
         borderPane.setLeft(lightOff);
         borderPane.setCenter(new Label(super.getUnitLabel()));
         borderPane.setRight(toggleSwitch);
 
         this.getStyleClass().add("widget-pane");
-        this.setGraphic(borderPane);
     }
 
     /**
@@ -160,6 +160,42 @@ public class AmbientLightPane extends UnitPane {
 
         final EventHandler<MouseEvent> sendingColorHandler = event -> {
             //TODO implement color (hueValue, saturation, brightness) sending to ambientlight unit
+
+
+
+
+
+
+
+
+            final ImageView bottomView = new ImageView(bottomImage);
+
+            bottomView.setClip(new ImageView(bottomImage));
+            bottomView.setScaleX(Constants.SMALL_ICON_SCALE_FACTOR);
+            bottomView.setScaleY(Constants.SMALL_ICON_SCALE_FACTOR);
+            bottomView.setSmooth(true);
+
+            final ImageView topView = new ImageView(topImage);
+            topView.setClip(new ImageView(topImage));
+            topView.setScaleX(Constants.SMALL_ICON_SCALE_FACTOR);
+            topView.setScaleY(Constants.SMALL_ICON_SCALE_FACTOR);
+            topView.setSmooth(true);
+
+            //color property
+            final ColorAdjust monochrome = new ColorAdjust();
+            monochrome.setSaturation(-1.0);
+
+            final Blend blushEffect = new Blend(BlendMode.ADD, monochrome, new ColorInput(0, 0,
+                    bottomView.getImage().getWidth(), bottomView.getImage().getHeight(),
+                    Color.hsb(hueValue.getValue(), saturation.getValue() / 100, brightness.getValue() / 100)));
+
+            bottomView.setEffect(blushEffect);
+            //bottomView.setCache(true);
+            //bottomView.setCacheHint(CacheHint.SPEED);
+
+            final Group imageEffect = new Group(bottomView, topView);
+
+            borderPane.setLeft(imageEffect);
         };
 
         //saturation & brightness depend on hue value

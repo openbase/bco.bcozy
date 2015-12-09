@@ -42,7 +42,7 @@ public class RoomPolygon extends Polygon {
         this.setFill(Color.TRANSPARENT);
         this.setStroke(Color.WHITE);
         //CHECKSTYLE.OFF: MagicNumber
-        this.setStrokeWidth(Constants.ROOMSTROKEWIDTH);
+        this.setStrokeWidth(Constants.ROOM_STROKE_WIDTH);
         //CHECKSTYLE.ON: MagicNumber
         this.centerX = (super.getLayoutBounds().getMaxX() + super.getLayoutBounds().getMinX()) / 2;
         this.centerY = (super.getLayoutBounds().getMaxY() + super.getLayoutBounds().getMinY()) / 2;

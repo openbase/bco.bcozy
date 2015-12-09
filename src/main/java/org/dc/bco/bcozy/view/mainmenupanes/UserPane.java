@@ -65,13 +65,13 @@ public class UserPane extends VBox {
         // Case: No user logged in
         final Image icon = new Image(getClass().getResourceAsStream("/icons/user_fa.png"));
         final ImageView userIconImageView = new ImageView(icon);
-        userIconImageView.setFitHeight(Constants.BIGICON);
-        userIconImageView.setFitWidth(Constants.BIGICON);
+        userIconImageView.setFitHeight(Constants.BIG_ICON);
+        userIconImageView.setFitWidth(Constants.BIG_ICON);
         userIcon = new PaneElement(userIconImageView);
-        userIcon.setMaxWidth(Constants.MAXMENUWIDTH);
+        userIcon.setMaxWidth(Constants.MAX_MENU_WIDTH);
         openLoginBtn = new Button(languageBundle.getString("startLogin"));
         login = new PaneElement(openLoginBtn);
-        login.setMaxWidth(Constants.MAXMENUWIDTH);
+        login.setMaxWidth(Constants.MAX_MENU_WIDTH);
 
         // Case: Login active
         final Label nameLbl = new Label(languageBundle.getString("username"));
@@ -81,8 +81,8 @@ public class UserPane extends VBox {
         loginBtn = new Button(languageBundle.getString("login"));
         final Image backIcon = new Image(getClass().getResourceAsStream("/icons/back.png"));
         final ImageView imageViewBackIcon = new ImageView(backIcon);
-        imageViewBackIcon.setFitWidth(Constants.SMALLICON);
-        imageViewBackIcon.setFitHeight(Constants.SMALLICON);
+        imageViewBackIcon.setFitWidth(Constants.SMALL_ICON);
+        imageViewBackIcon.setFitHeight(Constants.SMALL_ICON);
         backBtn = new Button("", imageViewBackIcon);
         final VBox loginLayout = new VBox(Constants.INSETS);
         final BorderPane loginFirstLineLayout = new BorderPane();
@@ -90,26 +90,26 @@ public class UserPane extends VBox {
         loginFirstLineLayout.setRight(backBtn);
         loginLayout.getChildren().addAll(loginFirstLineLayout, nameTxt, pwLbl, passwordField, loginBtn);
         loginPane = new PaneElement(loginLayout);
-        loginPane.setMaxWidth(Constants.MAXMENUWIDTH);
+        loginPane.setMaxWidth(Constants.MAX_MENU_WIDTH);
 
         //Case: User logged in
         final Image loggedInUserIcon = new Image(getClass().getResourceAsStream("/icons/user.png"));
         final ImageView loggedInUserIconImageView = new ImageView(loggedInUserIcon);
-        loggedInUserIconImageView.setFitHeight(Constants.BIGICON);
-        loggedInUserIconImageView.setFitWidth(Constants.BIGICON);
+        loggedInUserIconImageView.setFitHeight(Constants.BIG_ICON);
+        loggedInUserIconImageView.setFitWidth(Constants.BIG_ICON);
         loggedInUserPane = new PaneElement(loggedInUserIconImageView);
-        loggedInUserPane.setMaxWidth(Constants.MAXMENUWIDTH);
+        loggedInUserPane.setMaxWidth(Constants.MAX_MENU_WIDTH);
         loggedInUserLbl = new Label("");
         final Image logoutIcon = new Image(getClass().getResourceAsStream("/icons/logout.png"));
         final ImageView imageViewLogoutIcon = new ImageView(logoutIcon);
-        imageViewLogoutIcon.setFitWidth(Constants.SMALLICON);
-        imageViewLogoutIcon.setFitHeight(Constants.SMALLICON);
+        imageViewLogoutIcon.setFitWidth(Constants.SMALL_ICON);
+        imageViewLogoutIcon.setFitHeight(Constants.SMALL_ICON);
         logoutBtn = new Button("", imageViewLogoutIcon);
         final BorderPane loggedInBottomLayout = new BorderPane();
         loggedInBottomLayout.setLeft(loggedInUserLbl);
         loggedInBottomLayout.setRight(logoutBtn);
         loggedInBottomPane = new PaneElement(loggedInBottomLayout);
-        loggedInBottomPane.setMaxWidth(Constants.MAXMENUWIDTH);
+        loggedInBottomPane.setMaxWidth(Constants.MAX_MENU_WIDTH);
 
         this.setFillWidth(true);
         this.setSpacing(Constants.INSETS);

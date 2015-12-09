@@ -70,8 +70,8 @@ public class RollershutterPane extends UnitPane {
         //image
         rollershutterIcon = new ImageView(imageIcon);
         //rollershutterIcon.setClip(new ImageView(icon));
-        rollershutterIcon.setFitHeight(Constants.MIDDLEICON);
-        rollershutterIcon.setFitWidth(Constants.MIDDLEICON);
+        rollershutterIcon.setFitHeight(Constants.MIDDLE_ICON);
+        rollershutterIcon.setFitWidth(Constants.MIDDLE_ICON);
 
         //borderPane for header of titledPane as "graphic"
         borderPane = new BorderPane();
@@ -90,8 +90,8 @@ public class RollershutterPane extends UnitPane {
         final Label actualValue = new Label("Aktueller Wert: 15");
                                             // + Double.toString(shutterInstance.getOpeningRatio()));
         final ImageView imageViewIcon = new ImageView(imageIcon);
-        imageViewIcon.setFitHeight(Constants.MIDDLEICON);
-        imageViewIcon.setFitWidth(Constants.MIDDLEICON);
+        imageViewIcon.setFitHeight(Constants.MIDDLE_ICON);
+        imageViewIcon.setFitWidth(Constants.MIDDLE_ICON);
 
         final PlusMinusSlider control = new PlusMinusSlider();
         control.setOrientation(Orientation.VERTICAL);

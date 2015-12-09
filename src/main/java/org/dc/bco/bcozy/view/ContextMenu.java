@@ -60,7 +60,7 @@ public class ContextMenu extends VBox {
         final HiddenSidesPane hiddenSidesPane = new HiddenSidesPane();
         hiddenSidesPane.setContent(verticalScrollPane);
         hiddenSidesPane.setRight(scrollBar);
-        hiddenSidesPane.setTriggerDistance(Constants.TRIGGERDISTANCE);
+        hiddenSidesPane.setTriggerDistance(Constants.TRIGGER_DISTANCE);
 
         scrollBar.maxProperty().bind(verticalScrollPane.vmaxProperty());
         scrollBar.minProperty().bind(verticalScrollPane.vminProperty());

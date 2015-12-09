@@ -46,28 +46,28 @@ public class ConnectionPane extends VBox {
     public ConnectionPane() {
         final StackPane connectionIcon = new StackPane();
         final Image connectionImage = new Image(getClass().getResourceAsStream("/icons/connection.png"),
-                Constants.MIDDLEICON, Constants.MIDDLEICON, true, true);
+                Constants.MIDDLE_ICON, Constants.MIDDLE_ICON, true, true);
         final ImageView connectionView = new ImageView(connectionImage);
 
         final Image connectionSuccessImage =
-                new Image(getClass().getResourceAsStream("/icons/connection-successful.png"), Constants.MIDDLEICON,
-                        Constants.MIDDLEICON, true, true);
+                new Image(getClass().getResourceAsStream("/icons/connection-successful.png"), Constants.MIDDLE_ICON,
+                        Constants.MIDDLE_ICON, true, true);
         connectionSuccessView = new ImageView(connectionSuccessImage);
         connectionSuccessView.setOpacity(Constants.FULLYTRANSPARENT);
 
         final Image connectionProblemImage = new Image(getClass().getResourceAsStream("/icons/connection-problem.png"),
-                Constants.MIDDLEICON, Constants.MIDDLEICON, true, true);
+                Constants.MIDDLE_ICON, Constants.MIDDLE_ICON, true, true);
         connectionProblemView = new ImageView(connectionProblemImage);
         connectionProblemView.setOpacity(Constants.FULLYTRANSPARENT);
 
         final Image connectionUploadImage = new Image(getClass().getResourceAsStream("/icons/connection-upload.png"),
-                Constants.MIDDLEICON, Constants.MIDDLEICON, true, true);
+                Constants.MIDDLE_ICON, Constants.MIDDLE_ICON, true, true);
         connectionUploadView = new ImageView(connectionUploadImage);
         connectionUploadView.setOpacity(Constants.FULLYTRANSPARENT);
 
         final Image connectionDownloadImage =
-                new Image(getClass().getResourceAsStream("/icons/connection-download.png"), Constants.MIDDLEICON,
-                        Constants.MIDDLEICON, true, true);
+                new Image(getClass().getResourceAsStream("/icons/connection-download.png"), Constants.MIDDLE_ICON,
+                        Constants.MIDDLE_ICON, true, true);
         connectionDownloadView = new ImageView(connectionDownloadImage);
         connectionDownloadView.setOpacity(Constants.FULLYTRANSPARENT);
 

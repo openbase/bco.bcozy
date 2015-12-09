@@ -363,7 +363,7 @@
 
 .popup-overlay {
     -fx-background-color: -custom-red;
-    -fx-border-color: -custom-red, rgb(255.0, 255.0, 255.0, 0.6);
+    -fx-border-color: -custom-red, rgba(255.0, 255.0, 255.0, 0.6);
     -fx-border-width: 8.0;
     -fx-background-radius:20.0;
     -fx-border-radius:15.5, 15.5;
@@ -375,7 +375,7 @@
 
 .title-bar .icon {
     -fx-alignment: center-left;
-    -fx-effect:dropshadow(gaussian, rgb(0.0, 0.0, 0.0, 0.2), 0.0, 0.0, 0.0, 1.0);
+    -fx-effect:dropshadow(gaussian, rgba(0.0, 0.0, 0.0, 0.2), 0.0, 0.0, 0.0, 1.0);
 }
 
 .title-bar .title-label {
@@ -430,11 +430,11 @@
 .choice-box > .open-button > .arrow {
     -fx-background-color: white;
     -fx-padding: 0.2em;
-    -fx-effect:dropshadow(gaussian, rgb(0.0, 0.0, 0.0, 0.2), 0.0, 0.0, 0.0, 1.0);
+    -fx-effect:dropshadow(gaussian, rgba(0.0, 0.0, 0.0, 0.2), 0.0, 0.0, 0.0, 1.0);
 }
 
 .context-menu {
-    -fx-background-color: rgb(255.0, 255.0, 255.0, 0.95);
+    -fx-background-color: rgba(255.0, 255.0, 255.0, 0.95);
     -fx-background-radius: 2.0;
 }
 
@@ -570,7 +570,7 @@
  ******************************************************************************/
 
 .progress-indicator > .determinate-indicator > .indicator {
-    -fx-background-color: rgb(255.0, 255.0, 255.0, 0.5);
+    -fx-background-color: rgba(255.0, 255.0, 255.0, 0.5);
     -fx-padding: 0.0;
 }
 
@@ -600,14 +600,4 @@
 
 .titled-pane .widget-pane > .title > .arrow-button .arrow {
     visibility: hidden;
-}
-
-/*******************************************************************************
- *                                                                             *
- * Rectangle Shape                                                             *
- *                                                                             *
- ******************************************************************************/
-
-.rectangle-selector {
-    -fx-stroke-width: 2.0;
 }

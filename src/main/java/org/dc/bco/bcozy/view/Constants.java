@@ -22,6 +22,8 @@ package org.dc.bco.bcozy.view;
  * Created by hoestreich on 11/18/15.
  */
 public final class Constants {
+
+    private static final double IMAGE_SIZE = 512.0;
     /**
      * Inset used for UI Elements.
      */
@@ -29,20 +31,20 @@ public final class Constants {
     /**
      * The size for a big size icon.
      */
-    public static final double BIGICON = 128.0;
+    public static final double BIG_ICON = 128.0;
     /**
      * The size for a mid size icon.
      */
-    public static final double MIDDLEICON = 48.0;
+    public static final double MIDDLE_ICON = 48.0;
     /**
      * The size for a small size icon.
      */
-    public static final double SMALLICON = 32.0;
+    public static final double SMALL_ICON = 32.0;
 
     /**
      * The max width for a main menu pane.
      */
-    public static final double MAXMENUWIDTH = 280.0;
+    public static final double MAX_MENU_WIDTH = 280.0;
 
     /**
      * The max width for a main menu pane.
@@ -52,32 +54,42 @@ public final class Constants {
     /**
      * The insets for a icon.
      */
-    public static final double ICONINSETS = 15.0;
+    public static final double ICON_INSETS = 15.0;
 
     /**
      * The value for a full rotation.
      */
-    public static final double FULLROTATION = 360.0;
+    public static final double FULL_ROTATION = 360.0;
 
     /**
      * The value for a full rotation.
      */
-    public static final double TRIGGERDISTANCE = 200.0;
+    public static final double TRIGGER_DISTANCE = 200.0;
 
     /**
      * The relation between meters and pixels.
      */
-    public static final double METERTOPIXEL = 30.0;
+    public static final double METER_TO_PIXEL = 30.0;
 
     /**
      * The stroke width of the rooms.
      */
-    public static final double ROOMSTROKEWIDTH = 1.0;
+    public static final double ROOM_STROKE_WIDTH = 1.0;
 
     /**
      * The standard text size to be used when loading a new font.
      */
-    public static final double STANDARDTEXTSIZE = 14.0;
+    public static final double STANDARD_TEXT_SIZE = 14.0;
+
+    /**
+     * The relation factor of middle icon and image size.
+     */
+    public static final double MIDDLE_ICON_SCALE_FACTOR = MIDDLE_ICON / IMAGE_SIZE;
+
+    /**
+     * The relation factor of small icon and image size.
+     */
+    public static final double SMALL_ICON_SCALE_FACTOR = SMALL_ICON / IMAGE_SIZE;
 
     /**
      * The opacity value for fully transparent = invisible.

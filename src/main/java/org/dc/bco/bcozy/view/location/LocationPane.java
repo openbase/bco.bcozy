@@ -108,8 +108,8 @@ public class LocationPane extends StackPane {
         double[] points = new double[vertices.size() * 2];
         for (int i = 0; i < vertices.size(); i++) {
             // TODO: X and Y are swapped in the world of the csra... make it more generic...
-            points[i * 2] = vertices.get(i).getY() * Constants.METERTOPIXEL;
-            points[i * 2 + 1] = vertices.get(i).getX() * Constants.METERTOPIXEL;
+            points[i * 2] = vertices.get(i).getY() * Constants.METER_TO_PIXEL;
+            points[i * 2 + 1] = vertices.get(i).getX() * Constants.METER_TO_PIXEL;
         }
 
         // Create a new RoomPolygon, add a mouse event handler and paste it into the viewContent
