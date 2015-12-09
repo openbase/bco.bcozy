@@ -59,4 +59,9 @@ public abstract class UnitPane extends TitledPane {
      * Initialize the ContentPane.
      */
     abstract void initContent();
+
+    /**
+     * Removes the Observer.
+     */
+    abstract void removeObserver();
 }

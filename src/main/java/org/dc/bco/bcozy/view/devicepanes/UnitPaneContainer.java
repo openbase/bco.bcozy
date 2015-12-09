@@ -20,6 +20,7 @@ package org.dc.bco.bcozy.view.devicepanes;
 
 import de.citec.dal.remote.unit.DALRemoteService;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.VBox;
 import rst.homeautomation.unit.UnitTemplateType.UnitTemplate.UnitType;
@@ -70,5 +71,19 @@ public class UnitPaneContainer extends TitledPane {
                 vBox.getChildren().add(rollershutterPane);
             }
         }
+    }
+
+    /**
+     * Deletes and clears all UnitPanes.
+     */
+    public void clearUnitPaneContainer() {
+        final Iterator<Node> childrenIterator = vBox.getChildren().iterator();
+
+        while (childrenIterator.hasNext()) {
+            final UnitPane currentUnitPane = (UnitPane) childrenIterator.next();
+            currentUnitPane.removeObserver();
+        }
+
+        this.getChildren().clear();
     }
 }

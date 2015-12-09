@@ -58,8 +58,8 @@ public class RemotePool {
 
     private final Map<Class, HashMap<String, DALRemoteService>> deviceMap;
     private final Map<String, HashMap<String, DALRemoteService>> locationMap;
-    private LocationRegistryRemote locationRegistryRemote;
-    private DeviceRegistryRemote deviceRegistryRemote;
+    private LocationRegistryRemote locationRegistryRemote = null;
+    private DeviceRegistryRemote deviceRegistryRemote = null;
     private TransformReceiver transformReceiver;
 
     private boolean isInit;
@@ -350,18 +350,14 @@ public class RemotePool {
             }
         }
 
-        try {
+        if (locationRegistryRemote != null) {
             LOGGER.info("Shutting down locationRegistryRemote...");
             locationRegistryRemote.shutdown();
-        } catch (NullPointerException e) {
-            LOGGER.info("No locationRegistryRemote to shutdown...");
         }
 
-        try {
+        if (deviceRegistryRemote != null) {
             LOGGER.info("Shutting down deviceRegistryRemote...");
             deviceRegistryRemote.shutdown();
-        } catch (NullPointerException e) {
-            LOGGER.info("No deviceRegistryRemote to shutdown...");
         }
 
         TransformerFactory.killInstance(); //TODO mpohling: how to shutdown transformer factory?

@@ -20,9 +20,11 @@
 package org.dc.bco.bcozy.view.devicepanes;
 
 import de.citec.dal.remote.unit.DALRemoteService;
+import javafx.scene.Node;
 import javafx.scene.layout.VBox;
 import rst.homeautomation.unit.UnitTemplateType.UnitTemplate.UnitType;
 
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -41,5 +43,19 @@ public class TitledPaneContainer extends VBox {
         final UnitPaneContainer unitPaneContainer = new UnitPaneContainer(unitType.toString());
         unitPaneContainer.createAndAddNewUnitPanes(unitType, dalRemoteServiceList);
         this.getChildren().add(unitPaneContainer);
+    }
+
+    /**
+     * Deletes and clears all UnitPaneContainer.
+     */
+    public void clearTitledPane() {
+        final Iterator<Node> childrenIterator = this.getChildren().iterator();
+
+        while (childrenIterator.hasNext()) {
+            final UnitPaneContainer currentUnitPaneContainer = (UnitPaneContainer) childrenIterator.next();
+            currentUnitPaneContainer.clearUnitPaneContainer();
+        }
+
+        this.getChildren().clear();
     }
 }

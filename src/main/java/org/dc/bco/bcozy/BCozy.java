@@ -122,7 +122,7 @@ public class BCozy extends Application {
 
         //instantiate RemotePool
         remotePool = new RemotePool(foregroundPane);
-        new ContextMenuController(foregroundPane, remotePool);
+        new ContextMenuController(foregroundPane, backgroundPane, remotePool);
 
         //instantiate LocationController
         try {

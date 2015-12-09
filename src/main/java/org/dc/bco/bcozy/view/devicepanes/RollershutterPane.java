@@ -104,6 +104,11 @@ public class RollershutterPane extends UnitPane {
     }
 
     @Override
+    void removeObserver() {
+        //TODO: remove the observer
+    }
+
+    @Override
     public DALRemoteService getDALRemoteService() {
         return rollershutterRemote;
     }

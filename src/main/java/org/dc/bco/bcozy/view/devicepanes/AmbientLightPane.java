@@ -23,6 +23,8 @@ import de.citec.dal.remote.unit.DALRemoteService;
 import de.citec.jul.exception.CouldNotPerformException;
 import de.citec.jul.exception.printer.ExceptionPrinter;
 import de.citec.jul.exception.printer.LogLevel;
+import de.citec.jul.pattern.Observable;
+import de.citec.jul.pattern.Observer;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.DoubleProperty;
@@ -47,6 +49,7 @@ import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.ImageEffect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rst.homeautomation.unit.AmbientLightType.AmbientLight;
 
 /**
  * Created on 03.12.15.
@@ -62,6 +65,8 @@ public class AmbientLightPane extends UnitPane {
     private final Image topImage;
     private final Group imageEffect;
 
+    private final Observer<AmbientLight> observer;
+
     /**
      * Constructor for the AmbientLightPane.
      * @param ambientLightRemote ambientLightRemote
@@ -75,6 +80,16 @@ public class AmbientLightPane extends UnitPane {
         bottomImage = new Image("/icons/lightbulb_mask.png");
         topImage    = new Image("/icons/lightbulb.png");
         imageEffect = new ImageEffect().imageBlendEffect(bottomImage, topImage, Color.YELLOW);
+
+        observer = new Observer<AmbientLight>() {
+            @Override
+            public void update(final Observable<AmbientLight> observable, final AmbientLight ambientLight)
+                    throws Exception {
+                LOGGER.info("Peng! : " + ambientLight.getLabel());
+            }
+        };
+
+        this.ambientLightRemote.addObserver(observer);
 
         try {
             super.setUnitLabel(this.ambientLightRemote.getData().getLabel());
@@ -413,5 +428,10 @@ public class AmbientLightPane extends UnitPane {
     @Override
     public DALRemoteService getDALRemoteService() {
         return ambientLightRemote;
+    }
+
+    @Override
+    void removeObserver() {
+        this.ambientLightRemote.removeObserver(observer);
     }
 }
