@@ -28,21 +28,22 @@ public abstract class LocationPolygon extends Polygon {
     private final double centerX;
     private final double centerY;
     private boolean selected;
-    private final String label;
-    private final String id;
+    private final String locationLabel;
+    private final String locationId;
 
     /**
      * Constructor for the LocationPolygon.
      * @param points Points for the shape
-     * @param label Name for the room
+     * @param locationLabel The name of the location
+     * @param locationId The ID of the location
      */
-    public LocationPolygon(final String label, final String id, final double... points) {
+    public LocationPolygon(final String locationLabel, final String locationId, final double... points) {
         super(points);
         this.centerX = (super.getLayoutBounds().getMaxX() + super.getLayoutBounds().getMinX()) / 2;
         this.centerY = (super.getLayoutBounds().getMaxY() + super.getLayoutBounds().getMinY()) / 2;
         this.selected = false;
-        this.label = label;
-        this.id = id;
+        this.locationLabel = locationLabel;
+        this.locationId = locationId;
 
         this.setLocationStyle();
     }
@@ -84,7 +85,7 @@ public abstract class LocationPolygon extends Polygon {
      * @return the label as a String
      */
     public String getLocationLabel() {
-        return label;
+        return locationLabel;
     }
 
     /**
@@ -92,7 +93,7 @@ public abstract class LocationPolygon extends Polygon {
      * @return the id as a String
      */
     public String getLocationId() {
-        return id;
+        return locationId;
     }
 
     abstract void setLocationStyle();
