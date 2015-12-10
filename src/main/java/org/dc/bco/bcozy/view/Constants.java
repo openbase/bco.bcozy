@@ -136,6 +136,21 @@ public final class Constants {
     public static final Color REGION_FILL = new Color(1.0, 1.0, 1.0, 0.4);
 
     /**
+     * The width of the zoomPane in the locationPane.
+     */
+    public static final double ZOOM_PANE_WIDTH = 2000;
+
+    /**
+     * The height of the zoomPane in the locationPane.
+     */
+    public static final double ZOOM_PANE_HEIGHT = 2000;
+
+    /**
+     * The name of a dummy room.
+     */
+    public static final String DUMMY_ROOM_NAME = "DUMMY";
+
+    /**
      * Private Constructor.
      */
     private Constants() { }

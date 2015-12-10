@@ -18,15 +18,27 @@
  */
 package org.dc.bco.bcozy.view.location;
 
+import javafx.animation.Interpolator;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
-import javafx.scene.layout.*;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.ForegroundPane;
 
@@ -37,9 +49,6 @@ import java.util.List;
  */
 public class LocationPane extends StackPane {
 
-    private static final double ZOOM_PANE_WIDTH = 2000;
-    private static final double ZOOM_PANE_HEIGHT = 2000;
-
     private final Group locationViewContent;
     private LocationPolygon selectedRoom, rootRoom;
     private Group scrollContent;
@@ -47,7 +56,6 @@ public class LocationPane extends StackPane {
     private StackPane zoomPane;
     private final ScrollPane scrollPane;
     private final ForegroundPane foregroundPane;
-    private final LocationPaneDesktopControls locationPaneDesktopControls;
 
     private final SimpleStringProperty selectedRoomId;
 
@@ -61,10 +69,10 @@ public class LocationPane extends StackPane {
 
         this.foregroundPane = foregroundPane;
 
-        final Rectangle emptyHugeRectangle = new Rectangle(-(ZOOM_PANE_WIDTH / 2),
-                -(ZOOM_PANE_HEIGHT / 2),
-                ZOOM_PANE_WIDTH,
-                ZOOM_PANE_HEIGHT);
+        final Rectangle emptyHugeRectangle = new Rectangle(-(Constants.ZOOM_PANE_WIDTH / 2),
+                -(Constants.ZOOM_PANE_HEIGHT / 2),
+                Constants.ZOOM_PANE_WIDTH,
+                Constants.ZOOM_PANE_HEIGHT);
         emptyHugeRectangle.setFill(Color.TRANSPARENT);
 
         //Dummy Room
@@ -82,7 +90,8 @@ public class LocationPane extends StackPane {
                 BackgroundSize.DEFAULT);
         this.setBackground(new Background(backgroundImage));
 
-        this.locationPaneDesktopControls = new LocationPaneDesktopControls(this, this.foregroundPane);
+        configureScrollContent();
+        configureZoomPane();
 
     }
 
@@ -118,12 +127,47 @@ public class LocationPane extends StackPane {
         locationViewContent.getChildren().add(newRoom);
 
         if (!isRoot) {
-            locationPaneDesktopControls.addMouseEventHandlerToTile(newRoom);
+            addMouseEventHandlerToTile(newRoom);
         } else {
             newRoom.setMouseTransparent(true);
             this.rootRoom = newRoom;
         }
 
+    }
+
+    /**
+     * Adds a mouse eventHandler to the tile.
+     *
+     * @param tile The tile
+     */
+    public void addMouseEventHandlerToTile(final TilePolygon tile) {
+        tile.setOnMouseClicked(event -> {
+            event.consume();
+
+            //TODO: this isn't very nice yet, will be improved if we have a model with the rooms
+            if (tile.isSelected()) {
+                selectedRoom.toggleSelected();
+                scaleFitRoom(rootRoom);
+                centerScrollPaneToPointAnimated(new Point2D(rootRoom.getCenterX(), rootRoom.getCenterY()));
+                setSelectedRoom(new ZonePolygon("none", "none", 0.0, 0.0, 0.0, 0.0));
+                foregroundPane.getContextMenu().getRoomInfo().setText(rootRoom.getLocationLabel());
+            } else {
+                selectedRoom.toggleSelected();
+                scaleFitRoom(tile);
+                centerScrollPaneToPointAnimated(new Point2D(tile.getCenterX(), tile.getCenterY()));
+                tile.toggleSelected();
+                setSelectedRoom(tile);
+                foregroundPane.getContextMenu().getRoomInfo().setText(selectedRoom.getLocationLabel());
+            }
+        });
+        tile.setOnMouseEntered(event -> {
+            event.consume();
+            foregroundPane.getInfoFooter().getMouseOverText().setText(tile.getLocationLabel());
+        });
+        tile.setOnMouseExited(event -> {
+            event.consume();
+            foregroundPane.getInfoFooter().getMouseOverText().setText("");
+        });
     }
 
     private ScrollPane createZoomPane(final Group group) {
@@ -137,7 +181,6 @@ public class LocationPane extends StackPane {
         scroller.setContent(scrollContent);
         scroller.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scroller.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        //scroller.getStylesheets().add("css/transparent_scrollpane.css");
 
         scroller.viewportBoundsProperty().addListener((observable, oldValue, newValue) -> {
             zoomPane.setMinSize(newValue.getWidth(), newValue.getHeight());
@@ -152,70 +195,6 @@ public class LocationPane extends StackPane {
     }
 
     /**
-     * Getter for ZoomPaneWidth.
-     * @return the width of the zoomPane
-     */
-    public double getZoomPaneWidth() {
-        return ZOOM_PANE_WIDTH;
-    }
-
-    /**
-     * Getter for ZoomPaneHeight.
-     * @return the height of the zoomPane
-     */
-    public double getZoomPaneHeight() {
-        return ZOOM_PANE_HEIGHT;
-    }
-
-    /**
-     * Getter for selectedRoom.
-     * @return selectedRoom
-     */
-    public LocationPolygon getSelectedRoom() {
-        return selectedRoom;
-    }
-
-    /**
-     * Getter for scrollContent.
-     * @return scrollContent
-     */
-    public Group getScrollContent() {
-        return scrollContent;
-    }
-
-    /**
-     * Getter for scroller.
-     * @return scroller
-     */
-    public ScrollPane getScroller() {
-        return scroller;
-    }
-
-    /**
-     * Getter for zoomPane.
-     * @return zoomPane
-     */
-    public StackPane getZoomPane() {
-        return zoomPane;
-    }
-
-    /**
-     * Getter for locationViewContent.
-     * @return locationViewContent
-     */
-    public Group getLocationViewContent() {
-        return locationViewContent;
-    }
-
-    /**
-     * Getter for scrollPane.
-     * @return scrollPane
-     */
-    public ScrollPane getScrollPane() {
-        return scrollPane;
-    }
-
-    /**
      * Setter for selectedRoom.
      * @param selectedRoom Room to select
      */
@@ -225,18 +204,12 @@ public class LocationPane extends StackPane {
     }
 
     /**
-     * Getter for the rootRoom.
-     * @return rootRoom
-     */
-    public LocationPolygon getRootRoom() {
-        return rootRoom;
-    }
-
-    /**
      * ZoomFits to the root if available.
      */
     public void zoomFit() {
-        this.locationPaneDesktopControls.zoomFit();
+        //TODO: handle case where no root room exists
+        scaleFitRoom(rootRoom);
+        centerScrollPaneToPointAnimated(new Point2D(rootRoom.getCenterX(), rootRoom.getCenterY()));
     }
 
     /**
@@ -255,5 +228,126 @@ public class LocationPane extends StackPane {
      */
     public void removeSelectedRoomIdListener(final ChangeListener<? super String> changeListener) {
         selectedRoomId.removeListener(changeListener);
+    }
+
+    private void configureScrollContent() {
+        // Panning via drag....
+        final ObjectProperty<Point2D> lastMouseCoordinates = new SimpleObjectProperty<>();
+        scrollContent.setOnMousePressed(event -> lastMouseCoordinates.set(new Point2D(event.getX(), event.getY())));
+
+        scrollContent.setOnMouseDragged(event -> {
+            final double deltaX = event.getX() - lastMouseCoordinates.get().getX();
+            final double extraWidth = scrollContent.getLayoutBounds().getWidth()
+                    - scroller.getViewportBounds().getWidth();
+            final double deltaH = deltaX * (scroller.getHmax() - scroller.getHmin()) / extraWidth;
+            final double desiredH = scroller.getHvalue() - deltaH;
+            scroller.setHvalue(Math.max(0, Math.min(scroller.getHmax(), desiredH)));
+
+            final double deltaY = event.getY() - lastMouseCoordinates.get().getY();
+            final double extraHeight = scrollContent.getLayoutBounds().getHeight()
+                    - scroller.getViewportBounds().getHeight();
+            final double deltaV = deltaY * (scroller.getHmax() - scroller.getHmin()) / extraHeight;
+            final double desiredV = scroller.getVvalue() - deltaV;
+            scroller.setVvalue(Math.max(0, Math.min(scroller.getVmax(), desiredV)));
+        });
+    }
+
+    private void configureZoomPane() {
+
+        final double scaleDelta = 1.05;
+        zoomPane.setOnScroll(event -> {
+            event.consume();
+
+            if (event.getDeltaY() == 0) {
+                return;
+            }
+
+            final double scaleFactor = (event.getDeltaY() > 0) ? scaleDelta : 1 / scaleDelta;
+
+            // amount of scrolling in each direction in scrollContent coordinate
+            // units
+            final Point2D scrollOffset = figureScrollOffset();
+
+            locationViewContent.setScaleX(locationViewContent.getScaleX() * scaleFactor);
+            locationViewContent.setScaleY(locationViewContent.getScaleY() * scaleFactor);
+
+            // move viewport so that old center remains in the center after the
+            // scaling
+            repositionScroller(scaleFactor, scrollOffset);
+
+        });
+    }
+
+    private Point2D figureScrollOffset() {
+        final double extraWidth = scrollContent.getLayoutBounds().getWidth() - scroller.getViewportBounds().getWidth();
+        final double hScrollProportion = (scroller.getHvalue() - scroller.getHmin())
+                / (scroller.getHmax() - scroller.getHmin());
+        final double scrollXOffset = hScrollProportion * Math.max(0, extraWidth);
+        final double extraHeight = scrollContent.getLayoutBounds().getHeight()
+                - scroller.getViewportBounds().getHeight();
+        final double vScrollProportion = (scroller.getVvalue() - scroller.getVmin())
+                / (scroller.getVmax() - scroller.getVmin());
+        final double scrollYOffset = vScrollProportion * Math.max(0, extraHeight);
+        return new Point2D(scrollXOffset, scrollYOffset);
+    }
+
+    private void repositionScroller(final double scaleFactor, final Point2D scrollOffset) {
+        final double scrollXOffset = scrollOffset.getX();
+        final double scrollYOffset = scrollOffset.getY();
+        final double extraWidth = scrollContent.getLayoutBounds().getWidth() - scroller.getViewportBounds().getWidth();
+        if (extraWidth > 0) {
+            final double halfWidth = scroller.getViewportBounds().getWidth() / 2;
+            final double newScrollXOffset = (scaleFactor - 1) *  halfWidth + scaleFactor * scrollXOffset;
+            scroller.setHvalue(scroller.getHmin()
+                    + newScrollXOffset * (scroller.getHmax() - scroller.getHmin()) / extraWidth);
+        } else {
+            scroller.setHvalue(scroller.getHmin());
+        }
+        final double extraHeight = scrollContent.getLayoutBounds().getHeight()
+                - scroller.getViewportBounds().getHeight();
+        if (extraHeight > 0) {
+            final double halfHeight = scroller.getViewportBounds().getHeight() / 2;
+            final double newScrollYOffset = (scaleFactor - 1) * halfHeight + scaleFactor * scrollYOffset;
+            scroller.setVvalue(scroller.getVmin()
+                    + newScrollYOffset * (scroller.getVmax() - scroller.getVmin()) / extraHeight);
+        } else {
+            scroller.setHvalue(scroller.getHmin());
+        }
+    }
+
+    private void scaleFitRoom(final LocationPolygon room) {
+        final Point2D scrollOffset = figureScrollOffset();
+
+        double xScale = (this.getWidth() / room.prefWidth(0)) * 0.3;
+        double yScale = (this.getHeight() / room.prefHeight(0)) * 0.5;
+
+        double scale = (xScale < yScale) ? xScale : yScale;
+        double scaleFactor = scale / locationViewContent.getScaleX();
+
+        locationViewContent.setScaleX(scale);
+        locationViewContent.setScaleY(scale);
+
+        repositionScroller(scaleFactor, scrollOffset);
+    }
+
+    private void centerScrollPaneToPointAnimated(final Point2D center) {
+        final double realZoomPaneWidth =
+                Constants.ZOOM_PANE_WIDTH - scroller.getWidth() / locationViewContent.getScaleX();
+        final double realZoomPaneHeight =
+                Constants.ZOOM_PANE_HEIGHT - scroller.getHeight() / locationViewContent.getScaleY();
+
+        final Timeline timeline = new Timeline();
+        timeline.setCycleCount(1);
+
+        final KeyValue keyValueX = new KeyValue(scroller.hvalueProperty(),
+                (center.getX() + (realZoomPaneWidth / 2.0)) / realZoomPaneWidth,
+                Interpolator.EASE_BOTH);
+        final KeyValue keyValueY = new KeyValue(scroller.vvalueProperty(),
+                (center.getY() + (realZoomPaneHeight / 2.0)) / realZoomPaneHeight,
+                Interpolator.EASE_BOTH);
+        final KeyFrame keyFrame = new KeyFrame(Duration.millis(500), keyValueX, keyValueY);
+
+        timeline.getKeyFrames().add(keyFrame);
+        timeline.play();
     }
 }
