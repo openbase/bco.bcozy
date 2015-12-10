@@ -51,6 +51,11 @@ public final class Constants {
     public static final double SMALL_ICON = 32.0;
 
     /**
+     * The size for a small size icon.
+     */
+    public static final double EXTRA_SMALL_ICON = 16.0;
+
+    /**
      * The max width for a main menu pane.
      */
     public static final double MAX_MENU_WIDTH = 280.0;
@@ -169,6 +174,16 @@ public final class Constants {
      * The size for the small main menu.
      */
     public static final double SMALL_MAIN_MENU_WIDTH = 60.0;
+
+    /**
+     * The png file of the fullscreen icon.
+     */
+    public static final String FULLSCREEN_ICON = "/icons/fullscreen.png";
+
+    /**
+     * The png file of the normalscreen icon.
+     */
+    public static final String NORMALSCREEN_ICON = "/icons/normalscreen.png";
 
     /**
      * Private Constructor.

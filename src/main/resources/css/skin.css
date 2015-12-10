@@ -62,7 +62,7 @@
     -fx-border-radius: 0.0;
     -fx-background-color: rgba(255,255,255,0.9);
     -fx-background-radius: 0px;
-    -fx-padding: 5 5 5 5;
+    -fx-padding: 20 20 20 20;
 }
 
 .padding-large {
@@ -128,7 +128,8 @@
  ******************************************************************************/
 
 .small-label {
-    -fx-font-size: 14.0;
+    -fx-font-size: 12.0;
+    -fx-text-fill: slategray;
 }
 
 .label {
@@ -181,7 +182,7 @@
 .toggle-button:selected,
 .button:armed,
 .button:default:armed {
-     -fx-background-color: derive(-bluegrey-50, -20.0%);
+    -fx-background-color: derive(-bluegrey-50, -20.0%);
     -fx-background-insets:  0.0;
 }
 .toggle-switch .thumb {
@@ -194,6 +195,12 @@
 .toggle-switch:selected .thumb-area{
     -fx-background-radius: 0.0;
     -fx-background-color: limegreen;
+}
+
+.transparent-button {
+    -fx-padding         : 5 0 0 0;
+    -fx-background-color: transparent;
+    -fx-text-fill: dodgerblue;
 }
 
 .large-button {
@@ -230,20 +237,18 @@
  ******************************************************************************/
 
 .text-area, .text-field, .text-input, .password-field {
-    -fx-background-color: white;
-    -fx-background-insets:  0.0;
     -fx-background-radius: 2.0;
-    -fx-padding: 0.7em;
-    -fx-border-width: 0.0;
+    -fx-padding: 0 0 5 0;
+    -fx-background-color: transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color:
+        transparent
+        transparent
+        black
+        transparent;
+    -fx-border-insets: 0 0 1 0;
     -fx-prompt-text-fill: derive(-dark, 50.0%);
     -fx-highlight-fill: rgb(94.0, 203.0, 234.0);
-    /*-fx-background-insets: 0;*/
-    /*-fx-background-color: transparent, white, transparent, white;*/
-    /*-fx-background-radius: 0, 0, 0, 0;*/
-    /*-fx-box-border: none;*/
-    /*-fx-border-width: -1;*/
-    /*-fx-text-box-border: transparent;*/
-    /*-fx-effect: none !important;*/
 }
 
 .text-area, .text, .text-field, .text-input, .password-field > * > .text {

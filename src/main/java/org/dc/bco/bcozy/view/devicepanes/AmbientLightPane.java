@@ -32,7 +32,6 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
-import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.effect.*;
@@ -46,6 +45,7 @@ import javafx.scene.paint.*;
 import javafx.scene.shape.*;
 import org.controlsfx.control.ToggleSwitch;
 import org.dc.bco.bcozy.view.Constants;
+import org.dc.bco.bcozy.view.ImageEffect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.homeautomation.unit.AmbientLightType.AmbientLight;
@@ -85,6 +85,7 @@ public class AmbientLightPane extends UnitPane {
             public void update(final Observable<AmbientLight> observable, final AmbientLight ambientLight)
                     throws Exception {
                 LOGGER.info("Peng! : " + ambientLight.getLabel());
+
             }
         };
 
@@ -162,40 +163,8 @@ public class AmbientLightPane extends UnitPane {
             //TODO implement color (hueValue, saturation, brightness) sending to ambientlight unit
 
 
-
-
-
-
-
-
-            final ImageView bottomView = new ImageView(bottomImage);
-
-            bottomView.setClip(new ImageView(bottomImage));
-            bottomView.setScaleX(Constants.SMALL_ICON_SCALE_FACTOR);
-            bottomView.setScaleY(Constants.SMALL_ICON_SCALE_FACTOR);
-            bottomView.setSmooth(true);
-
-            final ImageView topView = new ImageView(topImage);
-            topView.setClip(new ImageView(topImage));
-            topView.setScaleX(Constants.SMALL_ICON_SCALE_FACTOR);
-            topView.setScaleY(Constants.SMALL_ICON_SCALE_FACTOR);
-            topView.setSmooth(true);
-
-            //color property
-            final ColorAdjust monochrome = new ColorAdjust();
-            monochrome.setSaturation(-1.0);
-
-            final Blend blushEffect = new Blend(BlendMode.ADD, monochrome, new ColorInput(0, 0,
-                    bottomView.getImage().getWidth(), bottomView.getImage().getHeight(),
-                    Color.hsb(hueValue.getValue(), saturation.getValue() / 100, brightness.getValue() / 100)));
-
-            bottomView.setEffect(blushEffect);
-            //bottomView.setCache(true);
-            //bottomView.setCacheHint(CacheHint.SPEED);
-
-            final Group imageEffect = new Group(bottomView, topView);
-
-            borderPane.setLeft(imageEffect);
+            final ImageEffect testGroup = new ImageEffect(bottomImage, topImage, Color.hsb(hueValue.getValue(), saturation.getValue() / 100, brightness.getValue() / 100));
+            borderPane.setLeft(testGroup);
         };
 
         //saturation & brightness depend on hue value

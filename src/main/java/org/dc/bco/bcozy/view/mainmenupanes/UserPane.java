@@ -18,6 +18,7 @@
  */
 package org.dc.bco.bcozy.view.mainmenupanes;
 
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -25,6 +26,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.dc.bco.bcozy.view.Constants;
 
@@ -65,8 +67,9 @@ public class UserPane extends VBox {
         // Case: No user logged in
         final Image icon = new Image(getClass().getResourceAsStream("/icons/user_fa.png"));
         final ImageView userIconImageView = new ImageView(icon);
-        userIconImageView.setFitHeight(Constants.BIG_ICON);
-        userIconImageView.setFitWidth(Constants.BIG_ICON);
+        userIconImageView.setFitHeight(Constants.MIDDLE_ICON);
+        userIconImageView.setFitWidth(Constants.MIDDLE_ICON);
+        userIconImageView.setSmooth(true);
         userIcon = new PaneElement(userIconImageView);
         userIcon.setMaxWidth(Constants.MAX_MENU_WIDTH);
         openLoginBtn = new Button(languageBundle.getString("startLogin"));
@@ -75,21 +78,35 @@ public class UserPane extends VBox {
 
         // Case: Login active
         final Label nameLbl = new Label(languageBundle.getString("username"));
+        nameLbl.getStyleClass().clear();
+        nameLbl.getStyleClass().add("small-label");
+        nameLbl.setAlignment(Pos.BOTTOM_LEFT);
         nameTxt = new TextField();
         final Label pwLbl = new Label(languageBundle.getString("password"));
+        pwLbl.getStyleClass().clear();
+        pwLbl.getStyleClass().add("small-label");
         passwordField = new PasswordField();
         loginBtn = new Button(languageBundle.getString("login"));
+        loginBtn.getStyleClass().clear();
+        loginBtn.getStyleClass().add("transparent-button");
+        final HBox rightAlignLoginButton = new HBox(loginBtn);
+        rightAlignLoginButton.setAlignment(Pos.CENTER_RIGHT);
+
         final Image backIcon = new Image(getClass().getResourceAsStream("/icons/back.png"));
         final ImageView imageViewBackIcon = new ImageView(backIcon);
-        imageViewBackIcon.setFitWidth(Constants.SMALL_ICON);
-        imageViewBackIcon.setFitHeight(Constants.SMALL_ICON);
+        imageViewBackIcon.setFitWidth(Constants.EXTRA_SMALL_ICON);
+        imageViewBackIcon.setFitHeight(Constants.EXTRA_SMALL_ICON);
+        imageViewBackIcon.setSmooth(true);
         backBtn = new Button("", imageViewBackIcon);
+        backBtn.getStyleClass().clear();
+
         final VBox loginLayout = new VBox(Constants.INSETS);
         final BorderPane loginFirstLineLayout = new BorderPane();
         loginFirstLineLayout.setLeft(nameLbl);
         loginFirstLineLayout.setRight(backBtn);
         loginLayout.getStyleClass().clear();
-        loginLayout.getChildren().addAll(loginFirstLineLayout, nameTxt, pwLbl, passwordField, loginBtn);
+        loginLayout.setAlignment(Pos.BOTTOM_LEFT);
+        loginLayout.getChildren().addAll(loginFirstLineLayout, nameTxt, pwLbl, passwordField, rightAlignLoginButton);
         loginPane = new PaneElement(loginLayout);
         loginPane.setMaxWidth(Constants.MAX_MENU_WIDTH);
 
