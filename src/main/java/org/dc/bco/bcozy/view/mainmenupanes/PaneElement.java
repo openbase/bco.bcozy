@@ -18,11 +18,9 @@
  */
 package org.dc.bco.bcozy.view.mainmenupanes;
 
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.layout.VBox;
-import org.dc.bco.bcozy.view.Constants;
 
 /**
  * Created by hoestreich on 11/19/15.
@@ -34,8 +32,6 @@ public class PaneElement extends VBox {
      * @param content the content which should be placed within this pane.
      */
     public PaneElement(final Node content) {
-        this.getStyleClass().add("dropshadow-bottom-bg");
-        this.setPadding(new Insets(Constants.INSETS, Constants.INSETS, Constants.INSETS, Constants.INSETS));
         this.setFillWidth(true);
         this.setAlignment(Pos.CENTER);
         this.getChildren().add(content);

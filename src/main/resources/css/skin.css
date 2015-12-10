@@ -10,8 +10,8 @@
     /*-fx-font-family: 'Helvetica Neue';*/
     -fx-font-family: 'Roboto Regular';
     -fx-font-size: 18.0px;
-    -fx-font-weight: 600;
-    -fx-disabled-opacity: 0.6;
+    /*-fx-font-weight: 600;*/
+    /*-fx-disabled-opacity: 0.6;*/
 
     -custom-red: rgb(237.0, 68.0, 37.0);
     -custom-blue: rgb(0.0, 184.0, 222.0);
@@ -42,25 +42,25 @@
     -fx-background-color: linear-gradient(to left, rgba(0,0,0,0.8) 80%, rgba(0,0,0,0.5) 90%, rgba(0,0,0,0.0) 100%);
 }
 
-.dropshadow-left-bg {
-    -fx-effect: dropshadow(gaussian, rgba(0.0, 0.0, 0.0, 0.3), 10.0, 0.0, -4.0, 0.0);
-}
+/*.dropshadow-left-bg {*/
+    /*-fx-effect: dropshadow(gaussian, rgba(0.0, 0.0, 0.0, 0.3), 10.0, 0.0, -4.0, 0.0);*/
+/*}*/
 
-.dropshadow-right-bg {
-    -fx-effect: dropshadow(gaussian, rgba(0.0, 0.0, 0.0, 0.3), 10.0, 0.0, 4.0, 0.0);
-}
+/*.dropshadow-right-bg {*/
+    /*-fx-effect: dropshadow(gaussian, rgba(0.0, 0.0, 0.0, 0.3), 10.0, 0.0, 4.0, 0.0);*/
+/*}*/
 
-.dropshadow-bottom-bg {
-    -fx-effect: dropshadow(gaussian, rgba(0.0, 0.0, 0.0, 0.3), 10.0, 0.0, 0.0, 4.0);
-}
+/*.dropshadow-bottom-bg {*/
+    /*-fx-effect: dropshadow(gaussian, rgba(0.0, 0.0, 0.0, 0.3), 10.0, 0.0, 0.0, 4.0);*/
+/*}*/
 
-.dropshadow-top-bg {
-    -fx-effect: dropshadow(gaussian, rgba(0.0, 0.0, 0.0, 0.3), 10.0, 0.0, 0.0, -4.0);
-}
+/*.dropshadow-top-bg {*/
+    /*-fx-effect: dropshadow(gaussian, rgba(0.0, 0.0, 0.0, 0.3), 10.0, 0.0, 0.0, -4.0);*/
+/*}*/
 
 .floating-box {
     -fx-border-radius: 0.0;
-    -fx-background-color: rgba(255,255,255,0.8);
+    -fx-background-color: rgba(255,255,255,0.9);
     -fx-background-radius: 0px;
     -fx-padding: 5 5 5 5;
 }
@@ -80,22 +80,35 @@
 }
 
 .main-menu {
-    -fx-background-insets:  10.0, 0.0, 10.0, 10.0;
+    -fx-border-radius: 0.0;
+    -fx-background-color: rgba(255,255,255,0.9);
+    -fx-background-radius: 0;
+    -fx-background-insets: 10.0 0.0 10.0 10.0;
+    -fx-padding: 60.0 10.0 10.0 20.0;
 }
 
 .context-menu {
+    -fx-border-radius: 0.0;
+    -fx-background-color: rgba(255,255,255,0.9);
+    -fx-background-radius: 0;
     -fx-background-insets:  10.0, 10.0, 10.0, 0.0;
+    -fx-padding: 20.0 10.0 10.0 10.0;
 }
 .info-footer {
     -fx-background-color: rgba(255,255,255,1.0);
 }
 
 .floating-button {
-    -fx-background-color: rgba(255,255,255,1.0);
+    -fx-background-color: rgba(255,255,255,0.9);
     -fx-alignment: CENTER;
     -fx-background-radius: 50%;
     -fx-effect: dropshadow(gaussian, rgba(0.0, 0.0, 0.0, 0.3), 10.0, 0.0, -4.0, 4.0);
     -fx-padding: 15.0 15.0 15.0 15.0;
+}
+.main-menu-pane {
+    -fx-padding:  10.0, 10.0, 10.0, 10.0;
+    -fx-background-color: rgba(255,255,255,1.0);
+    -fx-effect: dropshadow(gaussian, rgba(0.0, 0.0, 0.0, 0.3), 10.0, 0.0, 0.0, 4.0);
 }
 
 
@@ -143,25 +156,24 @@
 .toggle-button, .button{
     -fx-background-color: -bluegrey-50;
     -fx-background-insets:  0.0;
-    /*-fx-background-radius: 2.0;*/
     -fx-border-width: 0.0;
-    /*-fx-padding: 0.7em;*/
     -fx-text-fill: -fx-text-base-color;
     -fx-alignment: CENTER;
     -fx-content-display: LEFT;
     -fx-border-radius: 0px;
     -fx-background-radius: 0px;
+    -fx-effect: none !important;
 }
 
 .toggle-button:focused,
 .button:focused,
 .button:default:focused {
-       -fx-background-color: derive(-bluegrey-50, 50.0%);
+    -fx-background-color: derive(-bluegrey-50, 50.0%);
     -fx-background-insets:  0.0;
 }
 
 .toggle-button:focused:selected {
-       -fx-background-color: derive(-bluegrey-50, 50.0%), derive(-bluegrey-50, -20.0%);
+    -fx-background-color: derive(-bluegrey-50, 50.0%), derive(-bluegrey-50, -20.0%);
     -fx-background-insets:  0.0;
 }
 
@@ -177,12 +189,13 @@
 }
 .toggle-switch .thumb-area{
     -fx-background-radius: 0.0;
-    -fx-background-color: indianred;
+    -fx-background-color: slategrey;
 }
 .toggle-switch:selected .thumb-area{
     -fx-background-radius: 0.0;
     -fx-background-color: limegreen;
 }
+
 .large-button {
     -fx-min-width: 80;
 }
@@ -216,7 +229,7 @@
  *                                                                             *
  ******************************************************************************/
 
-.text-area , .text-field {
+.text-area, .text-field, .text-input, .password-field {
     -fx-background-color: white;
     -fx-background-insets:  0.0;
     -fx-background-radius: 2.0;
@@ -224,31 +237,43 @@
     -fx-border-width: 0.0;
     -fx-prompt-text-fill: derive(-dark, 50.0%);
     -fx-highlight-fill: rgb(94.0, 203.0, 234.0);
+    /*-fx-background-insets: 0;*/
+    /*-fx-background-color: transparent, white, transparent, white;*/
+    /*-fx-background-radius: 0, 0, 0, 0;*/
+    /*-fx-box-border: none;*/
+    /*-fx-border-width: -1;*/
+    /*-fx-text-box-border: transparent;*/
+    /*-fx-effect: none !important;*/
 }
 
-.text-area .text, .text-field > * > .text {
-    -fx-effect: null;
-    -fx-fill: -dark;
+.text-area, .text, .text-field, .text-input, .password-field > * > .text {
+    -fx-text-box-border: transparent;
 }
 
 .text-area {
-    -fx-padding: 0.15em;
+    -fx-background-insets: 0;
+    -fx-background-color: transparent, white, transparent, white;
+    -fx-background-radius: 0, 0, 0, 0;
+    -fx-box-border: none;
+    -fx-border-width: -1;
+    -fx-text-box-border: transparent;
 }
 
 .text-area .content {
-    -fx-padding: 0.7em;
-    -fx-border-width: 0.0;
-    -fx-background-color: transparent;
+    -fx-background-color: transparent, white, transparent, white;
+    -fx-text-box-border: transparent;
 }
 
 .text-area:focused  .content {
-     -fx-background-color: transparent;
+    -fx-background-color: transparent, white, transparent, white;
+    -fx-text-box-border: transparent;
 }
 
 .text-area:focused, .text-field:focused {
     -fx-background-color: derive(-bluegrey-50, 80.0%);
     -fx-background-insets: 0.0, 0.2em;
     -fx-background-radius: 2.0;
+    -fx-text-box-border: transparent;
 }
 
 .scroll-bar:vertical > .track-background,
@@ -271,13 +296,13 @@
 .scroll-bar:hover > .increment-button,
 .scroll-bar:hover > .decrement-button {
     -fx-background-color: transparent;
-    -fx-padding:5px;
+    -fx-padding:3px;
 }
 
 .scroll-bar > .increment-button > .increment-arrow,
 .scroll-bar > .decrement-button > .decrement-arrow {
     -fx-background-color: darkgray;
-    -fx-padding:5px;
+    -fx-padding:3px;
 }
 .scroll-bar > .track-background{
     -fx-background-color: transparent;
@@ -337,7 +362,7 @@
     -fx-pref-width: 16.0;
     -fx-pref-height: 16.0;
     -fx-scale-shape: false;
-    -fx-effect: dropshadow(two-pass-box , -fx-shadow-highlight-color, 1.0, 0.0 , 0.0, 1.4);
+    /*-fx-effect: dropshadow(two-pass-box , -fx-shadow-highlight-color, 1.0, 0.0 , 0.0, 1.4);*/
     -fx-background-color: -fx-mark-highlight-color,derive(-fx-base,-45.0%);
 }
 
@@ -346,7 +371,7 @@
     -fx-pref-height: 16.0;
     -fx-shape: "M0,0H8V2H0Z";
     -fx-scale-shape: false;
-    -fx-effect: dropshadow(two-pass-box , -fx-shadow-highlight-color, 1.0, 0.0 , 0.0, 1.4);
+    /*-fx-effect: dropshadow(two-pass-box , -fx-shadow-highlight-color, 1.0, 0.0 , 0.0, 1.4);*/
     -fx-background-color: -fx-mark-highlight-color,derive(-fx-base,-45.0%);
 }
 
@@ -361,21 +386,13 @@
     -fx-skin: "com.guigarage.flatterfx.skin.FlatterComboBoxSkin";
 }*/
 
-.popup-overlay {
-    -fx-background-color: -custom-red;
-    -fx-border-color: -custom-red, rgba(255.0, 255.0, 255.0, 0.6);
-    -fx-border-width: 8.0;
-    -fx-background-radius:20.0;
-    -fx-border-radius:15.5, 15.5;
-}
-
 .title-bar {
     -fx-padding: 10;
 }
 
 .title-bar .icon {
     -fx-alignment: center-left;
-    -fx-effect:dropshadow(gaussian, rgba(0.0, 0.0, 0.0, 0.2), 0.0, 0.0, 0.0, 1.0);
+    /*-fx-effect:dropshadow(gaussian, rgb(0.0, 0.0, 0.0, 0.2), 0.0, 0.0, 0.0, 1.0);*/
 }
 
 .title-bar .title-label {
@@ -430,7 +447,7 @@
 .choice-box > .open-button > .arrow {
     -fx-background-color: white;
     -fx-padding: 0.2em;
-    -fx-effect:dropshadow(gaussian, rgba(0.0, 0.0, 0.0, 0.2), 0.0, 0.0, 0.0, 1.0);
+    /*-fx-effect:dropshadow(gaussian, rgb(0.0, 0.0, 0.0, 0.2), 0.0, 0.0, 0.0, 1.0);*/
 }
 
 .context-menu {
@@ -447,7 +464,7 @@
     -fx-background-color: -dark;
     -fx-shape: "m 269.9,233.66286 c 0.15,-0.12 1.97,1.7 2.54,3.1 2.3,-7.33 4.09,-9.1 6.79,-12.1 1.5,-0.25 2.4,-0.27 4.36,0.11 -7.1,5.8 -8.8,16.7 -9.9,17.8 l -0.75,0.02 c 0,0 -2.36,-5.24 -5.6,-7.38 -0.27,-0.17 0.02,-1.5 -0.2,-1.6 z";
     -fx-padding: 0.68em 0.5em 0.0em 0.0em;
-    -fx-effect: dropshadow(gaussian, rgb(0.0, 0.0, 0.0, 0.2), 0.0, 0.0, 0.0, 1.0);
+    /*-fx-effect: dropshadow(gaussian, rgb(0.0, 0.0, 0.0, 0.2), 0.0, 0.0, 0.0, 1.0);*/
 }
 
 .radio-menu-item > .left-container > .radio,

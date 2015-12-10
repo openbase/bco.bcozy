@@ -97,7 +97,7 @@ public class ConnectionPane extends VBox {
      * Show the tick mark to indicate that the connection is established and no problems are detected.
      */
     public void connectionEstablished() {
-        connectionSuccessView.setOpacity(Constants.FULLYTRANSPARENT);
+        connectionSuccessView.setOpacity(Constants.NOTRANSPARENCY);
         problemFade.stop();
         connectionProblemView.setOpacity(Constants.FULLYTRANSPARENT);
     }
@@ -117,7 +117,7 @@ public class ConnectionPane extends VBox {
     public void uploadActive() {
         connectionUploadView.setOpacity(Constants.NOTRANSPARENCY);
         final FadeTransition uploadFade = createFadeTransition(connectionUploadView, Constants.FULLYTRANSPARENT,
-                Constants.FULLYTRANSPARENT, 1, Constants.FASTFADEDURATION);
+                Constants.NOTRANSPARENCY, 1, Constants.FASTFADEDURATION);
         uploadFade.play();
         uploadFade.setOnFinished(event -> connectionUploadView.setOpacity(Constants.FULLYTRANSPARENT));
     }
@@ -128,7 +128,7 @@ public class ConnectionPane extends VBox {
     public void downloadActive() {
         connectionDownloadView.setOpacity(Constants.NOTRANSPARENCY);
         final FadeTransition downloadFade = createFadeTransition(connectionDownloadView, Constants.FULLYTRANSPARENT,
-                Constants.FULLYTRANSPARENT, 1, Constants.FASTFADEDURATION);
+                Constants.NOTRANSPARENCY, 1, Constants.FASTFADEDURATION);
         downloadFade.play();
         downloadFade.setOnFinished(event -> connectionDownloadView.setOpacity(Constants.FULLYTRANSPARENT));
     }

@@ -36,6 +36,7 @@ public class CenterPaneController {
     private static final Logger LOGGER = LoggerFactory.getLogger(CenterPaneController.class);
     private final CenterPane centerPane;
     private State activeState;
+    private boolean isShowing;
     /**
      * Enum to control the display state.
      */
@@ -45,6 +46,7 @@ public class CenterPaneController {
      * @param foregroundPane instance of the foregroundPane which has all elements as its children.
      */
     public CenterPaneController(final ForegroundPane foregroundPane) {
+        isShowing = false;
         activeState = State.SETTINGS;
         centerPane = foregroundPane.getCenterPane();
         centerPane.getFullscreen().setOnAction(event -> setMaximizeAction());
@@ -65,15 +67,19 @@ public class CenterPaneController {
     }
 
     private void setShowHidePopOver() {
-        if (centerPane.getViewSwitcher().isShowing()) {
+        if (isShowing) {
             LOGGER.info("Hiding");
-            centerPane.getViewSwitcher().hide();
+            isShowing = false;
+            centerPane.setViewSwitchingButtonsVisible(false);
         } else {
             LOGGER.info("Showing");
-            centerPane.getViewSwitcher().show(centerPane.getPopUpParent());
+            LOGGER.info("Layout Y before: " + centerPane.getPopUpChildBottom().getLayoutY());
+            isShowing = true;
+            centerPane.setViewSwitchingButtonsVisible(true);
+            LOGGER.info("Layout Y after: " + centerPane.getPopUpChildBottom().getLayoutY());
         }
     }
-    //TODO: Does not work change concept of active button?
+
     private void setChooseView(final ActionEvent event) {
         if (event.getSource().equals(centerPane.getPopUpChildTop())) {
             if (activeState.equals(State.SETTINGS)) {

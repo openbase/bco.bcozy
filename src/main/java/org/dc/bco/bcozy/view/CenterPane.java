@@ -21,48 +21,50 @@ package org.dc.bco.bcozy.view;
 import javafx.geometry.Pos;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.StackPane;
-import org.controlsfx.control.PopOver;
 
 /**
  * Created by hoestreich on 11/26/15.
  */
 public class CenterPane extends StackPane {
 
-    private final PopOver viewSwitcher;
     private final FloatingButton popUpParent;
     private final FloatingButton popUpChildTop;
     private final FloatingButton popUpChildBottom;
     private final FloatingButton fullscreen;
-    private final ClockLabel clock;
-    private final VBox verticalLayout;
+    private final VBox viewSwitcher;
+    private final VBox viewSwitcherPopUp;
 
     /**
      * Constructor for the center pane.
      */
     public CenterPane() {
 
-        popUpParent = new FloatingButton("/icons/settings.png");
-        popUpChildTop = new FloatingButton("/icons/thermometer.png");
-        popUpChildBottom = new FloatingButton("/icons/observe.png");
-        fullscreen = new FloatingButton("/icons/fullscreen.png");
-        clock = new ClockLabel();
+        // Initializing components
+        popUpParent = new FloatingButton("/icons/settings.png", Constants.MIDDLE_ICON);
+        popUpChildTop = new FloatingButton("/icons/thermometer.png", Constants.SMALL_ICON);
+        popUpChildBottom = new FloatingButton("/icons/observe.png", Constants.SMALL_ICON);
+        fullscreen = new FloatingButton("/icons/fullscreen.png", Constants.MIDDLE_ICON);
+        viewSwitcher = new VBox(Constants.INSETS);
+        viewSwitcher.setMaxSize(Constants.MIDDLE_ICON,
+                (Constants.MIDDLE_ICON + Constants.SMALL_ICON * 2 + Constants.INSETS * 4));
+        viewSwitcher.setAlignment(Pos.BOTTOM_CENTER);
+        viewSwitcherPopUp = new VBox(Constants.INSETS);
+        viewSwitcherPopUp.setAlignment(Pos.CENTER);
 
-        verticalLayout = new VBox(Constants.INSETS);
-        verticalLayout.getChildren().addAll(popUpChildTop, popUpChildBottom);
-
-        viewSwitcher = new PopOver(verticalLayout);
-        viewSwitcher.setArrowLocation(PopOver.ArrowLocation.BOTTOM_CENTER);
-
-        this.getChildren().addAll(popUpParent, fullscreen, clock);
-        this.setAlignment(popUpParent, Pos.BOTTOM_RIGHT);
-        this.setAlignment(fullscreen, Pos.TOP_RIGHT);
-        this.setAlignment(clock, Pos.TOP_CENTER);
+        // Setting Alignment in Stackpane
+        StackPane.setAlignment(viewSwitcher, Pos.BOTTOM_RIGHT);
+        StackPane.setAlignment(fullscreen, Pos.TOP_RIGHT);
         this.setPickOnBounds(false);
-        popUpParent.translateYProperty().set(-Constants.INSETS);
+        viewSwitcher.translateYProperty().set(-Constants.INSETS);
         fullscreen.translateYProperty().set(Constants.INSETS);
+
+        // Adding components to their parents
+        viewSwitcher.getChildren().addAll(popUpParent);
+        viewSwitcherPopUp.getChildren().addAll(popUpChildTop, popUpChildBottom);
+        this.getChildren().addAll(viewSwitcher, fullscreen);
+
+        // Styling components with CSS
         //CHECKSTYLE.OFF: MultipleStringLiterals
-        verticalLayout.getStyleClass().addAll("padding-small");
-        viewSwitcher.getStyleClass().addAll("floating-box");
         this.getStyleClass().addAll("padding-small");
         //CHECKSTYLE.ON: MultipleStringLiterals
 
@@ -102,10 +104,16 @@ public class CenterPane extends StackPane {
 
     /**
      * Getter for the PopOver pane.
-     * @return PopOver instance
+     * @param visible value to be set
      */
-    public PopOver getViewSwitcher() {
-        return viewSwitcher;
+    public void setViewSwitchingButtonsVisible(final boolean visible) {
+        if (visible) {
+            viewSwitcher.getChildren().clear();
+            viewSwitcher.getChildren().addAll(viewSwitcherPopUp, popUpParent);
+        } else {
+            viewSwitcher.getChildren().removeAll(viewSwitcherPopUp);
+        }
+
     }
 
 }

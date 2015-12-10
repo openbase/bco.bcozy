@@ -60,7 +60,7 @@ public class UserPane extends VBox {
     public UserPane() {
 
         final ResourceBundle languageBundle = ResourceBundle
-                .getBundle("languages.languages", new Locale("de", "DE"));
+                .getBundle("languages.languages", new Locale("en", "US"));
 
         // Case: No user logged in
         final Image icon = new Image(getClass().getResourceAsStream("/icons/user_fa.png"));
@@ -88,6 +88,7 @@ public class UserPane extends VBox {
         final BorderPane loginFirstLineLayout = new BorderPane();
         loginFirstLineLayout.setLeft(nameLbl);
         loginFirstLineLayout.setRight(backBtn);
+        loginLayout.getStyleClass().clear();
         loginLayout.getChildren().addAll(loginFirstLineLayout, nameTxt, pwLbl, passwordField, loginBtn);
         loginPane = new PaneElement(loginLayout);
         loginPane.setMaxWidth(Constants.MAX_MENU_WIDTH);
@@ -115,6 +116,7 @@ public class UserPane extends VBox {
         this.setSpacing(Constants.INSETS);
 
         this.getChildren().addAll(userIcon, login);
+        this.getStyleClass().addAll("floating-box");
 
     }
 

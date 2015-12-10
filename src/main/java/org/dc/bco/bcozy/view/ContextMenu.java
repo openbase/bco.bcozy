@@ -19,6 +19,7 @@
 package org.dc.bco.bcozy.view;
 
 import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
@@ -50,6 +51,7 @@ public class ContextMenu extends VBox {
         this.setMaxWidth(Double.MAX_VALUE);
 
         roomInfo = new Label("No room selected.");
+        roomInfo.setAlignment(Pos.CENTER);
 
         final ScrollPane verticalScrollPane = new ScrollPane();
         verticalScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
@@ -82,7 +84,7 @@ public class ContextMenu extends VBox {
         //VBox.setVgrow(contextSortingPane, Priority.ALWAYS);
 
         //CHECKSTYLE.OFF: MultipleStringLiterals
-        this.getStyleClass().addAll("dropshadow-left-bg", "context-menu", "padding-large");
+        this.getStyleClass().addAll("context-menu");
         //CHECKSTYLE.ON: MultipleStringLiterals
     }
 

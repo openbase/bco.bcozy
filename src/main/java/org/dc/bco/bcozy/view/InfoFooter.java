@@ -44,7 +44,6 @@ public class InfoFooter extends AnchorPane {
         this.getChildren().addAll(mouseOverText, progressBar);
         this.setPrefHeight(height);
         this.setPrefWidth(width);
-        this.getStyleClass().add("dropshadow-top-bg");
         this.getStyleClass().add("info-footer");
         this.setLeftAnchor(mouseOverText, Constants.INSETS);
         this.setRightAnchor(progressBar, Constants.INSETS);
