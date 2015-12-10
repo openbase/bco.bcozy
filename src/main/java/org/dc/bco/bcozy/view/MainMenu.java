@@ -18,12 +18,8 @@
  */
 package org.dc.bco.bcozy.view;
 
-//import javafx.animation.KeyFrame;
-//import javafx.animation.KeyValue;
-//import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
@@ -61,12 +57,14 @@ public class MainMenu extends StackPane {
      */
     public MainMenu(final double height, final double width) {
 
+        // Initializing the container (StackPane)
         this.height = height;
         this.width = width;
         this.maximized = true;
         this.setMinHeight(height);
         this.setMinWidth(width);
 
+        // Initializing components
         verticalLayout = new VBox(Constants.INSETS);
         verticalLayout.setAlignment(Pos.TOP_CENTER);
 
@@ -94,35 +92,24 @@ public class MainMenu extends StackPane {
 
         connectionPane = new ConnectionPane();
 
-        //verticalLayout.setPadding(new Insets(0.0, Constants.SMALLICON / 2, 0.0, 0.0));
+        mainMenuFloatingButton = new FloatingButton("/icons/mainmenu.png", Constants.MIDDLE_ICON);
+
+        // Setting Alignment in Stackpane
+        StackPane.setAlignment(mainMenuFloatingButton, Pos.TOP_RIGHT);
+        StackPane.setAlignment(verticalLayout, Pos.TOP_CENTER);
+        StackPane.setAlignment(verticalLayoutSmall, Pos.TOP_CENTER);
+        mainMenuFloatingButton.translateYProperty().set(-(Constants.FLOATING_BUTTON_OFFSET));
+
+        // Adding components to their parents
         verticalLayout.getChildren()
-                .addAll(logoView, userPane, initRemoteButton, fetchLocationButton,
-                        fillHashesButton, fillContextMenuButton, connectionPane);
-
-        //verticalLayoutSmall.setPadding(new Insets(0.0, Constants.SMALLICON / 2, 0.0, 0.0));
-        verticalLayoutSmall.getChildren()
-                .addAll(logoViewSmall);
-
-        mainMenuFloatingButton = new FloatingButton("/icons/mainmenu.png");
-
+                .addAll(logoView, connectionPane, userPane, initRemoteButton, fetchLocationButton, fillHashesButton,
+                        fillContextMenuButton);
+        verticalLayoutSmall.getChildren().addAll(logoViewSmall);
         this.getChildren().addAll(verticalLayout, mainMenuFloatingButton);
-        this.setAlignment(mainMenuFloatingButton, Pos.TOP_RIGHT);
 
-        this.setMargin(mainMenuFloatingButton, new Insets(Constants.SMALL_ICON, 0, 0, 0));
-        mainMenuFloatingButton.translateXProperty().set(Constants.SMALL_ICON);
-
+        // Styling components with CSS
         //CHECKSTYLE.OFF: MultipleStringLiterals
-        initRemoteButton.getStyleClass().addAll("large-button", "visible-lg", "visible-md", "visible-sm", "visible-xs");
-        fetchLocationButton.getStyleClass()
-                .addAll("large-button", "visible-lg", "visible-md", "visible-sm", "visible-xs");
-        fillHashesButton.getStyleClass().addAll("large-button", "visible-lg", "visible-md", "visible-sm", "visible-xs");
-        fillContextMenuButton.getStyleClass()
-                .addAll("large-button", "visible-lg", "visible-md", "visible-sm", "visible-xs");
-
-        verticalLayout.getStyleClass().addAll("padding-large");
-        verticalLayoutSmall.getStyleClass().addAll("padding-small");
-
-        this.getStyleClass().addAll("dropshadow-right-bg", "floating-box", "main-menu", "padding-large");
+        this.getStyleClass().addAll("main-menu");
         //CHECKSTYLE.ON: MultipleStringLiterals
     }
 
@@ -192,6 +179,8 @@ public class MainMenu extends StackPane {
         this.setMinWidth(width);
         this.verticalLayout.getChildren().add(connectionPane);
         this.getChildren().clear();
+        StackPane.setAlignment(mainMenuFloatingButton, Pos.TOP_RIGHT);
+        mainMenuFloatingButton.translateYProperty().set(-(Constants.FLOATING_BUTTON_OFFSET));
         this.getChildren().addAll(verticalLayout, mainMenuFloatingButton);
     }
 
@@ -201,10 +190,11 @@ public class MainMenu extends StackPane {
      */
     public void minimizeMainMenu() {
         this.maximized = false;
-        //TODO: This will be implemented soon.
-        this.setMinHeight(height / 2);
-        this.setMinWidth(width / 2);
-        this.verticalLayoutSmall.getChildren().add(connectionPane);
+        this.setMinHeight(height);
+        this.setMinWidth(Constants.SMALL_MAIN_MENU_WIDTH);
+        this.verticalLayoutSmall.getChildren().addAll(connectionPane);
+        StackPane.setAlignment(mainMenuFloatingButton, Pos.TOP_CENTER);
+        mainMenuFloatingButton.translateYProperty().set(-(Constants.FLOATING_BUTTON_OFFSET));
         this.getChildren().clear();
         this.getChildren().addAll(verticalLayoutSmall, mainMenuFloatingButton);
     }

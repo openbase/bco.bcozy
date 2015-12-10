@@ -31,13 +31,16 @@ public class FloatingButton extends Button {
 
     private Image selected;
     private ImageView imageView;
+    private final double size;
     /**
      * Constructor for a floating button which has only an icon and no text.
      * @param imagePath the icon to set for the button
+     * @param size the icon size to be set
      */
-    public FloatingButton(final String imagePath) {
+    public FloatingButton(final String imagePath, final double size) {
+        this.size = size;
         selected = new Image(getClass()
-                .getResourceAsStream(imagePath), Constants.MIDDLE_ICON, Constants.MIDDLE_ICON, true, true);
+                .getResourceAsStream(imagePath), size, size, true, true);
         imageView = new ImageView(selected);
         this.getStyleClass().clear();
         this.getStyleClass().add("floating-button");
@@ -61,8 +64,8 @@ public class FloatingButton extends Button {
     public void changeIcon(final String imagePath) {
         selected = new Image(getClass().getResourceAsStream(imagePath));
         imageView = new ImageView(selected);
-        imageView.setFitHeight(Constants.MIDDLE_ICON);
-        imageView.setFitWidth(Constants.MIDDLE_ICON);
+        imageView.setFitHeight(this.size);
+        imageView.setFitWidth(this.size);
         super.setGraphic(imageView);
     }
 

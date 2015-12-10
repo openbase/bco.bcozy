@@ -151,6 +151,16 @@ public final class Constants {
     public static final String DUMMY_ROOM_NAME = "DUMMY";
 
     /**
+     * The offset to push the floating button on the border.
+     */
+    public static final double FLOATING_BUTTON_OFFSET = 85.0;
+
+    /**
+     * The size for the small main menu.
+     */
+    public static final double SMALL_MAIN_MENU_WIDTH = 60.0;
+
+    /**
      * Private Constructor.
      */
     private Constants() { }

@@ -28,9 +28,8 @@ public class ForegroundPane extends BorderPane {
     private final MainMenu mainMenu;
     private final ContextMenu contextMenu;
     private final CenterPane centerPane;
-    //private final MenuHeader menuHeader;
+    private final MenuHeader menuHeader;
     private final InfoFooter infoFooter;
-
     /**
      * Constructor for the ForegroundPane.
      * @param height Height of the application window
@@ -40,7 +39,7 @@ public class ForegroundPane extends BorderPane {
         //CHECKSTYLE.OFF: MagicNumber
         this.mainMenu = new MainMenu(height - 150, 300);
         this.contextMenu = new ContextMenu(height - 150, 300);
-        //this.menuHeader = new MenuHeader(50, width);
+        this.menuHeader = new MenuHeader(30, width);
         this.infoFooter = new InfoFooter(20, width);
         //CHECKSTYLE.ON: MagicNumber
         this.centerPane = new CenterPane();
@@ -50,6 +49,7 @@ public class ForegroundPane extends BorderPane {
         this.setRight(this.contextMenu);
         this.setBottom(this.infoFooter);
         this.setCenter(this.centerPane);
+        this.setTop(this.menuHeader);
         this.setPickOnBounds(false);
     }
 
