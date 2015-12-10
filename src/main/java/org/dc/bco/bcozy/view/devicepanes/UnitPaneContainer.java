@@ -54,6 +54,8 @@ public class UnitPaneContainer extends TitledPane {
      * @param dalRemoteServiceList dalRemoteServiceList
      */
     public void createAndAddNewUnitPanes(final UnitType unitType, final List<DALRemoteService> dalRemoteServiceList) {
+        this.setExpanded(false);
+
         if (unitType.equals(UnitType.AMBIENT_LIGHT)) {
             final Iterator<DALRemoteService> dalRemoteServiceIterator = dalRemoteServiceList.iterator();
             while (dalRemoteServiceIterator.hasNext()) {
