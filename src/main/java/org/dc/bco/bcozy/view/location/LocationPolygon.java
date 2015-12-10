@@ -18,21 +18,13 @@
  */
 package org.dc.bco.bcozy.view.location;
 
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
-import org.dc.bco.bcozy.view.Constants;
 
 /**
  *  A Polygon that can be selected and has a RoomName.
  */
-public class LocationPolygon extends Polygon {
+public abstract class LocationPolygon extends Polygon {
 
-    /**
-     * Enumeration for the different types of locations.
-     */
-    public enum LocationType { ZONE, REGION, TILE }
-
-    private LocationType locationType;
     private final double centerX;
     private final double centerY;
     private boolean selected;
@@ -44,15 +36,15 @@ public class LocationPolygon extends Polygon {
      * @param points Points for the shape
      * @param label Name for the room
      */
-    public LocationPolygon(final String label, final String id,
-                           final LocationType locationType, final double... points) {
+    public LocationPolygon(final String label, final String id, final double... points) {
         super(points);
         this.centerX = (super.getLayoutBounds().getMaxX() + super.getLayoutBounds().getMinX()) / 2;
         this.centerY = (super.getLayoutBounds().getMaxY() + super.getLayoutBounds().getMinY()) / 2;
         this.selected = false;
         this.label = label;
         this.id = id;
-        this.locationType = locationType;
+
+        this.setLocationStyle();
     }
 
     /**
@@ -83,22 +75,26 @@ public class LocationPolygon extends Polygon {
      * Toggle the selection of the LocationPolygon.
      */
     public void toggleSelected() {
-        if (this.selected) {
-            this.setFill(Color.TRANSPARENT);
-            this.selected = false;
-        } else {
-            //CHECKSTYLE.OFF: MagicNumber
-            this.setFill(new Color(0.8, 0.8, 0.8, 0.4));
-            //CHECKSTYLE.ON: MagicNumber
-            this.selected = true;
-        }
+        this.selected = !this.selected;
+        this.setLocationStyle();
     }
 
     /**
-     * Getter for the label.
+     * Getter for the location label.
      * @return the label as a String
      */
-    public String getLabel() {
+    public String getLocationLabel() {
         return label;
     }
+
+    /**
+     * Getter for the location id.
+     * @return the id as a String
+     */
+    public String getLocationId() {
+        return id;
+    }
+
+    abstract void setLocationStyle();
+
 }

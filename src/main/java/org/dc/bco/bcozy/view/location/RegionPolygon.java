@@ -32,6 +32,11 @@ public class RegionPolygon extends LocationPolygon {
      * @param points The vertices of the location
      */
     public RegionPolygon(final String label, final String id, final double... points) {
-        super(label, id, LocationType.REGION, points);
+        super(label, id, points);
+    }
+
+    @Override
+    void setLocationStyle() {
+
     }
 }

@@ -18,24 +18,33 @@
  */
 package org.dc.bco.bcozy.view;
 
+import javafx.scene.paint.Color;
+
 /**
  * Created by hoestreich on 11/18/15.
  */
 public final class Constants {
 
-    private static final double IMAGE_SIZE = 512.0;
+    /**
+     * The size of the images used.
+     */
+    public static final double IMAGE_SIZE = 512.0;
+
     /**
      * Inset used for UI Elements.
      */
     public static final double INSETS = 10.0;
+
     /**
      * The size for a big size icon.
      */
     public static final double BIG_ICON = 128.0;
+
     /**
      * The size for a mid size icon.
      */
     public static final double MIDDLE_ICON = 48.0;
+
     /**
      * The size for a small size icon.
      */
@@ -115,6 +124,17 @@ public final class Constants {
      * The duration for a glowing fade animation.
      */
     public static final double GLOWINGFADEDURATION = 1000.0;
+
+    /**
+     * The color for a selected tile.
+     */
+    public static final Color TILE_SELECTION = new Color(1.0, 1.0, 1.0, 0.4);
+
+    /**
+     * The color for a region.
+     */
+    public static final Color REGION_FILL = new Color(1.0, 1.0, 1.0, 0.4);
+
     /**
      * Private Constructor.
      */

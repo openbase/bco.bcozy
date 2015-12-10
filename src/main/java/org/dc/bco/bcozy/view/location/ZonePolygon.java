@@ -32,6 +32,11 @@ public class ZonePolygon extends LocationPolygon {
      * @param points The vertices of the location
      */
     public ZonePolygon(final String label, final String id, final double... points) {
-        super(label, id, LocationType.ZONE, points);
+        super(label, id, points);
+    }
+
+    @Override
+    void setLocationStyle() {
+
     }
 }
