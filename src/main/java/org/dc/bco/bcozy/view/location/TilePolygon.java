@@ -45,9 +45,7 @@ public class TilePolygon extends LocationPolygon {
         this.setStrokeWidth(Constants.ROOM_STROKE_WIDTH);
 
         if (this.isSelected()) {
-            //CHECKSTYLE.OFF: MagicNumber
-            this.setFill(new Color(0.8, 0.8, 0.8, 0.4));
-            //CHECKSTYLE.ON: MagicNumber
+            this.setFill(Constants.TILE_SELECTION);
         } else {
             this.setFill(Color.TRANSPARENT);
         }

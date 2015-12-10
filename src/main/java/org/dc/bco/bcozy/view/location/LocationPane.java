@@ -41,6 +41,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.ForegroundPane;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -48,6 +50,11 @@ import java.util.List;
  *
  */
 public class LocationPane extends StackPane {
+
+    /**
+     * Application logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(LocationPane.class);
 
     private final Group locationViewContent;
     private LocationPolygon selectedRoom;
@@ -101,15 +108,17 @@ public class LocationPane extends StackPane {
      *
      * If a room with the same id already exists, it will be overwritten.
      *
-     * @param roomID The room id
+     * @param locationId The location id
+     * @param locationLabel The location label
      * @param vertices A list of vertices which defines the shape of the room
-     * @param isRoot A boolean whether the room is root or not
+     * @param locationType The type of the location {ZONE,REGION,TILE}
      */
-    public void addRoom(final String roomID, final List<Point2D> vertices, final boolean isRoot) {
-        // TODO: Remove room with same ID
+    public void addRoom(final String locationId, final String locationLabel,
+                        final List<Point2D> vertices, final String locationType) {
+        // TODO: Remove location with same ID
 //        for (Node node : locationViewContent.getChildren()) {
 //            if (node instanceof LocationPolygon) {
-//                if (((LocationPolygon) node).getLabel().equals(roomID)) {
+//                if (((LocationPolygon) node).getLocationId().equals(locationId)) {
 //                    locationViewContent.getChildren().remove(node);
 //                }
 //            }
@@ -123,18 +132,31 @@ public class LocationPane extends StackPane {
             points[i * 2 + 1] = vertices.get(i).getX() * Constants.METER_TO_PIXEL;
         }
 
-        // Create a new LocationPolygon, add a mouse event handler and paste it into the viewContent
-        final TilePolygon newRoom = new TilePolygon(roomID, roomID, points);
+        LocationPolygon locationPolygon;
 
-        locationViewContent.getChildren().add(newRoom);
-
-        if (isRoot) {
-            newRoom.setMouseTransparent(true);
-            this.rootRoom = newRoom;
-        } else {
-            addMouseEventHandlerToTile(newRoom);
+        switch (locationType) {
+            case "TILE":
+                locationPolygon = new TilePolygon(locationLabel, locationId, points);
+                addMouseEventHandlerToTile((TilePolygon) locationPolygon);
+                break;
+            case "REGION":
+                locationPolygon = new RegionPolygon(locationLabel, locationId, points);
+                locationPolygon.setMouseTransparent(true);
+                break;
+            case "ZONE":
+                locationPolygon = new ZonePolygon(locationLabel, locationId, points);
+                locationPolygon.setMouseTransparent(true);
+                rootRoom = locationPolygon;
+                break;
+            default:
+                LOGGER.warn("The following location has an unknown LocationType and will be ignored:"
+                        + "\n  UUID:  " + locationId
+                        + "\n  Label: " + locationLabel
+                        + "\n  Type:  " + locationType);
+                return;
         }
 
+        locationViewContent.getChildren().add(locationPolygon);
     }
 
     /**

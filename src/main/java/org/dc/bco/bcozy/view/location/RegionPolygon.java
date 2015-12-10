@@ -19,6 +19,8 @@
 
 package org.dc.bco.bcozy.view.location;
 
+import org.dc.bco.bcozy.view.Constants;
+
 /**
  *
  */
@@ -37,6 +39,7 @@ public class RegionPolygon extends LocationPolygon {
 
     @Override
     void setLocationStyle() {
-
+        this.setFill(Constants.REGION_FILL);
+        this.setStrokeWidth(0);
     }
 }

@@ -133,7 +133,7 @@ public final class Constants {
     /**
      * The color for a region.
      */
-    public static final Color REGION_FILL = new Color(1.0, 1.0, 1.0, 0.4);
+    public static final Color REGION_FILL = new Color(1.0, 1.0, 1.0, 0.15);
 
     /**
      * The width of the zoomPane in the locationPane.

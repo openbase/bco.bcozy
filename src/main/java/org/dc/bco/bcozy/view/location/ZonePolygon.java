@@ -19,6 +19,9 @@
 
 package org.dc.bco.bcozy.view.location;
 
+import javafx.scene.paint.Color;
+import org.dc.bco.bcozy.view.Constants;
+
 /**
  *
  */
@@ -37,6 +40,8 @@ public class ZonePolygon extends LocationPolygon {
 
     @Override
     void setLocationStyle() {
-
+        this.setFill(Color.TRANSPARENT);
+        this.setStroke(Color.WHITE);
+        this.setStrokeWidth(Constants.ROOM_STROKE_WIDTH);
     }
 }
