@@ -35,10 +35,21 @@ public class TilePolygon extends LocationPolygon {
      * @param points The vertices of the location
      */
     public TilePolygon(final String label, final String id, final double... points) {
-        super(label, id, LocationType.TILE, points);
+        super(label, id, points);
+    }
 
+    @Override
+    void setLocationStyle() {
         this.setFill(Color.TRANSPARENT);
         this.setStroke(Color.WHITE);
         this.setStrokeWidth(Constants.ROOM_STROKE_WIDTH);
+
+        if (this.isSelected()) {
+            //CHECKSTYLE.OFF: MagicNumber
+            this.setFill(new Color(0.8, 0.8, 0.8, 0.4));
+            //CHECKSTYLE.ON: MagicNumber
+        } else {
+            this.setFill(Color.TRANSPARENT);
+        }
     }
 }

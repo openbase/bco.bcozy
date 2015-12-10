@@ -68,7 +68,7 @@ public class LocationPane extends StackPane {
         emptyHugeRectangle.setFill(Color.TRANSPARENT);
 
         //Dummy Room
-        selectedRoom = new LocationPolygon("none", "none", LocationPolygon.LocationType.ZONE, 0.0, 0.0, 0.0, 0.0);
+        selectedRoom = new ZonePolygon("none", "none", 0.0, 0.0, 0.0, 0.0);
         selectedRoomId = new SimpleStringProperty("none");
 
         locationViewContent = new Group(emptyHugeRectangle);
@@ -118,7 +118,7 @@ public class LocationPane extends StackPane {
         locationViewContent.getChildren().add(newRoom);
 
         if (!isRoot) {
-            locationPaneDesktopControls.addMouseEventHandlerToRoom(newRoom);
+            locationPaneDesktopControls.addMouseEventHandlerToTile(newRoom);
         } else {
             newRoom.setMouseTransparent(true);
             this.rootRoom = newRoom;
@@ -221,7 +221,7 @@ public class LocationPane extends StackPane {
      */
     public void setSelectedRoom(final LocationPolygon selectedRoom) {
         this.selectedRoom = selectedRoom;
-        this.selectedRoomId.set(selectedRoom.getLabel());
+        this.selectedRoomId.set(selectedRoom.getLocationId());
     }
 
     /**

@@ -63,7 +63,7 @@ public class LocationPaneDesktopControls {
                 locationPane.getLocationViewContent(),
                 locationPane.getZoomPaneWidth(), locationPane.getZoomPaneHeight());
 
-//        this.addMouseEventHandlerToRoom(locationPane.getScrollPane(), locationPane,
+//        this.addMouseEventHandlerToTile(locationPane.getScrollPane(), locationPane,
 //                locationPane.getLocationViewContent(), locationPane.getZoomPaneWidth(),
 //                locationPane.getZoomPaneHeight(), locationPane.getRooms(),
 //                foregroundPane);
@@ -192,49 +192,49 @@ public class LocationPaneDesktopControls {
 
 
     /**
-     * Adds a mouse eventHandler to the room.
+     * Adds a mouse eventHandler to the tile.
      *
-     * @param room The room
+     * @param tile The tile
      */
-    public void addMouseEventHandlerToRoom(final LocationPolygon room) {
+    public void addMouseEventHandlerToTile(final TilePolygon tile) {
         final ScrollPane scrollPane = this.locationPane.getScrollPane();
         final Group locationViewContent = this.locationPane.getLocationViewContent();
         final double zoomPaneWidth = this.locationPane.getZoomPaneWidth();
         final double zoomPaneHeight = this.locationPane.getZoomPaneHeight();
 
 
-        room.setOnMouseClicked(event -> {
+        tile.setOnMouseClicked(event -> {
             event.consume();
 
             //TODO: this isn't very nice yet, will be improved if we have a model with the rooms
-            if (room.isSelected()) {
+            if (tile.isSelected()) {
                 locationPane.getSelectedRoom().toggleSelected();
                 scaleFitRoom(locationPane.getZoomPane(), locationPane.getLocationViewContent(),
                         locationPane.getScrollContent(), locationPane.getScroller(), locationPane.getRootRoom());
                 centerScrollPaneToPointAnimated(scrollPane,
                         new Point2D(locationPane.getRootRoom().getCenterX(), locationPane.getRootRoom().getCenterY()),
                         locationViewContent, zoomPaneWidth, zoomPaneHeight);
-                locationPane.setSelectedRoom(new LocationPolygon("none", "none", LocationPolygon.LocationType.ZONE, 0.0, 0.0, 0.0, 0.0));
+                locationPane.setSelectedRoom(new ZonePolygon("none", "none", 0.0, 0.0, 0.0, 0.0));
                 foregroundPane.getContextMenu().getRoomInfo()
-                        .setText(locationPane.getRootRoom().getLabel());
+                        .setText(locationPane.getRootRoom().getLocationLabel());
             } else {
                 locationPane.getSelectedRoom().toggleSelected();
                 scaleFitRoom(locationPane.getZoomPane(), locationPane.getLocationViewContent(),
-                        locationPane.getScrollContent(), locationPane.getScroller(), room);
+                        locationPane.getScrollContent(), locationPane.getScroller(), tile);
                 centerScrollPaneToPointAnimated(scrollPane,
-                        new Point2D(room.getCenterX(), room.getCenterY()),
+                        new Point2D(tile.getCenterX(), tile.getCenterY()),
                         locationViewContent, zoomPaneWidth, zoomPaneHeight);
-                room.toggleSelected();
-                locationPane.setSelectedRoom(room);
+                tile.toggleSelected();
+                locationPane.setSelectedRoom(tile);
                 foregroundPane.getContextMenu().getRoomInfo()
-                        .setText(locationPane.getSelectedRoom().getLabel());
+                        .setText(locationPane.getSelectedRoom().getLocationLabel());
             }
         });
-        room.setOnMouseEntered(event -> {
+        tile.setOnMouseEntered(event -> {
             event.consume();
-            foregroundPane.getInfoFooter().getMouseOverText().setText(room.getLabel());
+            foregroundPane.getInfoFooter().getMouseOverText().setText(tile.getLocationLabel());
         });
-        room.setOnMouseExited(event -> {
+        tile.setOnMouseExited(event -> {
             event.consume();
             foregroundPane.getInfoFooter().getMouseOverText().setText("");
         });
