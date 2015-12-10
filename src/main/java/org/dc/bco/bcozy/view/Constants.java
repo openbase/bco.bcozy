@@ -86,9 +86,14 @@ public final class Constants {
     public static final double METER_TO_PIXEL = 50.0;
 
     /**
-     * The stroke width of the rooms.
+     * The stroke width of a location.
      */
     public static final double ROOM_STROKE_WIDTH = 1.0;
+
+    /**
+     * The stroke width of a location (mouse over).
+     */
+    public static final double ROOM_STROKE_WIDTH_MOUSE_OVER = 3.0;
 
     /**
      * The standard text size to be used when loading a new font.

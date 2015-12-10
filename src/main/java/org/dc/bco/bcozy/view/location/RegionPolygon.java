@@ -38,8 +38,13 @@ public class RegionPolygon extends LocationPolygon {
     }
 
     @Override
-    void setLocationStyle() {
+    protected void setLocationStyle() {
         this.setFill(Constants.REGION_FILL);
         this.setStrokeWidth(0);
+    }
+
+    @Override
+    protected void changeStyleOnSelection(final boolean selected) {
+
     }
 }

@@ -39,15 +39,32 @@ public class TilePolygon extends LocationPolygon {
     }
 
     @Override
-    void setLocationStyle() {
+    protected void setLocationStyle() {
         this.setFill(Color.TRANSPARENT);
         this.setStroke(Color.WHITE);
         this.setStrokeWidth(Constants.ROOM_STROKE_WIDTH);
+    }
 
-        if (this.isSelected()) {
+    @Override
+    protected void changeStyleOnSelection(final boolean selected) {
+        if (selected) {
             this.setFill(Constants.TILE_SELECTION);
         } else {
             this.setFill(Color.TRANSPARENT);
         }
+    }
+
+    /**
+     * This method should be called when the mouse enters the polygon.
+     */
+    public void mouseEntered() {
+        this.setStrokeWidth(Constants.ROOM_STROKE_WIDTH_MOUSE_OVER);
+    }
+
+    /**
+     * This method should be called when the mouse leaves the polygon.
+     */
+    public void mouseLeft() {
+        this.setStrokeWidth(Constants.ROOM_STROKE_WIDTH);
     }
 }

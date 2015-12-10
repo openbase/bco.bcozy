@@ -39,9 +39,14 @@ public class ZonePolygon extends LocationPolygon {
     }
 
     @Override
-    void setLocationStyle() {
+    protected void setLocationStyle() {
         this.setFill(Color.TRANSPARENT);
         this.setStroke(Color.WHITE);
         this.setStrokeWidth(Constants.ROOM_STROKE_WIDTH);
+    }
+
+    @Override
+    protected void changeStyleOnSelection(final boolean selected) {
+
     }
 }

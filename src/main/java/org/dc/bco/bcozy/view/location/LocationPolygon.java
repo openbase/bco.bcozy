@@ -25,11 +25,12 @@ import javafx.scene.shape.Polygon;
  */
 public abstract class LocationPolygon extends Polygon {
 
+    private boolean selected;
     private final double centerX;
     private final double centerY;
-    private boolean selected;
     private final String locationLabel;
     private final String locationId;
+
 
     /**
      * Constructor for the LocationPolygon.
@@ -41,9 +42,9 @@ public abstract class LocationPolygon extends Polygon {
         super(points);
         this.centerX = (super.getLayoutBounds().getMaxX() + super.getLayoutBounds().getMinX()) / 2;
         this.centerY = (super.getLayoutBounds().getMaxY() + super.getLayoutBounds().getMinY()) / 2;
-        this.selected = false;
         this.locationLabel = locationLabel;
         this.locationId = locationId;
+        this.selected = false;
 
         this.setLocationStyle();
     }
@@ -65,22 +66,6 @@ public abstract class LocationPolygon extends Polygon {
     }
 
     /**
-     * Getter method for the selection status.
-     * @return selection status as a boolean
-     */
-    public boolean isSelected() {
-        return selected;
-    }
-
-    /**
-     * Toggle the selection of the LocationPolygon.
-     */
-    public void toggleSelected() {
-        this.selected = !this.selected;
-        this.setLocationStyle();
-    }
-
-    /**
      * Getter for the location label.
      * @return the label as a String
      */
@@ -96,6 +81,31 @@ public abstract class LocationPolygon extends Polygon {
         return locationId;
     }
 
-    abstract void setLocationStyle();
+    /**
+     * Getter method for the selected boolean.
+     * @return selected as a boolean value
+     */
+    public boolean isSelected() {
+        return selected;
+    }
 
+    /**
+     * Setter method for the selected boolean.
+     * @param selected as a boolean value
+     */
+    public void setSelected(final boolean selected) {
+        this.selected = selected;
+        this.changeStyleOnSelection(selected);
+    }
+
+    /**
+     * Will be called when the selection of the Polygon has been toggled.
+     * @param selected boolean for the selection status
+     */
+    protected abstract void changeStyleOnSelection(final boolean selected);
+
+    /**
+     * Will be called when the Polygon is constructed and can be used to apply specific styles.
+     */
+    protected abstract void setLocationStyle();
 }
