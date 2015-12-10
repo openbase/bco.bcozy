@@ -27,12 +27,12 @@ public class RegionPolygon extends LocationPolygon {
     /**
      * The Constructor for a RegionPolygon.
      *
-     * @param label The label of the location
-     * @param id The id of the location
+     * @param locationLabel The label of the location
+     * @param locationId The id of the location
      * @param points The vertices of the location
      */
-    public RegionPolygon(final String label, final String id, final double... points) {
-        super(label, id, points);
+    public RegionPolygon(final String locationLabel, final String locationId, final double... points) {
+        super(locationLabel, locationId, points);
     }
 
     @Override

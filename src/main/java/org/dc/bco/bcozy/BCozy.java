@@ -133,7 +133,7 @@ public class BCozy extends Application {
     }
 
     @Override
-    public void stop() throws Exception {
+    public void stop() throws Exception { //NOPMD
         super.stop();
         remotePool.shutdownAllRemotes(); //TODO mpohling: not shutting down properly
         System.exit(0);

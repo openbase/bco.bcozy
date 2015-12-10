@@ -50,7 +50,8 @@ import java.util.List;
 public class LocationPane extends StackPane {
 
     private final Group locationViewContent;
-    private LocationPolygon selectedRoom, rootRoom;
+    private LocationPolygon selectedRoom;
+    private LocationPolygon rootRoom;
     private Group scrollContent;
     private ScrollPane scroller;
     private StackPane zoomPane;
@@ -76,8 +77,8 @@ public class LocationPane extends StackPane {
         emptyHugeRectangle.setFill(Color.TRANSPARENT);
 
         //Dummy Room
-        selectedRoom = new ZonePolygon("none", "none", 0.0, 0.0, 0.0, 0.0);
-        selectedRoomId = new SimpleStringProperty("none");
+        selectedRoom = new ZonePolygon(Constants.DUMMY_ROOM_NAME, Constants.DUMMY_ROOM_NAME, 0.0, 0.0, 0.0, 0.0);
+        selectedRoomId = new SimpleStringProperty(Constants.DUMMY_ROOM_NAME);
 
         locationViewContent = new Group(emptyHugeRectangle);
         scrollPane = createZoomPane(locationViewContent);
@@ -102,6 +103,7 @@ public class LocationPane extends StackPane {
      *
      * @param roomID The room id
      * @param vertices A list of vertices which defines the shape of the room
+     * @param isRoot A boolean whether the room is root or not
      */
     public void addRoom(final String roomID, final List<Point2D> vertices, final boolean isRoot) {
         // TODO: Remove room with same ID
@@ -126,11 +128,11 @@ public class LocationPane extends StackPane {
 
         locationViewContent.getChildren().add(newRoom);
 
-        if (!isRoot) {
-            addMouseEventHandlerToTile(newRoom);
-        } else {
+        if (isRoot) {
             newRoom.setMouseTransparent(true);
             this.rootRoom = newRoom;
+        } else {
+            addMouseEventHandlerToTile(newRoom);
         }
 
     }
@@ -149,7 +151,8 @@ public class LocationPane extends StackPane {
                 selectedRoom.toggleSelected();
                 scaleFitRoom(rootRoom);
                 centerScrollPaneToPointAnimated(new Point2D(rootRoom.getCenterX(), rootRoom.getCenterY()));
-                setSelectedRoom(new ZonePolygon("none", "none", 0.0, 0.0, 0.0, 0.0));
+                setSelectedRoom(
+                        new ZonePolygon(Constants.DUMMY_ROOM_NAME, Constants.DUMMY_ROOM_NAME, 0.0, 0.0, 0.0, 0.0));
                 foregroundPane.getContextMenu().getRoomInfo().setText(rootRoom.getLocationLabel());
             } else {
                 selectedRoom.toggleSelected();
@@ -318,11 +321,11 @@ public class LocationPane extends StackPane {
     private void scaleFitRoom(final LocationPolygon room) {
         final Point2D scrollOffset = figureScrollOffset();
 
-        double xScale = (this.getWidth() / room.prefWidth(0)) * 0.3;
-        double yScale = (this.getHeight() / room.prefHeight(0)) * 0.5;
+        final double xScale = (this.getWidth() / room.prefWidth(0)) * Constants.ZOOM_FIT_PERCENTAGE_WIDTH;
+        final double yScale = (this.getHeight() / room.prefHeight(0)) * Constants.ZOOM_FIT_PERCENTAGE_HEIGHT;
 
-        double scale = (xScale < yScale) ? xScale : yScale;
-        double scaleFactor = scale / locationViewContent.getScaleX();
+        final double scale = (xScale < yScale) ? xScale : yScale;
+        final double scaleFactor = scale / locationViewContent.getScaleX();
 
         locationViewContent.setScaleX(scale);
         locationViewContent.setScaleY(scale);

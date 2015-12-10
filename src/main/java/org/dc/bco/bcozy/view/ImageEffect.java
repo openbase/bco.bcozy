@@ -30,25 +30,35 @@ import javafx.scene.paint.Color;
 /**
  * Created by agatting on 25.11.15.
  */
-public class ImageEffect {
+public class ImageEffect extends Group{
 
-    private ImageView bottomView;
-    private ImageView topView;
+    public ImageEffect(final Image bottom, final Image top, final Color color) {
 
-    public ImageEffect() {
+        final Group group = effectGroup(bottom, top, color);
 
+        this.getChildren().add(group);
     }
 
-    public final Group effectGroup(final Image bottom, final Image top, final Color color) {
+    /**
+     * Method creates a colored image.
+     * @param bottom is the image mask.
+     * @param top is the image with structure.
+     * @param color is the color to paint the image.
+     * @return imageEffect of type Group.
+     */
+    private final Group effectGroup(final Image bottom, final Image top, final Color color) {
 
-        bottomView = new ImageView(bottom);
-        bottomView.setFitHeight(Constants.MIDDLE_ICON);
-        bottomView.setFitWidth(Constants.MIDDLE_ICON);
+        final ImageView bottomView = new ImageView(bottom);
+        final ImageView topView = new ImageView(top);
+
+        bottomView.setClip(new ImageView(bottom));
+        bottomView.setScaleX(Constants.SMALL_ICON_SCALE_FACTOR);
+        bottomView.setScaleY(Constants.SMALL_ICON_SCALE_FACTOR);
         bottomView.setSmooth(true);
 
-        topView = new ImageView(top);
-        topView.setFitHeight(Constants.MIDDLE_ICON);
-        topView.setFitWidth(Constants.MIDDLE_ICON);
+        topView.setClip(new ImageView(top));
+        topView.setScaleX(Constants.SMALL_ICON_SCALE_FACTOR);
+        topView.setScaleY(Constants.SMALL_ICON_SCALE_FACTOR);
         topView.setSmooth(true);
 
         //color property
@@ -57,7 +67,10 @@ public class ImageEffect {
 
         final Blend blushEffect = new Blend(BlendMode.ADD, monochrome, new ColorInput(0, 0,
                 bottomView.getImage().getWidth(), bottomView.getImage().getHeight(), color));
+
         bottomView.setEffect(blushEffect);
+        //bottomView.setCache(true);
+        //bottomView.setCacheHint(CacheHint.SPEED);
 
         final Group imageEffect = new Group(bottomView, topView);
 

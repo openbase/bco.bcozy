@@ -51,6 +51,11 @@ public final class Constants {
     public static final double SMALL_ICON = 32.0;
 
     /**
+     * The size for a small size icon.
+     */
+    public static final double EXTRA_SMALL_ICON = 16.0;
+
+    /**
      * The max width for a main menu pane.
      */
     public static final double MAX_MENU_WIDTH = 280.0;
@@ -78,7 +83,7 @@ public final class Constants {
     /**
      * The relation between meters and pixels.
      */
-    public static final double METER_TO_PIXEL = 30.0;
+    public static final double METER_TO_PIXEL = 50.0;
 
     /**
      * The stroke width of the rooms.
@@ -149,6 +154,16 @@ public final class Constants {
      * The name of a dummy room.
      */
     public static final String DUMMY_ROOM_NAME = "DUMMY";
+
+    /**
+     * The percentage of the full screen that a zoomed room will fill according to its width.
+     */
+    public static final double ZOOM_FIT_PERCENTAGE_WIDTH = 0.3;
+
+    /**
+     * The percentage of the full screen that a zoomed room will fill according to its width.
+     */
+    public static final double ZOOM_FIT_PERCENTAGE_HEIGHT = 0.5;
 
     /**
      * The offset to push the floating button on the border.

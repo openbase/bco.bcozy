@@ -108,13 +108,11 @@ public class LocationController {
             list = new ArrayList<>();
         }
 
-        //search for root and get child list
-        List<String> childList = new ArrayList<>();
+        //search for root
         String rootId = "";
 
         for (final LocationConfigType.LocationConfig locationConfig : list) {
             if (locationConfig.getRoot()) {
-                childList = locationConfig.getChildIdList();
                 rootId = locationConfig.getId();
             }
         }
