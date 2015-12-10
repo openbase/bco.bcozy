@@ -161,6 +161,16 @@ public final class Constants {
     public static final double SMALL_MAIN_MENU_WIDTH = 60.0;
 
     /**
+     * The png file of the fullscreen icon.
+     */
+    public static final String FULLSCREEN_ICON = "/icons/fullscreen.png";
+
+    /**
+     * The png file of the normalscreen icon.
+     */
+    public static final String NORMALSCREEN_ICON = "/icons/normalscreen.png";
+
+    /**
      * Private Constructor.
      */
     private Constants() { }

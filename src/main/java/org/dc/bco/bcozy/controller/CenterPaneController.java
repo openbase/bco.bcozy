@@ -21,6 +21,7 @@ package org.dc.bco.bcozy.controller;
 import javafx.event.ActionEvent;
 import javafx.stage.Stage;
 import org.dc.bco.bcozy.view.CenterPane;
+import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.ForegroundPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,15 +54,22 @@ public class CenterPaneController {
         centerPane.getPopUpParent().setOnAction(event -> setShowHidePopOver());
         centerPane.getPopUpChildBottom().setOnAction(event -> setChooseView(event));
         centerPane.getPopUpChildTop().setOnAction(event -> setChooseView(event));
+
+        ((Stage) centerPane.getScene().getWindow()).fullScreenProperty().
+                addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                centerPane.getFullscreen().changeIcon(Constants.FULLSCREEN_ICON);
+            }
+        });
     }
 
     private void setMaximizeAction() {
         final Stage stage = (Stage) centerPane.getScene().getWindow();
         if (stage.isFullScreen()) {
-            centerPane.getFullscreen().changeIcon("/icons/fullscreen.png");
+            centerPane.getFullscreen().changeIcon(Constants.FULLSCREEN_ICON);
             stage.setFullScreen(false);
         } else {
-            centerPane.getFullscreen().changeIcon("/icons/normalscreen.png");
+            centerPane.getFullscreen().changeIcon(Constants.NORMALSCREEN_ICON);
             stage.setFullScreen(true);
         }
     }
