@@ -34,27 +34,41 @@ import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.effect.*;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
-import javafx.scene.paint.*;
-import javafx.scene.shape.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Stop;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
+import javafx.scene.shape.StrokeType;
+import javafx.scene.shape.Path;
 import org.controlsfx.control.ToggleSwitch;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.ImageEffect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.homeautomation.unit.AmbientLightType.AmbientLight;
+import rst.homeautomation.state.PowerStateType.PowerState.State;
 
 /**
  * Created on 03.12.15.
  */
-public class AmbientLightPane extends UnitPane {
-
+public class AmbientLightPane extends UnitPane implements Observer<AmbientLight> {
     private static final Logger LOGGER = LoggerFactory.getLogger(AmbientLightPane.class);
 
     private static final String WHITE = "white";
@@ -62,9 +76,8 @@ public class AmbientLightPane extends UnitPane {
     private final AmbientLightRemote ambientLightRemote;
     private final Image bottomImage;
     private final Image topImage;
+    private final ToggleSwitch toggleSwitch;
     private final BorderPane borderPane;
-
-    private final Observer<AmbientLight> observer;
 
     /**
      * Constructor for the AmbientLightPane.
@@ -73,23 +86,15 @@ public class AmbientLightPane extends UnitPane {
     public AmbientLightPane(final DALRemoteService ambientLightRemote) {
         this.ambientLightRemote = (AmbientLightRemote) ambientLightRemote;
 
+        toggleSwitch = new ToggleSwitch();
+
         final Button lightBulb = new Button();
         lightBulb.setBackground(Background.EMPTY);
 
         bottomImage = new Image("/icons/lightbulb_mask.png");
         topImage    = new Image("/icons/lightbulb.png");
 
-
-        observer = new Observer<AmbientLight>() {
-            @Override
-            public void update(final Observable<AmbientLight> observable, final AmbientLight ambientLight)
-                    throws Exception {
-                LOGGER.info("Peng! : " + ambientLight.getLabel());
-
-            }
-        };
-
-        this.ambientLightRemote.addObserver(observer);
+        this.ambientLightRemote.addObserver(this);
 
         try {
             super.setUnitLabel(this.ambientLightRemote.getData().getLabel());
@@ -105,16 +110,36 @@ public class AmbientLightPane extends UnitPane {
         initContent();
     }
 
+    private void setColorToImageEffect(final Color color) {
+        final ImageEffect testGroup = new ImageEffect(bottomImage, topImage, color);
+        borderPane.setLeft(testGroup);
+    }
+
     /**
      * Method creates the header content of the titledPane.
      */
     @Override
     protected void initTitle() {
-        final ToggleSwitch toggleSwitch;
         final ImageView lightOff;
 
-        //button
-        toggleSwitch = new ToggleSwitch();
+        toggleSwitch.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(final MouseEvent event) {
+                if (toggleSwitch.isSelected()) {
+                    try {
+                        ambientLightRemote.setPower(State.ON);
+                    } catch (CouldNotPerformException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    try {
+                        ambientLightRemote.setPower(State.OFF);
+                    } catch (CouldNotPerformException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
 
         //image
         lightOff = new ImageView(topImage);
@@ -162,9 +187,16 @@ public class AmbientLightPane extends UnitPane {
         final EventHandler<MouseEvent> sendingColorHandler = event -> {
             //TODO implement color (hueValue, saturation, brightness) sending to ambientlight unit
 
+            Color testColor = Color.hsb(hueValue.getValue(), saturation.getValue() / 100, brightness.getValue() / 100);
+            setColorToImageEffect(testColor);
 
-            final ImageEffect testGroup = new ImageEffect(bottomImage, topImage, Color.hsb(hueValue.getValue(), saturation.getValue() / 100, brightness.getValue() / 100));
-            borderPane.setLeft(testGroup);
+            java.awt.Color color = java.awt.Color.getHSBColor(hueValue.floatValue() / 360,
+                    saturation.floatValue() / 100, brightness.floatValue() / 100);
+            try {
+                ambientLightRemote.setColor(color);
+            } catch (CouldNotPerformException e) {
+                e.printStackTrace();
+            }
         };
 
         //saturation & brightness depend on hue value
@@ -437,6 +469,14 @@ public class AmbientLightPane extends UnitPane {
 
     @Override
     void removeObserver() {
-        this.ambientLightRemote.removeObserver(observer);
+        this.ambientLightRemote.removeObserver(this);
+    }
+
+    @Override
+    public void update(final Observable<AmbientLight> observable, final AmbientLight ambientLight) throws Exception {
+        Color color = Color.hsb(ambientLight.getColor().getHue(), ambientLight.getColor().getSaturation() / 100,
+                ambientLight.getColor().getValue() / 100);
+        //setColorToImageEffect(color);
+        LOGGER.info("Peng! : " + ambientLight.getLabel());
     }
 }
