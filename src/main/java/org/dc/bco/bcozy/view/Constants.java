@@ -191,6 +191,11 @@ public final class Constants {
     public static final String NORMALSCREEN_ICON = "/icons/normalscreen.png";
 
     /**
+     * Divide constant for HSB color init.
+     */
+    public static final int ONEHUNDRED = 100;
+
+    /**
      * Private Constructor.
      */
     private Constants() { }

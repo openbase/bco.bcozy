@@ -25,6 +25,7 @@ import de.citec.jul.exception.printer.ExceptionPrinter;
 import de.citec.jul.exception.printer.LogLevel;
 import de.citec.jul.pattern.Observable;
 import de.citec.jul.pattern.Observer;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.DoubleProperty;
@@ -108,11 +109,30 @@ public class AmbientLightPane extends UnitPane implements Observer<AmbientLight>
 
         initTitle();
         initContent();
+        try {
+            initEffectAndSwitch();
+        } catch (CouldNotPerformException e) {
+            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+        }
     }
 
     private void setColorToImageEffect(final Color color) {
         final ImageEffect testGroup = new ImageEffect(bottomImage, topImage, color);
         borderPane.setLeft(testGroup);
+    }
+
+    private void initEffectAndSwitch() throws CouldNotPerformException {
+        final Color color = Color.hsb(ambientLightRemote.getColor().getHue(),
+                ambientLightRemote.getColor().getSaturation() / Constants.ONEHUNDRED,
+                ambientLightRemote.getColor().getValue() / Constants.ONEHUNDRED);
+
+        setColorToImageEffect(color);
+
+        if (ambientLightRemote.getPower().getValue().equals(State.ON) && !toggleSwitch.isSelected()) {
+            toggleSwitch.setSelected(true);
+        } else if (ambientLightRemote.getPower().getValue().equals(State.OFF) && toggleSwitch.isSelected()) {
+            toggleSwitch.setSelected(false);
+        }
     }
 
     /**
@@ -129,13 +149,13 @@ public class AmbientLightPane extends UnitPane implements Observer<AmbientLight>
                     try {
                         ambientLightRemote.setPower(State.ON);
                     } catch (CouldNotPerformException e) {
-                        e.printStackTrace();
+                        ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
                     }
                 } else {
                     try {
                         ambientLightRemote.setPower(State.OFF);
                     } catch (CouldNotPerformException e) {
-                        e.printStackTrace();
+                        ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
                     }
                 }
             }
@@ -187,15 +207,12 @@ public class AmbientLightPane extends UnitPane implements Observer<AmbientLight>
         final EventHandler<MouseEvent> sendingColorHandler = event -> {
             //TODO implement color (hueValue, saturation, brightness) sending to ambientlight unit
 
-            Color testColor = Color.hsb(hueValue.getValue(), saturation.getValue() / 100, brightness.getValue() / 100);
-            setColorToImageEffect(testColor);
-
             java.awt.Color color = java.awt.Color.getHSBColor(hueValue.floatValue() / 360,
                     saturation.floatValue() / 100, brightness.floatValue() / 100);
             try {
                 ambientLightRemote.setColor(color);
             } catch (CouldNotPerformException e) {
-                e.printStackTrace();
+                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
             }
         };
 
@@ -474,9 +491,20 @@ public class AmbientLightPane extends UnitPane implements Observer<AmbientLight>
 
     @Override
     public void update(final Observable<AmbientLight> observable, final AmbientLight ambientLight) throws Exception {
-        Color color = Color.hsb(ambientLight.getColor().getHue(), ambientLight.getColor().getSaturation() / 100,
-                ambientLight.getColor().getValue() / 100);
-        //setColorToImageEffect(color);
-        LOGGER.info("Peng! : " + ambientLight.getLabel());
+        final Color color = Color.hsb(ambientLight.getColor().getHue(),
+                ambientLight.getColor().getSaturation() / Constants.ONEHUNDRED,
+                ambientLight.getColor().getValue() / Constants.ONEHUNDRED);
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                setColorToImageEffect(color); //TODO: Set color to gray if powerstate is off
+
+                if (ambientLight.getPowerState().getValue().equals(State.ON) && !toggleSwitch.isSelected()) {
+                    toggleSwitch.setSelected(true);
+                } else if (ambientLight.getPowerState().getValue().equals(State.OFF) && toggleSwitch.isSelected()) {
+                    toggleSwitch.setSelected(false);
+                }
+            }
+        });
     }
 }
