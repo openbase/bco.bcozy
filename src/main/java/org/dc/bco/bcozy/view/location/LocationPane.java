@@ -148,7 +148,7 @@ public class LocationPane extends StackPane {
             case "ZONE":
                 locationPolygon = new ZonePolygon(locationLabel, locationId, points);
                 locationPolygon.setMouseTransparent(true);
-                rootRoom = locationPolygon;
+                rootRoom = locationPolygon; //TODO: handle the situation where several zones exist
                 break;
             default:
                 LOGGER.warn("The following location has an unknown LocationType and will be ignored:"
@@ -170,18 +170,20 @@ public class LocationPane extends StackPane {
         tile.setOnMouseClicked(event -> {
             event.consume();
 
-            if (event.getClickCount() == 1) {
-                if (!selectedRoom.equals(tile)) {
-                    selectedRoom.setSelected(false);
-                    tile.setSelected(true);
-                    setSelectedRoom(tile);
+            if (event.isStillSincePress()) {
+                if (event.getClickCount() == 1) {
+                    if (!selectedRoom.equals(tile)) {
+                        selectedRoom.setSelected(false);
+                        tile.setSelected(true);
+                        setSelectedRoom(tile);
+                    }
+                } else if (event.getClickCount() == 2) {
+                    scaleFitRoom(tile);
+                    centerScrollPaneToPointAnimated(new Point2D(tile.getCenterX(), tile.getCenterY()));
                 }
-            } else if (event.getClickCount() == 2) {
-                scaleFitRoom(tile);
-                centerScrollPaneToPointAnimated(new Point2D(tile.getCenterX(), tile.getCenterY()));
-            }
 
-            foregroundPane.getContextMenu().getRoomInfo().setText(selectedRoom.getLocationLabel());
+                foregroundPane.getContextMenu().getRoomInfo().setText(selectedRoom.getLocationLabel());
+            }
         });
         tile.setOnMouseEntered(event -> {
             event.consume();
@@ -349,7 +351,8 @@ public class LocationPane extends StackPane {
             scroller.setVvalue(scroller.getVmin()
                     + newScrollYOffset * (scroller.getVmax() - scroller.getVmin()) / extraHeight);
         } else {
-            scroller.setHvalue(scroller.getHmin());
+//            scroller.setHvalue(scroller.getHmin()); //TODO: possibly wrong?
+            scroller.setVvalue(scroller.getVmin());
         }
     }
 
