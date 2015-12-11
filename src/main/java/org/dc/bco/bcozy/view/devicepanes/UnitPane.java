@@ -42,6 +42,7 @@ public abstract class UnitPane extends TitledPane {
      */
     public void setUnitLabel(final String unitLabel) {
         this.unitLabel = unitLabel;
+        this.setExpanded(false);
     }
 
     /**

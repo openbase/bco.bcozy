@@ -25,7 +25,6 @@ import de.citec.jul.exception.printer.ExceptionPrinter;
 import de.citec.jul.exception.printer.LogLevel;
 import de.citec.lm.remote.LocationRegistryRemote;
 import javafx.geometry.Point2D;
-import org.dc.bco.bcozy.model.RoomInstance;
 import org.dc.bco.bcozy.view.ForegroundPane;
 import org.dc.bco.bcozy.view.location.LocationPane;
 import org.slf4j.Logger;
@@ -37,9 +36,8 @@ import rst.spatial.LocationConfigType;
 
 import javax.vecmath.Point3d;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -56,7 +54,7 @@ public class LocationController {
     private final RemotePool remotePool;
     private LocationRegistryRemote locationRegistryRemote;
 
-    private final Map<String, RoomInstance> roomInstanceMap;
+//    private final Map<String, LocationPolygon> locationPolygonMap;
 
     /**
      * The constructor.
@@ -68,30 +66,12 @@ public class LocationController {
      * @throws InstantiationException This exception will be thrown if no LocationRegistryRemote could be instantiated
      */
     public LocationController(final ForegroundPane foregroundPane, final LocationPane locationPane,
-                              final RemotePool remotePool)
-            throws InstantiationException {
+                              final RemotePool remotePool) throws InstantiationException {
         this.foregroundPane = foregroundPane;
         this.locationPane = locationPane;
         this.remotePool = remotePool;
-        this.roomInstanceMap = new HashMap<>();
 
         this.foregroundPane.getMainMenu().addFetchLocationButtonEventHandler(event -> connectLocationRemote());
-    }
-
-    /**
-     * Add a simple Dummy Room.
-     */
-    public void addDummyRoom() {
-
-        //CHECKSTYLE.OFF: MagicNumber
-        final List<Point2D> vertices = new ArrayList<>();
-        vertices.add(new Point2D(10, 10));
-        vertices.add(new Point2D(120, 10));
-        vertices.add(new Point2D(120, 140));
-        vertices.add(new Point2D(10, 140));
-        //CHECKSTYLE.ON: MagicNumber
-
-        this.locationPane.addRoom("Blub", vertices, false);
     }
 
     /**
@@ -120,16 +100,9 @@ public class LocationController {
         //check which location have a shape
         for (final LocationConfigType.LocationConfig locationConfig : list) {
             if (locationConfig.getPlacementConfig().hasShape()) {
-                RoomInstance newRoom;
-                if (roomInstanceMap.containsKey(locationConfig.getId())) {
-                    newRoom = roomInstanceMap.get(locationConfig.getId());
-                    newRoom.deleteAllVertices();
-                } else {
-                    newRoom = new RoomInstance(locationConfig.getId());
-                    newRoom.setRoot(locationConfig.getRoot());
-                }
-
                 try {
+                    final List<Point2D> vertices = new LinkedList<>();
+
                     // Get the transformation for the current room
                     final Transform transform =
                             remotePool.getTransformReceiver()
@@ -145,11 +118,12 @@ public class LocationController {
                         final Point3d vertex = new Point3d(rstVertex.getX(), rstVertex.getY(), rstVertex.getZ());
                         // Transform
                         transform.getTransform().transform(vertex);
-                        // Add vertex to room
-                        newRoom.addVertex(vertex);
+                        // Add vertex to list of vertices
+                        vertices.add(new Point2D(vertex.x, vertex.y));
                     }
 
-                    locationPane.addRoom(locationConfig.getId(), newRoom.getVertices(), newRoom.isRoot());
+                    locationPane.addRoom(locationConfig.getId(), locationConfig.getLabel(), vertices,
+                            locationConfig.getType().toString());
                 } catch (TransformerException e) {
                     ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
                     LOGGER.warn("Could not gather transformation for room: " + locationConfig.getId());

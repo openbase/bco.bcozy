@@ -41,6 +41,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.ForegroundPane;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -48,6 +50,11 @@ import java.util.List;
  *
  */
 public class LocationPane extends StackPane {
+
+    /**
+     * Application logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(LocationPane.class);
 
     private final Group locationViewContent;
     private LocationPolygon selectedRoom;
@@ -75,10 +82,12 @@ public class LocationPane extends StackPane {
                 Constants.ZOOM_PANE_WIDTH,
                 Constants.ZOOM_PANE_HEIGHT);
         emptyHugeRectangle.setFill(Color.TRANSPARENT);
+        addMouseEventHandlerToEmptyRectangle(emptyHugeRectangle);
 
         //Dummy Room
         selectedRoom = new ZonePolygon(Constants.DUMMY_ROOM_NAME, Constants.DUMMY_ROOM_NAME, 0.0, 0.0, 0.0, 0.0);
         selectedRoomId = new SimpleStringProperty(Constants.DUMMY_ROOM_NAME);
+        rootRoom = null;
 
         locationViewContent = new Group(emptyHugeRectangle);
         scrollPane = createZoomPane(locationViewContent);
@@ -101,15 +110,17 @@ public class LocationPane extends StackPane {
      *
      * If a room with the same id already exists, it will be overwritten.
      *
-     * @param roomID The room id
+     * @param locationId The location id
+     * @param locationLabel The location label
      * @param vertices A list of vertices which defines the shape of the room
-     * @param isRoot A boolean whether the room is root or not
+     * @param locationType The type of the location {ZONE,REGION,TILE}
      */
-    public void addRoom(final String roomID, final List<Point2D> vertices, final boolean isRoot) {
-        // TODO: Remove room with same ID
+    public void addRoom(final String locationId, final String locationLabel,
+                        final List<Point2D> vertices, final String locationType) {
+        // TODO: Remove location with same ID
 //        for (Node node : locationViewContent.getChildren()) {
 //            if (node instanceof LocationPolygon) {
-//                if (((LocationPolygon) node).getLabel().equals(roomID)) {
+//                if (((LocationPolygon) node).getLocationId().equals(locationId)) {
 //                    locationViewContent.getChildren().remove(node);
 //                }
 //            }
@@ -123,18 +134,31 @@ public class LocationPane extends StackPane {
             points[i * 2 + 1] = vertices.get(i).getX() * Constants.METER_TO_PIXEL;
         }
 
-        // Create a new LocationPolygon, add a mouse event handler and paste it into the viewContent
-        final TilePolygon newRoom = new TilePolygon(roomID, roomID, points);
+        LocationPolygon locationPolygon;
 
-        locationViewContent.getChildren().add(newRoom);
-
-        if (isRoot) {
-            newRoom.setMouseTransparent(true);
-            this.rootRoom = newRoom;
-        } else {
-            addMouseEventHandlerToTile(newRoom);
+        switch (locationType) {
+            case "TILE":
+                locationPolygon = new TilePolygon(locationLabel, locationId, points);
+                addMouseEventHandlerToTile((TilePolygon) locationPolygon);
+                break;
+            case "REGION":
+                locationPolygon = new RegionPolygon(locationLabel, locationId, points);
+                locationPolygon.setMouseTransparent(true);
+                break;
+            case "ZONE":
+                locationPolygon = new ZonePolygon(locationLabel, locationId, points);
+                locationPolygon.setMouseTransparent(true);
+                rootRoom = locationPolygon;
+                break;
+            default:
+                LOGGER.warn("The following location has an unknown LocationType and will be ignored:"
+                        + "\n  UUID:  " + locationId
+                        + "\n  Label: " + locationLabel
+                        + "\n  Type:  " + locationType);
+                return;
         }
 
+        locationViewContent.getChildren().add(locationPolygon);
     }
 
     /**
@@ -146,30 +170,46 @@ public class LocationPane extends StackPane {
         tile.setOnMouseClicked(event -> {
             event.consume();
 
-            //TODO: this isn't very nice yet, will be improved if we have a model with the rooms
-            if (tile.isSelected()) {
-                selectedRoom.toggleSelected();
-                scaleFitRoom(rootRoom);
-                centerScrollPaneToPointAnimated(new Point2D(rootRoom.getCenterX(), rootRoom.getCenterY()));
-                setSelectedRoom(
-                        new ZonePolygon(Constants.DUMMY_ROOM_NAME, Constants.DUMMY_ROOM_NAME, 0.0, 0.0, 0.0, 0.0));
-                foregroundPane.getContextMenu().getRoomInfo().setText(rootRoom.getLocationLabel());
-            } else {
-                selectedRoom.toggleSelected();
+            if (event.getClickCount() == 1) {
+                if (!selectedRoom.equals(tile)) {
+                    selectedRoom.setSelected(false);
+                    tile.setSelected(true);
+                    setSelectedRoom(tile);
+                }
+            } else if (event.getClickCount() == 2) {
                 scaleFitRoom(tile);
                 centerScrollPaneToPointAnimated(new Point2D(tile.getCenterX(), tile.getCenterY()));
-                tile.toggleSelected();
-                setSelectedRoom(tile);
-                foregroundPane.getContextMenu().getRoomInfo().setText(selectedRoom.getLocationLabel());
             }
+
+            foregroundPane.getContextMenu().getRoomInfo().setText(selectedRoom.getLocationLabel());
         });
         tile.setOnMouseEntered(event -> {
             event.consume();
+            tile.mouseEntered();
             foregroundPane.getInfoFooter().getMouseOverText().setText(tile.getLocationLabel());
         });
         tile.setOnMouseExited(event -> {
             event.consume();
+            tile.mouseLeft();
             foregroundPane.getInfoFooter().getMouseOverText().setText("");
+        });
+    }
+
+    private void addMouseEventHandlerToEmptyRectangle(final Rectangle emptyHugeRectangle) {
+        emptyHugeRectangle.setOnMouseClicked(event -> {
+            event.consume();
+
+            if (rootRoom != null) {
+                if (event.getClickCount() == 1) {
+                    if (!selectedRoom.equals(rootRoom)) {
+                        selectedRoom.setSelected(false);
+                        setSelectedRoom(rootRoom);
+                    }
+                } else if (event.getClickCount() == 2) {
+                    scaleFitRoom(rootRoom);
+                    centerScrollPaneToPointAnimated(new Point2D(rootRoom.getCenterX(), rootRoom.getCenterY()));
+                }
+            }
         });
     }
 
@@ -188,11 +228,6 @@ public class LocationPane extends StackPane {
         scroller.viewportBoundsProperty().addListener((observable, oldValue, newValue) -> {
             zoomPane.setMinSize(newValue.getWidth(), newValue.getHeight());
         });
-
-        //CHECKSTYLE.OFF: MagicNumber
-        scroller.setPrefViewportWidth(800);
-        scroller.setPrefViewportHeight(600);
-        //CHECKSTYLE.ON: MagicNumber
 
         return scroller;
     }
