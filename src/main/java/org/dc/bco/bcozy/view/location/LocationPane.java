@@ -44,6 +44,7 @@ import org.dc.bco.bcozy.view.ForegroundPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -65,6 +66,8 @@ public class LocationPane extends StackPane {
     private final ScrollPane scrollPane;
     private final ForegroundPane foregroundPane;
 
+    private final List<LocationPolygon> locationList;
+
     private final SimpleStringProperty selectedRoomId;
 
     /**
@@ -83,6 +86,8 @@ public class LocationPane extends StackPane {
                 Constants.ZOOM_PANE_HEIGHT);
         emptyHugeRectangle.setFill(Color.TRANSPARENT);
         addMouseEventHandlerToEmptyRectangle(emptyHugeRectangle);
+
+        locationList = new LinkedList<>();
 
         //Dummy Room
         selectedRoom = new ZonePolygon(Constants.DUMMY_ROOM_NAME, Constants.DUMMY_ROOM_NAME, 0.0, 0.0, 0.0, 0.0);
@@ -117,15 +122,6 @@ public class LocationPane extends StackPane {
      */
     public void addRoom(final String locationId, final String locationLabel,
                         final List<Point2D> vertices, final String locationType) {
-        // TODO: Remove location with same ID
-//        for (Node node : locationViewContent.getChildren()) {
-//            if (node instanceof LocationPolygon) {
-//                if (((LocationPolygon) node).getLocationId().equals(locationId)) {
-//                    locationViewContent.getChildren().remove(node);
-//                }
-//            }
-//        }
-
         // Fill the list of vertices into an array of points
         double[] points = new double[vertices.size() * 2];
         for (int i = 0; i < vertices.size(); i++) {
@@ -157,8 +153,16 @@ public class LocationPane extends StackPane {
                         + "\n  Type:  " + locationType);
                 return;
         }
-
+        locationList.add(locationPolygon);
         locationViewContent.getChildren().add(locationPolygon);
+    }
+
+    /**
+     * Erases all locations from the locationPane.
+     */
+    public void clearLocations() {
+        locationList.forEach(locationPolygon -> locationViewContent.getChildren().remove(locationPolygon));
+        locationList.clear();
     }
 
     /**

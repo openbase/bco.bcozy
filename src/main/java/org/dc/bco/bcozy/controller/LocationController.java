@@ -23,7 +23,10 @@ import de.citec.jul.exception.CouldNotPerformException;
 import de.citec.jul.exception.InstantiationException;
 import de.citec.jul.exception.printer.ExceptionPrinter;
 import de.citec.jul.exception.printer.LogLevel;
+import de.citec.jul.pattern.Observable;
+import de.citec.jul.pattern.Observer;
 import de.citec.lm.remote.LocationRegistryRemote;
+import javafx.application.Platform;
 import javafx.geometry.Point2D;
 import org.dc.bco.bcozy.view.ForegroundPane;
 import org.dc.bco.bcozy.view.location.LocationPane;
@@ -33,16 +36,16 @@ import rct.Transform;
 import rct.TransformerException;
 import rst.math.Vec3DDoubleType;
 import rst.spatial.LocationConfigType;
+import rst.spatial.LocationRegistryType;
 
 import javax.vecmath.Point3d;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 /**
  *
  */
-public class LocationController {
+public class LocationController implements Observer<LocationRegistryType.LocationRegistry> {
 
     /**
      * Application logger.
@@ -78,15 +81,20 @@ public class LocationController {
      * Establishes the connection with the RemoteRegistry.
      */
     public void connectLocationRemote() {
-        List<LocationConfigType.LocationConfig> list;
-
         try {
             locationRegistryRemote = remotePool.getLocationRegistryRemote();
-            list = locationRegistryRemote.getLocationConfigs();
+            locationRegistryRemote.addObserver(this);
+            this.fetchLocation();
+
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-            list = new ArrayList<>();
         }
+    }
+
+    private void fetchLocation() throws CouldNotPerformException {
+        final List<LocationConfigType.LocationConfig> list = locationRegistryRemote.getLocationConfigs();
+
+        locationPane.clearLocations();
 
         //search for root
         String rootId = "";
@@ -135,5 +143,18 @@ public class LocationController {
         }
 
         locationPane.zoomFit();
+    }
+
+    @Override
+    public void update(final Observable<LocationRegistryType.LocationRegistry> observable,
+                       final LocationRegistryType.LocationRegistry locationRegistry) throws Exception { //NOPMD
+        Platform.runLater(() -> {
+            try {
+                fetchLocation();
+            } catch (CouldNotPerformException e) {
+                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+            }
+        });
+
     }
 }
