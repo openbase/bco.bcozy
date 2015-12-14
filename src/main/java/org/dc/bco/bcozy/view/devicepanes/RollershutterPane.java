@@ -23,6 +23,7 @@ import de.citec.dal.remote.unit.RollershutterRemote;
 import de.citec.jul.exception.CouldNotPerformException;
 import de.citec.jul.exception.printer.ExceptionPrinter;
 import de.citec.jul.exception.printer.LogLevel;
+import de.citec.jul.pattern.Observable;
 import javafx.geometry.Orientation;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -111,5 +112,12 @@ public class RollershutterPane extends UnitPane {
     @Override
     public DALRemoteService getDALRemoteService() {
         return rollershutterRemote;
+    }
+
+    @Override
+    public void update(final Observable observable, final Object rollerShutter) throws Exception {
+        //TODO: Do something
+        //((RollershutterType.Rollershutter) rollerShutter).getLabel();
+
     }
 }

@@ -19,12 +19,13 @@
 package org.dc.bco.bcozy.view.devicepanes;
 
 import de.citec.dal.remote.unit.DALRemoteService;
+import de.citec.jul.pattern.Observer;
 import javafx.scene.control.TitledPane;
 
 /**
  * Created by tmichalski on 03.12.15.
  */
-public abstract class UnitPane extends TitledPane {
+public abstract class UnitPane extends TitledPane implements Observer {
 
     private String unitLabel;
 

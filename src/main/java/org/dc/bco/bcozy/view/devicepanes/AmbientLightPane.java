@@ -24,7 +24,6 @@ import de.citec.jul.exception.CouldNotPerformException;
 import de.citec.jul.exception.printer.ExceptionPrinter;
 import de.citec.jul.exception.printer.LogLevel;
 import de.citec.jul.pattern.Observable;
-import de.citec.jul.pattern.Observer;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.ObjectBinding;
@@ -33,7 +32,6 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
@@ -69,7 +67,7 @@ import rst.homeautomation.state.PowerStateType.PowerState.State;
 /**
  * Created on 03.12.15.
  */
-public class AmbientLightPane extends UnitPane implements Observer<AmbientLight> {
+public class AmbientLightPane extends UnitPane {
     private static final Logger LOGGER = LoggerFactory.getLogger(AmbientLightPane.class);
 
     private static final String WHITE = "white";
@@ -88,14 +86,10 @@ public class AmbientLightPane extends UnitPane implements Observer<AmbientLight>
         this.ambientLightRemote = (AmbientLightRemote) ambientLightRemote;
 
         toggleSwitch = new ToggleSwitch();
-
-        final Button lightBulb = new Button();
-        lightBulb.setBackground(Background.EMPTY);
-
         bottomImage = new Image("/icons/lightbulb_mask.png");
         topImage    = new Image("/icons/lightbulb.png");
-
-        this.ambientLightRemote.addObserver(this);
+        borderPane = new BorderPane();
+        this.setGraphic(borderPane);
 
         try {
             super.setUnitLabel(this.ambientLightRemote.getData().getLabel());
@@ -104,9 +98,6 @@ public class AmbientLightPane extends UnitPane implements Observer<AmbientLight>
             super.setUnitLabel("UnknownID");
         }
 
-        borderPane = new BorderPane();
-        this.setGraphic(borderPane);
-
         initTitle();
         initContent();
         try {
@@ -114,6 +105,8 @@ public class AmbientLightPane extends UnitPane implements Observer<AmbientLight>
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
+
+        this.ambientLightRemote.addObserver(this);
     }
 
     private void setColorToImageEffect(final Color color) {
@@ -490,18 +483,20 @@ public class AmbientLightPane extends UnitPane implements Observer<AmbientLight>
     }
 
     @Override
-    public void update(final Observable<AmbientLight> observable, final AmbientLight ambientLight) throws Exception {
-        final Color color = Color.hsb(ambientLight.getColor().getHue(),
-                ambientLight.getColor().getSaturation() / Constants.ONEHUNDRED,
-                ambientLight.getColor().getValue() / Constants.ONEHUNDRED);
+    public void update(final Observable observable, final Object ambientLight) throws Exception {
+        final Color color = Color.hsb(((AmbientLight) ambientLight).getColor().getHue(),
+                ((AmbientLight) ambientLight).getColor().getSaturation() / Constants.ONEHUNDRED,
+                ((AmbientLight) ambientLight).getColor().getValue() / Constants.ONEHUNDRED);
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
                 setColorToImageEffect(color); //TODO: Set color to gray if powerstate is off
 
-                if (ambientLight.getPowerState().getValue().equals(State.ON) && !toggleSwitch.isSelected()) {
+                if (((AmbientLight) ambientLight).getPowerState().getValue().equals(State.ON)
+                        && !toggleSwitch.isSelected()) {
                     toggleSwitch.setSelected(true);
-                } else if (ambientLight.getPowerState().getValue().equals(State.OFF) && toggleSwitch.isSelected()) {
+                } else if (((AmbientLight) ambientLight).getPowerState().getValue().equals(State.OFF)
+                        && toggleSwitch.isSelected()) {
                     toggleSwitch.setSelected(false);
                 }
             }
