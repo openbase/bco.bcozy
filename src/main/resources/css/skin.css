@@ -71,6 +71,9 @@
 .padding-small {
     -fx-padding: 5.0 5.0 5.0 5.0;
 }
+.padding-bottom {
+    -fx-padding: 0.0 0.0 15.0 0.0;
+}
 
 .insets {
     -fx-background-insets:  10.0, 10.0, 10.0, 10.0;
@@ -111,6 +114,17 @@
     -fx-effect: dropshadow(gaussian, rgba(0.0, 0.0, 0.0, 0.3), 10.0, 0.0, 0.0, 4.0);
 }
 
+.list-element {
+    -fx-padding:  0.0, 0.0, 2.0, 0.0;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color:
+            transparent
+            transparent
+            slategray;
+            transparent;
+    -fx-border-insets: 0 0 1 0;
+
+}
 
 /**** size variants **********************************************************/
 .size-variant-touch {
@@ -155,7 +169,7 @@
  ******************************************************************************/
 
 .toggle-button, .button{
-    -fx-background-color: -bluegrey-50;
+    -fx-background-color: transparent;
     -fx-background-insets:  0.0;
     -fx-border-width: 0.0;
     -fx-text-fill: -fx-text-base-color;
@@ -169,12 +183,14 @@
 .toggle-button:focused,
 .button:focused,
 .button:default:focused {
-    -fx-background-color: derive(-bluegrey-50, 50.0%);
+    /*-fx-background-color: derive(-bluegrey-50, 50.0%);*/
+    -fx-background-color: transparent;
     -fx-background-insets:  0.0;
 }
 
 .toggle-button:focused:selected {
-    -fx-background-color: derive(-bluegrey-50, 50.0%), derive(-bluegrey-50, -20.0%);
+    /*-fx-background-color: derive(-bluegrey-50, 50.0%), derive(-bluegrey-50, -20.0%);*/
+    -fx-background-color: transparent;
     -fx-background-insets:  0.0;
 }
 

@@ -32,8 +32,23 @@ public class PaneElement extends VBox {
      * @param content the content which should be placed within this pane.
      */
     public PaneElement(final Node content) {
+        this.init();
+        this.getChildren().add(content);
+    }
+
+    /**
+     * Default Constructor for a Pane Element to guarantee a similar layout for all gui elements.
+     */
+    public PaneElement() {
+        this.init();
+    }
+
+    /**
+     * Method to initialize all gui stuff.
+     */
+    private void init() {
         this.setFillWidth(true);
         this.setAlignment(Pos.CENTER);
-        this.getChildren().add(content);
+        this.getStyleClass().addAll("floating-box");
     }
 }

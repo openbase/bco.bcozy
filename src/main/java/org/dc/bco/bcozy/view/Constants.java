@@ -66,6 +66,11 @@ public final class Constants {
     public static final double MAXLOGOWIDTH = 175.0;
 
     /**
+     * The max height for a main menu pane.
+     */
+    public static final double MAX_PANE_HEIGHT = 300.0;
+
+    /**
      * The insets for a icon.
      */
     public static final double ICON_INSETS = 15.0;

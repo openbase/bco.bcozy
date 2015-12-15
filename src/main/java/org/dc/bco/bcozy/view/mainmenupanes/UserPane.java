@@ -23,12 +23,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.dc.bco.bcozy.view.Constants;
+import org.dc.bco.bcozy.view.ImageViewProvider;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -38,23 +38,18 @@ import java.util.ResourceBundle;
  */
 public class UserPane extends VBox {
 
-    private final PaneElement userIcon;
-    private final PaneElement login;
     private final PaneElement loginPane;
-    private final PaneElement loggedInBottomPane;
-    private final PaneElement loggedInUserPane;
-    private final Button openLoginBtn;
+    private final PaneElement startLoginPane;
+    private final Button startLoginBtn;
     private final Button loginBtn;
     private final Button backBtn;
-    private final Button logoutBtn;
     private final TextField nameTxt;
     private final PasswordField passwordField;
-    private final Label loggedInUserLbl;
 
     /**
      * Enum to control the display state.
      */
-    public enum State { NOLOGIN, LOGINACTIVE, LOGIN }
+    public enum State { LOGINACTIVE, LOGIN }
 
     /**
      * Constructor for the UserPane.
@@ -64,39 +59,25 @@ public class UserPane extends VBox {
         final ResourceBundle languageBundle = ResourceBundle
                 .getBundle("languages.languages", new Locale("en", "US"));
 
-        // Case: No user logged in
-        final Image icon = new Image(getClass().getResourceAsStream("/icons/user_fa.png"));
-        final ImageView userIconImageView = new ImageView(icon);
-        userIconImageView.setFitHeight(Constants.MIDDLE_ICON);
-        userIconImageView.setFitWidth(Constants.MIDDLE_ICON);
-        userIconImageView.setSmooth(true);
-        userIcon = new PaneElement(userIconImageView);
-        userIcon.setMaxWidth(Constants.MAX_MENU_WIDTH);
-        openLoginBtn = new Button(languageBundle.getString("startLogin"));
-        login = new PaneElement(openLoginBtn);
-        login.setMaxWidth(Constants.MAX_MENU_WIDTH);
+        // Case: Before login
+        final ImageView addUserIconImageView = ImageViewProvider
+                .createImageView("/icons/new_user.png", Constants.SMALL_ICON);
+        startLoginBtn = new Button("", addUserIconImageView);
+        startLoginBtn.getStyleClass().clear();
+        startLoginPane = new PaneElement(startLoginBtn);
 
         // Case: Login active
         final Label nameLbl = new Label(languageBundle.getString("username"));
-        nameLbl.getStyleClass().clear();
-        nameLbl.getStyleClass().add("small-label");
         nameLbl.setAlignment(Pos.BOTTOM_LEFT);
         nameTxt = new TextField();
         final Label pwLbl = new Label(languageBundle.getString("password"));
-        pwLbl.getStyleClass().clear();
-        pwLbl.getStyleClass().add("small-label");
         passwordField = new PasswordField();
         loginBtn = new Button(languageBundle.getString("login"));
-        loginBtn.getStyleClass().clear();
-        loginBtn.getStyleClass().add("transparent-button");
         final HBox rightAlignLoginButton = new HBox(loginBtn);
         rightAlignLoginButton.setAlignment(Pos.CENTER_RIGHT);
 
-        final Image backIcon = new Image(getClass().getResourceAsStream("/icons/back.png"));
-        final ImageView imageViewBackIcon = new ImageView(backIcon);
-        imageViewBackIcon.setFitWidth(Constants.EXTRA_SMALL_ICON);
-        imageViewBackIcon.setFitHeight(Constants.EXTRA_SMALL_ICON);
-        imageViewBackIcon.setSmooth(true);
+        final ImageView imageViewBackIcon = ImageViewProvider
+                .createImageView("/icons/back.png", Constants.EXTRA_SMALL_ICON);
         backBtn = new Button("", imageViewBackIcon);
         backBtn.getStyleClass().clear();
 
@@ -106,43 +87,33 @@ public class UserPane extends VBox {
         loginFirstLineLayout.setRight(backBtn);
         loginLayout.getStyleClass().clear();
         loginLayout.setAlignment(Pos.BOTTOM_LEFT);
-        loginLayout.getChildren().addAll(loginFirstLineLayout, nameTxt, pwLbl, passwordField, rightAlignLoginButton);
+        loginLayout.getChildren().addAll(loginFirstLineLayout, nameTxt, pwLbl, passwordField,
+                rightAlignLoginButton);
         loginPane = new PaneElement(loginLayout);
         loginPane.setMaxWidth(Constants.MAX_MENU_WIDTH);
-
-        //Case: User logged in
-        final Image loggedInUserIcon = new Image(getClass().getResourceAsStream("/icons/user.png"));
-        final ImageView loggedInUserIconImageView = new ImageView(loggedInUserIcon);
-        loggedInUserIconImageView.setFitHeight(Constants.BIG_ICON);
-        loggedInUserIconImageView.setFitWidth(Constants.BIG_ICON);
-        loggedInUserPane = new PaneElement(loggedInUserIconImageView);
-        loggedInUserPane.setMaxWidth(Constants.MAX_MENU_WIDTH);
-        loggedInUserLbl = new Label("");
-        final Image logoutIcon = new Image(getClass().getResourceAsStream("/icons/logout.png"));
-        final ImageView imageViewLogoutIcon = new ImageView(logoutIcon);
-        imageViewLogoutIcon.setFitWidth(Constants.SMALL_ICON);
-        imageViewLogoutIcon.setFitHeight(Constants.SMALL_ICON);
-        logoutBtn = new Button("", imageViewLogoutIcon);
-        final BorderPane loggedInBottomLayout = new BorderPane();
-        loggedInBottomLayout.setLeft(loggedInUserLbl);
-        loggedInBottomLayout.setRight(logoutBtn);
-        loggedInBottomPane = new PaneElement(loggedInBottomLayout);
-        loggedInBottomPane.setMaxWidth(Constants.MAX_MENU_WIDTH);
 
         this.setFillWidth(true);
         this.setSpacing(Constants.INSETS);
 
-        this.getChildren().addAll(userIcon, login);
-        this.getStyleClass().addAll("floating-box");
+        //Setting styles
+        //CHECKSTYLE.OFF: MultipleStringLiterals
+        nameLbl.getStyleClass().clear();
+        nameLbl.getStyleClass().add("small-label");
+        pwLbl.getStyleClass().clear();
+        pwLbl.getStyleClass().add("small-label");
+        loginBtn.getStyleClass().clear();
+        loginBtn.getStyleClass().add("transparent-button");
+        //CHECKSTYLE.ON: MultipleStringLiterals
 
+        this.getChildren().addAll(startLoginPane);
     }
 
     /**
-     * Getter for the Button which opens the login menu.
+     * Getter for the startLogin button which starts the user login.
      * @return instance of the button
      */
-    public Button getOpenLoginBtn() {
-        return openLoginBtn;
+    public Button getStartLoginBtn() {
+        return startLoginBtn;
     }
 
     /**
@@ -162,14 +133,6 @@ public class UserPane extends VBox {
     }
 
     /**
-     * Getter for the logout which logs out the current user.
-     * @return instance of the button
-     */
-    public Button getLogoutBtn() {
-        return logoutBtn;
-    }
-
-    /**
      * Getter for the name textfield.
      * @return instance of the textfield
      */
@@ -186,23 +149,11 @@ public class UserPane extends VBox {
     }
 
     /**
-     * Getter for the Label that displays the currently user.
-     * @return instance of the label
-     */
-    public Label getLoggedInUserLbl() {
-        return loggedInUserLbl;
-    }
-
-    /**
      * GUI Method to switch the displayed panes.
      * @param state A state from the defined Enum
      */
     public void setState(final State state) {
         switch (state) {
-            case NOLOGIN:
-                this.getChildren().clear();
-                this.getChildren().addAll(userIcon, login);
-                break;
 
             case LOGINACTIVE:
                 this.getChildren().clear();
@@ -211,12 +162,12 @@ public class UserPane extends VBox {
 
             case LOGIN:
                 this.getChildren().clear();
-                this.getChildren().addAll(loggedInUserPane, loggedInBottomPane);
+                this.getChildren().addAll(startLoginPane);
                 break;
 
             default:
                 this.getChildren().clear();
-                this.getChildren().addAll(userIcon, login);
+                this.getChildren().addAll(startLoginPane);
                 break;
 
         }

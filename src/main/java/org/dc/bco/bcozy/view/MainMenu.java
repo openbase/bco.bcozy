@@ -22,9 +22,9 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import org.dc.bco.bcozy.view.mainmenupanes.AvailableUsersPane;
 import org.dc.bco.bcozy.view.mainmenupanes.ConnectionPane;
 import org.dc.bco.bcozy.view.mainmenupanes.UserPane;
 
@@ -44,11 +44,8 @@ public class MainMenu extends StackPane {
     private final double height;
     private final double width;
     private boolean maximized;
-    private final Image logoImage;
-    private final ImageView logoView;
-    private final Image logoImageSmall;
-    private final ImageView logoViewSmall;
     private final ConnectionPane connectionPane;
+    private final AvailableUsersPane availableUsersPanePane;
 
     /**
      * Constructor for the MainMenu.
@@ -78,19 +75,14 @@ public class MainMenu extends StackPane {
         fillHashesButton = new Button("Fill Hashes");
         fillContextMenuButton = new Button("Fill ContextMenu");
 
-        logoImage = new Image(getClass().getResourceAsStream("/icons/bcozy.png"));
-        logoView = new ImageView(logoImage);
-        logoView.setSmooth(true);
-        logoView.setFitWidth(Constants.MAXLOGOWIDTH);
-        logoView.setPreserveRatio(true);
+        final ImageView logoView = ImageViewProvider
+                .createImageView("/icons/bcozy.png", Constants.MAXLOGOWIDTH, Double.MAX_VALUE);
 
-        logoImageSmall = new Image(getClass().getResourceAsStream("/icons/bc.png"));
-        logoViewSmall = new ImageView(logoImageSmall);
-        logoViewSmall.setSmooth(true);
-        logoViewSmall.setFitWidth(Constants.MIDDLE_ICON);
-        logoViewSmall.setPreserveRatio(true);
+        final ImageView logoViewSmall = ImageViewProvider.createImageView("/icons/bc.png", Constants.MIDDLE_ICON);
 
         connectionPane = new ConnectionPane();
+
+        availableUsersPanePane = new AvailableUsersPane();
 
         mainMenuFloatingButton = new FloatingButton("/icons/mainmenu.png", Constants.MIDDLE_ICON);
 
@@ -102,8 +94,8 @@ public class MainMenu extends StackPane {
 
         // Adding components to their parents
         verticalLayout.getChildren()
-                .addAll(logoView, connectionPane, userPane, initRemoteButton, fetchLocationButton, fillHashesButton,
-                        fillContextMenuButton);
+                .addAll(logoView, initRemoteButton, fetchLocationButton, fillHashesButton,
+                        fillContextMenuButton, connectionPane, userPane, availableUsersPanePane);
         verticalLayoutSmall.getChildren().addAll(logoViewSmall);
         this.getChildren().addAll(verticalLayout, mainMenuFloatingButton);
 

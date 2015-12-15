@@ -31,24 +31,24 @@ public class MainMenuController {
      * @param foregroundPane The foregroundPane allows to access all necessary gui elements
      */
     public MainMenuController(final ForegroundPane foregroundPane) {
-
-        foregroundPane.getMainMenu().getUserPane().getOpenLoginBtn().setOnAction(event -> setLoginPane(foregroundPane));
+        foregroundPane.getMainMenu().getUserPane().getStartLoginBtn().setOnAction(event -> startLogin(foregroundPane));
         foregroundPane.getMainMenu().getUserPane().getLoginBtn().setOnAction(event -> loginUser(foregroundPane));
-        foregroundPane.getMainMenu().getUserPane().getLogoutBtn().setOnAction(event -> logoutUser(foregroundPane));
-        foregroundPane.getMainMenu().getUserPane().getBackBtn().setOnAction(event -> logoutUser(foregroundPane));
+        foregroundPane.getMainMenu().getUserPane().getBackBtn().setOnAction(event -> resetLogin(foregroundPane));
         foregroundPane.getMainMenu().getMainMenuFloatingButton().setOnAction(event -> showHideMainMenu(foregroundPane));
     }
 
-    private void setLoginPane(final ForegroundPane foregroundPane) {
+
+    private void startLogin(final ForegroundPane foregroundPane) {
         foregroundPane.getMainMenu().getUserPane().setState(UserPane.State.LOGINACTIVE);
     }
 
     private void loginUser(final ForegroundPane foregroundPane) {
         foregroundPane.getMainMenu().getUserPane().setState(UserPane.State.LOGIN);
+        //TODO: Initiate Login with UserRegistry
     }
 
-    private void logoutUser(final ForegroundPane foregroundPane) {
-        foregroundPane.getMainMenu().getUserPane().setState(UserPane.State.NOLOGIN);
+    private void resetLogin(final ForegroundPane foregroundPane) {
+        foregroundPane.getMainMenu().getUserPane().setState(UserPane.State.LOGIN);
     }
     private void showHideMainMenu(final ForegroundPane foregroundPane) {
         //TODO: Resize the pain correctly
