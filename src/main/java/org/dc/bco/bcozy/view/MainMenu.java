@@ -26,6 +26,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import org.dc.bco.bcozy.view.mainmenupanes.AvailableUsersPane;
 import org.dc.bco.bcozy.view.mainmenupanes.ConnectionPane;
+import org.dc.bco.bcozy.view.mainmenupanes.SettingsPane;
 import org.dc.bco.bcozy.view.mainmenupanes.UserPane;
 
 /**
@@ -46,6 +47,7 @@ public class MainMenu extends StackPane {
     private boolean maximized;
     private final ConnectionPane connectionPane;
     private final AvailableUsersPane availableUsersPanePane;
+    private final SettingsPane settingsPane;
 
     /**
      * Constructor for the MainMenu.
@@ -84,6 +86,8 @@ public class MainMenu extends StackPane {
 
         availableUsersPanePane = new AvailableUsersPane();
 
+        settingsPane = new SettingsPane();
+
         mainMenuFloatingButton = new FloatingButton("/icons/mainmenu.png", Constants.MIDDLE_ICON);
 
         // Setting Alignment in Stackpane
@@ -95,7 +99,7 @@ public class MainMenu extends StackPane {
         // Adding components to their parents
         verticalLayout.getChildren()
                 .addAll(logoView, initRemoteButton, fetchLocationButton, fillHashesButton,
-                        fillContextMenuButton, connectionPane, userPane, availableUsersPanePane);
+                        fillContextMenuButton, connectionPane, userPane, availableUsersPanePane, settingsPane);
         verticalLayoutSmall.getChildren().addAll(logoViewSmall);
         this.getChildren().addAll(verticalLayout, mainMenuFloatingButton);
 
