@@ -19,8 +19,8 @@
 package org.dc.bco.bcozy;
 
 import com.guigarage.responsive.ResponsiveHandler;
-import de.citec.jps.core.JPService;
-import de.citec.jps.preset.JPDebugMode;
+import org.dc.jps.core.JPService;
+import org.dc.jps.preset.JPDebugMode;
 import de.citec.jul.exception.InstantiationException;
 import de.citec.jul.exception.printer.ExceptionPrinter;
 import de.citec.jul.exception.printer.LogLevel;
