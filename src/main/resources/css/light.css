@@ -1,8 +1,415 @@
-.text-field{
-    /*-fx-background-insets: 0;*/
-    /*-fx-background-color: transparent, white, transparent, white;*/
-    /*-fx-background-radius: 0, 0, 0, 0;*/
-    /*-fx-box-border: none;*/
-    /*-fx-border-width: -1;*/
-    /*-fx-text-box-border: transparent;*/
+/**** Light Theme for BCozy *********************************/
+.root {
+    -fx-text-base-color: rgb(0.0, 0.0, 0.0); /*rgb(252.0, 240.0, 237.0);*/
+    -fx-text-fill: -fx-text-base-color;
+
+    -dark: rgb(47.0, 52.0, 57.0);
+    -fx-background-color: -dark;
+
+    /*default font */
+    /*-fx-font-family: 'Helvetica Neue';*/
+    -fx-font-family: "Roboto";
+    -fx-font-size: 16.0px;
+
+    -custom-red: rgb(237.0, 68.0, 37.0);
+    -custom-blue: rgb(0.0, 184.0, 222.0);
+
+    -bluegrey-50: #ECEFF1;
+    -bluegrey-100: #CFD8DC;
+    -bluegrey-200: #B0BEC5;
+    -bluegrey-500: #607D8B;
+}
+
+.mnemonic-underline {
+    -fx-stroke: transparent;
+}
+
+.emoji-text {
+    -fx-fill: -fx-text-base-color;
+}
+
+.linear-gradient-left-to-right {
+    -fx-background-color: linear-gradient(to right, rgba(0,0,0,0.8) 80%, rgba(0,0,0,0.5) 90%, rgba(0,0,0,0.0) 100%);
+}
+
+.linear-gradient-right-to-left {
+    -fx-background-color: linear-gradient(to left, rgba(0,0,0,0.8) 80%, rgba(0,0,0,0.5) 90%, rgba(0,0,0,0.0) 100%);
+}
+
+.floating-box {
+    -fx-background-color: rgba(255,255,255,0.9);
+}
+
+.main-menu {
+    -fx-background-color: rgba(255,255,255,0.9);
+}
+
+.context-menu {
+    -fx-background-color: rgba(255,255,255,0.9);
+}
+.info-footer {
+    -fx-background-color: rgba(255,255,255,1.0);
+}
+
+.floating-button {
+    -fx-background-color: rgba(255,255,255,0.9);
+    -fx-effect: dropshadow(gaussian, rgba(0.0, 0.0, 0.0, 0.3), 10.0, 0.0, -4.0, 4.0);
+}
+.main-menu-pane {
+    -fx-background-color: rgba(255,255,255,1.0);
+    -fx-effect: dropshadow(gaussian, rgba(0.0, 0.0, 0.0, 0.3), 10.0, 0.0, 0.0, 4.0);
+}
+
+.list-element {
+    -fx-border-color:
+            transparent
+            transparent
+            slategray
+            transparent;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * Label                                                                       *
+ *                                                                             *
+ ******************************************************************************/
+
+.small-label {
+    -fx-text-fill: slategray;
+}
+
+.label {
+    -fx-text-fill: -fx-text-base-color;
+}
+
+.label:show-mnemonics > .mnemonic-underline {
+    -fx-stroke: -fx-text-base-color;
+}
+
+.text {
+    -fx-effect:dropshadow(gaussian, rgba(0.0, 0.0, 0.0, 0.2), 0.0, 0.0, 0.0, 1.0);
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * Button & ToggleButton                                                       *
+ *                                                                             *
+ ******************************************************************************/
+
+.toggle-button, .button{
+    -fx-background-color: transparent;
+    -fx-text-fill: -fx-text-base-color;
+}
+
+.toggle-button:focused,
+.button:focused,
+.button:default:focused {
+    -fx-background-color: transparent;
+}
+
+.toggle-button:focused:selected {
+    -fx-background-color: transparent;
+}
+
+.toggle-button:armed,
+.toggle-button:selected,
+.button:armed,
+.button:default:armed {
+    -fx-background-color: derive(-bluegrey-50, -20.0%);
+}
+.toggle-switch .thumb-area{
+    -fx-background-color: slategrey;
+}
+.toggle-switch:selected .thumb-area{
+    -fx-background-color: limegreen;
+}
+
+.transparent-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: dodgerblue;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * TextField & TextArea                                                        *
+ *                                                                             *
+ ******************************************************************************/
+
+.text-area, .text-field, .text-input, .password-field {
+    -fx-background-color: transparent;
+    -fx-border-color:
+            transparent
+            transparent
+            black
+            transparent;
+    -fx-prompt-text-fill: derive(-dark, 50.0%);
+    -fx-highlight-fill: rgb(94.0, 203.0, 234.0);
+}
+
+.text-area, .text, .text-field, .text-input, .password-field > * > .text {
+    -fx-text-box-border: transparent;
+}
+
+.text-area {
+    -fx-background-color: transparent, white, transparent, white;
+    -fx-text-box-border: transparent;
+}
+
+.text-area .content {
+    -fx-background-color: transparent, white, transparent, white;
+    -fx-text-box-border: transparent;
+}
+
+.text-area:focused  .content {
+    -fx-background-color: transparent, white, transparent, white;
+    -fx-text-box-border: transparent;
+}
+
+.text-area:focused, .text-field:focused {
+    -fx-background-color: derive(-bluegrey-50, 80.0%);
+    -fx-text-box-border: transparent;
+}
+
+.scroll-bar:vertical > .track-background,
+.scroll-bar:horizontal > .track-background{
+    -fx-background-color: transparent;
+}
+
+.scroll-bar:vertical > .thumb,
+.scroll-bar:horizontal > .thumb {
+    -fx-background-color: derive(-bluegrey-50, 80.0%);
+}
+
+.scroll-bar > .increment-button,
+.scroll-bar > .decrement-button,
+.scroll-bar:hover > .increment-button,
+.scroll-bar:hover > .decrement-button {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar > .increment-button > .increment-arrow,
+.scroll-bar > .decrement-button > .decrement-arrow {
+    -fx-background-color: darkgray;
+}
+.scroll-bar > .track-background{
+    -fx-background-color: transparent;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.plus-minus-slider {
+    -fx-border-color: -fx-box-border;
+}
+
+.plus-minus-slider:horizontal {
+    -fx-background-color: derive(-bluegrey-500,30.0%);
+}
+
+.plus-minus-slider:vertical {
+    -fx-background-color: derive(-bluegrey-500,30.0%);
+}
+
+.plus-minus-slider > * > .slider > .track {
+    -fx-background-color: transparent;
+}
+
+.plus-minus-slider > * > .slider > .thumb {
+    -fx-background-color: -fx-outer-border, -fx-inner-border, -fx-body-color;
+}
+
+.plus-minus-slider > * > .slider:focused > .thumb {
+    -fx-background-color: -fx-focus-color, -fx-inner-border, -fx-body-color, -fx-faint-focus-color, -fx-body-color;
+}
+
+.plus-minus-slider > * > .adjust-plus {
+    -fx-background-color: -fx-mark-highlight-color,derive(-fx-base,-45.0%);
+}
+
+.plus-minus-slider > * > .adjust-minus {
+    -fx-background-color: -fx-mark-highlight-color,derive(-fx-base,-45.0%);
+}
+
+
+/*******************************************************************************
+ *                                                                             *
+ * ComboBox                                                                    *
+ *                                                                             *
+ ******************************************************************************/
+
+.content-area {
+    -fx-background-color: -dark;
+}
+
+
+.content-background {
+    -fx-background-color: -custom-red;
+}
+
+
+/*******************************************************************************
+ *                                                                             *
+ * ChoiceBox                                                                   *
+ *                                                                             *
+ ******************************************************************************/
+.combo-box-base,
+.choice-box {
+    /*-fx-background-color: -custom-red;*/
+}
+
+.combo-box-base:focused,
+.choice-box:focused{
+    /*-fx-background-color: derive(-custom-red, 50.0%);*/
+}
+
+.combo-box-base > .arrow-button > .arrow,
+.choice-box > .open-button > .arrow {
+    -fx-background-color: white;
+}
+
+.context-menu .label {
+    -fx-text-fill: -dark;
+}
+
+.radio-menu-item:checked > .left-container > .radio,
+.check-menu-item:checked > .left-container > .check {
+    -fx-background-color: -dark;
+}
+
+.radio-menu-item > .left-container > .radio,
+.check-menu-item > .left-container > .check {
+    -fx-background-color: transparent;
+}
+
+.menu-item:focused {
+    -fx-background-color: rgb(94.0, 203.0, 234.0);
+}
+
+
+/*******************************************************************************
+ *                                                                             *
+ * CheckBox                                                                    *
+ *                                                                             *
+ ******************************************************************************/
+
+.check-box {
+    -fx-text-fill: -fx-text-base-color;
+}
+
+.check-box > .box,
+.check-box > .box.unfocused,
+.check-box:disabled > .box,
+.check-box:selected > .box,
+.check-box:indeterminate > .box {
+    -fx-background-color: -fx-text-base-color;
+}
+
+.check-box:focused > .box {
+    -fx-background-color: -custom-blue, derive(rgb(94.0, 203.0, 234.0), 80.0%);
+}
+
+.check-box:focused:armed > .box {
+    -fx-background-color: -custom-blue, derive(-fx-text-base-color, 80.0%);
+}
+
+.check-box:selected > .box > .mark,
+.check-box:indeterminate > .box > .mark {
+    -fx-background-color: -dark;
+}
+
+
+/*******************************************************************************
+ *                                                                             *
+ * RadioButton                                                                 *
+ *                                                                             *
+ ******************************************************************************/
+
+.radio-button {
+    -fx-text-fill: -fx-text-base-color;
+}
+
+.radio-button > .radio,
+.radio-button > .radio.unfocused,
+.radio-button:disabled > .radio,
+.radio-button:selected > .radio {
+    -fx-background-color: -fx-text-base-color;
+}
+
+.radio-button:focused > .radio {
+    -fx-background-color: -custom-blue, derive(rgb(94.0, 203.0, 234.0), 80.0%);
+}
+
+.radio-button:focused:armed > .radio {
+    -fx-background-color: -custom-blue, derive(-fx-text-base-color, 80.0%);
+}
+
+.radio-button:selected > .radio > .dot {
+    -fx-background-color: -dark;
+}
+
+
+/*******************************************************************************
+ *                                                                             *
+ * ProgressBar                                                                 *
+ *                                                                             *
+ ******************************************************************************/
+
+.progress-bar > .track {
+    -fx-background-color: lightgray;
+}
+
+.progress-bar > .bar {
+    -fx-background-color: linear-gradient(
+            from 0px .75em to .75em 0px,
+            repeat,
+            slategrey 0%,
+            slategrey 49%,
+            derive(slategrey, 30%) 50%,
+            derive(slategrey, 30%) 99%
+    );
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * ProgressIndicator                                                           *
+ *                                                                             *
+ ******************************************************************************/
+
+.progress-indicator > .determinate-indicator > .indicator {
+    -fx-background-color: rgba(255.0, 255.0, 255.0, 0.5);
+}
+
+.progress-indicator > .determinate-indicator > .progress {
+    -fx-background-color:  -custom-blue,  derive(-custom-blue, 50.0%);
+}
+
+.progress-indicator > .determinate-indicator > .percentage {
+    -fx-fill: white;
+}
+
+.progress-indicator > .indeterminate-indicator > .segment {
+    -fx-background-color: rgb(0.0, 183.0, 221.0);
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * TitledPane                                                                  *
+ *                                                                             *
+ ******************************************************************************/
+
+.titled-pane .widget-pane > .title > .arrow-button .arrow {
+    visibility: hidden;
+}
+
+.titled-pane > .title {
+    -fx-background-color: white;
+}
+
+.titled-pane > .content {
+    -fx-background-color: white;
 }

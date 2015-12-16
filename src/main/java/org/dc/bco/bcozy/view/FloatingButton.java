@@ -20,7 +20,6 @@ package org.dc.bco.bcozy.view;
 
 import javafx.animation.*;
 import javafx.scene.control.Button;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.util.Duration;
 
@@ -29,7 +28,6 @@ import javafx.util.Duration;
  */
 public class FloatingButton extends Button {
 
-    private Image selected;
     private ImageView imageView;
     private final double size;
     /**
@@ -39,9 +37,7 @@ public class FloatingButton extends Button {
      */
     public FloatingButton(final String imagePath, final double size) {
         this.size = size;
-        selected = new Image(getClass()
-                .getResourceAsStream(imagePath), size, size, true, true);
-        imageView = new ImageView(selected);
+        imageView = ImageViewProvider.createImageView(imagePath, size);
         this.getStyleClass().clear();
         this.getStyleClass().add("floating-button");
 
@@ -62,10 +58,7 @@ public class FloatingButton extends Button {
      * @param imagePath the path for the new icon
      */
     public void changeIcon(final String imagePath) {
-        selected = new Image(getClass().getResourceAsStream(imagePath));
-        imageView = new ImageView(selected);
-        imageView.setFitHeight(this.size);
-        imageView.setFitWidth(this.size);
+        imageView = ImageViewProvider.createImageView(imagePath, this.size);
         super.setGraphic(imageView);
     }
 

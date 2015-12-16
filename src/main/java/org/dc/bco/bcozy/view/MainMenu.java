@@ -34,6 +34,7 @@ import org.dc.bco.bcozy.view.mainmenupanes.UserPane;
  */
 public class MainMenu extends StackPane {
 
+
     private final Button initRemoteButton;
     private final Button fetchLocationButton;
     private final Button fillHashesButton;
