@@ -57,7 +57,7 @@ public class RemotePool {
     private final ForegroundPane foregroundPane;
 
     private final Map<String, DALRemoteService> deviceMap;
-    private final Map<String, HashMap<String, DALRemoteService>> locationMap;
+    private final Map<String, Map<String, DALRemoteService>> locationMap;
     private LocationRegistryRemote locationRegistryRemote = null;
     private DeviceRegistryRemote deviceRegistryRemote = null;
     private TransformReceiver transformReceiver;
@@ -173,7 +173,7 @@ public class RemotePool {
 
                 if (currentDalRemoteService != null) {
                     if (!locationMap.containsKey(currentLocationConfig.getId())) {
-                        locationMap.put(currentLocationConfig.getId(), new HashMap<>());
+                        locationMap.put(currentLocationConfig.getId(), new TreeMap<>());
                     }
 
                     locationMap.get(currentLocationConfig.getId()).put(unitId, currentDalRemoteService);

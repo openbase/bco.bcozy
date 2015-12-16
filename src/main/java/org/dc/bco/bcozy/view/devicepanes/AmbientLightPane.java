@@ -63,6 +63,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.homeautomation.unit.AmbientLightType.AmbientLight;
 import rst.homeautomation.state.PowerStateType.PowerState.State;
+import rst.vision.HSVColorType.HSVColor;
 
 /**
  * Created on 03.12.15.
@@ -115,16 +116,21 @@ public class AmbientLightPane extends UnitPane {
     }
 
     private void initEffectAndSwitch() throws CouldNotPerformException {
-        final Color color = Color.hsb(ambientLightRemote.getColor().getHue(),
-                ambientLightRemote.getColor().getSaturation() / Constants.ONEHUNDRED,
-                ambientLightRemote.getColor().getValue() / Constants.ONEHUNDRED);
+        if (ambientLightRemote.getPower().getValue().equals(State.ON)) {
+            final Color color = Color.hsb(ambientLightRemote.getColor().getHue(),
+                    ambientLightRemote.getColor().getSaturation() / Constants.ONEHUNDRED,
+                    ambientLightRemote.getColor().getValue() / Constants.ONEHUNDRED);
+            setColorToImageEffect(color);
 
-        setColorToImageEffect(color);
+            if (!toggleSwitch.isSelected()) {
+                toggleSwitch.setSelected(true);
+            }
+        } else if (ambientLightRemote.getPower().getValue().equals(State.OFF)) {
+            setColorToImageEffect(Color.LIGHTGRAY);
 
-        if (ambientLightRemote.getPower().getValue().equals(State.ON) && !toggleSwitch.isSelected()) {
-            toggleSwitch.setSelected(true);
-        } else if (ambientLightRemote.getPower().getValue().equals(State.OFF) && toggleSwitch.isSelected()) {
-            toggleSwitch.setSelected(false);
+            if (toggleSwitch.isSelected()) {
+                toggleSwitch.setSelected(false);
+            }
         }
     }
 
@@ -200,10 +206,12 @@ public class AmbientLightPane extends UnitPane {
         final EventHandler<MouseEvent> sendingColorHandler = event -> {
             //TODO implement color (hueValue, saturation, brightness) sending to ambientlight unit
 
-            java.awt.Color color = java.awt.Color.getHSBColor(hueValue.floatValue() / 360,
-                    saturation.floatValue() / 100, brightness.floatValue() / 100);
+            HSVColor hsvColor = HSVColor.newBuilder()
+                    .setHue(hueValue.floatValue())
+                    .setSaturation(saturation.floatValue())
+                    .setValue(brightness.floatValue()).build();
             try {
-                ambientLightRemote.setColor(color);
+                ambientLightRemote.setColor(hsvColor);
             } catch (CouldNotPerformException e) {
                 ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
             }
@@ -483,21 +491,23 @@ public class AmbientLightPane extends UnitPane {
     }
 
     @Override
-    public void update(final Observable observable, final Object ambientLight) throws Exception {
+    public void update(final Observable observable, final Object ambientLight) throws java.lang.Exception {
         final Color color = Color.hsb(((AmbientLight) ambientLight).getColor().getHue(),
                 ((AmbientLight) ambientLight).getColor().getSaturation() / Constants.ONEHUNDRED,
                 ((AmbientLight) ambientLight).getColor().getValue() / Constants.ONEHUNDRED);
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                setColorToImageEffect(color); //TODO: Set color to gray if powerstate is off
-
-                if (((AmbientLight) ambientLight).getPowerState().getValue().equals(State.ON)
-                        && !toggleSwitch.isSelected()) {
-                    toggleSwitch.setSelected(true);
-                } else if (((AmbientLight) ambientLight).getPowerState().getValue().equals(State.OFF)
-                        && toggleSwitch.isSelected()) {
-                    toggleSwitch.setSelected(false);
+                if (((AmbientLight) ambientLight).getPowerState().getValue().equals(State.ON)) {
+                    setColorToImageEffect(color);
+                    if (!toggleSwitch.isSelected()) {
+                        toggleSwitch.setSelected(true);
+                    }
+                } else {
+                    setColorToImageEffect(Color.LIGHTGRAY);
+                    if (toggleSwitch.isSelected()) {
+                        toggleSwitch.setSelected(false);
+                    }
                 }
             }
         });

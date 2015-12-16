@@ -115,7 +115,7 @@ public class RollershutterPane extends UnitPane {
     }
 
     @Override
-    public void update(final Observable observable, final Object rollerShutter) throws Exception {
+    public void update(final Observable observable, final Object rollerShutter) throws java.lang.Exception {
         //TODO: Do something
         //((RollershutterType.Rollershutter) rollerShutter).getLabel();
 
