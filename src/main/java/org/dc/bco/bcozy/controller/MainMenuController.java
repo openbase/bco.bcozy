@@ -26,29 +26,57 @@ import org.dc.bco.bcozy.view.mainmenupanes.UserPane;
  */
 public class MainMenuController {
 
+    private final UserPane userPane;
     /**
      * Constructor for the MainMenuController.
      * @param foregroundPane The foregroundPane allows to access all necessary gui elements
      */
     public MainMenuController(final ForegroundPane foregroundPane) {
-        foregroundPane.getMainMenu().getUserPane().getStartLoginBtn().setOnAction(event -> startLogin(foregroundPane));
-        foregroundPane.getMainMenu().getUserPane().getLoginBtn().setOnAction(event -> loginUser(foregroundPane));
-        foregroundPane.getMainMenu().getUserPane().getBackBtn().setOnAction(event -> resetLogin(foregroundPane));
+        userPane = foregroundPane.getMainMenu().getUserPane();
+        userPane.getStartLoginBtn().setOnAction(event -> startLogin());
+        userPane.getLoginBtn().setOnAction(event -> loginUser());
+        userPane.getBackBtn().setOnAction(event -> resetLogin());
+        userPane.getLogoutBtn().setOnAction(event -> resetLogin());
+        userPane.getPasswordField().setOnAction(event -> loginUser());
+        userPane.getNameTxt().setOnAction(event -> loginUser());
+        userPane.getNameTxt().setOnKeyTyped(event -> resetWrongInput());
+        userPane.getPasswordField().setOnKeyTyped(event -> resetWrongInput());
         foregroundPane.getMainMenu().getMainMenuFloatingButton().setOnAction(event -> showHideMainMenu(foregroundPane));
     }
 
 
-    private void startLogin(final ForegroundPane foregroundPane) {
-        foregroundPane.getMainMenu().getUserPane().setState(UserPane.State.LOGINACTIVE);
+    private void startLogin() {
+        userPane.setState(UserPane.State.LOGINACTIVE);
     }
 
-    private void loginUser(final ForegroundPane foregroundPane) {
-        foregroundPane.getMainMenu().getUserPane().setState(UserPane.State.LOGIN);
+    private void resetWrongInput() {
+        if(userPane.getInputWrongLbl().isVisible()){
+            userPane.resetUserOrPasswordWrong();
+        }
+    }
+
+    private void loginUser() {
         //TODO: Initiate Login with UserRegistry
+        if (userPane.getNameTxt().getText().equals("Admin") &&
+                userPane.getPasswordField().getText().equals("")) {
+            userPane.resetUserOrPasswordWrong();
+            userPane.getLoggedInUserLbl().setText(userPane.getNameTxt().getText());
+            userPane.getNameTxt().setText("");
+            userPane.getPasswordField().setText("");
+            userPane.setState(UserPane.State.LOGOUT);
+        } else {
+            userPane.indicateUserOrPasswordWrong();
+        }
     }
 
-    private void resetLogin(final ForegroundPane foregroundPane) {
-        foregroundPane.getMainMenu().getUserPane().setState(UserPane.State.LOGIN);
+    private void resetLogin() {
+        if(userPane.getInputWrongLbl().isVisible()){
+            userPane.resetUserOrPasswordWrong();
+        }
+        userPane.getNameTxt().setText("");
+        userPane.getPasswordField().setText("");
+        userPane.getLoggedInUserLbl().setText("");
+        userPane.setState(UserPane.State.LOGIN);
     }
     private void showHideMainMenu(final ForegroundPane foregroundPane) {
         //TODO: Resize the pain correctly

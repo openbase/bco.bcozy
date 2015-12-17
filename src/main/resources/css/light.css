@@ -77,6 +77,9 @@
 .small-label {
     -fx-text-fill: slategray;
 }
+.wrong-input-indicator {
+    -fx-text-fill: red;
+}
 
 .label {
     -fx-text-fill: -fx-text-base-color;
