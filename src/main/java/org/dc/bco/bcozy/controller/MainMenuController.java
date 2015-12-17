@@ -18,8 +18,16 @@
  */
 package org.dc.bco.bcozy.controller;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import org.dc.bco.bcozy.BCozy;
+import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.ForegroundPane;
+import org.dc.bco.bcozy.view.mainmenupanes.SettingsPane;
 import org.dc.bco.bcozy.view.mainmenupanes.UserPane;
+
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 /**
  * Created by hoestreich on 11/24/15.
@@ -27,12 +35,14 @@ import org.dc.bco.bcozy.view.mainmenupanes.UserPane;
 public class MainMenuController {
 
     private final UserPane userPane;
+    private final SettingsPane settingsPane;
     /**
      * Constructor for the MainMenuController.
      * @param foregroundPane The foregroundPane allows to access all necessary gui elements
      */
     public MainMenuController(final ForegroundPane foregroundPane) {
         userPane = foregroundPane.getMainMenu().getUserPane();
+        settingsPane = foregroundPane.getMainMenu().getSettingsPane();
         userPane.getStartLoginBtn().setOnAction(event -> startLogin());
         userPane.getLoginBtn().setOnAction(event -> loginUser());
         userPane.getBackBtn().setOnAction(event -> resetLogin());
@@ -41,6 +51,11 @@ public class MainMenuController {
         userPane.getNameTxt().setOnAction(event -> loginUser());
         userPane.getNameTxt().setOnKeyTyped(event -> resetWrongInput());
         userPane.getPasswordField().setOnKeyTyped(event -> resetWrongInput());
+        settingsPane.getThemeChoice().setOnAction(event -> chooseTheme());
+        settingsPane.getLanguageChoice().setOnAction(event -> chooseLanguage());
+        //Necessary to ensure that the first change is not missed by the ChangeListener
+        settingsPane.getThemeChoice().getSelectionModel().select(0);
+
         foregroundPane.getMainMenu().getMainMenuFloatingButton().setOnAction(event -> showHideMainMenu(foregroundPane));
     }
 
@@ -50,15 +65,15 @@ public class MainMenuController {
     }
 
     private void resetWrongInput() {
-        if(userPane.getInputWrongLbl().isVisible()){
+        if (userPane.getInputWrongLbl().isVisible()) {
             userPane.resetUserOrPasswordWrong();
         }
     }
 
     private void loginUser() {
         //TODO: Initiate Login with UserRegistry
-        if (userPane.getNameTxt().getText().equals("Admin") &&
-                userPane.getPasswordField().getText().equals("")) {
+        if (userPane.getNameTxt().getText().equals("Admin")
+                && userPane.getPasswordField().getText().equals("")) {
             userPane.resetUserOrPasswordWrong();
             userPane.getLoggedInUserLbl().setText(userPane.getNameTxt().getText());
             userPane.getNameTxt().setText("");
@@ -70,7 +85,7 @@ public class MainMenuController {
     }
 
     private void resetLogin() {
-        if(userPane.getInputWrongLbl().isVisible()){
+        if (userPane.getInputWrongLbl().isVisible()) {
             userPane.resetUserOrPasswordWrong();
         }
         userPane.getNameTxt().setText("");
@@ -78,6 +93,7 @@ public class MainMenuController {
         userPane.getLoggedInUserLbl().setText("");
         userPane.setState(UserPane.State.LOGIN);
     }
+
     private void showHideMainMenu(final ForegroundPane foregroundPane) {
         //TODO: Resize the pain correctly
         if (foregroundPane.getMainMenu().isMaximized()) {
@@ -86,5 +102,51 @@ public class MainMenuController {
             foregroundPane.getMainMenu().maximizeMainMenu();
         }
 
+    }
+
+    private void chooseTheme() {
+        final ResourceBundle languageBundle = ResourceBundle
+                .getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
+
+        settingsPane.getThemeChoice().getSelectionModel().selectedIndexProperty()
+                .addListener(new ChangeListener<Number>() {
+
+            @Override
+            public void changed(final ObservableValue<? extends Number> observableValue, final Number number,
+                                final Number number2) {
+                if (settingsPane.getAvailableThemes().get(number2.intValue())
+                        .equals(languageBundle.getString(Constants.LIGHT_THEME_CSS_NAME))) {
+                    BCozy.changeTheme(Constants.LIGHT_THEME_CSS);
+                } else if (settingsPane.getAvailableThemes().get(number2.intValue())
+                        .equals(languageBundle.getString(Constants.DARK_THEME_CSS_NAME))) {
+                    BCozy.changeTheme(Constants.DARK_THEME_CSS);
+                }
+            }
+        });
+    }
+
+    private void chooseLanguage() {
+        final ResourceBundle languageBundle = ResourceBundle
+                .getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
+        settingsPane.getLanguageChoice().getSelectionModel().selectedIndexProperty()
+                .addListener(new ChangeListener<Number>() {
+
+                    @Override
+                    public void changed(final ObservableValue<? extends Number> observableValue, final Number number,
+                                        final Number number2) {
+                        if (settingsPane.getAvailableLanguages().get(number2.intValue()).equals("English")) {
+                            Locale.setDefault(new Locale("en", "US"));
+                        } else if (settingsPane.getAvailableLanguages().get(number2.intValue()).equals("Deutsch")) {
+                            Locale.setDefault(new Locale("de", "DE"));
+                        }
+                    }
+                });
+        userPane.getInputWrongLbl().setText(languageBundle.getString("inputWrong"));
+        userPane.getNameLbl().setText(languageBundle.getString("username"));
+        userPane.getPwLbl().setText(languageBundle.getString("password"));
+        userPane.getLoginBtn().setText(languageBundle.getString("login"));
+        userPane.getLogoutBtn().setText(languageBundle.getString("logout"));
+
+        settingsPane.getSettingsLbl().setText(languageBundle.getString("settings"));
     }
 }

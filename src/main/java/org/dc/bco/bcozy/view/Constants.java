@@ -226,6 +226,10 @@ public final class Constants {
     public static final int ONEHUNDRED = 100;
 
     /**
+     * Name of the language resource bundle.
+     */
+    public static final String LANGUAGE_RESOURCE_BUNDLE = "languages.languages";
+    /**
      * Private Constructor.
      */
     private Constants() { }

@@ -18,8 +18,6 @@
  */
 package org.dc.bco.bcozy.view.mainmenupanes;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ChoiceBox;
@@ -28,7 +26,6 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import org.dc.bco.bcozy.BCozy;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.ImageViewProvider;
 
@@ -40,43 +37,36 @@ import java.util.ResourceBundle;
  */
 public class SettingsPane extends PaneElement {
 
+    private final ChoiceBox<String> themeChoice;
+    private final ChoiceBox<String> languageChoice;
+    private final ObservableList<String> availableThemes;
+    private final ObservableList<String> availableLanguages;
+    private final Label settingsLbl;
+
     /**
      * Constructor for the SettingsPane.
      */
     public SettingsPane() {
         final ResourceBundle languageBundle = ResourceBundle
-                .getBundle("languages.languages", new Locale("en", "US"));
+                .getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
 
         final TitledPane settingsPane = new TitledPane();
         final HBox settingsHeader = new HBox();
         final ImageView settingsIcon = ImageViewProvider
                 .createImageView("/icons/adjustment.png", Constants.EXTRA_SMALL_ICON);
-        final Label settingsLbl = new Label(languageBundle.getString("settings"));
+        settingsLbl = new Label(languageBundle.getString("settings"));
         settingsHeader.getChildren().addAll(settingsIcon, settingsLbl);
 
         final VBox verticalLayout = new VBox();
-        final ObservableList<String> availableLanguages = FXCollections.observableArrayList(
-                "English", "Deutsch");
-        final ChoiceBox<String> languageChoice = new ChoiceBox<>(availableLanguages);
+        availableLanguages = FXCollections.observableArrayList("English", "Deutsch");
+        languageChoice = new ChoiceBox<>(availableLanguages);
 
-        final ObservableList<String> availableThemes = FXCollections.observableArrayList(
+        availableThemes = FXCollections.observableArrayList(
                 languageBundle.getString(Constants.LIGHT_THEME_CSS_NAME), languageBundle.getString(
                         Constants.DARK_THEME_CSS_NAME));
-        final ChoiceBox<String> themeChoice = new ChoiceBox<>(availableThemes);
-        themeChoice.setValue(availableThemes.get(0));
-        themeChoice.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(final ObservableValue<? extends Number> observableValue, final Number number,
-                                final Number number2) {
-                if (availableThemes.get(number2.intValue())
-                        .equals(languageBundle.getString(Constants.LIGHT_THEME_CSS_NAME))) {
-                    BCozy.changeTheme(Constants.LIGHT_THEME_CSS);
-                } else if (availableThemes.get(number2.intValue())
-                        .equals(languageBundle.getString(Constants.DARK_THEME_CSS_NAME))) {
-                    BCozy.changeTheme(Constants.DARK_THEME_CSS);
-                }
-            }
-        });
+        themeChoice = new ChoiceBox<>(availableThemes);
+        //themeChoice.setValue(availableThemes.get(0));
+
         verticalLayout.setFillWidth(true);
         verticalLayout.getChildren().addAll(languageChoice, themeChoice);
 
@@ -86,5 +76,44 @@ public class SettingsPane extends PaneElement {
 
         this.getChildren().addAll(settingsPane);
 
+    }
+
+    /**
+     * Getter for the themeChoice ChoiceBox.
+     * @return instance of the themeChoice
+     */
+    public ChoiceBox<String> getThemeChoice() {
+        return themeChoice;
+    }
+
+    /**
+     * Getter for the languageChoice ChoiceBox.
+     * @return instance of the languageChoice
+     */
+    public ChoiceBox<String> getLanguageChoice() {
+        return languageChoice;
+    }
+
+    /**
+     * Getter for the availableThemes List.
+     * @return instance of the availableThemes
+     */
+    public ObservableList<String> getAvailableThemes() {
+        return availableThemes;
+    }
+    /**
+     * Getter for the availableLanguages List.
+     * @return instance of the availableLanguages
+     */
+    public ObservableList<String> getAvailableLanguages() {
+        return availableLanguages;
+    }
+
+    /**
+     * Getter for the settingsLbl.
+     * @return instance of the settingsLbl
+     */
+    public Label getSettingsLbl() {
+        return settingsLbl;
     }
 }

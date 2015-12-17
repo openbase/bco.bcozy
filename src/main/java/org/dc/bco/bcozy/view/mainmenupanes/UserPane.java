@@ -49,6 +49,9 @@ public class UserPane extends VBox {
     private final PasswordField passwordField;
     private final Label inputWrongLbl;
     private final Label loggedInUserLbl;
+    private final VBox loginLayout;
+    private final Label nameLbl;
+    private final Label pwLbl;
     /**
      * Enum to control the display state.
      */
@@ -60,7 +63,7 @@ public class UserPane extends VBox {
     public UserPane() {
 
         final ResourceBundle languageBundle = ResourceBundle
-                .getBundle("languages.languages", new Locale("en", "US"));
+                .getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
 
         // Case: Before login
         final ImageView addUserIconImageView = ImageViewProvider
@@ -70,14 +73,14 @@ public class UserPane extends VBox {
         startLoginPane = new PaneElement(startLoginBtn);
 
         // Case: Login active
-        final Label nameLbl = new Label(languageBundle.getString("username"));
+        nameLbl = new Label(languageBundle.getString("username"));
         nameLbl.setAlignment(Pos.BOTTOM_LEFT);
         nameTxt = new TextField();
-        final Label pwLbl = new Label(languageBundle.getString("password"));
+        pwLbl = new Label(languageBundle.getString("password"));
         passwordField = new PasswordField();
         inputWrongLbl = new Label(languageBundle.getString("inputWrong"));
         inputWrongLbl.setAlignment(Pos.TOP_LEFT);
-        inputWrongLbl.setVisible(false);
+        //inputWrongLbl.setVisible(false);
         loginBtn = new Button(languageBundle.getString("login"));
         final HBox rightAlignLoginButton = new HBox(loginBtn);
         rightAlignLoginButton.setAlignment(Pos.CENTER_RIGHT);
@@ -87,13 +90,13 @@ public class UserPane extends VBox {
         backBtn = new Button("", imageViewBackIcon);
         backBtn.getStyleClass().clear();
 
-        final VBox loginLayout = new VBox(Constants.INSETS);
+        loginLayout = new VBox(Constants.INSETS);
         final BorderPane loginFirstLineLayout = new BorderPane();
         loginFirstLineLayout.setLeft(nameLbl);
         loginFirstLineLayout.setRight(backBtn);
         loginLayout.getStyleClass().clear();
         loginLayout.setAlignment(Pos.BOTTOM_LEFT);
-        loginLayout.getChildren().addAll(loginFirstLineLayout, nameTxt, pwLbl, passwordField, inputWrongLbl,
+        loginLayout.getChildren().addAll(loginFirstLineLayout, nameTxt, pwLbl, passwordField,
                 rightAlignLoginButton);
         loginPane = new PaneElement(loginLayout);
         loginPane.setMaxWidth(Constants.MAX_MENU_WIDTH);
@@ -188,6 +191,7 @@ public class UserPane extends VBox {
     public Label getInputWrongLbl() {
         return inputWrongLbl;
     }
+
     /**
      * Getter for the loggedInUserLbl.
      * @return instance of the loggedInUserLbl
@@ -196,16 +200,45 @@ public class UserPane extends VBox {
         return loggedInUserLbl;
     }
 
-    public void indicateUserOrPasswordWrong() {
-        passwordField.setStyle("-fx-border-color: transparent transparent red transparent;");
-        nameTxt.setStyle("-fx-border-color: transparent transparent red transparent;");
-        inputWrongLbl.setVisible(true);
+    /**
+     * Getter for the pwLbl.
+     * @return instance of the pwLbl
+     */
+    public Label getPwLbl() {
+        return pwLbl;
     }
 
+    /**
+     * Getter for the nameLbl.
+     * @return instance of the nameLbl
+     */
+    public Label getNameLbl() {
+        return nameLbl;
+    }
+
+    /**
+     * Change CSS Style to indicate that at least one of the informations
+     * password or the name were wrong.
+     */
+    public void indicateUserOrPasswordWrong() {
+        if (!loginLayout.getChildren().contains(inputWrongLbl)) {
+            passwordField.getStyleClass().add("password-field-wrong");
+            nameTxt.getStyleClass().add("text-field-wrong");
+            loginLayout.getChildren().add(loginLayout.getChildren().size() - 1, inputWrongLbl);
+        }
+    }
+
+    /**
+     * Reset CSS Style if name or password are corrected.
+     */
     public void resetUserOrPasswordWrong() {
-        passwordField.setStyle("-fx-border-color: transparent transparent black transparent;");
-        nameTxt.setStyle("-fx-border-color: transparent transparent black transparent;");
-        inputWrongLbl.setVisible(false);
+        passwordField.getStyleClass().clear();
+        nameTxt.getStyleClass().clear();
+        passwordField.getStyleClass().add("password-field");
+        nameTxt.getStyleClass().add("text-field");
+        if (loginLayout.getChildren().contains(inputWrongLbl)) {
+            loginLayout.getChildren().remove(inputWrongLbl);
+        }
     }
     /**
      * GUI Method to switch the displayed panes.

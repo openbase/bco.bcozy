@@ -75,6 +75,9 @@ public class LocationController implements Observer<LocationRegistryType.Locatio
         this.remotePool = remotePool;
 
         this.foregroundPane.getMainMenu().addFetchLocationButtonEventHandler(event -> connectLocationRemote());
+        //@Julian: This is the size of the bounding box within which the drawing should be done
+        LOGGER.info("Height:" + foregroundPane.getCenterPane().getLayoutBounds().getHeight());
+        LOGGER.info("Width:" + foregroundPane.getCenterPane().getLayoutBounds().getWidth());
     }
 
     /**
