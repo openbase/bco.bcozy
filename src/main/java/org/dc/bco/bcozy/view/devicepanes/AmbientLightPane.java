@@ -78,6 +78,7 @@ public class AmbientLightPane extends UnitPane {
     private final Image topImage;
     private final ToggleSwitch toggleSwitch;
     private final BorderPane borderPane;
+    private HBox bodyContent;
 
     /**
      * Constructor for the AmbientLightPane.
@@ -90,7 +91,9 @@ public class AmbientLightPane extends UnitPane {
         bottomImage = new Image("/icons/lightbulb_mask.png");
         topImage    = new Image("/icons/lightbulb.png");
         borderPane = new BorderPane();
-        this.setGraphic(borderPane);
+        //this.setGraphic(borderPane);
+        //this.headPart(borderPane);
+
 
         try {
             super.setUnitLabel(this.ambientLightRemote.getData().getLabel());
@@ -101,6 +104,10 @@ public class AmbientLightPane extends UnitPane {
 
         initTitle();
         initContent();
+        final Pane pane = new Pane();
+        pane.getChildren().add(bodyContent);
+        createWidgetPane(borderPane, pane);
+
         try {
             initEffectAndSwitch();
         } catch (CouldNotPerformException e) {
@@ -171,7 +178,7 @@ public class AmbientLightPane extends UnitPane {
         borderPane.setCenter(new Label(super.getUnitLabel()));
         borderPane.setRight(toggleSwitch);
 
-        this.getStyleClass().add("widget-pane");
+        //this.getStyleClass().add("widget-pane");
     }
 
     /**
@@ -201,10 +208,7 @@ public class AmbientLightPane extends UnitPane {
             brightness.set(100 - (clamp(yMouse / 150) * 100));
         };
 
-        //TODO implement set color (hueValue, saturation, brightness) from ambientlight unit
-
         final EventHandler<MouseEvent> sendingColorHandler = event -> {
-            //TODO implement color (hueValue, saturation, brightness) sending to ambientlight unit
 
             HSVColor hsvColor = HSVColor.newBuilder()
                     .setHue(hueValue.floatValue())
@@ -281,7 +285,9 @@ public class AmbientLightPane extends UnitPane {
         hBox.setPadding(new Insets(0, 10, 0, 10));
         hBox.getChildren().addAll(colorContainer, colorCircleContainer);
 
-        this.setContent(hBox);
+        //this.setContent(hBox);
+        //this.bodyPart(hBox);
+        bodyContent = hBox;
     }
 
     /**
