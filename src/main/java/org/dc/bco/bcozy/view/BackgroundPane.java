@@ -34,13 +34,13 @@ import org.dc.bco.bcozy.view.location.LocationPane;
 public class BackgroundPane extends StackPane {
 
     private final LocationPane locationPane;
-    private double prevMouseCordX;
-    private double prevMouseCordY;
-    private final double scaleDelta = 1.05;
+    private double prevMouseCordX; //NOPMD
+    private double prevMouseCordY; //NOPMD
 
     /**
+     * The constructor for a BackgroundPane.
      *
-     * @param foregroundPane
+     * @param foregroundPane The foregroundPane
      */
     public BackgroundPane(final ForegroundPane foregroundPane) {
         locationPane = new LocationPane(foregroundPane);
@@ -72,7 +72,7 @@ public class BackgroundPane extends StackPane {
                 return;
             }
 
-            final double scaleFactor = (event.getDeltaY() > 0) ? scaleDelta : 1 / scaleDelta;
+            final double scaleFactor = (event.getDeltaY() > 0) ? Constants.SCALE_DELTA : 1 / Constants.SCALE_DELTA;
 
             locationPane.setScaleX(locationPane.getScaleX() * scaleFactor);
             locationPane.setScaleY(locationPane.getScaleY() * scaleFactor);
@@ -83,7 +83,7 @@ public class BackgroundPane extends StackPane {
 
     /**
      *
-     * @return
+     * @return The LocationPane.
      */
     public LocationPane getLocationPane() {
         return locationPane;

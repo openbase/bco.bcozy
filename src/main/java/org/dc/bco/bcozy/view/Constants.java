@@ -226,6 +226,11 @@ public final class Constants {
     public static final int ONEHUNDRED = 100;
 
     /**
+     * The factor for the scaling in the locationPane.
+     */
+    public static final double SCALE_DELTA = 1.05;
+
+    /**
      * Name of the language resource bundle.
      */
     public static final String LANGUAGE_RESOURCE_BUNDLE = "languages.languages";

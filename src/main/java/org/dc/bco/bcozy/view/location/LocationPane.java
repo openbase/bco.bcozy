@@ -159,6 +159,8 @@ public class LocationPane extends Pane {
         });
     }
 
+
+    //TODO: add mouseeventhandler that handles clicks out of the zones
 //    private void addMouseEventHandlerToEmptyRectangle(final Rectangle emptyHugeRectangle) {
 //        emptyHugeRectangle.setOnMouseClicked(event -> {
 //            event.consume();
@@ -214,8 +216,10 @@ public class LocationPane extends Pane {
     }
 
     private void scaleFitRoom(final LocationPolygon room) { //TODO: Bounds in Parent? Layout Bounds?
-        final double xScale = (getBoundsInParent().getWidth() / room.prefWidth(0)) * Constants.ZOOM_FIT_PERCENTAGE_WIDTH;
-        final double yScale = (getBoundsInParent().getHeight() / room.prefHeight(0)) * Constants.ZOOM_FIT_PERCENTAGE_HEIGHT;
+        final double xScale =
+                (getBoundsInParent().getWidth() / room.prefWidth(0)) * Constants.ZOOM_FIT_PERCENTAGE_WIDTH;
+        final double yScale =
+                (getBoundsInParent().getHeight() / room.prefHeight(0)) * Constants.ZOOM_FIT_PERCENTAGE_HEIGHT;
         final double scale = (xScale < yScale) ? xScale : yScale;
 
         this.setScaleX(scale);
@@ -228,7 +232,7 @@ public class LocationPane extends Pane {
     }
 
     private void centerScrollPaneToPointAnimated(final Point2D center) {
-        TranslateTransition transition = new TranslateTransition(Duration.millis(500), this);
+        final TranslateTransition transition = new TranslateTransition(Duration.millis(500), this);
         transition.setToX(-center.getX() * this.getScaleX() + getBoundsInParent().getWidth() / 2);
         transition.setToY(-center.getY() * this.getScaleY() + getBoundsInParent().getHeight() / 2);
         transition.setCycleCount(1);
