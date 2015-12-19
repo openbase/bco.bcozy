@@ -21,11 +21,11 @@ package org.dc.bco.bcozy.view.mainmenupanes;
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
 import javafx.scene.Node;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 import org.dc.bco.bcozy.view.Constants;
+import org.dc.bco.bcozy.view.ImageViewProvider;
 
 /**
  * Created by hoestreich on 12/8/15.
@@ -44,30 +44,23 @@ public class ConnectionPane extends PaneElement {
      */
     public ConnectionPane() {
         final StackPane connectionIcon = new StackPane();
-        final Image connectionImage = new Image(getClass().getResourceAsStream("/icons/connection.png"),
-                Constants.MIDDLE_ICON, Constants.MIDDLE_ICON, true, true);
-        final ImageView connectionView = new ImageView(connectionImage);
+        final ImageView connectionView = ImageViewProvider
+                .createImageView("/icons/connection.png", Constants.MIDDLE_ICON);
 
-        final Image connectionSuccessImage =
-                new Image(getClass().getResourceAsStream("/icons/connection-successful.png"), Constants.MIDDLE_ICON,
-                        Constants.MIDDLE_ICON, true, true);
-        connectionSuccessView = new ImageView(connectionSuccessImage);
+        connectionSuccessView = ImageViewProvider
+                .createImageView("/icons/connection-successful.png", Constants.MIDDLE_ICON);
         connectionSuccessView.setOpacity(Constants.FULLYTRANSPARENT);
 
-        final Image connectionProblemImage = new Image(getClass().getResourceAsStream("/icons/connection-problem.png"),
-                Constants.MIDDLE_ICON, Constants.MIDDLE_ICON, true, true);
-        connectionProblemView = new ImageView(connectionProblemImage);
+        connectionProblemView = ImageViewProvider
+                .createImageView("/icons/connection-problem.png", Constants.MIDDLE_ICON);
         connectionProblemView.setOpacity(Constants.FULLYTRANSPARENT);
 
-        final Image connectionUploadImage = new Image(getClass().getResourceAsStream("/icons/connection-upload.png"),
-                Constants.MIDDLE_ICON, Constants.MIDDLE_ICON, true, true);
-        connectionUploadView = new ImageView(connectionUploadImage);
+        connectionUploadView = ImageViewProvider
+                .createImageView("/icons/connection-upload.png", Constants.MIDDLE_ICON);
         connectionUploadView.setOpacity(Constants.FULLYTRANSPARENT);
 
-        final Image connectionDownloadImage =
-                new Image(getClass().getResourceAsStream("/icons/connection-download.png"), Constants.MIDDLE_ICON,
-                        Constants.MIDDLE_ICON, true, true);
-        connectionDownloadView = new ImageView(connectionDownloadImage);
+        connectionDownloadView = ImageViewProvider
+                .createImageView("/icons/connection-download.png", Constants.MIDDLE_ICON);
         connectionDownloadView.setOpacity(Constants.FULLYTRANSPARENT);
 
         test = false;

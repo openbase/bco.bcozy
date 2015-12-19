@@ -34,7 +34,7 @@ public class CenterPaneController {
     /**
      * Application logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(CenterPaneController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CenterPaneController.class); //NOPMD
     private final CenterPane centerPane;
     private State activeState;
     private boolean isShowing;
@@ -76,15 +76,11 @@ public class CenterPaneController {
 
     private void setShowHidePopOver() {
         if (isShowing) {
-            LOGGER.info("Hiding");
             isShowing = false;
             centerPane.setViewSwitchingButtonsVisible(false);
         } else {
-            LOGGER.info("Showing");
-            LOGGER.info("Layout Y before: " + centerPane.getPopUpChildBottom().getLayoutY());
             isShowing = true;
             centerPane.setViewSwitchingButtonsVisible(true);
-            LOGGER.info("Layout Y after: " + centerPane.getPopUpChildBottom().getLayoutY());
         }
     }
 

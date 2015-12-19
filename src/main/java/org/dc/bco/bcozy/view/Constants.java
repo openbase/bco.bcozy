@@ -26,6 +26,31 @@ import javafx.scene.paint.Color;
 public final class Constants {
 
     /**
+     * The name of the default css file.
+     */
+    public static final String DEFAULT_CSS = "/css/skin.css";
+
+    /**
+     * The name of the light theme css file.
+     */
+    public static final String LIGHT_THEME_CSS_NAME = "light";
+
+    /**
+     * The path of the light theme css file.
+     */
+    public static final String LIGHT_THEME_CSS = "/css/light.css";
+
+    /**
+     * The name of the dark theme css file.
+     */
+    public static final String DARK_THEME_CSS_NAME = "dark";
+
+    /**
+     * The path of the dark theme css file.
+     */
+    public static final String DARK_THEME_CSS = "/css/dark.css";
+
+    /**
      * The size of the images used.
      */
     public static final double IMAGE_SIZE = 512.0;
@@ -200,6 +225,10 @@ public final class Constants {
      */
     public static final int ONEHUNDRED = 100;
 
+    /**
+     * Name of the language resource bundle.
+     */
+    public static final String LANGUAGE_RESOURCE_BUNDLE = "languages.languages";
     /**
      * Private Constructor.
      */
