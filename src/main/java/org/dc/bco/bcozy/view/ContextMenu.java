@@ -85,7 +85,7 @@ public class ContextMenu extends VBox {
         //VBox.setVgrow(contextSortingPane, Priority.ALWAYS);
 
         //CHECKSTYLE.OFF: MultipleStringLiterals
-        this.getStyleClass().addAll("context-menu");
+        this.getStyleClass().addAll("detail-menu");
         //CHECKSTYLE.ON: MultipleStringLiterals
     }
 

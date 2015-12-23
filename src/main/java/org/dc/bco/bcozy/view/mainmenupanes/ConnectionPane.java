@@ -20,10 +20,9 @@ package org.dc.bco.bcozy.view.mainmenupanes;
 
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
-import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
-import javafx.util.Duration;
+import org.dc.bco.bcozy.view.AnimationProvider;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.ImageViewProvider;
 
@@ -49,19 +48,19 @@ public class ConnectionPane extends PaneElement {
 
         connectionSuccessView = ImageViewProvider
                 .createImageView("/icons/connection-successful.png", Constants.MIDDLE_ICON);
-        connectionSuccessView.setOpacity(Constants.FULLYTRANSPARENT);
+        connectionSuccessView.setOpacity(Constants.FULLY_TRANSPARENT);
 
         connectionProblemView = ImageViewProvider
                 .createImageView("/icons/connection-problem.png", Constants.MIDDLE_ICON);
-        connectionProblemView.setOpacity(Constants.FULLYTRANSPARENT);
+        connectionProblemView.setOpacity(Constants.FULLY_TRANSPARENT);
 
         connectionUploadView = ImageViewProvider
                 .createImageView("/icons/connection-upload.png", Constants.MIDDLE_ICON);
-        connectionUploadView.setOpacity(Constants.FULLYTRANSPARENT);
+        connectionUploadView.setOpacity(Constants.FULLY_TRANSPARENT);
 
         connectionDownloadView = ImageViewProvider
                 .createImageView("/icons/connection-download.png", Constants.MIDDLE_ICON);
-        connectionDownloadView.setOpacity(Constants.FULLYTRANSPARENT);
+        connectionDownloadView.setOpacity(Constants.FULLY_TRANSPARENT);
 
         test = false;
         connectionView.setOnMouseClicked(event -> testAnimations());
@@ -70,8 +69,9 @@ public class ConnectionPane extends PaneElement {
 
         this.getChildren().addAll(connectionIcon);
 
-        problemFade = createFadeTransition(connectionProblemView, Constants.NOTRANSPARENCY, Constants.NEARLYTRANSPARENT,
-                Animation.INDEFINITE, Constants.GLOWINGFADEDURATION);
+        problemFade = AnimationProvider.createFadeTransition(
+                connectionProblemView, Constants.NO_TRANSPARENCY, Constants.NEARLY_TRANSPARENT,
+                Animation.INDEFINITE, Constants.GLOWING_FADE_DURATION);
     }
 
     private void testAnimations() {
@@ -89,9 +89,9 @@ public class ConnectionPane extends PaneElement {
      * Show the tick mark to indicate that the connection is established and no problems are detected.
      */
     public void connectionEstablished() {
-        connectionSuccessView.setOpacity(Constants.NOTRANSPARENCY);
+        connectionSuccessView.setOpacity(Constants.NO_TRANSPARENCY);
         problemFade.stop();
-        connectionProblemView.setOpacity(Constants.FULLYTRANSPARENT);
+        connectionProblemView.setOpacity(Constants.FULLY_TRANSPARENT);
     }
 
     /**
@@ -99,7 +99,7 @@ public class ConnectionPane extends PaneElement {
      * Animation should generate attention.
      */
     public void connectionProblem() {
-        connectionSuccessView.setOpacity(Constants.FULLYTRANSPARENT);
+        connectionSuccessView.setOpacity(Constants.FULLY_TRANSPARENT);
         problemFade.play();
     }
 
@@ -107,31 +107,24 @@ public class ConnectionPane extends PaneElement {
      * Show upload arrow to indication that a server request was made.
      */
     public void uploadActive() {
-        connectionUploadView.setOpacity(Constants.NOTRANSPARENCY);
-        final FadeTransition uploadFade = createFadeTransition(connectionUploadView, Constants.FULLYTRANSPARENT,
-                Constants.NOTRANSPARENCY, 1, Constants.FASTFADEDURATION);
+        connectionUploadView.setOpacity(Constants.NO_TRANSPARENCY);
+        final FadeTransition uploadFade = AnimationProvider.createFadeTransition(
+                connectionUploadView, Constants.FULLY_TRANSPARENT,
+                Constants.NO_TRANSPARENCY, 1, Constants.FASTFADEDURATION);
         uploadFade.play();
-        uploadFade.setOnFinished(event -> connectionUploadView.setOpacity(Constants.FULLYTRANSPARENT));
+        uploadFade.setOnFinished(event -> connectionUploadView.setOpacity(Constants.FULLY_TRANSPARENT));
     }
 
     /**
      * Show download arrow to indicate that data is received.
      */
     public void downloadActive() {
-        connectionDownloadView.setOpacity(Constants.NOTRANSPARENCY);
-        final FadeTransition downloadFade = createFadeTransition(connectionDownloadView, Constants.FULLYTRANSPARENT,
-                Constants.NOTRANSPARENCY, 1, Constants.FASTFADEDURATION);
+        connectionDownloadView.setOpacity(Constants.NO_TRANSPARENCY);
+        final FadeTransition downloadFade = AnimationProvider.createFadeTransition(
+                connectionDownloadView, Constants.FULLY_TRANSPARENT,
+                Constants.NO_TRANSPARENCY, 1, Constants.FASTFADEDURATION);
         downloadFade.play();
-        downloadFade.setOnFinished(event -> connectionDownloadView.setOpacity(Constants.FULLYTRANSPARENT));
+        downloadFade.setOnFinished(event -> connectionDownloadView.setOpacity(Constants.FULLY_TRANSPARENT));
     }
 
-    private FadeTransition createFadeTransition(final Node node, final double fromValue, final double toValue,
-                                                final int cycleCount, final double duration) {
-        final FadeTransition fadeTransition = new FadeTransition(Duration.millis(duration), node);
-        fadeTransition.setFromValue(fromValue);
-        fadeTransition.setToValue(toValue);
-        fadeTransition.setCycleCount(cycleCount);
-        fadeTransition.setAutoReverse(true);
-        return fadeTransition;
-    }
 }

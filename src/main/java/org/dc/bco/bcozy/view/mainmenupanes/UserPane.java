@@ -18,17 +18,18 @@
  */
 package org.dc.bco.bcozy.view.mainmenupanes;
 
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.dc.bco.bcozy.view.Constants;
-import org.dc.bco.bcozy.view.ImageViewProvider;
+import org.dc.bco.bcozy.view.SVGIcon;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -66,10 +67,7 @@ public class UserPane extends VBox {
                 .getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
 
         // Case: Before login
-        final ImageView addUserIconImageView = ImageViewProvider
-                .createImageView("/icons/login.png", Constants.SMALL_ICON);
-        startLoginBtn = new Button("", addUserIconImageView);
-        startLoginBtn.getStyleClass().clear();
+        startLoginBtn = new Button("", new SVGIcon(MaterialDesignIcon.LOGIN, Constants.SMALL_ICON));
         startLoginPane = new PaneElement(startLoginBtn);
 
         // Case: Login active
@@ -85,10 +83,7 @@ public class UserPane extends VBox {
         final HBox rightAlignLoginButton = new HBox(loginBtn);
         rightAlignLoginButton.setAlignment(Pos.CENTER_RIGHT);
 
-        final ImageView imageViewBackIcon = ImageViewProvider
-                .createImageView("/icons/back.png", Constants.EXTRA_SMALL_ICON);
-        backBtn = new Button("", imageViewBackIcon);
-        backBtn.getStyleClass().clear();
+        backBtn = new Button("", new SVGIcon(FontAwesomeIcon.ARROW_LEFT, Constants.EXTRA_SMALL_ICON));
 
         loginLayout = new VBox(Constants.INSETS);
         final BorderPane loginFirstLineLayout = new BorderPane();
@@ -103,8 +98,7 @@ public class UserPane extends VBox {
 
         //Case: User logged in
         final VBox logoutLayout = new VBox(Constants.INSETS);
-        final ImageView loggedInUserIcon = ImageViewProvider
-                .createImageView("/icons/user_fa.png", Constants.SMALL_ICON);
+        final SVGIcon loggedInUserIcon = new SVGIcon(MaterialDesignIcon.ACCOUNT_CIRCLE, Constants.SMALL_ICON);
         loggedInUserLbl = new Label();
         logoutBtn = new Button(languageBundle.getString("logout"));
         final HBox rightAlignLogoutButton = new HBox(logoutBtn);

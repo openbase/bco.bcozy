@@ -18,9 +18,9 @@
  */
 package org.dc.bco.bcozy.view;
 
+import de.jensd.fx.glyphs.GlyphIcons;
 import javafx.animation.*;
 import javafx.scene.control.Button;
-import javafx.scene.image.ImageView;
 import javafx.util.Duration;
 
 /**
@@ -28,38 +28,36 @@ import javafx.util.Duration;
  */
 public class FloatingButton extends Button {
 
-    private ImageView imageView;
-    private final double size;
+    private SVGIcon icon;
+
     /**
      * Constructor for a floating button which has only an icon and no text.
-     * @param imagePath the icon to set for the button
-     * @param size the icon size to be set
+     * @param icon the icon to set for the button
      */
-    public FloatingButton(final String imagePath, final double size) {
-        this.size = size;
-        imageView = ImageViewProvider.createImageView(imagePath, size);
+    public FloatingButton(final SVGIcon icon) {
+        this.icon = icon;
         this.getStyleClass().clear();
         this.getStyleClass().add("floating-button");
 
-        this.getChildren().add(imageView);
+        //this.getChildren().add(this.icon);
 
-        final RotateTransition rotate = new RotateTransition(Duration.seconds(0.5), imageView);
+        final RotateTransition rotate = new RotateTransition(Duration.seconds(0.5), this.icon);
         rotate.setByAngle(Constants.FULL_ROTATION);
         rotate.setCycleCount(1);
         rotate.setInterpolator(Interpolator.LINEAR);
 
         this.setOnAction(event -> rotate.play());
 
-        super.setGraphic(imageView);
+        super.setGraphic(this.icon);
     }
 
     /**
      * Method to change the icon of a floating button.
-     * @param imagePath the path for the new icon
+     * @param icon The new icon to be set
      */
-    public void changeIcon(final String imagePath) {
-        imageView = ImageViewProvider.createImageView(imagePath, this.size);
-        super.setGraphic(imageView);
+    public void changeIcon(final GlyphIcons icon) {
+        this.icon = new SVGIcon(icon, this.icon.getSize());
+        super.setGraphic(this.icon);
     }
 
 }

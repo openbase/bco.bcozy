@@ -21,6 +21,7 @@ package org.dc.bco.bcozy.view;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,6 +60,7 @@ public final class ImageViewProvider {
         return init(imagePath, width, height);
     }
 
+
     /**
      * Colorizes all icons created by this provider to white.
      */
@@ -94,6 +96,7 @@ public final class ImageViewProvider {
             imageView.setSmooth(true);
         }
     }
+
 
     private static ImageView init(final String imagePath, final double width, final double height) {
         final Image icon = new Image(ImageViewProvider.class.getResourceAsStream(imagePath));

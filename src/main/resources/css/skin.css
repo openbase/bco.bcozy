@@ -34,17 +34,18 @@
     -fx-padding: 60.0 10.0 10.0 20.0;
 }
 
-.context-menu {
+.detail-menu {
     -fx-border-radius: 0.0;
     -fx-background-radius: 0;
     -fx-background-insets:  10.0, 10.0, 10.0, 0.0;
     -fx-padding: 20.0 10.0 10.0 10.0;
+    -fx-alignment: TOP-CENTER;
 }
 
 .floating-button {
     -fx-alignment: CENTER;
     -fx-background-radius: 50%;
-    -fx-padding: 15.0 15.0 15.0 15.0;
+    -fx-padding: 10.0 10.0 10.0 10.0;
 }
 .main-menu-pane {
     -fx-padding:  10.0, 10.0, 10.0, 10.0;

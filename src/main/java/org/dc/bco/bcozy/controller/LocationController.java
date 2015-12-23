@@ -27,6 +27,7 @@ import de.citec.jul.pattern.Observable;
 import de.citec.jul.pattern.Observer;
 import de.citec.lm.remote.LocationRegistryRemote;
 import javafx.application.Platform;
+import javafx.geometry.BoundingBox;
 import javafx.geometry.Point2D;
 import org.dc.bco.bcozy.view.ForegroundPane;
 import org.dc.bco.bcozy.view.location.LocationPane;
@@ -76,8 +77,13 @@ public class LocationController implements Observer<LocationRegistryType.Locatio
 
         this.foregroundPane.getMainMenu().addFetchLocationButtonEventHandler(event -> connectLocationRemote());
         //@Julian: This is the size of the bounding box within which the drawing should be done
-        LOGGER.info("Height:" + foregroundPane.getCenterPane().getLayoutBounds().getHeight());
-        LOGGER.info("Width:" + foregroundPane.getCenterPane().getLayoutBounds().getWidth());
+        final BoundingBox boundingBox = foregroundPane.getBoundingBox();
+        LOGGER.info("Height:" + boundingBox.getHeight());
+        LOGGER.info("Width:" + boundingBox.getWidth());
+        LOGGER.info("Min X:" + boundingBox.getMinX());
+        LOGGER.info("Min Y:" + boundingBox.getMinY());
+        LOGGER.info("Max X:" + boundingBox.getMaxX());
+        LOGGER.info("Max Y:" + boundingBox.getMaxY());
     }
 
     /**
