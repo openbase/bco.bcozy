@@ -18,10 +18,14 @@
  */
 package org.dc.bco.bcozy.view.location;
 
+import javafx.animation.ParallelTransition;
+import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
+import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 import org.dc.bco.bcozy.view.Constants;
@@ -45,10 +49,10 @@ public class LocationPane extends Pane {
     private LocationPolygon selectedRoom;
     private LocationPolygon rootRoom;
     private final ForegroundPane foregroundPane;
-
     private final List<LocationPolygon> locationList;
-
     private final SimpleStringProperty selectedRoomId;
+
+    private final EventHandler<MouseEvent> onEmptyAreaClickHandler;
 
     /**
      * Constructor for the LocationPane.
@@ -66,6 +70,22 @@ public class LocationPane extends Pane {
         selectedRoom = new ZonePolygon(Constants.DUMMY_ROOM_NAME, Constants.DUMMY_ROOM_NAME, 0.0, 0.0, 0.0, 0.0);
         selectedRoomId = new SimpleStringProperty(Constants.DUMMY_ROOM_NAME);
         rootRoom = null;
+
+        onEmptyAreaClickHandler = event -> {
+            if (event.isStillSincePress() && rootRoom != null) {
+                if (event.getClickCount() == 1) {
+                    if (!selectedRoom.equals(rootRoom)) {
+                        selectedRoom.setSelected(false);
+                        rootRoom.setSelected(true);
+                        this.setSelectedRoom(rootRoom);
+                    }
+                } else if (event.getClickCount() == 2) {
+                    this.autoFocusPolygonAnimated(rootRoom);
+                }
+
+                foregroundPane.getContextMenu().getRoomInfo().setText(selectedRoom.getLocationLabel());
+            }
+        };
     }
 
     /**
@@ -121,6 +141,7 @@ public class LocationPane extends Pane {
     public void clearLocations() {
         locationList.forEach(locationPolygon -> this.getChildren().remove(locationPolygon));
         locationList.clear();
+        rootRoom = null;
     }
 
     /**
@@ -140,8 +161,7 @@ public class LocationPane extends Pane {
                         setSelectedRoom(tile);
                     }
                 } else if (event.getClickCount() == 2) {
-                    scaleFitRoom(tile);
-                    centerScrollPaneToPointAnimated(new Point2D(tile.getCenterX(), tile.getCenterY()));
+                    autoFocusPolygonAnimated(tile);
                 }
 
                 foregroundPane.getContextMenu().getRoomInfo().setText(selectedRoom.getLocationLabel());
@@ -159,42 +179,20 @@ public class LocationPane extends Pane {
         });
     }
 
-
-    //TODO: add mouseeventhandler that handles clicks out of the zones
-//    private void addMouseEventHandlerToEmptyRectangle(final Rectangle emptyHugeRectangle) {
-//        emptyHugeRectangle.setOnMouseClicked(event -> {
-//            event.consume();
-//
-//            if (rootRoom != null) {
-//                if (event.getClickCount() == 1) {
-//                    if (!selectedRoom.equals(rootRoom)) {
-//                        selectedRoom.setSelected(false);
-//                        setSelectedRoom(rootRoom);
-//                    }
-//                } else if (event.getClickCount() == 2) {
-//                    scaleFitRoom(rootRoom);
-//                    centerScrollPaneToPointAnimated(new Point2D(rootRoom.getCenterX(), rootRoom.getCenterY()));
-//                }
-//            }
-//        });
-//    }
-
-    /**
-     * Setter for selectedRoom.
-     * @param selectedRoom Room to select
-     */
-    public void setSelectedRoom(final LocationPolygon selectedRoom) {
+    private void setSelectedRoom(final LocationPolygon selectedRoom) {
         this.selectedRoom = selectedRoom;
         this.selectedRoomId.set(selectedRoom.getLocationId());
     }
 
     /**
-     * ZoomFits to the root if available.
+     * ZoomFits to the root if available. Otherwise to the first location in the locationList.
      */
     public void zoomFit() {
-        //TODO: handle case where no root room exists
-        scaleFitRoom(rootRoom);
-        centerScrollPaneToPoint(new Point2D(rootRoom.getCenterX(), rootRoom.getCenterY()));
+        if (rootRoom != null) { //NOPMD
+            autoFocusPolygon(rootRoom);
+        } else if (!locationList.isEmpty()) {
+            autoFocusPolygon(locationList.get(0));
+        }
     }
 
     /**
@@ -215,28 +213,49 @@ public class LocationPane extends Pane {
         selectedRoomId.removeListener(changeListener);
     }
 
-    private void scaleFitRoom(final LocationPolygon room) { //TODO: Bounds in Parent? Layout Bounds?
+    /**
+     * Getter for the OnEmptyAreaClickHandler.
+     * @return The EventHandler.
+     */
+    public EventHandler<MouseEvent> getOnEmptyAreaClickHandler() {
+        return onEmptyAreaClickHandler;
+    }
+
+    private void autoFocusPolygon(final LocationPolygon polygon) {
         final double xScale =
-                (getBoundsInParent().getWidth() / room.prefWidth(0)) * Constants.ZOOM_FIT_PERCENTAGE_WIDTH;
+                (getLayoutBounds().getWidth() / polygon.prefWidth(0)) * Constants.ZOOM_FIT_PERCENTAGE_WIDTH;
         final double yScale =
-                (getBoundsInParent().getHeight() / room.prefHeight(0)) * Constants.ZOOM_FIT_PERCENTAGE_HEIGHT;
+                (getLayoutBounds().getHeight() / polygon.prefHeight(0)) * Constants.ZOOM_FIT_PERCENTAGE_HEIGHT;
         final double scale = (xScale < yScale) ? xScale : yScale;
 
         this.setScaleX(scale);
         this.setScaleY(scale);
+
+        this.setTranslateX(-polygon.getCenterX() * scale + (getLayoutBounds().getWidth() * scale) / 2);
+        this.setTranslateY(-polygon.getCenterY() * scale + (getLayoutBounds().getHeight() * scale) / 2);
     }
 
-    private void centerScrollPaneToPoint(final Point2D center) {
-        this.setTranslateX(-center.getX() + getBoundsInParent().getWidth() / 2);
-        this.setTranslateY(-center.getY() + getBoundsInParent().getHeight() / 2);
-    }
+    private void autoFocusPolygonAnimated(final LocationPolygon polygon) {
+        final double xScale =
+                (getLayoutBounds().getWidth() / polygon.prefWidth(0)) * Constants.ZOOM_FIT_PERCENTAGE_WIDTH;
+        final double yScale =
+                (getLayoutBounds().getHeight() / polygon.prefHeight(0)) * Constants.ZOOM_FIT_PERCENTAGE_HEIGHT;
+        final double scale = (xScale < yScale) ? xScale : yScale;
 
-    private void centerScrollPaneToPointAnimated(final Point2D center) {
-        final TranslateTransition transition = new TranslateTransition(Duration.millis(500), this);
-        transition.setToX(-center.getX() * this.getScaleX() + getBoundsInParent().getWidth() / 2);
-        transition.setToY(-center.getY() * this.getScaleY() + getBoundsInParent().getHeight() / 2);
-        transition.setCycleCount(1);
-        transition.setAutoReverse(true);
-        transition.play();
+        final ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(500));
+        scaleTransition.setToX(scale);
+        scaleTransition.setToY(scale);
+        scaleTransition.setCycleCount(1);
+        scaleTransition.setAutoReverse(true);
+
+        final TranslateTransition translateTransition = new TranslateTransition(Duration.millis(500));
+        translateTransition.setToX(-polygon.getCenterX() * scale + (getLayoutBounds().getWidth() * scale) / 2);
+        translateTransition.setToY(-polygon.getCenterY() * scale + (getLayoutBounds().getHeight() * scale) / 2);
+        translateTransition.setCycleCount(1);
+        translateTransition.setAutoReverse(true);
+
+        final ParallelTransition parallelTransition =
+                new ParallelTransition(this, scaleTransition, translateTransition);
+        parallelTransition.play();
     }
 }

@@ -79,6 +79,8 @@ public class BackgroundPane extends StackPane {
             locationPane.setTranslateX(locationPane.getTranslateX() * scaleFactor);
             locationPane.setTranslateY(locationPane.getTranslateY() * scaleFactor);
         });
+
+        this.setOnMouseClicked(locationPane.getOnEmptyAreaClickHandler());
     }
 
     /**

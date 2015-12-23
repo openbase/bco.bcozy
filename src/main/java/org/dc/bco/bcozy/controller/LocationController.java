@@ -84,13 +84,18 @@ public class LocationController implements Observer<LocationRegistryType.Locatio
      * Establishes the connection with the RemoteRegistry.
      */
     public void connectLocationRemote() {
-        try {
-            locationRegistryRemote = remotePool.getLocationRegistryRemote();
-            locationRegistryRemote.addObserver(this);
-            this.fetchLocation();
+        if (remotePool.isInit()) {
+            try {
+                locationRegistryRemote = remotePool.getLocationRegistryRemote();
+                locationRegistryRemote.addObserver(this);
+                this.fetchLocation();
 
-        } catch (CouldNotPerformException e) {
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+            } catch (CouldNotPerformException e) {
+                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+            }
+        } else {
+            LOGGER.warn("Registry Remotes are not initialized. Thus a Dummy Location will be loaded.");
+            this.fetchDummyLocation();
         }
     }
 
@@ -144,6 +149,38 @@ public class LocationController implements Observer<LocationRegistryType.Locatio
                 }
             }
         }
+
+        locationPane.zoomFit();
+    }
+
+    private void fetchDummyLocation() {
+        locationPane.clearLocations();
+
+        //CHECKSTYLE.OFF: MagicNumber
+        final List<Point2D> zoneVertices = new LinkedList<>();
+        zoneVertices.add(new Point2D(0, 0));
+        zoneVertices.add(new Point2D(10, 0));
+        zoneVertices.add(new Point2D(10, 10));
+        zoneVertices.add(new Point2D(0, 10));
+        locationPane.addRoom("DummyID0", "DummyLabel0", zoneVertices,
+                LocationConfigType.LocationConfig.LocationType.ZONE.toString());
+
+        final List<Point2D> tile0Vertices = new LinkedList<>();
+        tile0Vertices.add(new Point2D(1, 1));
+        tile0Vertices.add(new Point2D(5, 1));
+        tile0Vertices.add(new Point2D(5, 3));
+        tile0Vertices.add(new Point2D(1, 3));
+        locationPane.addRoom("DummyID1", "DummyLabel1", tile0Vertices,
+                LocationConfigType.LocationConfig.LocationType.TILE.toString());
+
+        final List<Point2D> tile1Vertices = new LinkedList<>();
+        tile1Vertices.add(new Point2D(6, 1));
+        tile1Vertices.add(new Point2D(6, 8));
+        tile1Vertices.add(new Point2D(8, 8));
+        tile1Vertices.add(new Point2D(8, 1));
+        locationPane.addRoom("DummyID2", "DummyLabel2", tile1Vertices,
+                LocationConfigType.LocationConfig.LocationType.TILE.toString());
+        //CHECKSTYLE.ON: MagicNumber
 
         locationPane.zoomFit();
     }
