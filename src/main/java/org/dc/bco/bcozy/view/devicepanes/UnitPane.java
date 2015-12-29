@@ -19,7 +19,7 @@
 package org.dc.bco.bcozy.view.devicepanes;
 
 import de.citec.dal.remote.unit.DALRemoteService;
-import de.citec.jul.pattern.Observer;
+import org.dc.jul.pattern.Observer;
 import javafx.scene.control.TitledPane;
 
 /**

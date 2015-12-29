@@ -69,7 +69,7 @@
             <version>${rem.version}</version>
         </dependency>
         <dependency>
-            <groupId>de.citec</groupId>
+            <groupId>org.dc</groupId>
             <artifactId>jul.extension.rst.processing</artifactId>
             <version>${jul.version}</version>
         </dependency>
