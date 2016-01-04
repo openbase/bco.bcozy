@@ -59,12 +59,12 @@
             <version>8.7</version>
         </dependency>
         <dependency>
-            <groupId>de.citec</groupId>
+            <groupId>org.dc.bco</groupId>
             <artifactId>dm.remote</artifactId>
             <version>${rem.version}</version>
         </dependency>
         <dependency>
-            <groupId>de.citec</groupId>
+            <groupId>org.dc.bco</groupId>
             <artifactId>lm.remote</artifactId>
             <version>${rem.version}</version>
         </dependency>
@@ -74,7 +74,7 @@
             <version>${jul.version}</version>
         </dependency>
         <dependency>
-            <groupId>de.citec</groupId>
+            <groupId>org.dc.bco</groupId>
             <artifactId>dal.remote</artifactId>
             <version>${dal.version}</version>
         </dependency>
