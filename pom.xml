@@ -17,32 +17,12 @@
         <plugin.pmd.version>3.5</plugin.pmd.version>
         <plugin.javadoc.version>2.10.3</plugin.javadoc.version>
         <failOnStyleError>false</failOnStyleError>
-        <jul.version>0.5-SNAPSHOT</jul.version>
-        <rem.version>0.7-SNAPSHOT</rem.version>
-        <dal.version>0.6-SNAPSHOT</dal.version>
-        <rsb.version>[0.12,0.13-SNAPSHOT)</rsb.version>
-        <rst.sandbox.artifact>rst-sandbox-csra-ha-paramite</rst.sandbox.artifact>
-        <rst.sandbox.version>0.12-SNAPSHOT</rst.sandbox.version>
-        <rst.stable.artifact>rst-csra-ha-paramite</rst.stable.artifact>
-        <rst.stable.version>0.12-SNAPSHOT</rst.stable.version>
+        <dependency.jul.version>0.5-SNAPSHOT</dependency.jul.version>
+        <dependency.bco.dal.version>0.6-SNAPSHOT</dependency.bco.dal.version>
+        <dependency.bco.manager.version>0.1-SNAPSHOT</dependency.bco.manager.version>
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>rsb</groupId>
-            <artifactId>rsb</artifactId>
-            <version>${rsb.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>rsb</groupId>
-            <artifactId>${rst.sandbox.artifact}</artifactId>
-            <version>${rst.sandbox.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>rsb</groupId>
-            <artifactId>${rst.stable.artifact}</artifactId>
-            <version>${rst.stable.version}</version>
-        </dependency>
         <dependency>
             <groupId>com.guigarage</groupId>
             <artifactId>responsivefx</artifactId>
@@ -59,24 +39,14 @@
             <version>8.7</version>
         </dependency>
         <dependency>
-            <groupId>org.dc.bco</groupId>
-            <artifactId>dm.remote</artifactId>
-            <version>${rem.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.dc.bco</groupId>
-            <artifactId>lm.remote</artifactId>
-            <version>${rem.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.dc</groupId>
-            <artifactId>jul.extension.rst.processing</artifactId>
-            <version>${jul.version}</version>
+            <artifactId>jul.extension.rct</artifactId>
+            <version>${dependency.jul.version}</version>
         </dependency>
         <dependency>
             <groupId>org.dc.bco</groupId>
             <artifactId>dal.remote</artifactId>
-            <version>${dal.version}</version>
+            <version>${dependency.bco.dal.version}</version>
         </dependency>
         <!-- Just so maven doesn't complain about a missing version. -->
         <dependency>
