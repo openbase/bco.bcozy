@@ -19,7 +19,7 @@
 
 package org.dc.bco.bcozy.controller;
 
-import de.citec.dal.remote.unit.DALRemoteService;
+import org.dc.bco.dal.remote.unit.DALRemoteService;
 import org.dc.jul.exception.CouldNotPerformException;
 import org.dc.jul.exception.printer.ExceptionPrinter;
 import org.dc.jul.exception.printer.LogLevel;

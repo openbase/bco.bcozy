@@ -18,7 +18,7 @@
  */
 package org.dc.bco.bcozy.view.devicepanes;
 
-import de.citec.dal.remote.unit.DALRemoteService;
+import org.dc.bco.dal.remote.unit.DALRemoteService;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.TitledPane;

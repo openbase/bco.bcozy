@@ -18,8 +18,8 @@
  */
 package org.dc.bco.bcozy.view.devicepanes;
 
-import de.citec.dal.remote.unit.AmbientLightRemote;
-import de.citec.dal.remote.unit.DALRemoteService;
+import org.dc.bco.dal.remote.unit.AmbientLightRemote;
+import org.dc.bco.dal.remote.unit.DALRemoteService;
 import org.dc.jul.exception.CouldNotPerformException;
 import org.dc.jul.exception.printer.ExceptionPrinter;
 import org.dc.jul.exception.printer.LogLevel;
