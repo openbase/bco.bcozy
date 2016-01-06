@@ -91,16 +91,6 @@ public final class Constants {
     public static final double MAXLOGOWIDTH = 175.0;
 
     /**
-     * The max height for a main menu pane.
-     */
-    public static final double MAX_PANE_HEIGHT = 300.0;
-
-    /**
-     * The insets for a icon.
-     */
-    public static final double ICON_INSETS = 15.0;
-
-    /**
      * The value for a full rotation.
      */
     public static final double FULL_ROTATION = 360.0;
@@ -143,17 +133,17 @@ public final class Constants {
     /**
      * The opacity value for fully transparent = invisible.
      */
-    public static final double FULLYTRANSPARENT = 0.0;
+    public static final double FULLY_TRANSPARENT = 0.0;
 
     /**
      * The opacity value for fully opaque = visible.
      */
-    public static final double NOTRANSPARENCY = 1.0;
+    public static final double NO_TRANSPARENCY = 1.0;
 
     /**
      * The opacity value for nearly opaque style.
      */
-    public static final double NEARLYTRANSPARENT = 0.3;
+    public static final double NEARLY_TRANSPARENT = 0.3;
 
     /**
      * The duration for a pretty fast fade animation.
@@ -161,9 +151,14 @@ public final class Constants {
     public static final double FASTFADEDURATION = 100.0;
 
     /**
+     * The duration for a slow fade animation.
+     */
+    public static final double SLOW_FADE_DURATION = 2000.0;
+
+    /**
      * The duration for a glowing fade animation.
      */
-    public static final double GLOWINGFADEDURATION = 1000.0;
+    public static final double GLOWING_FADE_DURATION = 1000.0;
 
     /**
      * The color for a selected tile.
@@ -211,24 +206,20 @@ public final class Constants {
     public static final double SMALL_MAIN_MENU_WIDTH = 60.0;
 
     /**
-     * The png file of the fullscreen icon.
-     */
-    public static final String FULLSCREEN_ICON = "/icons/fullscreen.png";
-
-    /**
-     * The png file of the normalscreen icon.
-     */
-    public static final String NORMALSCREEN_ICON = "/icons/normalscreen.png";
-
-    /**
      * Divide constant for HSB color init.
      */
     public static final int ONEHUNDRED = 100;
 
     /**
+     * The factor for the scaling in the locationPane.
+     */
+    public static final double SCALE_DELTA = 1.05;
+
+    /**
      * Name of the language resource bundle.
      */
     public static final String LANGUAGE_RESOURCE_BUNDLE = "languages.languages";
+
     /**
      * Private Constructor.
      */

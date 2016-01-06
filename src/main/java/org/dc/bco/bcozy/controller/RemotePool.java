@@ -62,7 +62,7 @@ public class RemotePool {
     private DeviceRegistryRemote deviceRegistryRemote = null;
     private TransformReceiver transformReceiver;
 
-    private boolean isInit;
+    private boolean init;
 
     /**
      * Constructor for the Remotecontroller.
@@ -99,7 +99,7 @@ public class RemotePool {
         deviceMap = new HashMap<>();
         locationMap = new HashMap<>();
 
-        isInit = false;
+        init = false;
     }
 
     /**
@@ -110,7 +110,7 @@ public class RemotePool {
      */
     public void initRegistryRemotes() throws CouldNotPerformException, InterruptedException,
             TransformerFactory.TransformerFactoryException {
-        if (isInit) {
+        if (init) {
             LOGGER.info("INFO: RegistryRemotes were already initialized.");
             return;
         }
@@ -136,12 +136,12 @@ public class RemotePool {
             throw e;
         }
 
-        isInit = true;
+        init = true;
         LOGGER.info("INFO: RegistryRemotes are initialized.");
     }
 
     private void checkInit() throws CouldNotPerformException {
-        if (!isInit) {
+        if (!init) {
             throw new CouldNotPerformException("RegistryRemotes are not initialized.");
         }
     }
@@ -365,7 +365,7 @@ public class RemotePool {
         }
 
         TransformerFactory.killInstance(); //TODO mpohling: how to shutdown transformer factory?
-        isInit = false;
+        init = false;
     }
 
     /**
@@ -399,5 +399,13 @@ public class RemotePool {
         checkInit();
 
         return transformReceiver;
+    }
+
+    /**
+     * Returns the information whether the remotepool is initialized or not.
+     * @return isInit
+     */
+    public boolean isInit() {
+        return init;
     }
 }

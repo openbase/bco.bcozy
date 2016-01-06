@@ -18,6 +18,8 @@
  */
 package org.dc.bco.bcozy.view;
 
+import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
+import de.jensd.fx.glyphs.materialicons.MaterialIcon;
 import javafx.geometry.Pos;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.StackPane;
@@ -40,10 +42,10 @@ public class CenterPane extends StackPane {
     public CenterPane() {
 
         // Initializing components
-        popUpParent = new FloatingButton("/icons/settings.png", Constants.MIDDLE_ICON);
-        popUpChildTop = new FloatingButton("/icons/thermometer.png", Constants.SMALL_ICON);
-        popUpChildBottom = new FloatingButton("/icons/observe.png", Constants.SMALL_ICON);
-        fullscreen = new FloatingButton("/icons/fullscreen.png", Constants.MIDDLE_ICON);
+        popUpParent = new FloatingButton(new SVGIcon(MaterialIcon.SETTINGS, Constants.MIDDLE_ICON));
+        popUpChildTop = new FloatingButton(new SVGIcon(MaterialDesignIcon.THERMOMETER_LINES, Constants.SMALL_ICON));
+        popUpChildBottom = new FloatingButton(new SVGIcon(MaterialIcon.VISIBILITY, Constants.SMALL_ICON));
+        fullscreen = new FloatingButton(new SVGIcon(MaterialIcon.FULLSCREEN, Constants.MIDDLE_ICON));
         viewSwitcher = new VBox(Constants.INSETS);
         viewSwitcher.setMaxSize(Constants.MIDDLE_ICON, Double.MAX_VALUE);
         viewSwitcher.setAlignment(Pos.BOTTOM_CENTER);

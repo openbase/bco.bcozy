@@ -29,15 +29,15 @@ import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import org.dc.bco.bcozy.controller.ContextMenuController;
 import org.dc.bco.bcozy.controller.CenterPaneController;
+import org.dc.bco.bcozy.controller.ContextMenuController;
 import org.dc.bco.bcozy.controller.LocationController;
 import org.dc.bco.bcozy.controller.MainMenuController;
 import org.dc.bco.bcozy.controller.RemotePool;
+import org.dc.bco.bcozy.view.BackgroundPane;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.ForegroundPane;
 import org.dc.bco.bcozy.view.ImageViewProvider;
-import org.dc.bco.bcozy.view.location.LocationPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,7 +96,7 @@ public class BCozy extends Application {
         final ForegroundPane foregroundPane = new ForegroundPane(screenHeight, screenWidth);
         foregroundPane.setMinHeight(root.getHeight());
         foregroundPane.setMinWidth(root.getWidth());
-        final LocationPane backgroundPane = new LocationPane(foregroundPane);
+        final BackgroundPane backgroundPane = new BackgroundPane(foregroundPane);
 
         root.getChildren().addAll(backgroundPane, foregroundPane);
 
@@ -119,11 +119,11 @@ public class BCozy extends Application {
 
         //instantiate RemotePool
         remotePool = new RemotePool(foregroundPane);
-        new ContextMenuController(foregroundPane, backgroundPane, remotePool);
+        new ContextMenuController(foregroundPane, backgroundPane.getLocationPane(), remotePool);
 
         //instantiate LocationController
         try {
-            new LocationController(foregroundPane, backgroundPane, remotePool);
+            new LocationController(foregroundPane, backgroundPane.getLocationPane(), remotePool);
         } catch (InstantiationException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }

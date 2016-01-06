@@ -1,24 +1,40 @@
 /**** Light Theme for BCozy *********************************/
 .root {
-    -fx-text-base-color: rgb(0.0, 0.0, 0.0); /*rgb(252.0, 240.0, 237.0);*/
+    -fx-text-base-color: rgb(0.0, 0.0, 0.0);
     -fx-text-fill: -fx-text-base-color;
+    -small-label-color: slategray;
 
-    -dark: rgb(47.0, 52.0, 57.0);
-    -fx-background-color: -dark;
+    -bg-color: rgba(255.0, 255.0, 255.0, 0.9);
+    -bg-accent-color: slategray;
+    -controls-color: rgba(0.0, 0.0, 0.0, 0.9);
+    -highlight-color: rgba(94.0, 203.0, 234.0, 1.0);
+    -border-color: slategray;
+    -shadow-color: rgba(0.0, 0.0, 0.0, 0.3);
+    -on-indicator: derive(limegreen, 40.0%);
+    -off-indicator: slategray;
+    -wrong-indicator: red;
+    -flat-button-text-color: dodgerblue;
+    -devider-color: slategray;
+    -icons-color: black;
+
+    -fx-background-color: -bg-color;
 
     /*default font */
     /*-fx-font-family: 'Helvetica Neue';*/
     -fx-font-family: "Roboto";
     -fx-font-size: 16.0px;
 
-    -custom-red: rgb(237.0, 68.0, 37.0);
-    -custom-blue: rgb(0.0, 184.0, 222.0);
-
-    -bluegrey-50: #ECEFF1;
-    -bluegrey-100: #CFD8DC;
-    -bluegrey-200: #B0BEC5;
-    -bluegrey-500: #607D8B;
 }
+
+.icons{
+    -fx-font-family: FontAwesome;
+    -fx-font-size: 16px;
+    -fx-effect: innershadow( three-pass-box , derive(-icons-color,-70%) , 0.1em, 0.0 , 0.07em, 0.07em );
+    -fx-text-fill: linear-gradient(to bottom, derive(-icons-color,20%) 10%, derive(-icons-color,-40%) 80%);
+}
+/*.icons:hover{*/
+    /*-fx-effect: dropshadow( three-pass-box , derive(-icons-color,0%) , 0.01em, 0.0 , 0, 0);*/
+/*}*/
 
 .mnemonic-underline {
     -fx-stroke: transparent;
@@ -37,34 +53,35 @@
 }
 
 .floating-box {
-    -fx-background-color: rgba(255,255,255,0.9);
+    -fx-background-color: -bg-color;
 }
 
 .main-menu {
-    -fx-background-color: rgba(255,255,255,0.9);
+    -fx-background-color: -bg-color;
 }
 
-.context-menu {
-    -fx-background-color: rgba(255,255,255,0.9);
+.detail-menu {
+    -fx-background-color: -bg-color;
 }
+
 .info-footer {
-    -fx-background-color: rgba(255,255,255,1.0);
+    -fx-background-color: -bg-color;
 }
 
 .floating-button {
-    -fx-background-color: rgba(255,255,255,0.9);
-    -fx-effect: dropshadow(gaussian, rgba(0.0, 0.0, 0.0, 0.3), 10.0, 0.0, -4.0, 4.0);
+    -fx-background-color: -bg-color;
+    -fx-effect: dropshadow(gaussian, -shadow-color, 10.0, 0.0, -4.0, 4.0);
 }
 .main-menu-pane {
-    -fx-background-color: rgba(255,255,255,1.0);
-    -fx-effect: dropshadow(gaussian, rgba(0.0, 0.0, 0.0, 0.3), 10.0, 0.0, 0.0, 4.0);
+    -fx-background-color: -bg-color;
+    -fx-effect: dropshadow(gaussian, -shadow-color, 10.0, 0.0, 0.0, 4.0);
 }
 
 .list-element {
     -fx-border-color:
             transparent
             transparent
-            slategray
+            -devider-color
             transparent;
 }
 
@@ -75,15 +92,15 @@
  ******************************************************************************/
 
 .small-label {
-    -fx-text-fill: slategray;
+    -fx-text-fill: -small-label-color;
 }
 
 .wrong-input-indicator {
-    -fx-text-fill: red;
+    -fx-text-fill: -wrong-indicator;
 }
 
 .label {
-    -fx-text-fill: -fx-text-base-color;
+    -fx-text-fill: black; /*-fx-text-base-color;*/
 }
 
 .label:show-mnemonics > .mnemonic-underline {
@@ -91,7 +108,7 @@
 }
 
 .text {
-    -fx-effect:dropshadow(gaussian, rgba(0.0, 0.0, 0.0, 0.2), 0.0, 0.0, 0.0, 1.0);
+    /*-fx-effect:dropshadow(gaussian, rgba(0.0, 0.0, 0.0, 0.2), 0.0, 0.0, 0.0, 1.0);*/
 }
 
 /*******************************************************************************
@@ -119,18 +136,18 @@
 .toggle-button:selected,
 .button:armed,
 .button:default:armed {
-    -fx-background-color: derive(-bluegrey-50, -20.0%);
+    -fx-background-color: derive(-highlight-color, -20.0%);
 }
 .toggle-switch .thumb-area{
-    -fx-background-color: slategrey;
+    -fx-background-color: -off-indicator;
 }
 .toggle-switch:selected .thumb-area{
-    -fx-background-color: limegreen;
+    -fx-background-color: -on-indicator;
 }
 
 .transparent-button {
     -fx-background-color: transparent;
-    -fx-text-fill: dodgerblue;
+    -fx-text-fill: -flat-button-text-color;
 }
 
 /*******************************************************************************
@@ -144,17 +161,17 @@
     -fx-border-color:
             transparent
             transparent
-            black
+            -border-color
             transparent;
-    -fx-prompt-text-fill: derive(-dark, 50.0%);
-    -fx-highlight-fill: rgb(94.0, 203.0, 234.0);
+    -fx-prompt-text-fill: derive(-bg-color, 50.0%);
+    -fx-highlight-fill: -highlight-color;
 }
 
 .text-area-wrong, .text-field-wrong, .text-input-wrong, .password-field-wrong {
     -fx-border-color:
             transparent
             transparent
-            red
+            -wrong-indicator
             transparent;
 }
 
@@ -163,22 +180,22 @@
 }
 
 .text-area {
-    -fx-background-color: transparent, white, transparent, white;
+    -fx-background-color: transparent, -bg-color, transparent, -bg-color;
     -fx-text-box-border: transparent;
 }
 
 .text-area .content {
-    -fx-background-color: transparent, white, transparent, white;
+    -fx-background-color: transparent, -bg-color, transparent, -bg-color;
     -fx-text-box-border: transparent;
 }
 
 .text-area:focused  .content {
-    -fx-background-color: transparent, white, transparent, white;
+    -fx-background-color: transparent, -bg-color, transparent, -bg-color;
     -fx-text-box-border: transparent;
 }
 
 .text-area:focused, .text-field:focused {
-    -fx-background-color: derive(-bluegrey-50, 80.0%);
+    -fx-background-color: derive(-highlight-color, 80.0%);
     -fx-text-box-border: transparent;
 }
 
@@ -189,7 +206,7 @@
 
 .scroll-bar:vertical > .thumb,
 .scroll-bar:horizontal > .thumb {
-    -fx-background-color: derive(-bluegrey-50, 80.0%);
+    -fx-background-color: derive(-controls-color, 80.0%);
 }
 
 .scroll-bar > .increment-button,
@@ -201,7 +218,7 @@
 
 .scroll-bar > .increment-button > .increment-arrow,
 .scroll-bar > .decrement-button > .decrement-arrow {
-    -fx-background-color: darkgray;
+    -fx-background-color: -controls-color;
 }
 .scroll-bar > .track-background{
     -fx-background-color: transparent;
@@ -220,11 +237,11 @@
 }
 
 .plus-minus-slider:horizontal {
-    -fx-background-color: derive(-bluegrey-500,30.0%);
+    -fx-background-color: derive(-controls-color,30.0%);
 }
 
 .plus-minus-slider:vertical {
-    -fx-background-color: derive(-bluegrey-500,30.0%);
+    -fx-background-color: derive(-controls-color,30.0%);
 }
 
 .plus-minus-slider > * > .slider > .track {
@@ -240,13 +257,12 @@
 }
 
 .plus-minus-slider > * > .adjust-plus {
-    -fx-background-color: -fx-mark-highlight-color,derive(-fx-base,-45.0%);
+    -fx-background-color: -fx-mark-highlight-color,derive(-controls-color,-45.0%);
 }
 
 .plus-minus-slider > * > .adjust-minus {
-    -fx-background-color: -fx-mark-highlight-color,derive(-fx-base,-45.0%);
+    -fx-background-color: -fx-mark-highlight-color,derive(-controls-color,-45.0%);
 }
-
 
 /*******************************************************************************
  *                                                                             *
@@ -255,42 +271,32 @@
  ******************************************************************************/
 
 .content-area {
-    -fx-background-color: -dark;
+    -fx-background-color: -bg-color;
 }
-
-
-.content-background {
-    -fx-background-color: -custom-red;
-}
-
 
 /*******************************************************************************
  *                                                                             *
  * ChoiceBox                                                                   *
  *                                                                             *
  ******************************************************************************/
-.combo-box-base,
-.choice-box {
-    /*-fx-background-color: -custom-red;*/
-}
-
-.combo-box-base:focused,
-.choice-box:focused{
-    /*-fx-background-color: derive(-custom-red, 50.0%);*/
-}
 
 .combo-box-base > .arrow-button > .arrow,
 .choice-box > .open-button > .arrow {
-    -fx-background-color: white;
+    -fx-background-color: -controls-color;
 }
 
-.context-menu .label {
-    -fx-text-fill: -dark;
+.choice-box {
+    -fx-background-color: -bg-color;
+    -fx-border-color: -border-color;
+    -fx-border-width: 1.0;
+}
+.choice-box > .open-button {
+    -fx-background-color: -bg-color;
 }
 
 .radio-menu-item:checked > .left-container > .radio,
 .check-menu-item:checked > .left-container > .check {
-    -fx-background-color: -dark;
+    -fx-background-color: -controls-color;
 }
 
 .radio-menu-item > .left-container > .radio,
@@ -299,7 +305,7 @@
 }
 
 .menu-item:focused {
-    -fx-background-color: rgb(94.0, 203.0, 234.0);
+    -fx-background-color: -highlight-color;
 }
 
 
@@ -322,16 +328,16 @@
 }
 
 .check-box:focused > .box {
-    -fx-background-color: -custom-blue, derive(rgb(94.0, 203.0, 234.0), 80.0%);
+    -fx-background-color: -highlight-color, derive(rgb(94.0, 203.0, 234.0), 80.0%);
 }
 
 .check-box:focused:armed > .box {
-    -fx-background-color: -custom-blue, derive(-fx-text-base-color, 80.0%);
+    -fx-background-color: -highlight-color, derive(-fx-text-base-color, 80.0%);
 }
 
 .check-box:selected > .box > .mark,
 .check-box:indeterminate > .box > .mark {
-    -fx-background-color: -dark;
+    -fx-background-color: -bg-color;
 }
 
 
@@ -353,15 +359,15 @@
 }
 
 .radio-button:focused > .radio {
-    -fx-background-color: -custom-blue, derive(rgb(94.0, 203.0, 234.0), 80.0%);
+    -fx-background-color: -highlight-color, derive(rgb(94.0, 203.0, 234.0), 80.0%);
 }
 
 .radio-button:focused:armed > .radio {
-    -fx-background-color: -custom-blue, derive(-fx-text-base-color, 80.0%);
+    -fx-background-color: -highlight-color, derive(-fx-text-base-color, 80.0%);
 }
 
 .radio-button:selected > .radio > .dot {
-    -fx-background-color: -dark;
+    -fx-background-color: -bg-color;
 }
 
 
@@ -397,11 +403,11 @@
 }
 
 .progress-indicator > .determinate-indicator > .progress {
-    -fx-background-color:  -custom-blue,  derive(-custom-blue, 50.0%);
+    -fx-background-color:  -highlight-color,  derive(-highlight-color, 50.0%);
 }
 
 .progress-indicator > .determinate-indicator > .percentage {
-    -fx-fill: white;
+    -fx-fill: -bg-color;
 }
 
 .progress-indicator > .indeterminate-indicator > .segment {
@@ -419,9 +425,11 @@
 }
 
 .titled-pane > .title {
-    -fx-background-color: white;
+    -fx-background-color: -bg-color;
+    -fx-border-color: -border-color;
+    -fx-border-width: 1.0;
 }
 
 .titled-pane > .content {
-    -fx-background-color: white;
+    -fx-background-color: -bg-color;
 }

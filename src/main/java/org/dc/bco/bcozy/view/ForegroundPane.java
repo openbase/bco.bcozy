@@ -18,6 +18,7 @@
  */
 package org.dc.bco.bcozy.view;
 
+import javafx.geometry.BoundingBox;
 import javafx.scene.layout.BorderPane;
 
 /**
@@ -83,5 +84,16 @@ public class ForegroundPane extends BorderPane {
      */
     public InfoFooter getInfoFooter() {
         return infoFooter;
+    }
+
+    /**
+     * Method to provide a bounding box within which the location should be drawn.
+     * @return a bounding box with the values.
+     */
+    public BoundingBox getBoundingBox() {
+        return new BoundingBox(this.mainMenu.getLayoutBounds().getMaxX(),
+                this.menuHeader.getLayoutBounds().getMaxY(),
+                this.centerPane.getWidth(),
+                this.centerPane.getHeight());
     }
 }

@@ -18,6 +18,7 @@
  */
 package org.dc.bco.bcozy.view;
 
+import de.jensd.fx.glyphs.materialicons.MaterialIcon;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -89,7 +90,7 @@ public class MainMenu extends StackPane {
 
         settingsPane = new SettingsPane();
 
-        mainMenuFloatingButton = new FloatingButton("/icons/mainmenu.png", Constants.MIDDLE_ICON);
+        mainMenuFloatingButton = new FloatingButton(new SVGIcon(MaterialIcon.MENU, Constants.MIDDLE_ICON));
 
         // Setting Alignment in Stackpane
         StackPane.setAlignment(mainMenuFloatingButton, Pos.TOP_RIGHT);
