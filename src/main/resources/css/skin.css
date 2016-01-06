@@ -428,3 +428,20 @@
 .titled-pane .widget-pane > .title > .arrow-button .arrow {
     visibility: hidden;
 }
+
+/*******************************************************************************
+ *                                                                             *
+ * WidgetPane                                                                  *
+ *                                                                             *
+ ******************************************************************************/
+
+.body-pane {
+    -fx-skin: "com.sun.javafx.scene.control.skin.TitledPaneSkin";
+    -fx-background-insets: 0, 0 1 1 1;
+}
+
+.head-pane {
+    -fx-skin: "com.sun.javafx.scene.control.skin.TitledPaneSkin";
+    -fx-background-insets: 0, 1, 2;
+    -fx-background-radius: 5 5 0 0, 4 4 0 0, 3 3 0 0;
+}

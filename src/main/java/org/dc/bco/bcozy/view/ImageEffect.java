@@ -30,8 +30,14 @@ import javafx.scene.paint.Color;
 /**
  * Created by agatting on 25.11.15.
  */
-public class ImageEffect extends Group{
+public class ImageEffect extends Group {
 
+    /**
+     * Constructor for ImageEffect.
+     * @param bottom mask image.
+     * @param top structured image.
+     * @param color color effect.
+     */
     public ImageEffect(final Image bottom, final Image top, final Color color) {
 
         final Group group = effectGroup(bottom, top, color);
@@ -46,7 +52,7 @@ public class ImageEffect extends Group{
      * @param color is the color to paint the image.
      * @return imageEffect of type Group.
      */
-    private final Group effectGroup(final Image bottom, final Image top, final Color color) {
+    private Group effectGroup(final Image bottom, final Image top, final Color color) {
 
         final ImageView bottomView = new ImageView(bottom);
         final ImageView topView = new ImageView(top);

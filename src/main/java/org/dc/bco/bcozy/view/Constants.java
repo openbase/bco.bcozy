@@ -221,6 +221,21 @@ public final class Constants {
     public static final String LANGUAGE_RESOURCE_BUNDLE = "languages.languages";
 
     /**
+     * Time in milliseconds for animation effects.
+     */
+    public static final int ANIMATION_TIME = 200;
+
+    /**
+     * Full circle angle in degree.
+     */
+    public static final int ROUND_ANGLE = 360;
+
+    /**
+     * 255 (1 byte) for rgb color.
+     */
+    public static final int RGB8 = 255;
+
+    /**
      * Private Constructor.
      */
     private Constants() { }

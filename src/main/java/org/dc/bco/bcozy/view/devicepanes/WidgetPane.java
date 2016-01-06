@@ -58,7 +58,7 @@ public class WidgetPane extends VBox {
         headPart(headContent);
         bodyPart(bodyContent);
 
-        setAnimation();
+        setAnimation(headContent, bodyContent);
         isExpanded.set(false);
         isExpanded.addListener((paramObservableValue, paramT1, paramT2) -> {
             if (paramT2) {
@@ -78,12 +78,7 @@ public class WidgetPane extends VBox {
     private void headPart(final BorderPane headContent) {
         head = headContent;
         head.getStyleClass().add("head-pane");
-        head.setPrefHeight(headContent.getHeight());
-        //head.setPrefWidth(100);
         head.setOnMouseClicked(paramT -> toggleVisibility());
-        System.out.println(headContent.maxWidthProperty());
-        System.out.println(headContent.prefWidthProperty());
-        System.out.println(headContent.minWidthProperty());
 
         this.getChildren().add(head);
     }
@@ -94,8 +89,6 @@ public class WidgetPane extends VBox {
      */
     private void bodyPart(final Pane bodyContent) {
         body = bodyContent;
-        body.setPrefHeight(50);
-        //body.setPrefWidth(100);
         body.getStyleClass().addAll("body-pane");
 
         this.getChildren().add(body);
@@ -115,73 +108,45 @@ public class WidgetPane extends VBox {
     /**
      * Method creates animation parameters for scroll down and up.
      */
-    private void setAnimation() {
-        rectangleClip = new Rectangle(300, Constants.SMALL_ICON);
+    private void setAnimation(final BorderPane headContent, final Pane bodyContent) {
+
+        //TODO get generic width
+        rectangleClip = new Rectangle(600, headContent.prefHeightProperty().getValue());
         this.setClip(rectangleClip);
 
         timelineDown = new Timeline();
         timelineUp = new Timeline();
 
         // animation for scroll down
-        timelineDown.setCycleCount((int) Constants.ONE);
+        timelineDown.setCycleCount(0);
         timelineDown.setAutoReverse(true);
 
-        final KeyValue kvDwn1 = new KeyValue(rectangleClip.heightProperty(), 70);
-        final KeyValue kvDwn2 = new KeyValue(rectangleClip.translateYProperty(), Constants.ZERO);
-        final KeyValue kvDwn3 = new KeyValue(body.prefHeightProperty(), 50);
-        final KeyValue kvDwn4 = new KeyValue(body.translateYProperty(), Constants.ZERO);
-        final KeyValue kvDwn5 = new KeyValue(this.maxHeightProperty(), 70);
-        final KeyValue kvDwn6 = new KeyValue(this.minHeightProperty(), 70);
-        final KeyFrame kfDwn = new KeyFrame(Duration.millis(Constants.ANIMATION_TIME), kvDwn1, kvDwn2, kvDwn3, kvDwn4,
-                kvDwn5, kvDwn6);
+        final KeyValue kvDwn1 = new KeyValue(rectangleClip.heightProperty(),
+                headContent.prefHeightProperty().getValue() + bodyContent.prefHeightProperty().getValue());
+        final KeyValue kvDwn2 = new KeyValue(rectangleClip.translateYProperty(), 0);
+        final KeyValue kvDwn3 = new KeyValue(body.prefHeightProperty(), bodyContent.prefHeightProperty().getValue());
+        final KeyValue kvDwn4 = new KeyValue(body.translateYProperty(), 0);
+        final KeyValue kvDwn5 = new KeyValue(this.maxHeightProperty(),
+                headContent.prefHeightProperty().getValue() + bodyContent.prefHeightProperty().getValue());
+        final KeyValue kvDwn6 = new KeyValue(this.minHeightProperty(),
+                headContent.prefHeightProperty().getValue() + bodyContent.prefHeightProperty().getValue());
+        final KeyFrame kfDwn = new KeyFrame(Duration.millis(Constants.ANIMATION_TIME), kvDwn1, kvDwn2, kvDwn3,
+                kvDwn4, kvDwn5, kvDwn6);
         timelineDown.getKeyFrames().add(kfDwn);
 
         // animation for scroll up
-        timelineUp.setCycleCount((int) Constants.ONE);
+        timelineUp.setCycleCount(1);
         timelineUp.setAutoReverse(true);
 
         final KeyValue kvUp1 = new KeyValue(rectangleClip.heightProperty(), Constants.SMALL_ICON);
-        final KeyValue kvUp2 = new KeyValue(rectangleClip.translateYProperty(), Constants.ZERO);
-        final KeyValue kvUp3 = new KeyValue(body.prefHeightProperty(), Constants.ZERO);
-        final KeyValue kvUp4 = new KeyValue(body.translateYProperty(), Constants.ZERO);
+        final KeyValue kvUp2 = new KeyValue(rectangleClip.translateYProperty(), 0);
+        final KeyValue kvUp3 = new KeyValue(body.prefHeightProperty(), 0);
+        final KeyValue kvUp4 = new KeyValue(body.translateYProperty(), 0);
         final KeyValue kvUp5 = new KeyValue(this.maxHeightProperty(), Constants.SMALL_ICON);
         final KeyValue kvUp6 = new KeyValue(this.minHeightProperty(), Constants.SMALL_ICON);
-        final KeyFrame kfUp = new KeyFrame(Duration.millis(Constants.ANIMATION_TIME), kvUp1, kvUp2, kvUp3, kvUp4,
-                kvUp5, kvUp6);
+        final KeyFrame kfUp = new KeyFrame(Duration.millis(Constants.ANIMATION_TIME), kvUp1, kvUp2, kvUp3,
+                kvUp4, kvUp5, kvUp6);
         timelineUp.getKeyFrames().add(kfUp);
     }
 }
 
-/*
-css setting...
-
-
-.custom-titled-pane
-{
-    -fx-skin: "com.sun.javafx.scene.control.skin.TitledPaneSkin";
-    -fx-text-fill: -fx-text-base-color;
-}
-.custom-titled-pane:focused
-{
-    -fx-text-fill: white;
-}
-
-.body-pane {
-    -fx-background-color:
-            -fx-box-border,
-            linear-gradient(to bottom, derive(-fx-color,-02%), derive(-fx-color,65%) 12%,
-            derive(-fx-color,23%) 88%, derive(-fx-color,50%) 99%, -fx-box-border);
-    -fx-background-insets: 0, 0 1 1 1;
-}
-
-        .head-pane {
-        -fx-background-color: -fx-box-border, -fx-inner-border, -fx-body-color;
-        -fx-background-insets: 0, 1, 2;
-        -fx-background-radius: 5 5 0 0, 4 4 0 0, 3 3 0 0;
-        }
-
-        .custom-titled-pane:focused > .head-pane
-        {
-        -fx-color: -fx-focus-color;
-        }
- */
