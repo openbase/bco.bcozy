@@ -159,6 +159,14 @@ public class MainMenu extends StackPane {
     }
 
     /**
+     * Getter for the settingsPane.
+     * @return the instance of the settingsPane
+     */
+    public SettingsPane getSettingsPane() {
+        return settingsPane;
+    }
+
+    /**
      * Getter for the current display state.
      * @return true if maximzed, false if minimized
      */

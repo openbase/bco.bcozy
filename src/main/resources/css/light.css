@@ -78,6 +78,10 @@
     -fx-text-fill: slategray;
 }
 
+.wrong-input-indicator {
+    -fx-text-fill: red;
+}
+
 .label {
     -fx-text-fill: -fx-text-base-color;
 }
@@ -144,6 +148,14 @@
             transparent;
     -fx-prompt-text-fill: derive(-dark, 50.0%);
     -fx-highlight-fill: rgb(94.0, 203.0, 234.0);
+}
+
+.text-area-wrong, .text-field-wrong, .text-input-wrong, .password-field-wrong {
+    -fx-border-color:
+            transparent
+            transparent
+            red
+            transparent;
 }
 
 .text-area, .text, .text-field, .text-input, .password-field > * > .text {

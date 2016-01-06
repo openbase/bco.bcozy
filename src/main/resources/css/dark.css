@@ -75,6 +75,10 @@
     -fx-text-fill: slategray;
 }
 
+.wrong-input-indicator {
+    -fx-text-fill: red;
+}
+
 .label {
     -fx-text-fill: -fx-text-base-color;
 }
@@ -139,8 +143,17 @@
             transparent
             white
             transparent;
-    -fx-prompt-text-fill: derive(white, 50.0%);
+    /*-fx-prompt-text-fill: derive(white, 50.0%);*/
+    -fx-text-fill: white;
     -fx-highlight-fill: rgb(94.0, 203.0, 234.0);
+}
+
+.text-area-wrong, .text-field-wrong, .text-input-wrong, .password-field-wrong {
+    -fx-border-color:
+            transparent
+            transparent
+            red
+            transparent;
 }
 
 .text-area, .text, .text-field, .text-input, .password-field > * > .text {
@@ -148,23 +161,26 @@
 }
 
 .text-area {
-    -fx-background-color: transparent, white, transparent, white;
+    -fx-background-color: transparent, black, transparent, black;
     -fx-text-box-border: transparent;
+    -fx-text-fill: white;
 }
 
 .text-area .content {
-    -fx-background-color: transparent, white, transparent, white;
+    -fx-background-color: transparent, black, transparent, black;
     -fx-text-box-border: transparent;
+    -fx-text-fill: white;
 }
 
 .text-area:focused  .content {
-    -fx-background-color: transparent, white, transparent, white;
+    -fx-background-color: transparent, black, transparent, black;
     -fx-text-box-border: transparent;
+    -fx-text-fill: white;
 }
 
 .text-area:focused, .text-field:focused {
-    -fx-background-color: derive(-bluegrey-50, 80.0%);
     -fx-text-box-border: transparent;
+    -fx-text-fill: white;
 }
 
 .scroll-bar:vertical > .track-background,

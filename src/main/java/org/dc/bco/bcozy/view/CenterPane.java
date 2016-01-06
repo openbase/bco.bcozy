@@ -45,8 +45,7 @@ public class CenterPane extends StackPane {
         popUpChildBottom = new FloatingButton("/icons/observe.png", Constants.SMALL_ICON);
         fullscreen = new FloatingButton("/icons/fullscreen.png", Constants.MIDDLE_ICON);
         viewSwitcher = new VBox(Constants.INSETS);
-        viewSwitcher.setMaxSize(Constants.MIDDLE_ICON,
-                (Constants.MIDDLE_ICON + Constants.SMALL_ICON * 2 + Constants.INSETS * 4));
+        viewSwitcher.setMaxSize(Constants.MIDDLE_ICON, Double.MAX_VALUE);
         viewSwitcher.setAlignment(Pos.BOTTOM_CENTER);
         viewSwitcherPopUp = new VBox(Constants.INSETS);
         viewSwitcherPopUp.setAlignment(Pos.CENTER);

@@ -226,20 +226,9 @@ public final class Constants {
     public static final int ONEHUNDRED = 100;
 
     /**
-     * Time in milliseconds for animation effects.
+     * Name of the language resource bundle.
      */
-    public static final int ANIMATION_TIME = 200;
-
-    /**
-     * Zero.
-     */
-    public static final double ZERO = 0.0;
-
-    /**
-     * One.
-     */
-    public static final double ONE = 1.0;
-
+    public static final String LANGUAGE_RESOURCE_BUNDLE = "languages.languages";
     /**
      * Private Constructor.
      */

@@ -77,9 +77,10 @@ public class ContextMenu extends VBox {
 
         verticalScrollPane.setFitToWidth(true);
         verticalScrollPane.setContent(titledPaneContainer);
-        //TODO: Find a nicer way to scroll the size of the scroll bar thumb
+        //TODO: Find a nicer way to scale the size of the scroll bar thumb
+        //CHECKSTYLE.OFF: MagicNumber
         scrollBar.setVisibleAmount(0.25);
-        //scrollBar.visibleAmountProperty().bind();
+        //CHECKSTYLE.ON: MagicNumber
 
         final WidgetPane widgetPane = new WidgetPane();
         final WidgetPane widgetPane2 = new WidgetPane();

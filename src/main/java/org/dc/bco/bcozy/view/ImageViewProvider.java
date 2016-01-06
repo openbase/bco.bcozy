@@ -85,7 +85,7 @@ public final class ImageViewProvider {
      * @param contrast the contrast of the color to be set
      */
     public static void colorizeIcons(final double hue, final double saturation, final double brightness,
-                                     final double contrast){
+                                     final double contrast) {
 
         actColor = new ColorAdjust(hue, saturation, brightness, contrast);
 

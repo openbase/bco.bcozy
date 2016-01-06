@@ -40,16 +40,22 @@ public class UserPane extends VBox {
 
     private final PaneElement loginPane;
     private final PaneElement startLoginPane;
+    private final PaneElement logoutPane;
     private final Button startLoginBtn;
     private final Button loginBtn;
     private final Button backBtn;
+    private final Button logoutBtn;
     private final TextField nameTxt;
     private final PasswordField passwordField;
-
+    private final Label inputWrongLbl;
+    private final Label loggedInUserLbl;
+    private final VBox loginLayout;
+    private final Label nameLbl;
+    private final Label pwLbl;
     /**
      * Enum to control the display state.
      */
-    public enum State { LOGINACTIVE, LOGIN }
+    public enum State { LOGINACTIVE, LOGIN, LOGOUT }
 
     /**
      * Constructor for the UserPane.
@@ -57,21 +63,24 @@ public class UserPane extends VBox {
     public UserPane() {
 
         final ResourceBundle languageBundle = ResourceBundle
-                .getBundle("languages.languages", new Locale("en", "US"));
+                .getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
 
         // Case: Before login
         final ImageView addUserIconImageView = ImageViewProvider
-                .createImageView("/icons/new_user.png", Constants.SMALL_ICON);
+                .createImageView("/icons/login.png", Constants.SMALL_ICON);
         startLoginBtn = new Button("", addUserIconImageView);
         startLoginBtn.getStyleClass().clear();
         startLoginPane = new PaneElement(startLoginBtn);
 
         // Case: Login active
-        final Label nameLbl = new Label(languageBundle.getString("username"));
+        nameLbl = new Label(languageBundle.getString("username"));
         nameLbl.setAlignment(Pos.BOTTOM_LEFT);
         nameTxt = new TextField();
-        final Label pwLbl = new Label(languageBundle.getString("password"));
+        pwLbl = new Label(languageBundle.getString("password"));
         passwordField = new PasswordField();
+        inputWrongLbl = new Label(languageBundle.getString("inputWrong"));
+        inputWrongLbl.setAlignment(Pos.TOP_LEFT);
+        //inputWrongLbl.setVisible(false);
         loginBtn = new Button(languageBundle.getString("login"));
         final HBox rightAlignLoginButton = new HBox(loginBtn);
         rightAlignLoginButton.setAlignment(Pos.CENTER_RIGHT);
@@ -81,7 +90,7 @@ public class UserPane extends VBox {
         backBtn = new Button("", imageViewBackIcon);
         backBtn.getStyleClass().clear();
 
-        final VBox loginLayout = new VBox(Constants.INSETS);
+        loginLayout = new VBox(Constants.INSETS);
         final BorderPane loginFirstLineLayout = new BorderPane();
         loginFirstLineLayout.setLeft(nameLbl);
         loginFirstLineLayout.setRight(backBtn);
@@ -92,6 +101,21 @@ public class UserPane extends VBox {
         loginPane = new PaneElement(loginLayout);
         loginPane.setMaxWidth(Constants.MAX_MENU_WIDTH);
 
+        //Case: User logged in
+        final VBox logoutLayout = new VBox(Constants.INSETS);
+        final ImageView loggedInUserIcon = ImageViewProvider
+                .createImageView("/icons/user_fa.png", Constants.SMALL_ICON);
+        loggedInUserLbl = new Label();
+        logoutBtn = new Button(languageBundle.getString("logout"));
+        final HBox rightAlignLogoutButton = new HBox(logoutBtn);
+        rightAlignLogoutButton.setAlignment(Pos.CENTER_RIGHT);
+
+        logoutLayout.getStyleClass().clear();
+        logoutLayout.setAlignment(Pos.TOP_CENTER);
+        logoutLayout.getChildren().addAll(loggedInUserIcon, loggedInUserLbl, rightAlignLogoutButton);
+        logoutPane = new PaneElement(logoutLayout);
+        logoutPane.setMaxWidth(Constants.MAX_MENU_WIDTH);
+
         this.setFillWidth(true);
         this.setSpacing(Constants.INSETS);
 
@@ -99,10 +123,14 @@ public class UserPane extends VBox {
         //CHECKSTYLE.OFF: MultipleStringLiterals
         nameLbl.getStyleClass().clear();
         nameLbl.getStyleClass().add("small-label");
+        inputWrongLbl.getStyleClass().clear();
+        inputWrongLbl.getStyleClass().add("wrong-input-indicator");
         pwLbl.getStyleClass().clear();
         pwLbl.getStyleClass().add("small-label");
         loginBtn.getStyleClass().clear();
         loginBtn.getStyleClass().add("transparent-button");
+        logoutBtn.getStyleClass().clear();
+        logoutBtn.getStyleClass().add("transparent-button");
         //CHECKSTYLE.ON: MultipleStringLiterals
 
         this.getChildren().addAll(startLoginPane);
@@ -149,6 +177,70 @@ public class UserPane extends VBox {
     }
 
     /**
+     * Getter for the logoutBtn.
+     * @return instance of the logoutBtn
+     */
+    public Button getLogoutBtn() {
+        return logoutBtn;
+    }
+
+    /**
+     * Getter for the inputWrongLabel.
+     * @return instance of the inputWrongLbl
+     */
+    public Label getInputWrongLbl() {
+        return inputWrongLbl;
+    }
+
+    /**
+     * Getter for the loggedInUserLbl.
+     * @return instance of the loggedInUserLbl
+     */
+    public Label getLoggedInUserLbl() {
+        return loggedInUserLbl;
+    }
+
+    /**
+     * Getter for the pwLbl.
+     * @return instance of the pwLbl
+     */
+    public Label getPwLbl() {
+        return pwLbl;
+    }
+
+    /**
+     * Getter for the nameLbl.
+     * @return instance of the nameLbl
+     */
+    public Label getNameLbl() {
+        return nameLbl;
+    }
+
+    /**
+     * Change CSS Style to indicate that at least one of the informations
+     * password or the name were wrong.
+     */
+    public void indicateUserOrPasswordWrong() {
+        if (!loginLayout.getChildren().contains(inputWrongLbl)) {
+            passwordField.getStyleClass().add("password-field-wrong");
+            nameTxt.getStyleClass().add("text-field-wrong");
+            loginLayout.getChildren().add(loginLayout.getChildren().size() - 1, inputWrongLbl);
+        }
+    }
+
+    /**
+     * Reset CSS Style if name or password are corrected.
+     */
+    public void resetUserOrPasswordWrong() {
+        passwordField.getStyleClass().clear();
+        nameTxt.getStyleClass().clear();
+        passwordField.getStyleClass().add("password-field");
+        nameTxt.getStyleClass().add("text-field");
+        if (loginLayout.getChildren().contains(inputWrongLbl)) {
+            loginLayout.getChildren().remove(inputWrongLbl);
+        }
+    }
+    /**
      * GUI Method to switch the displayed panes.
      * @param state A state from the defined Enum
      */
@@ -163,6 +255,11 @@ public class UserPane extends VBox {
             case LOGIN:
                 this.getChildren().clear();
                 this.getChildren().addAll(startLoginPane);
+                break;
+
+            case LOGOUT:
+                this.getChildren().clear();
+                this.getChildren().addAll(logoutPane);
                 break;
 
             default:
