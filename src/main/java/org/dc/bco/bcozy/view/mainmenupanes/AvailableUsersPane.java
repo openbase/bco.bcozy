@@ -45,7 +45,7 @@ public class AvailableUsersPane extends PaneElement {
      */
     public AvailableUsersPane() {
         final ResourceBundle languageBundle = ResourceBundle
-                .getBundle("languages.languages", new Locale("en", "US"));
+                .getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
 
         availableUsersList = FXCollections.observableArrayList();
         availableUsersList.addAll(new AvailableUserRow("Andi"), new AvailableUserRow("Julian"),

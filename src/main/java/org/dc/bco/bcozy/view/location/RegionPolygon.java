@@ -45,6 +45,8 @@ public class RegionPolygon extends LocationPolygon {
 
     @Override
     protected void changeStyleOnSelection(final boolean selected) {
-
+        /**
+         * No functionality needed here for now.
+         */
     }
 }

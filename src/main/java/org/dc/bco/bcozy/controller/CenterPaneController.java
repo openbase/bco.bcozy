@@ -18,10 +18,11 @@
  */
 package org.dc.bco.bcozy.controller;
 
+import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
+import de.jensd.fx.glyphs.materialicons.MaterialIcon;
 import javafx.event.ActionEvent;
 import javafx.stage.Stage;
 import org.dc.bco.bcozy.view.CenterPane;
-import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.ForegroundPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +35,7 @@ public class CenterPaneController {
     /**
      * Application logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(CenterPaneController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CenterPaneController.class); //NOPMD
     private final CenterPane centerPane;
     private State activeState;
     private boolean isShowing;
@@ -58,7 +59,7 @@ public class CenterPaneController {
         ((Stage) centerPane.getScene().getWindow()).fullScreenProperty().
                 addListener((observable, oldValue, newValue) -> {
             if (!newValue) {
-                centerPane.getFullscreen().changeIcon(Constants.FULLSCREEN_ICON);
+                centerPane.getFullscreen().changeIcon(MaterialIcon.FULLSCREEN);
             }
         });
     }
@@ -66,25 +67,21 @@ public class CenterPaneController {
     private void setMaximizeAction() {
         final Stage stage = (Stage) centerPane.getScene().getWindow();
         if (stage.isFullScreen()) {
-            centerPane.getFullscreen().changeIcon(Constants.FULLSCREEN_ICON);
+            centerPane.getFullscreen().changeIcon(MaterialIcon.FULLSCREEN);
             stage.setFullScreen(false);
         } else {
-            centerPane.getFullscreen().changeIcon(Constants.NORMALSCREEN_ICON);
+            centerPane.getFullscreen().changeIcon(MaterialIcon.FULLSCREEN_EXIT);
             stage.setFullScreen(true);
         }
     }
 
     private void setShowHidePopOver() {
         if (isShowing) {
-            LOGGER.info("Hiding");
             isShowing = false;
             centerPane.setViewSwitchingButtonsVisible(false);
         } else {
-            LOGGER.info("Showing");
-            LOGGER.info("Layout Y before: " + centerPane.getPopUpChildBottom().getLayoutY());
             isShowing = true;
             centerPane.setViewSwitchingButtonsVisible(true);
-            LOGGER.info("Layout Y after: " + centerPane.getPopUpChildBottom().getLayoutY());
         }
     }
 
@@ -108,22 +105,19 @@ public class CenterPaneController {
 
         }
 
-        final String settingsIcon = "/icons/settings.png";
-        final String temperatureIcon = "/icons/thermometer.png";
-        final String movementIcon = "/icons/observe.png";
         if (activeState.equals(State.SETTINGS)) {
-            centerPane.getPopUpParent().changeIcon(settingsIcon);
-            centerPane.getPopUpChildBottom().changeIcon(temperatureIcon);
-            centerPane.getPopUpChildTop().changeIcon(movementIcon);
+            centerPane.getPopUpParent().changeIcon(MaterialIcon.SETTINGS);
+            centerPane.getPopUpChildBottom().changeIcon(MaterialDesignIcon.THERMOMETER_LINES);
+            centerPane.getPopUpChildTop().changeIcon(MaterialIcon.VISIBILITY);
 
         } else if (activeState.equals(State.MOVEMENT)) {
-            centerPane.getPopUpParent().changeIcon(movementIcon);
-            centerPane.getPopUpChildBottom().changeIcon(settingsIcon);
-            centerPane.getPopUpChildTop().changeIcon(temperatureIcon);
+            centerPane.getPopUpParent().changeIcon(MaterialIcon.VISIBILITY);
+            centerPane.getPopUpChildBottom().changeIcon(MaterialIcon.SETTINGS);
+            centerPane.getPopUpChildTop().changeIcon(MaterialDesignIcon.THERMOMETER_LINES);
         } else if (activeState.equals(State.TEMPERATURE)) {
-            centerPane.getPopUpParent().changeIcon(temperatureIcon);
-            centerPane.getPopUpChildBottom().changeIcon(movementIcon);
-            centerPane.getPopUpChildTop().changeIcon(settingsIcon);
+            centerPane.getPopUpParent().changeIcon(MaterialDesignIcon.THERMOMETER_LINES);
+            centerPane.getPopUpChildBottom().changeIcon(MaterialIcon.VISIBILITY);
+            centerPane.getPopUpChildTop().changeIcon(MaterialIcon.SETTINGS);
         }
     }
 }

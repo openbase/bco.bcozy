@@ -65,8 +65,8 @@ public class RemotePool {
     private DeviceRegistryRemote deviceRegistryRemote = null;
     private TransformReceiver transformReceiver;
 
-    private boolean isInit;
-    private boolean areMapsFilled;
+    private boolean init;
+    private boolean mapsFilled;
 
     /**
      * Constructor for the Remotecontroller.
@@ -120,7 +120,7 @@ public class RemotePool {
                         });
                         try {
                             fillHashes();
-                            areMapsFilled = true;
+                            mapsFilled = true;
                         } catch (CouldNotPerformException e) {
                             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
                             shutdownDALRemotesAndClearMaps();
@@ -142,8 +142,9 @@ public class RemotePool {
         deviceMap = new HashMap<>();
         locationMap = new HashMap<>();
 
-        isInit = false;
-        areMapsFilled = false;
+
+        init = false;
+        mapsFilled = false;
     }
 
     /**
@@ -154,7 +155,7 @@ public class RemotePool {
      */
     public void initRegistryRemotes() throws CouldNotPerformException, InterruptedException,
             TransformerFactory.TransformerFactoryException {
-        if (isInit) {
+        if (init) {
             LOGGER.info("INFO: RegistryRemotes were already initialized.");
             return;
         }
@@ -180,12 +181,12 @@ public class RemotePool {
             throw e;
         }
 
-        isInit = true;
+        init = true;
         LOGGER.info("INFO: RegistryRemotes are initialized.");
     }
 
     private void checkInit() throws CouldNotPerformException {
-        if (!isInit) {
+        if (!init) {
             throw new CouldNotPerformException("RegistryRemotes are not initialized.");
         }
     }
@@ -197,7 +198,7 @@ public class RemotePool {
      */
     public void fillHashes() throws CouldNotPerformException {
         checkInit();
-        if (areMapsFilled) {
+        if (mapsFilled) {
             shutdownDALRemotesAndClearMaps();
         }
         fillDeviceMap();
@@ -397,7 +398,7 @@ public class RemotePool {
         this.deviceMap.clear();
         this.locationMap.clear();
 
-        areMapsFilled = false;
+        mapsFilled = false;
     }
 
     /**
@@ -434,7 +435,7 @@ public class RemotePool {
         }
 
         TransformerFactory.killInstance(); //TODO mpohling: how to shutdown transformer factory?
-        isInit = false;
+        init = false;
     }
 
     /**
@@ -468,5 +469,13 @@ public class RemotePool {
         checkInit();
 
         return transformReceiver;
+    }
+
+    /**
+     * Returns the information whether the remotepool is initialized or not.
+     * @return isInit
+     */
+    public boolean isInit() {
+        return init;
     }
 }

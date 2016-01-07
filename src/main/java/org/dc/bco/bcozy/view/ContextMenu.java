@@ -26,6 +26,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.HiddenSidesPane;
 import org.dc.bco.bcozy.view.devicepanes.TitledPaneContainer;
+import org.dc.bco.bcozy.view.devicepanes.WidgetPane;
 
 /**
  * Created by hoestreich on 11/10/15.
@@ -76,15 +77,19 @@ public class ContextMenu extends VBox {
 
         verticalScrollPane.setFitToWidth(true);
         verticalScrollPane.setContent(titledPaneContainer);
-        //TODO: Find a nicer way to scroll the size of the scroll bar thumb
+        //TODO: Find a nicer way to scale the size of the scroll bar thumb
+        //CHECKSTYLE.OFF: MagicNumber
         scrollBar.setVisibleAmount(0.25);
-        //scrollBar.visibleAmountProperty().bind();
+        //CHECKSTYLE.ON: MagicNumber
 
-        this.getChildren().addAll(roomInfo, contextSortingPane, hiddenSidesPane);
+        final WidgetPane widgetPane = new WidgetPane();
+        final WidgetPane widgetPane2 = new WidgetPane();
+
+        this.getChildren().addAll(roomInfo, contextSortingPane, hiddenSidesPane, widgetPane, widgetPane2);
         //VBox.setVgrow(contextSortingPane, Priority.ALWAYS);
 
         //CHECKSTYLE.OFF: MultipleStringLiterals
-        this.getStyleClass().addAll("context-menu");
+        this.getStyleClass().addAll("detail-menu");
         //CHECKSTYLE.ON: MultipleStringLiterals
     }
 

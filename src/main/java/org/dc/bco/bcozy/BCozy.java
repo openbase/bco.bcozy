@@ -27,17 +27,17 @@ import de.citec.jul.exception.printer.LogLevel;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
-import javafx.scene.text.Font;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import org.dc.bco.bcozy.controller.ContextMenuController;
 import org.dc.bco.bcozy.controller.CenterPaneController;
+import org.dc.bco.bcozy.controller.ContextMenuController;
 import org.dc.bco.bcozy.controller.LocationController;
 import org.dc.bco.bcozy.controller.MainMenuController;
 import org.dc.bco.bcozy.controller.RemotePool;
+import org.dc.bco.bcozy.view.BackgroundPane;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.ForegroundPane;
-import org.dc.bco.bcozy.view.location.LocationPane;
+import org.dc.bco.bcozy.view.ImageViewProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,6 +56,7 @@ public class BCozy extends Application {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(BCozy.class);
 
+    private static Stage primaryStage;
     private RemotePool remotePool;
 
     /**
@@ -86,10 +87,7 @@ public class BCozy extends Application {
     @Override
     public void start(final Stage primaryStage) {
 
-        // load the tron font.
-        Font.loadFont(BCozy.class.getClassLoader().getResource("fonts/Roboto-Thin.ttf").toExternalForm(),
-                Constants.STANDARD_TEXT_SIZE);
-
+        this.primaryStage = primaryStage;
         final double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
         final double screenHeight = Screen.getPrimary().getVisualBounds().getHeight();
         primaryStage.setTitle("BCozy");
@@ -98,7 +96,7 @@ public class BCozy extends Application {
         final ForegroundPane foregroundPane = new ForegroundPane(screenHeight, screenWidth);
         foregroundPane.setMinHeight(root.getHeight());
         foregroundPane.setMinWidth(root.getWidth());
-        final LocationPane backgroundPane = new LocationPane(foregroundPane);
+        final BackgroundPane backgroundPane = new BackgroundPane(foregroundPane);
 
         root.getChildren().addAll(backgroundPane, foregroundPane);
 
@@ -112,8 +110,7 @@ public class BCozy extends Application {
 
         primaryStage.setScene(new Scene(root, screenWidth, screenHeight));
 
-        primaryStage.getScene().getStylesheets().add(BCozy.class.getClassLoader().
-                getResource("css/skin.css").toExternalForm());
+        primaryStage.getScene().getStylesheets().addAll(Constants.DEFAULT_CSS, Constants.LIGHT_THEME_CSS);
         ResponsiveHandler.addResponsiveToWindow(primaryStage);
         primaryStage.show();
 
@@ -122,11 +119,11 @@ public class BCozy extends Application {
 
         //instantiate RemotePool
         remotePool = new RemotePool(foregroundPane);
-        new ContextMenuController(foregroundPane, backgroundPane, remotePool);
+        new ContextMenuController(foregroundPane, backgroundPane.getLocationPane(), remotePool);
 
         //instantiate LocationController
         try {
-            new LocationController(foregroundPane, backgroundPane, remotePool);
+            new LocationController(foregroundPane, backgroundPane.getLocationPane(), remotePool);
         } catch (InstantiationException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
@@ -139,6 +136,31 @@ public class BCozy extends Application {
         System.exit(0);
     }
 
+    /**
+     * Method to change application wide theme from other locations in the view.
+     * @param themeName the name of the theme to be set
+     */
+    public static void changeTheme(final String themeName) {
+        if (primaryStage != null) {
+            switch (themeName) {
+                case Constants.DARK_THEME_CSS:
+                    primaryStage.getScene().getStylesheets().clear();
+                    primaryStage.getScene().getStylesheets()
+                            .addAll(Constants.DEFAULT_CSS, Constants.DARK_THEME_CSS);
+                    ImageViewProvider.colorizeIconsToWhite();
+                    break;
+                case Constants.LIGHT_THEME_CSS:
+                    primaryStage.getScene().getStylesheets().clear();
+                    primaryStage.getScene().getStylesheets()
+                            .addAll(Constants.DEFAULT_CSS, Constants.LIGHT_THEME_CSS);
+                    ImageViewProvider.colorizeIconsToBlack();
+                    break;
+                default:
+                    primaryStage.getScene().getStylesheets().clear();
+                    break;
+            }
+        }
+    }
     private static void registerListeners() {
         LOGGER.info("Executing Registration of Listeners");
         ResponsiveHandler.setOnDeviceTypeChanged((over, oldDeviceType, newDeviceType) -> {

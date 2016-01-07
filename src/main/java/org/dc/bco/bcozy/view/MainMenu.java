@@ -18,6 +18,7 @@
  */
 package org.dc.bco.bcozy.view;
 
+import de.jensd.fx.glyphs.materialicons.MaterialIcon;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -26,12 +27,14 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import org.dc.bco.bcozy.view.mainmenupanes.AvailableUsersPane;
 import org.dc.bco.bcozy.view.mainmenupanes.ConnectionPane;
+import org.dc.bco.bcozy.view.mainmenupanes.SettingsPane;
 import org.dc.bco.bcozy.view.mainmenupanes.UserPane;
 
 /**
  * Created by hoestreich on 11/10/15.
  */
 public class MainMenu extends StackPane {
+
 
     private final Button initRemoteButton;
     private final Button fetchLocationButton;
@@ -46,6 +49,7 @@ public class MainMenu extends StackPane {
     private boolean maximized;
     private final ConnectionPane connectionPane;
     private final AvailableUsersPane availableUsersPanePane;
+    private final SettingsPane settingsPane;
 
     /**
      * Constructor for the MainMenu.
@@ -84,7 +88,9 @@ public class MainMenu extends StackPane {
 
         availableUsersPanePane = new AvailableUsersPane();
 
-        mainMenuFloatingButton = new FloatingButton("/icons/mainmenu.png", Constants.MIDDLE_ICON);
+        settingsPane = new SettingsPane();
+
+        mainMenuFloatingButton = new FloatingButton(new SVGIcon(MaterialIcon.MENU, Constants.MIDDLE_ICON));
 
         // Setting Alignment in Stackpane
         StackPane.setAlignment(mainMenuFloatingButton, Pos.TOP_RIGHT);
@@ -95,7 +101,7 @@ public class MainMenu extends StackPane {
         // Adding components to their parents
         verticalLayout.getChildren()
                 .addAll(logoView, initRemoteButton, fetchLocationButton, fillHashesButton,
-                        fillContextMenuButton, connectionPane, userPane, availableUsersPanePane);
+                        fillContextMenuButton, connectionPane, userPane, availableUsersPanePane, settingsPane);
         verticalLayoutSmall.getChildren().addAll(logoViewSmall);
         this.getChildren().addAll(verticalLayout, mainMenuFloatingButton);
 
@@ -151,6 +157,14 @@ public class MainMenu extends StackPane {
      */
     public UserPane getUserPane() {
         return userPane;
+    }
+
+    /**
+     * Getter for the settingsPane.
+     * @return the instance of the settingsPane
+     */
+    public SettingsPane getSettingsPane() {
+        return settingsPane;
     }
 
     /**

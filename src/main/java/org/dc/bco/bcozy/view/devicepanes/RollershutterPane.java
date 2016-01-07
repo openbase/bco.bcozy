@@ -43,6 +43,8 @@ public class RollershutterPane extends UnitPane {
 
     private final RollershutterRemote rollershutterRemote;
     private final Image imageIcon;
+    private BorderPane headContent;
+    private BorderPane bodyContent;
 
     /**
      * Constructor for a RollershutterPane.
@@ -61,7 +63,12 @@ public class RollershutterPane extends UnitPane {
 
         initTitle();
         initContent();
+        final Pane pane = new Pane();
+        pane.getChildren().add(bodyContent);
+        createWidgetPane(headContent, pane);
     }
+
+
 
     @Override
     protected void initTitle() {
@@ -79,8 +86,10 @@ public class RollershutterPane extends UnitPane {
         borderPane.setLeft(rollershutterIcon);
         borderPane.setCenter(new Label(super.getUnitLabel()));
 
-        this.getStyleClass().add("widgetPane");
-        this.setGraphic(borderPane);
+        //this.getStyleClass().add("widgetPane");
+        //this.setGraphic(borderPane);
+        //this.headPart(borderPane);
+        headContent = borderPane;
     }
 
     @Override
@@ -101,7 +110,9 @@ public class RollershutterPane extends UnitPane {
 
         borderPane.setLeft(verticalLayout);
         borderPane.setRight(control);
-        this.setContent(borderPane);
+        //this.setContent(borderPane);
+        //this.bodyPart(borderPane);
+        bodyContent = borderPane;
     }
 
     @Override
