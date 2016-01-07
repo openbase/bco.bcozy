@@ -35,7 +35,8 @@ public class ContextMenu extends VBox {
 
     private final ContextSortingPane contextSortingPane;
     private final Label roomInfo;
-    private final TitledPaneContainer titledPaneContainer;
+    private final ScrollPane verticalScrollPane;
+    private TitledPaneContainer titledPaneContainer;
 
 
     /**
@@ -54,7 +55,7 @@ public class ContextMenu extends VBox {
         roomInfo = new Label("No room selected.");
         roomInfo.setAlignment(Pos.CENTER);
 
-        final ScrollPane verticalScrollPane = new ScrollPane();
+        verticalScrollPane = new ScrollPane();
         verticalScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         verticalScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
@@ -107,5 +108,21 @@ public class ContextMenu extends VBox {
      */
     public TitledPaneContainer getTitledPaneContainer() {
         return titledPaneContainer;
+    }
+
+    /**
+     * Set the new TitledPaneContainer and add it to the VerticalScrollPane.
+     * @param titledPaneContainer titledPaneContainer
+     */
+    public void setTitledPaneContainer(final TitledPaneContainer titledPaneContainer) {
+        this.titledPaneContainer = titledPaneContainer;
+        verticalScrollPane.setContent(this.titledPaneContainer);
+    }
+
+    /**
+     * Clears the vertical ScrollPane of the ContextMenu.
+     */
+    public void clearVerticalScrollPane() {
+        verticalScrollPane.setContent(null);
     }
 }
