@@ -111,7 +111,7 @@ public class WidgetPane extends VBox {
     private void setAnimation(final BorderPane headContent, final Pane bodyContent) {
 
         //TODO get generic width
-        rectangleClip = new Rectangle(600, headContent.prefHeightProperty().getValue());
+        rectangleClip = new Rectangle(Integer.MAX_VALUE, headContent.prefHeightProperty().getValue());
         this.setClip(rectangleClip);
 
         timelineDown = new Timeline();

@@ -208,7 +208,7 @@ public final class Constants {
     /**
      * Divide constant for HSB color init.
      */
-    public static final int ONEHUNDRED = 100;
+    public static final int ONE_HUNDRED = 100;
 
     /**
      * The factor for the scaling in the locationPane.
@@ -231,9 +231,41 @@ public final class Constants {
     public static final int ROUND_ANGLE = 360;
 
     /**
+     * Obtuse angle (270) in degree.
+     */
+    public static final int OBTUSE_ANGLE_270 = 270;
+
+    /**
+     * Right angle in degree.
+     */
+    public static final int RIGHT_ANGLE = 90;
+
+    /**
      * 255 (1 byte) for rgb color.
      */
-    public static final int RGB8 = 255;
+    public static final int RGB_8_BIT = 255;
+
+    /**
+     * Number Six.
+     */
+    public static final int SIX = 6;
+
+    /**
+     * Number ten.
+     */
+    public static final int TEN = 10;
+
+    /**
+     * Number fifteen.
+     */
+    public static final int FIFTEEN = 15;
+
+
+
+    /**
+     * text: "white".
+     */
+    public static final String WHITE = "white";
 
     /**
      * Private Constructor.

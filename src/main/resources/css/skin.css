@@ -445,3 +445,27 @@
     -fx-background-insets: 0, 1, 2;
     -fx-background-radius: 5 5 0 0, 4 4 0 0, 3 3 0 0;
 }
+
+/*******************************************************************************
+ *                                                                             *
+ * AmbientLight elements                                                       *
+ *                                                                             *
+ ******************************************************************************/
+
+.circle-selector {
+    -fx-stroke-type: outside;
+    -fx-stroke-width: 2.0;
+}
+
+.rectangle-selector {
+    -fx-stroke-type: outside;
+    -fx-stroke-width: 2.0;
+}
+
+.color-rect-container {
+    -fx-padding: 0.0, 10.0, 0.0, 10.0;
+}
+
+.color-circle-container {
+    -fx-padding: 0.0, 10.0, 0.0, 10.0;
+}
