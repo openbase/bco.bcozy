@@ -26,8 +26,11 @@ import de.citec.jul.exception.CouldNotPerformException;
 import de.citec.jul.exception.printer.ExceptionPrinter;
 import de.citec.jul.exception.printer.LogLevel;
 import de.citec.lm.remote.LocationRegistryRemote;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.control.ProgressIndicator;
 import org.dc.bco.bcozy.view.ForegroundPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,6 +66,7 @@ public class RemotePool {
     private TransformReceiver transformReceiver;
 
     private boolean isInit;
+    private boolean areMapsFilled;
 
     /**
      * Constructor for the Remotecontroller.
@@ -75,24 +79,63 @@ public class RemotePool {
         this.foregroundPane.getMainMenu().addInitRemoteButtonEventHandler(new EventHandler<ActionEvent>() {
             @Override
             public void handle(final ActionEvent event) {
-                try {
-                    initRegistryRemotes();
-                    //fillHashes();
-                } catch (InterruptedException | CouldNotPerformException
-                        | TransformerFactory.TransformerFactoryException e) {
-                    ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-                }
+                final Task task = new Task() {
+                    private final ProgressIndicator progressIndicator = new ProgressIndicator(-1);
+                    @Override
+                    protected Object call() throws java.lang.Exception {
+                        Platform.runLater(() -> {
+                            foregroundPane.getContextMenu().getTitledPaneContainer().clearTitledPane();
+                            foregroundPane.getContextMenu().getChildren().add(progressIndicator);
+                        });
+                        try {
+                            initRegistryRemotes();
+                        }  catch (InterruptedException | CouldNotPerformException
+                                | TransformerFactory.TransformerFactoryException e) {
+                            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                        }
+                        return null;
+                    }
+                    @Override
+                    protected void succeeded() {
+                        super.succeeded();
+                        Platform.runLater(() -> {
+                            foregroundPane.getContextMenu().getChildren().remove(progressIndicator);
+                        });
+                    }
+                };
+                new Thread(task).start();
             }
         });
 
         this.foregroundPane.getMainMenu().addFillHashesButtonEventHandler(new EventHandler<ActionEvent>() {
             @Override
             public void handle(final ActionEvent event) {
-                try {
-                    fillHashes();
-                } catch (CouldNotPerformException e) {
-                    ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-                }
+                final Task task = new Task() {
+                    private final ProgressIndicator progressIndicator = new ProgressIndicator(-1);
+                    @Override
+                    protected Object call() throws java.lang.Exception {
+                        Platform.runLater(() -> {
+                            foregroundPane.getContextMenu().getTitledPaneContainer().clearTitledPane();
+                            foregroundPane.getContextMenu().getChildren().add(progressIndicator);
+                        });
+                        try {
+                            fillHashes();
+                            areMapsFilled = true;
+                        } catch (CouldNotPerformException e) {
+                            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                            shutdownDALRemotesAndClearMaps();
+                        }
+                        return null;
+                    }
+                    @Override
+                    protected void succeeded() {
+                        super.succeeded();
+                        Platform.runLater(() -> {
+                            foregroundPane.getContextMenu().getChildren().remove(progressIndicator);
+                        });
+                    }
+                };
+                new Thread(task).start();
             }
         });
 
@@ -100,6 +143,7 @@ public class RemotePool {
         locationMap = new HashMap<>();
 
         isInit = false;
+        areMapsFilled = false;
     }
 
     /**
@@ -153,6 +197,9 @@ public class RemotePool {
      */
     public void fillHashes() throws CouldNotPerformException {
         checkInit();
+        if (areMapsFilled) {
+            shutdownDALRemotesAndClearMaps();
+        }
         fillDeviceMap();
 
         final ListIterator<LocationConfigType.LocationConfig> locationConfigListIterator =
@@ -340,6 +387,28 @@ public class RemotePool {
         }
 
         return unitRemoteList;
+    }
+
+    /**
+     * Shut down all DALRemotes and clear the deviceMap and the locationMap.
+     */
+    public void shutdownDALRemotesAndClearMaps() {
+        shutdownDALRemotes();
+        this.deviceMap.clear();
+        this.locationMap.clear();
+
+        areMapsFilled = false;
+    }
+
+    /**
+     * Shut down all DALRemotes.
+     */
+    public void shutdownDALRemotes() {
+        final Iterator<Map.Entry<String, DALRemoteService>> unitIterator = deviceMap.entrySet().iterator();
+        while (unitIterator.hasNext()) {
+            final DALRemoteService remote = unitIterator.next().getValue();
+            remote.shutdown();
+        }
     }
 
     /**
