@@ -21,13 +21,13 @@ package org.dc.bco.bcozy.view.mainmenupanes;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.TitledPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.ImageViewProvider;
+import org.dc.bco.bcozy.view.ObserverLabel;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -41,7 +41,7 @@ public class SettingsPane extends PaneElement {
     private final ChoiceBox<String> languageChoice;
     private final ObservableList<String> availableThemes;
     private final ObservableList<String> availableLanguages;
-    private final Label settingsLbl;
+    private final ObserverLabel settingsLbl;
 
     /**
      * Constructor for the SettingsPane.
@@ -54,7 +54,7 @@ public class SettingsPane extends PaneElement {
         final HBox settingsHeader = new HBox();
         final ImageView settingsIcon = ImageViewProvider
                 .createImageView("/icons/adjustment.png", Constants.EXTRA_SMALL_ICON);
-        settingsLbl = new Label(languageBundle.getString("settings"));
+        settingsLbl = new ObserverLabel("settings");
         settingsHeader.getChildren().addAll(settingsIcon, settingsLbl);
 
         final VBox verticalLayout = new VBox();
@@ -62,17 +62,15 @@ public class SettingsPane extends PaneElement {
         languageChoice = new ChoiceBox<>(availableLanguages);
 
         availableThemes = FXCollections.observableArrayList(
-                languageBundle.getString(Constants.LIGHT_THEME_CSS_NAME), languageBundle.getString(
-                        Constants.DARK_THEME_CSS_NAME));
+                languageBundle.getString(Constants.LIGHT_THEME_CSS_NAME),
+                languageBundle.getString(Constants.DARK_THEME_CSS_NAME));
         themeChoice = new ChoiceBox<>(availableThemes);
-        //themeChoice.setValue(availableThemes.get(0));
 
         verticalLayout.setFillWidth(true);
         verticalLayout.getChildren().addAll(languageChoice, themeChoice);
 
         settingsPane.setGraphic(settingsHeader);
         settingsPane.setContent(verticalLayout);
-        //settingsPane.setExpanded(false);
 
         this.getChildren().addAll(settingsPane);
 
@@ -113,7 +111,7 @@ public class SettingsPane extends PaneElement {
      * Getter for the settingsLbl.
      * @return instance of the settingsLbl
      */
-    public Label getSettingsLbl() {
+    public ObserverLabel getSettingsLbl() {
         return settingsLbl;
     }
 }

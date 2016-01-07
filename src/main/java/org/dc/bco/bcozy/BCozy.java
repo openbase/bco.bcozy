@@ -41,6 +41,7 @@ import org.dc.bco.bcozy.view.ImageViewProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 /**
  * Main Class of the BCozy Program.
  */
