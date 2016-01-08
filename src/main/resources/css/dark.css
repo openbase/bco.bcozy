@@ -28,8 +28,8 @@
 .icons{
     -fx-font-family: FontAwesome;
     -fx-font-size: 16px;
-    -fx-effect: innershadow( three-pass-box , derive(-icons-color,-70%) , 0.1em, 0.0 , 0.07em, 0.07em );
-    -fx-text-fill: linear-gradient(to bottom, derive(-icons-color,20%) 10%, derive(-icons-color,-40%) 80%);
+    /*-fx-effect: innershadow( three-pass-box , derive(-icons-color,70%) , 0.1em, 0.0 , 0.07em, 0.07em );*/
+    /*-fx-text-fill: linear-gradient(to bottom, derive(-icons-color,20%) 10%, derive(-icons-color,-40%) 80%);*/
 }
 .icons:hover{
     -fx-effect: dropshadow( three-pass-box , derive(-icons-color,0%) , 0.01em, 0.0 , 0, 0);
@@ -430,4 +430,22 @@
 
 .titled-pane > .content {
     -fx-background-color: -bg-color;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * WidgetPane                                                                  *
+ *                                                                             *
+ ******************************************************************************/
+
+.body-pane {
+    -fx-text-fill: -fx-text-base-color;
+    -fx-background-color:
+            -fx-box-border, linear-gradient(to bottom, derive(-fx-color,-02%), derive(-fx-color,65%) 12%,
+            derive(-fx-color,23%) 88%, derive(-fx-color,50%) 99%, -fx-box-border);
+}
+
+.head-pane {
+    -fx-text-fill: -fx-text-base-color;
+    -fx-background-color: -fx-box-border, -fx-inner-border, -fx-body-color;
 }

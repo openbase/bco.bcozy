@@ -22,6 +22,8 @@ package org.dc.bco.bcozy.view.location;
 import javafx.scene.paint.Color;
 import org.dc.bco.bcozy.view.Constants;
 
+import java.util.List;
+
 /**
  *
  */
@@ -32,10 +34,12 @@ public class ZonePolygon extends LocationPolygon {
      *
      * @param locationLabel The label of the location
      * @param locationId The id of the location
+     * @param childIds The ids of the children
      * @param points The vertices of the location
      */
-    public ZonePolygon(final String locationLabel, final String locationId, final double... points) {
-        super(locationLabel, locationId, points);
+    public ZonePolygon(final String locationLabel, final String locationId,
+                       final List<String> childIds, final double... points) {
+        super(locationLabel, locationId, childIds, points);
     }
 
     @Override
@@ -43,6 +47,7 @@ public class ZonePolygon extends LocationPolygon {
         this.setFill(Color.TRANSPARENT);
         this.setStroke(Color.WHITE);
         this.setStrokeWidth(Constants.ROOM_STROKE_WIDTH);
+        this.setMouseTransparent(true);
     }
 
     @Override

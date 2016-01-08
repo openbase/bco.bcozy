@@ -428,3 +428,43 @@
 .titled-pane .widget-pane > .title > .arrow-button .arrow {
     visibility: hidden;
 }
+
+/*******************************************************************************
+ *                                                                             *
+ * WidgetPane                                                                  *
+ *                                                                             *
+ ******************************************************************************/
+
+.body-pane {
+    -fx-padding: 5.0 10.0 5.0 10.0;
+}
+
+.head-pane {
+    -fx-padding: 5.0 10.0 5.0 10.0;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * AmbientLight elements                                                       *
+ *                                                                             *
+ ******************************************************************************/
+
+.circle-selector {
+    -fx-stroke-type: outside;
+    -fx-stroke-width: 2.0;
+}
+
+.rectangle-selector {
+    -fx-stroke-type: outside;
+    -fx-stroke-width: 2.0;
+}
+
+.color-rect-container {
+    /*-fx-padding: 0.0 10.0 0.0 10.0;*/
+    -fx-background-insets:  10.0 10.0 10.0 10.0;
+}
+
+.color-circle-container {
+    /*-fx-padding: 0.0 10.0 0.0 10.0;*/
+    -fx-background-insets:  10.0 10.0 10.0 10.0;
+}

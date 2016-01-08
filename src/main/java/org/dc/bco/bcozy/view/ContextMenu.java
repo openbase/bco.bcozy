@@ -26,6 +26,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.HiddenSidesPane;
 import org.dc.bco.bcozy.view.devicepanes.TitledPaneContainer;
+import org.dc.bco.bcozy.view.devicepanes.WidgetPane;
 
 /**
  * Created by hoestreich on 11/10/15.
@@ -34,7 +35,8 @@ public class ContextMenu extends VBox {
 
     private final ContextSortingPane contextSortingPane;
     private final Label roomInfo;
-    private final TitledPaneContainer titledPaneContainer;
+    private final ScrollPane verticalScrollPane;
+    private TitledPaneContainer titledPaneContainer;
 
 
     /**
@@ -53,7 +55,7 @@ public class ContextMenu extends VBox {
         roomInfo = new Label("No room selected.");
         roomInfo.setAlignment(Pos.CENTER);
 
-        final ScrollPane verticalScrollPane = new ScrollPane();
+        verticalScrollPane = new ScrollPane();
         verticalScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         verticalScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
@@ -81,7 +83,10 @@ public class ContextMenu extends VBox {
         scrollBar.setVisibleAmount(0.25);
         //CHECKSTYLE.ON: MagicNumber
 
-        this.getChildren().addAll(roomInfo, contextSortingPane, hiddenSidesPane);
+        final WidgetPane widgetPane = new WidgetPane();
+        final WidgetPane widgetPane2 = new WidgetPane();
+
+        this.getChildren().addAll(roomInfo, contextSortingPane, hiddenSidesPane, widgetPane, widgetPane2);
         //VBox.setVgrow(contextSortingPane, Priority.ALWAYS);
 
         //CHECKSTYLE.OFF: MultipleStringLiterals
@@ -103,5 +108,21 @@ public class ContextMenu extends VBox {
      */
     public TitledPaneContainer getTitledPaneContainer() {
         return titledPaneContainer;
+    }
+
+    /**
+     * Set the new TitledPaneContainer and add it to the VerticalScrollPane.
+     * @param titledPaneContainer titledPaneContainer
+     */
+    public void setTitledPaneContainer(final TitledPaneContainer titledPaneContainer) {
+        this.titledPaneContainer = titledPaneContainer;
+        verticalScrollPane.setContent(this.titledPaneContainer);
+    }
+
+    /**
+     * Clears the vertical ScrollPane of the ContextMenu.
+     */
+    public void clearVerticalScrollPane() {
+        verticalScrollPane.setContent(null);
     }
 }

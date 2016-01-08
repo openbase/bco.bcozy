@@ -21,6 +21,7 @@ package org.dc.bco.bcozy.controller;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import org.dc.bco.bcozy.BCozy;
+import org.dc.bco.bcozy.model.LanguageSelection;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.ForegroundPane;
 import org.dc.bco.bcozy.view.mainmenupanes.SettingsPane;
@@ -36,6 +37,7 @@ public class MainMenuController {
 
     private final UserPane userPane;
     private final SettingsPane settingsPane;
+
     /**
      * Constructor for the MainMenuController.
      * @param foregroundPane The foregroundPane allows to access all necessary gui elements
@@ -55,6 +57,7 @@ public class MainMenuController {
         settingsPane.getLanguageChoice().setOnAction(event -> chooseLanguage());
         //Necessary to ensure that the first change is not missed by the ChangeListener
         settingsPane.getThemeChoice().getSelectionModel().select(0);
+        settingsPane.getLanguageChoice().getSelectionModel().select(0);
 
         foregroundPane.getMainMenu().getMainMenuFloatingButton().setOnAction(event -> showHideMainMenu(foregroundPane));
     }
@@ -126,8 +129,6 @@ public class MainMenuController {
     }
 
     private void chooseLanguage() {
-        final ResourceBundle languageBundle = ResourceBundle
-                .getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
         settingsPane.getLanguageChoice().getSelectionModel().selectedIndexProperty()
                 .addListener(new ChangeListener<Number>() {
 
@@ -135,18 +136,11 @@ public class MainMenuController {
                     public void changed(final ObservableValue<? extends Number> observableValue, final Number number,
                                         final Number number2) {
                         if (settingsPane.getAvailableLanguages().get(number2.intValue()).equals("English")) {
-                            Locale.setDefault(new Locale("en", "US"));
+                            LanguageSelection.getInstance().setSelectedLocale(new Locale("en", "US"));
                         } else if (settingsPane.getAvailableLanguages().get(number2.intValue()).equals("Deutsch")) {
-                            Locale.setDefault(new Locale("de", "DE"));
+                            LanguageSelection.getInstance().setSelectedLocale(new Locale("de", "DE"));
                         }
                     }
                 });
-        userPane.getInputWrongLbl().setText(languageBundle.getString("inputWrong"));
-        userPane.getNameLbl().setText(languageBundle.getString("username"));
-        userPane.getPwLbl().setText(languageBundle.getString("password"));
-        userPane.getLoginBtn().setText(languageBundle.getString("login"));
-        userPane.getLogoutBtn().setText(languageBundle.getString("logout"));
-
-        settingsPane.getSettingsLbl().setText(languageBundle.getString("settings"));
     }
 }

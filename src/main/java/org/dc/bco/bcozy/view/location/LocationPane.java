@@ -33,8 +33,10 @@ import org.dc.bco.bcozy.view.ForegroundPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -46,12 +48,14 @@ public class LocationPane extends Pane {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(LocationPane.class);
 
-    private LocationPolygon selectedRoom;
+    private LocationPolygon selectedLocation;
     private LocationPolygon rootRoom;
     private final ForegroundPane foregroundPane;
-    private final List<LocationPolygon> locationList;
-    private final SimpleStringProperty selectedRoomId;
+    private final Map<String, LocationPolygon> locationMap;
+    private final SimpleStringProperty selectedLocationId;
 
+    private LocationPolygon lastFirstClickTarget;
+    private LocationPolygon lastSelectedTile;
     private final EventHandler<MouseEvent> onEmptyAreaClickHandler;
 
     /**
@@ -64,26 +68,29 @@ public class LocationPane extends Pane {
 
         this.foregroundPane = foregroundPane;
 
-        locationList = new LinkedList<>();
+        locationMap = new HashMap<>();
 
         //Dummy Room
-        selectedRoom = new ZonePolygon(Constants.DUMMY_ROOM_NAME, Constants.DUMMY_ROOM_NAME, 0.0, 0.0, 0.0, 0.0);
-        selectedRoomId = new SimpleStringProperty(Constants.DUMMY_ROOM_NAME);
-        rootRoom = null;
+        selectedLocation = new ZonePolygon(
+                Constants.DUMMY_ROOM_NAME, Constants.DUMMY_ROOM_NAME, new LinkedList<>(), 0.0, 0.0, 0.0, 0.0);
+        selectedLocationId = new SimpleStringProperty(Constants.DUMMY_ROOM_NAME);
 
+        rootRoom = null;
+        lastSelectedTile = selectedLocation;
+        lastFirstClickTarget = selectedLocation;
         onEmptyAreaClickHandler = event -> {
             if (event.isStillSincePress() && rootRoom != null) {
                 if (event.getClickCount() == 1) {
-                    if (!selectedRoom.equals(rootRoom)) {
-                        selectedRoom.setSelected(false);
+                    if (!selectedLocation.equals(rootRoom)) {
+                        selectedLocation.setSelected(false);
                         rootRoom.setSelected(true);
-                        this.setSelectedRoom(rootRoom);
+                        this.setSelectedLocation(rootRoom);
                     }
                 } else if (event.getClickCount() == 2) {
                     this.autoFocusPolygonAnimated(rootRoom);
                 }
 
-                foregroundPane.getContextMenu().getRoomInfo().setText(selectedRoom.getLocationLabel());
+                foregroundPane.getContextMenu().getRoomInfo().setText(selectedLocation.getLocationLabel());
             }
         };
     }
@@ -95,11 +102,12 @@ public class LocationPane extends Pane {
      *
      * @param locationId The location id
      * @param locationLabel The location label
+     * @param childIds The ids of the children
      * @param vertices A list of vertices which defines the shape of the room
      * @param locationType The type of the location {ZONE,REGION,TILE}
      */
-    public void addRoom(final String locationId, final String locationLabel,
-                        final List<Point2D> vertices, final String locationType) {
+    public void addLocation(final String locationId, final String locationLabel, final List<String> childIds,
+                            final List<Point2D> vertices, final String locationType) {
         // Fill the list of vertices into an array of points
         double[] points = new double[vertices.size() * 2];
         for (int i = 0; i < vertices.size(); i++) {
@@ -112,16 +120,15 @@ public class LocationPane extends Pane {
 
         switch (locationType) {
             case "TILE":
-                locationPolygon = new TilePolygon(locationLabel, locationId, points);
+                locationPolygon = new TilePolygon(locationLabel, locationId, childIds, points);
                 addMouseEventHandlerToTile((TilePolygon) locationPolygon);
                 break;
             case "REGION":
-                locationPolygon = new RegionPolygon(locationLabel, locationId, points);
-                locationPolygon.setMouseTransparent(true);
+                locationPolygon = new RegionPolygon(locationLabel, locationId, childIds, points);
+                addMouseEventHandlerToRegion((RegionPolygon) locationPolygon);
                 break;
             case "ZONE":
-                locationPolygon = new ZonePolygon(locationLabel, locationId, points);
-                locationPolygon.setMouseTransparent(true);
+                locationPolygon = new ZonePolygon(locationLabel, locationId, childIds, points);
                 rootRoom = locationPolygon; //TODO: handle the situation where several zones exist
                 break;
             default:
@@ -131,7 +138,7 @@ public class LocationPane extends Pane {
                         + "\n  Type:  " + locationType);
                 return;
         }
-        locationList.add(locationPolygon);
+        locationMap.put(locationId, locationPolygon);
         this.getChildren().add(locationPolygon);
     }
 
@@ -139,8 +146,8 @@ public class LocationPane extends Pane {
      * Erases all locations from the locationPane.
      */
     public void clearLocations() {
-        locationList.forEach(locationPolygon -> this.getChildren().remove(locationPolygon));
-        locationList.clear();
+        locationMap.forEach((locationId, locationPolygon) -> this.getChildren().remove(locationPolygon));
+        locationMap.clear();
         rootRoom = null;
     }
 
@@ -155,16 +162,11 @@ public class LocationPane extends Pane {
 
             if (event.isStillSincePress()) {
                 if (event.getClickCount() == 1) {
-                    if (!selectedRoom.equals(tile)) {
-                        selectedRoom.setSelected(false);
-                        tile.setSelected(true);
-                        setSelectedRoom(tile);
-                    }
+                    this.setSelectedLocation(tile);
+                    this.lastFirstClickTarget = tile;
                 } else if (event.getClickCount() == 2) {
                     autoFocusPolygonAnimated(tile);
                 }
-
-                foregroundPane.getContextMenu().getRoomInfo().setText(selectedRoom.getLocationLabel());
             }
         });
         tile.setOnMouseEntered(event -> {
@@ -179,19 +181,70 @@ public class LocationPane extends Pane {
         });
     }
 
-    private void setSelectedRoom(final LocationPolygon selectedRoom) {
-        this.selectedRoom = selectedRoom;
-        this.selectedRoomId.set(selectedRoom.getLocationId());
+    /**
+     * Adds a mouse eventHandler to the region.
+     *
+     * @param region The region
+     */
+    public void addMouseEventHandlerToRegion(final RegionPolygon region) {
+        region.setOnMouseClicked(event -> {
+            event.consume();
+
+            if (event.isStillSincePress()) {
+                if (event.getClickCount() == 1) {
+                    this.setSelectedLocation(region);
+                    this.lastFirstClickTarget = region;
+                } else if (event.getClickCount() == 2) {
+                    if (this.lastFirstClickTarget.equals(region)) {
+                        autoFocusPolygonAnimated(region);
+                    } else {
+                        selectedLocation.fireEvent(event.copyFor(null, selectedLocation));
+                    }
+                }
+            }
+        });
+        region.setOnMouseEntered(event -> {
+            event.consume();
+            region.mouseEntered();
+            foregroundPane.getInfoFooter().getMouseOverText().setText(region.getLocationLabel());
+        });
+        region.setOnMouseExited(event -> {
+            event.consume();
+            region.mouseLeft();
+            foregroundPane.getInfoFooter().getMouseOverText().setText("");
+        });
+    }
+
+    private void setSelectedLocation(final LocationPolygon newSelectedLocation) {
+        if (!this.selectedLocation.equals(newSelectedLocation)) {
+            if (!newSelectedLocation.getClass().equals(RegionPolygon.class)) {
+                this.lastSelectedTile.getChildIds().forEach(childId ->
+                        ((RegionPolygon) locationMap.get(childId)).changeStyleOnSelectable(false));
+            }
+
+            if (newSelectedLocation.getClass().equals(TilePolygon.class)) {
+                this.lastSelectedTile = newSelectedLocation;
+                newSelectedLocation.getChildIds().forEach(childId ->
+                        ((RegionPolygon) locationMap.get(childId)).changeStyleOnSelectable(true));
+            }
+
+            this.selectedLocation.setSelected(false);
+            newSelectedLocation.setSelected(true);
+            this.selectedLocation = newSelectedLocation;
+            this.selectedLocationId.set(newSelectedLocation.getLocationId());
+
+            foregroundPane.getContextMenu().getRoomInfo().setText(selectedLocation.getLocationLabel());
+        }
     }
 
     /**
-     * ZoomFits to the root if available. Otherwise to the first location in the locationList.
+     * ZoomFits to the root if available. Otherwise to the first location in the locationMap.
      */
     public void zoomFit() {
         if (rootRoom != null) { //NOPMD
             autoFocusPolygon(rootRoom);
-        } else if (!locationList.isEmpty()) {
-            autoFocusPolygon(locationList.get(0));
+        } else if (!locationMap.isEmpty()) {
+            autoFocusPolygon(locationMap.values().iterator().next());
         }
     }
 
@@ -200,8 +253,8 @@ public class LocationPane extends Pane {
      *
      * @param changeListener The change Listener
      */
-    public void addSelectedRoomIdListener(final ChangeListener<? super String> changeListener) {
-        selectedRoomId.addListener(changeListener);
+    public void addSelectedLocationIdListener(final ChangeListener<? super String> changeListener) {
+        selectedLocationId.addListener(changeListener);
     }
 
     /**
@@ -209,8 +262,8 @@ public class LocationPane extends Pane {
      *
      * @param changeListener The change Listener
      */
-    public void removeSelectedRoomIdListener(final ChangeListener<? super String> changeListener) {
-        selectedRoomId.removeListener(changeListener);
+    public void removeSelectedLocationIdListener(final ChangeListener<? super String> changeListener) {
+        selectedLocationId.removeListener(changeListener);
     }
 
     /**

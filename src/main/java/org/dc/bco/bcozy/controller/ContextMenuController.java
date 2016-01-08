@@ -28,11 +28,13 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import org.dc.bco.bcozy.view.ForegroundPane;
+import org.dc.bco.bcozy.view.devicepanes.TitledPaneContainer;
 import org.dc.bco.bcozy.view.location.LocationPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.homeautomation.unit.UnitTemplateType.UnitTemplate.UnitType;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +48,7 @@ public class ContextMenuController {
     private final ForegroundPane foregroundPane;
     private final LocationPane backgroundPane;
     private final RemotePool remotePool;
+    private final Map<String, TitledPaneContainer> titledPaneMap;
 
     /**
      * Constructor for the ContextMenuController.
@@ -58,6 +61,7 @@ public class ContextMenuController {
         this.foregroundPane = foregroundPane;
         this.backgroundPane = backgroundPane;
         this.remotePool = remotePool;
+        this.titledPaneMap = new HashMap<>();
 
         this.foregroundPane.getMainMenu().addFillContextMenuButtonEventHandler(new EventHandler<ActionEvent>() {
             @Override
@@ -70,7 +74,7 @@ public class ContextMenuController {
             }
         });
 
-        this.backgroundPane.addSelectedRoomIdListener(new ChangeListener<String>() {
+        this.backgroundPane.addSelectedLocationIdListener(new ChangeListener<String>() {
             @Override
             public void changed(final ObservableValue<? extends String> observable, final String oldValue,
                                 final String newValue) {
@@ -89,24 +93,46 @@ public class ContextMenuController {
      * @throws CouldNotPerformException CouldNotPerformException
      */
     public void setContextMenuDevicePanes(final String locationID) throws CouldNotPerformException {
-        foregroundPane.getContextMenu().getTitledPaneContainer().clearTitledPane();
-
         if ("none".equals(locationID)) {
             throw new CouldNotPerformException("No location is selected.");
         }
 
-        final Map<UnitType, List<DALRemoteService>> unitRemoteMap =
-                remotePool.getUnitRemoteMapOfLocation(locationID);
+        TitledPaneContainer titledPaneContainer;
+        if (this.titledPaneMap.containsKey(locationID)) {
+            titledPaneContainer = this.titledPaneMap.get(locationID);
+        } else {
+            titledPaneContainer = new TitledPaneContainer();
+            this.titledPaneMap.put(locationID, titledPaneContainer);
 
-        final Iterator<Map.Entry<UnitType, List<DALRemoteService>>> entryIterator =
-                unitRemoteMap.entrySet().iterator();
+            final Map<UnitType, List<DALRemoteService>> unitRemoteMap =
+                    remotePool.getUnitRemoteMapOfLocation(locationID);
 
-        while (entryIterator.hasNext()) {
-            final Map.Entry<UnitType, List<DALRemoteService>> nextEntry =
-                    entryIterator.next();
+            final Iterator<Map.Entry<UnitType, List<DALRemoteService>>> entryIterator =
+                    unitRemoteMap.entrySet().iterator();
 
-            foregroundPane.getContextMenu().getTitledPaneContainer().createAndAddNewTitledPane(
-                    nextEntry.getKey(), nextEntry.getValue());
+            while (entryIterator.hasNext()) {
+                final Map.Entry<UnitType, List<DALRemoteService>> nextEntry = entryIterator.next();
+
+                titledPaneContainer.createAndAddNewTitledPane(nextEntry.getKey(), nextEntry.getValue());
+            }
         }
+
+        this.foregroundPane.getContextMenu().setTitledPaneContainer(titledPaneContainer);
+    }
+
+    /**
+     * Clears all stored titledPanes and clears the map afterwards.
+     */
+    public void clearTitledPaneMap() {
+        final Iterator<Map.Entry<String, TitledPaneContainer>> titledPaneIterator =
+                this.titledPaneMap.entrySet().iterator();
+
+        while (titledPaneIterator.hasNext()) {
+            final Map.Entry<String, TitledPaneContainer> nextEntry = titledPaneIterator.next();
+            nextEntry.getValue().clearTitledPane();
+        }
+
+        this.titledPaneMap.clear();
+        this.foregroundPane.getContextMenu().clearVerticalScrollPane();
     }
 }

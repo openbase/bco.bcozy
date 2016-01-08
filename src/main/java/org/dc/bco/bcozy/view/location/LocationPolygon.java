@@ -20,6 +20,8 @@ package org.dc.bco.bcozy.view.location;
 
 import javafx.scene.shape.Polygon;
 
+import java.util.List;
+
 /**
  *  A Polygon that can be selected and has a RoomName.
  */
@@ -30,21 +32,26 @@ public abstract class LocationPolygon extends Polygon {
     private final double centerY;
     private final String locationLabel;
     private final String locationId;
+    private final List<String> childIds;
 
 
     /**
      * Constructor for the LocationPolygon.
-     * @param points Points for the shape
      * @param locationLabel The name of the location
      * @param locationId The ID of the location
+     * @param childIds The ids of the children
+     * @param points Points for the shape
      */
-    public LocationPolygon(final String locationLabel, final String locationId, final double... points) {
+    public LocationPolygon(final String locationLabel, final String locationId,
+                           final List<String> childIds, final double... points) {
         super(points);
         this.centerX = (super.getLayoutBounds().getMaxX() + super.getLayoutBounds().getMinX()) / 2;
         this.centerY = (super.getLayoutBounds().getMaxY() + super.getLayoutBounds().getMinY()) / 2;
         this.locationLabel = locationLabel;
         this.locationId = locationId;
+        this.childIds = childIds;
         this.selected = false;
+
 
         this.setLocationStyle();
     }
@@ -79,6 +86,14 @@ public abstract class LocationPolygon extends Polygon {
      */
     public String getLocationId() {
         return locationId;
+    }
+
+    /**
+     * Method to get all the childIds from the Tile.
+     * @return A list of childIds.
+     */
+    public List<String> getChildIds() {
+        return childIds;
     }
 
     /**

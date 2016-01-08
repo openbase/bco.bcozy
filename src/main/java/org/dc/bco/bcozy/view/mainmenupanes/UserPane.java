@@ -29,10 +29,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.dc.bco.bcozy.view.Constants;
+import org.dc.bco.bcozy.view.ObserverButton;
+import org.dc.bco.bcozy.view.ObserverLabel;
 import org.dc.bco.bcozy.view.SVGIcon;
-
-import java.util.Locale;
-import java.util.ResourceBundle;
 
 /**
  * Created by hoestreich on 11/24/15.
@@ -43,16 +42,16 @@ public class UserPane extends VBox {
     private final PaneElement startLoginPane;
     private final PaneElement logoutPane;
     private final Button startLoginBtn;
-    private final Button loginBtn;
+    private final ObserverButton loginBtn;
     private final Button backBtn;
-    private final Button logoutBtn;
+    private final ObserverButton logoutBtn;
     private final TextField nameTxt;
     private final PasswordField passwordField;
-    private final Label inputWrongLbl;
+    private final ObserverLabel inputWrongLbl;
     private final Label loggedInUserLbl;
     private final VBox loginLayout;
-    private final Label nameLbl;
-    private final Label pwLbl;
+    private final ObserverLabel nameLbl;
+    private final ObserverLabel pwLbl;
     /**
      * Enum to control the display state.
      */
@@ -63,23 +62,20 @@ public class UserPane extends VBox {
      */
     public UserPane() {
 
-        final ResourceBundle languageBundle = ResourceBundle
-                .getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
-
         // Case: Before login
         startLoginBtn = new Button("", new SVGIcon(MaterialDesignIcon.LOGIN, Constants.SMALL_ICON));
         startLoginPane = new PaneElement(startLoginBtn);
 
         // Case: Login active
-        nameLbl = new Label(languageBundle.getString("username"));
+        nameLbl = new ObserverLabel("username");
         nameLbl.setAlignment(Pos.BOTTOM_LEFT);
         nameTxt = new TextField();
-        pwLbl = new Label(languageBundle.getString("password"));
+        pwLbl = new ObserverLabel("password");
         passwordField = new PasswordField();
-        inputWrongLbl = new Label(languageBundle.getString("inputWrong"));
+        inputWrongLbl = new ObserverLabel("inputWrong");
         inputWrongLbl.setAlignment(Pos.TOP_LEFT);
         //inputWrongLbl.setVisible(false);
-        loginBtn = new Button(languageBundle.getString("login"));
+        loginBtn = new ObserverButton("login");
         final HBox rightAlignLoginButton = new HBox(loginBtn);
         rightAlignLoginButton.setAlignment(Pos.CENTER_RIGHT);
 
@@ -100,7 +96,7 @@ public class UserPane extends VBox {
         final VBox logoutLayout = new VBox(Constants.INSETS);
         final SVGIcon loggedInUserIcon = new SVGIcon(MaterialDesignIcon.ACCOUNT_CIRCLE, Constants.SMALL_ICON);
         loggedInUserLbl = new Label();
-        logoutBtn = new Button(languageBundle.getString("logout"));
+        logoutBtn = new ObserverButton("logout");
         final HBox rightAlignLogoutButton = new HBox(logoutBtn);
         rightAlignLogoutButton.setAlignment(Pos.CENTER_RIGHT);
 
@@ -142,7 +138,7 @@ public class UserPane extends VBox {
      * Getter for the login button which initiates the user login.
      * @return instance of the button
      */
-    public Button getLoginBtn() {
+    public ObserverButton getLoginBtn() {
         return loginBtn;
     }
 
@@ -174,7 +170,7 @@ public class UserPane extends VBox {
      * Getter for the logoutBtn.
      * @return instance of the logoutBtn
      */
-    public Button getLogoutBtn() {
+    public ObserverButton getLogoutBtn() {
         return logoutBtn;
     }
 
@@ -182,7 +178,7 @@ public class UserPane extends VBox {
      * Getter for the inputWrongLabel.
      * @return instance of the inputWrongLbl
      */
-    public Label getInputWrongLbl() {
+    public ObserverLabel getInputWrongLbl() {
         return inputWrongLbl;
     }
 
@@ -198,7 +194,7 @@ public class UserPane extends VBox {
      * Getter for the pwLbl.
      * @return instance of the pwLbl
      */
-    public Label getPwLbl() {
+    public ObserverLabel getPwLbl() {
         return pwLbl;
     }
 
@@ -206,7 +202,7 @@ public class UserPane extends VBox {
      * Getter for the nameLbl.
      * @return instance of the nameLbl
      */
-    public Label getNameLbl() {
+    public ObserverLabel getNameLbl() {
         return nameLbl;
     }
 

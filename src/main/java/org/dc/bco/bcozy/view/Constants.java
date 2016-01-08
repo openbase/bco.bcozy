@@ -116,6 +116,21 @@ public final class Constants {
     public static final double ROOM_STROKE_WIDTH_MOUSE_OVER = 3.0;
 
     /**
+     * The stroke width of a region.
+     */
+    public static final double REGION_STROKE_WIDTH = 0.5;
+
+    /**
+     * The stroke width of a region (mouse over).
+     */
+    public static final double REGION_STROKE_WIDTH_MOUSE_OVER = 2.0;
+
+    /**
+     * The dash width of a region.
+     */
+    public static final double REGION_DASH_WIDTH = 4.0;
+
+    /**
      * The standard text size to be used when loading a new font.
      */
     public static final double STANDARD_TEXT_SIZE = 14.0;
@@ -151,6 +166,11 @@ public final class Constants {
     public static final double FASTFADEDURATION = 100.0;
 
     /**
+     * The duration for light change fade animation.
+     */
+    public static final double LIGHT_CHANGE_FADE_DURATION = 400.0;
+
+    /**
      * The duration for a slow fade animation.
      */
     public static final double SLOW_FADE_DURATION = 2000.0;
@@ -168,7 +188,7 @@ public final class Constants {
     /**
      * The color for a region.
      */
-    public static final Color REGION_FILL = new Color(1.0, 1.0, 1.0, 0.15);
+    public static final Color REGION_FILL = new Color(1.0, 1.0, 1.0, 0.08);
 
     /**
      * The width of the zoomPane in the locationPane.
@@ -208,7 +228,7 @@ public final class Constants {
     /**
      * Divide constant for HSB color init.
      */
-    public static final int ONEHUNDRED = 100;
+    public static final int ONE_HUNDRED = 100;
 
     /**
      * The factor for the scaling in the locationPane.
@@ -219,6 +239,56 @@ public final class Constants {
      * Name of the language resource bundle.
      */
     public static final String LANGUAGE_RESOURCE_BUNDLE = "languages.languages";
+
+    /**
+     * Time in milliseconds for animation effects.
+     */
+    public static final int ANIMATION_TIME = 200;
+
+    /**
+     * Full circle angle in degree.
+     */
+    public static final int ROUND_ANGLE = 360;
+
+    /**
+     * Obtuse angle (270) in degree.
+     */
+    public static final int OBTUSE_ANGLE_270 = 270;
+
+    /**
+     * Right angle in degree.
+     */
+    public static final int RIGHT_ANGLE = 90;
+
+    /**
+     * 255 (1 byte) for rgb color.
+     */
+    public static final int RGB_8_BIT = 255;
+
+    /**
+     * Number Six.
+     */
+    public static final int SIX = 6;
+
+    /**
+     * Number ten.
+     */
+    public static final int TEN = 10;
+
+    /**
+     * Number fifteen.
+     */
+    public static final int FIFTEEN = 15;
+
+    /**
+     * text: "white".
+     */
+    public static final String WHITE = "white";
+
+    /**
+     * Yellow color like a lightbulb.
+     */
+    public static final Color LIGHTBULB_COLOR = new Color(1.0, 1.0, 0.3, 1.0);
 
     /**
      * Private Constructor.

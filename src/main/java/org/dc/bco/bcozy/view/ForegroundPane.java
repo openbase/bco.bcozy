@@ -96,4 +96,5 @@ public class ForegroundPane extends BorderPane {
                 this.centerPane.getWidth(),
                 this.centerPane.getHeight());
     }
+
 }
