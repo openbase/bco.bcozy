@@ -18,16 +18,20 @@
  */
 package org.dc.bco.bcozy.view.mainmenupanes;
 
+import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
+import de.jensd.fx.glyphs.materialicons.MaterialIcon;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TitledPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.ImageViewProvider;
 import org.dc.bco.bcozy.view.ObserverLabel;
+import org.dc.bco.bcozy.view.SVGIcon;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -52,8 +56,7 @@ public class SettingsPane extends PaneElement {
 
         final TitledPane settingsPane = new TitledPane();
         final HBox settingsHeader = new HBox();
-        final ImageView settingsIcon = ImageViewProvider
-                .createImageView("/icons/adjustment.png", Constants.EXTRA_SMALL_ICON);
+        final StackPane settingsIcon = new SVGIcon(MaterialIcon.TUNE, Constants.EXTRA_SMALL_ICON);
         settingsLbl = new ObserverLabel("settings");
         settingsHeader.getChildren().addAll(settingsIcon, settingsLbl);
 
