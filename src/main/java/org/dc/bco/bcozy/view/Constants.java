@@ -166,6 +166,11 @@ public final class Constants {
     public static final double FASTFADEDURATION = 100.0;
 
     /**
+     * The duration for light change fade animation.
+     */
+    public static final double LIGHT_CHANGE_FADE_DURATION = 400.0;
+
+    /**
      * The duration for a slow fade animation.
      */
     public static final double SLOW_FADE_DURATION = 2000.0;

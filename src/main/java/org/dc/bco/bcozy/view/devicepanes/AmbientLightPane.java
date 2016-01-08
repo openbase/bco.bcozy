@@ -24,6 +24,7 @@ import de.citec.jul.exception.CouldNotPerformException;
 import de.citec.jul.exception.printer.ExceptionPrinter;
 import de.citec.jul.exception.printer.LogLevel;
 import de.citec.jul.pattern.Observable;
+import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.ObjectBinding;
@@ -35,7 +36,6 @@ import javafx.geometry.Point2D;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
@@ -57,7 +57,7 @@ import javafx.scene.shape.Shape;
 import javafx.scene.shape.Path;
 import org.controlsfx.control.ToggleSwitch;
 import org.dc.bco.bcozy.view.Constants;
-import org.dc.bco.bcozy.view.ImageEffect;
+import org.dc.bco.bcozy.view.SVGIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.homeautomation.unit.AmbientLightType.AmbientLight;
@@ -71,8 +71,7 @@ public class AmbientLightPane extends UnitPane {
     private static final Logger LOGGER = LoggerFactory.getLogger(AmbientLightPane.class);
 
     private final AmbientLightRemote ambientLightRemote;
-    private final Image bottomImage;
-    private final Image topImage;
+    private final SVGIcon lightbulbIcon;
     private final ToggleSwitch toggleSwitch;
     private final BorderPane headContent;
     private Pane colorCircleContainer;
@@ -86,8 +85,8 @@ public class AmbientLightPane extends UnitPane {
         this.ambientLightRemote = (AmbientLightRemote) ambientLightRemote;
 
         toggleSwitch = new ToggleSwitch();
-        bottomImage = new Image("/icons/lightbulb_mask.png");
-        topImage    = new Image("/icons/lightbulb.png");
+        lightbulbIcon =
+                new SVGIcon(MaterialDesignIcon.LIGHTBULB, MaterialDesignIcon.LIGHTBULB_OUTLINE, Constants.SMALL_ICON);
         headContent = new BorderPane();
 
         try {
@@ -111,8 +110,7 @@ public class AmbientLightPane extends UnitPane {
     }
 
     private void setColorToImageEffect(final Color color) {
-        final ImageEffect imageGroup = new ImageEffect(bottomImage, topImage, color);
-        headContent.setLeft(imageGroup);
+        lightbulbIcon.setBackgroundIconColorAnimated(color);
     }
 
     private void initEffectAndSwitch() throws CouldNotPerformException {
@@ -126,7 +124,7 @@ public class AmbientLightPane extends UnitPane {
                 toggleSwitch.setSelected(true);
             }
         } else if (ambientLightRemote.getPower().getValue().equals(State.OFF)) {
-            setColorToImageEffect(Color.LIGHTGRAY);
+            setColorToImageEffect(Color.TRANSPARENT);
 
             if (toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(false);
@@ -139,7 +137,7 @@ public class AmbientLightPane extends UnitPane {
      */
     @Override
     protected void initTitle() {
-        final ImageView lightOff;
+        setColorToImageEffect(Color.TRANSPARENT);
 
         toggleSwitch.setOnMouseClicked(event -> {
             if (toggleSwitch.isSelected()) {
@@ -157,17 +155,12 @@ public class AmbientLightPane extends UnitPane {
             }
         });
 
-        //image
-        lightOff = new ImageView(topImage);
-        lightOff.setFitHeight(Constants.SMALL_ICON);
-        lightOff.setFitWidth(Constants.SMALL_ICON);
-        lightOff.setSmooth(true);
-
-        headContent.setLeft(lightOff);
+        headContent.setLeft(lightbulbIcon);
         headContent.setCenter(new Label(super.getUnitLabel()));
         headContent.setRight(toggleSwitch);
-        headContent.prefHeightProperty().set(lightOff.getFitHeight() + headContent.getPadding().getTop()
-                + headContent.getPadding().getBottom());
+
+        headContent.prefHeightProperty().set(lightbulbIcon.getSize() + Constants.INSETS);
+
     }
 
     /**
@@ -189,7 +182,9 @@ public class AmbientLightPane extends UnitPane {
         colorCircleContainer = new Pane();
         //CHECKSTYLE.OFF: MagicNumber
         colorCircleContainer.setPrefSize(150, 150);
+        colorCircleContainer.setMinSize(150, 150);
         //CHECKSTYLE.ON: MagicNumber
+        colorCircleContainer.getStyleClass().clear();
         colorCircleContainer.getStyleClass().add("color-circle-container");
         //colorCircleContainer.setPadding(new Insets(0, 10, 0, 10));
 
@@ -238,8 +233,8 @@ public class AmbientLightPane extends UnitPane {
         colorRectContainer.setOnMousePressed(colorContainerMouseHandler);
         colorRectContainer.setOnMouseDragged(colorContainerMouseHandler);
         colorRectContainer.setOnMouseReleased(sendingColorHandler);
+        colorRectContainer.getStyleClass().clear();
         colorRectContainer.getStyleClass().add("color-rect-container");
-        //colorRectContainer.setPadding(new Insets(0, 10, 0, 10));
         colorRectContainer.getChildren().add(circle);
 
         //rectangle as color selector
