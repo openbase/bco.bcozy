@@ -260,12 +260,15 @@ public final class Constants {
      */
     public static final int FIFTEEN = 15;
 
-
-
     /**
      * text: "white".
      */
     public static final String WHITE = "white";
+
+    /**
+     * Yellow color like a lightbulb.
+     */
+    public static final Color LIGHTBULB_COLOR = new Color(1.0, 1.0, 0.3, 1.0);
 
     /**
      * Private Constructor.

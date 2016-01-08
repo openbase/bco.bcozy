@@ -72,6 +72,16 @@ public class WidgetPane extends VBox {
     }
 
     /**
+     * Method creates a sliding widget pane, which includes a header(listener) and a body(sliding) with content.
+     * @param headContent Content of the header.
+     */
+    public void createWidgetPane(final BorderPane headContent) {
+        headPart(headContent);
+
+        isExpanded.set(false);
+    }
+
+    /**
      * Method adds style and listener to the head content and integrates it to the ground pane.
      * @param headContent Content of the header.
      */
