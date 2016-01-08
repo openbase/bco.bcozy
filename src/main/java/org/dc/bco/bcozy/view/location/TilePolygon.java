@@ -29,18 +29,17 @@ import java.util.List;
  */
 public class TilePolygon extends LocationPolygon {
 
-    private List<String> childIds;
-
     /**
      * The Constructor for a TilePolygon.
      *
      * @param locationLabel The label of the location
      * @param locationId The id of the location
+     * @param childIds The ids of the children
      * @param points The vertices of the location
      */
-    public TilePolygon(final String locationLabel, final String locationId, final List<String> childIds, final double... points) {
-        super(locationLabel, locationId, points);
-        this.childIds = childIds;
+    public TilePolygon(final String locationLabel, final String locationId,
+                       final List<String> childIds, final double... points) {
+        super(locationLabel, locationId, childIds, points);
     }
 
     @Override
@@ -57,15 +56,6 @@ public class TilePolygon extends LocationPolygon {
         } else {
             this.setFill(Color.TRANSPARENT);
         }
-    }
-
-    /**
-     * Method to get all the childIds from the Tile.
-     *
-     * @return A list of childIds.
-     */
-    public List<String> getChildIds() {
-        return childIds;
     }
 
     /**
