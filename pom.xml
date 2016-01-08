@@ -119,7 +119,7 @@
                     <programs>
                         <program>
                             <mainClass>org.dc.bco.bcozy.BCozy</mainClass>
-                            <id>BCozy</id>
+                            <id>bcozy</id>
                             <platforms>
                                 <platform>unix</platform>
                             </platforms>
