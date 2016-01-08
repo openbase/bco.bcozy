@@ -21,6 +21,7 @@ package org.dc.bco.bcozy.view;
 import de.jensd.fx.glyphs.GlyphIcons;
 import de.jensd.fx.glyphs.GlyphsDude;
 import javafx.animation.FadeTransition;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -32,7 +33,9 @@ public class SVGIcon extends StackPane {
 
     private static final String ICON_CSS_STYLE = "icons";
     private Text backgroundIcon; //NOPMD
+    private Text backgroundFadeIcon; //NOPMD
     private Text foregroundIcon; //NOPMD
+    private Text foregroundFadeIcon; //NOPMD
     private final double size;
 
     /**
@@ -46,8 +49,13 @@ public class SVGIcon extends StackPane {
         backgroundIcon = createIcon(icon, String.valueOf(size));
         backgroundIcon.getStyleClass().add(ICON_CSS_STYLE);
         backgroundIcon.setSmooth(true);
+        backgroundFadeIcon = createIcon(icon, String.valueOf(size));
+        backgroundFadeIcon.getStyleClass().add(ICON_CSS_STYLE);
+        backgroundFadeIcon.setSmooth(true);
+        backgroundFadeIcon.setOpacity(Constants.FULLY_TRANSPARENT);
         foregroundIcon = null;
-        this.getChildren().addAll(backgroundIcon);
+        foregroundFadeIcon = null;
+        this.getChildren().addAll(backgroundIcon, backgroundFadeIcon);
     }
 
     /**
@@ -62,11 +70,20 @@ public class SVGIcon extends StackPane {
         this.backgroundIcon = createIcon(backgroundIcon, String.valueOf(size));
         this.backgroundIcon.getStyleClass().add(ICON_CSS_STYLE);
         this.backgroundIcon.setSmooth(true);
+        this.backgroundFadeIcon = createIcon(backgroundIcon, String.valueOf(size));
+        this.backgroundFadeIcon.getStyleClass().add(ICON_CSS_STYLE);
+        this.backgroundFadeIcon.setSmooth(true);
+        this.backgroundFadeIcon.setOpacity(Constants.FULLY_TRANSPARENT);
         this.foregroundIcon = createIcon(foregroundIcon, String.valueOf(size));
         this.foregroundIcon.getStyleClass().add(ICON_CSS_STYLE);
         this.foregroundIcon.setSmooth(true);
+        this.foregroundFadeIcon = createIcon(foregroundIcon, String.valueOf(size));
+        this.foregroundFadeIcon.getStyleClass().add(ICON_CSS_STYLE);
+        this.foregroundFadeIcon.setSmooth(true);
+        this.foregroundFadeIcon.setOpacity(Constants.FULLY_TRANSPARENT);
 
-        this.getChildren().addAll(this.backgroundIcon, this.foregroundIcon);
+        this.getChildren().addAll(this.backgroundIcon, this.backgroundFadeIcon, this.foregroundIcon,
+                this.foregroundFadeIcon);
     }
 
     private Text createIcon(final GlyphIcons icon, final String iconSize) {
@@ -114,13 +131,29 @@ public class SVGIcon extends StackPane {
     }
 
     private void setAnimatedColor(final Text node, final Color color) {
-        node.setOpacity(Constants.FULLY_TRANSPARENT);
-        node.setFill(color);
-        final FadeTransition colorFade = AnimationProvider.createFadeTransition(
-                node, Constants.FULLY_TRANSPARENT, Constants.NO_TRANSPARENCY,
-                1, Constants.FASTFADEDURATION);
-        colorFade.setOnFinished(event -> node.setOpacity(Constants.NO_TRANSPARENCY));
-        colorFade.play();
+        final FadeTransition colorFade;
+        if(node.equals(backgroundIcon)){
+            backgroundFadeIcon.setFill(color);
+            colorFade = AnimationProvider.createFadeTransition(
+                    backgroundFadeIcon, Constants.FULLY_TRANSPARENT, Constants.NO_TRANSPARENCY,
+                    1, Constants.LIGHT_CHANGE_FADE_DURATION);
+            colorFade.setOnFinished(event -> {
+                backgroundIcon.setFill(color);
+                backgroundFadeIcon.setOpacity(Constants.FULLY_TRANSPARENT);
+            });
+            colorFade.play();
+        } else if(node.equals(foregroundIcon)) {
+            foregroundFadeIcon.setFill(color);
+            colorFade = AnimationProvider.createFadeTransition(
+                    foregroundFadeIcon, Constants.FULLY_TRANSPARENT, Constants.NO_TRANSPARENCY,
+                    1, Constants.LIGHT_CHANGE_FADE_DURATION);
+            colorFade.setOnFinished(event -> {
+                foregroundIcon.setFill(color);
+                foregroundFadeIcon.setOpacity(Constants.FULLY_TRANSPARENT);
+            });
+            colorFade.play();
+        }
+
     }
 
     /**
