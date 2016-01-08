@@ -436,14 +436,11 @@
  ******************************************************************************/
 
 .body-pane {
-    -fx-skin: "com.sun.javafx.scene.control.skin.TitledPaneSkin";
-    -fx-background-insets: 0, 0 1 1 1;
+    -fx-padding: 5.0 10.0 5.0 10.0;
 }
 
 .head-pane {
-    -fx-skin: "com.sun.javafx.scene.control.skin.TitledPaneSkin";
-    -fx-background-insets: 0, 1, 2;
-    -fx-background-radius: 5 5 0 0, 4 4 0 0, 3 3 0 0;
+    -fx-padding: 5.0 10.0 5.0 10.0;
 }
 
 /*******************************************************************************
@@ -463,9 +460,11 @@
 }
 
 .color-rect-container {
-    -fx-padding: 0.0, 10.0, 0.0, 10.0;
+    /*-fx-padding: 0.0 10.0 0.0 10.0;*/
+    -fx-background-insets:  10.0 10.0 10.0 10.0;
 }
 
 .color-circle-container {
-    -fx-padding: 0.0, 10.0, 0.0, 10.0;
+    /*-fx-padding: 0.0 10.0 0.0 10.0;*/
+    -fx-background-insets:  10.0 10.0 10.0 10.0;
 }

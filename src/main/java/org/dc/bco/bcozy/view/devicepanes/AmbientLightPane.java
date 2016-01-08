@@ -189,7 +189,9 @@ public class AmbientLightPane extends UnitPane {
         colorCircleContainer = new Pane();
         //CHECKSTYLE.OFF: MagicNumber
         colorCircleContainer.setPrefSize(150, 150);
+        colorCircleContainer.setMinSize(150, 150);
         //CHECKSTYLE.ON: MagicNumber
+        colorCircleContainer.getStyleClass().clear();
         colorCircleContainer.getStyleClass().add("color-circle-container");
         //colorCircleContainer.setPadding(new Insets(0, 10, 0, 10));
 
@@ -238,6 +240,7 @@ public class AmbientLightPane extends UnitPane {
         colorRectContainer.setOnMousePressed(colorContainerMouseHandler);
         colorRectContainer.setOnMouseDragged(colorContainerMouseHandler);
         colorRectContainer.setOnMouseReleased(sendingColorHandler);
+        colorRectContainer.getStyleClass().clear();
         colorRectContainer.getStyleClass().add("color-rect-container");
         //colorRectContainer.setPadding(new Insets(0, 10, 0, 10));
         colorRectContainer.getChildren().add(circle);

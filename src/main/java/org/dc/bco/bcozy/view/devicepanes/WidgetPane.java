@@ -87,6 +87,7 @@ public class WidgetPane extends VBox {
      */
     private void headPart(final BorderPane headContent) {
         head = headContent;
+        head.getStyleClass().clear();
         head.getStyleClass().add("head-pane");
         head.setOnMouseClicked(paramT -> toggleVisibility());
 
@@ -99,6 +100,7 @@ public class WidgetPane extends VBox {
      */
     private void bodyPart(final Pane bodyContent) {
         body = bodyContent;
+        body.getStyleClass().clear();
         body.getStyleClass().addAll("body-pane");
 
         this.getChildren().add(body);
