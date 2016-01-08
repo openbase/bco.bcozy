@@ -9,6 +9,28 @@
 
     <name>BCozy</name>
 
+    <organization>
+        <name>DivineCooperation</name>
+        <url>https://github.com/divinecooperation</url>
+    </organization>
+    <developers>
+        <!-- please list all devs here -->
+        <developer>
+            <id>DivineThreepwood</id>
+            <name>Marian Pohling</name>
+
+            <email>divinethreepwood@gmail.com</email>
+            <url>https://github.com/DivineThreepwood</url>
+            <organization>DivineCooperation</organization>
+            <organizationUrl>https://github.com/divinecooperation</organizationUrl>
+            <roles>
+                <role>architect</role>
+                <role>developer</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
+    </developers>
+
     <properties>
         <test.configs>${project.basedir}/target/generated-test-config</test.configs>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
