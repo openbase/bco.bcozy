@@ -18,18 +18,15 @@
  */
 package org.dc.bco.bcozy.view.mainmenupanes;
 
-import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import de.jensd.fx.glyphs.materialicons.MaterialIcon;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TitledPane;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.dc.bco.bcozy.view.Constants;
-import org.dc.bco.bcozy.view.ImageViewProvider;
 import org.dc.bco.bcozy.view.ObserverLabel;
 import org.dc.bco.bcozy.view.SVGIcon;
 

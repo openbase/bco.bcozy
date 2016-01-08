@@ -21,7 +21,6 @@ package org.dc.bco.bcozy.view;
 import de.jensd.fx.glyphs.GlyphIcons;
 import de.jensd.fx.glyphs.GlyphsDude;
 import javafx.animation.FadeTransition;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -132,7 +131,7 @@ public class SVGIcon extends StackPane {
 
     private void setAnimatedColor(final Text node, final Color color) {
         final FadeTransition colorFade;
-        if(node.equals(backgroundIcon)){
+        if (node.equals(backgroundIcon)) {
             backgroundFadeIcon.setFill(color);
             colorFade = AnimationProvider.createFadeTransition(
                     backgroundFadeIcon, Constants.FULLY_TRANSPARENT, Constants.NO_TRANSPARENCY,
@@ -142,7 +141,7 @@ public class SVGIcon extends StackPane {
                 backgroundFadeIcon.setOpacity(Constants.FULLY_TRANSPARENT);
             });
             colorFade.play();
-        } else if(node.equals(foregroundIcon)) {
+        } else if (node.equals(foregroundIcon)) {
             foregroundFadeIcon.setFill(color);
             colorFade = AnimationProvider.createFadeTransition(
                     foregroundFadeIcon, Constants.FULLY_TRANSPARENT, Constants.NO_TRANSPARENCY,

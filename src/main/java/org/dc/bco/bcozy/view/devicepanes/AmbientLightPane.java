@@ -36,7 +36,6 @@ import javafx.geometry.Point2D;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
@@ -58,7 +57,6 @@ import javafx.scene.shape.Shape;
 import javafx.scene.shape.Path;
 import org.controlsfx.control.ToggleSwitch;
 import org.dc.bco.bcozy.view.Constants;
-import org.dc.bco.bcozy.view.ImageEffect;
 import org.dc.bco.bcozy.view.SVGIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -161,7 +159,6 @@ public class AmbientLightPane extends UnitPane {
         headContent.setCenter(new Label(super.getUnitLabel()));
         headContent.setRight(toggleSwitch);
 
-        System.out.println("ALP LightbulbIcon Height:" + lightbulbIcon.getPrefHeight());
         headContent.prefHeightProperty().set(lightbulbIcon.getSize() + Constants.INSETS);
 
     }

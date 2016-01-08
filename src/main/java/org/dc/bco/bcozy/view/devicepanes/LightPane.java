@@ -27,14 +27,10 @@ import de.citec.jul.pattern.Observable;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import org.controlsfx.control.ToggleSwitch;
 import org.dc.bco.bcozy.view.Constants;
-import org.dc.bco.bcozy.view.ImageEffect;
 import org.dc.bco.bcozy.view.SVGIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -130,10 +126,7 @@ public class LightPane extends UnitPane {
         headContent.setCenter(new Label(super.getUnitLabel()));
         headContent.setRight(toggleSwitch);
         //Padding values are not available here
-
-        System.out.println("LP LightbulbIcon Height:" + lightbulbIcon.getPrefHeight());
         headContent.prefHeightProperty().set(lightbulbIcon.getSize() + Constants.INSETS);
-        System.out.println("Light Pane HeadContent Height:" + headContent.prefHeightProperty().getValue());
     }
 
     /**
