@@ -43,6 +43,7 @@ public class ZonePolygon extends LocationPolygon {
         this.setFill(Color.TRANSPARENT);
         this.setStroke(Color.WHITE);
         this.setStrokeWidth(Constants.ROOM_STROKE_WIDTH);
+        this.setMouseTransparent(true);
     }
 
     @Override

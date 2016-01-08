@@ -64,9 +64,8 @@ public class LocationController implements Observer<LocationRegistryType.Locatio
      * The constructor.
      *
      * @param foregroundPane the foreground pane
-     * @param locationPane the location pane
-     * @param remotePool the remotePool
-     *
+     * @param locationPane   the location pane
+     * @param remotePool     the remotePool
      * @throws InstantiationException This exception will be thrown if no LocationRegistryRemote could be instantiated
      */
     public LocationController(final ForegroundPane foregroundPane, final LocationPane locationPane,
@@ -144,8 +143,8 @@ public class LocationController implements Observer<LocationRegistryType.Locatio
                         vertices.add(new Point2D(vertex.x, vertex.y));
                     }
 
-                    locationPane.addRoom(locationConfig.getId(), locationConfig.getLabel(), vertices,
-                            locationConfig.getType().toString());
+                    locationPane.addRoom(locationConfig.getId(), locationConfig.getLabel(),
+                            locationConfig.getChildIdList(), vertices, locationConfig.getType().toString());
                 } catch (TransformerException e) {
                     ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
                     LOGGER.warn("Could not gather transformation for room: " + locationConfig.getId());
@@ -168,7 +167,7 @@ public class LocationController implements Observer<LocationRegistryType.Locatio
         zoneVertices.add(new Point2D(10, 0));
         zoneVertices.add(new Point2D(10, 10));
         zoneVertices.add(new Point2D(0, 10));
-        locationPane.addRoom("DummyID0", "DummyLabel0", zoneVertices,
+        locationPane.addRoom("DummyID0", "DummyLabel0", new LinkedList<>(), zoneVertices,
                 LocationConfigType.LocationConfig.LocationType.ZONE.toString());
 
         final List<Point2D> tile0Vertices = new LinkedList<>();
@@ -176,7 +175,7 @@ public class LocationController implements Observer<LocationRegistryType.Locatio
         tile0Vertices.add(new Point2D(5, 1));
         tile0Vertices.add(new Point2D(5, 3));
         tile0Vertices.add(new Point2D(1, 3));
-        locationPane.addRoom("DummyID1", "DummyLabel1", tile0Vertices,
+        locationPane.addRoom("DummyID1", "DummyLabel1", new LinkedList<>(), tile0Vertices,
                 LocationConfigType.LocationConfig.LocationType.TILE.toString());
 
         final List<Point2D> tile1Vertices = new LinkedList<>();
@@ -184,7 +183,7 @@ public class LocationController implements Observer<LocationRegistryType.Locatio
         tile1Vertices.add(new Point2D(6, 8));
         tile1Vertices.add(new Point2D(8, 8));
         tile1Vertices.add(new Point2D(8, 1));
-        locationPane.addRoom("DummyID2", "DummyLabel2", tile1Vertices,
+        locationPane.addRoom("DummyID2", "DummyLabel2", new LinkedList<>(), tile1Vertices,
                 LocationConfigType.LocationConfig.LocationType.TILE.toString());
         //CHECKSTYLE.ON: MagicNumber
 

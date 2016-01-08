@@ -33,8 +33,9 @@ import org.dc.bco.bcozy.view.ForegroundPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.LinkedList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -49,7 +50,7 @@ public class LocationPane extends Pane {
     private LocationPolygon selectedRoom;
     private LocationPolygon rootRoom;
     private final ForegroundPane foregroundPane;
-    private final List<LocationPolygon> locationList;
+    private final Map<String, LocationPolygon> locationMap;
     private final SimpleStringProperty selectedRoomId;
 
     private final EventHandler<MouseEvent> onEmptyAreaClickHandler;
@@ -64,7 +65,7 @@ public class LocationPane extends Pane {
 
         this.foregroundPane = foregroundPane;
 
-        locationList = new LinkedList<>();
+        locationMap = new HashMap<>();
 
         //Dummy Room
         selectedRoom = new ZonePolygon(Constants.DUMMY_ROOM_NAME, Constants.DUMMY_ROOM_NAME, 0.0, 0.0, 0.0, 0.0);
@@ -98,7 +99,7 @@ public class LocationPane extends Pane {
      * @param vertices A list of vertices which defines the shape of the room
      * @param locationType The type of the location {ZONE,REGION,TILE}
      */
-    public void addRoom(final String locationId, final String locationLabel,
+    public void addRoom(final String locationId, final String locationLabel, final List<String> childIds,
                         final List<Point2D> vertices, final String locationType) {
         // Fill the list of vertices into an array of points
         double[] points = new double[vertices.size() * 2];
@@ -112,16 +113,15 @@ public class LocationPane extends Pane {
 
         switch (locationType) {
             case "TILE":
-                locationPolygon = new TilePolygon(locationLabel, locationId, points);
+                locationPolygon = new TilePolygon(locationLabel, locationId, childIds, points);
                 addMouseEventHandlerToTile((TilePolygon) locationPolygon);
                 break;
             case "REGION":
                 locationPolygon = new RegionPolygon(locationLabel, locationId, points);
-                locationPolygon.setMouseTransparent(true);
+                addMouseEventHandlerToRegion((RegionPolygon) locationPolygon);
                 break;
             case "ZONE":
                 locationPolygon = new ZonePolygon(locationLabel, locationId, points);
-                locationPolygon.setMouseTransparent(true);
                 rootRoom = locationPolygon; //TODO: handle the situation where several zones exist
                 break;
             default:
@@ -131,7 +131,7 @@ public class LocationPane extends Pane {
                         + "\n  Type:  " + locationType);
                 return;
         }
-        locationList.add(locationPolygon);
+        locationMap.put(locationId, locationPolygon);
         this.getChildren().add(locationPolygon);
     }
 
@@ -139,8 +139,8 @@ public class LocationPane extends Pane {
      * Erases all locations from the locationPane.
      */
     public void clearLocations() {
-        locationList.forEach(locationPolygon -> this.getChildren().remove(locationPolygon));
-        locationList.clear();
+        locationMap.forEach((id, locationPolygon) -> this.getChildren().remove(locationPolygon) );
+        locationMap.clear();
         rootRoom = null;
     }
 
@@ -157,7 +157,19 @@ public class LocationPane extends Pane {
                 if (event.getClickCount() == 1) {
                     if (!selectedRoom.equals(tile)) {
                         selectedRoom.setSelected(false);
+
+                        //If previous selected location was a tile, make all of its regions unselectable.
+                        if (selectedRoom.getClass().equals(TilePolygon.class)) {
+                            ((TilePolygon) selectedRoom).getChildIds().forEach(s ->
+                                    ((RegionPolygon) locationMap.get(s)).changeStyleOnSelectable(false));
+                        }
+
                         tile.setSelected(true);
+
+                        //Make all regions of the newly selected tile selectable.
+                        tile.getChildIds().forEach(s ->
+                                ((RegionPolygon) locationMap.get(s)).changeStyleOnSelectable(true));
+
                         setSelectedRoom(tile);
                     }
                 } else if (event.getClickCount() == 2) {
@@ -179,19 +191,54 @@ public class LocationPane extends Pane {
         });
     }
 
+    /**
+     * Adds a mouse eventHandler to the region.
+     *
+     * @param region The region
+     */
+    public void addMouseEventHandlerToRegion(final RegionPolygon region) {
+        region.setOnMouseClicked(event -> {
+            event.consume();
+
+            if (event.isStillSincePress()) {
+                if (event.getClickCount() == 1) {
+                    if (!selectedRoom.equals(region)) {
+                        selectedRoom.setSelected(false);
+                        region.setSelected(true);
+                        setSelectedRoom(region);
+                    }
+                } else if (event.getClickCount() == 2) {
+                    autoFocusPolygonAnimated(region);
+                }
+
+                foregroundPane.getContextMenu().getRoomInfo().setText(selectedRoom.getLocationLabel());
+            }
+        });
+        region.setOnMouseEntered(event -> {
+            event.consume();
+            region.mouseEntered();
+            foregroundPane.getInfoFooter().getMouseOverText().setText(region.getLocationLabel());
+        });
+        region.setOnMouseExited(event -> {
+            event.consume();
+            region.mouseLeft();
+            foregroundPane.getInfoFooter().getMouseOverText().setText("");
+        });
+    }
+
     private void setSelectedRoom(final LocationPolygon selectedRoom) {
         this.selectedRoom = selectedRoom;
         this.selectedRoomId.set(selectedRoom.getLocationId());
     }
 
     /**
-     * ZoomFits to the root if available. Otherwise to the first location in the locationList.
+     * ZoomFits to the root if available. Otherwise to the first location in the locationMap.
      */
     public void zoomFit() {
         if (rootRoom != null) { //NOPMD
             autoFocusPolygon(rootRoom);
-        } else if (!locationList.isEmpty()) {
-            autoFocusPolygon(locationList.get(0));
+        } else if (!locationMap.isEmpty()) {
+            autoFocusPolygon(locationMap.values().iterator().next());
         }
     }
 

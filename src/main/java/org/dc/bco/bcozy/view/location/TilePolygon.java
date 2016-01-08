@@ -22,10 +22,14 @@ package org.dc.bco.bcozy.view.location;
 import javafx.scene.paint.Color;
 import org.dc.bco.bcozy.view.Constants;
 
+import java.util.List;
+
 /**
  *
  */
 public class TilePolygon extends LocationPolygon {
+
+    private List<String> childIds;
 
     /**
      * The Constructor for a TilePolygon.
@@ -34,8 +38,9 @@ public class TilePolygon extends LocationPolygon {
      * @param locationId The id of the location
      * @param points The vertices of the location
      */
-    public TilePolygon(final String locationLabel, final String locationId, final double... points) {
+    public TilePolygon(final String locationLabel, final String locationId, final List<String> childIds, final double... points) {
         super(locationLabel, locationId, points);
+        this.childIds = childIds;
     }
 
     @Override
@@ -52,6 +57,15 @@ public class TilePolygon extends LocationPolygon {
         } else {
             this.setFill(Color.TRANSPARENT);
         }
+    }
+
+    /**
+     * Method to get all the childIds from the Tile.
+     *
+     * @return A list of childIds.
+     */
+    public List<String> getChildIds() {
+        return childIds;
     }
 
     /**
