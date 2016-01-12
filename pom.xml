@@ -31,6 +31,11 @@
         </developer>
     </developers>
 
+    <scm>
+        <developerConnection>scm:git:https://github.com/divinethreepwood/bcozy.git</developerConnection>
+        <url>https://github.com/divinecooperation/bco.core-manager.git</url>
+    </scm>
+
     <properties>
         <test.configs>${project.basedir}/target/generated-test-config</test.configs>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
