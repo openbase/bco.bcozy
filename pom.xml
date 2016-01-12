@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.dc.bco</groupId>
     <artifactId>bcozy</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>0.2-SNAPSHOT</version>
 
     <packaging>jar</packaging>
 
@@ -39,9 +39,9 @@
         <plugin.pmd.version>3.5</plugin.pmd.version>
         <plugin.javadoc.version>2.10.3</plugin.javadoc.version>
         <failOnStyleError>false</failOnStyleError>
-        <dependency.jul.version>[1.0,1.1-SNAPSHOT)</dependency.jul.version>
-        <dependency.bco.dal.version>[1.0,1.1-SNAPSHOT)</dependency.bco.dal.version>
-        <dependency.bco.manager.version>[1.0,1.1-SNAPSHOT)</dependency.bco.manager.version>
+        <dependency.jul.version>[1.0,1.1-SNAPSHOT]</dependency.jul.version>
+        <dependency.bco.dal.version>[1.0,1.1-SNAPSHOT]</dependency.bco.dal.version>
+        <dependency.bco.manager.version>[1.0,1.1-SNAPSHOT]</dependency.bco.manager.version>
     </properties>
 
     <dependencies>
