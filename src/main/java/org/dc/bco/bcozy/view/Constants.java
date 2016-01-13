@@ -196,6 +196,11 @@ public final class Constants {
     public static final Color REGION_FILL = new Color(1.0, 1.0, 1.0, 0.08);
 
     /**
+     * The background color.
+     */
+    public static final Color BACKGROUND_COLOR = new Color(0.2, 0.2, 0.2, 1.0);
+
+    /**
      * The width of the zoomPane in the locationPane.
      */
     public static final double ZOOM_PANE_WIDTH = 2000;
@@ -213,12 +218,12 @@ public final class Constants {
     /**
      * The percentage of the full screen that a zoomed room will fill according to its width.
      */
-    public static final double ZOOM_FIT_PERCENTAGE_WIDTH = 0.3;
+    public static final double ZOOM_FIT_PERCENTAGE_WIDTH = 0.7;
 
     /**
      * The percentage of the full screen that a zoomed room will fill according to its width.
      */
-    public static final double ZOOM_FIT_PERCENTAGE_HEIGHT = 0.5;
+    public static final double ZOOM_FIT_PERCENTAGE_HEIGHT = 0.7;
 
     /**
      * The offset to push the floating button on the border.

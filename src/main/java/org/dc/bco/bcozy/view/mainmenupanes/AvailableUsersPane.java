@@ -22,14 +22,14 @@ import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.*;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollBar;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import org.controlsfx.control.HiddenSidesPane;
 import org.dc.bco.bcozy.view.Constants;
-import org.dc.bco.bcozy.view.ImageViewProvider;
 import org.dc.bco.bcozy.view.SVGIcon;
 
 import java.util.Locale;
@@ -86,22 +86,23 @@ public class AvailableUsersPane extends PaneElement {
     }
 
     private class AvailableUserRow extends BorderPane {
-        public AvailableUserRow(final String userName) {
-            final ImageView userIcon = ImageViewProvider
-                    .createImageView("/icons/users.png", Constants.EXTRA_SMALL_ICON);
-            final ImageView deleteUserIcon = ImageViewProvider
-                    .createImageView("/icons/delete_user.png", Constants.EXTRA_SMALL_ICON);
-            final ImageView logoutUserIcon = ImageViewProvider
-                    .createImageView("/icons/logout.png", Constants.EXTRA_SMALL_ICON);
-            final Button deleteUserBtn = new Button("", deleteUserIcon);
-            final Button logoutUserBtn = new Button("", logoutUserIcon);
-            final Label userLabel = new Label(userName, userIcon);
-            BorderPane.setAlignment(userLabel, Pos.CENTER_LEFT);
-            final HBox rightAlign = new HBox();
-            rightAlign.getChildren().addAll(deleteUserBtn, logoutUserBtn);
-            this.setLeft(userLabel);
-            this.setRight(rightAlign);
-            this.getStyleClass().add("list-element");
+        AvailableUserRow(final String userName) {
+            // TODO: uncomment when the time comes...
+//            final ImageView userIcon = ImageViewProvider
+//                    .createImageView("/icons/users.png", Constants.EXTRA_SMALL_ICON);
+//            final ImageView deleteUserIcon = ImageViewProvider
+//                    .createImageView("/icons/delete_user.png", Constants.EXTRA_SMALL_ICON);
+//            final ImageView logoutUserIcon = ImageViewProvider
+//                    .createImageView("/icons/logout.png", Constants.EXTRA_SMALL_ICON);
+//            final Button deleteUserBtn = new Button("", deleteUserIcon);
+//            final Button logoutUserBtn = new Button("", logoutUserIcon);
+//            final Label userLabel = new Label(userName, userIcon);
+//            BorderPane.setAlignment(userLabel, Pos.CENTER_LEFT);
+//            final HBox rightAlign = new HBox();
+//            rightAlign.getChildren().addAll(deleteUserBtn, logoutUserBtn);
+//            this.setLeft(userLabel);
+//            this.setRight(rightAlign);
+//            this.getStyleClass().add("list-element");
         }
     }
 
