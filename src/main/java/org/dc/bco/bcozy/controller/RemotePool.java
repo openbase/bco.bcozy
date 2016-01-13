@@ -18,14 +18,14 @@
  */
 package org.dc.bco.bcozy.controller;
 
-import de.citec.dal.remote.unit.DALRemoteService;
-import de.citec.dal.remote.unit.UnitRemoteFactory;
-import de.citec.dal.remote.unit.UnitRemoteFactoryInterface;
-import de.citec.dm.remote.DeviceRegistryRemote;
-import de.citec.jul.exception.CouldNotPerformException;
-import de.citec.jul.exception.printer.ExceptionPrinter;
-import de.citec.jul.exception.printer.LogLevel;
-import de.citec.lm.remote.LocationRegistryRemote;
+import org.dc.bco.dal.remote.unit.DALRemoteService;
+import org.dc.bco.dal.remote.unit.UnitRemoteFactory;
+import org.dc.bco.dal.remote.unit.UnitRemoteFactoryInterface;
+import org.dc.bco.registry.device.remote.DeviceRegistryRemote;
+import org.dc.jul.exception.CouldNotPerformException;
+import org.dc.jul.exception.printer.ExceptionPrinter;
+import org.dc.jul.exception.printer.LogLevel;
+import org.dc.bco.registry.location.remote.LocationRegistryRemote;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;

@@ -18,12 +18,12 @@
  */
 package org.dc.bco.bcozy.view.devicepanes;
 
-import de.citec.dal.remote.unit.AmbientLightRemote;
-import de.citec.dal.remote.unit.DALRemoteService;
-import de.citec.jul.exception.CouldNotPerformException;
-import de.citec.jul.exception.printer.ExceptionPrinter;
-import de.citec.jul.exception.printer.LogLevel;
-import de.citec.jul.pattern.Observable;
+import org.dc.bco.dal.remote.unit.AmbientLightRemote;
+import org.dc.bco.dal.remote.unit.DALRemoteService;
+import org.dc.jul.exception.CouldNotPerformException;
+import org.dc.jul.exception.printer.ExceptionPrinter;
+import org.dc.jul.exception.printer.LogLevel;
+import org.dc.jul.pattern.Observable;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;

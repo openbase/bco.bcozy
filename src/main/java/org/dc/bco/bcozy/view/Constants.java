@@ -121,6 +121,21 @@ public final class Constants {
     public static final double ROOM_STROKE_WIDTH_MOUSE_OVER = 3.0;
 
     /**
+     * The stroke width of a region.
+     */
+    public static final double REGION_STROKE_WIDTH = 0.5;
+
+    /**
+     * The stroke width of a region (mouse over).
+     */
+    public static final double REGION_STROKE_WIDTH_MOUSE_OVER = 2.0;
+
+    /**
+     * The dash width of a region.
+     */
+    public static final double REGION_DASH_WIDTH = 4.0;
+
+    /**
      * The standard text size to be used when loading a new font.
      */
     public static final double STANDARD_TEXT_SIZE = 14.0;
@@ -178,7 +193,7 @@ public final class Constants {
     /**
      * The color for a region.
      */
-    public static final Color REGION_FILL = new Color(1.0, 1.0, 1.0, 0.15);
+    public static final Color REGION_FILL = new Color(1.0, 1.0, 1.0, 0.08);
 
     /**
      * The width of the zoomPane in the locationPane.
