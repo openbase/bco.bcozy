@@ -19,11 +19,11 @@
 
 package org.dc.bco.bcozy.controller;
 
-import de.citec.dal.remote.unit.DALRemoteService;
-import de.citec.jul.exception.CouldNotPerformException;
-import de.citec.jul.exception.printer.ExceptionPrinter;
-import de.citec.jul.exception.printer.LogLevel;
-import de.citec.lm.remote.LocationRegistryRemote;
+import org.dc.bco.dal.remote.unit.DALRemoteService;
+import org.dc.bco.registry.location.remote.LocationRegistryRemote;
+import org.dc.jul.exception.CouldNotPerformException;
+import org.dc.jul.exception.printer.ExceptionPrinter;
+import org.dc.jul.exception.printer.LogLevel;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -140,7 +140,7 @@ public class ContextMenuController {
 
     /**
      * Initializes and saves all TitledPanes of all Locations.
-     * @throws CouldNotPerformException
+     * @throws CouldNotPerformException CouldNotPerformException
      */
     public void initTitledPaneMap() throws CouldNotPerformException {
         final LocationRegistryRemote locationRegistryRemote = this.remotePool.getLocationRegistryRemote();
@@ -154,11 +154,11 @@ public class ContextMenuController {
             final String locationID = locationConfig.getId();
 
             //TODO: This is a workaround, while the handles are not included.
-            if (locationID.equals("f0a71f71-1463-41e3-9c9a-25a02a536001") || locationID.equals("ddc5097e-1018-443d-b288-e27e3a247e5d")) {
+            if ("f0a71f71-1463-41e3-9c9a-25a02a536001".equals(locationID) || "ddc5097e-1018-443d-b288-e27e3a247e5d".equals(locationID)) {
                 continue;
             }
 
-            TitledPaneContainer titledPaneContainer = new TitledPaneContainer();
+            final TitledPaneContainer titledPaneContainer = new TitledPaneContainer();
             this.titledPaneMap.put(locationID, titledPaneContainer);
 
             final Map<UnitType, List<DALRemoteService>> unitRemoteMap =

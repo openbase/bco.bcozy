@@ -19,13 +19,13 @@
 
 package org.dc.bco.bcozy.controller;
 
-import de.citec.jul.exception.CouldNotPerformException;
-import de.citec.jul.exception.InstantiationException;
-import de.citec.jul.exception.printer.ExceptionPrinter;
-import de.citec.jul.exception.printer.LogLevel;
-import de.citec.jul.pattern.Observable;
-import de.citec.jul.pattern.Observer;
-import de.citec.lm.remote.LocationRegistryRemote;
+import org.dc.jul.exception.CouldNotPerformException;
+import org.dc.jul.exception.InstantiationException;
+import org.dc.jul.exception.printer.ExceptionPrinter;
+import org.dc.jul.exception.printer.LogLevel;
+import org.dc.jul.pattern.Observable;
+import org.dc.jul.pattern.Observer;
+import org.dc.bco.registry.location.remote.LocationRegistryRemote;
 import javafx.application.Platform;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Point2D;

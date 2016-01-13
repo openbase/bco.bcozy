@@ -19,7 +19,7 @@
 
 package org.dc.bco.bcozy.view.devicepanes;
 
-import de.citec.dal.remote.unit.DALRemoteService;
+import org.dc.bco.dal.remote.unit.DALRemoteService;
 import javafx.scene.Node;
 import javafx.scene.layout.VBox;
 import rst.homeautomation.unit.UnitTemplateType.UnitTemplate.UnitType;
