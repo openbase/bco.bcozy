@@ -58,7 +58,7 @@ public class BatteryPane extends UnitPane {
 
         headContent = new BorderPane();
         batteryIcon = new SVGIcon(MaterialDesignIcon.BATTERY, MaterialDesignIcon.BATTERY_OUTLINE,
-                Constants.EXTRA_SMALL_ICON);
+                Constants.SMALL_ICON);
         batteryStatus = new Text();
         iconPane = new GridPane();
 
@@ -116,7 +116,7 @@ public class BatteryPane extends UnitPane {
         switch (batteryRemote.getBattery().getValue()) {
             case UNKNOWN:
                 batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_UNKNOWN);
-                batteryIcon.setBackgroundIconColorAnimated(Color.YELLOW);
+                batteryIcon.setBackgroundIconColorAnimated(Color.BLACK);
                 break;
             case OK:
                 batteryIcon.setBackgroundIconColorAnimated(Color.GREEN);

@@ -168,6 +168,13 @@ public class SVGIcon extends StackPane {
         this.backgroundFadeIcon = createIcon(icon, String.valueOf(this.size));
         this.backgroundFadeIcon.setSmooth(true);
         this.backgroundFadeIcon.setOpacity(Constants.FULLY_TRANSPARENT);
+        this.getChildren().clear();
+        if (this.backgroundIcon != null) {
+            this.getChildren().addAll(this.backgroundIcon, this.backgroundFadeIcon, this.foregroundIcon,
+                    this.foregroundFadeIcon);
+        } else {
+            this.getChildren().addAll(this.foregroundIcon, this.foregroundFadeIcon);
+        }
     }
 
     /**
