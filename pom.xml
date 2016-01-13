@@ -28,6 +28,62 @@
             </roles>
             <timezone>+1</timezone>
         </developer>
+        <developer>
+            <id>agatting</id>
+            <name>Andreas Gatting</name>
+
+            <email>agatting@techfak.uni-bielefeld.de</email>
+            <url>https://github.com/agatting</url>
+            <organization>DivineCooperation</organization>
+            <organizationUrl>https://github.com/divinecooperation</organizationUrl>
+            <roles>
+                <role>architect</role>
+                <role>developer</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
+        <developer>
+            <id>hoestreich</id>
+            <name>Hendrik Oestreich</name>
+
+            <email>hoestreich@techfak.uni-bielefeld.de</email>
+            <url>https://github.com/hoestreich</url>
+            <organization>DivineCooperation</organization>
+            <organizationUrl>https://github.com/divinecooperation</organizationUrl>
+            <roles>
+                <role>architect</role>
+                <role>developer</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
+        <developer>
+            <id>jdaberkow</id>
+            <name>Julian Daberkow</name>
+
+            <email>jdaberkow@techfak.uni-bielefeld.de</email>
+            <url>https://github.com/jdaberkow</url>
+            <organization>DivineCooperation</organization>
+            <organizationUrl>https://github.com/divinecooperation</organizationUrl>
+            <roles>
+                <role>architect</role>
+                <role>developer</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
+        <developer>
+            <id>tmichalskibi</id>
+            <name>Timo Michalski</name>
+
+            <email>tmichalski@techfak.uni-bielefeld.de</email>
+            <url>https://github.com/tmichalskibi</url>
+            <organization>DivineCooperation</organization>
+            <organizationUrl>https://github.com/divinecooperation</organizationUrl>
+            <roles>
+                <role>architect</role>
+                <role>developer</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
     </developers>
 
     <scm>
@@ -62,7 +118,7 @@
         <dependency>
             <groupId>de.jensd</groupId>
             <artifactId>fontawesomefx</artifactId>
-            <version>8.7</version>
+            <version>8.8</version>
         </dependency>
         <dependency>
             <groupId>org.dc</groupId>
@@ -79,11 +135,6 @@
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-project-info-reports-plugin</artifactId>
             <version>2.8.1</version>
-        </dependency>
-        <dependency>
-            <groupId>de.codecentric.centerdevice</groupId>
-            <artifactId>javafxsvg</artifactId>
-            <version>1.0.0</version>
         </dependency>
     </dependencies>
 
