@@ -93,6 +93,14 @@ public class LocationPane extends Pane {
                 foregroundPane.getContextMenu().getRoomInfo().setText(selectedLocation.getLocationLabel());
             }
         };
+
+        this.heightProperty().addListener((observable, oldValue, newValue) ->
+                this.setTranslateY(this.getTranslateY()
+                        - ((oldValue.doubleValue() - newValue.doubleValue()) / 2) * this.getScaleY()));
+
+        this.widthProperty().addListener((observable, oldValue, newValue) ->
+                this.setTranslateX(this.getTranslateX()
+                        - ((oldValue.doubleValue() - newValue.doubleValue()) / 2) * this.getScaleX()));
     }
 
     /**
@@ -100,11 +108,11 @@ public class LocationPane extends Pane {
      *
      * If a room with the same id already exists, it will be overwritten.
      *
-     * @param locationId The location id
+     * @param locationId    The location id
      * @param locationLabel The location label
-     * @param childIds The ids of the children
-     * @param vertices A list of vertices which defines the shape of the room
-     * @param locationType The type of the location {ZONE,REGION,TILE}
+     * @param childIds      The ids of the children
+     * @param vertices      A list of vertices which defines the shape of the room
+     * @param locationType  The type of the location {ZONE,REGION,TILE}
      */
     public void addLocation(final String locationId, final String locationLabel, final List<String> childIds,
                             final List<Point2D> vertices, final String locationType) {
@@ -268,6 +276,7 @@ public class LocationPane extends Pane {
 
     /**
      * Getter for the OnEmptyAreaClickHandler.
+     *
      * @return The EventHandler.
      */
     public EventHandler<MouseEvent> getOnEmptyAreaClickHandler() {
@@ -275,24 +284,33 @@ public class LocationPane extends Pane {
     }
 
     private void autoFocusPolygon(final LocationPolygon polygon) {
-        final double xScale =
-                (getLayoutBounds().getWidth() / polygon.prefWidth(0)) * Constants.ZOOM_FIT_PERCENTAGE_WIDTH;
-        final double yScale =
-                (getLayoutBounds().getHeight() / polygon.prefHeight(0)) * Constants.ZOOM_FIT_PERCENTAGE_HEIGHT;
+        final double xScale = (foregroundPane.getBoundingBox().getWidth() / polygon.prefWidth(0))
+                * Constants.ZOOM_FIT_PERCENTAGE_WIDTH;
+        final double yScale = (foregroundPane.getBoundingBox().getHeight() / polygon.prefHeight(0))
+                * Constants.ZOOM_FIT_PERCENTAGE_HEIGHT;
         final double scale = (xScale < yScale) ? xScale : yScale;
 
         this.setScaleX(scale);
         this.setScaleY(scale);
 
-        this.setTranslateX(-polygon.getCenterX() * scale + (getLayoutBounds().getWidth() * scale) / 2);
-        this.setTranslateY(-polygon.getCenterY() * scale + (getLayoutBounds().getHeight() * scale) / 2);
+        final double polygonDistanceToCenterX = (-(polygon.getCenterX() - (getLayoutBounds().getWidth() / 2))) * scale;
+        final double polygonDistanceToCenterY = (-(polygon.getCenterY() - (getLayoutBounds().getHeight() / 2))) * scale;
+        final double boundingBoxCenterX =
+                (foregroundPane.getBoundingBox().getMinX() + foregroundPane.getBoundingBox().getMaxX()) / 2;
+        final double boundingBoxCenterY =
+                (foregroundPane.getBoundingBox().getMinY() + foregroundPane.getBoundingBox().getMaxY()) / 2;
+        final double bbCenterDistanceToCenterX = ((getLayoutBounds().getWidth() / 2) - boundingBoxCenterX);
+        final double bbCenterDistanceToCenterY = ((getLayoutBounds().getHeight() / 2) - boundingBoxCenterY);
+
+        this.setTranslateX(polygonDistanceToCenterX - bbCenterDistanceToCenterX);
+        this.setTranslateY(polygonDistanceToCenterY - bbCenterDistanceToCenterY);
     }
 
     private void autoFocusPolygonAnimated(final LocationPolygon polygon) {
-        final double xScale =
-                (getLayoutBounds().getWidth() / polygon.prefWidth(0)) * Constants.ZOOM_FIT_PERCENTAGE_WIDTH;
-        final double yScale =
-                (getLayoutBounds().getHeight() / polygon.prefHeight(0)) * Constants.ZOOM_FIT_PERCENTAGE_HEIGHT;
+        final double xScale = (foregroundPane.getBoundingBox().getWidth() / polygon.prefWidth(0))
+                * Constants.ZOOM_FIT_PERCENTAGE_WIDTH;
+        final double yScale = (foregroundPane.getBoundingBox().getHeight() / polygon.prefHeight(0))
+                * Constants.ZOOM_FIT_PERCENTAGE_HEIGHT;
         final double scale = (xScale < yScale) ? xScale : yScale;
 
         final ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(500));
@@ -301,9 +319,18 @@ public class LocationPane extends Pane {
         scaleTransition.setCycleCount(1);
         scaleTransition.setAutoReverse(true);
 
+        final double polygonDistanceToCenterX = (-(polygon.getCenterX() - (getLayoutBounds().getWidth() / 2))) * scale;
+        final double polygonDistanceToCenterY = (-(polygon.getCenterY() - (getLayoutBounds().getHeight() / 2))) * scale;
+        final double boundingBoxCenterX =
+                (foregroundPane.getBoundingBox().getMinX() + foregroundPane.getBoundingBox().getMaxX()) / 2;
+        final double boundingBoxCenterY =
+                (foregroundPane.getBoundingBox().getMinY() + foregroundPane.getBoundingBox().getMaxY()) / 2;
+        final double bbCenterDistanceToCenterX = ((getLayoutBounds().getWidth() / 2) - boundingBoxCenterX);
+        final double bbCenterDistanceToCenterY = ((getLayoutBounds().getHeight() / 2) - boundingBoxCenterY);
+
         final TranslateTransition translateTransition = new TranslateTransition(Duration.millis(500));
-        translateTransition.setToX(-polygon.getCenterX() * scale + (getLayoutBounds().getWidth() * scale) / 2);
-        translateTransition.setToY(-polygon.getCenterY() * scale + (getLayoutBounds().getHeight() * scale) / 2);
+        translateTransition.setToX(polygonDistanceToCenterX - bbCenterDistanceToCenterX);
+        translateTransition.setToY(polygonDistanceToCenterY - bbCenterDistanceToCenterY);
         translateTransition.setCycleCount(1);
         translateTransition.setAutoReverse(true);
 
