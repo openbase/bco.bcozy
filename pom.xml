@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.dc.bco</groupId>
     <artifactId>bcozy</artifactId>
@@ -9,6 +8,33 @@
 
     <name>BCozy</name>
 
+    <organization>
+        <name>DivineCooperation</name>
+        <url>https://github.com/divinecooperation</url>
+    </organization>
+    <developers>
+        <!-- please list all devs here -->
+        <developer>
+            <id>DivineThreepwood</id>
+            <name>Marian Pohling</name>
+
+            <email>divinethreepwood@gmail.com</email>
+            <url>https://github.com/DivineThreepwood</url>
+            <organization>DivineCooperation</organization>
+            <organizationUrl>https://github.com/divinecooperation</organizationUrl>
+            <roles>
+                <role>architect</role>
+                <role>developer</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
+    </developers>
+
+    <scm>
+        <developerConnection>scm:git:https://github.com/divinethreepwood/bcozy.git</developerConnection>
+        <url>https://github.com/divinecooperation/bco.core-manager.git</url>
+    </scm>
+
     <properties>
         <test.configs>${project.basedir}/target/generated-test-config</test.configs>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -17,32 +43,12 @@
         <plugin.pmd.version>3.5</plugin.pmd.version>
         <plugin.javadoc.version>2.10.3</plugin.javadoc.version>
         <failOnStyleError>false</failOnStyleError>
-        <jul.version>0.5-SNAPSHOT</jul.version>
-        <rem.version>0.7-SNAPSHOT</rem.version>
-        <dal.version>0.6-SNAPSHOT</dal.version>
-        <rsb.version>[0.12,0.13-SNAPSHOT)</rsb.version>
-        <rst.sandbox.artifact>rst-sandbox-csra-ha-paramite</rst.sandbox.artifact>
-        <rst.sandbox.version>0.12-SNAPSHOT</rst.sandbox.version>
-        <rst.stable.artifact>rst-csra-ha-paramite</rst.stable.artifact>
-        <rst.stable.version>0.12-SNAPSHOT</rst.stable.version>
+        <dependency.jul.version>[1.0,1.1-SNAPSHOT]</dependency.jul.version>
+        <dependency.bco.dal.version>[1.0,1.1-SNAPSHOT]</dependency.bco.dal.version>
+        <dependency.bco.manager.version>[1.0,1.1-SNAPSHOT]</dependency.bco.manager.version>
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>rsb</groupId>
-            <artifactId>rsb</artifactId>
-            <version>${rsb.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>rsb</groupId>
-            <artifactId>${rst.sandbox.artifact}</artifactId>
-            <version>${rst.sandbox.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>rsb</groupId>
-            <artifactId>${rst.stable.artifact}</artifactId>
-            <version>${rst.stable.version}</version>
-        </dependency>
         <dependency>
             <groupId>com.guigarage</groupId>
             <artifactId>responsivefx</artifactId>
@@ -59,24 +65,14 @@
             <version>8.7</version>
         </dependency>
         <dependency>
-            <groupId>de.citec</groupId>
-            <artifactId>dm.remote</artifactId>
-            <version>${rem.version}</version>
+            <groupId>org.dc</groupId>
+            <artifactId>jul.extension.rct</artifactId>
+            <version>${dependency.jul.version}</version>
         </dependency>
         <dependency>
-            <groupId>de.citec</groupId>
-            <artifactId>lm.remote</artifactId>
-            <version>${rem.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.citec</groupId>
-            <artifactId>jul.extension.rst.processing</artifactId>
-            <version>${jul.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.citec</groupId>
+            <groupId>org.dc.bco</groupId>
             <artifactId>dal.remote</artifactId>
-            <version>${dal.version}</version>
+            <version>${dependency.bco.dal.version}</version>
         </dependency>
         <!-- Just so maven doesn't complain about a missing version. -->
         <dependency>
@@ -127,7 +123,7 @@
                     <programs>
                         <program>
                             <mainClass>org.dc.bco.bcozy.BCozy</mainClass>
-                            <id>BCozy</id>
+                            <id>bcozy</id>
                             <platforms>
                                 <platform>unix</platform>
                             </platforms>

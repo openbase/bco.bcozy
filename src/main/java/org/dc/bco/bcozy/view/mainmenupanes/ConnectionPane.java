@@ -18,54 +18,58 @@
  */
 package org.dc.bco.bcozy.view.mainmenupanes;
 
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.StackPane;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
 import org.dc.bco.bcozy.view.AnimationProvider;
 import org.dc.bco.bcozy.view.Constants;
-import org.dc.bco.bcozy.view.ImageViewProvider;
+import org.dc.bco.bcozy.view.SVGIcon;
 
 /**
  * Created by hoestreich on 12/8/15.
  */
 public class ConnectionPane extends PaneElement {
 
-    private final ImageView connectionSuccessView;
-    private final ImageView connectionProblemView;
-    private final ImageView connectionUploadView;
-    private final ImageView connectionDownloadView;
+    private final SVGIcon connectionSuccessView;
+    private final SVGIcon connectionProblemView;
+    private final SVGIcon connectionUploadView;
+    private final SVGIcon connectionDownloadView;
     private boolean test;
     private final FadeTransition problemFade;
+    private final GridPane connectionIcon;
 
     /**
      * Constructor for the ConnectionPane.
      */
     public ConnectionPane() {
-        final StackPane connectionIcon = new StackPane();
-        final ImageView connectionView = ImageViewProvider
-                .createImageView("/icons/connection.png", Constants.MIDDLE_ICON);
+        connectionIcon = new GridPane();
+        final SVGIcon connectionView = new SVGIcon(FontAwesomeIcon.DATABASE, Constants.SMALL_ICON);
 
-        connectionSuccessView = ImageViewProvider
-                .createImageView("/icons/connection-successful.png", Constants.MIDDLE_ICON);
+        connectionSuccessView = new SVGIcon(FontAwesomeIcon.CHECK_CIRCLE, Constants.EXTRA_SMALL_ICON);
         connectionSuccessView.setOpacity(Constants.FULLY_TRANSPARENT);
 
-        connectionProblemView = ImageViewProvider
-                .createImageView("/icons/connection-problem.png", Constants.MIDDLE_ICON);
+        connectionProblemView = new SVGIcon(FontAwesomeIcon.QUESTION_CIRCLE, Constants.EXTRA_SMALL_ICON);
         connectionProblemView.setOpacity(Constants.FULLY_TRANSPARENT);
 
-        connectionUploadView = ImageViewProvider
-                .createImageView("/icons/connection-upload.png", Constants.MIDDLE_ICON);
+        connectionUploadView = new SVGIcon(FontAwesomeIcon.ARROW_UP, Constants.EXTRA_EXTRA_SMALL_ICON);
         connectionUploadView.setOpacity(Constants.FULLY_TRANSPARENT);
 
-        connectionDownloadView = ImageViewProvider
-                .createImageView("/icons/connection-download.png", Constants.MIDDLE_ICON);
+        connectionDownloadView = new SVGIcon(FontAwesomeIcon.ARROW_DOWN, Constants.EXTRA_EXTRA_SMALL_ICON);
         connectionDownloadView.setOpacity(Constants.FULLY_TRANSPARENT);
 
         test = false;
         connectionView.setOnMouseClicked(event -> testAnimations());
-        connectionIcon.getChildren().addAll(connectionView, connectionSuccessView, connectionProblemView,
-                connectionUploadView, connectionDownloadView);
+        connectionIcon.add(connectionView, 0, 0, 1, 2);
+        connectionIcon.add(connectionSuccessView, 1, 0);
+        connectionIcon.add(connectionProblemView, 1, 0);
+        connectionIcon.add(connectionUploadView, 1, 1);
+        connectionIcon.add(connectionDownloadView, 1, 1);
+        connectionIcon.setHgap(2);
+        connectionIcon.setAlignment(Pos.CENTER);
 
         this.getChildren().addAll(connectionIcon);
 
@@ -90,6 +94,7 @@ public class ConnectionPane extends PaneElement {
      */
     public void connectionEstablished() {
         connectionSuccessView.setOpacity(Constants.NO_TRANSPARENCY);
+        connectionSuccessView.setForegroundIconColorAnimated(Color.LIMEGREEN);
         problemFade.stop();
         connectionProblemView.setOpacity(Constants.FULLY_TRANSPARENT);
     }
@@ -100,6 +105,7 @@ public class ConnectionPane extends PaneElement {
      */
     public void connectionProblem() {
         connectionSuccessView.setOpacity(Constants.FULLY_TRANSPARENT);
+        connectionProblemView.setForegroundIconColorAnimated(Color.TOMATO);
         problemFade.play();
     }
 
@@ -127,4 +133,8 @@ public class ConnectionPane extends PaneElement {
         downloadFade.setOnFinished(event -> connectionDownloadView.setOpacity(Constants.FULLY_TRANSPARENT));
     }
 
+    @Override
+    public Node getStatusIcon() {
+        return connectionIcon;
+    }
 }

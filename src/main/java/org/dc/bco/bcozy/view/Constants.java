@@ -76,9 +76,14 @@ public final class Constants {
     public static final double SMALL_ICON = 32.0;
 
     /**
-     * The size for a small size icon.
+     * The size for a extra small size icon.
      */
     public static final double EXTRA_SMALL_ICON = 16.0;
+
+    /**
+     * The size for a extra extra small size icon.
+     */
+    public static final double EXTRA_EXTRA_SMALL_ICON = 10.0;
 
     /**
      * The max width for a main menu pane.

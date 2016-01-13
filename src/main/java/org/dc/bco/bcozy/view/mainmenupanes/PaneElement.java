@@ -25,7 +25,7 @@ import javafx.scene.layout.VBox;
 /**
  * Created by hoestreich on 11/19/15.
  */
-public class PaneElement extends VBox {
+public abstract class PaneElement extends VBox {
 
     /**
      * Constructor for a Pane Element to guarantee a similar layout for all gui elements.
@@ -51,4 +51,6 @@ public class PaneElement extends VBox {
         this.setAlignment(Pos.CENTER);
         this.getStyleClass().addAll("floating-box");
     }
+
+    public abstract Node getStatusIcon();
 }

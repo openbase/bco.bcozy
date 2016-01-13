@@ -21,10 +21,9 @@ package org.dc.bco.bcozy.view.mainmenupanes;
 import de.jensd.fx.glyphs.materialicons.MaterialIcon;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.Node;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TitledPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.ObserverLabel;
@@ -43,6 +42,7 @@ public class SettingsPane extends PaneElement {
     private final ObservableList<String> availableThemes;
     private final ObservableList<String> availableLanguages;
     private final ObserverLabel settingsLbl;
+    private final SVGIcon settingsIcon;
 
     /**
      * Constructor for the SettingsPane.
@@ -52,10 +52,10 @@ public class SettingsPane extends PaneElement {
                 .getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
 
         final TitledPane settingsPane = new TitledPane();
-        final HBox settingsHeader = new HBox();
-        final StackPane settingsIcon = new SVGIcon(MaterialIcon.TUNE, Constants.EXTRA_SMALL_ICON);
-        settingsLbl = new ObserverLabel("settings");
-        settingsHeader.getChildren().addAll(settingsIcon, settingsLbl);
+        //final HBox settingsHeader = new HBox();
+        settingsIcon = new SVGIcon(MaterialIcon.TUNE, Constants.EXTRA_SMALL_ICON);
+        settingsLbl = new ObserverLabel("settings", settingsIcon);
+        //settingsHeader.getChildren().addAll(settingsIcon, settingsLbl);
 
         final VBox verticalLayout = new VBox();
         availableLanguages = FXCollections.observableArrayList("English", "Deutsch");
@@ -69,7 +69,7 @@ public class SettingsPane extends PaneElement {
         verticalLayout.setFillWidth(true);
         verticalLayout.getChildren().addAll(languageChoice, themeChoice);
 
-        settingsPane.setGraphic(settingsHeader);
+        settingsPane.setGraphic(settingsLbl);
         settingsPane.setContent(verticalLayout);
 
         this.getChildren().addAll(settingsPane);
@@ -113,5 +113,10 @@ public class SettingsPane extends PaneElement {
      */
     public ObserverLabel getSettingsLbl() {
         return settingsLbl;
+    }
+
+    @Override
+    public Node getStatusIcon() {
+        return settingsIcon;
     }
 }

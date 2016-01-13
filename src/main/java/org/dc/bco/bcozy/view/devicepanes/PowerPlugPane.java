@@ -19,12 +19,12 @@
 package org.dc.bco.bcozy.view.devicepanes;
 
 import org.dc.bco.dal.remote.unit.DALRemoteService;
-import org.dc.bco.dal.remote.unit.LightRemote;
+import org.dc.bco.dal.remote.unit.PowerPlugRemote;
 import org.dc.jul.exception.CouldNotPerformException;
 import org.dc.jul.exception.printer.ExceptionPrinter;
 import org.dc.jul.exception.printer.LogLevel;
 import org.dc.jul.pattern.Observable;
-import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
@@ -35,33 +35,33 @@ import org.dc.bco.bcozy.view.SVGIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.homeautomation.state.PowerStateType.PowerState.State;
-import rst.homeautomation.unit.LightType.Light;
+import rst.homeautomation.unit.PowerPlugType.PowerPlug;
 
 /**
  * Created by timo on 08.01.16.
  */
-public class LightPane extends UnitPane {
-    private static final Logger LOGGER = LoggerFactory.getLogger(LightPane.class);
+public class PowerPlugPane extends UnitPane {
+    private static final Logger LOGGER = LoggerFactory.getLogger(PowerPlugPane.class);
 
-    private final LightRemote lightRemote;
-    private final SVGIcon lightbulbIcon;
+    private final PowerPlugRemote powerPlugRemote;
+    private final SVGIcon powerPlugbulbIcon;
     private final ToggleSwitch toggleSwitch;
     private final BorderPane headContent;
 
     /**
-     * Constructor for the LightPane.
-     * @param lightRemote lightRemote
+     * Constructor for the PowerPlugPane.
+     * @param powerPlugRemote powerPlugRemote
      */
-    public LightPane(final DALRemoteService lightRemote) {
-        this.lightRemote = (LightRemote) lightRemote;
+    public PowerPlugPane(final DALRemoteService powerPlugRemote) {
+        this.powerPlugRemote = (PowerPlugRemote) powerPlugRemote;
 
         toggleSwitch = new ToggleSwitch();
-        lightbulbIcon =
-                new SVGIcon(MaterialDesignIcon.LIGHTBULB, MaterialDesignIcon.LIGHTBULB_OUTLINE, Constants.SMALL_ICON);
+        powerPlugbulbIcon =
+                new SVGIcon(FontAwesomeIcon.PLUG, FontAwesomeIcon.PLUG, Constants.EXTRA_SMALL_ICON);
         headContent = new BorderPane();
 
         try {
-            super.setUnitLabel(this.lightRemote.getData().getLabel());
+            super.setUnitLabel(this.powerPlugRemote.getData().getLabel());
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
             super.setUnitLabel("UnknownID");
@@ -77,21 +77,21 @@ public class LightPane extends UnitPane {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
 
-        this.lightRemote.addObserver(this);
+        this.powerPlugRemote.addObserver(this);
     }
 
     private void setColorToImageEffect(final Color color) {
-        lightbulbIcon.setBackgroundIconColorAnimated(color);
+        powerPlugbulbIcon.setBackgroundIconColorAnimated(color);
     }
 
     private void initEffectAndSwitch() throws CouldNotPerformException {
-        if (lightRemote.getPower().getValue().equals(State.ON)) {
+        if (powerPlugRemote.getPower().getValue().equals(State.ON)) {
             setColorToImageEffect(Constants.LIGHTBULB_COLOR);
 
             if (!toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(true);
             }
-        } else if (lightRemote.getPower().getValue().equals(State.OFF)) {
+        } else if (powerPlugRemote.getPower().getValue().equals(State.OFF)) {
             setColorToImageEffect(Color.TRANSPARENT);
 
             if (toggleSwitch.isSelected()) {
@@ -109,24 +109,24 @@ public class LightPane extends UnitPane {
         toggleSwitch.setOnMouseClicked(event -> {
             if (toggleSwitch.isSelected()) {
                 try {
-                    lightRemote.setPower(State.ON);
+                    powerPlugRemote.setPower(State.ON);
                 } catch (CouldNotPerformException e) {
                     ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
                 }
             } else {
                 try {
-                    lightRemote.setPower(State.OFF);
+                    powerPlugRemote.setPower(State.OFF);
                 } catch (CouldNotPerformException e) {
                     ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
                 }
             }
         });
 
-        headContent.setLeft(lightbulbIcon);
+        headContent.setLeft(powerPlugbulbIcon);
         headContent.setCenter(new Label(super.getUnitLabel()));
         headContent.setRight(toggleSwitch);
         //Padding values are not available here
-        headContent.prefHeightProperty().set(lightbulbIcon.getSize() + Constants.INSETS);
+        headContent.prefHeightProperty().set(powerPlugbulbIcon.getSize() + Constants.INSETS);
     }
 
     /**
@@ -139,18 +139,18 @@ public class LightPane extends UnitPane {
 
     @Override
     public DALRemoteService getDALRemoteService() {
-        return lightRemote;
+        return powerPlugRemote;
     }
 
     @Override
     void removeObserver() {
-        this.lightRemote.removeObserver(this);
+        this.powerPlugRemote.removeObserver(this);
     }
 
     @Override
-    public void update(final Observable observable, final Object light) throws java.lang.Exception {
+    public void update(final Observable observable, final Object powerPlug) throws java.lang.Exception {
         Platform.runLater(() -> {
-            if (((Light) light).getPowerState().getValue().equals(State.ON)) {
+            if (((PowerPlug) powerPlug).getPowerState().getValue().equals(State.ON)) {
                 setColorToImageEffect(Constants.LIGHTBULB_COLOR);
                 if (!toggleSwitch.isSelected()) {
                     toggleSwitch.setSelected(true);

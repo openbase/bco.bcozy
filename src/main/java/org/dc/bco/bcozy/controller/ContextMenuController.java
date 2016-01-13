@@ -19,10 +19,11 @@
 
 package org.dc.bco.bcozy.controller;
 
-import de.citec.dal.remote.unit.DALRemoteService;
-import de.citec.jul.exception.CouldNotPerformException;
-import de.citec.jul.exception.printer.ExceptionPrinter;
-import de.citec.jul.exception.printer.LogLevel;
+import org.dc.bco.dal.remote.unit.DALRemoteService;
+import org.dc.bco.registry.location.remote.LocationRegistryRemote;
+import org.dc.jul.exception.CouldNotPerformException;
+import org.dc.jul.exception.printer.ExceptionPrinter;
+import org.dc.jul.exception.printer.LogLevel;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -33,6 +34,7 @@ import org.dc.bco.bcozy.view.location.LocationPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.homeautomation.unit.UnitTemplateType.UnitTemplate.UnitType;
+import rst.spatial.LocationConfigType;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -134,5 +136,42 @@ public class ContextMenuController {
 
         this.titledPaneMap.clear();
         this.foregroundPane.getContextMenu().clearVerticalScrollPane();
+    }
+
+    /**
+     * Initializes and saves all TitledPanes of all Locations.
+     * @throws CouldNotPerformException CouldNotPerformException
+     */
+    public void initTitledPaneMap() throws CouldNotPerformException {
+        final LocationRegistryRemote locationRegistryRemote = this.remotePool.getLocationRegistryRemote();
+
+        final Iterator<LocationConfigType.LocationConfig> locationConfigIterator =
+                locationRegistryRemote.getLocationConfigs().iterator();
+
+        while (locationConfigIterator.hasNext()) {
+            final LocationConfigType.LocationConfig locationConfig = locationConfigIterator.next();
+
+            final String locationID = locationConfig.getId();
+
+            //TODO: This is a workaround, while the handles are not included.
+            if ("f0a71f71-1463-41e3-9c9a-25a02a536001".equals(locationID) || "ddc5097e-1018-443d-b288-e27e3a247e5d".equals(locationID)) {
+                continue;
+            }
+
+            final TitledPaneContainer titledPaneContainer = new TitledPaneContainer();
+            this.titledPaneMap.put(locationID, titledPaneContainer);
+
+            final Map<UnitType, List<DALRemoteService>> unitRemoteMap =
+                    remotePool.getUnitRemoteMapOfLocation(locationID);
+
+            final Iterator<Map.Entry<UnitType, List<DALRemoteService>>> entryIterator =
+                    unitRemoteMap.entrySet().iterator();
+
+            while (entryIterator.hasNext()) {
+                final Map.Entry<UnitType, List<DALRemoteService>> nextEntry = entryIterator.next();
+
+                titledPaneContainer.createAndAddNewTitledPane(nextEntry.getKey(), nextEntry.getValue());
+            }
+        }
     }
 }

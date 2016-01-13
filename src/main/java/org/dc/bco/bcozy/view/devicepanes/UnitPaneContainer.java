@@ -18,7 +18,7 @@
  */
 package org.dc.bco.bcozy.view.devicepanes;
 
-import de.citec.dal.remote.unit.DALRemoteService;
+import org.dc.bco.dal.remote.unit.DALRemoteService;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.TitledPane;
@@ -71,6 +71,14 @@ public class UnitPaneContainer extends TitledPane {
                 final LightPane lightPane = new LightPane(dalRemoteService);
 
                 vBox.getChildren().add(lightPane);
+            }
+        } else if (unitType.equals(UnitType.POWER_PLUG)) {
+            final Iterator<DALRemoteService> dalRemoteServiceIterator = dalRemoteServiceList.iterator();
+            while (dalRemoteServiceIterator.hasNext()) {
+                final DALRemoteService dalRemoteService = dalRemoteServiceIterator.next();
+                final PowerPlugPane powerPlugPane = new PowerPlugPane(dalRemoteService);
+
+                vBox.getChildren().add(powerPlugPane);
             }
         } else if (unitType.equals(UnitType.ROLLERSHUTTER)) {
             final Iterator<DALRemoteService> dalRemoteServiceIterator = dalRemoteServiceList.iterator();
