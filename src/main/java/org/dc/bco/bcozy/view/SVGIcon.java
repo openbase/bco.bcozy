@@ -30,7 +30,6 @@ import javafx.scene.text.Text;
  */
 public class SVGIcon extends StackPane {
 
-    private static final String ICON_CSS_STYLE = "icons";
     private Text backgroundIcon; //NOPMD
     private Text backgroundFadeIcon; //NOPMD
     private Text foregroundIcon; //NOPMD
@@ -46,10 +45,8 @@ public class SVGIcon extends StackPane {
     public SVGIcon(final GlyphIcons icon, final double size) {
         this.size = size;
         backgroundIcon = createIcon(icon, String.valueOf(size));
-        backgroundIcon.getStyleClass().add("icons");
         backgroundIcon.setSmooth(true);
         backgroundFadeIcon = createIcon(icon, String.valueOf(size));
-        backgroundFadeIcon.getStyleClass().add("icons");
         backgroundFadeIcon.setSmooth(true);
         backgroundFadeIcon.setOpacity(Constants.FULLY_TRANSPARENT);
         foregroundIcon = null;
@@ -67,17 +64,13 @@ public class SVGIcon extends StackPane {
     public SVGIcon(final GlyphIcons backgroundIcon, final GlyphIcons foregroundIcon, final double size) {
         this.size = size;
         this.backgroundIcon = createIcon(backgroundIcon, String.valueOf(size));
-        this.backgroundIcon.getStyleClass().add(ICON_CSS_STYLE);
         this.backgroundIcon.setSmooth(true);
         this.backgroundFadeIcon = createIcon(backgroundIcon, String.valueOf(size));
-        this.backgroundFadeIcon.getStyleClass().add(ICON_CSS_STYLE);
         this.backgroundFadeIcon.setSmooth(true);
         this.backgroundFadeIcon.setOpacity(Constants.FULLY_TRANSPARENT);
         this.foregroundIcon = createIcon(foregroundIcon, String.valueOf(size));
-        this.foregroundIcon.getStyleClass().add(ICON_CSS_STYLE);
         this.foregroundIcon.setSmooth(true);
         this.foregroundFadeIcon = createIcon(foregroundIcon, String.valueOf(size));
-        this.foregroundFadeIcon.getStyleClass().add(ICON_CSS_STYLE);
         this.foregroundFadeIcon.setSmooth(true);
         this.foregroundFadeIcon.setOpacity(Constants.FULLY_TRANSPARENT);
 
@@ -161,7 +154,6 @@ public class SVGIcon extends StackPane {
      */
     public void changeBackgroundIcon(final GlyphIcons icon) {
         this.backgroundIcon = createIcon(icon, String.valueOf(this.size));
-        this.backgroundIcon.getStyleClass().add(ICON_CSS_STYLE);
         this.backgroundIcon.setSmooth(true);
     }
 
