@@ -109,22 +109,18 @@ public class AmbientLightPane extends UnitPane {
         this.ambientLightRemote.addObserver(this);
     }
 
-    private void setColorToImageEffect(final Color color) {
-        lightbulbIcon.setBackgroundIconColorAnimated(color);
-    }
-
     private void initEffectAndSwitch() throws CouldNotPerformException {
         if (ambientLightRemote.getPower().getValue().equals(State.ON)) {
             final Color color = Color.hsb(ambientLightRemote.getColor().getHue(),
                     ambientLightRemote.getColor().getSaturation() / Constants.ONE_HUNDRED,
                     ambientLightRemote.getColor().getValue() / Constants.ONE_HUNDRED);
-            setColorToImageEffect(color);
+            lightbulbIcon.setBackgroundIconColorAnimated(color);
 
             if (!toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(true);
             }
         } else if (ambientLightRemote.getPower().getValue().equals(State.OFF)) {
-            setColorToImageEffect(Color.TRANSPARENT);
+            lightbulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
 
             if (toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(false);
@@ -137,7 +133,7 @@ public class AmbientLightPane extends UnitPane {
      */
     @Override
     protected void initTitle() {
-        setColorToImageEffect(Color.TRANSPARENT);
+        lightbulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
 
         toggleSwitch.setOnMouseClicked(event -> {
             if (toggleSwitch.isSelected()) {
@@ -485,12 +481,12 @@ public class AmbientLightPane extends UnitPane {
                 ((AmbientLight) ambientLight).getColor().getValue() / Constants.ONE_HUNDRED);
         Platform.runLater(() -> {
             if (((AmbientLight) ambientLight).getPowerState().getValue().equals(State.ON)) {
-                setColorToImageEffect(color);
+                lightbulbIcon.setBackgroundIconColorAnimated(color);
                 if (!toggleSwitch.isSelected()) {
                     toggleSwitch.setSelected(true);
                 }
             } else {
-                setColorToImageEffect(Color.LIGHTGRAY);
+                lightbulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
                 if (toggleSwitch.isSelected()) {
                     toggleSwitch.setSelected(false);
                 }

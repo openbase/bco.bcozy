@@ -18,6 +18,7 @@
  */
 package org.dc.bco.bcozy.view.devicepanes;
 
+import javafx.scene.layout.GridPane;
 import org.dc.bco.dal.remote.unit.DALRemoteService;
 import org.dc.bco.dal.remote.unit.PowerPlugRemote;
 import org.dc.jul.exception.CouldNotPerformException;
@@ -44,7 +45,9 @@ public class PowerPlugPane extends UnitPane {
     private static final Logger LOGGER = LoggerFactory.getLogger(PowerPlugPane.class);
 
     private final PowerPlugRemote powerPlugRemote;
-    private final SVGIcon powerPlugbulbIcon;
+    private final SVGIcon powerPlugIcon;
+    private final SVGIcon powerStatusIcon;
+    private final GridPane iconPane;
     private final ToggleSwitch toggleSwitch;
     private final BorderPane headContent;
 
@@ -56,9 +59,10 @@ public class PowerPlugPane extends UnitPane {
         this.powerPlugRemote = (PowerPlugRemote) powerPlugRemote;
 
         toggleSwitch = new ToggleSwitch();
-        powerPlugbulbIcon =
-                new SVGIcon(FontAwesomeIcon.PLUG, FontAwesomeIcon.PLUG, Constants.EXTRA_SMALL_ICON);
         headContent = new BorderPane();
+        powerPlugIcon = new SVGIcon(FontAwesomeIcon.PLUG, Constants.EXTRA_SMALL_ICON);
+        powerStatusIcon = new SVGIcon(FontAwesomeIcon.BOLT, Constants.EXTRA_EXTRA_SMALL_ICON);
+        iconPane = new GridPane();
 
         try {
             super.setUnitLabel(this.powerPlugRemote.getData().getLabel());
@@ -80,19 +84,15 @@ public class PowerPlugPane extends UnitPane {
         this.powerPlugRemote.addObserver(this);
     }
 
-    private void setColorToImageEffect(final Color color) {
-        powerPlugbulbIcon.setBackgroundIconColorAnimated(color);
-    }
-
     private void initEffectAndSwitch() throws CouldNotPerformException {
         if (powerPlugRemote.getPower().getValue().equals(State.ON)) {
-            setColorToImageEffect(Constants.LIGHTBULB_COLOR);
+            powerStatusIcon.setBackgroundIconColorAnimated(Constants.LIGHTBULB_COLOR);
 
             if (!toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(true);
             }
         } else if (powerPlugRemote.getPower().getValue().equals(State.OFF)) {
-            setColorToImageEffect(Color.TRANSPARENT);
+            powerStatusIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
 
             if (toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(false);
@@ -105,7 +105,7 @@ public class PowerPlugPane extends UnitPane {
      */
     @Override
     protected void initTitle() {
-        setColorToImageEffect(Color.TRANSPARENT);
+        powerStatusIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
         toggleSwitch.setOnMouseClicked(event -> {
             if (toggleSwitch.isSelected()) {
                 try {
@@ -122,11 +122,14 @@ public class PowerPlugPane extends UnitPane {
             }
         });
 
-        headContent.setLeft(powerPlugbulbIcon);
+        iconPane.add(powerPlugIcon, 1, 0, 3, 2);
+        iconPane.add(powerStatusIcon, 0, 0);
+
+        headContent.setLeft(iconPane);
         headContent.setCenter(new Label(super.getUnitLabel()));
         headContent.setRight(toggleSwitch);
         //Padding values are not available here
-        headContent.prefHeightProperty().set(powerPlugbulbIcon.getSize() + Constants.INSETS);
+        headContent.prefHeightProperty().set(iconPane.getHeight() + Constants.INSETS);
     }
 
     /**
@@ -151,12 +154,12 @@ public class PowerPlugPane extends UnitPane {
     public void update(final Observable observable, final Object powerPlug) throws java.lang.Exception {
         Platform.runLater(() -> {
             if (((PowerPlug) powerPlug).getPowerState().getValue().equals(State.ON)) {
-                setColorToImageEffect(Constants.LIGHTBULB_COLOR);
+                powerStatusIcon.setBackgroundIconColorAnimated(Constants.LIGHTBULB_COLOR);
                 if (!toggleSwitch.isSelected()) {
                     toggleSwitch.setSelected(true);
                 }
             } else {
-                setColorToImageEffect(Color.LIGHTGRAY);
+                powerStatusIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
                 if (toggleSwitch.isSelected()) {
                     toggleSwitch.setSelected(false);
                 }

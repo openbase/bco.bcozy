@@ -64,7 +64,15 @@ public class UnitPaneContainer extends TitledPane {
 
                 vBox.getChildren().add(ambientLightPane);
             }
-        } else if (unitType.equals(UnitType.LIGHT)) {
+        } else if (unitType.equals(UnitType.BATTERY)) {
+            final Iterator<DALRemoteService> dalRemoteServiceIterator = dalRemoteServiceList.iterator();
+            while (dalRemoteServiceIterator.hasNext()) {
+                final DALRemoteService dalRemoteService = dalRemoteServiceIterator.next();
+                final BatteryPane batteryPanePane = new BatteryPane(dalRemoteService);
+
+                vBox.getChildren().add(batteryPanePane);
+            }
+        }else if (unitType.equals(UnitType.LIGHT)) {
             final Iterator<DALRemoteService> dalRemoteServiceIterator = dalRemoteServiceList.iterator();
             while (dalRemoteServiceIterator.hasNext()) {
                 final DALRemoteService dalRemoteService = dalRemoteServiceIterator.next();

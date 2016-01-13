@@ -80,19 +80,15 @@ public class LightPane extends UnitPane {
         this.lightRemote.addObserver(this);
     }
 
-    private void setColorToImageEffect(final Color color) {
-        lightbulbIcon.setBackgroundIconColorAnimated(color);
-    }
-
     private void initEffectAndSwitch() throws CouldNotPerformException {
         if (lightRemote.getPower().getValue().equals(State.ON)) {
-            setColorToImageEffect(Constants.LIGHTBULB_COLOR);
+            lightbulbIcon.setBackgroundIconColorAnimated(Constants.LIGHTBULB_COLOR);
 
             if (!toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(true);
             }
         } else if (lightRemote.getPower().getValue().equals(State.OFF)) {
-            setColorToImageEffect(Color.TRANSPARENT);
+            lightbulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
 
             if (toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(false);
@@ -105,7 +101,7 @@ public class LightPane extends UnitPane {
      */
     @Override
     protected void initTitle() {
-        setColorToImageEffect(Color.TRANSPARENT);
+        lightbulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
         toggleSwitch.setOnMouseClicked(event -> {
             if (toggleSwitch.isSelected()) {
                 try {
@@ -151,12 +147,12 @@ public class LightPane extends UnitPane {
     public void update(final Observable observable, final Object light) throws java.lang.Exception {
         Platform.runLater(() -> {
             if (((Light) light).getPowerState().getValue().equals(State.ON)) {
-                setColorToImageEffect(Constants.LIGHTBULB_COLOR);
+                lightbulbIcon.setBackgroundIconColorAnimated(Constants.LIGHTBULB_COLOR);
                 if (!toggleSwitch.isSelected()) {
                     toggleSwitch.setSelected(true);
                 }
             } else {
-                setColorToImageEffect(Color.LIGHTGRAY);
+                lightbulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
                 if (toggleSwitch.isSelected()) {
                     toggleSwitch.setSelected(false);
                 }
