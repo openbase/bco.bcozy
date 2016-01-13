@@ -439,12 +439,12 @@
 
 .body-pane {
     -fx-text-fill: -fx-text-base-color;
-    -fx-background-color:
-            -fx-box-border, linear-gradient(to bottom, derive(-fx-color,-02%), derive(-fx-color,65%) 12%,
-            derive(-fx-color,23%) 88%, derive(-fx-color,50%) 99%, -fx-box-border);
+    -fx-background-color: -bg-color;
+            /*-fx-box-border, linear-gradient(to bottom, derive(-fx-color,-02%), derive(-fx-color,65%) 12%,*/
+            /*derive(-fx-color,23%) 88%, derive(-fx-color,50%) 99%, -fx-box-border);*/
 }
 
 .head-pane {
     -fx-text-fill: -fx-text-base-color;
-    -fx-background-color: -fx-box-border, -fx-inner-border, -fx-body-color;
+    -fx-background-color: -bg-color; /*-fx-box-border, -fx-inner-border, -fx-body-color;*/
 }

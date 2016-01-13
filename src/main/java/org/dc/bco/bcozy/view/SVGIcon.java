@@ -30,8 +30,8 @@ import javafx.scene.text.Text;
  */
 public class SVGIcon extends StackPane {
 
-    private Text backgroundIcon; //NOPMD
-    private Text backgroundFadeIcon; //NOPMD
+    private Text backgroundIcon;
+    private Text backgroundFadeIcon;
     private Text foregroundIcon; //NOPMD
     private Text foregroundFadeIcon; //NOPMD
     private final double size;
