@@ -60,8 +60,8 @@ public class PowerPlugPane extends UnitPane {
 
         toggleSwitch = new ToggleSwitch();
         headContent = new BorderPane();
-        powerPlugIcon = new SVGIcon(FontAwesomeIcon.PLUG, Constants.EXTRA_SMALL_ICON, true);
-        powerStatusIcon = new SVGIcon(FontAwesomeIcon.BOLT, Constants.EXTRA_EXTRA_SMALL_ICON, false);
+        powerPlugIcon = new SVGIcon(FontAwesomeIcon.PLUG, Constants.SMALL_ICON, true);
+        powerStatusIcon = new SVGIcon(FontAwesomeIcon.BOLT, Constants.EXTRA_SMALL_ICON, false);
         iconPane = new GridPane();
 
         try {
@@ -86,7 +86,7 @@ public class PowerPlugPane extends UnitPane {
 
     private void initEffectAndSwitch() throws CouldNotPerformException {
         if (powerPlugRemote.getPower().getValue().equals(State.ON)) {
-            powerStatusIcon.setForegroundIconColorAnimated(Constants.LIGHTBULB_COLOR);
+            powerStatusIcon.setForegroundIconColorAnimated(Color.LIMEGREEN);
 
             if (!toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(true);
@@ -154,7 +154,7 @@ public class PowerPlugPane extends UnitPane {
     public void update(final Observable observable, final Object powerPlug) throws java.lang.Exception {
         Platform.runLater(() -> {
             if (((PowerPlug) powerPlug).getPowerState().getValue().equals(State.ON)) {
-                powerStatusIcon.setForegroundIconColorAnimated(Constants.LIGHTBULB_COLOR);
+                powerStatusIcon.setForegroundIconColorAnimated(Color.LIMEGREEN);
                 if (!toggleSwitch.isSelected()) {
                     toggleSwitch.setSelected(true);
                 }
