@@ -46,10 +46,10 @@ public class SVGIcon extends StackPane {
     public SVGIcon(final GlyphIcons icon, final double size) {
         this.size = size;
         backgroundIcon = createIcon(icon, String.valueOf(size));
-        backgroundIcon.getStyleClass().add(ICON_CSS_STYLE);
+        backgroundIcon.getStyleClass().add("icons");
         backgroundIcon.setSmooth(true);
         backgroundFadeIcon = createIcon(icon, String.valueOf(size));
-        backgroundFadeIcon.getStyleClass().add(ICON_CSS_STYLE);
+        backgroundFadeIcon.getStyleClass().add("icons");
         backgroundFadeIcon.setSmooth(true);
         backgroundFadeIcon.setOpacity(Constants.FULLY_TRANSPARENT);
         foregroundIcon = null;
