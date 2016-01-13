@@ -22,7 +22,9 @@ import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
 import org.dc.bco.bcozy.view.AnimationProvider;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.SVGIcon;
@@ -38,12 +40,13 @@ public class ConnectionPane extends PaneElement {
     private final SVGIcon connectionDownloadView;
     private boolean test;
     private final FadeTransition problemFade;
+    private final GridPane connectionIcon;
 
     /**
      * Constructor for the ConnectionPane.
      */
     public ConnectionPane() {
-        final GridPane connectionIcon = new GridPane();
+        connectionIcon = new GridPane();
         final SVGIcon connectionView = new SVGIcon(FontAwesomeIcon.DATABASE, Constants.SMALL_ICON);
 
         connectionSuccessView = new SVGIcon(FontAwesomeIcon.CHECK_CIRCLE, Constants.EXTRA_SMALL_ICON);
@@ -91,6 +94,7 @@ public class ConnectionPane extends PaneElement {
      */
     public void connectionEstablished() {
         connectionSuccessView.setOpacity(Constants.NO_TRANSPARENCY);
+        connectionSuccessView.setForegroundIconColorAnimated(Color.LIMEGREEN);
         problemFade.stop();
         connectionProblemView.setOpacity(Constants.FULLY_TRANSPARENT);
     }
@@ -101,6 +105,7 @@ public class ConnectionPane extends PaneElement {
      */
     public void connectionProblem() {
         connectionSuccessView.setOpacity(Constants.FULLY_TRANSPARENT);
+        connectionProblemView.setForegroundIconColorAnimated(Color.TOMATO);
         problemFade.play();
     }
 
@@ -128,4 +133,8 @@ public class ConnectionPane extends PaneElement {
         downloadFade.setOnFinished(event -> connectionDownloadView.setOpacity(Constants.FULLY_TRANSPARENT));
     }
 
+    @Override
+    public Node getStatusIcon() {
+        return connectionIcon;
+    }
 }

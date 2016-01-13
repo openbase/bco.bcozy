@@ -18,16 +18,19 @@
  */
 package org.dc.bco.bcozy.view.mainmenupanes;
 
+import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import org.controlsfx.control.HiddenSidesPane;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.ImageViewProvider;
+import org.dc.bco.bcozy.view.SVGIcon;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -100,5 +103,10 @@ public class AvailableUsersPane extends PaneElement {
             this.setRight(rightAlign);
             this.getStyleClass().add("list-element");
         }
+    }
+
+    @Override
+    public Node getStatusIcon() {
+        return new SVGIcon(MaterialDesignIcon.ACCOUNT_CIRCLE, Constants.MIDDLE_ICON);
     }
 }
