@@ -44,14 +44,18 @@ public class SVGIcon extends StackPane {
      */
     public SVGIcon(final GlyphIcons icon, final double size) {
         this.size = size;
-        backgroundIcon = createIcon(icon, String.valueOf(size));
-        backgroundIcon.setSmooth(true);
-        backgroundFadeIcon = createIcon(icon, String.valueOf(size));
-        backgroundFadeIcon.setSmooth(true);
-        backgroundFadeIcon.setOpacity(Constants.FULLY_TRANSPARENT);
-        foregroundIcon = null;
-        foregroundFadeIcon = null;
-        this.getChildren().addAll(backgroundIcon, backgroundFadeIcon);
+        foregroundIcon = createIcon(icon, String.valueOf(size));
+        foregroundIcon.setSmooth(true);
+        foregroundIcon.getStyleClass().clear();
+        foregroundIcon.getStyleClass().add("icons");
+        foregroundFadeIcon = createIcon(icon, String.valueOf(size));
+        foregroundFadeIcon.setSmooth(true);
+        foregroundFadeIcon.getStyleClass().clear();
+        foregroundFadeIcon.getStyleClass().add("icons");
+        foregroundFadeIcon.setOpacity(Constants.FULLY_TRANSPARENT);
+        backgroundIcon = null;
+        backgroundFadeIcon = null;
+        this.getChildren().addAll(foregroundIcon, foregroundFadeIcon);
     }
 
     /**
@@ -70,8 +74,12 @@ public class SVGIcon extends StackPane {
         this.backgroundFadeIcon.setOpacity(Constants.FULLY_TRANSPARENT);
         this.foregroundIcon = createIcon(foregroundIcon, String.valueOf(size));
         this.foregroundIcon.setSmooth(true);
+        this.foregroundIcon.getStyleClass().clear();
+        this.foregroundIcon.getStyleClass().add("icons");
         this.foregroundFadeIcon = createIcon(foregroundIcon, String.valueOf(size));
         this.foregroundFadeIcon.setSmooth(true);
+        this.foregroundFadeIcon.getStyleClass().clear();
+        this.foregroundFadeIcon.getStyleClass().add("icons");
         this.foregroundFadeIcon.setOpacity(Constants.FULLY_TRANSPARENT);
 
         this.getChildren().addAll(this.backgroundIcon, this.backgroundFadeIcon, this.foregroundIcon,

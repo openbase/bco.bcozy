@@ -21,6 +21,7 @@ package org.dc.bco.bcozy.view.mainmenupanes;
 import de.jensd.fx.glyphs.materialicons.MaterialIcon;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.Node;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.VBox;
@@ -41,6 +42,7 @@ public class SettingsPane extends PaneElement {
     private final ObservableList<String> availableThemes;
     private final ObservableList<String> availableLanguages;
     private final ObserverLabel settingsLbl;
+    private final SVGIcon settingsIcon;
 
     /**
      * Constructor for the SettingsPane.
@@ -51,7 +53,7 @@ public class SettingsPane extends PaneElement {
 
         final TitledPane settingsPane = new TitledPane();
         //final HBox settingsHeader = new HBox();
-        final SVGIcon settingsIcon = new SVGIcon(MaterialIcon.TUNE, Constants.EXTRA_SMALL_ICON);
+        settingsIcon = new SVGIcon(MaterialIcon.TUNE, Constants.EXTRA_SMALL_ICON);
         settingsLbl = new ObserverLabel("settings", settingsIcon);
         //settingsHeader.getChildren().addAll(settingsIcon, settingsLbl);
 
@@ -111,5 +113,10 @@ public class SettingsPane extends PaneElement {
      */
     public ObserverLabel getSettingsLbl() {
         return settingsLbl;
+    }
+
+    @Override
+    public Node getStatusIcon() {
+        return settingsIcon;
     }
 }

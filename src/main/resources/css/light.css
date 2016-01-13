@@ -25,7 +25,11 @@
     -fx-font-size: 16.0px;
 }
 
-.glyph-icon{
+/*.glyph-icon{*/
+    /*-fx-fill: -icons-color;*/
+/*}*/
+
+.icons{
     -fx-fill: -icons-color;
 }
 
