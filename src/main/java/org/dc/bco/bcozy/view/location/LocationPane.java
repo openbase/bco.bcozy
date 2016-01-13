@@ -101,6 +101,10 @@ public class LocationPane extends Pane {
         this.widthProperty().addListener((observable, oldValue, newValue) ->
                 this.setTranslateX(this.getTranslateX()
                         - ((oldValue.doubleValue() - newValue.doubleValue()) / 2) * this.getScaleX()));
+
+        this.foregroundPane.getMainMenuWidthProperty().addListener((observable, oldValue, newValue) ->
+                this.setTranslateX(this.getTranslateX()
+                        - ((oldValue.doubleValue() - newValue.doubleValue()) / 2)));
     }
 
     /**

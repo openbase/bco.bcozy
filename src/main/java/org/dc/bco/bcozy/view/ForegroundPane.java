@@ -18,6 +18,7 @@
  */
 package org.dc.bco.bcozy.view;
 
+import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.geometry.BoundingBox;
 import javafx.scene.layout.BorderPane;
 
@@ -97,4 +98,11 @@ public class ForegroundPane extends BorderPane {
                 this.centerPane.getHeight());
     }
 
+    /**
+     * Method to provide the width property of the bounding box within which the location should be drawn.
+     * @return a property of the width from the bounding box.
+     */
+    public ReadOnlyDoubleProperty getMainMenuWidthProperty() {
+        return this.mainMenu.widthProperty();
+    }
 }
