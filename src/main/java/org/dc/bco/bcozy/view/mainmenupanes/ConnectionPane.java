@@ -133,8 +133,19 @@ public class ConnectionPane extends PaneElement {
         downloadFade.setOnFinished(event -> connectionDownloadView.setOpacity(Constants.FULLY_TRANSPARENT));
     }
 
+    /**
+     * Necessary method which adds the connectionIcon (GridPane) again to the PaneElement.
+     * (Is taken away when the mainMenu is minimzed)
+     */
+    public void maximize() {
+        if (connectionIcon != null) {
+            this.getChildren().addAll(connectionIcon);
+        }
+    }
+
     @Override
     public Node getStatusIcon() {
         return connectionIcon;
     }
+
 }

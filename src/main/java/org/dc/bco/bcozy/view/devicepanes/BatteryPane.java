@@ -171,7 +171,7 @@ public class BatteryPane extends UnitPane {
     public void update(final Observable observable, final Object battery) throws java.lang.Exception {
         Platform.runLater(() -> {
             final double batteryLevel = ((Battery) battery).getBatteryState().getLevel();
-            batteryStatus.setText((int)batteryLevel + "%");
+            batteryStatus.setText((int) batteryLevel + "%");
             //CHECKSTYLE.OFF: MagicNumber
             //CHECKSTYLE.OFF: EmptyBlock
             if (batteryLevel > 95) {

@@ -30,6 +30,7 @@ import javafx.scene.text.Text;
  */
 public class SVGIcon extends StackPane {
 
+    private static final String ICONS_CSS_STRING = "icons";
     private Text backgroundIcon;
     private Text backgroundFadeIcon;
     private Text foregroundIcon; //NOPMD
@@ -41,8 +42,9 @@ public class SVGIcon extends StackPane {
      * @param icon the Icon to be set in the backgroundIcon
      *             (can be chosen from one of the supported fonts from fontawesomefx)
      * @param size the size in px for the icon
+     * @param styled true if color should be changed by theme, otherwise false
      */
-    public SVGIcon(final GlyphIcons icon, final double size, boolean styled) {
+    public SVGIcon(final GlyphIcons icon, final double size, final boolean styled) {
         this.size = size;
         foregroundIcon = createIcon(icon, String.valueOf(size));
         foregroundIcon.setSmooth(true);
@@ -54,8 +56,8 @@ public class SVGIcon extends StackPane {
         backgroundIcon = null;
         backgroundFadeIcon = null;
         if (styled) {
-            foregroundIcon.getStyleClass().add("icons");
-            foregroundFadeIcon.getStyleClass().add("icons");
+            foregroundIcon.getStyleClass().add(ICONS_CSS_STRING);
+            foregroundFadeIcon.getStyleClass().add(ICONS_CSS_STRING);
         }
         this.getChildren().addAll(foregroundIcon, foregroundFadeIcon);
     }
@@ -77,11 +79,11 @@ public class SVGIcon extends StackPane {
         this.foregroundIcon = createIcon(foregroundIcon, String.valueOf(size));
         this.foregroundIcon.setSmooth(true);
         this.foregroundIcon.getStyleClass().clear();
-        this.foregroundIcon.getStyleClass().add("icons");
+        this.foregroundIcon.getStyleClass().add(ICONS_CSS_STRING);
         this.foregroundFadeIcon = createIcon(foregroundIcon, String.valueOf(size));
         this.foregroundFadeIcon.setSmooth(true);
         this.foregroundFadeIcon.getStyleClass().clear();
-        this.foregroundFadeIcon.getStyleClass().add("icons");
+        this.foregroundFadeIcon.getStyleClass().add(ICONS_CSS_STRING);
         this.foregroundFadeIcon.setOpacity(Constants.FULLY_TRANSPARENT);
 
         this.getChildren().addAll(this.backgroundIcon, this.backgroundFadeIcon, this.foregroundIcon,

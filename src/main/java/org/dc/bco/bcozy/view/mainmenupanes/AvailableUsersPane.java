@@ -43,6 +43,7 @@ public class AvailableUsersPane extends PaneElement {
 
     private final ObservableList<AvailableUserRow> availableUsersList;
 
+    private final BorderPane statusIcon;
     /**
      * Constructor for the AvailableUsersPane.
      */
@@ -50,6 +51,7 @@ public class AvailableUsersPane extends PaneElement {
         final ResourceBundle languageBundle = ResourceBundle
                 .getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
 
+        statusIcon = new BorderPane(new SVGIcon(MaterialDesignIcon.ACCOUNT_CIRCLE, Constants.MIDDLE_ICON, true));
         availableUsersList = FXCollections.observableArrayList();
         availableUsersList.addAll(new AvailableUserRow("Andi"), new AvailableUserRow("Julian"),
                 new AvailableUserRow("Timo"));
@@ -108,6 +110,6 @@ public class AvailableUsersPane extends PaneElement {
 
     @Override
     public Node getStatusIcon() {
-        return new SVGIcon(MaterialDesignIcon.ACCOUNT_CIRCLE, Constants.MIDDLE_ICON, true);
+        return statusIcon;
     }
 }

@@ -52,5 +52,10 @@ public abstract class PaneElement extends VBox {
         this.getStyleClass().addAll("floating-box");
     }
 
+    /**
+     * Method to get a status icon which muss be impelmented by all PaneElements.
+     * This icon is used to be displayed in the minimized mainMenu.
+     * @return a general Node (can be of different types)
+     */
     public abstract Node getStatusIcon();
 }

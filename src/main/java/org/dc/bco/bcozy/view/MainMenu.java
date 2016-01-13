@@ -50,6 +50,7 @@ public class MainMenu extends StackPane {
     private final ConnectionPane connectionPane;
     private final AvailableUsersPane availableUsersPanePane;
     private final SettingsPane settingsPane;
+    private final ImageView logoView;
     private final ImageView logoViewSmall;
 
     /**
@@ -70,7 +71,7 @@ public class MainMenu extends StackPane {
         verticalLayout = new VBox(Constants.INSETS);
         verticalLayout.setAlignment(Pos.TOP_CENTER);
 
-        verticalLayoutSmall = new VBox(Constants.INSETS);
+        verticalLayoutSmall = new VBox(Constants.INSETS * 2);
         verticalLayoutSmall.setAlignment(Pos.TOP_CENTER);
 
         userPane = new UserPane();
@@ -80,7 +81,7 @@ public class MainMenu extends StackPane {
         fillHashesButton = new Button("Fill Hashes");
         fillContextMenuButton = new Button("Fill ContextMenu");
 
-        final ImageView logoView = ImageViewProvider
+        logoView = ImageViewProvider
                 .createImageView("/icons/bcozy.png", Constants.MAXLOGOWIDTH, Double.MAX_VALUE);
 
         logoViewSmall = ImageViewProvider.createImageView("/icons/bc.png", Constants.MIDDLE_ICON);
@@ -103,8 +104,7 @@ public class MainMenu extends StackPane {
         verticalLayout.getChildren()
                 .addAll(logoView, initRemoteButton, fetchLocationButton, fillHashesButton,
                         fillContextMenuButton, connectionPane, userPane, availableUsersPanePane, settingsPane);
-        verticalLayoutSmall.getChildren().addAll(logoViewSmall, connectionPane.getStatusIcon(),
-                userPane.getStatusIcon(), availableUsersPanePane.getStatusIcon(), settingsPane.getStatusIcon());
+
         this.getChildren().addAll(verticalLayout, mainMenuFloatingButton);
 
         // Styling components with CSS
@@ -170,6 +170,22 @@ public class MainMenu extends StackPane {
     }
 
     /**
+     * Getter for the availableUsersPanePane.
+     * @return the instance of the availableUsersPanePane
+     */
+    public AvailableUsersPane getAvailableUsersPanePane() {
+        return availableUsersPanePane;
+    }
+
+    /**
+     * Getter for the connectionPane.
+     * @return the instance of the connectionPane
+     */
+    public ConnectionPane getConnectionPane() {
+        return connectionPane;
+    }
+
+    /**
      * Getter for the current display state.
      * @return true if maximzed, false if minimized
      */
@@ -187,6 +203,7 @@ public class MainMenu extends StackPane {
         this.setMinWidth(width);
         this.getChildren().clear();
         StackPane.setAlignment(mainMenuFloatingButton, Pos.TOP_RIGHT);
+        connectionPane.maximize();
         mainMenuFloatingButton.translateYProperty().set(-(Constants.FLOATING_BUTTON_OFFSET));
         this.getChildren().addAll(verticalLayout, mainMenuFloatingButton);
     }
@@ -201,6 +218,9 @@ public class MainMenu extends StackPane {
         this.setMinWidth(Constants.SMALL_MAIN_MENU_WIDTH);
         StackPane.setAlignment(mainMenuFloatingButton, Pos.TOP_CENTER);
         mainMenuFloatingButton.translateYProperty().set(-(Constants.FLOATING_BUTTON_OFFSET));
+        verticalLayoutSmall.getChildren().clear();
+        verticalLayoutSmall.getChildren().addAll(logoViewSmall, connectionPane.getStatusIcon(),
+                userPane.getStatusIcon(), availableUsersPanePane.getStatusIcon(), settingsPane.getStatusIcon());
         this.getChildren().clear();
         this.getChildren().addAll(verticalLayoutSmall, mainMenuFloatingButton);
     }

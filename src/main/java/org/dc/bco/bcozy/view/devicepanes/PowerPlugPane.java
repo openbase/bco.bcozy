@@ -122,8 +122,10 @@ public class PowerPlugPane extends UnitPane {
             }
         });
 
+        //CHECKSTYLE.OFF: MagicNumber
         iconPane.add(powerPlugIcon, 1, 0, 3, 2);
         iconPane.add(powerStatusIcon, 0, 0);
+        //CHECKSTYLE.ON: MagicNumber
 
         headContent.setLeft(iconPane);
         headContent.setCenter(new Label(super.getUnitLabel()));

@@ -51,7 +51,7 @@ public class UserPane extends PaneElement {
     private final VBox logoutLayout;
     private final ObserverLabel nameLbl;
     private final ObserverLabel pwLbl;
-    private SVGIcon statusIcon;
+    private final BorderPane statusIcon;
     /**
      * Enum to control the display state.
      */
@@ -115,7 +115,7 @@ public class UserPane extends PaneElement {
         //CHECKSTYLE.ON: MultipleStringLiterals
 
         this.getChildren().addAll(startLoginBtn);
-        this.statusIcon = new SVGIcon(MaterialDesignIcon.LOGIN, Constants.SMALL_ICON, true);
+        this.statusIcon = new BorderPane(new SVGIcon(MaterialDesignIcon.LOGIN, Constants.MIDDLE_ICON, true));
     }
 
     /**
@@ -238,25 +238,29 @@ public class UserPane extends PaneElement {
             case LOGINACTIVE:
                 this.getChildren().clear();
                 this.getChildren().addAll(loginLayout);
-                this.statusIcon = new SVGIcon(MaterialDesignIcon.ACCOUNT_CIRCLE, Constants.SMALL_ICON, true);
+                this.statusIcon.getChildren().clear();
+                this.statusIcon.setCenter(new SVGIcon(MaterialDesignIcon.LOGIN, Constants.MIDDLE_ICON, true));
                 break;
 
             case LOGIN:
                 this.getChildren().clear();
                 this.getChildren().addAll(startLoginBtn);
-                this.statusIcon = new SVGIcon(MaterialDesignIcon.LOGIN, Constants.SMALL_ICON, true);
+                this.statusIcon.getChildren();
+                this.statusIcon.setCenter(new SVGIcon(MaterialDesignIcon.LOGIN, Constants.MIDDLE_ICON, true));
                 break;
 
             case LOGOUT:
                 this.getChildren().clear();
                 this.getChildren().addAll(logoutLayout);
-                this.statusIcon = new SVGIcon(MaterialDesignIcon.LOGOUT, Constants.SMALL_ICON, true);
+                this.statusIcon.getChildren();
+                this.statusIcon.setCenter(new SVGIcon(MaterialDesignIcon.LOGOUT, Constants.MIDDLE_ICON, true));
                 break;
 
             default:
                 this.getChildren().clear();
                 this.getChildren().addAll(startLoginBtn);
-                this.statusIcon = new SVGIcon(MaterialDesignIcon.LOGIN, Constants.SMALL_ICON, true);
+                this.statusIcon.getChildren();
+                this.statusIcon.setCenter(new SVGIcon(MaterialDesignIcon.LOGIN, Constants.SMALL_ICON, true));
                 break;
 
         }

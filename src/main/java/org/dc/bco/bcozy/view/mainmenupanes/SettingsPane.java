@@ -43,6 +43,8 @@ public class SettingsPane extends PaneElement {
     private final ObservableList<String> availableLanguages;
     private final ObserverLabel settingsLbl;
     private final SVGIcon settingsIcon;
+    private final SVGIcon statusIcon;
+
 
     /**
      * Constructor for the SettingsPane.
@@ -50,6 +52,8 @@ public class SettingsPane extends PaneElement {
     public SettingsPane() {
         final ResourceBundle languageBundle = ResourceBundle
                 .getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
+
+        statusIcon = new SVGIcon(MaterialIcon.TUNE, Constants.SMALL_ICON, true);
 
         final TitledPane settingsPane = new TitledPane();
         //final HBox settingsHeader = new HBox();
@@ -117,6 +121,6 @@ public class SettingsPane extends PaneElement {
 
     @Override
     public Node getStatusIcon() {
-        return settingsIcon;
+        return statusIcon;
     }
 }

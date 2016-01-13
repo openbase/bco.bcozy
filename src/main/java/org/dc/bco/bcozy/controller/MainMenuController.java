@@ -24,6 +24,8 @@ import org.dc.bco.bcozy.BCozy;
 import org.dc.bco.bcozy.model.LanguageSelection;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.ForegroundPane;
+import org.dc.bco.bcozy.view.mainmenupanes.AvailableUsersPane;
+import org.dc.bco.bcozy.view.mainmenupanes.ConnectionPane;
 import org.dc.bco.bcozy.view.mainmenupanes.SettingsPane;
 import org.dc.bco.bcozy.view.mainmenupanes.UserPane;
 
@@ -37,6 +39,8 @@ public class MainMenuController {
 
     private final UserPane userPane;
     private final SettingsPane settingsPane;
+    private final AvailableUsersPane availableUsersPane;
+    private final ConnectionPane connectionPane;
 
     /**
      * Constructor for the MainMenuController.
@@ -45,6 +49,8 @@ public class MainMenuController {
     public MainMenuController(final ForegroundPane foregroundPane) {
         userPane = foregroundPane.getMainMenu().getUserPane();
         settingsPane = foregroundPane.getMainMenu().getSettingsPane();
+        availableUsersPane = foregroundPane.getMainMenu().getAvailableUsersPanePane();
+        connectionPane = foregroundPane.getMainMenu().getConnectionPane();
         userPane.getStartLoginBtn().setOnAction(event -> startLogin());
         userPane.getLoginBtn().setOnAction(event -> loginUser());
         userPane.getBackBtn().setOnAction(event -> resetLogin());
@@ -53,6 +59,10 @@ public class MainMenuController {
         userPane.getNameTxt().setOnAction(event -> loginUser());
         userPane.getNameTxt().setOnKeyTyped(event -> resetWrongInput());
         userPane.getPasswordField().setOnKeyTyped(event -> resetWrongInput());
+        userPane.getStatusIcon().setOnMouseClicked(event -> showHideMainMenu(foregroundPane));
+        settingsPane.getStatusIcon().setOnMouseClicked(event -> showHideMainMenu(foregroundPane));
+        availableUsersPane.getStatusIcon().setOnMouseClicked(event -> showHideMainMenu(foregroundPane));
+        connectionPane.getStatusIcon().setOnMouseClicked(event -> showHideMainMenu(foregroundPane));
         settingsPane.getThemeChoice().setOnAction(event -> chooseTheme());
         settingsPane.getLanguageChoice().setOnAction(event -> chooseLanguage());
         //Necessary to ensure that the first change is not missed by the ChangeListener
