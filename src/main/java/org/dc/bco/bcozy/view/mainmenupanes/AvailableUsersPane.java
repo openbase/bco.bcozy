@@ -107,6 +107,6 @@ public class AvailableUsersPane extends PaneElement {
 
     @Override
     public Node getStatusIcon() {
-        return new SVGIcon(MaterialDesignIcon.ACCOUNT_CIRCLE, Constants.MIDDLE_ICON);
+        return new SVGIcon(MaterialDesignIcon.ACCOUNT_CIRCLE, Constants.MIDDLE_ICON, true);
     }
 }

@@ -63,7 +63,7 @@ public class UserPane extends PaneElement {
     public UserPane() {
 
         // Case: Before login
-        startLoginBtn = new Button("", new SVGIcon(MaterialDesignIcon.LOGIN, Constants.SMALL_ICON));
+        startLoginBtn = new Button("", new SVGIcon(MaterialDesignIcon.LOGIN, Constants.SMALL_ICON, true));
 
         // Case: Login active
         nameLbl = new ObserverLabel("username");
@@ -77,7 +77,7 @@ public class UserPane extends PaneElement {
         final HBox rightAlignLoginButton = new HBox(loginBtn);
         rightAlignLoginButton.setAlignment(Pos.CENTER_RIGHT);
 
-        backBtn = new Button("", new SVGIcon(FontAwesomeIcon.ARROW_LEFT, Constants.EXTRA_SMALL_ICON));
+        backBtn = new Button("", new SVGIcon(FontAwesomeIcon.ARROW_LEFT, Constants.EXTRA_SMALL_ICON, true));
 
         loginLayout = new VBox(Constants.INSETS);
         final BorderPane loginFirstLineLayout = new BorderPane();
@@ -90,7 +90,7 @@ public class UserPane extends PaneElement {
 
         //Case: User logged in
         logoutLayout = new VBox(Constants.INSETS);
-        final SVGIcon loggedInUserIcon = new SVGIcon(MaterialDesignIcon.ACCOUNT_CIRCLE, Constants.SMALL_ICON);
+        final SVGIcon loggedInUserIcon = new SVGIcon(MaterialDesignIcon.ACCOUNT_CIRCLE, Constants.SMALL_ICON, true);
         loggedInUserLbl = new Label();
         logoutBtn = new ObserverButton("logout");
         final HBox rightAlignLogoutButton = new HBox(logoutBtn);
@@ -115,7 +115,7 @@ public class UserPane extends PaneElement {
         //CHECKSTYLE.ON: MultipleStringLiterals
 
         this.getChildren().addAll(startLoginBtn);
-        this.statusIcon = new SVGIcon(MaterialDesignIcon.LOGIN, Constants.SMALL_ICON);
+        this.statusIcon = new SVGIcon(MaterialDesignIcon.LOGIN, Constants.SMALL_ICON, true);
     }
 
     /**
@@ -238,25 +238,25 @@ public class UserPane extends PaneElement {
             case LOGINACTIVE:
                 this.getChildren().clear();
                 this.getChildren().addAll(loginLayout);
-                this.statusIcon = new SVGIcon(MaterialDesignIcon.ACCOUNT_CIRCLE, Constants.SMALL_ICON);
+                this.statusIcon = new SVGIcon(MaterialDesignIcon.ACCOUNT_CIRCLE, Constants.SMALL_ICON, true);
                 break;
 
             case LOGIN:
                 this.getChildren().clear();
                 this.getChildren().addAll(startLoginBtn);
-                this.statusIcon = new SVGIcon(MaterialDesignIcon.LOGIN, Constants.SMALL_ICON);
+                this.statusIcon = new SVGIcon(MaterialDesignIcon.LOGIN, Constants.SMALL_ICON, true);
                 break;
 
             case LOGOUT:
                 this.getChildren().clear();
                 this.getChildren().addAll(logoutLayout);
-                this.statusIcon = new SVGIcon(MaterialDesignIcon.LOGOUT, Constants.SMALL_ICON);
+                this.statusIcon = new SVGIcon(MaterialDesignIcon.LOGOUT, Constants.SMALL_ICON, true);
                 break;
 
             default:
                 this.getChildren().clear();
                 this.getChildren().addAll(startLoginBtn);
-                this.statusIcon = new SVGIcon(MaterialDesignIcon.LOGIN, Constants.SMALL_ICON);
+                this.statusIcon = new SVGIcon(MaterialDesignIcon.LOGIN, Constants.SMALL_ICON, true);
                 break;
 
         }

@@ -42,19 +42,21 @@ public class SVGIcon extends StackPane {
      *             (can be chosen from one of the supported fonts from fontawesomefx)
      * @param size the size in px for the icon
      */
-    public SVGIcon(final GlyphIcons icon, final double size) {
+    public SVGIcon(final GlyphIcons icon, final double size, boolean styled) {
         this.size = size;
         foregroundIcon = createIcon(icon, String.valueOf(size));
         foregroundIcon.setSmooth(true);
         foregroundIcon.getStyleClass().clear();
-        foregroundIcon.getStyleClass().add("icons");
         foregroundFadeIcon = createIcon(icon, String.valueOf(size));
         foregroundFadeIcon.setSmooth(true);
         foregroundFadeIcon.getStyleClass().clear();
-        foregroundFadeIcon.getStyleClass().add("icons");
         foregroundFadeIcon.setOpacity(Constants.FULLY_TRANSPARENT);
         backgroundIcon = null;
         backgroundFadeIcon = null;
+        if (styled) {
+            foregroundIcon.getStyleClass().add("icons");
+            foregroundFadeIcon.getStyleClass().add("icons");
+        }
         this.getChildren().addAll(foregroundIcon, foregroundFadeIcon);
     }
 
@@ -163,6 +165,9 @@ public class SVGIcon extends StackPane {
     public void changeBackgroundIcon(final GlyphIcons icon) {
         this.backgroundIcon = createIcon(icon, String.valueOf(this.size));
         this.backgroundIcon.setSmooth(true);
+        this.backgroundFadeIcon = createIcon(icon, String.valueOf(this.size));
+        this.backgroundFadeIcon.setSmooth(true);
+        this.backgroundFadeIcon.setOpacity(Constants.FULLY_TRANSPARENT);
     }
 
     /**

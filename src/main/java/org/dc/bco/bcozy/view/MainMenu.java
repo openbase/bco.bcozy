@@ -91,7 +91,7 @@ public class MainMenu extends StackPane {
 
         settingsPane = new SettingsPane();
 
-        mainMenuFloatingButton = new FloatingButton(new SVGIcon(MaterialIcon.MENU, Constants.MIDDLE_ICON));
+        mainMenuFloatingButton = new FloatingButton(new SVGIcon(MaterialIcon.MENU, Constants.MIDDLE_ICON, true));
 
         // Setting Alignment in Stackpane
         StackPane.setAlignment(mainMenuFloatingButton, Pos.TOP_RIGHT);

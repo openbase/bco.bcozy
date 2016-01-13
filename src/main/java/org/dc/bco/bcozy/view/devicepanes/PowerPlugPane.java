@@ -60,8 +60,8 @@ public class PowerPlugPane extends UnitPane {
 
         toggleSwitch = new ToggleSwitch();
         headContent = new BorderPane();
-        powerPlugIcon = new SVGIcon(FontAwesomeIcon.PLUG, Constants.EXTRA_SMALL_ICON);
-        powerStatusIcon = new SVGIcon(FontAwesomeIcon.BOLT, Constants.EXTRA_EXTRA_SMALL_ICON);
+        powerPlugIcon = new SVGIcon(FontAwesomeIcon.PLUG, Constants.EXTRA_SMALL_ICON, true);
+        powerStatusIcon = new SVGIcon(FontAwesomeIcon.BOLT, Constants.EXTRA_EXTRA_SMALL_ICON, false);
         iconPane = new GridPane();
 
         try {
@@ -86,13 +86,13 @@ public class PowerPlugPane extends UnitPane {
 
     private void initEffectAndSwitch() throws CouldNotPerformException {
         if (powerPlugRemote.getPower().getValue().equals(State.ON)) {
-            powerStatusIcon.setBackgroundIconColorAnimated(Constants.LIGHTBULB_COLOR);
+            powerStatusIcon.setForegroundIconColorAnimated(Constants.LIGHTBULB_COLOR);
 
             if (!toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(true);
             }
         } else if (powerPlugRemote.getPower().getValue().equals(State.OFF)) {
-            powerStatusIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
+            powerStatusIcon.setForegroundIconColorAnimated(Color.TRANSPARENT);
 
             if (toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(false);
@@ -105,7 +105,7 @@ public class PowerPlugPane extends UnitPane {
      */
     @Override
     protected void initTitle() {
-        powerStatusIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
+        powerStatusIcon.setForegroundIconColorAnimated(Color.TRANSPARENT);
         toggleSwitch.setOnMouseClicked(event -> {
             if (toggleSwitch.isSelected()) {
                 try {
@@ -154,12 +154,12 @@ public class PowerPlugPane extends UnitPane {
     public void update(final Observable observable, final Object powerPlug) throws java.lang.Exception {
         Platform.runLater(() -> {
             if (((PowerPlug) powerPlug).getPowerState().getValue().equals(State.ON)) {
-                powerStatusIcon.setBackgroundIconColorAnimated(Constants.LIGHTBULB_COLOR);
+                powerStatusIcon.setForegroundIconColorAnimated(Constants.LIGHTBULB_COLOR);
                 if (!toggleSwitch.isSelected()) {
                     toggleSwitch.setSelected(true);
                 }
             } else {
-                powerStatusIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
+                powerStatusIcon.setForegroundIconColorAnimated(Color.TRANSPARENT);
                 if (toggleSwitch.isSelected()) {
                     toggleSwitch.setSelected(false);
                 }

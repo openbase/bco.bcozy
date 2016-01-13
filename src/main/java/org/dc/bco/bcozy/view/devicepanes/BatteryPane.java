@@ -57,7 +57,7 @@ public class BatteryPane extends UnitPane {
         this.batteryRemote = (BatteryRemote) batteryRemote;
 
         headContent = new BorderPane();
-        batteryIcon = new SVGIcon(MaterialDesignIcon.BATTERY_OUTLINE, MaterialDesignIcon.BATTERY,
+        batteryIcon = new SVGIcon(MaterialDesignIcon.BATTERY, MaterialDesignIcon.BATTERY_OUTLINE,
                 Constants.EXTRA_SMALL_ICON);
         batteryStatus = new Text();
         iconPane = new GridPane();
@@ -82,13 +82,9 @@ public class BatteryPane extends UnitPane {
         this.batteryRemote.addObserver(this);
     }
 
-    private void setColorToImageEffect(final Color color) {
-        batteryIcon.setBackgroundIconColorAnimated(color);
-    }
-
     private void initEffect() throws CouldNotPerformException {
         final double batteryLevel = batteryRemote.getBattery().getLevel();
-        batteryStatus.setText((int)batteryLevel + "%");
+        batteryStatus.setText((int) batteryLevel + "%");
         //CHECKSTYLE.OFF: MagicNumber
         //CHECKSTYLE.OFF: EmptyBlock
         if (batteryLevel > 95) {
@@ -117,22 +113,20 @@ public class BatteryPane extends UnitPane {
         //CHECKSTYLE.ON: MagicNumber
         //CHECKSTYLE.ON: EmptyBlock
 
-
-        batteryIcon.setForegroundIconColorAnimated(Color.BLACK);
         switch (batteryRemote.getBattery().getValue()) {
             case UNKNOWN:
                 batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_UNKNOWN);
-                setColorToImageEffect(Color.YELLOW);
+                batteryIcon.setBackgroundIconColorAnimated(Color.YELLOW);
                 break;
             case OK:
-                setColorToImageEffect(Color.GREEN);
+                batteryIcon.setBackgroundIconColorAnimated(Color.GREEN);
                 break;
             case CRITICAL:
-                setColorToImageEffect(Color.RED);
+                batteryIcon.setBackgroundIconColorAnimated(Color.RED);
                 break;
             case INSUFFICIENT:
-                setColorToImageEffect(Color.RED);
-                batteryIcon.setForegroundIconColorAnimated(Color.RED);
+                batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_ALERT);
+                batteryIcon.setBackgroundIconColorAnimated(Color.RED);
                 break;
             default:
                 break;
@@ -144,7 +138,7 @@ public class BatteryPane extends UnitPane {
      */
     @Override
     protected void initTitle() {
-        setColorToImageEffect(Color.TRANSPARENT);
+        batteryIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
 
         iconPane.add(batteryIcon, 0, 0);
         iconPane.add(batteryStatus, 1, 0);
@@ -211,17 +205,17 @@ public class BatteryPane extends UnitPane {
             switch (((Battery) battery).getBatteryState().getValue()) {
                 case UNKNOWN:
                     batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_UNKNOWN);
-                    setColorToImageEffect(Color.YELLOW);
+                    batteryIcon.setBackgroundIconColorAnimated(Color.YELLOW);
                     break;
                 case OK:
-                    setColorToImageEffect(Color.GREEN);
+                    batteryIcon.setBackgroundIconColorAnimated(Color.GREEN);
                     break;
                 case CRITICAL:
-                    setColorToImageEffect(Color.RED);
+                    batteryIcon.setBackgroundIconColorAnimated(Color.RED);
                     break;
                 case INSUFFICIENT:
-                    setColorToImageEffect(Color.RED);
-                    batteryIcon.setForegroundIconColorAnimated(Color.RED);
+                    batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_ALERT);
+                    batteryIcon.setBackgroundIconColorAnimated(Color.RED);
                     break;
                 default:
                     break;

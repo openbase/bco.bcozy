@@ -42,10 +42,11 @@ public class CenterPane extends StackPane {
     public CenterPane() {
 
         // Initializing components
-        popUpParent = new FloatingButton(new SVGIcon(MaterialIcon.SETTINGS, Constants.MIDDLE_ICON));
-        popUpChildTop = new FloatingButton(new SVGIcon(MaterialDesignIcon.THERMOMETER_LINES, Constants.SMALL_ICON));
-        popUpChildBottom = new FloatingButton(new SVGIcon(MaterialIcon.VISIBILITY, Constants.SMALL_ICON));
-        fullscreen = new FloatingButton(new SVGIcon(MaterialIcon.FULLSCREEN, Constants.MIDDLE_ICON));
+        popUpParent = new FloatingButton(new SVGIcon(MaterialIcon.SETTINGS, Constants.MIDDLE_ICON, true));
+        popUpChildTop =
+                new FloatingButton(new SVGIcon(MaterialDesignIcon.THERMOMETER_LINES, Constants.SMALL_ICON, true));
+        popUpChildBottom = new FloatingButton(new SVGIcon(MaterialIcon.VISIBILITY, Constants.SMALL_ICON, true));
+        fullscreen = new FloatingButton(new SVGIcon(MaterialIcon.FULLSCREEN, Constants.MIDDLE_ICON, true));
         viewSwitcher = new VBox(Constants.INSETS);
         viewSwitcher.setMaxSize(Constants.MIDDLE_ICON, Double.MAX_VALUE);
         viewSwitcher.setAlignment(Pos.BOTTOM_CENTER);

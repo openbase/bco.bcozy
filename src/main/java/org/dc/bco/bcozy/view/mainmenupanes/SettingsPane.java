@@ -53,7 +53,7 @@ public class SettingsPane extends PaneElement {
 
         final TitledPane settingsPane = new TitledPane();
         //final HBox settingsHeader = new HBox();
-        settingsIcon = new SVGIcon(MaterialIcon.TUNE, Constants.EXTRA_SMALL_ICON);
+        settingsIcon = new SVGIcon(MaterialIcon.TUNE, Constants.EXTRA_SMALL_ICON, true);
         settingsLbl = new ObserverLabel("settings", settingsIcon);
         //settingsHeader.getChildren().addAll(settingsIcon, settingsLbl);
 

@@ -56,7 +56,7 @@ public class FloatingButton extends Button {
      * @param icon The new icon to be set
      */
     public void changeIcon(final GlyphIcons icon) {
-        this.icon = new SVGIcon(icon, this.icon.getSize());
+        this.icon = new SVGIcon(icon, this.icon.getSize(), true);
         super.setGraphic(this.icon);
     }
 

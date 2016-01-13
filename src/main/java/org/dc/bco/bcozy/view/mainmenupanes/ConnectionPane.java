@@ -47,18 +47,18 @@ public class ConnectionPane extends PaneElement {
      */
     public ConnectionPane() {
         connectionIcon = new GridPane();
-        final SVGIcon connectionView = new SVGIcon(FontAwesomeIcon.DATABASE, Constants.SMALL_ICON);
+        final SVGIcon connectionView = new SVGIcon(FontAwesomeIcon.DATABASE, Constants.SMALL_ICON, true);
 
-        connectionSuccessView = new SVGIcon(FontAwesomeIcon.CHECK_CIRCLE, Constants.EXTRA_SMALL_ICON);
+        connectionSuccessView = new SVGIcon(FontAwesomeIcon.CHECK_CIRCLE, Constants.EXTRA_SMALL_ICON, true);
         connectionSuccessView.setOpacity(Constants.FULLY_TRANSPARENT);
 
-        connectionProblemView = new SVGIcon(FontAwesomeIcon.QUESTION_CIRCLE, Constants.EXTRA_SMALL_ICON);
+        connectionProblemView = new SVGIcon(FontAwesomeIcon.QUESTION_CIRCLE, Constants.EXTRA_SMALL_ICON, true);
         connectionProblemView.setOpacity(Constants.FULLY_TRANSPARENT);
 
-        connectionUploadView = new SVGIcon(FontAwesomeIcon.ARROW_UP, Constants.EXTRA_EXTRA_SMALL_ICON);
+        connectionUploadView = new SVGIcon(FontAwesomeIcon.ARROW_UP, Constants.EXTRA_EXTRA_SMALL_ICON, true);
         connectionUploadView.setOpacity(Constants.FULLY_TRANSPARENT);
 
-        connectionDownloadView = new SVGIcon(FontAwesomeIcon.ARROW_DOWN, Constants.EXTRA_EXTRA_SMALL_ICON);
+        connectionDownloadView = new SVGIcon(FontAwesomeIcon.ARROW_DOWN, Constants.EXTRA_EXTRA_SMALL_ICON, true);
         connectionDownloadView.setOpacity(Constants.FULLY_TRANSPARENT);
 
         test = false;
