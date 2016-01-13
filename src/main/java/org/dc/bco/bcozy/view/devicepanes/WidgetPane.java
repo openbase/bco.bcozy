@@ -45,8 +45,8 @@ public class WidgetPane extends VBox {
      * Constructor for the widget pane.
      */
     public WidgetPane() {
-        this.setMinHeight(Constants.SMALL_ICON);
-        this.setMaxHeight(Constants.SMALL_ICON);
+        //this.setMinHeight(Constants.SMALL_ICON);
+        //this.setMaxHeight(Constants.SMALL_ICON);
     }
 
     /**
@@ -69,6 +69,9 @@ public class WidgetPane extends VBox {
                 timelineUp.play();
             }
         });
+
+        this.setMinHeight(headContent.prefHeightProperty().getValue());
+        this.setMaxHeight(headContent.prefHeightProperty().getValue());
     }
 
     /**
@@ -150,12 +153,12 @@ public class WidgetPane extends VBox {
         timelineUp.setCycleCount(1);
         timelineUp.setAutoReverse(true);
 
-        final KeyValue kvUp1 = new KeyValue(rectangleClip.heightProperty(), Constants.SMALL_ICON);
+        final KeyValue kvUp1 = new KeyValue(rectangleClip.heightProperty(), headContent.prefHeightProperty().getValue());
         final KeyValue kvUp2 = new KeyValue(rectangleClip.translateYProperty(), 0);
         final KeyValue kvUp3 = new KeyValue(body.prefHeightProperty(), 0);
         final KeyValue kvUp4 = new KeyValue(body.translateYProperty(), 0);
-        final KeyValue kvUp5 = new KeyValue(this.maxHeightProperty(), Constants.SMALL_ICON);
-        final KeyValue kvUp6 = new KeyValue(this.minHeightProperty(), Constants.SMALL_ICON);
+        final KeyValue kvUp5 = new KeyValue(this.maxHeightProperty(), headContent.prefHeightProperty().getValue());
+        final KeyValue kvUp6 = new KeyValue(this.minHeightProperty(), headContent.prefHeightProperty().getValue());
         final KeyFrame kfUp = new KeyFrame(Duration.millis(Constants.ANIMATION_TIME), kvUp1, kvUp2, kvUp3,
                 kvUp4, kvUp5, kvUp6);
         timelineUp.getKeyFrames().add(kfUp);

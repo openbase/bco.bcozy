@@ -154,9 +154,7 @@ public class AmbientLightPane extends UnitPane {
         headContent.setLeft(lightbulbIcon);
         headContent.setCenter(new Label(super.getUnitLabel()));
         headContent.setRight(toggleSwitch);
-
         headContent.prefHeightProperty().set(lightbulbIcon.getSize() + Constants.INSETS);
-
     }
 
     /**
@@ -182,7 +180,6 @@ public class AmbientLightPane extends UnitPane {
         //CHECKSTYLE.ON: MagicNumber
         colorCircleContainer.getStyleClass().clear();
         colorCircleContainer.getStyleClass().add("color-circle-container");
-        //colorCircleContainer.setPadding(new Insets(0, 10, 0, 10));
 
         //mouse event for saturation & brightness rectangle
         final EventHandler<MouseEvent> colorContainerMouseHandler = event -> {
@@ -216,6 +213,8 @@ public class AmbientLightPane extends UnitPane {
             }
         });
 
+        //rectangle as color selector
+        rectangleSelector = rectangleSelector();
         //circle as selector for colorRectangleContainer
         circle = circleSelector();
         circle.layoutXProperty().bind(saturation.divide(Constants.ONE_HUNDRED)
@@ -232,9 +231,6 @@ public class AmbientLightPane extends UnitPane {
         colorRectContainer.getStyleClass().clear();
         colorRectContainer.getStyleClass().add("color-rect-container");
         colorRectContainer.getChildren().add(circle);
-
-        //rectangle as color selector
-        rectangleSelector = rectangleSelector();
 
         final EventHandler<MouseEvent> colorCircleMouseHandler = event -> {
             double yMouse = event.getY() + colorCircleContainer.getPrefHeight() / 2;
@@ -268,8 +264,7 @@ public class AmbientLightPane extends UnitPane {
         //hBox includes color elements (colorContainer & pane)
         bodyContent = new HBox();
         bodyContent.getChildren().addAll(colorRectContainer, colorCircleContainer);
-        bodyContent.prefHeightProperty().set(colorCircleContainer.getPrefHeight() + bodyContent.getPadding().getTop()
-                + bodyContent.getPadding().getBottom());
+        bodyContent.prefHeightProperty().set(colorCircleContainer.getPrefHeight() + (Constants.INSETS * 2));
     }
 
     /**
