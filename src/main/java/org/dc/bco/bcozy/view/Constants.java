@@ -301,6 +301,16 @@ public final class Constants {
     public static final Color LIGHTBULB_COLOR = new Color(1.0, 1.0, 0.3, 1.0);
 
     /**
+     * Step value of rollerShutterPane.
+     */
+    public static final double ROLLERSHUTTER_STEP = 0.05;
+
+    /**
+     * Max value of open ratio @ rollerShutterPane.
+     */
+    public static final double ROLLERSHUTTER_MAX_VALUE = 1.0;
+
+    /**
      * Private Constructor.
      */
     private Constants() { }

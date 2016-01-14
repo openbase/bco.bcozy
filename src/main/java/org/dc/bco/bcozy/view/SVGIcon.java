@@ -134,6 +134,14 @@ public class SVGIcon extends StackPane {
         setAnimatedColor(foregroundIcon, color);
     }
 
+    /**
+     * Method sets the icon color only.
+     * @param color the color for the foregroundIcon icon to be set
+     */
+    public void setColor(final Color color) {
+        foregroundIcon.setFill(color);
+    }
+
     private void setAnimatedColor(final Text node, final Color color) {
         final FadeTransition colorFade;
         if (node.equals(backgroundIcon)) {
