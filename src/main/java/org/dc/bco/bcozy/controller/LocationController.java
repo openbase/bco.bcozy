@@ -32,7 +32,6 @@ import org.dc.jul.pattern.Observer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rct.Transform;
-import rct.TransformerException;
 import rst.math.Vec3DDoubleType;
 import rst.spatial.ConnectionConfigType;
 import rst.spatial.LocationConfigType;
@@ -41,6 +40,8 @@ import rst.spatial.LocationRegistryType;
 import javax.vecmath.Point3d;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 /**
  *
@@ -84,7 +85,7 @@ public class LocationController implements Observer<LocationRegistryType.Locatio
             try {
                 locationRegistryRemote = remotePool.getLocationRegistryRemote();
                 locationRegistryRemote.addObserver(this);
-                this.update(null, null);
+                updateAndZoomFit();
             } catch (Exception e) { //NOPMD
                 ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
             }
@@ -115,9 +116,9 @@ public class LocationController implements Observer<LocationRegistryType.Locatio
                     final List<Point2D> vertices = new LinkedList<>();
 
                     // Get the transformation for the current room
-                    final Transform transform =
+                    final Future<Transform> transform =
                             remotePool.getTransformReceiver()
-                                    .lookupTransform(rootId, locationConfig.getId(), System.currentTimeMillis());
+                                    .requestTransform(rootId, locationConfig.getId(), System.currentTimeMillis());
 
                     // Get the shape of the room
                     final List<Vec3DDoubleType.Vec3DDouble> shape =
@@ -128,19 +129,20 @@ public class LocationController implements Observer<LocationRegistryType.Locatio
                         // Convert vertex into java type
                         final Point3d vertex = new Point3d(rstVertex.getX(), rstVertex.getY(), rstVertex.getZ());
                         // Transform
-                        transform.getTransform().transform(vertex);
+                        transform.get().getTransform().transform(vertex); //TODO: add timeout?!
                         // Add vertex to list of vertices
                         vertices.add(new Point2D(vertex.x, vertex.y));
                     }
 
                     locationPane.addLocation(locationConfig.getId(), locationConfig.getLabel(),
                             locationConfig.getChildIdList(), vertices, locationConfig.getType().toString());
-                } catch (TransformerException e) {
-                    ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-                    LOGGER.warn("Could not gather transformation for room: " + locationConfig.getId());
                 } catch (CouldNotPerformException e) {
                     ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
                     LOGGER.warn("TransformReceiver was not properly initialized.");
+                } catch (InterruptedException e) {
+                    ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                } catch (ExecutionException e) {
+                    ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
                 }
             }
         }
@@ -232,6 +234,20 @@ public class LocationController implements Observer<LocationRegistryType.Locatio
                 fetchLocations();
                 fetchConnections();
                 locationPane.updateLocationPane();
+            } catch (CouldNotPerformException e) {
+                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+            }
+        });
+
+    }
+
+    public void updateAndZoomFit() throws Exception { //NOPMD
+        Platform.runLater(() -> {
+            try {
+                fetchLocations();
+                fetchConnections();
+                locationPane.updateLocationPane();
+                locationPane.zoomFit();
             } catch (CouldNotPerformException e) {
                 ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
             }
