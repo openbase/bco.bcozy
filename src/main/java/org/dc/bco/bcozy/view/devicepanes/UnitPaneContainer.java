@@ -96,6 +96,14 @@ public class UnitPaneContainer extends TitledPane {
 
                 vBox.getChildren().add(rollershutterPane);
             }
+        } else if (unitType.equals(UnitType.DIMMER)) {
+            final Iterator<DALRemoteService> dalRemoteServiceIterator = dalRemoteServiceList.iterator();
+            while (dalRemoteServiceIterator.hasNext()) {
+                final DALRemoteService dalRemoteService = dalRemoteServiceIterator.next();
+                final DimmerPane dimmerPane = new DimmerPane(dalRemoteService);
+
+                vBox.getChildren().add(dimmerPane);
+            }
         }
     }
 
