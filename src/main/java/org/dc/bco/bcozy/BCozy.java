@@ -19,9 +19,10 @@
 package org.dc.bco.bcozy;
 
 import com.guigarage.responsive.ResponsiveHandler;
+import javafx.concurrent.Task;
+import org.dc.bco.bcozy.view.InfoPane;
 import org.dc.jps.core.JPService;
 import org.dc.jps.preset.JPDebugMode;
-import org.dc.jul.exception.InstantiationException;
 import org.dc.jul.exception.printer.ExceptionPrinter;
 import org.dc.jul.exception.printer.LogLevel;
 import javafx.application.Application;
@@ -57,8 +58,11 @@ public class BCozy extends Application {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(BCozy.class);
 
+    private InfoPane infoPane;
     private static Stage primaryStage;
     private RemotePool remotePool;
+    private ContextMenuController contextMenuController;
+    private LocationController locationController;
 
     /**
      * Main Method starting JavaFX Environment.
@@ -98,8 +102,18 @@ public class BCozy extends Application {
         foregroundPane.setMinHeight(root.getHeight());
         foregroundPane.setMinWidth(root.getWidth());
         final BackgroundPane backgroundPane = new BackgroundPane(foregroundPane);
+        infoPane = new InfoPane(screenHeight, screenWidth);
+        infoPane.setMinHeight(root.getHeight());
+        infoPane.setMinWidth(root.getWidth());
+        infoPane.setCloseButtonEventHandler(event -> {
+            try {
+                stop();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
 
-        root.getChildren().addAll(backgroundPane, foregroundPane);
+        root.getChildren().addAll(backgroundPane, foregroundPane, infoPane);
 
         //CHECKSTYLE.OFF: MagicNumber
         primaryStage.setMinWidth(foregroundPane.getMainMenu().getMinWidth()
@@ -118,14 +132,42 @@ public class BCozy extends Application {
 
         //instantiate RemotePool
         remotePool = new RemotePool(foregroundPane);
-        new ContextMenuController(foregroundPane, backgroundPane.getLocationPane(), remotePool);
+        contextMenuController = new ContextMenuController(foregroundPane, backgroundPane.getLocationPane(), remotePool);
 
         //instantiate LocationController
-        try {
-            new LocationController(foregroundPane, backgroundPane.getLocationPane(), remotePool);
-        } catch (InstantiationException e) {
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-        }
+        locationController = new LocationController(foregroundPane, backgroundPane.getLocationPane(), remotePool);
+
+        this.initRemotesAndLocation();
+    }
+
+    private void initRemotesAndLocation() {
+        final Task task = new Task() {
+            @Override
+            protected Object call() throws java.lang.Exception {
+                infoPane.setTextLabelIdentifier("initRemotes");
+                remotePool.initRegistryRemotes();
+
+                if (!Constants.DEBUG) {
+                    infoPane.setTextLabelIdentifier("fillDeviceAndLocationMap");
+                    remotePool.fillDeviceAndLocationMap();
+
+
+                    infoPane.setTextLabelIdentifier("fillContextMenu");
+                    contextMenuController.initTitledPaneMap();
+                }
+
+                infoPane.setTextLabelIdentifier("connectLocationRemote");
+                locationController.connectLocationRemote();
+
+                return null;
+            }
+            @Override
+            protected void succeeded() {
+                super.succeeded();
+                infoPane.setVisible(false);
+            }
+        };
+        new Thread(task).start();
     }
 
     @Override

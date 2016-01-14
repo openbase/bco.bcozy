@@ -32,7 +32,7 @@ import java.util.ResourceBundle;
  */
 public class ObserverLabel extends Label implements Observer {
 
-    private final String identifier;
+    private String identifier;
     private ResourceBundle languageBundle = ResourceBundle
             .getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
 
@@ -64,6 +64,16 @@ public class ObserverLabel extends Label implements Observer {
 
     @Override
     public void update(final Observable observable, final Object arg) {
+        languageBundle = ResourceBundle.getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
+        super.setText(languageBundle.getString(this.identifier));
+    }
+
+    /**
+     * Sets the new identifier for this ObserverLabel.
+     * @param identifier identifier
+     */
+    public void setIdentifier(final String identifier) {
+        this.identifier = identifier;
         languageBundle = ResourceBundle.getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
         super.setText(languageBundle.getString(this.identifier));
     }

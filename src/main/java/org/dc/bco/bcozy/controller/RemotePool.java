@@ -119,8 +119,7 @@ public class RemotePool {
                             foregroundPane.getContextMenu().getChildren().add(progressIndicator);
                         });
                         try {
-                            fillHashes();
-                            mapsFilled = true;
+                            fillDeviceAndLocationMap();
                         } catch (CouldNotPerformException e) {
                             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
                             shutdownDALRemotesAndClearMaps();
@@ -196,7 +195,7 @@ public class RemotePool {
      * @throws CouldNotPerformException CouldNotPerformException
      * @throws InterruptedException InterruptedException
      */
-    public void fillHashes() throws CouldNotPerformException {
+    public void fillDeviceAndLocationMap() throws CouldNotPerformException {
         checkInit();
         if (mapsFilled) {
             shutdownDALRemotesAndClearMaps();
@@ -228,6 +227,7 @@ public class RemotePool {
                 }
             }
         }
+        mapsFilled = true;
     }
 
     private void fillDeviceMap() throws CouldNotPerformException {

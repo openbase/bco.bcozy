@@ -25,7 +25,6 @@ import org.dc.bco.bcozy.view.ForegroundPane;
 import org.dc.bco.bcozy.view.location.LocationPane;
 import org.dc.bco.registry.location.remote.LocationRegistryRemote;
 import org.dc.jul.exception.CouldNotPerformException;
-import org.dc.jul.exception.InstantiationException;
 import org.dc.jul.exception.printer.ExceptionPrinter;
 import org.dc.jul.exception.printer.LogLevel;
 import org.dc.jul.pattern.Observable;
@@ -68,7 +67,7 @@ public class LocationController implements Observer<LocationRegistryType.Locatio
      * @throws InstantiationException This exception will be thrown if no LocationRegistryRemote could be instantiated
      */
     public LocationController(final ForegroundPane foregroundPane, final LocationPane locationPane,
-                              final RemotePool remotePool) throws InstantiationException {
+                              final RemotePool remotePool) {
         this.foregroundPane = foregroundPane;
         this.locationPane = locationPane;
         this.remotePool = remotePool;

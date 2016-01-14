@@ -301,6 +301,11 @@ public final class Constants {
     public static final Color LIGHTBULB_COLOR = new Color(1.0, 1.0, 0.3, 1.0);
 
     /**
+     * Debug flag.
+     */
+    public static final boolean DEBUG = false;
+
+    /**
      * Private Constructor.
      */
     private Constants() { }

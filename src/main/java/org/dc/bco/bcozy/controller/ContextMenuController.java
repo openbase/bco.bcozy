@@ -157,12 +157,6 @@ public class ContextMenuController {
 
             final String locationID = locationConfig.getId();
 
-            //TODO: This is a workaround, while the handles are not included.
-            if ("f0a71f71-1463-41e3-9c9a-25a02a536001".equals(locationID) ||
-                    "ddc5097e-1018-443d-b288-e27e3a247e5d".equals(locationID)) {
-                continue;
-            }
-
             final TitledPaneContainer titledPaneContainer = new TitledPaneContainer();
             this.titledPaneMap.put(locationID, titledPaneContainer);
 
