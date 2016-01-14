@@ -27,6 +27,8 @@ import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.shape.Path;
+import javafx.scene.shape.Shape;
 import javafx.util.Duration;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.ForegroundPane;
@@ -54,6 +56,8 @@ public class LocationPane extends Pane {
     private final Map<String, LocationPolygon> locationMap;
     private final SimpleStringProperty selectedLocationId;
 
+    private final Map<String, ConnectionPolygon> connectionMap;
+
     private LocationPolygon lastFirstClickTarget;
     private LocationPolygon lastSelectedTile;
     private final EventHandler<MouseEvent> onEmptyAreaClickHandler;
@@ -69,6 +73,7 @@ public class LocationPane extends Pane {
         this.foregroundPane = foregroundPane;
 
         locationMap = new HashMap<>();
+        connectionMap = new HashMap<>();
 
         //Dummy Room
         selectedLocation = new ZonePolygon(
@@ -151,7 +156,62 @@ public class LocationPane extends Pane {
                 return;
         }
         locationMap.put(locationId, locationPolygon);
-        this.getChildren().add(locationPolygon);
+    }
+
+    /**
+     * Adds a connection to the location Pane.
+     *
+     * If a connection with the same id already exists, it will be overwritten.
+     *
+     * @param connectionId    The connection id
+     * @param connectionLabel The connection label
+     * @param vertices        A list of vertices which defines the shape of the connection
+     * @param connectionType  The type of the connection {DOOR,WINDOW,PASSAGE}
+     */
+    public void addConnection(final String connectionId, final String connectionLabel,
+                              final List<Point2D> vertices, final String connectionType,
+                              final List<String> locationIds) {
+        // Fill the list of vertices into an array of points
+        double[] points = new double[vertices.size() * 2];
+        for (int i = 0; i < vertices.size(); i++) {
+            // TODO: X and Y are swapped in the world of the csra... make it more generic...
+            points[i * 2] = vertices.get(i).getY() * Constants.METER_TO_PIXEL;
+            points[i * 2 + 1] = vertices.get(i).getX() * Constants.METER_TO_PIXEL;
+        }
+
+        ConnectionPolygon connectionPolygon;
+
+        switch (connectionType) {
+            case "DOOR":
+                connectionPolygon = new DoorPolygon(connectionLabel, connectionId, points);
+                break;
+            case "WINDOW":
+                connectionPolygon = new WindowPolygon(connectionLabel, connectionId, points);
+                break;
+            case "PASSAGE":
+                connectionPolygon = new PassagePolygon(connectionLabel, connectionId, points);
+                break;
+            default:
+                LOGGER.warn("The following connection has an unknown LocationType and will be ignored:"
+                        + "\n  UUID:  " + connectionId
+                        + "\n  Label: " + connectionLabel
+                        + "\n  Type:  " + connectionType);
+                return;
+        }
+        //TODO: add mouseeventhandler to connections?!
+
+        connectionMap.put(connectionId, connectionPolygon);
+
+        locationIds.forEach(locationId -> {
+            if (locationMap.containsKey(locationId)) {
+                final LocationPolygon locationPolygon = locationMap.get(locationId);
+                final Shape subtractedShape = Path.subtract(locationPolygon, connectionPolygon);
+                locationPolygon.setClip(subtractedShape);
+            } else {
+                LOGGER.error("Location ID \"" + locationId + "\" can not be found in the location Map. "
+                        + "No Clipping will be applied");
+            }
+        });
     }
 
     /**
@@ -161,6 +221,20 @@ public class LocationPane extends Pane {
         locationMap.forEach((locationId, locationPolygon) -> this.getChildren().remove(locationPolygon));
         locationMap.clear();
         rootRoom = null;
+    }
+
+    /**
+     * Erases all connections from the locationPane.
+     */
+    public void clearConnections() {
+        connectionMap.forEach((connectionId, connectionPolygon) -> this.getChildren().remove(connectionPolygon));
+        connectionMap.clear();
+    }
+
+    public void updateLocationPane() {
+        this.getChildren().clear();
+        locationMap.forEach((locationId, locationPolygon) -> this.getChildren().add(locationPolygon));
+        connectionMap.forEach((connectionId, connectionPolygon) -> this.getChildren().add(connectionPolygon));
     }
 
     /**

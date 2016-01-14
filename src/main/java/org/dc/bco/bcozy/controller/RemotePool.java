@@ -473,9 +473,17 @@ public class RemotePool {
 
     /**
      * Returns the information whether the remotepool is initialized or not.
-     * @return isInit
+     * @return init
      */
     public boolean isInit() {
         return init;
+    }
+
+    /**
+     * Returns the information whether the maps are filled or not.
+     * @return mapsFilled
+     */
+    public boolean isMapsFilled() {
+        return mapsFilled;
     }
 }

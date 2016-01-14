@@ -80,10 +80,14 @@ public class ContextMenuController {
             @Override
             public void changed(final ObservableValue<? extends String> observable, final String oldValue,
                                 final String newValue) {
-                try {
-                    setContextMenuDevicePanes(newValue);
-                } catch (CouldNotPerformException e) {
-                    ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                if (remotePool.isMapsFilled()) {
+                    try {
+                        setContextMenuDevicePanes(newValue);
+                    } catch (CouldNotPerformException e) {
+                        ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                    }
+                } else {
+                    LOGGER.error("DALRemoteService Maps are not filled. Thus no Context Menu will be loaded!");
                 }
             }
         });

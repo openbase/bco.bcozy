@@ -20,40 +20,35 @@ package org.dc.bco.bcozy.view.location;
 
 import javafx.scene.shape.Polygon;
 
-import java.util.List;
-
 /**
- *  A Polygon that represents different kinds of locations.
+ *  A Polygon that represents different kinds of connections.
  */
-public abstract class LocationPolygon extends Polygon {
+public abstract class ConnectionPolygon extends Polygon {
 
-    private boolean selected;
+    private boolean open;
     private final double centerX;
     private final double centerY;
-    private final String locationLabel;
-    private final String locationId;
-    private final List<String> childIds;
+    private final String connectionLabel;
+    private final String connectionId;
 
 
     /**
-     * Constructor for the LocationPolygon.
-     * @param locationLabel The name of the location
-     * @param locationId The ID of the location
-     * @param childIds The ids of the children
+     * Constructor for the ConnectionPolygon.
+     * @param connectionLabel The name of the location
+     * @param connectionId The ID of the location
      * @param points Points for the shape
      */
-    public LocationPolygon(final String locationLabel, final String locationId,
-                           final List<String> childIds, final double... points) {
+    public ConnectionPolygon(final String connectionLabel, final String connectionId, final double... points) {
         super(points);
         this.centerX = (super.getLayoutBounds().getMaxX() + super.getLayoutBounds().getMinX()) / 2;
         this.centerY = (super.getLayoutBounds().getMaxY() + super.getLayoutBounds().getMinY()) / 2;
-        this.locationLabel = locationLabel;
-        this.locationId = locationId;
-        this.childIds = childIds;
-        this.selected = false;
+        this.connectionLabel = connectionLabel;
+        this.connectionId = connectionId;
+        this.open = false;
 
+        //TODO: Size need to be raised somehow to fully overlap room walls
 
-        this.setLocationStyle();
+        this.setConnectionStyle();
     }
 
     /**
@@ -73,54 +68,46 @@ public abstract class LocationPolygon extends Polygon {
     }
 
     /**
-     * Getter for the location label.
+     * Getter for the connection label.
      * @return the label as a String
      */
     public String getLocationLabel() {
-        return locationLabel;
+        return connectionLabel;
     }
 
     /**
-     * Getter for the location id.
+     * Getter for the connection id.
      * @return the id as a String
      */
     public String getLocationId() {
-        return locationId;
+        return connectionId;
     }
 
     /**
-     * Method to get all the childIds from the Tile.
-     * @return A list of childIds.
+     * Getter method for the open boolean.
+     * @return open as a boolean value
      */
-    public List<String> getChildIds() {
-        return childIds;
+    public boolean isOpen() {
+        return open;
     }
 
     /**
-     * Getter method for the selected boolean.
-     * @return selected as a boolean value
+     * Setter method for the open boolean.
+     * @param open as a boolean value
      */
-    public boolean isSelected() {
-        return selected;
+    public void setSelected(final boolean open) {
+        this.open = open;
+        this.changeStyleOnOpening(open);
     }
 
     /**
-     * Setter method for the selected boolean.
-     * @param selected as a boolean value
+     * Will be called when the open value of the Polygon has been toggled.
+     * @param open boolean for the open status
      */
-    public void setSelected(final boolean selected) {
-        this.selected = selected;
-        this.changeStyleOnSelection(selected);
-    }
-
-    /**
-     * Will be called when the selection of the Polygon has been toggled.
-     * @param selected boolean for the selection status
-     */
-    protected abstract void changeStyleOnSelection(final boolean selected);
+    protected abstract void changeStyleOnOpening(final boolean open);
 
     /**
      * Will be called when the Polygon is constructed and can be used to apply specific styles.
      */
-    protected abstract void setLocationStyle();
+    protected abstract void setConnectionStyle();
 }

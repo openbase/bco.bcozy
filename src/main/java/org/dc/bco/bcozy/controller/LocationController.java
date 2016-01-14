@@ -19,23 +19,23 @@
 
 package org.dc.bco.bcozy.controller;
 
+import javafx.application.Platform;
+import javafx.geometry.Point2D;
+import org.dc.bco.bcozy.view.ForegroundPane;
+import org.dc.bco.bcozy.view.location.LocationPane;
+import org.dc.bco.registry.location.remote.LocationRegistryRemote;
 import org.dc.jul.exception.CouldNotPerformException;
 import org.dc.jul.exception.InstantiationException;
 import org.dc.jul.exception.printer.ExceptionPrinter;
 import org.dc.jul.exception.printer.LogLevel;
 import org.dc.jul.pattern.Observable;
 import org.dc.jul.pattern.Observer;
-import org.dc.bco.registry.location.remote.LocationRegistryRemote;
-import javafx.application.Platform;
-import javafx.geometry.BoundingBox;
-import javafx.geometry.Point2D;
-import org.dc.bco.bcozy.view.ForegroundPane;
-import org.dc.bco.bcozy.view.location.LocationPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rct.Transform;
 import rct.TransformerException;
 import rst.math.Vec3DDoubleType;
+import rst.spatial.ConnectionConfigType;
 import rst.spatial.LocationConfigType;
 import rst.spatial.LocationRegistryType;
 
@@ -56,9 +56,8 @@ public class LocationController implements Observer<LocationRegistryType.Locatio
     private final ForegroundPane foregroundPane;
     private final LocationPane locationPane;
     private final RemotePool remotePool;
+    private String rootId;
     private LocationRegistryRemote locationRegistryRemote;
-
-//    private final Map<String, LocationPolygon> locationPolygonMap;
 
     /**
      * The constructor.
@@ -73,16 +72,9 @@ public class LocationController implements Observer<LocationRegistryType.Locatio
         this.foregroundPane = foregroundPane;
         this.locationPane = locationPane;
         this.remotePool = remotePool;
+        this.rootId = "";
 
         this.foregroundPane.getMainMenu().addFetchLocationButtonEventHandler(event -> connectLocationRemote());
-        //@Julian: This is the size of the bounding box within which the drawing should be done
-        final BoundingBox boundingBox = foregroundPane.getBoundingBox();
-        LOGGER.info("Height:" + boundingBox.getHeight());
-        LOGGER.info("Width:" + boundingBox.getWidth());
-        LOGGER.info("Min X:" + boundingBox.getMinX());
-        LOGGER.info("Min Y:" + boundingBox.getMinY());
-        LOGGER.info("Max X:" + boundingBox.getMaxX());
-        LOGGER.info("Max Y:" + boundingBox.getMaxY());
     }
 
     /**
@@ -93,9 +85,8 @@ public class LocationController implements Observer<LocationRegistryType.Locatio
             try {
                 locationRegistryRemote = remotePool.getLocationRegistryRemote();
                 locationRegistryRemote.addObserver(this);
-                this.fetchLocation();
-
-            } catch (CouldNotPerformException e) {
+                this.update(null, null);
+            } catch (Exception e) { //NOPMD
                 ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
             }
         } else {
@@ -104,13 +95,13 @@ public class LocationController implements Observer<LocationRegistryType.Locatio
         }
     }
 
-    private void fetchLocation() throws CouldNotPerformException {
+    private void fetchLocations() throws CouldNotPerformException {
         final List<LocationConfigType.LocationConfig> list = locationRegistryRemote.getLocationConfigs();
 
         locationPane.clearLocations();
 
         //search for root
-        String rootId = "";
+        rootId = "";
 
         for (final LocationConfigType.LocationConfig locationConfig : list) {
             if (locationConfig.getRoot()) {
@@ -118,7 +109,7 @@ public class LocationController implements Observer<LocationRegistryType.Locatio
             }
         }
 
-        //check which location have a shape
+        //check which location has a shape
         for (final LocationConfigType.LocationConfig locationConfig : list) {
             if (locationConfig.getPlacementConfig().hasShape()) {
                 try {
@@ -154,8 +145,52 @@ public class LocationController implements Observer<LocationRegistryType.Locatio
                 }
             }
         }
+    }
 
-        locationPane.zoomFit();
+    private void fetchConnections() throws CouldNotPerformException {
+        final List<ConnectionConfigType.ConnectionConfig> list = locationRegistryRemote.getConnectionConfigs();
+
+        locationPane.clearConnections();
+
+        //check which connection has a shape
+        for (final ConnectionConfigType.ConnectionConfig connectionConfig : list) {
+            if (connectionConfig.getPlacement().hasShape()) {
+                try {
+                    final List<Point2D> vertices = new LinkedList<>();
+
+                    // Get the transformation for the current room TODO: comment in when transformer bug is fixed
+                    //final Transform transform =
+                    //        remotePool.getTransformReceiver()
+                    //                .lookupTransform(rootId, connectionConfig.getId(), System.currentTimeMillis());
+
+                    // Get the shape of the room
+                    final List<Vec3DDoubleType.Vec3DDouble> shape =
+                            connectionConfig.getPlacement().getShape().getFloorList();
+
+                    // Iterate over all vertices
+                    for (final Vec3DDoubleType.Vec3DDouble rstVertex : shape) {
+                        // Convert vertex into java type
+                        final Point3d vertex = new Point3d(rstVertex.getX(), rstVertex.getY(), rstVertex.getZ());
+                        // Transform
+                        //transform.getTransform().transform(vertex);
+                        // Add vertex to list of vertices
+                        vertices.add(new Point2D(vertex.x, vertex.y));
+                    }
+
+                    locationPane.addConnection(connectionConfig.getId(), connectionConfig.getLabel(),
+                            vertices, connectionConfig.getType().toString(), connectionConfig.getTileIdList());
+                } catch (Exception e) { //NOPMD
+
+                }
+//                } catch (TransformerException e) {
+//                    ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+//                    LOGGER.warn("Could not gather transformation for connection: " + connectionConfig.getId());
+//                } catch (CouldNotPerformException e) {
+//                    ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+//                    LOGGER.warn("TransformReceiver was not properly initialized.");
+//                }
+            }
+        }
     }
 
     private void fetchDummyLocation() {
@@ -195,7 +230,9 @@ public class LocationController implements Observer<LocationRegistryType.Locatio
                        final LocationRegistryType.LocationRegistry locationRegistry) throws Exception { //NOPMD
         Platform.runLater(() -> {
             try {
-                fetchLocation();
+                fetchLocations();
+                fetchConnections();
+                locationPane.updateLocationPane();
             } catch (CouldNotPerformException e) {
                 ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
             }
