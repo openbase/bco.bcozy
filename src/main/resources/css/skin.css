@@ -468,3 +468,36 @@
     /*-fx-padding: 0.0 10.0 0.0 10.0;*/
     -fx-background-insets:  10.0 10.0 10.0 10.0;
 }
+
+/*******************************************************************************
+ *                                                                             *
+ * DimmerPane                                                                  *
+ *                                                                             *
+ ******************************************************************************/
+
+.slider .track {
+    -fx-background-color:null;  /* Hide the track */
+    -fx-background-insets: 1 0 -1 0, 0, 1;
+    -fx-background-radius: 2.5, 2.5, 1.5;
+    -fx-padding: 0.208333em; /* 2.5 */
+}
+
+.dimmer-body {
+    -fx-background-insets:  10.0 10.0 10.0 10.0;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * RollerShutterPane                                                           *
+ *                                                                             *
+ ******************************************************************************/
+
+.roller-shutter-button {
+    -fx-background-insets:  10.0 10.0 10.0 10.0;
+    -fx-background-radius: 20.0;
+    -fx-border-radius: 20.0;
+    -fx-min-width: 10.0;
+    -fx-min-height: 10.0;
+    -fx-max-width: 10.0;
+    -fx-max-height: 10.0;
+}
