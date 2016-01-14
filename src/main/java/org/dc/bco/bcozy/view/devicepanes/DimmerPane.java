@@ -212,7 +212,7 @@ public class DimmerPane extends UnitPane {
                     toggleSwitch.setSelected(true);
                 }
             } else {
-                setColorToImageEffect(Color.LIGHTGRAY);
+                setColorToImageEffect(Color.TRANSPARENT);
                 slider.setValue(0);
                 progressBar.setProgress(0);
 

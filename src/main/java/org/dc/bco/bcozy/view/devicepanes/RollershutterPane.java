@@ -21,8 +21,10 @@ package org.dc.bco.bcozy.view.devicepanes;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
+import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.shape.Rectangle;
 import org.dc.bco.bcozy.view.SVGIcon;
 import org.dc.bco.dal.remote.unit.DALRemoteService;
 import org.dc.bco.dal.remote.unit.RollershutterRemote;
@@ -31,15 +33,13 @@ import org.dc.jul.exception.printer.ExceptionPrinter;
 import org.dc.jul.exception.printer.LogLevel;
 import org.dc.jul.pattern.Observable;
 import javafx.scene.control.Label;
-//import javafx.scene.image.Image;
 import javafx.scene.layout.*;
-//import javafx.scene.paint.Color;
+import javafx.scene.paint.Color;
 import org.dc.bco.bcozy.view.Constants;
-//import org.dc.bco.bcozy.view.ImageEffect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.homeautomation.state.ShutterStateType;
-//import rst.homeautomation.unit.RollershutterType;
+import rst.homeautomation.unit.RollershutterType;
 
 /**
  * Created by hoestreich on 11/19/15.
@@ -51,18 +51,22 @@ public class RollershutterPane extends UnitPane {
     private final RollershutterRemote rollershutterRemote;
     private final BorderPane headContent;
     private final HBox bodyContent;
-    //private final Image bottomImage;
-    //private final Image topImage;
+    private final SVGIcon rollerShutterIconBackground;
+    private final SVGIcon rollerShutterIconForeground;
+    private final Group rollerShutterIcon;
+    private final Rectangle clip;
 
     /**
      * Constructor for a RollershutterPane.
-     * @param rollershutterRemote DALRemoteService
+     * @param rollerShutterRemote DALRemoteService
      */
-    public RollershutterPane(final DALRemoteService rollershutterRemote) {
-        this.rollershutterRemote = (RollershutterRemote) rollershutterRemote;
+    public RollershutterPane(final DALRemoteService rollerShutterRemote) {
+        this.rollershutterRemote = (RollershutterRemote) rollerShutterRemote;
 
-        //bottomImage = new Image("/icons/shutter_test.png");
-        //topImage    = new Image("/icons/shutter_test2.png");
+        rollerShutterIconBackground = new SVGIcon(MaterialDesignIcon.FORMAT_ALIGN_JUSTIFY, Constants.SMALL_ICON, false);
+        rollerShutterIconForeground = new SVGIcon(MaterialDesignIcon.FORMAT_ALIGN_JUSTIFY, Constants.SMALL_ICON, false);
+        rollerShutterIcon = new Group();
+        clip = new Rectangle();
 
         headContent = new BorderPane();
         bodyContent = new HBox();
@@ -78,19 +82,33 @@ public class RollershutterPane extends UnitPane {
         initContent();
         createWidgetPane(headContent, bodyContent);
 
+        try {
+            initEffect();
+        } catch (CouldNotPerformException e) {
+            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+        }
+
         this.rollershutterRemote.addObserver(this);
+    }
+
+    private void effectGroup(final Double percentage) {
+        rollerShutterIconBackground.setColor(Color.GRAY);
+        rollerShutterIconForeground.setColor(Color.BLACK);
+
+        clip.setWidth(Constants.SMALL_ICON);
+        clip.setHeight(Constants.SMALL_ICON * percentage);
+        rollerShutterIconForeground.setClip(clip);
+
+        rollerShutterIcon.getChildren().addAll(rollerShutterIconBackground, rollerShutterIconForeground);
     }
 
     @Override
     protected void initTitle() {
-        //final ImageEffect imageGroup = new ImageEffect(bottomImage, topImage, Color.BLACK);
+        //effectGroup(0.9);
 
-        //headContent.setLeft(imageGroup);
+        headContent.setLeft(rollerShutterIcon);
         headContent.setCenter(new Label(super.getUnitLabel()));
-        //headContent.prefHeightProperty().set(bottomImage.getHeight() + (Constants.INSETS * 2));
-        //CHECKSTYLE.OFF: MagicNumber
-        headContent.prefHeightProperty().set(50 + Constants.INSETS);
-        //CHECKSTYLE.ON: MagicNumber
+        headContent.prefHeightProperty().set(Constants.SMALL_ICON + Constants.INSETS);
     }
 
     @Override
@@ -109,24 +127,12 @@ public class RollershutterPane extends UnitPane {
         arrowDoubleUP = new SVGIcon(MaterialDesignIcon.CHEVRON_DOUBLE_UP, Constants.SMALL_ICON, true);
         arrowDoubleDown = new SVGIcon(MaterialDesignIcon.CHEVRON_DOUBLE_DOWN, Constants.SMALL_ICON, true);
 
-        buttonUp.getStyleClass().add("roller-shutter-button");
         buttonUp.setGraphic(arrowUp);
-        buttonDown.getStyleClass().add("roller-shutter-button");
         buttonDown.setGraphic(arrowDown);
-        buttonOpen.getStyleClass().add("roller-shutter-button");
         buttonOpen.setGraphic(arrowDoubleUP);
-        buttonClose.getStyleClass().add("roller-shutter-button");
         buttonClose.setGraphic(arrowDoubleDown);
 
         final EventHandler<MouseEvent> sendingTotalOpening = event -> {
-            try {
-                rollershutterRemote.setOpeningRatio(1.0);
-            } catch (CouldNotPerformException e) {
-                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-            }
-        };
-
-        final EventHandler<MouseEvent> sendingTotalClosing = event -> {
             try {
                 rollershutterRemote.setOpeningRatio(0.0);
             } catch (CouldNotPerformException e) {
@@ -134,9 +140,21 @@ public class RollershutterPane extends UnitPane {
             }
         };
 
+        final EventHandler<MouseEvent> sendingTotalClosing = event -> {
+            try {
+                rollershutterRemote.setOpeningRatio(1.0);
+            } catch (CouldNotPerformException e) {
+                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+            }
+        };
+
         final EventHandler<MouseEvent> sendingUpLive = event -> {
             try {
-                rollershutterRemote.setShutter(ShutterStateType.ShutterState.State.UP);
+                if (rollershutterRemote.getOpeningRatio() >= Constants.ROLLERSHUTTER_STEP) {
+                    rollershutterRemote.setOpeningRatio(rollershutterRemote.getOpeningRatio()
+                            - Constants.ROLLERSHUTTER_STEP);
+                }
+                //rollershutterRemote.setShutter(ShutterStateType.ShutterState.State.UP);
             } catch (CouldNotPerformException e) {
                 ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
             }
@@ -152,7 +170,12 @@ public class RollershutterPane extends UnitPane {
 
         final EventHandler<MouseEvent> sendingDownLive = event -> {
             try {
-                rollershutterRemote.setShutter(ShutterStateType.ShutterState.State.DOWN);
+                if (rollershutterRemote.getOpeningRatio() <= Constants.ROLLERSHUTTER_MAX_VALUE
+                        - Constants.ROLLERSHUTTER_STEP) {
+                    rollershutterRemote.setOpeningRatio(rollershutterRemote.getOpeningRatio()
+                            + Constants.ROLLERSHUTTER_STEP);
+                }
+                //rollershutterRemote.setShutter(ShutterStateType.ShutterState.State.DOWN);
             } catch (CouldNotPerformException e) {
                 ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
             }
@@ -160,20 +183,23 @@ public class RollershutterPane extends UnitPane {
 
         buttonOpen.setOnMouseClicked(sendingTotalOpening);
         buttonClose.setOnMouseClicked(sendingTotalClosing);
-        buttonUp.setOnMousePressed(sendingUpLive);
-        buttonUp.setOnMouseReleased(sendingStop);
-        buttonDown.setOnMousePressed(sendingDownLive);
-        buttonDown.setOnMouseReleased(sendingStop);
+        buttonUp.setOnMouseClicked(sendingUpLive);
+        buttonDown.setOnMouseClicked(sendingDownLive);
+        //buttonUp.setOnMousePressed(sendingUpLive);
+        //buttonUp.setOnMouseReleased(sendingStop);
+        //buttonDown.setOnMousePressed(sendingDownLive);
+        //buttonDown.setOnMouseReleased(sendingStop);
 
         bodyContent.getChildren().addAll(buttonUp, buttonDown, buttonOpen, buttonClose);
-        bodyContent.prefHeightProperty().set(buttonUp.getPrefHeight() + bodyContent.getPadding().getTop()
-                + bodyContent.getPadding().getBottom());
+        //CHECKSTYLE.OFF: MagicNumber
+        bodyContent.prefHeightProperty().set(100 + Constants.INSETS);
+        //CHECKSTYLE.ON: MagicNumber
     }
 
-//    private void initEffect() throws CouldNotPerformException {
-//        final Double openingPercentage = rollershutterRemote.getOpeningRatio();
-//        //TODO set iconRatio
-//    }
+    private void initEffect() throws CouldNotPerformException {
+        final Double openingPercentage = rollershutterRemote.getOpeningRatio();
+        effectGroup(openingPercentage);
+    }
 
     @Override
     public DALRemoteService getDALRemoteService() {
@@ -188,8 +214,8 @@ public class RollershutterPane extends UnitPane {
     @Override
     public void update(final Observable observable, final Object rollerShutter) throws java.lang.Exception {
         Platform.runLater(() -> {
-            //final Double openingPercentage = ((RollershutterType.Rollershutter) rollerShutter).getOpeningRatio();
-            //TODO set iconRatio
+            final Double openingPercentage = ((RollershutterType.Rollershutter) rollerShutter).getOpeningRatio();
+            effectGroup(openingPercentage);
         });
 
     }

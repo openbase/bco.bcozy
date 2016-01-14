@@ -494,8 +494,8 @@
 
 .roller-shutter-button {
     -fx-background-insets:  10.0 10.0 10.0 10.0;
-    -fx-background-radius: 20.0;
-    -fx-border-radius: 20.0;
+    -fx-padding: 10.0 10.0 10.0 10.0;
+    -fx-background-radius: 1em;
     -fx-min-width: 10.0;
     -fx-min-height: 10.0;
     -fx-max-width: 10.0;
