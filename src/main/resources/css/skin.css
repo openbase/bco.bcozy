@@ -437,10 +437,14 @@
 
 .body-pane {
     -fx-padding: 5.0 10.0 5.0 10.0;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-insets: 0 0 1 0;
 }
 
 .head-pane {
     -fx-padding: 5.0 10.0 5.0 10.0;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-insets: 0 0 1 0;
 }
 
 /*******************************************************************************

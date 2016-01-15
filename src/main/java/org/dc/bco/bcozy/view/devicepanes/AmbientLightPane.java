@@ -154,7 +154,7 @@ public class AmbientLightPane extends UnitPane {
         headContent.setLeft(lightbulbIcon);
         headContent.setCenter(new Label(super.getUnitLabel()));
         headContent.setRight(toggleSwitch);
-        headContent.prefHeightProperty().set(lightbulbIcon.getSize() + Constants.INSETS);
+        headContent.prefHeightProperty().set(lightbulbIcon.getSize() + Constants.INSETS + 1);
     }
 
     /**

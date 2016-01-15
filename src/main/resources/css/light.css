@@ -442,9 +442,23 @@
     -fx-background-color: -bg-color;
             /*-fx-box-border, linear-gradient(to bottom, derive(-fx-color,-02%), derive(-fx-color,65%) 12%,*/
             /*derive(-fx-color,23%) 88%, derive(-fx-color,50%) 99%, -fx-box-border);*/
+    -fx-border-color:
+            transparent
+            transparent
+            -border-color
+            transparent;
 }
 
 .head-pane {
     -fx-text-fill: -fx-text-base-color;
     -fx-background-color: -bg-color; /*-fx-box-border, -fx-inner-border, -fx-body-color;*/
+    -fx-border-color:
+            transparent
+            transparent
+            -border-color
+            transparent;
+}
+
+.background-pane {
+    -fx-background-color: radial-gradient(center 50% 50%, radius 100%, derive(rgb(0.2, 0.2, 0.2), 90%), rgb(0.2, 0.2, 0.2));
 }
