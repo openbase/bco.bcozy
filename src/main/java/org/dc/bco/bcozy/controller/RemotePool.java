@@ -16,7 +16,7 @@
  * along with org.dc.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
-package org.dc.bco.bcozy.controller;
+package org.dc.bco.bcozy.controller; //NOPMD
 
 import org.dc.bco.dal.remote.unit.DALRemoteService;
 import org.dc.bco.dal.remote.unit.UnitRemoteFactory;

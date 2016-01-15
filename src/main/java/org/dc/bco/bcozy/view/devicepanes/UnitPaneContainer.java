@@ -53,7 +53,8 @@ public class UnitPaneContainer extends TitledPane {
      * @param unitType unitType
      * @param dalRemoteServiceList dalRemoteServiceList
      */
-    public void createAndAddNewUnitPanes(final UnitType unitType, final List<DALRemoteService> dalRemoteServiceList) {
+    public void createAndAddNewUnitPanes(final UnitType unitType, //NOPMD
+                                         final List<DALRemoteService> dalRemoteServiceList) {
         this.setExpanded(false);
 
         if (unitType.equals(UnitType.AMBIENT_LIGHT)) {

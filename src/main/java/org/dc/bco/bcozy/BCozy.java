@@ -168,7 +168,7 @@ public class BCozy extends Application {
     public void stop() {
         try {
             super.stop();
-        } catch (Exception e) {
+        } catch (Exception e) { //NOPMD
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
         remotePool.shutdownAllRemotes(); //TODO mpohling: not shutting down properly

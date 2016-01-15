@@ -108,22 +108,26 @@ public class ContextMenuController {
             titledPaneContainer = this.titledPaneMap.get(locationID);
         } else {
             titledPaneContainer = new TitledPaneContainer();
-            this.titledPaneMap.put(locationID, titledPaneContainer);
-
-            final Map<UnitType, List<DALRemoteService>> unitRemoteMap =
-                    remotePool.getUnitRemoteMapOfLocation(locationID);
-
-            final Iterator<Map.Entry<UnitType, List<DALRemoteService>>> entryIterator =
-                    unitRemoteMap.entrySet().iterator();
-
-            while (entryIterator.hasNext()) {
-                final Map.Entry<UnitType, List<DALRemoteService>> nextEntry = entryIterator.next();
-
-                titledPaneContainer.createAndAddNewTitledPane(nextEntry.getKey(), nextEntry.getValue());
-            }
+            fillTitledPaneContainer(titledPaneContainer, locationID);
         }
 
         this.foregroundPane.getContextMenu().setTitledPaneContainer(titledPaneContainer);
+    }
+
+    private void fillTitledPaneContainer(final TitledPaneContainer titledPaneContainer, final String locationID) {
+        this.titledPaneMap.put(locationID, titledPaneContainer);
+
+        final Map<UnitType, List<DALRemoteService>> unitRemoteMap =
+                remotePool.getUnitRemoteMapOfLocation(locationID);
+
+        final Iterator<Map.Entry<UnitType, List<DALRemoteService>>> entryIterator =
+                unitRemoteMap.entrySet().iterator();
+
+        while (entryIterator.hasNext()) {
+            final Map.Entry<UnitType, List<DALRemoteService>> nextEntry = entryIterator.next();
+
+            titledPaneContainer.createAndAddNewTitledPane(nextEntry.getKey(), nextEntry.getValue());
+        }
     }
 
     /**
@@ -158,19 +162,7 @@ public class ContextMenuController {
             final String locationID = locationConfig.getId();
 
             final TitledPaneContainer titledPaneContainer = new TitledPaneContainer();
-            this.titledPaneMap.put(locationID, titledPaneContainer);
-
-            final Map<UnitType, List<DALRemoteService>> unitRemoteMap =
-                    remotePool.getUnitRemoteMapOfLocation(locationID);
-
-            final Iterator<Map.Entry<UnitType, List<DALRemoteService>>> entryIterator =
-                    unitRemoteMap.entrySet().iterator();
-
-            while (entryIterator.hasNext()) {
-                final Map.Entry<UnitType, List<DALRemoteService>> nextEntry = entryIterator.next();
-
-                titledPaneContainer.createAndAddNewTitledPane(nextEntry.getKey(), nextEntry.getValue());
-            }
+            fillTitledPaneContainer(titledPaneContainer, locationID);
         }
     }
 }

@@ -35,6 +35,7 @@ import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.SVGIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rst.homeautomation.state.BatteryStateType;
 import rst.homeautomation.unit.BatteryType.Battery;
 
 /**
@@ -84,58 +85,17 @@ public class BatteryPane extends UnitPane {
 
     private void initEffect() throws CouldNotPerformException {
         final double batteryLevel = batteryRemote.getBattery().getLevel();
-        batteryStatus.setText((int) batteryLevel + "%");
-        //CHECKSTYLE.OFF: MagicNumber
-        //CHECKSTYLE.OFF: EmptyBlock
-        if (batteryLevel > 95) {
-            batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY);
-        } else if (batteryLevel > 85) {
-            batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_90);
-        } else if (batteryLevel > 75) {
-            batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_80);
-        } else if (batteryLevel > 65) {
-            //batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_70);
-        } else if (batteryLevel > 55) {
-            batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_60);
-        } else if (batteryLevel > 45) {
-            //batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_50);
-        } else if (batteryLevel > 35) {
-            batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_40);
-        } else if (batteryLevel > 25) {
-            batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_30);
-        } else if (batteryLevel > 15) {
-            batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_20);
-        } else if (batteryLevel > 5) {
-            //batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_10);
-        } else {
-            batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_OUTLINE);
-        }
-        //CHECKSTYLE.ON: MagicNumber
-        //CHECKSTYLE.ON: EmptyBlock
+        setStatusBatteryIcon(batteryLevel);
 
-        switch (batteryRemote.getBattery().getValue()) {
-            case UNKNOWN:
-                batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_UNKNOWN);
-                batteryIcon.setBackgroundIconColorAnimated(Color.BLACK);
-                break;
-            case OK:
-                batteryIcon.setBackgroundIconColorAnimated(Color.GREEN);
-                break;
-            case CRITICAL:
-                batteryIcon.setBackgroundIconColorAnimated(Color.RED);
-                break;
-            case INSUFFICIENT:
-                batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_ALERT);
-                batteryIcon.setBackgroundIconColorAnimated(Color.RED);
-                break;
-            default:
-                break;
-        }
+        final BatteryStateType.BatteryState.State batteryState =
+                batteryRemote.getBattery().getValue();
+        setBatteryStateColorAndIcon(batteryState);
     }
 
     /**
      * Method creates the header content of the widgetPane.
      */
+
     @Override
     protected void initTitle() {
         batteryIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
@@ -171,55 +131,59 @@ public class BatteryPane extends UnitPane {
     public void update(final Observable observable, final Object battery) throws java.lang.Exception {
         Platform.runLater(() -> {
             final double batteryLevel = ((Battery) battery).getBatteryState().getLevel();
-            batteryStatus.setText((int) batteryLevel + "%");
-            //CHECKSTYLE.OFF: MagicNumber
-            //CHECKSTYLE.OFF: EmptyBlock
-            if (batteryLevel > 95) {
-                batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY);
-            } else if (batteryLevel > 85) {
-                batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_90);
-            } else if (batteryLevel > 75) {
-                batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_80);
-            } else if (batteryLevel > 65) {
-                //batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_70);
-            } else if (batteryLevel > 55) {
-                batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_60);
-            } else if (batteryLevel > 45) {
-                //batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_50);
-            } else if (batteryLevel > 35) {
-                batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_40);
-            } else if (batteryLevel > 25) {
-                batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_30);
-            } else if (batteryLevel > 15) {
-                batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_20);
-            } else if (batteryLevel > 5) {
-                //batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_10);
-            } else {
-                batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_OUTLINE);
-            }
-            //CHECKSTYLE.ON: MagicNumber
-            //CHECKSTYLE.ON: EmptyBlock
+            setStatusBatteryIcon(batteryLevel);
 
 
             batteryIcon.setForegroundIconColorAnimated(Color.BLACK);
-            switch (((Battery) battery).getBatteryState().getValue()) {
-                case UNKNOWN:
-                    batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_UNKNOWN);
-                    batteryIcon.setBackgroundIconColorAnimated(Color.YELLOW);
-                    break;
-                case OK:
-                    batteryIcon.setBackgroundIconColorAnimated(Color.GREEN);
-                    break;
-                case CRITICAL:
-                    batteryIcon.setBackgroundIconColorAnimated(Color.RED);
-                    break;
-                case INSUFFICIENT:
-                    batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_ALERT);
-                    batteryIcon.setBackgroundIconColorAnimated(Color.RED);
-                    break;
-                default:
-                    break;
-            }
+            final BatteryStateType.BatteryState.State batteryState =
+                    ((Battery) battery).getBatteryState().getValue();
+            setBatteryStateColorAndIcon(batteryState);
         });
+    }
+
+    private void setBatteryStateColorAndIcon(final BatteryStateType.BatteryState.State batteryState) {
+        switch (batteryState) {
+            case UNKNOWN:
+                batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_UNKNOWN);
+                batteryIcon.setBackgroundIconColorAnimated(Color.YELLOW);
+                break;
+            case OK:
+                batteryIcon.setBackgroundIconColorAnimated(Color.GREEN);
+                break;
+            case CRITICAL:
+                batteryIcon.setBackgroundIconColorAnimated(Color.RED);
+                break;
+            case INSUFFICIENT:
+                batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_ALERT);
+                batteryIcon.setBackgroundIconColorAnimated(Color.RED);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void setStatusBatteryIcon(final double batteryLevel) {
+        batteryStatus.setText((int) batteryLevel + "%");
+        //CHECKSTYLE.OFF: MagicNumber
+        //CHECKSTYLE.OFF: EmptyBlock
+        if (batteryLevel > 95) {
+            batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY);
+        } else if (batteryLevel > 85) {
+            batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_90);
+        } else if (batteryLevel > 75) {
+            batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_80);
+        }  else if (batteryLevel > 55) {
+            batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_60);
+        }  else if (batteryLevel > 35) {
+            batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_40);
+        } else if (batteryLevel > 25) {
+            batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_30);
+        } else if (batteryLevel > 15) {
+            batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_20);
+        }  else {
+            batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_OUTLINE);
+        }
+        //CHECKSTYLE.ON: MagicNumber
+        //CHECKSTYLE.ON: EmptyBlock
     }
 }

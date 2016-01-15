@@ -16,7 +16,7 @@
  * along with org.dc.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
-package org.dc.bco.bcozy.view.devicepanes;
+package org.dc.bco.bcozy.view.devicepanes; //NOPMD //TODO: Split up in several classes
 
 import org.dc.bco.dal.remote.unit.AmbientLightRemote;
 import org.dc.bco.dal.remote.unit.DALRemoteService;

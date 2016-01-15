@@ -153,8 +153,8 @@ public class WidgetPane extends VBox {
         timelineUp.setCycleCount(1);
         timelineUp.setAutoReverse(true);
 
-        final KeyValue kvUp1 = new KeyValue(rectangleClip.heightProperty()
-                , headContent.prefHeightProperty().getValue());
+        final KeyValue kvUp1 = new KeyValue(rectangleClip.heightProperty(),
+                headContent.prefHeightProperty().getValue());
         final KeyValue kvUp2 = new KeyValue(rectangleClip.translateYProperty(), 0);
         final KeyValue kvUp3 = new KeyValue(body.prefHeightProperty(), 0);
         final KeyValue kvUp4 = new KeyValue(body.translateYProperty(), 0);
