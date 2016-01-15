@@ -27,8 +27,6 @@ import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.shape.Path;
-import javafx.scene.shape.Shape;
 import javafx.util.Duration;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.ForegroundPane;
@@ -150,9 +148,9 @@ public class LocationPane extends Pane {
                 break;
             default:
                 LOGGER.warn("The following location has an unknown LocationType and will be ignored:"
-                        + "\n  UUID:  " + locationId
-                        + "\n  Label: " + locationLabel
-                        + "\n  Type:  " + locationType);
+                        + "\n  location UUID:  " + locationId
+                        + "\n  location Label: " + locationLabel
+                        + "\n  location Type:  " + locationType);
                 return;
         }
         locationMap.put(locationId, locationPolygon);
@@ -167,6 +165,7 @@ public class LocationPane extends Pane {
      * @param connectionLabel The connection label
      * @param vertices        A list of vertices which defines the shape of the connection
      * @param connectionType  The type of the connection {DOOR,WINDOW,PASSAGE}
+     * @param locationIds     The IDs of the location that will be connected by this connection
      */
     public void addConnection(final String connectionId, final String connectionLabel,
                               final List<Point2D> vertices, final String connectionType,
@@ -193,23 +192,21 @@ public class LocationPane extends Pane {
                 break;
             default:
                 LOGGER.warn("The following connection has an unknown LocationType and will be ignored:"
-                        + "\n  UUID:  " + connectionId
-                        + "\n  Label: " + connectionLabel
-                        + "\n  Type:  " + connectionType);
+                        + "\n  connection UUID:  " + connectionId
+                        + "\n  connection Label: " + connectionLabel
+                        + "\n  connection Type:  " + connectionType);
                 return;
         }
-        //TODO: add mouseeventhandler to connections?!
 
         connectionMap.put(connectionId, connectionPolygon);
 
         locationIds.forEach(locationId -> {
             if (locationMap.containsKey(locationId)) {
                 final LocationPolygon locationPolygon = locationMap.get(locationId);
-                final Shape subtractedShape = Path.subtract(locationPolygon, connectionPolygon);
-                locationPolygon.setClip(subtractedShape);
+                locationPolygon.addCuttingShape(connectionPolygon);
             } else {
                 LOGGER.error("Location ID \"" + locationId + "\" can not be found in the location Map. "
-                        + "No Clipping will be applied");
+                        + "No Cutting will be applied");
             }
         });
     }
@@ -231,6 +228,9 @@ public class LocationPane extends Pane {
         connectionMap.clear();
     }
 
+    /**
+     * Will clear everything on the location Pane and then add everything that is saved in the maps.
+     */
     public void updateLocationPane() {
         this.getChildren().clear();
         locationMap.forEach((locationId, locationPolygon) -> this.getChildren().add(locationPolygon));
@@ -371,17 +371,10 @@ public class LocationPane extends Pane {
         this.setScaleX(scale);
         this.setScaleY(scale);
 
-        final double polygonDistanceToCenterX = (-(polygon.getCenterX() - (getLayoutBounds().getWidth() / 2))) * scale;
-        final double polygonDistanceToCenterY = (-(polygon.getCenterY() - (getLayoutBounds().getHeight() / 2))) * scale;
-        final double boundingBoxCenterX =
-                (foregroundPane.getBoundingBox().getMinX() + foregroundPane.getBoundingBox().getMaxX()) / 2;
-        final double boundingBoxCenterY =
-                (foregroundPane.getBoundingBox().getMinY() + foregroundPane.getBoundingBox().getMaxY()) / 2;
-        final double bbCenterDistanceToCenterX = ((getLayoutBounds().getWidth() / 2) - boundingBoxCenterX);
-        final double bbCenterDistanceToCenterY = ((getLayoutBounds().getHeight() / 2) - boundingBoxCenterY);
+        final Point2D transition = calculateTransition(scale, polygon);
 
-        this.setTranslateX(polygonDistanceToCenterX - bbCenterDistanceToCenterX);
-        this.setTranslateY(polygonDistanceToCenterY - bbCenterDistanceToCenterY);
+        this.setTranslateX(transition.getX());
+        this.setTranslateY(transition.getY());
     }
 
     private void autoFocusPolygonAnimated(final LocationPolygon polygon) {
@@ -397,6 +390,20 @@ public class LocationPane extends Pane {
         scaleTransition.setCycleCount(1);
         scaleTransition.setAutoReverse(true);
 
+        final Point2D transition = calculateTransition(scale, polygon);
+
+        final TranslateTransition translateTransition = new TranslateTransition(Duration.millis(500));
+        translateTransition.setToX(transition.getX());
+        translateTransition.setToY(transition.getY());
+        translateTransition.setCycleCount(1);
+        translateTransition.setAutoReverse(true);
+
+        final ParallelTransition parallelTransition =
+                new ParallelTransition(this, scaleTransition, translateTransition);
+        parallelTransition.play();
+    }
+
+    private Point2D calculateTransition(final double scale, final LocationPolygon polygon) {
         final double polygonDistanceToCenterX = (-(polygon.getCenterX() - (getLayoutBounds().getWidth() / 2))) * scale;
         final double polygonDistanceToCenterY = (-(polygon.getCenterY() - (getLayoutBounds().getHeight() / 2))) * scale;
         final double boundingBoxCenterX =
@@ -405,15 +412,9 @@ public class LocationPane extends Pane {
                 (foregroundPane.getBoundingBox().getMinY() + foregroundPane.getBoundingBox().getMaxY()) / 2;
         final double bbCenterDistanceToCenterX = ((getLayoutBounds().getWidth() / 2) - boundingBoxCenterX);
         final double bbCenterDistanceToCenterY = ((getLayoutBounds().getHeight() / 2) - boundingBoxCenterY);
+        final double transitionX = polygonDistanceToCenterX - bbCenterDistanceToCenterX;
+        final double transitionY = polygonDistanceToCenterY - bbCenterDistanceToCenterY;
 
-        final TranslateTransition translateTransition = new TranslateTransition(Duration.millis(500));
-        translateTransition.setToX(polygonDistanceToCenterX - bbCenterDistanceToCenterX);
-        translateTransition.setToY(polygonDistanceToCenterY - bbCenterDistanceToCenterY);
-        translateTransition.setCycleCount(1);
-        translateTransition.setAutoReverse(true);
-
-        final ParallelTransition parallelTransition =
-                new ParallelTransition(this, scaleTransition, translateTransition);
-        parallelTransition.play();
+        return new Point2D(transitionX, transitionY);
     }
 }

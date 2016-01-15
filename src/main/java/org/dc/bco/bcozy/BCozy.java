@@ -58,8 +58,9 @@ public class BCozy extends Application {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(BCozy.class);
 
-    private InfoPane infoPane;
     private static Stage primaryStage;
+
+    private InfoPane infoPane;
     private RemotePool remotePool;
     private ContextMenuController contextMenuController;
     private LocationController locationController;
@@ -82,7 +83,6 @@ public class BCozy extends Application {
             JPService.parseAndExitOnError(args);
             launch(args);
         } catch (IllegalStateException ex) {
-//        } catch (Exception ex) {
             ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
             LOGGER.info(APP_NAME + " finished unexpected.");
         }
@@ -105,13 +105,7 @@ public class BCozy extends Application {
         infoPane = new InfoPane(screenHeight, screenWidth);
         infoPane.setMinHeight(root.getHeight());
         infoPane.setMinWidth(root.getWidth());
-        infoPane.setCloseButtonEventHandler(event -> {
-            try {
-                stop();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
+        infoPane.setCloseButtonEventHandler(event -> stop());
 
         root.getChildren().addAll(backgroundPane, foregroundPane, infoPane);
 
@@ -171,8 +165,12 @@ public class BCozy extends Application {
     }
 
     @Override
-    public void stop() throws Exception { //NOPMD
-        super.stop();
+    public void stop() {
+        try {
+            super.stop();
+        } catch (Exception e) {
+            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+        }
         remotePool.shutdownAllRemotes(); //TODO mpohling: not shutting down properly
         System.exit(0);
     }

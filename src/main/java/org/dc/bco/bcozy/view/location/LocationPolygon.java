@@ -18,7 +18,9 @@
  */
 package org.dc.bco.bcozy.view.location;
 
+import javafx.scene.shape.Path;
 import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Shape;
 
 import java.util.List;
 
@@ -33,6 +35,7 @@ public abstract class LocationPolygon extends Polygon {
     private final String locationLabel;
     private final String locationId;
     private final List<String> childIds;
+    private Shape cuttingShape;
 
 
     /**
@@ -51,6 +54,7 @@ public abstract class LocationPolygon extends Polygon {
         this.locationId = locationId;
         this.childIds = childIds;
         this.selected = false;
+        this.cuttingShape = this;
 
 
         this.setLocationStyle();
@@ -114,6 +118,16 @@ public abstract class LocationPolygon extends Polygon {
     }
 
     /**
+     * Will cut an additional Shape out of the polygon.
+     *
+     * @param additionalCuttingShape The shape to be cut out
+     */
+    public void addCuttingShape(final Shape additionalCuttingShape) {
+        this.cuttingShape = Path.subtract(this.cuttingShape, additionalCuttingShape);
+        this.setClip(this.cuttingShape);
+    }
+
+    /**
      * Will be called when the selection of the Polygon has been toggled.
      * @param selected boolean for the selection status
      */
@@ -123,4 +137,6 @@ public abstract class LocationPolygon extends Polygon {
      * Will be called when the Polygon is constructed and can be used to apply specific styles.
      */
     protected abstract void setLocationStyle();
+
+
 }

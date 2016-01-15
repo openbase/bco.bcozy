@@ -196,6 +196,11 @@ public final class Constants {
     public static final Color REGION_FILL = new Color(1.0, 1.0, 1.0, 0.08);
 
     /**
+     * The color for a door.
+     */
+    public static final Color DOOR_FILL = new Color(1.0, 1.0, 1.0, 0.12);
+
+    /**
      * The background color.
      */
     public static final Color BACKGROUND_COLOR = new Color(0.2, 0.2, 0.2, 1.0);

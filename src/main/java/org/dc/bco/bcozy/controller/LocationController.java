@@ -136,13 +136,9 @@ public class LocationController implements Observer<LocationRegistryType.Locatio
 
                     locationPane.addLocation(locationConfig.getId(), locationConfig.getLabel(),
                             locationConfig.getChildIdList(), vertices, locationConfig.getType().toString());
-                } catch (CouldNotPerformException e) {
-                    ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-                    LOGGER.warn("TransformReceiver was not properly initialized.");
-                } catch (InterruptedException e) {
-                    ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-                } catch (ExecutionException e) {
-                    ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                } catch (InterruptedException | ExecutionException e) {
+                    LOGGER.error("Error while fetching transformation for location \"" + locationConfig.getLabel()
+                            + "\", locationID: " + locationConfig.getId());
                 }
             }
         }
@@ -159,10 +155,9 @@ public class LocationController implements Observer<LocationRegistryType.Locatio
                 try {
                     final List<Point2D> vertices = new LinkedList<>();
 
-                    // Get the transformation for the current room TODO: comment in when transformer bug is fixed
-                    //final Transform transform =
-                    //        remotePool.getTransformReceiver()
-                    //                .lookupTransform(rootId, connectionConfig.getId(), System.currentTimeMillis());
+                    final Future<Transform> transform =
+                            remotePool.getTransformReceiver()
+                                    .requestTransform(rootId, connectionConfig.getId(), System.currentTimeMillis());
 
                     // Get the shape of the room
                     final List<Vec3DDoubleType.Vec3DDouble> shape =
@@ -173,23 +168,18 @@ public class LocationController implements Observer<LocationRegistryType.Locatio
                         // Convert vertex into java type
                         final Point3d vertex = new Point3d(rstVertex.getX(), rstVertex.getY(), rstVertex.getZ());
                         // Transform
-                        //transform.getTransform().transform(vertex);
+                        transform.get().getTransform().transform(vertex); //TODO: add timeout?!
                         // Add vertex to list of vertices
                         vertices.add(new Point2D(vertex.x, vertex.y));
                     }
 
                     locationPane.addConnection(connectionConfig.getId(), connectionConfig.getLabel(),
                             vertices, connectionConfig.getType().toString(), connectionConfig.getTileIdList());
-                } catch (Exception e) { //NOPMD
-
+                } catch (InterruptedException | ExecutionException e) {
+                    ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                    LOGGER.error("Error while fetching transformation for connection \"" + connectionConfig.getLabel()
+                            + "\", connectionID: " + connectionConfig.getId());
                 }
-//                } catch (TransformerException e) {
-//                    ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-//                    LOGGER.warn("Could not gather transformation for connection: " + connectionConfig.getId());
-//                } catch (CouldNotPerformException e) {
-//                    ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-//                    LOGGER.warn("TransformReceiver was not properly initialized.");
-//                }
             }
         }
     }
@@ -241,6 +231,12 @@ public class LocationController implements Observer<LocationRegistryType.Locatio
 
     }
 
+    /**
+     * Method to trigger a complete update of the locationPane.
+     * Will furthermore apply a zoomFit after everything is finished.
+     *
+     * @throws Exception The Exception thrown by the runLater method.
+     */
     public void updateAndZoomFit() throws Exception { //NOPMD
         Platform.runLater(() -> {
             try {

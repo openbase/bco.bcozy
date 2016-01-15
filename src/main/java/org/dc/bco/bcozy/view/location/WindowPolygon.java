@@ -41,11 +41,11 @@ public class WindowPolygon extends ConnectionPolygon {
 
     @Override
     protected void setConnectionStyle() {
-
+        // TODO: To be implemented...
     }
 
     @Override
     protected void changeStyleOnOpening(final boolean open) {
-
+        // TODO: To be implemented...
     }
 }
