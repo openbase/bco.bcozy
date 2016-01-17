@@ -21,15 +21,11 @@ package org.dc.bco.bcozy.view.location;
 import javafx.collections.ObservableList;
 import javafx.scene.shape.Polygon;
 import org.dc.bco.bcozy.view.Constants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- *  A Polygon that represents different kinds of connections.
+ * A Polygon that represents different kinds of connections.
  */
 public abstract class ConnectionPolygon extends Polygon {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionPolygon.class);
 
     private boolean open;
     private final double centerX;
@@ -42,18 +38,20 @@ public abstract class ConnectionPolygon extends Polygon {
 
     /**
      * Constructor for the ConnectionPolygon.
+     *
      * @param connectionLabel The name of the location
-     * @param connectionId The ID of the location
-     * @param points Points for the shape
+     * @param connectionId    The ID of the location
+     * @param points          Points for the shape
      */
-    public ConnectionPolygon(final String connectionLabel, final String connectionId, final double... points) {super(points);
+    public ConnectionPolygon(final String connectionLabel, final String connectionId, final double... points) {
+        super(points);
         this.centerX = (super.getLayoutBounds().getMaxX() + super.getLayoutBounds().getMinX()) / 2;
         this.centerY = (super.getLayoutBounds().getMaxY() + super.getLayoutBounds().getMinY()) / 2;
         this.connectionLabel = connectionLabel;
         this.connectionId = connectionId;
         this.open = false;
 
-        ObservableList<Double> pointList = super.getPoints();
+        final ObservableList<Double> pointList = super.getPoints();
 
         double minX = Double.MAX_VALUE;
         double maxX = Double.MIN_VALUE;
@@ -75,17 +73,17 @@ public abstract class ConnectionPolygon extends Polygon {
         if (this.horizontal) {
             for (int i = 1; i < pointList.size(); i = i + 2) {
                 if (pointList.get(i) == minY) {
-                    pointList.set(i, minY - Constants.ROOM_STROKE_WIDTH);
+                    pointList.set(i, minY - Constants.ROOM_STROKE_WIDTH / 2);
                 } else {
-                    pointList.set(i, maxY + Constants.ROOM_STROKE_WIDTH);
+                    pointList.set(i, maxY + Constants.ROOM_STROKE_WIDTH / 2);
                 }
             }
         } else {
             for (int i = 0; i < pointList.size(); i = i + 2) {
                 if (pointList.get(i) == minX) {
-                    pointList.set(i, minX - Constants.ROOM_STROKE_WIDTH);
+                    pointList.set(i, minX - Constants.ROOM_STROKE_WIDTH / 2);
                 } else {
-                    pointList.set(i, maxX + Constants.ROOM_STROKE_WIDTH);
+                    pointList.set(i, maxX + Constants.ROOM_STROKE_WIDTH / 2);
                 }
             }
         }
@@ -97,6 +95,7 @@ public abstract class ConnectionPolygon extends Polygon {
 
     /**
      * Getter method for the X Coordinate of the center.
+     *
      * @return x center as a double value
      */
     public double getCenterX() {
@@ -105,6 +104,7 @@ public abstract class ConnectionPolygon extends Polygon {
 
     /**
      * Getter method for the Y Coordinate of the center.
+     *
      * @return y center as a double value
      */
     public double getCenterY() {
@@ -113,6 +113,7 @@ public abstract class ConnectionPolygon extends Polygon {
 
     /**
      * Getter for the connection label.
+     *
      * @return the label as a String
      */
     public String getLocationLabel() {
@@ -121,6 +122,7 @@ public abstract class ConnectionPolygon extends Polygon {
 
     /**
      * Getter for the connection id.
+     *
      * @return the id as a String
      */
     public String getLocationId() {
@@ -129,6 +131,7 @@ public abstract class ConnectionPolygon extends Polygon {
 
     /**
      * Getter method for the open boolean.
+     *
      * @return open as a boolean value
      */
     public boolean isOpen() {
@@ -137,6 +140,7 @@ public abstract class ConnectionPolygon extends Polygon {
 
     /**
      * Setter method for the open boolean.
+     *
      * @param open as a boolean value
      */
     public void setSelected(final boolean open) {
@@ -146,6 +150,7 @@ public abstract class ConnectionPolygon extends Polygon {
 
     /**
      * Will be called when the open value of the Polygon has been toggled.
+     *
      * @param open boolean for the open status
      */
     protected abstract void changeStyleOnOpening(final boolean open);

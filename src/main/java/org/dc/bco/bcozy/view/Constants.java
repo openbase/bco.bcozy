@@ -136,6 +136,11 @@ public final class Constants {
     public static final double REGION_DASH_WIDTH = 4.0;
 
     /**
+     * The dash width of a door.
+     */
+    public static final double DOOR_DASH_WIDTH = 2.0;
+
+    /**
      * The standard text size to be used when loading a new font.
      */
     public static final double STANDARD_TEXT_SIZE = 14.0;
@@ -251,7 +256,7 @@ public final class Constants {
     public static final double SCALE_DELTA = 1.05;
 
     /**
-     * The amount of points for a connection
+     * The amount of points for a connection.
      */
     public static final int CONNECTION_POINTS = 8;
 

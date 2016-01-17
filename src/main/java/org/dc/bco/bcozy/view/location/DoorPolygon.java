@@ -20,6 +20,8 @@
 package org.dc.bco.bcozy.view.location;
 
 import javafx.scene.paint.Color;
+import javafx.scene.shape.StrokeType;
+import org.dc.bco.bcozy.view.Constants;
 
 /**
  *
@@ -43,8 +45,11 @@ public class DoorPolygon extends ConnectionPolygon {
 
     @Override
     protected void setConnectionStyle() {
-        //this.setFill(Constants.DOOR_FILL);
         this.setFill(Color.TRANSPARENT);
+        this.setStroke(Color.WHITE);
+        this.getStrokeDashArray().addAll(Constants.DOOR_DASH_WIDTH, Constants.DOOR_DASH_WIDTH * 2);
+        this.setStrokeWidth(Constants.ROOM_STROKE_WIDTH);
+        this.setStrokeType(StrokeType.INSIDE);
         this.setMouseTransparent(true);
     }
 
