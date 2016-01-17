@@ -18,6 +18,7 @@
  */
 package org.dc.bco.bcozy.view.devicepanes;
 
+import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
@@ -73,7 +74,7 @@ public class DimmerPane extends UnitPane {
         bodyContent = new VBox();
 
         try {
-            super.setUnitLabel(this.dimmerRemote.getData().getLabel());
+            super.setUnitLabel(this.dimmerRemote.getLatestValue().getLabel());
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
             super.setUnitLabel("UnknownID");
@@ -126,19 +127,25 @@ public class DimmerPane extends UnitPane {
     protected void initTitle() {
         setColorToImageEffect(Color.TRANSPARENT);
         toggleSwitch.setOnMouseClicked(event -> {
-            if (toggleSwitch.isSelected()) {
-                try {
-                    dimmerRemote.setPower(PowerStateType.PowerState.State.ON);
-                } catch (CouldNotPerformException e) {
-                    ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+            new Thread(new Task() {
+                @Override
+                protected Object call() throws java.lang.Exception {
+                    if (toggleSwitch.isSelected()) {
+                        try {
+                            dimmerRemote.setPower(PowerStateType.PowerState.State.ON);
+                        } catch (CouldNotPerformException e) {
+                            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                        }
+                    } else {
+                        try {
+                            dimmerRemote.setPower(PowerStateType.PowerState.State.OFF);
+                        } catch (CouldNotPerformException e) {
+                            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                        }
+                    }
+                    return null;
                 }
-            } else {
-                try {
-                    dimmerRemote.setPower(PowerStateType.PowerState.State.OFF);
-                } catch (CouldNotPerformException e) {
-                    ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-                }
-            }
+            }).start();
         });
 
         headContent.setLeft(lightBulbIcon);

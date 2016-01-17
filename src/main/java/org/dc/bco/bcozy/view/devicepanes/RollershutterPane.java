@@ -20,6 +20,7 @@ package org.dc.bco.bcozy.view.devicepanes;
 
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
@@ -72,7 +73,7 @@ public class RollershutterPane extends UnitPane {
         bodyContent = new HBox();
 
         try {
-            super.setUnitLabel(this.rollershutterRemote.getData().getLabel());
+            super.setUnitLabel(this.rollershutterRemote.getLatestValue().getLabel());
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
             super.setUnitLabel("UnknownID");
@@ -91,28 +92,19 @@ public class RollershutterPane extends UnitPane {
         this.rollershutterRemote.addObserver(this);
     }
 
-    private void effectGroup(final Double percentage) {
-        rollerShutterIconBackground.setColor(Color.GRAY);
-        rollerShutterIconForeground.setColor(Color.BLACK);
-
-        clip.setWidth(Constants.SMALL_ICON);
-        clip.setHeight(Constants.SMALL_ICON * percentage);
-        rollerShutterIconForeground.setClip(clip);
-
-        rollerShutterIcon.getChildren().addAll(rollerShutterIconBackground, rollerShutterIconForeground);
+    private void setEffectOpeningRatio(final Double percentage) {
+        ((Rectangle) rollerShutterIconForeground.getClip()).setHeight(Constants.SMALL_ICON * percentage);
     }
 
     @Override
     protected void initTitle() {
-        //effectGroup(0.9);
-
         headContent.setLeft(rollerShutterIcon);
         headContent.setCenter(new Label(super.getUnitLabel()));
         headContent.prefHeightProperty().set(Constants.SMALL_ICON + Constants.INSETS);
     }
 
     @Override
-    protected void initContent() {
+    protected void initContent() { //NOPMD
         final Button buttonUp = new Button();
         final Button buttonDown = new Button();
         final Button buttonOpen = new Button();
@@ -133,52 +125,82 @@ public class RollershutterPane extends UnitPane {
         buttonClose.setGraphic(arrowDoubleDown);
 
         final EventHandler<MouseEvent> sendingTotalOpening = event -> {
-            try {
-                rollershutterRemote.setOpeningRatio(0.0);
-            } catch (CouldNotPerformException e) {
-                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-            }
+            new Thread(new Task() {
+                @Override
+                protected Object call() throws java.lang.Exception {
+                    try {
+                        rollershutterRemote.setOpeningRatio(0.0);
+                    } catch (CouldNotPerformException e) {
+                        ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                    }
+                    return null;
+                }
+            }).start();
         };
 
         final EventHandler<MouseEvent> sendingTotalClosing = event -> {
-            try {
-                rollershutterRemote.setOpeningRatio(1.0);
-            } catch (CouldNotPerformException e) {
-                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-            }
+            new Thread(new Task() {
+                @Override
+                protected Object call() throws java.lang.Exception {
+                    try {
+                        rollershutterRemote.setOpeningRatio(1.0);
+                    } catch (CouldNotPerformException e) {
+                        ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                    }
+                    return null;
+                }
+            }).start();
         };
 
         final EventHandler<MouseEvent> sendingUpLive = event -> {
-            try {
-                if (rollershutterRemote.getOpeningRatio() >= Constants.ROLLERSHUTTER_STEP) {
-                    rollershutterRemote.setOpeningRatio(rollershutterRemote.getOpeningRatio()
-                            - Constants.ROLLERSHUTTER_STEP);
+            new Thread(new Task() {
+                @Override
+                protected Object call() throws java.lang.Exception {
+                    try {
+                        if (rollershutterRemote.getOpeningRatio() >= Constants.ROLLERSHUTTER_STEP) {
+                            rollershutterRemote.setOpeningRatio(rollershutterRemote.getOpeningRatio()
+                                    - Constants.ROLLERSHUTTER_STEP);
+                        }
+                        //rollershutterRemote.setShutter(ShutterStateType.ShutterState.State.UP);
+                    } catch (CouldNotPerformException e) {
+                        ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                    }
+                    return null;
                 }
-                //rollershutterRemote.setShutter(ShutterStateType.ShutterState.State.UP);
-            } catch (CouldNotPerformException e) {
-                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-            }
+            }).start();
         };
 
         final EventHandler<MouseEvent> sendingStop = event -> {
-            try {
-                rollershutterRemote.setShutter(ShutterStateType.ShutterState.State.STOP);
-            } catch (CouldNotPerformException e) {
-                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-            }
+            new Thread(new Task() {
+                @Override
+                protected Object call() throws java.lang.Exception {
+                    try {
+                        rollershutterRemote.setShutter(ShutterStateType.ShutterState.State.STOP);
+                    } catch (CouldNotPerformException e) {
+                        ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                    }
+                    return null;
+                }
+            }).start();
         };
 
         final EventHandler<MouseEvent> sendingDownLive = event -> {
-            try {
-                if (rollershutterRemote.getOpeningRatio() <= Constants.ROLLERSHUTTER_MAX_VALUE
-                        - Constants.ROLLERSHUTTER_STEP) {
-                    rollershutterRemote.setOpeningRatio(rollershutterRemote.getOpeningRatio()
-                            + Constants.ROLLERSHUTTER_STEP);
+            new Thread(new Task() {
+                @Override
+                protected Object call() throws java.lang.Exception {
+                    try {
+                        if (rollershutterRemote.getOpeningRatio() <= Constants.ROLLERSHUTTER_MAX_VALUE
+                                - Constants.ROLLERSHUTTER_STEP) {
+                            rollershutterRemote.setOpeningRatio(rollershutterRemote.getOpeningRatio()
+                                    + Constants.ROLLERSHUTTER_STEP);
+                        }
+                        //rollershutterRemote.setShutter(ShutterStateType.ShutterState.State.DOWN);
+                    } catch (CouldNotPerformException e) {
+                        ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                    }
+                    return null;
                 }
-                //rollershutterRemote.setShutter(ShutterStateType.ShutterState.State.DOWN);
-            } catch (CouldNotPerformException e) {
-                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-            }
+            }).start();
         };
 
         buttonOpen.setOnMouseClicked(sendingTotalOpening);
@@ -198,7 +220,15 @@ public class RollershutterPane extends UnitPane {
 
     private void initEffect() throws CouldNotPerformException {
         final Double openingPercentage = rollershutterRemote.getOpeningRatio();
-        effectGroup(openingPercentage);
+
+        clip.setWidth(Constants.SMALL_ICON);
+        clip.setHeight(Constants.SMALL_ICON * openingPercentage);
+
+        rollerShutterIconBackground.setColor(Color.GRAY);
+        rollerShutterIconForeground.setColor(Color.BLACK);
+        rollerShutterIconForeground.setClip(clip);
+
+        rollerShutterIcon.getChildren().addAll(rollerShutterIconBackground, rollerShutterIconForeground);
     }
 
     @Override
@@ -215,7 +245,7 @@ public class RollershutterPane extends UnitPane {
     public void update(final Observable observable, final Object rollerShutter) throws java.lang.Exception {
         Platform.runLater(() -> {
             final Double openingPercentage = ((RollershutterType.Rollershutter) rollerShutter).getOpeningRatio();
-            effectGroup(openingPercentage);
+            setEffectOpeningRatio(openingPercentage);
         });
 
     }

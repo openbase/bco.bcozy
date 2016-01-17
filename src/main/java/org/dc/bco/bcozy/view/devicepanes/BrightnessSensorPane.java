@@ -63,7 +63,7 @@ public class BrightnessSensorPane extends UnitPane {
         iconPane = new GridPane();
 
         try {
-            super.setUnitLabel(this.brightnessSensorRemote.getData().getLabel());
+            super.setUnitLabel(this.brightnessSensorRemote.getLatestValue().getLabel());
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
             super.setUnitLabel("UnknownID");

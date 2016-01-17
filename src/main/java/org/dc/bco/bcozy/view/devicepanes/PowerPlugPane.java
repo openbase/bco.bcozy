@@ -18,6 +18,7 @@
  */
 package org.dc.bco.bcozy.view.devicepanes;
 
+import javafx.concurrent.Task;
 import javafx.scene.layout.GridPane;
 import org.dc.bco.dal.remote.unit.DALRemoteService;
 import org.dc.bco.dal.remote.unit.PowerPlugRemote;
@@ -35,6 +36,7 @@ import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.SVGIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rst.homeautomation.state.PowerStateType;
 import rst.homeautomation.state.PowerStateType.PowerState.State;
 import rst.homeautomation.unit.PowerPlugType.PowerPlug;
 
@@ -65,7 +67,7 @@ public class PowerPlugPane extends UnitPane {
         iconPane = new GridPane();
 
         try {
-            super.setUnitLabel(this.powerPlugRemote.getData().getLabel());
+            super.setUnitLabel(this.powerPlugRemote.getLatestValue().getLabel());
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
             super.setUnitLabel("UnknownID");
@@ -107,19 +109,26 @@ public class PowerPlugPane extends UnitPane {
     protected void initTitle() {
         powerStatusIcon.setForegroundIconColorAnimated(Color.TRANSPARENT);
         toggleSwitch.setOnMouseClicked(event -> {
-            if (toggleSwitch.isSelected()) {
-                try {
-                    powerPlugRemote.setPower(State.ON);
-                } catch (CouldNotPerformException e) {
-                    ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+            new Thread(new Task() {
+                @Override
+                protected Object call() throws java.lang.Exception {
+                    if (toggleSwitch.isSelected()) {
+                        try {
+                            powerPlugRemote.setPower(PowerStateType.PowerState.State.ON);
+                        } catch (CouldNotPerformException e) {
+                            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                        }
+                    } else {
+                        try {
+                            powerPlugRemote.setPower(PowerStateType.PowerState.State.OFF);
+                        } catch (CouldNotPerformException e) {
+                            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                        }
+                    }
+                    return null;
                 }
-            } else {
-                try {
-                    powerPlugRemote.setPower(State.OFF);
-                } catch (CouldNotPerformException e) {
-                    ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-                }
-            }
+            }).start();
+
         });
 
         //CHECKSTYLE.OFF: MagicNumber

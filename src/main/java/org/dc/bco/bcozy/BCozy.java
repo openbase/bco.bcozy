@@ -135,7 +135,7 @@ public class BCozy extends Application {
     }
 
     private void initRemotesAndLocation() {
-        final Task task = new Task() {
+        new Thread(new Task() {
             @Override
             protected Object call() throws java.lang.Exception {
                 infoPane.setTextLabelIdentifier("initRemotes");
@@ -160,8 +160,7 @@ public class BCozy extends Application {
                 super.succeeded();
                 infoPane.setVisible(false);
             }
-        };
-        new Thread(task).start();
+        }).start();
     }
 
     @Override

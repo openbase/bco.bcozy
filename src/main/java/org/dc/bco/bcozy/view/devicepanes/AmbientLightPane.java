@@ -18,6 +18,7 @@
  */
 package org.dc.bco.bcozy.view.devicepanes; //NOPMD //TODO: Split up in several classes
 
+import javafx.concurrent.Task;
 import org.dc.bco.dal.remote.unit.AmbientLightRemote;
 import org.dc.bco.dal.remote.unit.DALRemoteService;
 import org.dc.jul.exception.CouldNotPerformException;
@@ -60,6 +61,7 @@ import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.SVGIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rst.homeautomation.state.PowerStateType;
 import rst.homeautomation.unit.AmbientLightType.AmbientLight;
 import rst.homeautomation.state.PowerStateType.PowerState.State;
 import rst.vision.HSVColorType.HSVColor;
@@ -90,7 +92,7 @@ public class AmbientLightPane extends UnitPane {
         headContent = new BorderPane();
 
         try {
-            super.setUnitLabel(this.ambientLightRemote.getData().getLabel());
+            super.setUnitLabel(this.ambientLightRemote.getLatestValue().getLabel());
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
             super.setUnitLabel("UnknownID");
@@ -136,19 +138,25 @@ public class AmbientLightPane extends UnitPane {
         lightbulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
 
         toggleSwitch.setOnMouseClicked(event -> {
-            if (toggleSwitch.isSelected()) {
-                try {
-                    ambientLightRemote.setPower(State.ON);
-                } catch (CouldNotPerformException e) {
-                    ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+            new Thread(new Task() {
+                @Override
+                protected Object call() throws java.lang.Exception {
+                    if (toggleSwitch.isSelected()) {
+                        try {
+                            ambientLightRemote.setPower(PowerStateType.PowerState.State.ON);
+                        } catch (CouldNotPerformException e) {
+                            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                        }
+                    } else {
+                        try {
+                            ambientLightRemote.setPower(PowerStateType.PowerState.State.OFF);
+                        } catch (CouldNotPerformException e) {
+                            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                        }
+                    }
+                    return null;
                 }
-            } else {
-                try {
-                    ambientLightRemote.setPower(State.OFF);
-                } catch (CouldNotPerformException e) {
-                    ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-                }
-            }
+            }).start();
         });
 
         headContent.setLeft(lightbulbIcon);
@@ -191,13 +199,19 @@ public class AmbientLightPane extends UnitPane {
         };
 
         final EventHandler<MouseEvent> sendingColorHandler = event -> {
-            HSVColor hsvColor = HSVColor.newBuilder().setHue(hueValue.floatValue())
-                    .setSaturation(saturation.floatValue()).setValue(brightness.floatValue()).build();
-            try {
-                ambientLightRemote.setColor(hsvColor);
-            } catch (CouldNotPerformException e) {
-                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-            }
+            new Thread(new Task() {
+                @Override
+                protected Object call() throws java.lang.Exception {
+                    HSVColor hsvColor = HSVColor.newBuilder().setHue(hueValue.floatValue())
+                            .setSaturation(saturation.floatValue()).setValue(brightness.floatValue()).build();
+                    try {
+                        ambientLightRemote.setColor(hsvColor);
+                    } catch (CouldNotPerformException e) {
+                        ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                    }
+                    return null;
+                }
+            }).start();
         };
 
         //saturation & brightness depend on hue value

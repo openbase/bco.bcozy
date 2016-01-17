@@ -19,8 +19,6 @@
 
 package org.dc.bco.bcozy.view;
 
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.StackPane;
 import org.dc.bco.bcozy.view.location.LocationPane;
 
