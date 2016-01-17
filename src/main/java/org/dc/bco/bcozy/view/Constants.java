@@ -251,6 +251,11 @@ public final class Constants {
     public static final double SCALE_DELTA = 1.05;
 
     /**
+     * The amount of points for a connection
+     */
+    public static final int CONNECTION_POINTS = 8;
+
+    /**
      * Name of the language resource bundle.
      */
     public static final String LANGUAGE_RESOURCE_BUNDLE = "languages.languages";

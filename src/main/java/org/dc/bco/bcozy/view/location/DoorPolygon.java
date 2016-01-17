@@ -19,7 +19,7 @@
 
 package org.dc.bco.bcozy.view.location;
 
-import org.dc.bco.bcozy.view.Constants;
+import javafx.scene.paint.Color;
 
 /**
  *
@@ -43,7 +43,8 @@ public class DoorPolygon extends ConnectionPolygon {
 
     @Override
     protected void setConnectionStyle() {
-        this.setFill(Constants.DOOR_FILL);
+        //this.setFill(Constants.DOOR_FILL);
+        this.setFill(Color.TRANSPARENT);
         this.setMouseTransparent(true);
     }
 
