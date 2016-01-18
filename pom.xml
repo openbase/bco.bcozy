@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.dc.bco</groupId>
     <artifactId>bcozy</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>0.1.1-SNAPSHOT</version>
 
     <packaging>jar</packaging>
 
