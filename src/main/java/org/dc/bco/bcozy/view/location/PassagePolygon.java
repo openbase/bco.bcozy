@@ -19,6 +19,9 @@
 
 package org.dc.bco.bcozy.view.location;
 
+import javafx.collections.ObservableList;
+import org.dc.bco.bcozy.view.Constants;
+
 /**
  *
  */
@@ -34,12 +37,45 @@ public class PassagePolygon extends ConnectionPolygon {
      */
     public PassagePolygon(final String connectionLabel, final String connectionId, final double... points) {
         super(connectionLabel, connectionId, points);
+
+        final ObservableList<Double> pointList = super.getPoints();
+
+        if (isHorizontal()) {
+            if (pointList.get(0).equals(pointList.get(2))) { //Start Top Right
+                pointList.set(1, pointList.get(1) - Constants.ROOM_STROKE_WIDTH / 2);
+                pointList.set(3, pointList.get(3) + Constants.ROOM_STROKE_WIDTH / 2);
+                pointList.set(5, pointList.get(5) + Constants.ROOM_STROKE_WIDTH / 2);
+                pointList.set(7, pointList.get(7) - Constants.ROOM_STROKE_WIDTH / 2);
+            } else { //Start Top Left
+                pointList.set(1, pointList.get(1) - Constants.ROOM_STROKE_WIDTH / 2);
+                pointList.set(3, pointList.get(3) - Constants.ROOM_STROKE_WIDTH / 2);
+                pointList.set(5, pointList.get(5) + Constants.ROOM_STROKE_WIDTH / 2);
+                pointList.set(7, pointList.get(7) + Constants.ROOM_STROKE_WIDTH / 2);
+            }
+        } else {
+            if (pointList.get(1).equals(pointList.get(3))) { //Start Top Left
+                pointList.set(0, pointList.get(0) - Constants.ROOM_STROKE_WIDTH / 2);
+                pointList.set(2, pointList.get(2) + Constants.ROOM_STROKE_WIDTH / 2);
+                pointList.set(4, pointList.get(4) + Constants.ROOM_STROKE_WIDTH / 2);
+                pointList.set(6, pointList.get(6) - Constants.ROOM_STROKE_WIDTH / 2);
+            } else { //Start Top Right
+                pointList.set(0, pointList.get(0) + Constants.ROOM_STROKE_WIDTH / 2);
+                pointList.set(2, pointList.get(2) + Constants.ROOM_STROKE_WIDTH / 2);
+                pointList.set(4, pointList.get(4) - Constants.ROOM_STROKE_WIDTH / 2);
+                pointList.set(6, pointList.get(6) - Constants.ROOM_STROKE_WIDTH / 2);
+            }
+        }
     }
 
 
     @Override
     protected void setConnectionStyle() {
-        // TODO: To be implemented...
+        this.setFill(Constants.DOOR_FILL);
+        //this.setStroke(Color.WHITE);
+        //this.getStrokeDashArray().addAll(Constants.DOOR_DASH_WIDTH, Constants.DOOR_DASH_WIDTH * 2);
+        this.setStrokeWidth(0);
+        //this.setStrokeType(StrokeType.INSIDE);
+        this.setMouseTransparent(true);
     }
 
     @Override

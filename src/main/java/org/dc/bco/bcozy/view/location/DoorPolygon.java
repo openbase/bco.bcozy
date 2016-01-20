@@ -19,6 +19,7 @@
 
 package org.dc.bco.bcozy.view.location;
 
+import javafx.collections.ObservableList;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
 import org.dc.bco.bcozy.view.Constants;
@@ -27,8 +28,6 @@ import org.dc.bco.bcozy.view.Constants;
  *
  */
 public class DoorPolygon extends ConnectionPolygon {
-
-
 
     /**
      * Constructor for the DoorPolygon.
@@ -39,6 +38,26 @@ public class DoorPolygon extends ConnectionPolygon {
      */
     public DoorPolygon(final String connectionLabel, final String connectionId, final double... points) {
         super(connectionLabel, connectionId, points);
+
+        final ObservableList<Double> pointList = super.getPoints();
+
+        if (isHorizontal()) {
+            for (int i = 1; i < pointList.size(); i = i + 2) {
+                if (pointList.get(i) == getMinY()) {
+                    pointList.set(i, getMinY() - Constants.ROOM_STROKE_WIDTH / 2);
+                } else {
+                    pointList.set(i, getMaxY() + Constants.ROOM_STROKE_WIDTH / 2);
+                }
+            }
+        } else {
+            for (int i = 0; i < pointList.size(); i = i + 2) {
+                if (pointList.get(i) == getMinX()) {
+                    pointList.set(i, getMinX() - Constants.ROOM_STROKE_WIDTH / 2);
+                } else {
+                    pointList.set(i, getMaxX() + Constants.ROOM_STROKE_WIDTH / 2);
+                }
+            }
+        }
     }
 
 

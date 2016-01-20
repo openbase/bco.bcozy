@@ -105,7 +105,7 @@ public class LocationController implements Observer<LocationRegistryType.Locatio
         for (final LocationConfigType.LocationConfig locationConfig : list) {
             try {
                 //skip locations without a shape
-                if (!locationConfig.getPlacementConfig().hasShape()) {
+                if (!(locationConfig.getPlacementConfig().getShape().getFloorCount() > 0)) {
                     continue;
                 }
 
@@ -153,7 +153,7 @@ public class LocationController implements Observer<LocationRegistryType.Locatio
 
         //check which connection has a shape
         for (final ConnectionConfigType.ConnectionConfig connectionConfig : list) {
-            if (connectionConfig.getPlacementConfig().hasShape()) {
+            if (connectionConfig.getPlacementConfig().getShape().getFloorCount() > 0) {
                 try {
                     final List<Point2D> vertices = new LinkedList<>();
 

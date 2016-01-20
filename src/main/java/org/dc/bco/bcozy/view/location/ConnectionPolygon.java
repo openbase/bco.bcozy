@@ -20,7 +20,6 @@ package org.dc.bco.bcozy.view.location;
 
 import javafx.collections.ObservableList;
 import javafx.scene.shape.Polygon;
-import org.dc.bco.bcozy.view.Constants;
 
 /**
  * A Polygon that represents different kinds of connections.
@@ -33,6 +32,10 @@ public abstract class ConnectionPolygon extends Polygon {
     private final String connectionLabel;
     private final String connectionId;
 
+    private double minX;
+    private double maxX;
+    private double minY;
+    private double maxY;
     private final boolean horizontal;
 
 
@@ -53,10 +56,10 @@ public abstract class ConnectionPolygon extends Polygon {
 
         final ObservableList<Double> pointList = super.getPoints();
 
-        double minX = Double.MAX_VALUE;
-        double maxX = Double.MIN_VALUE;
-        double minY = Double.MAX_VALUE;
-        double maxY = Double.MIN_VALUE;
+        minX = Double.MAX_VALUE;
+        maxX = Double.MIN_VALUE;
+        minY = Double.MAX_VALUE;
+        maxY = Double.MIN_VALUE;
 
         for (int i = 0; i < pointList.size(); i = i + 2) {
             minX = pointList.get(i) < minX ? pointList.get(i) : minX;
@@ -69,26 +72,6 @@ public abstract class ConnectionPolygon extends Polygon {
         }
 
         this.horizontal = (maxX - minX > maxY - minY);
-
-        if (this.horizontal) {
-            for (int i = 1; i < pointList.size(); i = i + 2) {
-                if (pointList.get(i) == minY) {
-                    pointList.set(i, minY - Constants.ROOM_STROKE_WIDTH / 2);
-                } else {
-                    pointList.set(i, maxY + Constants.ROOM_STROKE_WIDTH / 2);
-                }
-            }
-        } else {
-            for (int i = 0; i < pointList.size(); i = i + 2) {
-                if (pointList.get(i) == minX) {
-                    pointList.set(i, minX - Constants.ROOM_STROKE_WIDTH / 2);
-                } else {
-                    pointList.set(i, maxX + Constants.ROOM_STROKE_WIDTH / 2);
-                }
-            }
-        }
-
-        //TODO: Size need to be raised somehow to fully overlap room walls
 
         this.setConnectionStyle();
     }
@@ -136,6 +119,51 @@ public abstract class ConnectionPolygon extends Polygon {
      */
     public boolean isOpen() {
         return open;
+    }
+
+    /**
+     * Getter method for the minX value.
+     *
+     * @return minX
+     */
+    protected double getMinX() {
+        return minX;
+    }
+
+    /**
+     * Getter method for the maxX value.
+     *
+     * @return maxX
+     */
+    protected double getMaxX() {
+        return maxX;
+    }
+
+    /**
+     * Getter method for the minY value.
+     *
+     * @return minY
+     */
+    protected double getMinY() {
+        return minY;
+    }
+
+    /**
+     * Getter method for the maxY value.
+     *
+     * @return maxY
+     */
+    protected double getMaxY() {
+        return maxY;
+    }
+
+    /**
+     * Getter method for the horizontal value.
+     *
+     * @return horizontal as a boolean value
+     */
+    protected boolean isHorizontal() {
+        return horizontal;
     }
 
     /**
