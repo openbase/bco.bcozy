@@ -66,48 +66,43 @@ public class PowerPlugPane extends UnitPane {
         powerStatusIcon = new SVGIcon(FontAwesomeIcon.BOLT, Constants.EXTRA_SMALL_ICON, false);
         iconPane = new GridPane();
 
-        try {
-            super.setUnitLabel(this.powerPlugRemote.getLatestValue().getLabel());
-        } catch (CouldNotPerformException e) {
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-            super.setUnitLabel("UnknownID");
-        }
-
+        initUnitLabel();
         initTitle();
         initContent();
         createWidgetPane(headContent);
 
-        try {
-            initEffectAndSwitch();
-        } catch (CouldNotPerformException e) {
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-        }
+        initEffectAndSwitch();
 
         this.powerPlugRemote.addObserver(this);
     }
 
-    private void initEffectAndSwitch() throws CouldNotPerformException {
-        if (powerPlugRemote.getPower().getValue().equals(State.ON)) {
-            powerStatusIcon.setForegroundIconColorAnimated(Color.LIMEGREEN);
+    private void initEffectAndSwitch() {
+        State powerState = State.OFF;
 
+        try {
+            powerState = powerPlugRemote.getPower().getValue();
+        } catch (CouldNotPerformException e) {
+            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+        }
+        setPowerStateSwitchAndIcon(powerState);
+    }
+
+    private void setPowerStateSwitchAndIcon(final State powerState) {
+        if (powerState.equals(State.ON)) {
+            powerStatusIcon.setColor(Color.YELLOW, Color.BLACK, Constants.THIN_STROKE);
             if (!toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(true);
             }
-        } else if (powerPlugRemote.getPower().getValue().equals(State.OFF)) {
-            powerStatusIcon.setForegroundIconColorAnimated(Color.TRANSPARENT);
-
+        } else {
+            powerStatusIcon.setColor(Color.TRANSPARENT);
             if (toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(false);
             }
         }
     }
 
-    /**
-     * Method creates the header content of the widgetPane.
-     */
     @Override
     protected void initTitle() {
-        powerStatusIcon.setForegroundIconColorAnimated(Color.TRANSPARENT);
         toggleSwitch.setOnMouseClicked(event -> {
             new Thread(new Task() {
                 @Override
@@ -128,7 +123,6 @@ public class PowerPlugPane extends UnitPane {
                     return null;
                 }
             }).start();
-
         });
 
         //CHECKSTYLE.OFF: MagicNumber
@@ -143,12 +137,20 @@ public class PowerPlugPane extends UnitPane {
         headContent.prefHeightProperty().set(iconPane.getHeight() + Constants.INSETS);
     }
 
-    /**
-     * Method creates the body content of the widgetPane.
-     */
     @Override
     protected void initContent() {
         //No body content.
+    }
+
+    @Override
+    protected void initUnitLabel() {
+        String unitLabel = Constants.UNKNOWN_ID;
+        try {
+            unitLabel = this.powerPlugRemote.getData().getLabel();
+        } catch (CouldNotPerformException e) {
+            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+        }
+        setUnitLabel(unitLabel);
     }
 
     @Override
@@ -164,17 +166,8 @@ public class PowerPlugPane extends UnitPane {
     @Override
     public void update(final Observable observable, final Object powerPlug) throws java.lang.Exception {
         Platform.runLater(() -> {
-            if (((PowerPlug) powerPlug).getPowerState().getValue().equals(State.ON)) {
-                powerStatusIcon.setForegroundIconColorAnimated(Color.LIMEGREEN);
-                if (!toggleSwitch.isSelected()) {
-                    toggleSwitch.setSelected(true);
-                }
-            } else {
-                powerStatusIcon.setForegroundIconColorAnimated(Color.TRANSPARENT);
-                if (toggleSwitch.isSelected()) {
-                    toggleSwitch.setSelected(false);
-                }
-            }
+            final State powerState = ((PowerPlug) powerPlug).getPowerState().getValue();
+            setPowerStateSwitchAndIcon(powerState);
         });
     }
 }

@@ -331,6 +331,38 @@ public final class Constants {
     public static final long TRANSFORMATION_TIMEOUT = 1000;
 
     /**
+     * String for CSS styling of icons.
+     */
+    public static final String ICONS_CSS_STRING = "icons";
+
+    /**
+     * text: "UnknownID".
+     */
+    public static final String UNKNOWN_ID = "UnknownID";
+
+    /**
+     * The minimal temperatur for fading.
+     * Has to be >= 0.
+     */
+    public static final double TEMPERATUR_FADING_MINIMUM = 10.0;
+
+    /**
+     * The maximal temperatur for fading.
+     * Has to be > TEMPERATUR_FADING_MINIMUM.
+     */
+    public static final double TEMPERATUR_FADING_MAXIMUM = 25.0;
+
+    /**
+     * Thin stroke.
+     */
+    public static final double THIN_STROKE = 0.5;
+
+    /**
+     * Normal stroke.
+     */
+    public static final double NORMAL_STROKE = 1.5;
+
+    /**
      * Debug flag.
      */
     public static final boolean DEBUG = false;

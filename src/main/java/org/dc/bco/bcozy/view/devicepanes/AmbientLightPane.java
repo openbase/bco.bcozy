@@ -91,194 +91,47 @@ public class AmbientLightPane extends UnitPane {
                 new SVGIcon(MaterialDesignIcon.LIGHTBULB, MaterialDesignIcon.LIGHTBULB_OUTLINE, Constants.SMALL_ICON);
         headContent = new BorderPane();
 
-        try {
-            super.setUnitLabel(this.ambientLightRemote.getLatestValue().getLabel());
-        } catch (CouldNotPerformException e) {
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-            super.setUnitLabel("UnknownID");
-        }
-
+        initUnitLabel();
         initTitle();
         initContent();
         createWidgetPane(headContent, bodyContent);
 
-        try {
-            initEffectAndSwitch();
-        } catch (CouldNotPerformException e) {
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-        }
+        initEffectAndSwitch();
 
         this.ambientLightRemote.addObserver(this);
     }
 
-    private void initEffectAndSwitch() throws CouldNotPerformException {
-        if (ambientLightRemote.getPower().getValue().equals(State.ON)) {
-            final Color color = Color.hsb(ambientLightRemote.getColor().getHue(),
-                    ambientLightRemote.getColor().getSaturation() / Constants.ONE_HUNDRED,
-                    ambientLightRemote.getColor().getValue() / Constants.ONE_HUNDRED);
+    private void initEffectAndSwitch() {
+        State powerState = State.OFF;
+        HSVColor currentColor = HSVColor.newBuilder().build();
+
+        try {
+            powerState = ambientLightRemote.getPower().getValue();
+            currentColor = ambientLightRemote.getColor();
+        } catch (CouldNotPerformException e) {
+            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+        }
+        final Color color = Color.hsb(currentColor.getHue(),
+                currentColor.getSaturation() / Constants.ONE_HUNDRED,
+                currentColor.getValue() / Constants.ONE_HUNDRED);
+
+        setEffectColorAndSwitch(powerState, color);
+    }
+
+    private void setEffectColorAndSwitch(final State powerState, final Color color) {
+        if (powerState.equals(State.ON)) {
             lightbulbIcon.setBackgroundIconColorAnimated(color);
 
             if (!toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(true);
             }
-        } else if (ambientLightRemote.getPower().getValue().equals(State.OFF)) {
+        } else {
             lightbulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
 
             if (toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(false);
             }
         }
-    }
-
-    /**
-     * Method creates the header content of the widgetPane.
-     */
-    @Override
-    protected void initTitle() {
-        lightbulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
-
-        toggleSwitch.setOnMouseClicked(event -> {
-            new Thread(new Task() {
-                @Override
-                protected Object call() throws java.lang.Exception {
-                    if (toggleSwitch.isSelected()) {
-                        try {
-                            ambientLightRemote.setPower(PowerStateType.PowerState.State.ON);
-                        } catch (CouldNotPerformException e) {
-                            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-                        }
-                    } else {
-                        try {
-                            ambientLightRemote.setPower(PowerStateType.PowerState.State.OFF);
-                        } catch (CouldNotPerformException e) {
-                            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-                        }
-                    }
-                    return null;
-                }
-            }).start();
-        });
-
-        headContent.setLeft(lightbulbIcon);
-        headContent.setCenter(new Label(super.getUnitLabel()));
-        headContent.setRight(toggleSwitch);
-        headContent.prefHeightProperty().set(lightbulbIcon.getSize() + Constants.INSETS + 1);
-    }
-
-    /**
-     * Method creates the body content of the widgetPane.
-     */
-    @Override
-    protected void initContent() {
-        final Pane colorRectContainer;
-        final Pane colorHue;
-        final Circle circle;
-        final Rectangle rectangleSelector;
-        final Shape hollowCircle;
-
-        final DoubleProperty hueValue = new SimpleDoubleProperty(-1);
-        final DoubleProperty saturation = new SimpleDoubleProperty(-1);
-        final DoubleProperty brightness = new SimpleDoubleProperty(-1);
-
-        //pane to set color circle and color selector
-        colorCircleContainer = new Pane();
-        //CHECKSTYLE.OFF: MagicNumber
-        colorCircleContainer.setPrefSize(150, 150);
-        colorCircleContainer.setMinSize(150, 150);
-        //CHECKSTYLE.ON: MagicNumber
-        colorCircleContainer.getStyleClass().clear();
-        colorCircleContainer.getStyleClass().add("color-circle-container");
-
-        //mouse event for saturation & brightness rectangle
-        final EventHandler<MouseEvent> colorContainerMouseHandler = event -> {
-            final double xMouse = event.getX();
-            final double yMouse = event.getY();
-            saturation.set(clamp(xMouse / colorCircleContainer.getPrefWidth()) * Constants.ONE_HUNDRED);
-            brightness.set(Constants.ONE_HUNDRED - (clamp(yMouse / colorCircleContainer.getPrefHeight())
-                    * Constants.ONE_HUNDRED));
-        };
-
-        final EventHandler<MouseEvent> sendingColorHandler = event -> {
-            new Thread(new Task() {
-                @Override
-                protected Object call() throws java.lang.Exception {
-                    HSVColor hsvColor = HSVColor.newBuilder().setHue(hueValue.floatValue())
-                            .setSaturation(saturation.floatValue()).setValue(brightness.floatValue()).build();
-                    try {
-                        ambientLightRemote.setColor(hsvColor);
-                    } catch (CouldNotPerformException e) {
-                        ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-                    }
-                    return null;
-                }
-            }).start();
-        };
-
-        //saturation & brightness depend on hue value
-        colorHue = new Pane();
-        colorHue.backgroundProperty().bind(new ObjectBinding<Background>() {
-            {
-                bind(hueValue);
-            }
-
-            @Override protected Background computeValue() {
-                return new Background(new BackgroundFill(Color.hsb(hueValue.getValue(), 1, 1),
-                        CornerRadii.EMPTY, Insets.EMPTY));
-            }
-        });
-
-        //rectangle as color selector
-        rectangleSelector = rectangleSelector();
-        //circle as selector for colorRectangleContainer
-        circle = circleSelector();
-        circle.layoutXProperty().bind(saturation.divide(Constants.ONE_HUNDRED)
-                .multiply(colorCircleContainer.getPrefWidth()));
-        circle.layoutYProperty().bind(Bindings.subtract(1, brightness.divide(Constants.ONE_HUNDRED))
-                .multiply(colorCircleContainer.getPrefHeight()));
-
-        //container/stackPane for saturation/brightness area
-        colorRectContainer = new StackPane();
-        colorRectContainer.getChildren().addAll(colorHue, saturationRect(), brightnessRect());
-        colorRectContainer.setOnMousePressed(colorContainerMouseHandler);
-        colorRectContainer.setOnMouseDragged(colorContainerMouseHandler);
-        colorRectContainer.setOnMouseReleased(sendingColorHandler);
-        colorRectContainer.getStyleClass().clear();
-        colorRectContainer.getStyleClass().add("color-rect-container");
-        colorRectContainer.getChildren().add(circle);
-
-        final EventHandler<MouseEvent> colorCircleMouseHandler = event -> {
-            double yMouse = event.getY() + colorCircleContainer.getPrefHeight() / 2;
-            double xMouse = event.getX() + colorCircleContainer.getPrefWidth() / 2;
-
-            double angle = (Math.toDegrees(Math.atan2(yMouse - colorCircleContainer.getPrefHeight() / 2,
-                    colorCircleContainer.getPrefWidth() / 2 - xMouse)) + Constants.RIGHT_ANGLE) % Constants.ROUND_ANGLE;
-            angle = Constants.ROUND_ANGLE - angle;
-            hueValue.set(angle);
-
-            rectangleSelector.setY(0);
-            final int rectX = (int) Math.round(colorCircleContainer.getPrefWidth() / 2
-                    + (colorCircleContainer.getPrefHeight() - rectangleSelector.getHeight()) / 2
-                    * Math.cos(Math.toRadians((angle + Constants.OBTUSE_ANGLE_270) % Constants.ROUND_ANGLE)));
-            final int rectY = (int) Math.round(colorCircleContainer.getPrefHeight() / 2
-                    + (colorCircleContainer.getPrefHeight() - rectangleSelector.getHeight()) / 2
-                    * Math.sin(Math.toRadians((angle + Constants.OBTUSE_ANGLE_270) % Constants.ROUND_ANGLE)));
-            rectangleSelector.setLayoutX(rectX);
-            rectangleSelector.setLayoutY(rectY);
-            rectangleSelector.setRotate(angle);
-        };
-
-        //hollow circle with color spectrum
-        hollowCircle = hollowCircle();
-        hollowCircle.setOnMousePressed(colorCircleMouseHandler);
-        hollowCircle.setOnMouseDragged(colorCircleMouseHandler);
-        hollowCircle.setOnMouseReleased(sendingColorHandler);
-
-        colorCircleContainer.getChildren().addAll(hollowCircle, rectangleSelector);
-
-        //hBox includes color elements (colorContainer & pane)
-        bodyContent = new HBox();
-        bodyContent.getChildren().addAll(colorRectContainer, colorCircleContainer);
-        bodyContent.prefHeightProperty().set(colorCircleContainer.getPrefHeight() + (Constants.INSETS * 2));
     }
 
     /**
@@ -474,6 +327,162 @@ public class AmbientLightPane extends UnitPane {
     }
 
     @Override
+    protected void initTitle() {
+        lightbulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
+
+        toggleSwitch.setOnMouseClicked(event -> {
+            new Thread(new Task() {
+                @Override
+                protected Object call() throws java.lang.Exception {
+                    if (toggleSwitch.isSelected()) {
+                        try {
+                            ambientLightRemote.setPower(PowerStateType.PowerState.State.ON);
+                        } catch (CouldNotPerformException e) {
+                            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                        }
+                    } else {
+                        try {
+                            ambientLightRemote.setPower(PowerStateType.PowerState.State.OFF);
+                        } catch (CouldNotPerformException e) {
+                            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                        }
+                    }
+                    return null;
+                }
+            }).start();
+        });
+
+        headContent.setLeft(lightbulbIcon);
+        headContent.setCenter(new Label(super.getUnitLabel()));
+        headContent.setRight(toggleSwitch);
+        headContent.prefHeightProperty().set(lightbulbIcon.getSize() + Constants.INSETS + 1);
+    }
+
+    @Override
+    protected void initContent() {
+        final Pane colorRectContainer;
+        final Pane colorHue;
+        final Circle circle;
+        final Rectangle rectangleSelector;
+        final Shape hollowCircle;
+
+        final DoubleProperty hueValue = new SimpleDoubleProperty(-1);
+        final DoubleProperty saturation = new SimpleDoubleProperty(-1);
+        final DoubleProperty brightness = new SimpleDoubleProperty(-1);
+
+        //pane to set color circle and color selector
+        colorCircleContainer = new Pane();
+        //CHECKSTYLE.OFF: MagicNumber
+        colorCircleContainer.setPrefSize(150, 150);
+        colorCircleContainer.setMinSize(150, 150);
+        //CHECKSTYLE.ON: MagicNumber
+        colorCircleContainer.getStyleClass().clear();
+        colorCircleContainer.getStyleClass().add("color-circle-container");
+
+        //mouse event for saturation & brightness rectangle
+        final EventHandler<MouseEvent> colorContainerMouseHandler = event -> {
+            final double xMouse = event.getX();
+            final double yMouse = event.getY();
+            saturation.set(clamp(xMouse / colorCircleContainer.getPrefWidth()) * Constants.ONE_HUNDRED);
+            brightness.set(Constants.ONE_HUNDRED - (clamp(yMouse / colorCircleContainer.getPrefHeight())
+                    * Constants.ONE_HUNDRED));
+        };
+
+        final EventHandler<MouseEvent> sendingColorHandler = event -> {
+            new Thread(new Task() {
+                @Override
+                protected Object call() throws java.lang.Exception {
+                    HSVColor hsvColor = HSVColor.newBuilder().setHue(hueValue.floatValue())
+                            .setSaturation(saturation.floatValue()).setValue(brightness.floatValue()).build();
+                    try {
+                        ambientLightRemote.setColor(hsvColor);
+                    } catch (CouldNotPerformException e) {
+                        ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                    }
+                    return null;
+                }
+            }).start();
+        };
+
+        //saturation & brightness depend on hue value
+        colorHue = new Pane();
+        colorHue.backgroundProperty().bind(new ObjectBinding<Background>() {
+            {
+                bind(hueValue);
+            }
+
+            @Override protected Background computeValue() {
+                return new Background(new BackgroundFill(Color.hsb(hueValue.getValue(), 1, 1),
+                        CornerRadii.EMPTY, Insets.EMPTY));
+            }
+        });
+
+        //rectangle as color selector
+        rectangleSelector = rectangleSelector();
+        //circle as selector for colorRectangleContainer
+        circle = circleSelector();
+        circle.layoutXProperty().bind(saturation.divide(Constants.ONE_HUNDRED)
+                .multiply(colorCircleContainer.getPrefWidth()));
+        circle.layoutYProperty().bind(Bindings.subtract(1, brightness.divide(Constants.ONE_HUNDRED))
+                .multiply(colorCircleContainer.getPrefHeight()));
+
+        //container/stackPane for saturation/brightness area
+        colorRectContainer = new StackPane();
+        colorRectContainer.getChildren().addAll(colorHue, saturationRect(), brightnessRect());
+        colorRectContainer.setOnMousePressed(colorContainerMouseHandler);
+        colorRectContainer.setOnMouseDragged(colorContainerMouseHandler);
+        colorRectContainer.setOnMouseReleased(sendingColorHandler);
+        colorRectContainer.getStyleClass().clear();
+        colorRectContainer.getStyleClass().add("color-rect-container");
+        colorRectContainer.getChildren().add(circle);
+
+        final EventHandler<MouseEvent> colorCircleMouseHandler = event -> {
+            double yMouse = event.getY() + colorCircleContainer.getPrefHeight() / 2;
+            double xMouse = event.getX() + colorCircleContainer.getPrefWidth() / 2;
+
+            double angle = (Math.toDegrees(Math.atan2(yMouse - colorCircleContainer.getPrefHeight() / 2,
+                    colorCircleContainer.getPrefWidth() / 2 - xMouse)) + Constants.RIGHT_ANGLE) % Constants.ROUND_ANGLE;
+            angle = Constants.ROUND_ANGLE - angle;
+            hueValue.set(angle);
+
+            rectangleSelector.setY(0);
+            final int rectX = (int) Math.round(colorCircleContainer.getPrefWidth() / 2
+                    + (colorCircleContainer.getPrefHeight() - rectangleSelector.getHeight()) / 2
+                    * Math.cos(Math.toRadians((angle + Constants.OBTUSE_ANGLE_270) % Constants.ROUND_ANGLE)));
+            final int rectY = (int) Math.round(colorCircleContainer.getPrefHeight() / 2
+                    + (colorCircleContainer.getPrefHeight() - rectangleSelector.getHeight()) / 2
+                    * Math.sin(Math.toRadians((angle + Constants.OBTUSE_ANGLE_270) % Constants.ROUND_ANGLE)));
+            rectangleSelector.setLayoutX(rectX);
+            rectangleSelector.setLayoutY(rectY);
+            rectangleSelector.setRotate(angle);
+        };
+
+        //hollow circle with color spectrum
+        hollowCircle = hollowCircle();
+        hollowCircle.setOnMousePressed(colorCircleMouseHandler);
+        hollowCircle.setOnMouseDragged(colorCircleMouseHandler);
+        hollowCircle.setOnMouseReleased(sendingColorHandler);
+
+        colorCircleContainer.getChildren().addAll(hollowCircle, rectangleSelector);
+
+        //hBox includes color elements (colorContainer & pane)
+        bodyContent = new HBox();
+        bodyContent.getChildren().addAll(colorRectContainer, colorCircleContainer);
+        bodyContent.prefHeightProperty().set(colorCircleContainer.getPrefHeight() + (Constants.INSETS * 2));
+    }
+
+    @Override
+    protected void initUnitLabel() {
+        String unitLabel = Constants.UNKNOWN_ID;
+        try {
+            unitLabel = this.ambientLightRemote.getData().getLabel();
+        } catch (CouldNotPerformException e) {
+            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+        }
+        setUnitLabel(unitLabel);
+    }
+
+    @Override
     public DALRemoteService getDALRemoteService() {
         return ambientLightRemote;
     }
@@ -485,21 +494,12 @@ public class AmbientLightPane extends UnitPane {
 
     @Override
     public void update(final Observable observable, final Object ambientLight) throws java.lang.Exception {
-        final Color color = Color.hsb(((AmbientLight) ambientLight).getColor().getHue(),
-                ((AmbientLight) ambientLight).getColor().getSaturation() / Constants.ONE_HUNDRED,
-                ((AmbientLight) ambientLight).getColor().getValue() / Constants.ONE_HUNDRED);
         Platform.runLater(() -> {
-            if (((AmbientLight) ambientLight).getPowerState().getValue().equals(State.ON)) {
-                lightbulbIcon.setBackgroundIconColorAnimated(color);
-                if (!toggleSwitch.isSelected()) {
-                    toggleSwitch.setSelected(true);
-                }
-            } else {
-                lightbulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
-                if (toggleSwitch.isSelected()) {
-                    toggleSwitch.setSelected(false);
-                }
-            }
+            final State powerState = ((AmbientLight) ambientLight).getPowerState().getValue();
+            final Color color = Color.hsb(((AmbientLight) ambientLight).getColor().getHue(),
+                    ((AmbientLight) ambientLight).getColor().getSaturation() / Constants.ONE_HUNDRED,
+                    ((AmbientLight) ambientLight).getColor().getValue() / Constants.ONE_HUNDRED);
+            setEffectColorAndSwitch(powerState, color);
         });
     }
 }

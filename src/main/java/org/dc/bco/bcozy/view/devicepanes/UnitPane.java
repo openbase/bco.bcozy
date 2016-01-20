@@ -62,6 +62,11 @@ public abstract class UnitPane extends WidgetPane implements Observer {
     abstract void initContent();
 
     /**
+     * Initialize the UnitLabel.
+     */
+    abstract void initUnitLabel();
+
+    /**
      * Removes the Observer.
      */
     abstract void removeObserver();

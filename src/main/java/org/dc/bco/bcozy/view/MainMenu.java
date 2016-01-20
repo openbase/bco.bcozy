@@ -101,10 +101,14 @@ public class MainMenu extends StackPane {
         mainMenuFloatingButton.translateYProperty().set(-(Constants.FLOATING_BUTTON_OFFSET));
 
         // Adding components to their parents
-        verticalLayout.getChildren()
-                .addAll(logoView, initRemoteButton, fetchLocationButton, fillHashesButton,
-                        fillContextMenuButton, connectionPane, userPane, availableUsersPanePane, settingsPane);
-
+        if (Constants.DEBUG) {
+            verticalLayout.getChildren()
+                    .addAll(logoView, initRemoteButton, fetchLocationButton, fillHashesButton,
+                            fillContextMenuButton, connectionPane, userPane, availableUsersPanePane, settingsPane);
+        } else {
+            verticalLayout.getChildren()
+                    .addAll(logoView, connectionPane, userPane, availableUsersPanePane, settingsPane);
+        }
         this.getChildren().addAll(verticalLayout, mainMenuFloatingButton);
 
         // Styling components with CSS

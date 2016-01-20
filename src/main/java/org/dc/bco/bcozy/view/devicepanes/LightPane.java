@@ -18,21 +18,21 @@
  */
 package org.dc.bco.bcozy.view.devicepanes;
 
-import javafx.concurrent.Task;
-import org.dc.bco.dal.remote.unit.DALRemoteService;
-import org.dc.bco.dal.remote.unit.LightRemote;
-import org.dc.jul.exception.CouldNotPerformException;
-import org.dc.jul.exception.printer.ExceptionPrinter;
-import org.dc.jul.exception.printer.LogLevel;
-import org.dc.jul.pattern.Observable;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import org.controlsfx.control.ToggleSwitch;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.SVGIcon;
+import org.dc.bco.dal.remote.unit.DALRemoteService;
+import org.dc.bco.dal.remote.unit.LightRemote;
+import org.dc.jul.exception.CouldNotPerformException;
+import org.dc.jul.exception.printer.ExceptionPrinter;
+import org.dc.jul.exception.printer.LogLevel;
+import org.dc.jul.pattern.Observable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.homeautomation.state.PowerStateType;
@@ -62,34 +62,35 @@ public class LightPane extends UnitPane {
                 new SVGIcon(MaterialDesignIcon.LIGHTBULB, MaterialDesignIcon.LIGHTBULB_OUTLINE, Constants.SMALL_ICON);
         headContent = new BorderPane();
 
-        try {
-            super.setUnitLabel(this.lightRemote.getLatestValue().getLabel());
-        } catch (CouldNotPerformException e) {
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-            super.setUnitLabel("UnknownID");
-        }
-
+        initUnitLabel();
         initTitle();
         initContent();
         createWidgetPane(headContent);
 
-        try {
-            initEffectAndSwitch();
-        } catch (CouldNotPerformException e) {
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-        }
+        initEffectAndSwitch();
 
         this.lightRemote.addObserver(this);
     }
 
-    private void initEffectAndSwitch() throws CouldNotPerformException {
-        if (lightRemote.getPower().getValue().equals(State.ON)) {
+    private void initEffectAndSwitch() {
+        State powerState = State.OFF;
+
+        try {
+            powerState = lightRemote.getPower().getValue();
+        } catch (CouldNotPerformException e) {
+            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+        }
+        setPowerStateSwitchAndIcon(powerState);
+    }
+
+    private void setPowerStateSwitchAndIcon(final State powerState) {
+        if (powerState.equals(State.ON)) {
             lightbulbIcon.setBackgroundIconColorAnimated(Constants.LIGHTBULB_COLOR);
 
             if (!toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(true);
             }
-        } else if (lightRemote.getPower().getValue().equals(State.OFF)) {
+        } else {
             lightbulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
 
             if (toggleSwitch.isSelected()) {
@@ -98,9 +99,6 @@ public class LightPane extends UnitPane {
         }
     }
 
-    /**
-     * Method creates the header content of the widgetPane.
-     */
     @Override
     protected void initTitle() {
         lightbulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
@@ -134,12 +132,20 @@ public class LightPane extends UnitPane {
         headContent.prefHeightProperty().set(lightbulbIcon.getSize() + Constants.INSETS);
     }
 
-    /**
-     * Method creates the body content of the widgetPane.
-     */
     @Override
     protected void initContent() {
         //No body content.
+    }
+
+    @Override
+    protected void initUnitLabel() {
+        String unitLabel = Constants.UNKNOWN_ID;
+        try {
+            unitLabel = this.lightRemote.getData().getLabel();
+        } catch (CouldNotPerformException e) {
+            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+        }
+        setUnitLabel(unitLabel);
     }
 
     @Override
@@ -155,17 +161,8 @@ public class LightPane extends UnitPane {
     @Override
     public void update(final Observable observable, final Object light) throws java.lang.Exception {
         Platform.runLater(() -> {
-            if (((Light) light).getPowerState().getValue().equals(State.ON)) {
-                lightbulbIcon.setBackgroundIconColorAnimated(Constants.LIGHTBULB_COLOR);
-                if (!toggleSwitch.isSelected()) {
-                    toggleSwitch.setSelected(true);
-                }
-            } else {
-                lightbulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
-                if (toggleSwitch.isSelected()) {
-                    toggleSwitch.setSelected(false);
-                }
-            }
+            final State powerState = ((Light) light).getPowerState().getValue();
+            setPowerStateSwitchAndIcon(powerState);
         });
     }
 }

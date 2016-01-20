@@ -131,7 +131,11 @@ public class BCozy extends Application {
         //instantiate LocationController
         locationController = new LocationController(foregroundPane, backgroundPane.getLocationPane(), remotePool);
 
-        this.initRemotesAndLocation();
+        if (Constants.DEBUG) {
+            infoPane.setVisible(false);
+        } else {
+            this.initRemotesAndLocation();
+        }
     }
 
     private void initRemotesAndLocation() {
@@ -141,20 +145,18 @@ public class BCozy extends Application {
                 infoPane.setTextLabelIdentifier("initRemotes");
                 remotePool.initRegistryRemotes();
 
-                if (!Constants.DEBUG) {
-                    infoPane.setTextLabelIdentifier("fillDeviceAndLocationMap");
-                    remotePool.fillDeviceAndLocationMap();
+                infoPane.setTextLabelIdentifier("fillDeviceAndLocationMap");
+                remotePool.fillDeviceAndLocationMap();
 
-
-                    infoPane.setTextLabelIdentifier("fillContextMenu");
-                    contextMenuController.initTitledPaneMap();
-                }
+                infoPane.setTextLabelIdentifier("fillContextMenu");
+                contextMenuController.initTitledPaneMap();
 
                 infoPane.setTextLabelIdentifier("connectLocationRemote");
                 locationController.connectLocationRemote();
 
                 return null;
             }
+
             @Override
             protected void succeeded() {
                 super.succeeded();
@@ -199,27 +201,41 @@ public class BCozy extends Application {
             }
         }
     }
+
     private static void registerListeners() {
         LOGGER.info("Executing Registration of Listeners");
         ResponsiveHandler.setOnDeviceTypeChanged((over, oldDeviceType, newDeviceType) -> {
             switch (newDeviceType) {
-                case LARGE      : adjustToLargeDevice();        break;
-                case MEDIUM     : adjustToMediumDevice();       break;
-                case SMALL      : adjustToSmallDevice();        break;
-                case EXTRA_SMALL: adjustToExtremeSmallDevice(); break;
-                default : break;
+                case LARGE:
+                    adjustToLargeDevice();
+                    break;
+                case MEDIUM:
+                    adjustToMediumDevice();
+                    break;
+                case SMALL:
+                    adjustToSmallDevice();
+                    break;
+                case EXTRA_SMALL:
+                    adjustToExtremeSmallDevice();
+                    break;
+                default:
+                    break;
             }
         });
     }
+
     private static void adjustToLargeDevice() {
         LOGGER.info("Detected Large Device");
     }
+
     private static void adjustToMediumDevice() {
         LOGGER.info("Detected Medium Device");
     }
+
     private static void adjustToSmallDevice() {
         LOGGER.info("Detected Small Device");
     }
+
     private static void adjustToExtremeSmallDevice() {
         LOGGER.info("Detected Extreme Small Device");
     }

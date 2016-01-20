@@ -81,6 +81,14 @@ public class UnitPaneContainer extends TitledPane {
 
                 vBox.getChildren().add(brightnessSensorPane);
             }
+        } else if (unitType.equals(UnitType.DIMMER)) {
+            final Iterator<DALRemoteService> dalRemoteServiceIterator = dalRemoteServiceList.iterator();
+            while (dalRemoteServiceIterator.hasNext()) {
+                final DALRemoteService dalRemoteService = dalRemoteServiceIterator.next();
+                final DimmerPane dimmerPane = new DimmerPane(dalRemoteService);
+
+                vBox.getChildren().add(dimmerPane);
+            }
         } else if (unitType.equals(UnitType.LIGHT)) {
             final Iterator<DALRemoteService> dalRemoteServiceIterator = dalRemoteServiceList.iterator();
             while (dalRemoteServiceIterator.hasNext()) {
@@ -105,13 +113,13 @@ public class UnitPaneContainer extends TitledPane {
 
                 vBox.getChildren().add(rollershutterPane);
             }
-        } else if (unitType.equals(UnitType.DIMMER)) {
+        } else if (unitType.equals(UnitType.TEMPERATURE_SENSOR)) {
             final Iterator<DALRemoteService> dalRemoteServiceIterator = dalRemoteServiceList.iterator();
             while (dalRemoteServiceIterator.hasNext()) {
                 final DALRemoteService dalRemoteService = dalRemoteServiceIterator.next();
-                final DimmerPane dimmerPane = new DimmerPane(dalRemoteService);
+                final TemperatureSensorPane temperatureSensorPane = new TemperatureSensorPane(dalRemoteService);
 
-                vBox.getChildren().add(dimmerPane);
+                vBox.getChildren().add(temperatureSensorPane);
             }
         }
     }

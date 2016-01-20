@@ -62,41 +62,38 @@ public class BrightnessSensorPane extends UnitPane {
         brightnessStatus = new Text();
         iconPane = new GridPane();
 
-        try {
-            super.setUnitLabel(this.brightnessSensorRemote.getLatestValue().getLabel());
-        } catch (CouldNotPerformException e) {
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-            super.setUnitLabel("UnknownID");
-        }
-
+        initUnitLabel();
         initTitle();
         initContent();
         createWidgetPane(headContent);
 
-        try {
-            initEffect();
-        } catch (CouldNotPerformException e) {
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-        }
+        initEffect();
 
         this.brightnessSensorRemote.addObserver(this);
     }
 
-    private void initEffect() throws CouldNotPerformException {
-        final double brightnessLevel = brightnessSensorRemote.getBrightness();
+    private void initEffect() {
+        double brightnessLevel = 0;
 
+        try {
+            brightnessLevel = brightnessSensorRemote.getBrightness();
+        } catch (CouldNotPerformException e) {
+            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+        }
+        setBrightnessLevelTextAndIcon(brightnessLevel);
+    }
+
+    private void setBrightnessLevelTextAndIcon(final double brightnessLevel) {
         this.brightnessIcon.setBackgroundIconColorAnimated(
                 new Color(brightnessLevel, brightnessLevel, brightnessLevel, 1));
 
-        this.brightnessStatus.setText((int) brightnessLevel + ""); //NOPMD //TODO: add measure
+        this.brightnessStatus.setText((int) brightnessLevel + "lm"); //TODO: add correct measure (lm = lumen)?
     }
-
-    /**
-     * Method creates the header content of the widgetPane.
-     */
 
     @Override
     protected void initTitle() {
+        brightnessStatus.getStyleClass().add(Constants.ICONS_CSS_STRING);
+
         brightnessIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
 
         iconPane.add(brightnessIcon, 0, 0);
@@ -108,12 +105,20 @@ public class BrightnessSensorPane extends UnitPane {
         headContent.prefHeightProperty().set(iconPane.getHeight() + Constants.INSETS);
     }
 
-    /**
-     * Method creates the body content of the widgetPane.
-     */
     @Override
     protected void initContent() {
         //No body content.
+    }
+
+    @Override
+    protected void initUnitLabel() {
+        String unitLabel = Constants.UNKNOWN_ID;
+        try {
+            unitLabel = this.brightnessSensorRemote.getData().getLabel();
+        } catch (CouldNotPerformException e) {
+            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+        }
+        setUnitLabel(unitLabel);
     }
 
     @Override
@@ -130,11 +135,7 @@ public class BrightnessSensorPane extends UnitPane {
     public void update(final Observable observable, final Object brightnessSensor) throws java.lang.Exception {
         Platform.runLater(() -> {
             final double brightnessLevel = ((BrightnessSensor) brightnessSensor).getBrightness();
-
-            this.brightnessIcon.setBackgroundIconColorAnimated(
-                    new Color(brightnessLevel, brightnessLevel, brightnessLevel, 1));
-
-            this.brightnessStatus.setText((int) brightnessLevel + ""); //NOPMD //TODO: add measure
+            setBrightnessLevelTextAndIcon(brightnessLevel);
         });
     }
 }
