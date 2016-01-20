@@ -203,7 +203,7 @@ public final class Constants {
     /**
      * The color for a door.
      */
-    public static final Color DOOR_FILL = new Color(1.0, 1.0, 1.0, 0.12);
+    public static final Color PASSAGE_FILL = new Color(1.0, 1.0, 1.0, 0.12);
 
     /**
      * The background color.
