@@ -363,11 +363,6 @@ public final class Constants {
     public static final double NORMAL_STROKE = 1.5;
 
     /**
-     * Debug flag.
-     */
-    public static final boolean DEBUG = false;
-
-    /**
      * Private Constructor.
      */
     private Constants() { }

@@ -105,7 +105,7 @@ public class LocationController implements Observer<LocationRegistryType.Locatio
         for (final LocationConfigType.LocationConfig locationConfig : list) {
             try {
                 //skip locations without a shape
-                if (!(locationConfig.getPlacementConfig().getShape().getFloorCount() > 0)) {
+                if (locationConfig.getPlacementConfig().getShape().getFloorCount() == 0) {
                     continue;
                 }
 
@@ -153,37 +153,40 @@ public class LocationController implements Observer<LocationRegistryType.Locatio
 
         //check which connection has a shape
         for (final ConnectionConfigType.ConnectionConfig connectionConfig : list) {
-            if (connectionConfig.getPlacementConfig().getShape().getFloorCount() > 0) {
-                try {
-                    final List<Point2D> vertices = new LinkedList<>();
-
-                    final Future<Transform> transform = remotePool.getTransformReceiver().requestTransform(
-                            rootLocationFrameId,
-                            connectionConfig.getPlacementConfig().getTransformationFrameId(),
-                            System.currentTimeMillis());
-
-                    // Get the shape of the room
-                    final List<Vec3DDoubleType.Vec3DDouble> shape
-                            = connectionConfig.getPlacementConfig().getShape().getFloorList();
-
-                    // Iterate over all vertices
-                    for (final Vec3DDoubleType.Vec3DDouble rstVertex : shape) {
-                        // Convert vertex into java type
-                        final Point3d vertex = new Point3d(rstVertex.getX(), rstVertex.getY(), rstVertex.getZ());
-                        // Transform
-                        transform.get(Constants.TRANSFORMATION_TIMEOUT, TimeUnit.MILLISECONDS)
-                                .getTransform().transform(vertex);
-                        // Add vertex to list of vertices
-                        vertices.add(new Point2D(vertex.x, vertex.y));
-                    }
-
-                    locationPane.addConnection(connectionConfig.getId(), connectionConfig.getLabel(),
-                            vertices, connectionConfig.getType().toString(), connectionConfig.getTileIdList());
-                } catch (InterruptedException | ExecutionException | TimeoutException e) {
-                    ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-                    LOGGER.error("Error while fetching transformation for connection \"" + connectionConfig.getLabel()
-                            + "\", connectionID: " + connectionConfig.getId());
+            try {
+                //skip connections without a shape
+                if (connectionConfig.getPlacementConfig().getShape().getFloorCount() == 0) {
+                    continue;
                 }
+
+                final List<Point2D> vertices = new LinkedList<>();
+
+                final Future<Transform> transform = remotePool.getTransformReceiver().requestTransform(
+                        rootLocationFrameId,
+                        connectionConfig.getPlacementConfig().getTransformationFrameId(),
+                        System.currentTimeMillis());
+
+                // Get the shape of the room
+                final List<Vec3DDoubleType.Vec3DDouble> shape
+                        = connectionConfig.getPlacementConfig().getShape().getFloorList();
+
+                // Iterate over all vertices
+                for (final Vec3DDoubleType.Vec3DDouble rstVertex : shape) {
+                    // Convert vertex into java type
+                    final Point3d vertex = new Point3d(rstVertex.getX(), rstVertex.getY(), rstVertex.getZ());
+                    // Transform
+                    transform.get(Constants.TRANSFORMATION_TIMEOUT, TimeUnit.MILLISECONDS)
+                            .getTransform().transform(vertex);
+                    // Add vertex to list of vertices
+                    vertices.add(new Point2D(vertex.x, vertex.y));
+                }
+
+                locationPane.addConnection(connectionConfig.getId(), connectionConfig.getLabel(),
+                        vertices, connectionConfig.getType().toString(), connectionConfig.getTileIdList());
+            } catch (InterruptedException | ExecutionException | TimeoutException e) {
+                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                LOGGER.error("Error while fetching transformation for connection \"" + connectionConfig.getLabel()
+                        + "\", connectionID: " + connectionConfig.getId());
             }
         }
     }

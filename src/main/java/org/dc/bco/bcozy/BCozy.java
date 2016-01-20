@@ -22,6 +22,7 @@ import com.guigarage.responsive.ResponsiveHandler;
 import javafx.concurrent.Task;
 import org.dc.bco.bcozy.view.InfoPane;
 import org.dc.jps.core.JPService;
+import org.dc.jps.exception.JPNotAvailableException;
 import org.dc.jps.preset.JPDebugMode;
 import org.dc.jul.exception.printer.ExceptionPrinter;
 import org.dc.jul.exception.printer.LogLevel;
@@ -131,9 +132,14 @@ public class BCozy extends Application {
         //instantiate LocationController
         locationController = new LocationController(foregroundPane, backgroundPane.getLocationPane(), remotePool);
 
-        if (Constants.DEBUG) {
-            infoPane.setVisible(false);
-        } else {
+        try {
+            if (JPService.getProperty(JPDebugMode.class).getValue()) {
+                infoPane.setVisible(false);
+            } else {
+                this.initRemotesAndLocation();
+            }
+        } catch (JPNotAvailableException e) {
+            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
             this.initRemotesAndLocation();
         }
     }

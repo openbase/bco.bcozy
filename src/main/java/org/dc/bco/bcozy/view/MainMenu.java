@@ -29,12 +29,21 @@ import org.dc.bco.bcozy.view.mainmenupanes.AvailableUsersPane;
 import org.dc.bco.bcozy.view.mainmenupanes.ConnectionPane;
 import org.dc.bco.bcozy.view.mainmenupanes.SettingsPane;
 import org.dc.bco.bcozy.view.mainmenupanes.UserPane;
+import org.dc.jps.core.JPService;
+import org.dc.jps.exception.JPNotAvailableException;
+import org.dc.jps.preset.JPDebugMode;
+import org.dc.jul.exception.printer.ExceptionPrinter;
+import org.dc.jul.exception.printer.LogLevel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by hoestreich on 11/10/15.
  */
 public class MainMenu extends StackPane {
 
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(MainMenu.class);
 
     private final Button initRemoteButton;
     private final Button fetchLocationButton;
@@ -101,11 +110,17 @@ public class MainMenu extends StackPane {
         mainMenuFloatingButton.translateYProperty().set(-(Constants.FLOATING_BUTTON_OFFSET));
 
         // Adding components to their parents
-        if (Constants.DEBUG) {
-            verticalLayout.getChildren()
-                    .addAll(logoView, initRemoteButton, fetchLocationButton, fillHashesButton,
-                            fillContextMenuButton, connectionPane, userPane, availableUsersPanePane, settingsPane);
-        } else {
+        try {
+            if (JPService.getProperty(JPDebugMode.class).getValue()) {
+                verticalLayout.getChildren()
+                        .addAll(logoView, initRemoteButton, fetchLocationButton, fillHashesButton,
+                                fillContextMenuButton, connectionPane, userPane, availableUsersPanePane, settingsPane);
+            } else {
+                verticalLayout.getChildren()
+                        .addAll(logoView, connectionPane, userPane, availableUsersPanePane, settingsPane);
+            }
+        } catch (JPNotAvailableException e) {
+            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
             verticalLayout.getChildren()
                     .addAll(logoView, connectionPane, userPane, availableUsersPanePane, settingsPane);
         }
