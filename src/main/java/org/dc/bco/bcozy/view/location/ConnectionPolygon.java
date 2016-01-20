@@ -32,10 +32,10 @@ public abstract class ConnectionPolygon extends Polygon {
     private final String connectionLabel;
     private final String connectionId;
 
-    private double minX;
-    private double maxX;
-    private double minY;
-    private double maxY;
+    private final double minX;
+    private final double maxX;
+    private final double minY;
+    private final double maxY;
     private final boolean horizontal;
 
 
@@ -56,21 +56,25 @@ public abstract class ConnectionPolygon extends Polygon {
 
         final ObservableList<Double> pointList = super.getPoints();
 
-        minX = Double.MAX_VALUE;
-        maxX = Double.MIN_VALUE;
-        minY = Double.MAX_VALUE;
-        maxY = Double.MIN_VALUE;
+        double tempMinX = Double.MAX_VALUE;
+        double tempMaxX = Double.MIN_VALUE;
+        double tempMinY = Double.MAX_VALUE;
+        double tempMaxY = Double.MIN_VALUE;
 
         for (int i = 0; i < pointList.size(); i = i + 2) {
-            minX = pointList.get(i) < minX ? pointList.get(i) : minX;
-            maxX = pointList.get(i) > maxX ? pointList.get(i) : maxX;
+            tempMinX = pointList.get(i) < tempMinX ? pointList.get(i) : tempMinX;
+            tempMaxX = pointList.get(i) > tempMaxX ? pointList.get(i) : tempMaxX;
         }
 
         for (int i = 1; i < pointList.size(); i = i + 2) {
-            minY = pointList.get(i) < minY ? pointList.get(i) : minY;
-            maxY = pointList.get(i) > maxY ? pointList.get(i) : maxY;
+            tempMinY = pointList.get(i) < tempMinY ? pointList.get(i) : tempMinY;
+            tempMaxY = pointList.get(i) > tempMaxY ? pointList.get(i) : tempMaxY;
         }
 
+        minX = tempMinX;
+        maxX = tempMaxX;
+        minY = tempMinY;
+        maxY = tempMaxY;
         this.horizontal = (maxX - minX > maxY - minY);
 
         this.setConnectionStyle();
