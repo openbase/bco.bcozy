@@ -42,6 +42,7 @@ import org.dc.jul.pattern.Observable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.homeautomation.state.PowerStateType;
+import rst.homeautomation.state.PowerStateType.PowerState.State;
 import rst.homeautomation.unit.DimmerType;
 
 /**
@@ -73,44 +74,42 @@ public class DimmerPane extends UnitPane {
         headContent = new BorderPane();
         bodyContent = new VBox();
 
-        try {
-            super.setUnitLabel(this.dimmerRemote.getLatestValue().getLabel());
-        } catch (CouldNotPerformException e) {
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-            super.setUnitLabel("UnknownID");
-        }
-
+        initUnitLabel();
         initTitle();
         initContent();
         createWidgetPane(headContent, bodyContent);
 
-        try {
-            initEffectAndSwitch();
-        } catch (CouldNotPerformException e) {
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-        }
+        initEffectAndSwitch();
 
         this.dimmerRemote.addObserver(this);
     }
 
-    private void setColorToImageEffect(final Color color) {
-        lightBulbIcon.setBackgroundIconColorAnimated(color);
+    private void initEffectAndSwitch() {
+        State powerState = State.OFF;
+        double brightness = 0.0;
+
+        try {
+            powerState = dimmerRemote.getPower().getValue();
+            brightness = dimmerRemote.getDim() / Constants.ONE_HUNDRED;
+        } catch (CouldNotPerformException e) {
+            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+        }
+        setEffectColorAndSlider(powerState, brightness);
     }
 
-    private void initEffectAndSwitch() throws CouldNotPerformException {
-        if (dimmerRemote.getPower().getValue().equals(PowerStateType.PowerState.State.ON)) {
-            final Double brightness = dimmerRemote.getDim() / Constants.ONE_HUNDRED;
+    private void setEffectColorAndSlider(final State powerState, final double brightness) {
+        if (powerState.equals(State.ON)) {
             final Color color = Color.hsb(Constants.LIGHTBULB_COLOR.getHue(),
                     Constants.LIGHTBULB_COLOR.getSaturation(), brightness, Constants.LIGHTBULB_COLOR.getOpacity());
-            setColorToImageEffect(color);
+            lightBulbIcon.setBackgroundIconColorAnimated(color);
             slider.setValue(brightness * slider.getMax());
             progressBar.setProgress(brightness);
 
             if (!toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(true);
             }
-        } else if (dimmerRemote.getPower().getValue().equals(PowerStateType.PowerState.State.OFF)) {
-            setColorToImageEffect(Color.TRANSPARENT);
+        } else {
+            lightBulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
             slider.setValue(0);
             progressBar.setProgress(0);
 
@@ -120,12 +119,9 @@ public class DimmerPane extends UnitPane {
         }
     }
 
-    /**
-     * Method creates the header content of the widgetPane.
-     */
     @Override
     protected void initTitle() {
-        setColorToImageEffect(Color.TRANSPARENT);
+        lightBulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
         toggleSwitch.setOnMouseClicked(event -> {
             new Thread(new Task() {
                 @Override
@@ -154,9 +150,6 @@ public class DimmerPane extends UnitPane {
         headContent.prefHeightProperty().set(lightBulbIcon.getSize() + Constants.INSETS);
     }
 
-    /**
-     * Method creates the body content of the widgetPane.
-     */
     @Override
     protected void initContent() {
         final StackPane stackPane;
@@ -195,6 +188,17 @@ public class DimmerPane extends UnitPane {
     }
 
     @Override
+    protected void initUnitLabel() {
+        String unitLabel = Constants.UNKNOWN_ID;
+        try {
+            unitLabel = this.dimmerRemote.getData().getLabel();
+        } catch (CouldNotPerformException e) {
+            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+        }
+        setUnitLabel(unitLabel);
+    }
+
+    @Override
     public DALRemoteService getDALRemoteService() {
         return dimmerRemote;
     }
@@ -207,26 +211,9 @@ public class DimmerPane extends UnitPane {
     @Override
     public void update(final Observable observable, final Object dimmer) throws java.lang.Exception {
         Platform.runLater(() -> {
-            if (((DimmerType.Dimmer) dimmer).getPowerState().getValue().equals(PowerStateType.PowerState.State.ON)) {
-                final Double brightness = ((DimmerType.Dimmer) dimmer).getValue() / Constants.ONE_HUNDRED;
-                final Color color = Color.hsb(Constants.LIGHTBULB_COLOR.getHue(),
-                        Constants.LIGHTBULB_COLOR.getSaturation(), brightness, Constants.LIGHTBULB_COLOR.getOpacity());
-                setColorToImageEffect(color);
-                slider.setValue(brightness * slider.getMax());
-                progressBar.setProgress(brightness);
-
-                if (!toggleSwitch.isSelected()) {
-                    toggleSwitch.setSelected(true);
-                }
-            } else {
-                setColorToImageEffect(Color.TRANSPARENT);
-                slider.setValue(0);
-                progressBar.setProgress(0);
-
-                if (toggleSwitch.isSelected()) {
-                    toggleSwitch.setSelected(false);
-                }
-            }
+            final State powerState = ((DimmerType.Dimmer) dimmer).getPowerState().getValue();
+            final double brightness = ((DimmerType.Dimmer) dimmer).getValue() / Constants.ONE_HUNDRED;
+            setEffectColorAndSlider(powerState, brightness);
         });
     }
 }

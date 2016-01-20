@@ -72,13 +72,7 @@ public class RollershutterPane extends UnitPane {
         headContent = new BorderPane();
         bodyContent = new HBox();
 
-        try {
-            super.setUnitLabel(this.rollershutterRemote.getLatestValue().getLabel());
-        } catch (CouldNotPerformException e) {
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-            super.setUnitLabel("UnknownID");
-        }
-
+        initUnitLabel();
         initTitle();
         initContent();
         createWidgetPane(headContent, bodyContent);
@@ -92,7 +86,7 @@ public class RollershutterPane extends UnitPane {
         this.rollershutterRemote.addObserver(this);
     }
 
-    private void setEffectOpeningRatio(final Double percentage) {
+    private void setEffectOpeningRatio(final double percentage) {
         ((Rectangle) rollerShutterIconForeground.getClip()).setHeight(Constants.SMALL_ICON * percentage);
     }
 
@@ -218,8 +212,19 @@ public class RollershutterPane extends UnitPane {
         //CHECKSTYLE.ON: MagicNumber
     }
 
+    @Override
+    protected void initUnitLabel() {
+        String unitLabel = Constants.UNKNOWN_ID;
+        try {
+            unitLabel = this.rollershutterRemote.getData().getLabel();
+        } catch (CouldNotPerformException e) {
+            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+        }
+        setUnitLabel(unitLabel);
+    }
+
     private void initEffect() throws CouldNotPerformException {
-        final Double openingPercentage = rollershutterRemote.getOpeningRatio();
+        final double openingPercentage = rollershutterRemote.getOpeningRatio();
 
         clip.setWidth(Constants.SMALL_ICON);
         clip.setHeight(Constants.SMALL_ICON * openingPercentage);
@@ -244,7 +249,7 @@ public class RollershutterPane extends UnitPane {
     @Override
     public void update(final Observable observable, final Object rollerShutter) throws java.lang.Exception {
         Platform.runLater(() -> {
-            final Double openingPercentage = ((RollershutterType.Rollershutter) rollerShutter).getOpeningRatio();
+            final double openingPercentage = ((RollershutterType.Rollershutter) rollerShutter).getOpeningRatio();
             setEffectOpeningRatio(openingPercentage);
         });
 
