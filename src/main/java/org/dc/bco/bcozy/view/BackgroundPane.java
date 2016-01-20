@@ -19,6 +19,8 @@
 
 package org.dc.bco.bcozy.view;
 
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.StackPane;
 import org.dc.bco.bcozy.view.location.LocationPane;
 
@@ -39,14 +41,14 @@ public class BackgroundPane extends StackPane {
     public BackgroundPane(final ForegroundPane foregroundPane) {
         locationPane = new LocationPane(foregroundPane);
         this.getChildren().add(locationPane);
-        this.getStyleClass().add("background-pane");
+//        this.getStyleClass().add("background-pane");
 
 //        final BackgroundImage backgroundImage = new BackgroundImage(
 //                new Image("backgrounds/blueprint.jpg"),
 //                BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
 //                BackgroundSize.DEFAULT);
 //        this.setBackground(new Background(backgroundImage));
-        //this.setBackground(new Background(new BackgroundFill(Constants.BACKGROUND_COLOR, null, null)));
+        this.setBackground(new Background(new BackgroundFill(Constants.BACKGROUND_COLOR, null, null)));
 
 
         this.setOnMousePressed(event -> {

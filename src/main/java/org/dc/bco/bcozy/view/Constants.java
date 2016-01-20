@@ -208,7 +208,7 @@ public final class Constants {
     /**
      * The background color.
      */
-    public static final Color BACKGROUND_COLOR = new Color(0.2, 0.2, 0.2, 1.0);
+    public static final Color BACKGROUND_COLOR = new Color(0.25, 0.25, 0.25, 1.0);
 
     /**
      * The width of the zoomPane in the locationPane.
@@ -324,6 +324,11 @@ public final class Constants {
      * Max value of open ratio @ rollerShutterPane.
      */
     public static final double ROLLERSHUTTER_MAX_VALUE = 1.0;
+
+    /**
+     * Timeout value in milliseconds for fetching transformations.
+     */
+    public static final long TRANSFORMATION_TIMEOUT = 1000;
 
     /**
      * Debug flag.
