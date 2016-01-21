@@ -233,8 +233,18 @@ public class LocationPane extends Pane {
      */
     public void updateLocationPane() {
         this.getChildren().clear();
-        locationMap.forEach((locationId, locationPolygon) -> this.getChildren().add(locationPolygon));
-        connectionMap.forEach((connectionId, connectionPolygon) -> this.getChildren().add(connectionPolygon));
+
+        locationMap.forEach((locationId, locationPolygon) -> {
+            if (this.rootRoom != locationPolygon) {
+                rootRoom.addCuttingShape(locationPolygon);
+            }
+            this.getChildren().add(locationPolygon);
+        });
+
+        connectionMap.forEach((connectionId, connectionPolygon) -> {
+            rootRoom.addCuttingShape(connectionPolygon);
+            this.getChildren().add(connectionPolygon);
+        });
     }
 
     /**

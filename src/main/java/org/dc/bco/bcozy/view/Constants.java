@@ -206,6 +206,11 @@ public final class Constants {
     public static final Color PASSAGE_FILL = new Color(1.0, 1.0, 1.0, 0.05);
 
     /**
+     * The color for a zone.
+     */
+    public static final Color ZONE_FILL = new Color(1.0, 1.0, 1.0, 0.25);
+
+    /**
      * The color for a door.
      */
     public static final Color WINDOW_EFFECT = new Color(1.0, 1.0, 1.0, 0.40);
