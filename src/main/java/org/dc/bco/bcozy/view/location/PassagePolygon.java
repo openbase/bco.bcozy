@@ -125,6 +125,6 @@ public class PassagePolygon extends ConnectionPolygon {
 
     @Override
     protected void changeStyleOnOpening(final boolean open) {
-        // TODO: To be implemented...
+        // nothing to do here...
     }
 }

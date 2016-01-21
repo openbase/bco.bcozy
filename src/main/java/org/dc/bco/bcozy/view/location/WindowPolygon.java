@@ -19,11 +19,16 @@
 
 package org.dc.bco.bcozy.view.location;
 
+import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
+import org.dc.bco.bcozy.view.Constants;
+
 /**
  *
  */
 public class WindowPolygon extends ConnectionPolygon {
-
 
 
     /**
@@ -37,11 +42,19 @@ public class WindowPolygon extends ConnectionPolygon {
         super(connectionLabel, connectionId, points);
     }
 
-
-
     @Override
     protected void setConnectionStyle() {
-        // TODO: To be implemented...
+        this.setStroke(Color.WHITE);
+        this.setStrokeWidth(Constants.ROOM_STROKE_WIDTH);
+        this.setMouseTransparent(true);
+
+        final Stop[] stops = new Stop[]{new Stop(0, Color.TRANSPARENT),
+                new Stop(0.2, Color.TRANSPARENT),
+                new Stop(0.5, Constants.WINDOW_EFFECT),
+                new Stop(0.8, Color.TRANSPARENT),
+                new Stop(1, Color.TRANSPARENT)};
+        final LinearGradient lg1 = new LinearGradient(0, 0, 6, 6, false, CycleMethod.REPEAT, stops);
+        this.setFill(lg1);
     }
 
     @Override
