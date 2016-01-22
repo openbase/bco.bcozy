@@ -84,10 +84,15 @@ public class BrightnessSensorPane extends UnitPane {
     }
 
     private void setBrightnessLevelTextAndIcon(final double brightnessLevel) {
-        this.brightnessIcon.setBackgroundIconColorAnimated(
-                new Color(brightnessLevel, brightnessLevel, brightnessLevel, 1));
+        if (brightnessLevel <= Constants.BRIGHTNESS_MAXIMUM) {
+            this.brightnessIcon.setBackgroundIconColorAnimated(
+                    new Color(brightnessLevel / Constants.BRIGHTNESS_MAXIMUM,
+                            brightnessLevel / Constants.BRIGHTNESS_MAXIMUM, 0, 1));
+        } else {
+            this.brightnessIcon.setBackgroundIconColorAnimated(new Color(1, 1, 1, 1));
+        }
 
-        this.brightnessStatus.setText((int) brightnessLevel + "lm"); //TODO: add correct measure (lm = lumen)?
+        this.brightnessStatus.setText((int) brightnessLevel + "lx");
     }
 
     @Override

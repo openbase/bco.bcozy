@@ -66,6 +66,10 @@ import rst.homeautomation.unit.AmbientLightType.AmbientLight;
 import rst.homeautomation.state.PowerStateType.PowerState.State;
 import rst.vision.HSVColorType.HSVColor;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
 /**
  * Created on 03.12.15.
  */
@@ -328,6 +332,7 @@ public class AmbientLightPane extends UnitPane {
 
     @Override
     protected void initTitle() {
+        final String setPowerString = "setPower";
         lightbulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
 
         toggleSwitch.setOnMouseClicked(event -> {
@@ -336,15 +341,39 @@ public class AmbientLightPane extends UnitPane {
                 protected Object call() throws java.lang.Exception {
                     if (toggleSwitch.isSelected()) {
                         try {
-                            ambientLightRemote.setPower(PowerStateType.PowerState.State.ON);
-                        } catch (CouldNotPerformException e) {
+                            ambientLightRemote.callMethodAsync(setPowerString, PowerStateType.PowerState.State.ON)
+                                    .get(Constants.THREAD_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
+                            //ambientLightRemote.setPower(PowerStateType.PowerState.State.ON);
+                        } catch (InterruptedException | ExecutionException | TimeoutException
+                                | CouldNotPerformException e) {
                             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                            setEnabled(false);
+                            while (!ambientLightRemote.isConnected()) {
+                                try {
+                                    Thread.sleep(Constants.THREAD_MILLI_TIMEOUT);
+                                } catch (InterruptedException ex) {
+                                    ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
+                                }
+                            }
+                            setEnabled(true);
                         }
                     } else {
                         try {
-                            ambientLightRemote.setPower(PowerStateType.PowerState.State.OFF);
-                        } catch (CouldNotPerformException e) {
+                            ambientLightRemote.callMethodAsync(setPowerString, PowerStateType.PowerState.State.OFF)
+                                    .get(Constants.THREAD_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
+                            //ambientLightRemote.setPower(PowerStateType.PowerState.State.OFF);
+                        } catch (InterruptedException | ExecutionException | TimeoutException
+                                | CouldNotPerformException e) {
                             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                            setEnabled(false);
+                            while (!ambientLightRemote.isConnected()) {
+                                try {
+                                    Thread.sleep(Constants.THREAD_MILLI_TIMEOUT);
+                                } catch (InterruptedException ex) {
+                                    ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
+                                }
+                            }
+                            setEnabled(true);
                         }
                     }
                     return null;
@@ -391,13 +420,25 @@ public class AmbientLightPane extends UnitPane {
         final EventHandler<MouseEvent> sendingColorHandler = event -> {
             new Thread(new Task() {
                 @Override
-                protected Object call() throws java.lang.Exception {
+                protected Object call() {
                     HSVColor hsvColor = HSVColor.newBuilder().setHue(hueValue.floatValue())
                             .setSaturation(saturation.floatValue()).setValue(brightness.floatValue()).build();
                     try {
-                        ambientLightRemote.setColor(hsvColor);
-                    } catch (CouldNotPerformException e) {
+                        ambientLightRemote.callMethodAsync("setColor", hsvColor)
+                                .get(Constants.THREAD_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
+                        //ambientLightRemote.setColor(hsvColor);
+                    } catch (InterruptedException | ExecutionException | TimeoutException
+                            | CouldNotPerformException e) {
                         ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                        setEnabled(false);
+                        while (!ambientLightRemote.isConnected()) {
+                            try {
+                                Thread.sleep(Constants.THREAD_MILLI_TIMEOUT);
+                            } catch (InterruptedException ex) {
+                                ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
+                            }
+                        }
+                        setEnabled(true);
                     }
                     return null;
                 }
