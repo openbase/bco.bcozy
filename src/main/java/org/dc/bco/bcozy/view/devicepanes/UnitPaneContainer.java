@@ -98,6 +98,14 @@ public class UnitPaneContainer extends ObserverTitledPane {
 
                 vBox.getChildren().add(lightPane);
             }
+        } else if (unitType.equals(UnitType.MOTION_SENSOR)) {
+            final Iterator<DALRemoteService> dalRemoteServiceIterator = dalRemoteServiceList.iterator();
+            while (dalRemoteServiceIterator.hasNext()) {
+                final DALRemoteService dalRemoteService = dalRemoteServiceIterator.next();
+                final MotionSensorPane motionSensorPane = new MotionSensorPane(dalRemoteService);
+
+                vBox.getChildren().add(motionSensorPane);
+            }
         } else if (unitType.equals(UnitType.POWER_PLUG)) {
             final Iterator<DALRemoteService> dalRemoteServiceIterator = dalRemoteServiceList.iterator();
             while (dalRemoteServiceIterator.hasNext()) {

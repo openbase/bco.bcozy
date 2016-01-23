@@ -22,9 +22,13 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.scene.effect.Blend;
+import javafx.scene.effect.BlendMode;
+import javafx.scene.effect.ColorInput;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import org.dc.bco.bcozy.view.Constants;
@@ -40,11 +44,14 @@ public class WidgetPane extends VBox {
     private Timeline timelineUp;
     private Timeline timelineDown;
     private Rectangle rectangleClip;
+    private final Blend blendEffect;
 
     /**
      * Constructor for the widget pane.
      */
     public WidgetPane() {
+        blendEffect = new Blend();
+        initBlendEffect();
         //this.setMinHeight(Constants.SMALL_ICON);
         //this.setMaxHeight(Constants.SMALL_ICON);
     }
@@ -163,6 +170,35 @@ public class WidgetPane extends VBox {
         final KeyFrame kfUp = new KeyFrame(Duration.millis(Constants.ANIMATION_TIME), kvUp1, kvUp2, kvUp3,
                 kvUp4, kvUp5, kvUp6);
         timelineUp.getKeyFrames().add(kfUp);
+    }
+
+    /**
+     * Initiates the blend effect.
+     */
+    private void initBlendEffect() {
+        blendEffect.setMode(BlendMode.ADD);
+
+        final ColorInput colorInput = new ColorInput();
+        colorInput.setPaint(Color.GRAY);
+        colorInput.widthProperty().bind(this.widthProperty());
+        colorInput.heightProperty().bind(this.heightProperty());
+
+        blendEffect.setTopInput(colorInput);
+    }
+
+    /**
+     * Enables or disables the Widgetpane.
+     * @param enabled enabled
+     */
+    public void setEnabled(final boolean enabled) {
+        if (enabled) {
+            this.setEffect(null);
+            this.setMouseTransparent(false);
+        } else {
+            this.setEffect(blendEffect);
+            this.setMouseTransparent(true);
+            this.isExpanded.set(false);
+        }
     }
 }
 

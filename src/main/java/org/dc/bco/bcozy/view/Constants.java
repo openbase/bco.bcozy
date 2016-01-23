@@ -373,6 +373,16 @@ public final class Constants {
     public static final double NORMAL_STROKE = 1.5;
 
     /**
+     * Highest Brightness for fading.
+     */
+    public static final double BRIGHTNESS_MAXIMUM = 3000;
+
+    /**
+     * Milliseconds timeout for threads.
+     */
+    public static final int THREAD_MILLI_TIMEOUT = 500;
+
+    /**
      * Private Constructor.
      */
     private Constants() { }
