@@ -65,12 +65,14 @@ public class ContextMenu extends VBox {
         hiddenSidesPane.setContent(verticalScrollPane);
         hiddenSidesPane.setRight(scrollBar);
         hiddenSidesPane.setTriggerDistance(Constants.TRIGGER_DISTANCE);
+        hiddenSidesPane.getStyleClass().add("hidden-sides-pane");
 
         scrollBar.maxProperty().bind(verticalScrollPane.vmaxProperty());
         scrollBar.minProperty().bind(verticalScrollPane.vminProperty());
 
         verticalScrollPane.vvalueProperty().bindBidirectional(scrollBar.valueProperty());
 
+        //TODO: Delete completely - at the moment it is just not added to the rest
         contextSortingPane = new ContextSortingPane(width + Constants.INSETS);
         contextSortingPane.setMaxWidth(Double.MAX_VALUE);
 
@@ -84,9 +86,10 @@ public class ContextMenu extends VBox {
         //CHECKSTYLE.ON: MagicNumber
 
         final WidgetPane widgetPane = new WidgetPane();
-        final WidgetPane widgetPane2 = new WidgetPane();
+        //TODO: Comment HO: why this? I commented it out and removed it from the list of added nodes in line 91
+        //final WidgetPane widgetPane2 = new WidgetPane();
 
-        this.getChildren().addAll(roomInfo, contextSortingPane, hiddenSidesPane, widgetPane, widgetPane2);
+        this.getChildren().addAll(roomInfo, hiddenSidesPane, widgetPane);
         //VBox.setVgrow(contextSortingPane, Priority.ALWAYS);
 
         //CHECKSTYLE.OFF: MultipleStringLiterals

@@ -18,10 +18,9 @@
  */
 package org.dc.bco.bcozy.view.devicepanes;
 
+import org.dc.bco.bcozy.view.mainmenupanes.ObserverTitledPane;
 import org.dc.bco.dal.remote.unit.DALRemoteService;
-import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.control.TitledPane;
 import javafx.scene.layout.VBox;
 import rst.homeautomation.unit.UnitTemplateType.UnitTemplate.UnitType;
 
@@ -31,7 +30,7 @@ import java.util.List;
 /**
  * Created by timo on 03.12.15.
  */
-public class UnitPaneContainer extends TitledPane {
+public class UnitPaneContainer extends ObserverTitledPane {
 
     private final VBox vBox;
 
@@ -40,11 +39,13 @@ public class UnitPaneContainer extends TitledPane {
      * @param unitTypeName unitTypeName
      */
     public UnitPaneContainer(final String unitTypeName) {
-        this.setText(unitTypeName);
-        this.setPadding(new Insets(0, 0, 0, 0));
+        super(unitTypeName);
 
-        vBox = new VBox();
-        vBox.setPadding(new Insets(0, 0, 0, 0));
+        this.vBox = new VBox();
+        //CHECKSTYLE.OFF: MultipleStringLiterals
+        this.vBox.getStyleClass().add("observer-titled-pane");
+        this.getStyleClass().add("observer-titled-pane");
+        //CHECKSTYLE.ON: MultipleStringLiterals
         this.setContent(vBox);
     }
 

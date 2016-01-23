@@ -8,7 +8,7 @@
     -bg-accent-color: slategray;
     -controls-color: rgba(0.0, 0.0, 0.0, 0.9);
     -highlight-color: rgba(94.0, 203.0, 234.0, 1.0);
-    -border-color: slategray;
+    -border-color: lightgray;
     -shadow-color: rgba(0.0, 0.0, 0.0, 0.3);
     -on-indicator: derive(limegreen, 40.0%);
     -off-indicator: slategray;
@@ -16,6 +16,8 @@
     -flat-button-text-color: dodgerblue;
     -devider-color: slategray;
     -icons-color: black;
+    -flat-button-hover-color: radial-gradient(center 50% 50%, radius 50%, rgba(30,144,255, 0.4), transparent);
+    -button-hover-color: radial-gradient(center 50% 50%, radius 50%, rgba(180,180,180, 0.8), transparent);
 
     -fx-background-color: -bg-color;
 
@@ -145,6 +147,10 @@
 .transparent-button {
     -fx-background-color: transparent;
     -fx-text-fill: -flat-button-text-color;
+}
+
+.transparent-button:hover {
+    -fx-background-color: -flat-button-hover-color;
 }
 
 /*******************************************************************************
@@ -284,10 +290,17 @@
 
 .choice-box {
     -fx-background-color: -bg-color;
-    -fx-border-color: -border-color;
-    -fx-border-width: 1.0;
+    -fx-border-color:
+            transparent
+            transparent
+            -border-color
+            transparent;
 }
 .choice-box > .open-button {
+    -fx-background-color: -bg-color;
+}
+
+.choice-box .context-menu {
     -fx-background-color: -bg-color;
 }
 
@@ -379,14 +392,16 @@
 }
 
 .progress-bar > .bar {
-    -fx-background-color: linear-gradient(
-            from 0px .75em to .75em 0px,
-            repeat,
-            slategrey 0%,
-            slategrey 49%,
-            derive(slategrey, 30%) 50%,
-            derive(slategrey, 30%) 99%
-    );
+    /* barrier tape style*/
+    /*-fx-background-color: linear-gradient(*/
+            /*from 0px .75em to .75em 0px,*/
+            /*repeat,*/
+            /*slategrey 0%,*/
+            /*slategrey 49%,*/
+            /*derive(slategrey, 30%) 50%,*/
+            /*derive(slategrey, 30%) 99%*/
+    /*);*/
+    -fx-background-color: slategray;
 }
 
 /*******************************************************************************
@@ -417,18 +432,20 @@
  *                                                                             *
  ******************************************************************************/
 
-.titled-pane .widget-pane > .title > .arrow-button .arrow {
-    visibility: hidden;
-}
-
 .titled-pane > .title {
     -fx-background-color: -bg-color;
-    -fx-border-color: -border-color;
-    -fx-border-width: 1.0;
 }
 
 .titled-pane > .content {
     -fx-background-color: -bg-color;
+}
+
+.titled-pane > .title > .arrow-button .arrow {
+    -fx-background-color: derive(-fx-text-fill, 70%);
+}
+.titled-pane:focused > .title > .arrow-button .arrow {
+    -fx-effect: none;
+    -fx-background-color: derive(-fx-text-fill, 70%);
 }
 
 /*******************************************************************************
@@ -440,8 +457,6 @@
 .body-pane {
     -fx-text-fill: -fx-text-base-color;
     -fx-background-color: -bg-color;
-            /*-fx-box-border, linear-gradient(to bottom, derive(-fx-color,-02%), derive(-fx-color,65%) 12%,*/
-            /*derive(-fx-color,23%) 88%, derive(-fx-color,50%) 99%, -fx-box-border);*/
     -fx-border-color:
             transparent
             transparent
@@ -451,7 +466,7 @@
 
 .head-pane {
     -fx-text-fill: -fx-text-base-color;
-    -fx-background-color: -bg-color; /*-fx-box-border, -fx-inner-border, -fx-body-color;*/
+    -fx-background-color: -bg-color;
     -fx-border-color:
             transparent
             transparent
@@ -459,6 +474,21 @@
             transparent;
 }
 
+.head-pane:hover {
+    -fx-background-color: -button-hover-color;
+}
+
 .background-pane {
     -fx-background-color: radial-gradient(center 50% 50%, radius 100%, derive(rgb(0.2, 0.2, 0.2), 90%), rgb(0.2, 0.2, 0.2));
+}
+
+.info-pane {
+    -fx-background-color: linear-gradient(from 50% 0% to 50% 100%,
+    rgba(255.0, 255.0, 255.0, 0.3),
+    rgba(255.0, 255.0, 255.0, 0.4),
+    rgba(255.0, 255.0, 255.0, 0.7),
+    rgba(255.0, 255.0, 255.0, 0.9),
+    rgba(255.0, 255.0, 255.0, 0.7),
+    rgba(255.0, 255.0, 255.0, 0.4),
+    rgba(255.0, 255.0, 255.0, 0.3));
 }
