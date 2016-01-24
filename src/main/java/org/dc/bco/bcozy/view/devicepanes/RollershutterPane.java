@@ -142,7 +142,7 @@ public class RollershutterPane extends UnitPane {
 
         final EventHandler<MouseEvent> sendingTotalOpening = event -> new Thread(new Task() {
             @Override
-            protected Object call() throws Exception {
+            protected Object call() {
                 try {
                     rollershutterRemote.setOpeningRatio(0.0);
                 } catch (CouldNotPerformException e) {
@@ -154,7 +154,7 @@ public class RollershutterPane extends UnitPane {
 
         final EventHandler<MouseEvent> sendingTotalClosing = event -> new Thread(new Task() {
             @Override
-            protected Object call() throws Exception {
+            protected Object call() {
                 try {
                     rollershutterRemote.setOpeningRatio(1.0);
                 } catch (CouldNotPerformException e) {
@@ -166,7 +166,7 @@ public class RollershutterPane extends UnitPane {
 
         final EventHandler<MouseEvent> sendingUpLive = event -> new Thread(new Task() {
             @Override
-            protected Object call() throws Exception {
+            protected Object call() {
                 try {
                     if (rollershutterRemote.getOpeningRatio() >= Constants.ROLLERSHUTTER_STEP) {
                         rollershutterRemote.setOpeningRatio(rollershutterRemote.getOpeningRatio()
@@ -182,9 +182,9 @@ public class RollershutterPane extends UnitPane {
             }
         }).start();
 
-        final EventHandler<MouseEvent> sendingStop = event -> new Thread(new Task() {
+        /*final EventHandler<MouseEvent> sendingStop = event -> new Thread(new Task() {
             @Override
-            protected Object call() throws Exception {
+            protected Object call() {
                 try {
                     rollershutterRemote.setShutter(ShutterStateType.ShutterState.State.STOP);
                 } catch (CouldNotPerformException e) {
@@ -192,11 +192,11 @@ public class RollershutterPane extends UnitPane {
                 }
                 return null;
             }
-        }).start();
+        }).start();*/
 
         final EventHandler<MouseEvent> sendingDownLive = event -> new Thread(new Task() {
             @Override
-            protected Object call() throws Exception {
+            protected Object call() {
                 try {
                     if (rollershutterRemote.getOpeningRatio() <= Constants.ROLLERSHUTTER_MAX_VALUE) {
                         rollershutterRemote.setOpeningRatio(rollershutterRemote.getOpeningRatio()

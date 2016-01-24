@@ -383,6 +383,11 @@ public final class Constants {
     public static final int THREAD_MILLI_TIMEOUT = 500;
 
     /**
+     * text: "°C".
+     */
+    public static final String CELSIUS = "°C";
+
+    /**
      * Private Constructor.
      */
     private Constants() { }

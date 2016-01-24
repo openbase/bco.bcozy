@@ -176,7 +176,7 @@ public class DimmerPane extends UnitPane {
 
         final EventHandler<MouseEvent> sendingBrightness = event -> new Thread(new Task() {
             @Override
-            protected Object call() throws Exception {
+            protected Object call() {
                 try {
                     dimmerRemote.setDim(slider.getValue());
                 } catch (CouldNotPerformException e) {

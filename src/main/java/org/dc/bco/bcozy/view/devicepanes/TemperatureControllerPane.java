@@ -49,7 +49,7 @@ import java.text.DecimalFormat;
 /**
  * Created by agatting on 17.01.16.
  */
-public class TemperatureControllerPane extends UnitPane{
+public class TemperatureControllerPane extends UnitPane {
     private static final Logger LOGGER = LoggerFactory.getLogger(TemperatureControllerPane.class);
 
     private final TemperatureControllerRemote temperatureControllerRemote;
@@ -108,14 +108,14 @@ public class TemperatureControllerPane extends UnitPane{
 
     private void setLabelValues(double actualTemperature, double targetTemperature) {
         decimalFormat.setRoundingMode(RoundingMode.CEILING);
-
+        //CHECKSTYLE.OFF: MagicNumber
         actualTemperature = (actualTemperature < 10.0) ? 10.0 : actualTemperature;
         targetTemperature = (targetTemperature < 10.0) ? 10.0 : targetTemperature;
 
-        actual.setText("Actual: " + decimalFormat.format(actualTemperature) + "°C");
+        actual.setText("Actual: " + decimalFormat.format(actualTemperature) + Constants.CELSIUS);
         actual.setTranslateX((actualTemperature - slider.getMin())
                 * (slider.getMinWidth() / (slider.getMax() - slider.getMin())) - (slider.getMinWidth() / 2));
-        target.setText("Target: " + decimalFormat.format(targetTemperature) + "°C");
+        target.setText("Target: " + decimalFormat.format(targetTemperature) + Constants.CELSIUS);
         target.setTranslateX((targetTemperature - slider.getMin())
                 * (slider.getMinWidth() / (slider.getMax() - slider.getMin())) - (slider.getMinWidth() / 2));
     }
@@ -134,7 +134,6 @@ public class TemperatureControllerPane extends UnitPane{
 
         slider.setPrefHeight(25);
         slider.setMinHeight(25);
-        //CHECKSTYLE.ON: MagicNumber
         slider.setMin(10);
         slider.setMax(35);
         slider.setMinWidth(sliderWidth);
@@ -149,12 +148,13 @@ public class TemperatureControllerPane extends UnitPane{
         target.setContentDisplay(ContentDisplay.TOP);
         target.setGraphicTextGap(-12.0);
         target.setTranslateX(-slider.getMinWidth() / 2);
+        //CHECKSTYLE.ON: MagicNumber
 
         //TODO add progressbar in slider...?
 
         final EventHandler<MouseEvent> sendingTargetTemperature = event -> new Thread(new Task() {
             @Override
-            protected Object call() throws Exception {
+            protected Object call() {
                 try {
                     temperatureControllerRemote.setTargetTemperature(slider.getValue());
                 } catch (CouldNotPerformException e) {
@@ -188,17 +188,20 @@ public class TemperatureControllerPane extends UnitPane{
     }
 
     @Override
-    public DALRemoteService getDALRemoteService() { return temperatureControllerRemote; }
+    public DALRemoteService getDALRemoteService() {
+        return temperatureControllerRemote;
+    }
 
     @Override
-    void removeObserver() { this.temperatureControllerRemote.removeObserver(this); }
+    void removeObserver() {
+        this.temperatureControllerRemote.removeObserver(this);
+    }
 
     @Override
     public void update(final Observable observable, final Object temperatureController) throws java.lang.Exception {
         Platform.runLater(() -> {
             final double actualTemperature =
                     ((TemperatureControllerType.TemperatureController) temperatureController).getActualTemperature();
-            System.out.println(actualTemperature);
             final double targetTemperature =
                     ((TemperatureControllerType.TemperatureController) temperatureController).getTargetTemperature();
             setLabelValues(actualTemperature, targetTemperature);
