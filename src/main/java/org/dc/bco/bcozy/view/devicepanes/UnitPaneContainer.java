@@ -122,6 +122,15 @@ public class UnitPaneContainer extends ObserverTitledPane {
 
                 vBox.getChildren().add(rollershutterPane);
             }
+        } else if (unitType.equals(UnitType.TEMPERATURE_CONTROLLER)) {
+            final Iterator<DALRemoteService> dalRemoteServiceIterator = dalRemoteServiceList.iterator();
+            while (dalRemoteServiceIterator.hasNext()) {
+                final DALRemoteService dalRemoteService = dalRemoteServiceIterator.next();
+                final TemperatureControllerPane temperatureControllerPane
+                        = new TemperatureControllerPane(dalRemoteService);
+
+                vBox.getChildren().add(temperatureControllerPane);
+            }
         } else if (unitType.equals(UnitType.TEMPERATURE_SENSOR)) {
             final Iterator<DALRemoteService> dalRemoteServiceIterator = dalRemoteServiceList.iterator();
             while (dalRemoteServiceIterator.hasNext()) {

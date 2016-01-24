@@ -525,3 +525,31 @@
 .observer-titled-pane {
     -fx-padding: 0.0 0.0 0.0 0.0;
 }
+
+/*******************************************************************************
+ *                                                                             *
+ * TemperatureControllerPane                                                   *
+ *                                                                             *
+ ******************************************************************************/
+
+.temperature-slider {
+    -fx-skin: "com.sun.javafx.scene.control.skin.SliderSkin";
+}
+
+.temperature-slider .track {
+    -fx-background-color:
+            -fx-shadow-highlight-color,
+            derive(-fx-color,-22%),
+            linear-gradient(to bottom, derive(-fx-color,-15.5%), derive(-fx-color,34%) 30%, derive(-fx-color,68%));
+    -fx-background-insets: 1 0 -1 0, 0, 1;
+    -fx-background-radius: 2.5, 2.5, 1.5;
+    -fx-padding: 0.208333em;
+}
+
+.temperature-slider:vertical .track {
+    -fx-background-color:
+            -fx-shadow-highlight-color,
+            derive(-fx-color,-22%),
+            linear-gradient(to right, derive(-fx-color,-15.5%), derive(-fx-color,34%) 30%, derive(-fx-color,68%));
+    -fx-background-insets: 0 -1 0 1, 0, 1;
+}
