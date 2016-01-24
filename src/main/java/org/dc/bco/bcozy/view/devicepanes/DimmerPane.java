@@ -58,10 +58,11 @@ public class DimmerPane extends UnitPane {
     private final VBox bodyContent;
     private final Slider slider;
     private final ProgressBar progressBar;
+    private final StackPane stackPane;
 
     /**
      * Constructor for the DimmerPane.
-     * @param dimmerRemote dimmerremote.
+     * @param dimmerRemote dimmerRemote.
      */
     public DimmerPane(final DALRemoteService dimmerRemote) {
         this.dimmerRemote = (DimmerRemote) dimmerRemote;
@@ -73,6 +74,7 @@ public class DimmerPane extends UnitPane {
                 new SVGIcon(MaterialDesignIcon.LIGHTBULB, MaterialDesignIcon.LIGHTBULB_OUTLINE, Constants.SMALL_ICON);
         headContent = new BorderPane();
         bodyContent = new VBox();
+        stackPane = new StackPane();
 
         initUnitLabel();
         initTitle();
@@ -119,6 +121,9 @@ public class DimmerPane extends UnitPane {
         }
     }
 
+    /**
+     * Method creates the header content of the widgetPane.
+     */
     @Override
     protected void initTitle() {
         lightBulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
@@ -150,11 +155,13 @@ public class DimmerPane extends UnitPane {
         headContent.prefHeightProperty().set(lightBulbIcon.getSize() + Constants.INSETS);
     }
 
+    /**
+     * Method creates the body content of the widgetPane.
+     */
     @Override
     protected void initContent() {
-        final StackPane stackPane;
         //CHECKSTYLE.OFF: MagicNumber
-        final double sliderWidth = 150;
+        final double sliderWidth = 200;
 
         slider.setPrefHeight(25);
         slider.setMinHeight(25);
@@ -167,18 +174,21 @@ public class DimmerPane extends UnitPane {
         progressBar.setMinWidth(sliderWidth);
         progressBar.setMaxWidth(sliderWidth);
 
-        final EventHandler<MouseEvent> sendingBrightness = event -> {
-            try {
-                dimmerRemote.setDim(slider.getValue());
-            } catch (CouldNotPerformException e) {
-                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+        final EventHandler<MouseEvent> sendingBrightness = event -> new Thread(new Task() {
+            @Override
+            protected Object call() throws Exception {
+                try {
+                    dimmerRemote.setDim(slider.getValue());
+                } catch (CouldNotPerformException e) {
+                    ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                }
+                return null;
             }
-        };
+        }).start();
 
         slider.setOnMouseDragged(sendingBrightness);
         slider.setOnMouseClicked(sendingBrightness);
 
-        stackPane = new StackPane();
         stackPane.getStyleClass().clear();
         stackPane.getStyleClass().add("dimmer-body");
         stackPane.getChildren().addAll(progressBar, slider);
