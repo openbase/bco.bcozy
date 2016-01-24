@@ -341,7 +341,8 @@ public class AmbientLightPane extends UnitPane {
                 protected Object call() throws java.lang.Exception {
                     if (toggleSwitch.isSelected()) {
                         try {
-                            ambientLightRemote.callMethodAsync(setPowerString, PowerStateType.PowerState.State.ON)
+                            ambientLightRemote.callMethodAsync(setPowerString, PowerStateType.PowerState.newBuilder()
+                                    .setValue(PowerStateType.PowerState.State.ON).build())
                                     .get(Constants.THREAD_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
                             //ambientLightRemote.setPower(PowerStateType.PowerState.State.ON);
                         } catch (InterruptedException | ExecutionException | TimeoutException
@@ -359,7 +360,8 @@ public class AmbientLightPane extends UnitPane {
                         }
                     } else {
                         try {
-                            ambientLightRemote.callMethodAsync(setPowerString, PowerStateType.PowerState.State.OFF)
+                            ambientLightRemote.callMethodAsync(setPowerString, PowerStateType.PowerState.newBuilder()
+                                    .setValue(PowerStateType.PowerState.State.OFF).build())
                                     .get(Constants.THREAD_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
                             //ambientLightRemote.setPower(PowerStateType.PowerState.State.OFF);
                         } catch (InterruptedException | ExecutionException | TimeoutException
