@@ -328,7 +328,7 @@ public final class Constants {
     /**
      * Step value of rollerShutterPane.
      */
-    public static final double ROLLERSHUTTER_STEP = 0.05;
+    public static final double ROLLERSHUTTER_STEP = 0.01;
 
     /**
      * Max value of open ratio @ rollerShutterPane.
