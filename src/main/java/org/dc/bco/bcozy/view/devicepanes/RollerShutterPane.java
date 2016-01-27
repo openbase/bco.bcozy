@@ -46,9 +46,9 @@ import rst.homeautomation.unit.RollershutterType;
 /**
  * Created by hoestreich on 11/19/15.
  */
-public class RollershutterPane extends UnitPane {
+public class RollerShutterPane extends UnitPane {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RollershutterPane.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RollerShutterPane.class);
 
     private final RollershutterRemote rollershutterRemote;
     private final BorderPane headContent;
@@ -64,7 +64,7 @@ public class RollershutterPane extends UnitPane {
      * Constructor for a RollerShutterPane.
      * @param rollerShutterRemote DALRemoteService
      */
-    public RollershutterPane(final DALRemoteService rollerShutterRemote) {
+    public RollerShutterPane(final DALRemoteService rollerShutterRemote) {
         this.rollershutterRemote = (RollershutterRemote) rollerShutterRemote;
 
         rollerShutterIconBackground = new SVGIcon(MaterialDesignIcon.FORMAT_ALIGN_JUSTIFY, Constants.SMALL_ICON, false);
@@ -190,12 +190,7 @@ public class RollershutterPane extends UnitPane {
             }
         }).start();
 
-        final EventHandler<MouseEvent> stopEvent = event -> new Thread(new Task() {
-            protected Object call() {
-                stop = true;
-                return null;
-            }
-        }).start();
+        final EventHandler<MouseEvent> stopEvent = event -> stop = true;
 
         final EventHandler<MouseEvent> sendingDownLive = event -> new Thread(new Task() {
             @Override

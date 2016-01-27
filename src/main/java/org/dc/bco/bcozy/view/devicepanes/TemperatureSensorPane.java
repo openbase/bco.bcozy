@@ -44,7 +44,7 @@ import rst.homeautomation.unit.TemperatureSensorType.TemperatureSensor;
  */
 public class TemperatureSensorPane extends UnitPane {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RollershutterPane.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RollerShutterPane.class);
 
     private final TemperatureSensorRemote temperatureSensorRemote;
     private final BorderPane headContent;
@@ -55,7 +55,7 @@ public class TemperatureSensorPane extends UnitPane {
     private final GridPane iconPane;
 
     /**
-     * Constructor for a RollershutterPane.
+     * Constructor for TemperatureSensorPane.
      * @param temperatureSensorRemote DALRemoteService
      */
     public TemperatureSensorPane(final DALRemoteService temperatureSensorRemote) {
