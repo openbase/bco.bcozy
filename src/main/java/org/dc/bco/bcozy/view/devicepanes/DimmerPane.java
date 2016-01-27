@@ -18,22 +18,22 @@
  */
 package org.dc.bco.bcozy.view.devicepanes;
 
-import javafx.concurrent.Task;
-import javafx.event.EventHandler;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
-import org.dc.bco.dal.remote.unit.DALRemoteService;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.application.Platform;
-import javafx.scene.control.Label;
+import javafx.concurrent.Task;
+import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Slider;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import org.controlsfx.control.ToggleSwitch;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.SVGIcon;
+import org.dc.bco.dal.remote.unit.DALRemoteService;
 import org.dc.bco.dal.remote.unit.DimmerRemote;
 import org.dc.jul.exception.CouldNotPerformException;
 import org.dc.jul.exception.printer.ExceptionPrinter;
@@ -150,7 +150,8 @@ public class DimmerPane extends UnitPane {
         });
 
         headContent.setLeft(lightBulbIcon);
-        headContent.setCenter(new Label(super.getUnitLabel()));
+        headContent.setCenter(getUnitLabel());
+        headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
         headContent.setRight(toggleSwitch);
         headContent.prefHeightProperty().set(lightBulbIcon.getSize() + Constants.INSETS);
     }
@@ -205,7 +206,7 @@ public class DimmerPane extends UnitPane {
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
-        setUnitLabel(unitLabel);
+        setUnitLabelString(unitLabel);
     }
 
     @Override

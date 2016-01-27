@@ -25,8 +25,13 @@ import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.SVGIcon;
 import org.dc.bco.dal.remote.unit.DALRemoteService;
 import org.dc.bco.dal.remote.unit.RollershutterRemote;
@@ -34,10 +39,6 @@ import org.dc.jul.exception.CouldNotPerformException;
 import org.dc.jul.exception.printer.ExceptionPrinter;
 import org.dc.jul.exception.printer.LogLevel;
 import org.dc.jul.pattern.Observable;
-import javafx.scene.control.Label;
-import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import org.dc.bco.bcozy.view.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.homeautomation.unit.RollershutterType;
@@ -109,7 +110,8 @@ public class RollershutterPane extends UnitPane {
         iconPane.add(rollerShutterStatus, 1, 0);
 
         headContent.setLeft(iconPane);
-        headContent.setCenter(new Label(super.getUnitLabel()));
+        headContent.setCenter(getUnitLabel());
+        headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
         headContent.prefHeightProperty().set(Constants.SMALL_ICON + Constants.INSETS);
 
         clip.setWidth(Constants.SMALL_ICON);
@@ -242,7 +244,7 @@ public class RollershutterPane extends UnitPane {
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
-        setUnitLabel(unitLabel);
+        setUnitLabelString(unitLabel);
     }
 
     @Override

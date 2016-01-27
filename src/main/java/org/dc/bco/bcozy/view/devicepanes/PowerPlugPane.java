@@ -18,22 +18,22 @@
  */
 package org.dc.bco.bcozy.view.devicepanes;
 
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import javafx.application.Platform;
 import javafx.concurrent.Task;
+import javafx.geometry.Pos;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
+import org.controlsfx.control.ToggleSwitch;
+import org.dc.bco.bcozy.view.Constants;
+import org.dc.bco.bcozy.view.SVGIcon;
 import org.dc.bco.dal.remote.unit.DALRemoteService;
 import org.dc.bco.dal.remote.unit.PowerPlugRemote;
 import org.dc.jul.exception.CouldNotPerformException;
 import org.dc.jul.exception.printer.ExceptionPrinter;
 import org.dc.jul.exception.printer.LogLevel;
 import org.dc.jul.pattern.Observable;
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
-import javafx.application.Platform;
-import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.paint.Color;
-import org.controlsfx.control.ToggleSwitch;
-import org.dc.bco.bcozy.view.Constants;
-import org.dc.bco.bcozy.view.SVGIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.homeautomation.state.PowerStateType;
@@ -131,7 +131,8 @@ public class PowerPlugPane extends UnitPane {
         //CHECKSTYLE.ON: MagicNumber
 
         headContent.setLeft(iconPane);
-        headContent.setCenter(new Label(super.getUnitLabel()));
+        headContent.setCenter(getUnitLabel());
+        headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
         headContent.setRight(toggleSwitch);
         //Padding values are not available here
         headContent.prefHeightProperty().set(iconPane.getHeight() + Constants.INSETS);
@@ -150,7 +151,7 @@ public class PowerPlugPane extends UnitPane {
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
-        setUnitLabel(unitLabel);
+        setUnitLabelString(unitLabel);
     }
 
     @Override

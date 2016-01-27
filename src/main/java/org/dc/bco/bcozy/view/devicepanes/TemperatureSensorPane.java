@@ -21,7 +21,7 @@ package org.dc.bco.bcozy.view.devicepanes;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.weathericons.WeatherIcon;
 import javafx.application.Platform;
-import javafx.scene.control.Label;
+import javafx.geometry.Pos;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
@@ -136,11 +136,13 @@ public class TemperatureSensorPane extends UnitPane {
 
         iconPane.add(thermometerIconBackground, 0, 0);
         iconPane.add(thermometerIconForeground, 0, 0);
-        iconPane.add(alarmIcon, 2, 0);
         iconPane.add(temperatureStatus, 1, 0);
+        iconPane.setHgap(Constants.INSETS);
 
         headContent.setLeft(iconPane);
-        headContent.setCenter(new Label(super.getUnitLabel()));
+        headContent.setCenter(getUnitLabel());
+        headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
+        headContent.setRight(alarmIcon);
         headContent.prefHeightProperty().set(Constants.SMALL_ICON + Constants.INSETS);
     }
 
@@ -157,7 +159,7 @@ public class TemperatureSensorPane extends UnitPane {
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
-        setUnitLabel(unitLabel);
+        setUnitLabelString(unitLabel);
     }
 
     @Override

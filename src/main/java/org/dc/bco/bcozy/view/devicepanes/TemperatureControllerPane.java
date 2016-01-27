@@ -125,7 +125,8 @@ public class TemperatureControllerPane extends UnitPane {
     @Override
     protected void initTitle() {
         headContent.setLeft(temperatureControllerIcon);
-        headContent.setCenter(new Label(super.getUnitLabel()));
+        headContent.setCenter(getUnitLabel());
+        headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
         headContent.prefHeightProperty().set(temperatureControllerIcon.getSize() + Constants.INSETS);
     }
 
@@ -186,7 +187,7 @@ public class TemperatureControllerPane extends UnitPane {
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
-        setUnitLabel(unitLabel);
+        setUnitLabelString(unitLabel);
     }
 
     @Override

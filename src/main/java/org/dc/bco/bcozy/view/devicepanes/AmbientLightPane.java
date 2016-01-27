@@ -18,52 +18,52 @@
  */
 package org.dc.bco.bcozy.view.devicepanes; //NOPMD //TODO: Split up in several classes
 
-import javafx.concurrent.Task;
-import org.dc.bco.dal.remote.unit.AmbientLightRemote;
-import org.dc.bco.dal.remote.unit.DALRemoteService;
-import org.dc.jul.exception.CouldNotPerformException;
-import org.dc.jul.exception.printer.ExceptionPrinter;
-import org.dc.jul.exception.printer.LogLevel;
-import org.dc.jul.pattern.Observable;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
-import javafx.scene.control.Label;
+import javafx.geometry.Pos;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Background;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Stop;
-import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.ImagePattern;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Path;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
-import javafx.scene.shape.Path;
 import org.controlsfx.control.ToggleSwitch;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.SVGIcon;
+import org.dc.bco.dal.remote.unit.AmbientLightRemote;
+import org.dc.bco.dal.remote.unit.DALRemoteService;
+import org.dc.jul.exception.CouldNotPerformException;
+import org.dc.jul.exception.printer.ExceptionPrinter;
+import org.dc.jul.exception.printer.LogLevel;
+import org.dc.jul.pattern.Observable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.homeautomation.state.PowerStateType;
-import rst.homeautomation.unit.AmbientLightType.AmbientLight;
 import rst.homeautomation.state.PowerStateType.PowerState.State;
+import rst.homeautomation.unit.AmbientLightType.AmbientLight;
 import rst.vision.HSVColorType.HSVColor;
 
 import java.util.concurrent.ExecutionException;
@@ -384,7 +384,8 @@ public class AmbientLightPane extends UnitPane {
         });
 
         headContent.setLeft(lightbulbIcon);
-        headContent.setCenter(new Label(super.getUnitLabel()));
+        headContent.setCenter(getUnitLabel());
+        headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
         headContent.setRight(toggleSwitch);
         headContent.prefHeightProperty().set(lightbulbIcon.getSize() + Constants.INSETS + 1);
     }
@@ -522,7 +523,7 @@ public class AmbientLightPane extends UnitPane {
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
-        setUnitLabel(unitLabel);
+        setUnitLabelString(unitLabel);
     }
 
     @Override

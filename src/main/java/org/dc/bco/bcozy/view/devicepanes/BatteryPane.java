@@ -19,20 +19,20 @@
 package org.dc.bco.bcozy.view.devicepanes;
 
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
+import javafx.application.Platform;
+import javafx.geometry.Pos;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import org.dc.bco.dal.remote.unit.DALRemoteService;
+import org.dc.bco.bcozy.view.Constants;
+import org.dc.bco.bcozy.view.SVGIcon;
 import org.dc.bco.dal.remote.unit.BatteryRemote;
+import org.dc.bco.dal.remote.unit.DALRemoteService;
 import org.dc.jul.exception.CouldNotPerformException;
 import org.dc.jul.exception.printer.ExceptionPrinter;
 import org.dc.jul.exception.printer.LogLevel;
 import org.dc.jul.pattern.Observable;
-import javafx.application.Platform;
-import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.paint.Color;
-import org.dc.bco.bcozy.view.Constants;
-import org.dc.bco.bcozy.view.SVGIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.homeautomation.state.BatteryStateType.BatteryState.State;
@@ -143,7 +143,8 @@ public class BatteryPane extends UnitPane {
         iconPane.add(batteryStatus, 1, 0);
 
         headContent.setLeft(iconPane);
-        headContent.setCenter(new Label(super.getUnitLabel()));
+        headContent.setCenter(getUnitLabel());
+        headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
         //Padding values are not available here
         headContent.prefHeightProperty().set(iconPane.getHeight() + Constants.INSETS);
     }
@@ -161,7 +162,7 @@ public class BatteryPane extends UnitPane {
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
-        setUnitLabel(unitLabel);
+        setUnitLabelString(unitLabel);
     }
 
     @Override
