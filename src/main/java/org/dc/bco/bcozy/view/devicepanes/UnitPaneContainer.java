@@ -18,19 +18,22 @@
  */
 package org.dc.bco.bcozy.view.devicepanes;
 
-import org.dc.bco.bcozy.view.mainmenupanes.ObserverTitledPane;
-import org.dc.bco.dal.remote.unit.DALRemoteService;
 import javafx.scene.Node;
 import javafx.scene.layout.VBox;
+import org.dc.bco.bcozy.view.mainmenupanes.ObserverTitledPane;
+import org.dc.bco.dal.remote.unit.DALRemoteService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rst.homeautomation.unit.UnitTemplateType.UnitTemplate.UnitType;
 
-import java.util.Iterator;
 import java.util.List;
 
 /**
  * Created by timo on 03.12.15.
  */
 public class UnitPaneContainer extends ObserverTitledPane {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(UnitPaneContainer.class);
 
     private final VBox vBox;
 
@@ -53,104 +56,86 @@ public class UnitPaneContainer extends ObserverTitledPane {
      * Takes a List of DALRemoteService and creates new UnitPanes for each.
      * @param unitType unitType
      * @param dalRemoteServiceList dalRemoteServiceList
+     * @return true if unitType is handled, otherwise false
      */
-    public void createAndAddNewUnitPanes(final UnitType unitType, //NOPMD
+    public boolean createAndAddNewUnitPanes(final UnitType unitType, //NOPMD
                                          final List<DALRemoteService> dalRemoteServiceList) {
         this.setExpanded(false);
 
         if (unitType.equals(UnitType.AMBIENT_LIGHT)) {
-            final Iterator<DALRemoteService> dalRemoteServiceIterator = dalRemoteServiceList.iterator();
-            while (dalRemoteServiceIterator.hasNext()) {
-                final DALRemoteService dalRemoteService = dalRemoteServiceIterator.next();
+            for (final DALRemoteService dalRemoteService : dalRemoteServiceList) {
                 final AmbientLightPane ambientLightPane = new AmbientLightPane(dalRemoteService);
 
                 vBox.getChildren().add(ambientLightPane);
             }
         } else if (unitType.equals(UnitType.BATTERY)) {
-            final Iterator<DALRemoteService> dalRemoteServiceIterator = dalRemoteServiceList.iterator();
-            while (dalRemoteServiceIterator.hasNext()) {
-                final DALRemoteService dalRemoteService = dalRemoteServiceIterator.next();
+            for (final DALRemoteService dalRemoteService : dalRemoteServiceList) {
                 final BatteryPane batteryPanePane = new BatteryPane(dalRemoteService);
 
                 vBox.getChildren().add(batteryPanePane);
             }
         } else if (unitType.equals(UnitType.BRIGHTNESS_SENSOR)) {
-            final Iterator<DALRemoteService> dalRemoteServiceIterator = dalRemoteServiceList.iterator();
-            while (dalRemoteServiceIterator.hasNext()) {
-                final DALRemoteService dalRemoteService = dalRemoteServiceIterator.next();
+            for (final DALRemoteService dalRemoteService : dalRemoteServiceList) {
                 final BrightnessSensorPane brightnessSensorPane = new BrightnessSensorPane(dalRemoteService);
 
                 vBox.getChildren().add(brightnessSensorPane);
             }
         } else if (unitType.equals(UnitType.DIMMER)) {
-            final Iterator<DALRemoteService> dalRemoteServiceIterator = dalRemoteServiceList.iterator();
-            while (dalRemoteServiceIterator.hasNext()) {
-                final DALRemoteService dalRemoteService = dalRemoteServiceIterator.next();
+            for (final DALRemoteService dalRemoteService : dalRemoteServiceList) {
                 final DimmerPane dimmerPane = new DimmerPane(dalRemoteService);
 
                 vBox.getChildren().add(dimmerPane);
             }
         } else if (unitType.equals(UnitType.LIGHT)) {
-            final Iterator<DALRemoteService> dalRemoteServiceIterator = dalRemoteServiceList.iterator();
-            while (dalRemoteServiceIterator.hasNext()) {
-                final DALRemoteService dalRemoteService = dalRemoteServiceIterator.next();
+            for (final DALRemoteService dalRemoteService : dalRemoteServiceList) {
                 final LightPane lightPane = new LightPane(dalRemoteService);
 
                 vBox.getChildren().add(lightPane);
             }
         } else if (unitType.equals(UnitType.MOTION_SENSOR)) {
-            final Iterator<DALRemoteService> dalRemoteServiceIterator = dalRemoteServiceList.iterator();
-            while (dalRemoteServiceIterator.hasNext()) {
-                final DALRemoteService dalRemoteService = dalRemoteServiceIterator.next();
+            for (final DALRemoteService dalRemoteService : dalRemoteServiceList) {
                 final MotionSensorPane motionSensorPane = new MotionSensorPane(dalRemoteService);
 
                 vBox.getChildren().add(motionSensorPane);
             }
         } else if (unitType.equals(UnitType.POWER_PLUG)) {
-            final Iterator<DALRemoteService> dalRemoteServiceIterator = dalRemoteServiceList.iterator();
-            while (dalRemoteServiceIterator.hasNext()) {
-                final DALRemoteService dalRemoteService = dalRemoteServiceIterator.next();
+            for (final DALRemoteService dalRemoteService : dalRemoteServiceList) {
                 final PowerPlugPane powerPlugPane = new PowerPlugPane(dalRemoteService);
 
                 vBox.getChildren().add(powerPlugPane);
             }
         } else if (unitType.equals(UnitType.ROLLERSHUTTER)) {
-            final Iterator<DALRemoteService> dalRemoteServiceIterator = dalRemoteServiceList.iterator();
-            while (dalRemoteServiceIterator.hasNext()) {
-                final DALRemoteService dalRemoteService = dalRemoteServiceIterator.next();
+            for (final DALRemoteService dalRemoteService : dalRemoteServiceList) {
                 final RollershutterPane rollershutterPane = new RollershutterPane(dalRemoteService);
 
                 vBox.getChildren().add(rollershutterPane);
             }
         } else if (unitType.equals(UnitType.TEMPERATURE_CONTROLLER)) {
-            final Iterator<DALRemoteService> dalRemoteServiceIterator = dalRemoteServiceList.iterator();
-            while (dalRemoteServiceIterator.hasNext()) {
-                final DALRemoteService dalRemoteService = dalRemoteServiceIterator.next();
+            for (final DALRemoteService dalRemoteService : dalRemoteServiceList) {
                 final TemperatureControllerPane temperatureControllerPane
                         = new TemperatureControllerPane(dalRemoteService);
 
                 vBox.getChildren().add(temperatureControllerPane);
             }
         } else if (unitType.equals(UnitType.TEMPERATURE_SENSOR)) {
-            final Iterator<DALRemoteService> dalRemoteServiceIterator = dalRemoteServiceList.iterator();
-            while (dalRemoteServiceIterator.hasNext()) {
-                final DALRemoteService dalRemoteService = dalRemoteServiceIterator.next();
+            for (final DALRemoteService dalRemoteService : dalRemoteServiceList) {
                 final TemperatureSensorPane temperatureSensorPane = new TemperatureSensorPane(dalRemoteService);
 
                 vBox.getChildren().add(temperatureSensorPane);
             }
+        } else {
+            LOGGER.info("INFO: Unit Type is not supported yet: ".concat(unitType.toString()));
+            return false;
         }
+        return true;
     }
 
     /**
      * Deletes and clears all UnitPanes.
      */
     public void clearUnitPaneContainer() {
-        final Iterator<Node> childrenIterator = vBox.getChildren().iterator();
-
-        while (childrenIterator.hasNext()) {
-            final UnitPane currentUnitPane = (UnitPane) childrenIterator.next();
-            currentUnitPane.removeObserver();
+        for (final Node node : vBox.getChildren()) {
+            ((UnitPane) node).removeObserver();
         }
 
         this.getChildren().clear();

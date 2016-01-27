@@ -19,15 +19,12 @@
 
 package org.dc.bco.bcozy.view.devicepanes;
 
-import org.dc.bco.dal.remote.unit.DALRemoteService;
 import javafx.scene.Node;
 import javafx.scene.layout.VBox;
+import org.dc.bco.dal.remote.unit.DALRemoteService;
 import rst.homeautomation.unit.UnitTemplateType.UnitTemplate.UnitType;
 
-import java.util.Iterator;
 import java.util.List;
-
-
 
 /**
  * Created by agatting on 24.11.15.
@@ -41,19 +38,17 @@ public class TitledPaneContainer extends VBox {
      */
     public void createAndAddNewTitledPane(final UnitType unitType, final List<DALRemoteService> dalRemoteServiceList) {
         final UnitPaneContainer unitPaneContainer = new UnitPaneContainer(unitType.toString());
-        unitPaneContainer.createAndAddNewUnitPanes(unitType, dalRemoteServiceList);
-        this.getChildren().add(unitPaneContainer);
+        if (unitPaneContainer.createAndAddNewUnitPanes(unitType, dalRemoteServiceList)) {
+            this.getChildren().add(unitPaneContainer);
+        }
     }
 
     /**
      * Deletes and clears all UnitPaneContainer.
      */
     public void clearTitledPane() {
-        final Iterator<Node> childrenIterator = this.getChildren().iterator();
-
-        while (childrenIterator.hasNext()) {
-            final UnitPaneContainer currentUnitPaneContainer = (UnitPaneContainer) childrenIterator.next();
-            currentUnitPaneContainer.clearUnitPaneContainer();
+        for (final Node node : this.getChildren()) {
+            ((UnitPaneContainer) node).clearUnitPaneContainer();
         }
 
         this.getChildren().clear();
