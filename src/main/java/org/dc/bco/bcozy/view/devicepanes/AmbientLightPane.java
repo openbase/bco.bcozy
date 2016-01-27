@@ -348,15 +348,7 @@ public class AmbientLightPane extends UnitPane {
                         } catch (InterruptedException | ExecutionException | TimeoutException
                                 | CouldNotPerformException e) {
                             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-                            setWidgetPaneDisabled(true);
-                            while (!ambientLightRemote.isConnected()) {
-                                try {
-                                    Thread.sleep(Constants.THREAD_MILLI_TIMEOUT);
-                                } catch (InterruptedException ex) {
-                                    ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
-                                }
-                            }
-                            setWidgetPaneDisabled(false);
+                            setWidgetPaneDisable(true);
                         }
                     } else {
                         try {
@@ -367,15 +359,7 @@ public class AmbientLightPane extends UnitPane {
                         } catch (InterruptedException | ExecutionException | TimeoutException
                                 | CouldNotPerformException e) {
                             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-                            setWidgetPaneDisabled(true);
-                            while (!ambientLightRemote.isConnected()) {
-                                try {
-                                    Thread.sleep(Constants.THREAD_MILLI_TIMEOUT);
-                                } catch (InterruptedException ex) {
-                                    ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
-                                }
-                            }
-                            setWidgetPaneDisabled(false);
+                            setWidgetPaneDisable(true);
                         }
                     }
                     return null;
@@ -433,15 +417,7 @@ public class AmbientLightPane extends UnitPane {
                     } catch (InterruptedException | ExecutionException | TimeoutException
                             | CouldNotPerformException e) {
                         ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-                        setWidgetPaneDisabled(true);
-                        while (!ambientLightRemote.isConnected()) {
-                            try {
-                                Thread.sleep(Constants.THREAD_MILLI_TIMEOUT);
-                            } catch (InterruptedException ex) {
-                                ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
-                            }
-                        }
-                        setWidgetPaneDisabled(false);
+                        setWidgetPaneDisable(true);
                     }
                     return null;
                 }
@@ -539,6 +515,10 @@ public class AmbientLightPane extends UnitPane {
     @Override
     public void update(final Observable observable, final Object ambientLight) throws java.lang.Exception {
         Platform.runLater(() -> {
+            if (this.isDisabled()) {
+                setWidgetPaneDisable(false);
+            }
+
             final State powerState = ((AmbientLight) ambientLight).getPowerState().getValue();
             final Color color = Color.hsb(((AmbientLight) ambientLight).getColor().getHue(),
                     ((AmbientLight) ambientLight).getColor().getSaturation() / Constants.ONE_HUNDRED,

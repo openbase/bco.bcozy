@@ -27,8 +27,8 @@ import org.dc.jul.pattern.Observer;
  */
 public abstract class UnitPane extends WidgetPane implements Observer {
 
+    private final Label unitLabel;
     private String unitLabelString;
-    final private Label unitLabel;
 
     /**
      * Constructor for the UnitPane.

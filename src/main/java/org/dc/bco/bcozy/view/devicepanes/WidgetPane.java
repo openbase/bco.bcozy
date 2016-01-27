@@ -174,12 +174,12 @@ public class WidgetPane extends VBox {
      *
      * @param disabled disabled
      */
-    public void setWidgetPaneDisabled(final boolean disabled) {
+    public void setWidgetPaneDisable(final boolean disabled) {
         if (disabled) {
-            this.setDisabled(true);
+            this.setDisable(true);
             this.isExpanded.set(false);
         } else {
-            this.setDisabled(false);
+            this.setDisable(false);
         }
     }
 }
