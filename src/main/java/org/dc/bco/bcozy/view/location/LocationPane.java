@@ -23,6 +23,7 @@ import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.input.MouseEvent;
@@ -30,6 +31,7 @@ import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.ForegroundPane;
+import org.dc.bco.bcozy.view.SVGIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -245,6 +247,19 @@ public final class LocationPane extends Pane {
                         + "No Cutting will be applied");
             }
         });
+    }
+
+    /**
+     * Will add a UnitIcon to the locationPane.
+     * @param svgIcon The icon
+     * @param onActionHandler The Handler that gets activated when the button is pressed
+     * @param position The position where the button is to be placed
+     */
+    public void addUnit(SVGIcon svgIcon, EventHandler<ActionEvent> onActionHandler, Point2D position) {
+        UnitButton unitButton = new UnitButton(svgIcon, onActionHandler);
+        unitButton.setTranslateX(position.getX());
+        unitButton.setTranslateY(position.getY());
+        this.getChildren().add(unitButton);
     }
 
     /**
