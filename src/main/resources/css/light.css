@@ -464,6 +464,18 @@
     -fx-background-color: derive(-fx-text-fill, 70%);
 }
 
+.settings-pane {
+    -fx-border-color: transparent;
+    -fx-effect: null;
+}
+.settings-pane > .title {
+    -fx-background-color: transparent;
+}
+
+.settings-pane > .content {
+    -fx-background-color: transparent;
+}
+
 /*******************************************************************************
  *                                                                             *
  * WidgetPane                                                                  *
@@ -472,7 +484,7 @@
 
 .body-pane {
     -fx-text-fill: -fx-text-base-color;
-    -fx-background-color: -bg-color;
+    -fx-background-color: transparent;
     -fx-border-color:
             transparent
             transparent
@@ -482,7 +494,7 @@
 
 .head-pane {
     -fx-text-fill: -fx-text-base-color;
-    -fx-background-color: -bg-color;
+    -fx-background-color: transparent;
     -fx-border-color:
             transparent
             transparent

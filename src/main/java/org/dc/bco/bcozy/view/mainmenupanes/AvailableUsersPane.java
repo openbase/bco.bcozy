@@ -19,17 +19,13 @@
 package org.dc.bco.bcozy.view.mainmenupanes;
 
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.HiddenSidesPane;
-import org.dc.bco.bcozy.view.AdvancedHorizontalSlider;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.SVGIcon;
 
@@ -47,8 +43,6 @@ public class AvailableUsersPane extends PaneElement {
      * Constructor for the AvailableUsersPane.
      */
     public AvailableUsersPane() {
-        final ResourceBundle languageBundle = ResourceBundle
-                .getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
 
         statusIcon = new BorderPane(new SVGIcon(MaterialDesignIcon.ACCOUNT_CIRCLE, Constants.MIDDLE_ICON, true));
 
@@ -65,9 +59,16 @@ public class AvailableUsersPane extends PaneElement {
 
         scrollBar.maxProperty().bind(verticalScrollPane.vmaxProperty());
         scrollBar.minProperty().bind(verticalScrollPane.vminProperty());
+//
+//        AdvancedHorizontalSlider advancedHorizontalSlider = new AdvancedHorizontalSlider(10, 30);
+        VBox userPanes = new VBox(Constants.INSETS);
+        UserPane userMarian = new UserPane("Marian", false, "userStateCooking", true);
+        UserPane userTamino = new UserPane("Tamino", true, "userStateWatchingTV", true);
+        UserPane userAndi = new UserPane("Andi", false, "userStateNotAvailable", false);
+        UserPane userJulian = new UserPane("Julian", false, "userStateSleeping", true);
+        userPanes.getChildren().addAll(userMarian, userTamino, userAndi, userJulian);
 
-        AdvancedHorizontalSlider advancedHorizontalSlider = new AdvancedHorizontalSlider(10, 30);
-        verticalScrollPane.setContent(advancedHorizontalSlider);
+        verticalScrollPane.setContent(userPanes);
         verticalScrollPane.setFitToWidth(true);
         this.getChildren().addAll(hiddenSidesPane);
     }

@@ -26,8 +26,8 @@ import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.ForegroundPane;
 import org.dc.bco.bcozy.view.mainmenupanes.AvailableUsersPane;
 import org.dc.bco.bcozy.view.mainmenupanes.ConnectionPane;
+import org.dc.bco.bcozy.view.mainmenupanes.LoginPane;
 import org.dc.bco.bcozy.view.mainmenupanes.SettingsPane;
-import org.dc.bco.bcozy.view.mainmenupanes.UserPane;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -37,7 +37,7 @@ import java.util.ResourceBundle;
  */
 public class MainMenuController {
 
-    private final UserPane userPane;
+    private final LoginPane loginPane;
     private final SettingsPane settingsPane;
     private final AvailableUsersPane availableUsersPane;
     private final ConnectionPane connectionPane;
@@ -47,19 +47,19 @@ public class MainMenuController {
      * @param foregroundPane The foregroundPane allows to access all necessary gui elements
      */
     public MainMenuController(final ForegroundPane foregroundPane) {
-        userPane = foregroundPane.getMainMenu().getUserPane();
+        loginPane = foregroundPane.getMainMenu().getLoginPane();
         settingsPane = foregroundPane.getMainMenu().getSettingsPane();
         availableUsersPane = foregroundPane.getMainMenu().getAvailableUsersPanePane();
         connectionPane = foregroundPane.getMainMenu().getConnectionPane();
-        userPane.getStartLoginBtn().setOnAction(event -> startLogin());
-        userPane.getLoginBtn().setOnAction(event -> loginUser());
-        userPane.getBackBtn().setOnAction(event -> resetLogin());
-        userPane.getLogoutBtn().setOnAction(event -> resetLogin());
-        userPane.getPasswordField().setOnAction(event -> loginUser());
-        userPane.getNameTxt().setOnAction(event -> loginUser());
-        userPane.getNameTxt().setOnKeyTyped(event -> resetWrongInput());
-        userPane.getPasswordField().setOnKeyTyped(event -> resetWrongInput());
-        userPane.getStatusIcon().setOnMouseClicked(event -> showHideMainMenu(foregroundPane));
+        loginPane.getStartLoginBtn().setOnAction(event -> startLogin());
+        loginPane.getLoginBtn().setOnAction(event -> loginUser());
+        loginPane.getBackBtn().setOnAction(event -> resetLogin());
+        loginPane.getLogoutBtn().setOnAction(event -> resetLogin());
+        loginPane.getPasswordField().setOnAction(event -> loginUser());
+        loginPane.getNameTxt().setOnAction(event -> loginUser());
+        loginPane.getNameTxt().setOnKeyTyped(event -> resetWrongInput());
+        loginPane.getPasswordField().setOnKeyTyped(event -> resetWrongInput());
+        loginPane.getStatusIcon().setOnMouseClicked(event -> showHideMainMenu(foregroundPane));
         settingsPane.getStatusIcon().setOnMouseClicked(event -> showHideMainMenu(foregroundPane));
         availableUsersPane.getStatusIcon().setOnMouseClicked(event -> showHideMainMenu(foregroundPane));
         connectionPane.getStatusIcon().setOnMouseClicked(event -> showHideMainMenu(foregroundPane));
@@ -74,37 +74,37 @@ public class MainMenuController {
 
 
     private void startLogin() {
-        userPane.setState(UserPane.State.LOGINACTIVE);
+        loginPane.setState(LoginPane.State.LOGINACTIVE);
     }
 
     private void resetWrongInput() {
-        if (userPane.getInputWrongLbl().isVisible()) {
-            userPane.resetUserOrPasswordWrong();
+        if (loginPane.getInputWrongLbl().isVisible()) {
+            loginPane.resetUserOrPasswordWrong();
         }
     }
 
     private void loginUser() {
         //TODO: Initiate Login with UserRegistry
-        if (userPane.getNameTxt().getText().equals("Admin")
-                && userPane.getPasswordField().getText().equals("")) {
-            userPane.resetUserOrPasswordWrong();
-            userPane.getLoggedInUserLbl().setText(userPane.getNameTxt().getText());
-            userPane.getNameTxt().setText("");
-            userPane.getPasswordField().setText("");
-            userPane.setState(UserPane.State.LOGOUT);
+        if (loginPane.getNameTxt().getText().equals("Admin")
+                && loginPane.getPasswordField().getText().equals("")) {
+            loginPane.resetUserOrPasswordWrong();
+            loginPane.getLoggedInUserLbl().setText(loginPane.getNameTxt().getText());
+            loginPane.getNameTxt().setText("");
+            loginPane.getPasswordField().setText("");
+            loginPane.setState(LoginPane.State.LOGOUT);
         } else {
-            userPane.indicateUserOrPasswordWrong();
+            loginPane.indicateUserOrPasswordWrong();
         }
     }
 
     private void resetLogin() {
-        if (userPane.getInputWrongLbl().isVisible()) {
-            userPane.resetUserOrPasswordWrong();
+        if (loginPane.getInputWrongLbl().isVisible()) {
+            loginPane.resetUserOrPasswordWrong();
         }
-        userPane.getNameTxt().setText("");
-        userPane.getPasswordField().setText("");
-        userPane.getLoggedInUserLbl().setText("");
-        userPane.setState(UserPane.State.LOGIN);
+        loginPane.getNameTxt().setText("");
+        loginPane.getPasswordField().setText("");
+        loginPane.getLoggedInUserLbl().setText("");
+        loginPane.setState(LoginPane.State.LOGIN);
     }
 
     private void showHideMainMenu(final ForegroundPane foregroundPane) {
