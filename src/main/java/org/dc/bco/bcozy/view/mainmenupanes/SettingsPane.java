@@ -25,9 +25,12 @@ import javafx.scene.Node;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.VBox;
+import org.dc.bco.bcozy.jp.JPLanguage;
+import org.dc.bco.bcozy.view.AdvancedHorizontalSlider;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.ObserverLabel;
 import org.dc.bco.bcozy.view.SVGIcon;
+import org.dc.jps.core.JPService;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -62,6 +65,10 @@ public class SettingsPane extends PaneElement {
         //settingsHeader.getChildren().addAll(settingsIcon, settingsLbl);
 
         final VBox verticalLayout = new VBox();
+
+        //TODO: Implement Property implementation
+        //JPService.getProperty(JPLanguage.class).getValue();
+
         availableLanguages = FXCollections.observableArrayList("English", "Deutsch");
         languageChoice = new ChoiceBox<>(availableLanguages);
 
@@ -70,7 +77,8 @@ public class SettingsPane extends PaneElement {
                 languageBundle.getString(Constants.DARK_THEME_CSS_NAME));
         themeChoice = new ChoiceBox<>(availableThemes);
 
-        verticalLayout.setFillWidth(true);
+
+        //verticalLayout.setFillWidth(true);
         verticalLayout.getChildren().addAll(languageChoice, themeChoice);
 
         settingsPane.setGraphic(settingsLbl);

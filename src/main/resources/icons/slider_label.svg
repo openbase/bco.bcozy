@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:osb="http://www.openswatchbook.org/uri/2009/osb"
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   version="1.1"
+   id="svg2"
+   viewBox="0 0 744.09448819 1052.3622047"
+   height="297mm"
+   width="210mm">
+  <defs
+     id="defs4">
+    <linearGradient
+       osb:paint="solid"
+       id="linearGradient4235">
+      <stop
+         id="stop4237"
+         offset="0"
+         style="stop-color:#000000;stop-opacity:1;" />
+    </linearGradient>
+    <linearGradient
+       gradientTransform="matrix(4.5965439,0,0,4.5965439,-1439.9167,-1496.2592)"
+       gradientUnits="userSpaceOnUse"
+       y2="442.00503"
+       x2="408.90935"
+       y1="442.00503"
+       x1="356.34362"
+       id="linearGradient4239"
+       xlink:href="#linearGradient4235" />
+  </defs>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1">
+    <path
+       id="rect4156"
+       d="m 231.88056,426.86331 c 40.90133,-42.1586 132.63016,-42.1586 173.5315,0 35.69998,36.79714 33.43429,100.15274 0.82118,139.69922 L 316.2916,675.62575 232.70086,566.56253 c -31.14812,-40.63959 -36.52007,-102.90208 -0.8203,-139.69922 z"
+       style="opacity:1;fill:url(#linearGradient4239);fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:15.05365753;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+  </g>
+</svg>
