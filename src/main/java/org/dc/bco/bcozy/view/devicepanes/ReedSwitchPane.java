@@ -1,0 +1,155 @@
+/**
+ * ==================================================================
+ *
+ * This file is part of org.dc.bco.bcozy.
+ *
+ * org.dc.bco.bcozy is free software: you can redistribute it and modify
+ * it under the terms of the GNU General Public License (Version 3)
+ * as published by the Free Software Foundation.
+ *
+ * org.dc.bco.bcozy is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with org.dc.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
+ * ==================================================================
+ */
+package org.dc.bco.bcozy.view.devicepanes;
+
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.materialicons.MaterialIcon;
+import javafx.application.Platform;
+import javafx.geometry.Pos;
+import javafx.scene.control.Tooltip;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
+import org.dc.bco.bcozy.view.Constants;
+import org.dc.bco.bcozy.view.SVGIcon;
+import org.dc.bco.dal.remote.unit.DALRemoteService;
+import org.dc.bco.dal.remote.unit.ReedSwitchRemote;
+import org.dc.jul.exception.CouldNotPerformException;
+import org.dc.jul.exception.printer.ExceptionPrinter;
+import org.dc.jul.exception.printer.LogLevel;
+import org.dc.jul.pattern.Observable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import rst.homeautomation.state.ReedSwitchStateType.ReedSwitchState.State;
+import rst.homeautomation.unit.ReedSwitchType;
+
+/**
+ * Created by agatting on 27.01.16.
+ */
+public class ReedSwitchPane extends UnitPane {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReedSwitchPane.class);
+
+    private final ReedSwitchRemote reedSwitchRemote;
+    private final SVGIcon reedSwitchIcon;
+    private final SVGIcon alarmIcon;
+    private final BorderPane headContent;
+    private final GridPane iconPane;
+    private final Tooltip tooltip;
+
+    /**
+     * Constructor for the ReedSwitchPane.
+     * @param reedSwitchRemote reedSwitchRemote
+     */
+    public ReedSwitchPane(final DALRemoteService reedSwitchRemote) {
+        this.reedSwitchRemote = (ReedSwitchRemote) reedSwitchRemote;
+
+        reedSwitchIcon = new SVGIcon(MaterialIcon.RADIO_BUTTON_CHECKED, Constants.SMALL_ICON, true);
+        alarmIcon = new SVGIcon(FontAwesomeIcon.EXCLAMATION_TRIANGLE, Constants.SMALL_ICON, false);
+        headContent = new BorderPane();
+        iconPane = new GridPane();
+        tooltip = new Tooltip();
+
+        initUnitLabel();
+        initTitle();
+        initContent();
+        createWidgetPane(headContent);
+
+        initEffectAndText();
+
+        this.reedSwitchRemote.addObserver(this);
+    }
+
+    private void initEffectAndText() {
+        State reedSwitchState = State.CLOSED;
+
+        try {
+            reedSwitchState = reedSwitchRemote.getReedSwitch().getValue();
+        } catch (CouldNotPerformException e) {
+            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+        }
+        setReedSwitchIconAndTooltip(reedSwitchState);
+    }
+
+    private void setReedSwitchIconAndTooltip(final State reedSwitchState) {
+        if (reedSwitchState.equals(State.CLOSED)) {
+            reedSwitchIcon.changeForegroundIcon(MaterialIcon.RADIO_BUTTON_CHECKED);
+            alarmIcon.setColor(Color.TRANSPARENT);
+
+            tooltip.setText("Closed");
+            Tooltip.install(iconPane, tooltip);
+        } else if (reedSwitchState.equals(State.OPEN)) {
+            reedSwitchIcon.changeForegroundIcon(MaterialIcon.RADIO_BUTTON_UNCHECKED);
+            alarmIcon.setColor(Color.TRANSPARENT);
+
+            tooltip.setText("Open");
+            Tooltip.install(iconPane, tooltip);
+        } else {
+            alarmIcon.setColor(Color.YELLOW, Color.BLACK, Constants.NORMAL_STROKE);
+
+            tooltip.setText("Unknown");
+            Tooltip.install(iconPane, tooltip);
+        }
+    }
+
+    @Override
+    protected void initTitle() {
+        iconPane.add(reedSwitchIcon, 0, 0);
+        iconPane.add(alarmIcon, 1, 0);
+
+        headContent.setLeft(iconPane);
+        headContent.setCenter(getUnitLabel());
+        headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
+        //Padding values are not available here
+        headContent.prefHeightProperty().set(reedSwitchIcon.getSize() + Constants.INSETS);
+    }
+
+    @Override
+    protected void initContent() {
+        //No body content.
+    }
+
+    @Override
+    protected void initUnitLabel() {
+        String unitLabel = Constants.UNKNOWN_ID;
+        try {
+            unitLabel = this.reedSwitchRemote.getData().getLabel();
+        } catch (CouldNotPerformException e) {
+            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+        }
+        setUnitLabelString(unitLabel);
+    }
+
+    @Override
+    public DALRemoteService getDALRemoteService() {
+        return reedSwitchRemote;
+    }
+
+    @Override
+    void removeObserver() {
+        this.reedSwitchRemote.removeObserver(this);
+    }
+
+    @Override
+    public void update(final Observable observable, final Object reedSwitch) throws java.lang.Exception {
+        Platform.runLater(() -> {
+            final State reedSwitchState = ((ReedSwitchType.ReedSwitch) reedSwitch).getReedSwitchState().getValue();
+            setReedSwitchIconAndTooltip(reedSwitchState);
+        });
+    }
+}

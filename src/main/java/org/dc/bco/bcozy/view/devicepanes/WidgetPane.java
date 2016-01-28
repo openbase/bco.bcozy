@@ -22,13 +22,9 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.scene.effect.Blend;
-import javafx.scene.effect.BlendMode;
-import javafx.scene.effect.ColorInput;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import org.dc.bco.bcozy.view.Constants;
@@ -44,20 +40,18 @@ public class WidgetPane extends VBox {
     private Timeline timelineUp;
     private Timeline timelineDown;
     private Rectangle rectangleClip;
-    private final Blend blendEffect;
 
     /**
      * Constructor for the widget pane.
      */
     public WidgetPane() {
-        blendEffect = new Blend();
-        initBlendEffect();
         //this.setMinHeight(Constants.SMALL_ICON);
         //this.setMaxHeight(Constants.SMALL_ICON);
     }
 
     /**
      * Method creates a sliding widget pane, which includes a header(listener) and a body(sliding) with content.
+     *
      * @param headContent Content of the header.
      * @param bodyContent Content of the sliding body.
      */
@@ -83,6 +77,7 @@ public class WidgetPane extends VBox {
 
     /**
      * Method creates a sliding widget pane, which includes a header(listener) and a body(sliding) with content.
+     *
      * @param headContent Content of the header.
      */
     public void createWidgetPane(final BorderPane headContent) {
@@ -93,6 +88,7 @@ public class WidgetPane extends VBox {
 
     /**
      * Method adds style and listener to the head content and integrates it to the ground pane.
+     *
      * @param headContent Content of the header.
      */
     private void headPart(final BorderPane headContent) {
@@ -106,6 +102,7 @@ public class WidgetPane extends VBox {
 
     /**
      * Method adds style to the body content and integrates it to the ground pane.
+     *
      * @param bodyContent Content of the sliding body.
      */
     private void bodyPart(final Pane bodyContent) {
@@ -173,31 +170,16 @@ public class WidgetPane extends VBox {
     }
 
     /**
-     * Initiates the blend effect.
-     */
-    private void initBlendEffect() {
-        blendEffect.setMode(BlendMode.ADD);
-
-        final ColorInput colorInput = new ColorInput();
-        colorInput.setPaint(Color.GRAY);
-        colorInput.widthProperty().bind(this.widthProperty());
-        colorInput.heightProperty().bind(this.heightProperty());
-
-        blendEffect.setTopInput(colorInput);
-    }
-
-    /**
      * Enables or disables the Widgetpane.
-     * @param enabled enabled
+     *
+     * @param disabled disabled
      */
-    public void setEnabled(final boolean enabled) {
-        if (enabled) {
-            this.setEffect(null);
-            this.setMouseTransparent(false);
-        } else {
-            this.setEffect(blendEffect);
-            this.setMouseTransparent(true);
+    public void setWidgetPaneDisable(final boolean disabled) {
+        if (disabled) {
+            this.setDisable(true);
             this.isExpanded.set(false);
+        } else {
+            this.setDisable(false);
         }
     }
 }

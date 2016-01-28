@@ -63,6 +63,8 @@ public class TemperatureControllerPane extends UnitPane {
     private final SVGIcon triangleIconActual;
     private final SVGIcon triangleIconTarget;
     private final DecimalFormat decimalFormat;
+    private double actualTemperature;
+    private double targetTemperature;
 
     /**
      * Constructor for a TemperatureControllerPane.
@@ -92,8 +94,8 @@ public class TemperatureControllerPane extends UnitPane {
     }
 
     private void initEffectSlider() {
-        double actualTemperature = slider.getMin();
-        double targetTemperature = slider.getMin();
+        actualTemperature = slider.getMin();
+        targetTemperature = slider.getMin();
         slider.setValue(0.0);
 
         try {
@@ -103,10 +105,10 @@ public class TemperatureControllerPane extends UnitPane {
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
-        setLabelValues(actualTemperature, targetTemperature);
+        setLabelValues();
     }
 
-    private void setLabelValues(double actualTemperature, double targetTemperature) {
+    private void setLabelValues() {
         decimalFormat.setRoundingMode(RoundingMode.CEILING);
         //CHECKSTYLE.OFF: MagicNumber
         actualTemperature = (actualTemperature < 10.0) ? 10.0 : actualTemperature;
@@ -123,7 +125,8 @@ public class TemperatureControllerPane extends UnitPane {
     @Override
     protected void initTitle() {
         headContent.setLeft(temperatureControllerIcon);
-        headContent.setCenter(new Label(super.getUnitLabel()));
+        headContent.setCenter(getUnitLabel());
+        headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
         headContent.prefHeightProperty().set(temperatureControllerIcon.getSize() + Constants.INSETS);
     }
 
@@ -184,7 +187,7 @@ public class TemperatureControllerPane extends UnitPane {
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
-        setUnitLabel(unitLabel);
+        setUnitLabelString(unitLabel);
     }
 
     @Override
@@ -200,11 +203,11 @@ public class TemperatureControllerPane extends UnitPane {
     @Override
     public void update(final Observable observable, final Object temperatureController) throws java.lang.Exception {
         Platform.runLater(() -> {
-            final double actualTemperature =
+            actualTemperature =
                     ((TemperatureControllerType.TemperatureController) temperatureController).getActualTemperature();
-            final double targetTemperature =
+            targetTemperature =
                     ((TemperatureControllerType.TemperatureController) temperatureController).getTargetTemperature();
-            setLabelValues(actualTemperature, targetTemperature);
+            setLabelValues();
         });
 
     }

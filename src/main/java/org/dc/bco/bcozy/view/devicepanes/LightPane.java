@@ -21,7 +21,7 @@ package org.dc.bco.bcozy.view.devicepanes;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
-import javafx.scene.control.Label;
+import javafx.geometry.Pos;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import org.controlsfx.control.ToggleSwitch;
@@ -126,7 +126,8 @@ public class LightPane extends UnitPane {
         });
 
         headContent.setLeft(lightbulbIcon);
-        headContent.setCenter(new Label(super.getUnitLabel()));
+        headContent.setCenter(getUnitLabel());
+        headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
         headContent.setRight(toggleSwitch);
         //Padding values are not available here
         headContent.prefHeightProperty().set(lightbulbIcon.getSize() + Constants.INSETS);
@@ -145,7 +146,7 @@ public class LightPane extends UnitPane {
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
-        setUnitLabel(unitLabel);
+        setUnitLabelString(unitLabel);
     }
 
     @Override

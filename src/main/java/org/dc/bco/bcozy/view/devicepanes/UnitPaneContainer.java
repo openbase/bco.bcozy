@@ -104,11 +104,17 @@ public class UnitPaneContainer extends ObserverTitledPane {
 
                 vBox.getChildren().add(powerPlugPane);
             }
+        } else if (unitType.equals(UnitType.REED_SWITCH)) {
+            for (final DALRemoteService dalRemoteService : dalRemoteServiceList) {
+                final ReedSwitchPane reedSwitchPane = new ReedSwitchPane(dalRemoteService);
+
+                vBox.getChildren().add(reedSwitchPane);
+            }
         } else if (unitType.equals(UnitType.ROLLERSHUTTER)) {
             for (final DALRemoteService dalRemoteService : dalRemoteServiceList) {
-                final RollershutterPane rollershutterPane = new RollershutterPane(dalRemoteService);
+                final RollerShutterPane rollerShutterPane = new RollerShutterPane(dalRemoteService);
 
-                vBox.getChildren().add(rollershutterPane);
+                vBox.getChildren().add(rollerShutterPane);
             }
         } else if (unitType.equals(UnitType.TEMPERATURE_CONTROLLER)) {
             for (final DALRemoteService dalRemoteService : dalRemoteServiceList) {

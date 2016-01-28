@@ -198,7 +198,7 @@ public final class Constants {
     /**
      * The color for a region.
      */
-    public static final Color REGION_FILL = new Color(1.0, 1.0, 1.0, 0.08);
+    public static final Color REGION_FILL = new Color(1.0, 1.0, 1.0, 0.04);
 
     /**
      * The color for a door.
@@ -328,7 +328,7 @@ public final class Constants {
     /**
      * Step value of rollerShutterPane.
      */
-    public static final double ROLLERSHUTTER_STEP = 0.05;
+    public static final double ROLLERSHUTTER_STEP = 0.01;
 
     /**
      * Max value of open ratio @ rollerShutterPane.

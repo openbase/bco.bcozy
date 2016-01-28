@@ -18,6 +18,7 @@
  */
 package org.dc.bco.bcozy.view.devicepanes;
 
+import javafx.scene.control.Label;
 import org.dc.bco.dal.remote.unit.DALRemoteService;
 import org.dc.jul.pattern.Observer;
 
@@ -26,22 +27,40 @@ import org.dc.jul.pattern.Observer;
  */
 public abstract class UnitPane extends WidgetPane implements Observer {
 
-    private String unitLabel;
+    private final Label unitLabel;
+    private String unitLabelString;
+
+    /**
+     * Constructor for the UnitPane.
+     */
+    public UnitPane() {
+        this.unitLabel = new Label();
+        //TODO: Set css styling for unitlabel
+    }
+
+    /**
+     * Getter for unitLabelString.
+     * @return unitLabelString
+     */
+    public String getUnitLabelString() {
+        return unitLabelString;
+    }
+
+    /**
+     * Setter for unitLabelString.
+     * @param unitLabelString unitLabelString
+     */
+    public void setUnitLabelString(final String unitLabelString) {
+        this.unitLabelString = unitLabelString;
+        this.unitLabel.setText(unitLabelString);
+    }
 
     /**
      * Getter for unitLabel.
      * @return unitLabel
      */
-    public String getUnitLabel() {
+    public Label getUnitLabel() {
         return unitLabel;
-    }
-
-    /**
-     * Setter for unitLabel.
-     * @param unitLabel unitLabel
-     */
-    public void setUnitLabel(final String unitLabel) {
-        this.unitLabel = unitLabel;
     }
 
     /**

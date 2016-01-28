@@ -20,6 +20,7 @@
 package org.dc.bco.bcozy.view.location;
 
 import javafx.collections.ObservableList;
+import javafx.scene.paint.Color;
 import org.dc.bco.bcozy.view.Constants;
 
 /**
@@ -118,7 +119,7 @@ public class PassagePolygon extends ConnectionPolygon {
 
     @Override
     protected void setConnectionStyle() {
-        this.setFill(Constants.PASSAGE_FILL);
+        this.setMainColor(Constants.PASSAGE_FILL);
         this.setStrokeWidth(0);
         this.setMouseTransparent(true);
     }
@@ -126,5 +127,20 @@ public class PassagePolygon extends ConnectionPolygon {
     @Override
     protected void changeStyleOnOpening(final boolean open) {
         // nothing to do here...
+    }
+
+    /**
+     * Will be called when either the main or the custom color changes.
+     * The initial values for both colors are Color.TRANSPARENT.
+     * @param mainColor   The main color
+     * @param customColor The custom color
+     */
+    @Override
+    protected void onColorChange(final Color mainColor, final Color customColor) {
+        if (customColor.equals(Color.TRANSPARENT)) {
+            this.setFill(mainColor);
+        } else {
+            this.setFill(mainColor.interpolate(customColor, CUSTOM_COLOR_WEIGHT));
+        }
     }
 }
