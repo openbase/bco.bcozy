@@ -23,6 +23,7 @@ import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.input.MouseEvent;
@@ -30,6 +31,7 @@ import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.ForegroundPane;
+import org.dc.bco.bcozy.view.SVGIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +43,12 @@ import java.util.Map;
 /**
  *
  */
-public class LocationPane extends Pane {
+public final class LocationPane extends Pane {
+
+    /**
+     * Singleton instance.
+     */
+    private static LocationPane instance;
 
     /**
      * Application logger.
@@ -62,11 +69,11 @@ public class LocationPane extends Pane {
     private final EventHandler<MouseEvent> onEmptyAreaClickHandler;
 
     /**
-     * Constructor for the LocationPane.
+     * Private constructor to deny manual instantiation.
      *
      * @param foregroundPane The foregroundPane
      */
-    public LocationPane(final ForegroundPane foregroundPane) {
+    private LocationPane(final ForegroundPane foregroundPane) {
         super();
 
         this.foregroundPane = foregroundPane;
@@ -110,6 +117,34 @@ public class LocationPane extends Pane {
         this.foregroundPane.getMainMenuWidthProperty().addListener((observable, oldValue, newValue) ->
                 this.setTranslateX(this.getTranslateX()
                         - ((oldValue.doubleValue() - newValue.doubleValue()) / 2)));
+    }
+
+    /**
+     * Singleton Pattern. This method call can not be used to instantiate the singleton.
+     * @return the singleton instance of the location pane
+     * @throws InstantiationException thrown if no getInstance(ForegroundPane foregroundPane) is called before
+     */
+    public static LocationPane getInstance() throws InstantiationException {
+        synchronized (LocationPane.class) {
+            if (LocationPane.instance == null) {
+                throw new InstantiationException();
+            }
+        }
+        return LocationPane.instance;
+    }
+
+    /**
+     * Singleton Pattern.
+     * @return the singleton instance of the location pane
+     * @param foregroundPane the foreground pane needed for instantiation
+     */
+    public static LocationPane getInstance(final ForegroundPane foregroundPane) {
+        synchronized (LocationPane.class) {
+            if (LocationPane.instance == null) {
+                LocationPane.instance = new LocationPane(foregroundPane);
+            }
+        }
+        return LocationPane.instance;
     }
 
     /**
@@ -212,6 +247,19 @@ public class LocationPane extends Pane {
                         + "No Cutting will be applied");
             }
         });
+    }
+
+    /**
+     * Will add a UnitIcon to the locationPane.
+     * @param svgIcon The icon
+     * @param onActionHandler The Handler that gets activated when the button is pressed
+     * @param position The position where the button is to be placed
+     */
+    public void addUnit(SVGIcon svgIcon, EventHandler<ActionEvent> onActionHandler, Point2D position) {
+        UnitButton unitButton = new UnitButton(svgIcon, onActionHandler);
+        unitButton.setTranslateX(position.getX());
+        unitButton.setTranslateY(position.getY());
+        this.getChildren().add(unitButton);
     }
 
     /**

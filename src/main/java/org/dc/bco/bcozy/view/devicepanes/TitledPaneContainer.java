@@ -21,6 +21,8 @@ package org.dc.bco.bcozy.view.devicepanes;
 
 import javafx.scene.Node;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import org.dc.bco.dal.remote.unit.DALRemoteService;
 import rst.homeautomation.unit.UnitTemplateType.UnitTemplate.UnitType;
 
@@ -52,5 +54,14 @@ public class TitledPaneContainer extends VBox {
         }
 
         this.getChildren().clear();
+    }
+
+    /**
+     * Workaround Method to cope with the missing 15 pixel
+     */
+    public void addDummyPane() {
+        //CHECKSTYLE.OFF: MagicNumber
+        this.getChildren().add(new Rectangle(15.0, 15.0, Color.TRANSPARENT));
+        //CHECKSTYLE.ON: MagicNumber
     }
 }
