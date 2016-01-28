@@ -41,7 +41,12 @@ import java.util.Map;
 /**
  *
  */
-public class LocationPane extends Pane {
+public final class LocationPane extends Pane {
+
+    /**
+     * Singleton instance.
+     */
+    private static LocationPane instance;
 
     /**
      * Application logger.
@@ -62,11 +67,11 @@ public class LocationPane extends Pane {
     private final EventHandler<MouseEvent> onEmptyAreaClickHandler;
 
     /**
-     * Constructor for the LocationPane.
+     * Private constructor to deny manual instantiation.
      *
      * @param foregroundPane The foregroundPane
      */
-    public LocationPane(final ForegroundPane foregroundPane) {
+    private LocationPane(final ForegroundPane foregroundPane) {
         super();
 
         this.foregroundPane = foregroundPane;
@@ -110,6 +115,34 @@ public class LocationPane extends Pane {
         this.foregroundPane.getMainMenuWidthProperty().addListener((observable, oldValue, newValue) ->
                 this.setTranslateX(this.getTranslateX()
                         - ((oldValue.doubleValue() - newValue.doubleValue()) / 2)));
+    }
+
+    /**
+     * Singleton Pattern. This method call can not be used to instantiate the singleton.
+     * @return the singleton instance of the location pane
+     * @throws InstantiationException thrown if no getInstance(ForegroundPane foregroundPane) is called before
+     */
+    public static LocationPane getInstance() throws InstantiationException {
+        synchronized (LocationPane.class) {
+            if (LocationPane.instance == null) {
+                throw new InstantiationException();
+            }
+        }
+        return LocationPane.instance;
+    }
+
+    /**
+     * Singleton Pattern.
+     * @return the singleton instance of the location pane
+     * @param foregroundPane the foreground pane needed for instantiation
+     */
+    public static LocationPane getInstance(final ForegroundPane foregroundPane) {
+        synchronized (LocationPane.class) {
+            if (LocationPane.instance == null) {
+                LocationPane.instance = new LocationPane(foregroundPane);
+            }
+        }
+        return LocationPane.instance;
     }
 
     /**

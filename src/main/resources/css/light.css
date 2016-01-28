@@ -479,7 +479,7 @@
 }
 
 .background-pane {
-    -fx-background-color: radial-gradient(center 50% 50%, radius 100%, derive(rgb(0.2, 0.2, 0.2), 90%), rgb(0.2, 0.2, 0.2));
+    -fx-background-color: rgb(64.0 , 64.0, 64.0);
 }
 
 .info-pane {
