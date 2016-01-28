@@ -120,6 +120,8 @@ public class ContextMenuController {
         for (final Map.Entry<UnitType, List<DALRemoteService>> nextEntry : unitRemoteMap.entrySet()) {
             titledPaneContainer.createAndAddNewTitledPane(nextEntry.getKey(), nextEntry.getValue());
         }
+
+        titledPaneContainer.addDummyPane(); //TODO: Find a way to solve this problem properly...
     }
 
     /**

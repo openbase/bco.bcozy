@@ -38,7 +38,7 @@ public class BackgroundPane extends StackPane {
      */
     public BackgroundPane(final ForegroundPane foregroundPane) {
         locationPane = LocationPane.getInstance(foregroundPane);
-        
+
         this.getChildren().add(locationPane);
         this.getStyleClass().add("background-pane");
 
