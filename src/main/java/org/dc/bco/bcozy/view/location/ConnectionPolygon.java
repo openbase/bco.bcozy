@@ -19,18 +19,13 @@
 package org.dc.bco.bcozy.view.location;
 
 import javafx.collections.ObservableList;
-import javafx.scene.shape.Polygon;
 
 /**
  * A Polygon that represents different kinds of connections.
  */
-public abstract class ConnectionPolygon extends Polygon {
+public abstract class ConnectionPolygon extends AbstractPolygon {
 
     private boolean open;
-    private final double centerX;
-    private final double centerY;
-    private final String connectionLabel;
-    private final String connectionId;
 
     private final double minX;
     private final double maxX;
@@ -38,20 +33,14 @@ public abstract class ConnectionPolygon extends Polygon {
     private final double maxY;
     private final boolean horizontal;
 
-
     /**
      * Constructor for the ConnectionPolygon.
-     *
      * @param connectionLabel The name of the location
      * @param connectionId    The ID of the location
      * @param points          Points for the shape
      */
     public ConnectionPolygon(final String connectionLabel, final String connectionId, final double... points) {
-        super(points);
-        this.centerX = (super.getLayoutBounds().getMaxX() + super.getLayoutBounds().getMinX()) / 2;
-        this.centerY = (super.getLayoutBounds().getMaxY() + super.getLayoutBounds().getMinY()) / 2;
-        this.connectionLabel = connectionLabel;
-        this.connectionId = connectionId;
+        super(connectionLabel, connectionId, points);
         this.open = false;
 
         final ObservableList<Double> pointList = super.getPoints();
@@ -81,48 +70,22 @@ public abstract class ConnectionPolygon extends Polygon {
     }
 
     /**
-     * Getter method for the X Coordinate of the center.
-     *
-     * @return x center as a double value
-     */
-    public double getCenterX() {
-        return centerX;
-    }
-
-    /**
-     * Getter method for the Y Coordinate of the center.
-     *
-     * @return y center as a double value
-     */
-    public double getCenterY() {
-        return centerY;
-    }
-
-    /**
-     * Getter for the connection label.
-     *
-     * @return the label as a String
-     */
-    public String getLocationLabel() {
-        return connectionLabel;
-    }
-
-    /**
-     * Getter for the connection id.
-     *
-     * @return the id as a String
-     */
-    public String getLocationId() {
-        return connectionId;
-    }
-
-    /**
      * Getter method for the open boolean.
      *
      * @return open as a boolean value
      */
     public boolean isOpen() {
         return open;
+    }
+
+    /**
+     * Setter method for the open boolean.
+     *
+     * @param open as a boolean value
+     */
+    public void setOpen(final boolean open) {
+        this.open = open;
+        this.changeStyleOnOpening(open);
     }
 
     /**
@@ -168,16 +131,6 @@ public abstract class ConnectionPolygon extends Polygon {
      */
     protected boolean isHorizontal() {
         return horizontal;
-    }
-
-    /**
-     * Setter method for the open boolean.
-     *
-     * @param open as a boolean value
-     */
-    public void setSelected(final boolean open) {
-        this.open = open;
-        this.changeStyleOnOpening(open);
     }
 
     /**

@@ -95,7 +95,7 @@ public class LocationPane extends Pane {
                     this.autoFocusPolygonAnimated(rootRoom);
                 }
 
-                foregroundPane.getContextMenu().getRoomInfo().setText(selectedLocation.getLocationLabel());
+                foregroundPane.getContextMenu().getRoomInfo().setText(selectedLocation.getLabel());
             }
         };
 
@@ -155,6 +155,7 @@ public class LocationPane extends Pane {
                         + "\n  location UUID:  " + locationId
                         + "\n  location Label: " + locationLabel
                         + "\n  location Type:  " + locationType);
+                break;
         }
     }
 
@@ -282,7 +283,7 @@ public class LocationPane extends Pane {
         tile.setOnMouseEntered(event -> {
             event.consume();
             tile.mouseEntered();
-            foregroundPane.getInfoFooter().getMouseOverText().setText(tile.getLocationLabel());
+            foregroundPane.getInfoFooter().getMouseOverText().setText(tile.getLabel());
         });
         tile.setOnMouseExited(event -> {
             event.consume();
@@ -316,7 +317,7 @@ public class LocationPane extends Pane {
         region.setOnMouseEntered(event -> {
             event.consume();
             region.mouseEntered();
-            foregroundPane.getInfoFooter().getMouseOverText().setText(region.getLocationLabel());
+            foregroundPane.getInfoFooter().getMouseOverText().setText(region.getLabel());
         });
         region.setOnMouseExited(event -> {
             event.consume();
@@ -341,9 +342,9 @@ public class LocationPane extends Pane {
             this.selectedLocation.setSelected(false);
             newSelectedLocation.setSelected(true);
             this.selectedLocation = newSelectedLocation;
-            this.selectedLocationId.set(newSelectedLocation.getLocationId());
+            this.selectedLocationId.set(newSelectedLocation.getUuid());
 
-            foregroundPane.getContextMenu().getRoomInfo().setText(selectedLocation.getLocationLabel());
+            foregroundPane.getContextMenu().getRoomInfo().setText(selectedLocation.getLabel());
         }
     }
 

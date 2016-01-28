@@ -64,7 +64,7 @@ public class DoorPolygon extends ConnectionPolygon {
 
     @Override
     protected void setConnectionStyle() {
-        this.setFill(Color.TRANSPARENT);
+        this.setMainColor(Color.TRANSPARENT);
         this.setStroke(Color.WHITE);
         this.getStrokeDashArray().addAll(Constants.DOOR_DASH_WIDTH, Constants.DOOR_DASH_WIDTH * 2);
         this.setStrokeWidth(Constants.ROOM_STROKE_WIDTH);
@@ -75,5 +75,19 @@ public class DoorPolygon extends ConnectionPolygon {
     @Override
     protected void changeStyleOnOpening(final boolean open) {
         // TODO: To be implemented...
+    }
+
+    /**
+     * Will be called when either the main or the custom color changes.
+     * @param mainColor   The main color
+     * @param customColor The custom color
+     */
+    @Override
+    protected void onColorChange(final Color mainColor, final Color customColor) {
+        if (customColor.equals(Color.TRANSPARENT)) {
+            this.setFill(mainColor);
+        } else {
+            this.setFill(mainColor.interpolate(customColor, CUSTOM_COLOR_WEIGHT));
+        }
     }
 }
