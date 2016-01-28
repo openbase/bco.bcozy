@@ -125,6 +125,7 @@
 }
 .toggle-switch .thumb {
     -fx-background-radius: 0.0em;
+    -fx-background-insets:  2.0;
 }
 .toggle-switch .thumb-area{
     -fx-background-radius: 0.0;
@@ -435,8 +436,20 @@
     visibility: hidden;
 }
 
+.titled-pane {
+    -fx-border-radius: 0.0;
+    -fx-background-radius: 0px;
+    -fx-border-width: 0 0 5 5;
+}
+
+.titled-pane > .title{
+    -fx-border-radius: 0.0;
+    -fx-background-radius: 0px;
+    -fx-border-width: 0;
+}
+
 .titled-pane > .content {
-    -fx-border-width: 0px;
+    -fx-padding: 0 0 0 10;
     -fx-border-width: 1 0 0 0;
     -fx-border-insets: 1 0 0 0;
 }
@@ -448,15 +461,19 @@
  ******************************************************************************/
 
 .body-pane {
+    -fx-border-radius: 0.0;
+    -fx-background-radius: 0px;
     -fx-padding: 5.0 10.0 5.0 10.0;
     -fx-border-width: 0 0 1 0;
-    -fx-border-insets: 0 10 0 10;
+    -fx-border-insets: 0 2 0 2;
 }
 
 .head-pane {
+    -fx-border-radius: 0.0;
+    -fx-background-radius: 0px;
     -fx-padding: 5.0 10.0 5.0 10.0;
     -fx-border-width: 0 0 1 0;
-    -fx-border-insets: 0 10 0 10;
+    -fx-border-insets: 0 2 0 2;
 }
 
 /*******************************************************************************
@@ -491,10 +508,21 @@
  *                                                                             *
  ******************************************************************************/
 
+.slider {
+    -fx-skin: null;
+}
+
+.slider .thumb {
+    -fx-background-insets: 0, 1, 2;
+    -fx-background-radius: 1.0em; /* makes sure this remains circular */
+    -fx-padding: 0.583333em; /* 7 */;
+}
+
 .slider .track {
     -fx-background-color:null;  /* Hide the track */
     -fx-background-insets: 1 0 -1 0, 0, 1;
-    -fx-background-radius: 2.5, 2.5, 1.5;
+    /*-fx-background-radius: 2.5, 2.5, 1.5;*/
+    -fx-background-radius: 0;
     -fx-padding: 0.208333em; /* 2.5 */
 }
 
@@ -533,7 +561,7 @@
  ******************************************************************************/
 
 .temperature-slider {
-    -fx-skin: "com.sun.javafx.scene.control.skin.SliderSkin";
+    /*-fx-skin: "com.sun.javafx.scene.control.skin.SliderSkin";*/
 }
 
 .temperature-slider .track {
@@ -542,7 +570,8 @@
             derive(-fx-color,-22%),
             linear-gradient(to bottom, derive(-fx-color,-15.5%), derive(-fx-color,34%) 30%, derive(-fx-color,68%));
     -fx-background-insets: 1 0 -1 0, 0, 1;
-    -fx-background-radius: 2.5, 2.5, 1.5;
+    /*-fx-background-radius: 2.5, 2.5, 1.5;*/
+    -fx-background-radius: 0;
     -fx-padding: 0.208333em;
 }
 
@@ -552,4 +581,31 @@
             derive(-fx-color,-22%),
             linear-gradient(to right, derive(-fx-color,-15.5%), derive(-fx-color,34%) 30%, derive(-fx-color,68%));
     -fx-background-insets: 0 -1 0 1, 0, 1;
+}
+
+.advanced-horizontal-slider-highlight {
+    -fx-background-insets: 0 10 0 10;
+    -fx-padding: 0 10 0 10;
+}
+
+.advanced-horizontal-slider-background {
+    -fx-background-insets: 0 10 0 10;
+    -fx-padding: 0 10 0 10;
+}
+
+
+.advanced-horizontal-slider-label-top {
+    -fx-fill: palegreen;
+    -fx-text-fill: black;
+    -fx-font-size: 12.0;
+    -fx-shape: "m 231.88056,426.86331 c 40.90133,-42.1586 132.63016,-42.1586 173.5315,0 35.69998,36.79714 33.43429,100.15274 0.82118,139.69922 L 316.2916,675.62575 232.70086,566.56253 c -31.14812,-40.63959 -36.52007,-102.90208 -0.8203,-139.69922 z";
+
+}
+
+.advanced-horizontal-slider-label-bottom {
+    -fx-fill: limegreen;
+    -fx-text-fill: white;
+    -fx-font-size: 12.0;
+    -fx-shape: "m 406.76188,648.57176 c -40.90133,42.1586 -132.63016,42.1586 -173.5315,0 C 197.5304,611.77462 199.79609,548.41902 232.4092,508.87254 l 89.94164,-109.06322 83.59074,109.06322 c 31.14812,40.63959 36.52007,102.90208 0.8203,139.69922 z";
+
 }

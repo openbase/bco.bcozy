@@ -20,6 +20,7 @@ package org.dc.bco.bcozy;
 
 import com.guigarage.responsive.ResponsiveHandler;
 import javafx.concurrent.Task;
+import org.dc.bco.bcozy.jp.JPLanguage;
 import org.dc.bco.bcozy.view.InfoPane;
 import org.dc.jps.core.JPService;
 import org.dc.jps.exception.JPNotAvailableException;
@@ -79,6 +80,7 @@ public class BCozy extends Application {
         /* Setup JPService */
         JPService.setApplicationName(APP_NAME);
         JPService.registerProperty(JPDebugMode.class);
+        JPService.registerProperty(JPLanguage.class);
 
         try {
             JPService.parseAndExitOnError(args);

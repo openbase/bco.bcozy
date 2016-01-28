@@ -17,8 +17,12 @@
     -flat-button-text-color: dodgerblue;
     -devider-color: lightgray;
     -icons-color: white;
-    -flat-button-hover-color: radial-gradient(center 50% 50%, radius 50%, rgba(30,144,255, 0.4), transparent);
-    -button-hover-color: radial-gradient(center 50% 50%, radius 50%, rgba(180,180,180, 0.8), transparent);
+    -flat-button-hover-color: linear-gradient(from 50% 10% to 50% 90%,
+        transparent
+        transparent,
+        rgba(30,144,255, 0.4),
+        transparent);
+    -button-hover-color: darkgray /*radial-gradient(center 50% 50%, radius 50%, rgba(180,180,180, 0.8), transparent)*/;
 
     -fx-background-color: -bg-color;
 
@@ -136,6 +140,11 @@
 .button:default:armed {
     -fx-background-color: derive(-highlight-color, -20.0%);
 }
+
+.toggle-switch .thumb {
+    -fx-background-color: -bg-color;
+}
+
 .toggle-switch .thumb-area{
     -fx-background-color: -off-indicator;
 }

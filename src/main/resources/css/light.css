@@ -16,8 +16,8 @@
     -flat-button-text-color: dodgerblue;
     -devider-color: slategray;
     -icons-color: black;
-    -flat-button-hover-color: radial-gradient(center 50% 50%, radius 50%, rgba(30,144,255, 0.4), transparent);
-    -button-hover-color: radial-gradient(center 50% 50%, radius 50%, rgba(180,180,180, 0.8), transparent);
+    -flat-button-hover-color: slategray /*linear-gradient(from 60% 20% to 60% 80%, transparent, lightgray, transparent)*/;
+    -button-hover-color: rgba(228.0, 228.0, 228.0, 1.0);/*radial-gradient(center 50% 50%, radius 50%, rgba(180,180,180, 0.8), transparent)*/;
 
     -fx-background-color: -bg-color;
 
@@ -63,9 +63,9 @@
     -fx-background-color: -bg-color;
 }
 
-.info-footer {
-    -fx-background-color: -bg-color;
-}
+/*.info-footer {*/
+    /*-fx-background-color: -bg-color;*/
+/*}*/
 
 .floating-button {
     -fx-background-color: -bg-color;
@@ -106,6 +106,10 @@
     -fx-stroke: -fx-text-base-color;
 }
 
+.floating-label {
+    -fx-text-fill: -bg-color;
+}
+
 .text {
     /*-fx-effect:dropshadow(gaussian, rgba(0.0, 0.0, 0.0, 0.2), 0.0, 0.0, 0.0, 1.0);*/
 }
@@ -137,6 +141,11 @@
 .button:default:armed {
     -fx-background-color: derive(-highlight-color, -20.0%);
 }
+
+.toggle-switch .thumb {
+    -fx-background-color: -bg-color;
+}
+
 .toggle-switch .thumb-area{
     -fx-background-color: -off-indicator;
 }
@@ -150,7 +159,8 @@
 }
 
 .transparent-button:hover {
-    -fx-background-color: -flat-button-hover-color;
+    -fx-effect: dropshadow(gaussian, -flat-button-hover-color, 10.0, 0.0, -2.0, 2.0);
+    /*-fx-background-color: -flat-button-hover-color;*/
 }
 
 /*******************************************************************************
@@ -401,7 +411,7 @@
             /*derive(slategrey, 30%) 50%,*/
             /*derive(slategrey, 30%) 99%*/
     /*);*/
-    -fx-background-color: slategray;
+    -fx-background-color: -controls-color;
 }
 
 /*******************************************************************************
@@ -432,8 +442,14 @@
  *                                                                             *
  ******************************************************************************/
 
+.titled-pane {
+    -fx-border-color: transparent;
+    -fx-effect: dropshadow(gaussian, -shadow-color, 10, 0.0, -2, 2);
+}
 .titled-pane > .title {
     -fx-background-color: -bg-color;
+    -fx-border-color: -border-color;
+    -fx-font-weight: bold;
 }
 
 .titled-pane > .content {
@@ -491,4 +507,41 @@
     rgba(255.0, 255.0, 255.0, 0.7),
     rgba(255.0, 255.0, 255.0, 0.4),
     rgba(255.0, 255.0, 255.0, 0.3));
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * DimmerPane                                                                  *
+ *                                                                             *
+ ******************************************************************************/
+.slider .thumb {
+    -fx-background-color: -controls-color;
+}
+
+
+.temperature-slider-pane-top .temperature-slider-pane-bottom{
+    -fx-background-color: -controls-color !important;
+    -fx-text-fill: -bg-color;
+}
+
+.advanced-horizontal-slider-thumb {
+    -fx-fill: slategray;
+}
+
+.advanced-horizontal-slider-highlight {
+    -fx-fill: dodgerblue;
+}
+
+.advanced-horizontal-slider-background {
+    -fx-fill: lightgray;
+}
+
+.advanced-horizontal-slider-label-top {
+    -fx-fill: palegreen;
+    -fx-text-fill: black;
+}
+
+.advanced-horizontal-slider-label-bottom {
+    -fx-fill: limegreen;
+    -fx-text-fill: white;
 }
