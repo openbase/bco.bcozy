@@ -18,18 +18,17 @@
  */
 package org.dc.bco.bcozy.view.devicepanes;
 
-
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
-import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.SVGIcon;
@@ -58,10 +57,8 @@ public class TemperatureControllerPane extends UnitPane {
     private final VBox bodyContent;
     private final Slider slider;
     private final VBox vBox;
-    private final Label actual;
-    private final Label target;
-    private final SVGIcon triangleIconActual;
-    private final SVGIcon triangleIconTarget;
+    private final Button actual;
+    private final Button target;
     private final DecimalFormat decimalFormat;
     private double actualTemperature;
     private double targetTemperature;
@@ -74,14 +71,12 @@ public class TemperatureControllerPane extends UnitPane {
         this.temperatureControllerRemote = (TemperatureControllerRemote) temperatureControllerRemote;
 
         temperatureControllerIcon = new SVGIcon(MaterialDesignIcon.RADIATOR, Constants.SMALL_ICON, true);
-        triangleIconActual = new SVGIcon(FontAwesomeIcon.CARET_DOWN, Constants.SMALL_ICON, true);
-        triangleIconTarget = new SVGIcon(FontAwesomeIcon.CARET_UP, Constants.SMALL_ICON, true);
         headContent = new BorderPane();
         bodyContent = new VBox();
         slider = new Slider();
         vBox = new VBox();
-        actual = new Label();
-        target = new Label();
+        actual = new Button();
+        target = new Button();
         decimalFormat = new DecimalFormat("#.#");
 
         initUnitLabel();
@@ -117,9 +112,9 @@ public class TemperatureControllerPane extends UnitPane {
         actual.setText("Actual: " + decimalFormat.format(actualTemperature) + Constants.CELSIUS);
         actual.setTranslateX((actualTemperature - slider.getMin())
                 * (slider.getMinWidth() / (slider.getMax() - slider.getMin())) - (slider.getMinWidth() / 2));
-        target.setText("Target: " + decimalFormat.format(targetTemperature) + Constants.CELSIUS);
-        target.setTranslateX((targetTemperature - slider.getMin())
-                * (slider.getMinWidth() / (slider.getMax() - slider.getMin())) - (slider.getMinWidth() / 2));
+        target.setText(decimalFormat.format(targetTemperature) + Constants.CELSIUS);
+//        target.setTranslateX((targetTemperature - slider.getMin())
+//                * (slider.getMinWidth() / (slider.getMax() - slider.getMin())) - (slider.getMinWidth() / 2));
     }
 
     @Override
@@ -142,15 +137,16 @@ public class TemperatureControllerPane extends UnitPane {
         slider.setMinWidth(sliderWidth);
         slider.setMaxWidth(sliderWidth);
         slider.getStyleClass().add("temperature-slider");
+        actual.getStyleClass().addAll("temperature-slider-pane-top");
+        target.getStyleClass().addAll("temperature-slider-pane-bottom");
 
-        actual.setGraphic(triangleIconActual);
-        actual.setContentDisplay(ContentDisplay.BOTTOM);
-        actual.setGraphicTextGap(-12.0);
-        actual.setTranslateX(-slider.getMinWidth() / 2);
-        target.setGraphic(triangleIconTarget);
-        target.setContentDisplay(ContentDisplay.TOP);
-        target.setGraphicTextGap(-12.0);
-        target.setTranslateX(-slider.getMinWidth() / 2);
+
+//        actual.setContentDisplay(ContentDisplay.BOTTOM);
+//        actual.setGraphicTextGap(-12.0);
+//        actual.setTranslateX(-slider.getMinWidth() / 2);
+//        target.setContentDisplay(ContentDisplay.TOP);
+//        target.setGraphicTextGap(-12.0);
+//        target.setTranslateX(-slider.getMinWidth() / 2);
         //CHECKSTYLE.ON: MagicNumber
 
         //TODO add progressbar in slider...?
@@ -160,6 +156,9 @@ public class TemperatureControllerPane extends UnitPane {
             protected Object call() {
                 try {
                     temperatureControllerRemote.setTargetTemperature(slider.getValue());
+
+                    StackPane track = (StackPane) slider.lookup(".track");
+                    target.setTranslateX(track.getLayoutX());
                 } catch (CouldNotPerformException e) {
                     ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
                 }

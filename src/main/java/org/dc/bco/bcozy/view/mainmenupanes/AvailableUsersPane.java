@@ -29,6 +29,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.HiddenSidesPane;
+import org.dc.bco.bcozy.view.AdvancedHorizontalSlider;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.SVGIcon;
 
@@ -41,8 +42,6 @@ import java.util.ResourceBundle;
  */
 public class AvailableUsersPane extends PaneElement {
 
-    private final ObservableList<AvailableUserRow> availableUsersList;
-
     private final BorderPane statusIcon;
     /**
      * Constructor for the AvailableUsersPane.
@@ -52,9 +51,6 @@ public class AvailableUsersPane extends PaneElement {
                 .getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
 
         statusIcon = new BorderPane(new SVGIcon(MaterialDesignIcon.ACCOUNT_CIRCLE, Constants.MIDDLE_ICON, true));
-        availableUsersList = FXCollections.observableArrayList();
-        availableUsersList.addAll(new AvailableUserRow("Andi"), new AvailableUserRow("Julian"),
-                new AvailableUserRow("Timo"));
 
         final ScrollPane verticalScrollPane = new ScrollPane();
         verticalScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
@@ -70,43 +66,12 @@ public class AvailableUsersPane extends PaneElement {
         scrollBar.maxProperty().bind(verticalScrollPane.vmaxProperty());
         scrollBar.minProperty().bind(verticalScrollPane.vminProperty());
 
-        final VBox verticalLayout = new VBox();
-        verticalLayout.setFillWidth(true);
-
-        final Label availableUsersLbl = new Label(languageBundle.getString("availableUsers"));
-        availableUsersLbl.getStyleClass().clear();
-        availableUsersLbl.getStyleClass().add("small-label");
-        availableUsersLbl.getStyleClass().add("padding-bottom");
-        verticalLayout.getChildren().add(availableUsersLbl);
-
-        for (final AvailableUserRow user : availableUsersList) {
-            verticalLayout.getChildren().add(user);
-        }
-        verticalScrollPane.setContent(verticalLayout);
+        AdvancedHorizontalSlider advancedHorizontalSlider = new AdvancedHorizontalSlider(10, 30);
+        verticalScrollPane.setContent(advancedHorizontalSlider);
         verticalScrollPane.setFitToWidth(true);
         this.getChildren().addAll(hiddenSidesPane);
     }
 
-    private class AvailableUserRow extends BorderPane {
-        AvailableUserRow(final String userName) {
-            // TODO: uncomment when the time comes...
-//            final ImageView userIcon = ImageViewProvider
-//                    .createImageView("/icons/users.png", Constants.EXTRA_SMALL_ICON);
-//            final ImageView deleteUserIcon = ImageViewProvider
-//                    .createImageView("/icons/delete_user.png", Constants.EXTRA_SMALL_ICON);
-//            final ImageView logoutUserIcon = ImageViewProvider
-//                    .createImageView("/icons/logout.png", Constants.EXTRA_SMALL_ICON);
-//            final Button deleteUserBtn = new Button("", deleteUserIcon);
-//            final Button logoutUserBtn = new Button("", logoutUserIcon);
-//            final Label userLabel = new Label(userName, userIcon);
-//            BorderPane.setAlignment(userLabel, Pos.CENTER_LEFT);
-//            final HBox rightAlign = new HBox();
-//            rightAlign.getChildren().addAll(deleteUserBtn, logoutUserBtn);
-//            this.setLeft(userLabel);
-//            this.setRight(rightAlign);
-//            this.getStyleClass().add("list-element");
-        }
-    }
 
     @Override
     public Node getStatusIcon() {
