@@ -283,7 +283,7 @@ public final class Constants {
     /**
      * Full circle angle in degree.
      */
-    public static final int ROUND_ANGLE = 360;
+    public static final double ROUND_ANGLE = 360.0;
 
     /**
      * Obtuse angle (270) in degree.

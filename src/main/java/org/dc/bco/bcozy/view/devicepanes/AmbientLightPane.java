@@ -29,6 +29,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
+import javafx.scene.control.Tooltip;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelWriter;
@@ -77,11 +78,12 @@ public class AmbientLightPane extends UnitPane {
     private static final Logger LOGGER = LoggerFactory.getLogger(AmbientLightPane.class);
 
     private final AmbientLightRemote ambientLightRemote;
-    private final SVGIcon lightbulbIcon;
+    private final SVGIcon lightBulbIcon;
     private final ToggleSwitch toggleSwitch;
     private final BorderPane headContent;
     private Pane colorCircleContainer;
     private HBox bodyContent;
+    private final Tooltip tooltip;
 
     /**
      * Constructor for the AmbientLightPane.
@@ -91,9 +93,10 @@ public class AmbientLightPane extends UnitPane {
         this.ambientLightRemote = (AmbientLightRemote) ambientLightRemote;
 
         toggleSwitch = new ToggleSwitch();
-        lightbulbIcon =
+        lightBulbIcon =
                 new SVGIcon(MaterialDesignIcon.LIGHTBULB, MaterialDesignIcon.LIGHTBULB_OUTLINE, Constants.SMALL_ICON);
         headContent = new BorderPane();
+        tooltip = new Tooltip();
 
         initUnitLabel();
         initTitle();
@@ -123,19 +126,25 @@ public class AmbientLightPane extends UnitPane {
     }
 
     private void setEffectColorAndSwitch(final State powerState, final Color color) {
+
         if (powerState.equals(State.ON)) {
-            lightbulbIcon.setBackgroundIconColorAnimated(color);
+            lightBulbIcon.setBackgroundIconColorAnimated(color);
+            tooltip.setText("On");
 
             if (!toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(true);
             }
-        } else {
-            lightbulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
+        } else if (powerState.equals(State.OFF)) {
+            lightBulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
+            tooltip.setText("Off");
 
             if (toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(false);
             }
+        } else {
+            tooltip.setText("Unknown");
         }
+        Tooltip.install(lightBulbIcon, tooltip);
     }
 
     /**
@@ -333,7 +342,7 @@ public class AmbientLightPane extends UnitPane {
     @Override
     protected void initTitle() {
         final String setPowerString = "setPower";
-        lightbulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
+        lightBulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
 
         toggleSwitch.setOnMouseClicked(event -> {
             new Thread(new Task() {
@@ -367,11 +376,11 @@ public class AmbientLightPane extends UnitPane {
             }).start();
         });
 
-        headContent.setLeft(lightbulbIcon);
+        headContent.setLeft(lightBulbIcon);
         headContent.setCenter(getUnitLabel());
         headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
         headContent.setRight(toggleSwitch);
-        headContent.prefHeightProperty().set(lightbulbIcon.getSize() + Constants.INSETS + 1);
+        headContent.prefHeightProperty().set(lightBulbIcon.getSize() + Constants.INSETS + 1);
     }
 
     @Override
@@ -382,9 +391,9 @@ public class AmbientLightPane extends UnitPane {
         final Rectangle rectangleSelector;
         final Shape hollowCircle;
 
-        final DoubleProperty hueValue = new SimpleDoubleProperty(-1);
-        final DoubleProperty saturation = new SimpleDoubleProperty(-1);
-        final DoubleProperty brightness = new SimpleDoubleProperty(-1);
+        final DoubleProperty hueValue = new SimpleDoubleProperty(0);
+        final DoubleProperty saturation = new SimpleDoubleProperty(0);
+        final DoubleProperty brightness = new SimpleDoubleProperty(0);
 
         //pane to set color circle and color selector
         colorCircleContainer = new Pane();
@@ -457,12 +466,11 @@ public class AmbientLightPane extends UnitPane {
         colorRectContainer.getChildren().add(circle);
 
         final EventHandler<MouseEvent> colorCircleMouseHandler = event -> {
-            double yMouse = event.getY() + colorCircleContainer.getPrefHeight() / 2;
-            double xMouse = event.getX() + colorCircleContainer.getPrefWidth() / 2;
+            double yMouse = event.getY();
+            double xMouse = event.getX();
 
-            double angle = (Math.toDegrees(Math.atan2(yMouse - colorCircleContainer.getPrefHeight() / 2,
-                    colorCircleContainer.getPrefWidth() / 2 - xMouse)) + Constants.RIGHT_ANGLE) % Constants.ROUND_ANGLE;
-            angle = Constants.ROUND_ANGLE - angle;
+            double angle = (Math.toDegrees(Math.atan2(yMouse, xMouse)) + 5 * Constants.RIGHT_ANGLE)
+                    % Constants.ROUND_ANGLE;
             hueValue.set(angle);
 
             rectangleSelector.setY(0);
