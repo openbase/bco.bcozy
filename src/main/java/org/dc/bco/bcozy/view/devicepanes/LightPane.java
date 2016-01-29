@@ -101,11 +101,12 @@ public class LightPane extends UnitPane {
 
     @Override
     protected void initTitle() {
-        lightbulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
-        toggleSwitch.setOnMouseClicked(event -> {
+        toggleSwitch.setMouseTransparent(true);
+        this.setOnMouseClicked(event -> {
             new Thread(new Task() {
                 @Override
                 protected Object call() throws java.lang.Exception {
+                    toggleSwitch.setSelected(!toggleSwitch.isSelected());
                     if (toggleSwitch.isSelected()) {
                         try {
                             lightRemote.setPower(PowerStateType.PowerState.State.ON);
@@ -122,8 +123,9 @@ public class LightPane extends UnitPane {
                     return null;
                 }
             }).start();
-
         });
+
+        lightbulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
 
         headContent.setLeft(lightbulbIcon);
         headContent.setCenter(getUnitLabel());

@@ -103,10 +103,12 @@ public class PowerPlugPane extends UnitPane {
 
     @Override
     protected void initTitle() {
-        toggleSwitch.setOnMouseClicked(event -> {
+        toggleSwitch.setMouseTransparent(true);
+        this.setOnMouseClicked(event -> {
             new Thread(new Task() {
                 @Override
                 protected Object call() throws java.lang.Exception {
+                    toggleSwitch.setSelected(!toggleSwitch.isSelected());
                     if (toggleSwitch.isSelected()) {
                         try {
                             powerPlugRemote.setPower(PowerStateType.PowerState.State.ON);
