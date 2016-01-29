@@ -44,7 +44,7 @@ public class ZonePolygon extends LocationPolygon {
 
     @Override
     protected void setLocationStyle() {
-        this.setFill(Color.TRANSPARENT);
+        this.setMainColor(Constants.ZONE_FILL);
         this.setStroke(Color.WHITE);
         this.setStrokeWidth(Constants.ROOM_STROKE_WIDTH);
         this.setMouseTransparent(true);
@@ -55,5 +55,20 @@ public class ZonePolygon extends LocationPolygon {
         /**
          * No functionality needed here for now.
          */
+    }
+
+    /**
+     * Will be called when either the main or the custom color changes.
+     * The initial values for both colors are Color.TRANSPARENT.
+     * @param mainColor   The main color
+     * @param customColor The custom color
+     */
+    @Override
+    protected void onColorChange(final Color mainColor, final Color customColor) {
+        if (customColor.equals(Color.TRANSPARENT)) {
+            this.setFill(mainColor);
+        } else {
+            this.setFill(mainColor.interpolate(customColor, CUSTOM_COLOR_WEIGHT));
+        }
     }
 }

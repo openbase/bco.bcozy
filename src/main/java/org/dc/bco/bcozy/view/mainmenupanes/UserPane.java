@@ -18,251 +18,97 @@
  */
 package org.dc.bco.bcozy.view.mainmenupanes;
 
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
-import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
+import de.jensd.fx.glyphs.materialicons.MaterialIcon;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import org.dc.bco.bcozy.view.Constants;
-import org.dc.bco.bcozy.view.ObserverButton;
 import org.dc.bco.bcozy.view.ObserverLabel;
 import org.dc.bco.bcozy.view.SVGIcon;
 
 /**
- * Created by hoestreich on 11/24/15.
+ * Created by hoestreich on 1/28/16.
  */
-public class UserPane extends PaneElement {
+public class UserPane extends BorderPane {
 
-    private final Button startLoginBtn;
-    private final ObserverButton loginBtn;
-    private final Button backBtn;
-    private final ObserverButton logoutBtn;
-    private final TextField nameTxt;
-    private final PasswordField passwordField;
-    private final ObserverLabel inputWrongLbl;
-    private final Label loggedInUserLbl;
-    private final VBox loginLayout;
-    private final VBox logoutLayout;
-    private final ObserverLabel nameLbl;
-    private final ObserverLabel pwLbl;
-    private final BorderPane statusIcon;
-    /**
-     * Enum to control the display state.
-     */
-    public enum State { LOGINACTIVE, LOGIN, LOGOUT }
+    private SVGIcon userIcon;
+    private SVGIcon atHomeIcon;
+    private Label userNameLabel;
+    private ObserverLabel userStateLabel;
 
-    /**
-     * Constructor for the UserPane.
-     */
-    public UserPane() {
 
-        // Case: Before login
-        startLoginBtn = new Button("", new SVGIcon(MaterialDesignIcon.LOGIN, Constants.SMALL_ICON, true));
+    public UserPane(final String userName, final boolean guest, final String userState, final boolean atHome) {
+        init(userName, guest, userState, atHome);
+    }
 
-        // Case: Login active
-        nameLbl = new ObserverLabel("username");
-        nameLbl.setAlignment(Pos.BOTTOM_LEFT);
-        nameTxt = new TextField();
-        pwLbl = new ObserverLabel("password");
-        passwordField = new PasswordField();
-        inputWrongLbl = new ObserverLabel("inputWrong");
-        inputWrongLbl.setAlignment(Pos.TOP_LEFT);
-        loginBtn = new ObserverButton("login");
-        final HBox rightAlignLoginButton = new HBox(loginBtn);
-        rightAlignLoginButton.setAlignment(Pos.CENTER_RIGHT);
+    private void init(final String userName, final boolean guest, final String userState, final boolean atHome) {
 
-        backBtn = new Button("", new SVGIcon(FontAwesomeIcon.ARROW_LEFT, Constants.EXTRA_SMALL_ICON, true));
+        userIcon = new SVGIcon(MaterialIcon.PERSON, Constants.MIDDLE_ICON, false);
+        setAtHome(atHome);
 
-        loginLayout = new VBox(Constants.INSETS);
-        final BorderPane loginFirstLineLayout = new BorderPane();
-        loginFirstLineLayout.setLeft(nameLbl);
-        loginFirstLineLayout.setRight(backBtn);
-        loginLayout.getStyleClass().clear();
-        loginLayout.setAlignment(Pos.BOTTOM_LEFT);
-        loginLayout.getChildren().addAll(loginFirstLineLayout, nameTxt, pwLbl, passwordField,
-                rightAlignLoginButton);
+        final GridPane userIconPane = new GridPane();
+        userIconPane.setVgap(Constants.INSETS);
+        userIconPane.setHgap(Constants.INSETS);
+        //CHECKSTYLE.OFF: MagicNumbers
+        userIconPane.add(userIcon, 0, 0, 5, 5);
+        userIconPane.add(atHomeIcon, 4, 4, 1, 1);
+        //CHECKSTYLE.ON: MagicNumbers
 
-        //Case: User logged in
-        logoutLayout = new VBox(Constants.INSETS);
-        final SVGIcon loggedInUserIcon = new SVGIcon(MaterialDesignIcon.ACCOUNT_CIRCLE, Constants.SMALL_ICON, true);
-        loggedInUserLbl = new Label();
-        logoutBtn = new ObserverButton("logout");
-        final HBox rightAlignLogoutButton = new HBox(logoutBtn);
-        rightAlignLogoutButton.setAlignment(Pos.CENTER_RIGHT);
+        userNameLabel = new Label(userName);
+        userNameLabel.getStyleClass().add("bold-label");
+        final ObserverLabel guestLabel = new ObserverLabel("guest");
+        guestLabel.getStyleClass().add("bold-label");
+        if (guest) {
+            guestLabel.setVisible(true);
+        } else {
+            guestLabel.setVisible(false);
+        }
 
-        logoutLayout.getStyleClass().clear();
-        logoutLayout.setAlignment(Pos.TOP_CENTER);
-        logoutLayout.getChildren().addAll(loggedInUserIcon, loggedInUserLbl, rightAlignLogoutButton);
+        final HBox nameAndGuestLayout = new HBox(Constants.INSETS);
+        nameAndGuestLayout.getChildren().addAll(userNameLabel, guestLabel);
+        nameAndGuestLayout.setAlignment(Pos.CENTER);
+        userStateLabel = new ObserverLabel(userState);
 
-        //Setting styles
-        //CHECKSTYLE.OFF: MultipleStringLiterals
-        nameLbl.getStyleClass().clear();
-        nameLbl.getStyleClass().add("small-label");
-        inputWrongLbl.getStyleClass().clear();
-        inputWrongLbl.getStyleClass().add("wrong-input-indicator");
-        pwLbl.getStyleClass().clear();
-        pwLbl.getStyleClass().add("small-label");
-        loginBtn.getStyleClass().clear();
-        loginBtn.getStyleClass().add("transparent-button");
-        logoutBtn.getStyleClass().clear();
-        logoutBtn.getStyleClass().add("transparent-button");
-        //CHECKSTYLE.ON: MultipleStringLiterals
 
-        this.getChildren().addAll(startLoginBtn);
-        this.statusIcon = new BorderPane(new SVGIcon(MaterialDesignIcon.LOGIN, Constants.MIDDLE_ICON, true));
+        final VBox nameAndStateLayout = new VBox(Constants.INSETS / 2);
+        nameAndStateLayout.setAlignment(Pos.CENTER);
+        nameAndStateLayout.getChildren().addAll(nameAndGuestLayout, userStateLabel);
+
+        this.setLeft(userIconPane);
+        this.setCenter(nameAndStateLayout);
     }
 
     /**
-     * Getter for the startLogin button which starts the user login.
-     * @return instance of the button
+     * Sets the at home value of the user.
+     * @param atHome true if at home, false if on the way
      */
-    public Button getStartLoginBtn() {
-        return startLoginBtn;
-    }
-
-    /**
-     * Getter for the login button which initiates the user login.
-     * @return instance of the button
-     */
-    public ObserverButton getLoginBtn() {
-        return loginBtn;
-    }
-
-    /**
-     * Getter for the back button to abort a login.
-     * @return instance of the button
-     */
-    public Button getBackBtn() {
-        return backBtn;
-    }
-
-    /**
-     * Getter for the name textfield.
-     * @return instance of the textfield
-     */
-    public TextField getNameTxt() {
-        return nameTxt;
-    }
-
-    /**
-     * Getter for the passwordfield.
-     * @return instance of the passwordfield
-     */
-    public PasswordField getPasswordField() {
-        return passwordField;
-    }
-
-    /**
-     * Getter for the logoutBtn.
-     * @return instance of the logoutBtn
-     */
-    public ObserverButton getLogoutBtn() {
-        return logoutBtn;
-    }
-
-    /**
-     * Getter for the inputWrongLabel.
-     * @return instance of the inputWrongLbl
-     */
-    public ObserverLabel getInputWrongLbl() {
-        return inputWrongLbl;
-    }
-
-    /**
-     * Getter for the loggedInUserLbl.
-     * @return instance of the loggedInUserLbl
-     */
-    public Label getLoggedInUserLbl() {
-        return loggedInUserLbl;
-    }
-
-    /**
-     * Getter for the pwLbl.
-     * @return instance of the pwLbl
-     */
-    public ObserverLabel getPwLbl() {
-        return pwLbl;
-    }
-
-    /**
-     * Getter for the nameLbl.
-     * @return instance of the nameLbl
-     */
-    public ObserverLabel getNameLbl() {
-        return nameLbl;
-    }
-
-    /**
-     * Change CSS Style to indicate that at least one of the informations
-     * password or the name were wrong.
-     */
-    public void indicateUserOrPasswordWrong() {
-        if (!loginLayout.getChildren().contains(inputWrongLbl)) {
-            passwordField.getStyleClass().add("password-field-wrong");
-            nameTxt.getStyleClass().add("text-field-wrong");
-            loginLayout.getChildren().add(loginLayout.getChildren().size() - 1, inputWrongLbl);
+    public void setAtHome(final boolean atHome) {
+        if (atHome) {
+            atHomeIcon = new SVGIcon(MaterialIcon.HOME, Constants.EXTRA_SMALL_ICON, true);
+            userIcon.setColor(Color.DODGERBLUE);
+        } else {
+            atHomeIcon = new SVGIcon(MaterialIcon.DIRECTIONS_WALK, Constants.EXTRA_SMALL_ICON, true);
+            userIcon.setColor(Color.LIGHTGRAY);
         }
     }
 
     /**
-     * Reset CSS Style if name or password are corrected.
+     * Setter for the userState Label.
+     * @param newUserState must be a string identifier from language properties
      */
-    public void resetUserOrPasswordWrong() {
-        passwordField.getStyleClass().clear();
-        nameTxt.getStyleClass().clear();
-        passwordField.getStyleClass().add("password-field");
-        nameTxt.getStyleClass().add("text-field");
-        if (loginLayout.getChildren().contains(inputWrongLbl)) {
-            loginLayout.getChildren().remove(inputWrongLbl);
-        }
-    }
-
-    @Override
-    public Node getStatusIcon() {
-        return this.statusIcon;
+    public void setUserState(final String newUserState) {
+        userStateLabel.setIdentifier(newUserState);
     }
 
     /**
-     * GUI Method to switch the displayed panes.
-     * @param state A state from the defined Enum
+     * Setter for the user name Label.
+     * @param newUserName a string value for the label text
      */
-    public void setState(final State state) {
-        switch (state) {
-
-            case LOGINACTIVE:
-                this.getChildren().clear();
-                this.getChildren().addAll(loginLayout);
-                this.statusIcon.getChildren().clear();
-                this.statusIcon.setCenter(new SVGIcon(MaterialDesignIcon.LOGIN, Constants.MIDDLE_ICON, true));
-                break;
-
-            case LOGIN:
-                this.getChildren().clear();
-                this.getChildren().addAll(startLoginBtn);
-                this.statusIcon.getChildren();
-                this.statusIcon.setCenter(new SVGIcon(MaterialDesignIcon.LOGIN, Constants.MIDDLE_ICON, true));
-                break;
-
-            case LOGOUT:
-                this.getChildren().clear();
-                this.getChildren().addAll(logoutLayout);
-                this.statusIcon.getChildren();
-                this.statusIcon.setCenter(new SVGIcon(MaterialDesignIcon.LOGOUT, Constants.MIDDLE_ICON, true));
-                break;
-
-            default:
-                this.getChildren().clear();
-                this.getChildren().addAll(startLoginBtn);
-                this.statusIcon.getChildren();
-                this.statusIcon.setCenter(new SVGIcon(MaterialDesignIcon.LOGIN, Constants.SMALL_ICON, true));
-                break;
-
-        }
+    public void setUserName(final String newUserName) {
+        userNameLabel.setText(newUserName);
     }
 }

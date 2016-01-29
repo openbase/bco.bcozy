@@ -43,12 +43,14 @@ public class InfoPane extends BorderPane {
      */
     public InfoPane(final double height, final double width) {
         this.setPrefSize(width, height);
+        this.getStyleClass().add("info-pane");
 
         this.textLabel = new ObserverLabel("initRemotes");
         this.progressIndicator = new ProgressIndicator(-1);
         this.closeButton = new ObserverButton("close");
+        this.closeButton.getStyleClass().add("transparent-button");
 
-        this.centerPane = new VBox();
+        this.centerPane = new VBox(Constants.INSETS);
         this.centerPane.setAlignment(Pos.CENTER);
         this.centerPane.getChildren().addAll(this.textLabel, this.progressIndicator, this.closeButton);
 

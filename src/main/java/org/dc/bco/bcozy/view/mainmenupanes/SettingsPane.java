@@ -24,7 +24,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TitledPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.BorderPane;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.ObserverLabel;
 import org.dc.bco.bcozy.view.SVGIcon;
@@ -56,22 +56,32 @@ public class SettingsPane extends PaneElement {
         statusIcon = new SVGIcon(MaterialIcon.TUNE, Constants.SMALL_ICON, true);
 
         final TitledPane settingsPane = new TitledPane();
+        settingsPane.getStyleClass().add("settings-pane");
         //final HBox settingsHeader = new HBox();
         settingsIcon = new SVGIcon(MaterialIcon.TUNE, Constants.EXTRA_SMALL_ICON, true);
         settingsLbl = new ObserverLabel("settings", settingsIcon);
         //settingsHeader.getChildren().addAll(settingsIcon, settingsLbl);
 
-        final VBox verticalLayout = new VBox();
+        //final VBox verticalLayout = new VBox();
+        final BorderPane verticalLayout = new BorderPane();
+
+        //TODO: Implement Property implementation
+        //JPService.getProperty(JPLanguage.class).getValue();
+
         availableLanguages = FXCollections.observableArrayList("English", "Deutsch");
         languageChoice = new ChoiceBox<>(availableLanguages);
+        languageChoice.setPrefWidth(250);
 
         availableThemes = FXCollections.observableArrayList(
                 languageBundle.getString(Constants.LIGHT_THEME_CSS_NAME),
                 languageBundle.getString(Constants.DARK_THEME_CSS_NAME));
         themeChoice = new ChoiceBox<>(availableThemes);
+        themeChoice.setPrefWidth(250);
 
-        verticalLayout.setFillWidth(true);
-        verticalLayout.getChildren().addAll(languageChoice, themeChoice);
+        //verticalLayout.setFillWidth(true);
+        //verticalLayout.getChildren().addAll(languageChoice, themeChoice);
+        verticalLayout.setTop(languageChoice);
+        verticalLayout.setBottom(themeChoice);
 
         settingsPane.setGraphic(settingsLbl);
         settingsPane.setContent(verticalLayout);

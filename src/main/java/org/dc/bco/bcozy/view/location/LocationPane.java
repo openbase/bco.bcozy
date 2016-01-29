@@ -23,6 +23,7 @@ import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.input.MouseEvent;
@@ -30,6 +31,7 @@ import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.ForegroundPane;
+import org.dc.bco.bcozy.view.SVGIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +43,12 @@ import java.util.Map;
 /**
  *
  */
-public class LocationPane extends Pane {
+public final class LocationPane extends Pane {
+
+    /**
+     * Singleton instance.
+     */
+    private static LocationPane instance;
 
     /**
      * Application logger.
@@ -49,9 +56,10 @@ public class LocationPane extends Pane {
     private static final Logger LOGGER = LoggerFactory.getLogger(LocationPane.class);
 
     private LocationPolygon selectedLocation;
-    private LocationPolygon rootRoom;
+    private ZonePolygon rootRoom;
     private final ForegroundPane foregroundPane;
-    private final Map<String, LocationPolygon> locationMap;
+    private final Map<String, TilePolygon> tileMap;
+    private final Map<String, RegionPolygon> regionMap;
     private final SimpleStringProperty selectedLocationId;
 
     private final Map<String, ConnectionPolygon> connectionMap;
@@ -61,16 +69,17 @@ public class LocationPane extends Pane {
     private final EventHandler<MouseEvent> onEmptyAreaClickHandler;
 
     /**
-     * Constructor for the LocationPane.
+     * Private constructor to deny manual instantiation.
      *
      * @param foregroundPane The foregroundPane
      */
-    public LocationPane(final ForegroundPane foregroundPane) {
+    private LocationPane(final ForegroundPane foregroundPane) {
         super();
 
         this.foregroundPane = foregroundPane;
 
-        locationMap = new HashMap<>();
+        tileMap = new HashMap<>();
+        regionMap = new HashMap<>();
         connectionMap = new HashMap<>();
 
         //Dummy Room
@@ -93,7 +102,7 @@ public class LocationPane extends Pane {
                     this.autoFocusPolygonAnimated(rootRoom);
                 }
 
-                foregroundPane.getContextMenu().getRoomInfo().setText(selectedLocation.getLocationLabel());
+                foregroundPane.getContextMenu().getRoomInfo().setText(selectedLocation.getLabel());
             }
         };
 
@@ -108,6 +117,34 @@ public class LocationPane extends Pane {
         this.foregroundPane.getMainMenuWidthProperty().addListener((observable, oldValue, newValue) ->
                 this.setTranslateX(this.getTranslateX()
                         - ((oldValue.doubleValue() - newValue.doubleValue()) / 2)));
+    }
+
+    /**
+     * Singleton Pattern. This method call can not be used to instantiate the singleton.
+     * @return the singleton instance of the location pane
+     * @throws InstantiationException thrown if no getInstance(ForegroundPane foregroundPane) is called before
+     */
+    public static LocationPane getInstance() throws InstantiationException {
+        synchronized (LocationPane.class) {
+            if (LocationPane.instance == null) {
+                throw new InstantiationException();
+            }
+        }
+        return LocationPane.instance;
+    }
+
+    /**
+     * Singleton Pattern.
+     * @return the singleton instance of the location pane
+     * @param foregroundPane the foreground pane needed for instantiation
+     */
+    public static LocationPane getInstance(final ForegroundPane foregroundPane) {
+        synchronized (LocationPane.class) {
+            if (LocationPane.instance == null) {
+                LocationPane.instance = new LocationPane(foregroundPane);
+            }
+        }
+        return LocationPane.instance;
     }
 
     /**
@@ -137,23 +174,24 @@ public class LocationPane extends Pane {
             case "TILE":
                 locationPolygon = new TilePolygon(locationLabel, locationId, childIds, points);
                 addMouseEventHandlerToTile((TilePolygon) locationPolygon);
+                tileMap.put(locationId, (TilePolygon) locationPolygon);
                 break;
             case "REGION":
                 locationPolygon = new RegionPolygon(locationLabel, locationId, childIds, points);
                 addMouseEventHandlerToRegion((RegionPolygon) locationPolygon);
+                regionMap.put(locationId, (RegionPolygon) locationPolygon);
                 break;
             case "ZONE":
                 locationPolygon = new ZonePolygon(locationLabel, locationId, childIds, points);
-                rootRoom = locationPolygon; //TODO: handle the situation where several zones exist
+                rootRoom = (ZonePolygon) locationPolygon; //TODO: handle the situation where several zones exist
                 break;
             default:
                 LOGGER.warn("The following location has an unknown LocationType and will be ignored:"
                         + "\n  location UUID:  " + locationId
                         + "\n  location Label: " + locationLabel
                         + "\n  location Type:  " + locationType);
-                return;
+                break;
         }
-        locationMap.put(locationId, locationPolygon);
     }
 
     /**
@@ -201,8 +239,8 @@ public class LocationPane extends Pane {
         connectionMap.put(connectionId, connectionPolygon);
 
         locationIds.forEach(locationId -> {
-            if (locationMap.containsKey(locationId)) {
-                final LocationPolygon locationPolygon = locationMap.get(locationId);
+            if (tileMap.containsKey(locationId)) {
+                final LocationPolygon locationPolygon = tileMap.get(locationId);
                 locationPolygon.addCuttingShape(connectionPolygon);
             } else {
                 LOGGER.error("Location ID \"" + locationId + "\" can not be found in the location Map. "
@@ -212,11 +250,28 @@ public class LocationPane extends Pane {
     }
 
     /**
+     * Will add a UnitIcon to the locationPane.
+     * @param svgIcon The icon
+     * @param onActionHandler The Handler that gets activated when the button is pressed
+     * @param position The position where the button is to be placed
+     */
+    public void addUnit(SVGIcon svgIcon, EventHandler<ActionEvent> onActionHandler, Point2D position) {
+        UnitButton unitButton = new UnitButton(svgIcon, onActionHandler);
+        unitButton.setTranslateX(position.getX());
+        unitButton.setTranslateY(position.getY());
+        this.getChildren().add(unitButton);
+    }
+
+    /**
      * Erases all locations from the locationPane.
      */
     public void clearLocations() {
-        locationMap.forEach((locationId, locationPolygon) -> this.getChildren().remove(locationPolygon));
-        locationMap.clear();
+        tileMap.forEach((locationId, locationPolygon) -> this.getChildren().remove(locationPolygon));
+        tileMap.clear();
+
+        regionMap.forEach((locationId, locationPolygon) -> this.getChildren().remove(locationPolygon));
+        regionMap.clear();
+
         rootRoom = null;
     }
 
@@ -230,11 +285,29 @@ public class LocationPane extends Pane {
 
     /**
      * Will clear everything on the location Pane and then add everything that is saved in the maps.
+     * Also adds a cutting shape for every Polygon to the root.
      */
     public void updateLocationPane() {
         this.getChildren().clear();
-        locationMap.forEach((locationId, locationPolygon) -> this.getChildren().add(locationPolygon));
-        connectionMap.forEach((connectionId, connectionPolygon) -> this.getChildren().add(connectionPolygon));
+
+        tileMap.forEach((locationId, locationPolygon) -> {
+            rootRoom.addCuttingShape(locationPolygon);
+            this.getChildren().add(locationPolygon);
+        });
+
+        regionMap.forEach((locationId, locationPolygon) -> {
+            rootRoom.addCuttingShape(locationPolygon);
+            this.getChildren().add(locationPolygon);
+        });
+
+        connectionMap.forEach((connectionId, connectionPolygon) -> {
+            rootRoom.addCuttingShape(connectionPolygon);
+            this.getChildren().add(connectionPolygon);
+        });
+
+        if (rootRoom != null) {
+            this.getChildren().add(rootRoom);
+        }
     }
 
     /**
@@ -258,7 +331,7 @@ public class LocationPane extends Pane {
         tile.setOnMouseEntered(event -> {
             event.consume();
             tile.mouseEntered();
-            foregroundPane.getInfoFooter().getMouseOverText().setText(tile.getLocationLabel());
+            foregroundPane.getInfoFooter().getMouseOverText().setText(tile.getLabel());
         });
         tile.setOnMouseExited(event -> {
             event.consume();
@@ -292,7 +365,7 @@ public class LocationPane extends Pane {
         region.setOnMouseEntered(event -> {
             event.consume();
             region.mouseEntered();
-            foregroundPane.getInfoFooter().getMouseOverText().setText(region.getLocationLabel());
+            foregroundPane.getInfoFooter().getMouseOverText().setText(region.getLabel());
         });
         region.setOnMouseExited(event -> {
             event.consume();
@@ -305,32 +378,32 @@ public class LocationPane extends Pane {
         if (!this.selectedLocation.equals(newSelectedLocation)) {
             if (!newSelectedLocation.getClass().equals(RegionPolygon.class)) {
                 this.lastSelectedTile.getChildIds().forEach(childId ->
-                        ((RegionPolygon) locationMap.get(childId)).changeStyleOnSelectable(false));
+                        (regionMap.get(childId)).changeStyleOnSelectable(false));
             }
 
             if (newSelectedLocation.getClass().equals(TilePolygon.class)) {
                 this.lastSelectedTile = newSelectedLocation;
                 newSelectedLocation.getChildIds().forEach(childId ->
-                        ((RegionPolygon) locationMap.get(childId)).changeStyleOnSelectable(true));
+                        (regionMap.get(childId)).changeStyleOnSelectable(true));
             }
 
             this.selectedLocation.setSelected(false);
             newSelectedLocation.setSelected(true);
             this.selectedLocation = newSelectedLocation;
-            this.selectedLocationId.set(newSelectedLocation.getLocationId());
+            this.selectedLocationId.set(newSelectedLocation.getUuid());
 
-            foregroundPane.getContextMenu().getRoomInfo().setText(selectedLocation.getLocationLabel());
+            foregroundPane.getContextMenu().getRoomInfo().setText(selectedLocation.getLabel());
         }
     }
 
     /**
-     * ZoomFits to the root if available. Otherwise to the first location in the locationMap.
+     * ZoomFits to the root if available. Otherwise to the first location in the tileMap.
      */
     public void zoomFit() {
         if (rootRoom != null) { //NOPMD
             autoFocusPolygon(rootRoom);
-        } else if (!locationMap.isEmpty()) {
-            autoFocusPolygon(locationMap.values().iterator().next());
+        } else if (!tileMap.isEmpty()) {
+            autoFocusPolygon(tileMap.values().iterator().next());
         }
     }
 

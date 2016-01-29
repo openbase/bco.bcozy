@@ -19,13 +19,8 @@
 package org.dc.bco.bcozy;
 
 import com.guigarage.responsive.ResponsiveHandler;
-import javafx.concurrent.Task;
-import org.dc.bco.bcozy.view.InfoPane;
-import org.dc.jps.core.JPService;
-import org.dc.jps.preset.JPDebugMode;
-import org.dc.jul.exception.printer.ExceptionPrinter;
-import org.dc.jul.exception.printer.LogLevel;
 import javafx.application.Application;
+import javafx.concurrent.Task;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Screen;
@@ -35,10 +30,17 @@ import org.dc.bco.bcozy.controller.ContextMenuController;
 import org.dc.bco.bcozy.controller.LocationController;
 import org.dc.bco.bcozy.controller.MainMenuController;
 import org.dc.bco.bcozy.controller.RemotePool;
+import org.dc.bco.bcozy.jp.JPLanguage;
 import org.dc.bco.bcozy.view.BackgroundPane;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.ForegroundPane;
 import org.dc.bco.bcozy.view.ImageViewProvider;
+import org.dc.bco.bcozy.view.InfoPane;
+import org.dc.jps.core.JPService;
+import org.dc.jps.exception.JPNotAvailableException;
+import org.dc.jps.preset.JPDebugMode;
+import org.dc.jul.exception.printer.ExceptionPrinter;
+import org.dc.jul.exception.printer.LogLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,6 +66,7 @@ public class BCozy extends Application {
     private RemotePool remotePool;
     private ContextMenuController contextMenuController;
     private LocationController locationController;
+    private Thread initThread;
 
     /**
      * Main Method starting JavaFX Environment.
@@ -78,6 +81,7 @@ public class BCozy extends Application {
         /* Setup JPService */
         JPService.setApplicationName(APP_NAME);
         JPService.registerProperty(JPDebugMode.class);
+        JPService.registerProperty(JPLanguage.class);
 
         try {
             JPService.parseAndExitOnError(args);
@@ -131,40 +135,56 @@ public class BCozy extends Application {
         //instantiate LocationController
         locationController = new LocationController(foregroundPane, backgroundPane.getLocationPane(), remotePool);
 
-        this.initRemotesAndLocation();
+        try {
+            if (JPService.getProperty(JPDebugMode.class).getValue()) {
+                infoPane.setVisible(false);
+            } else {
+                this.initRemotesAndLocation();
+            }
+        } catch (JPNotAvailableException e) {
+            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+            this.initRemotesAndLocation();
+        }
     }
 
     private void initRemotesAndLocation() {
-        new Thread(new Task() {
+         initThread = new Thread(new Task() {
             @Override
             protected Object call() throws java.lang.Exception {
                 infoPane.setTextLabelIdentifier("initRemotes");
                 remotePool.initRegistryRemotes();
 
-                if (!Constants.DEBUG) {
-                    infoPane.setTextLabelIdentifier("fillDeviceAndLocationMap");
-                    remotePool.fillDeviceAndLocationMap();
+                infoPane.setTextLabelIdentifier("fillDeviceAndLocationMap");
+                remotePool.fillDeviceAndLocationMap();
 
-
-                    infoPane.setTextLabelIdentifier("fillContextMenu");
-                    contextMenuController.initTitledPaneMap();
-                }
+                infoPane.setTextLabelIdentifier("fillContextMenu");
+                contextMenuController.initTitledPaneMap();
 
                 infoPane.setTextLabelIdentifier("connectLocationRemote");
                 locationController.connectLocationRemote();
 
                 return null;
             }
+
             @Override
             protected void succeeded() {
                 super.succeeded();
                 infoPane.setVisible(false);
             }
-        }).start();
+        });
+        initThread.start();
     }
 
     @Override
     public void stop() {
+        if (initThread != null && initThread.isAlive()) {
+            initThread.interrupt();
+            try {
+                initThread.join();
+            } catch (InterruptedException e) {
+                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+            }
+        }
         try {
             super.stop();
         } catch (Exception e) { //NOPMD
@@ -199,27 +219,41 @@ public class BCozy extends Application {
             }
         }
     }
+
     private static void registerListeners() {
         LOGGER.info("Executing Registration of Listeners");
         ResponsiveHandler.setOnDeviceTypeChanged((over, oldDeviceType, newDeviceType) -> {
             switch (newDeviceType) {
-                case LARGE      : adjustToLargeDevice();        break;
-                case MEDIUM     : adjustToMediumDevice();       break;
-                case SMALL      : adjustToSmallDevice();        break;
-                case EXTRA_SMALL: adjustToExtremeSmallDevice(); break;
-                default : break;
+                case LARGE:
+                    adjustToLargeDevice();
+                    break;
+                case MEDIUM:
+                    adjustToMediumDevice();
+                    break;
+                case SMALL:
+                    adjustToSmallDevice();
+                    break;
+                case EXTRA_SMALL:
+                    adjustToExtremeSmallDevice();
+                    break;
+                default:
+                    break;
             }
         });
     }
+
     private static void adjustToLargeDevice() {
         LOGGER.info("Detected Large Device");
     }
+
     private static void adjustToMediumDevice() {
         LOGGER.info("Detected Medium Device");
     }
+
     private static void adjustToSmallDevice() {
         LOGGER.info("Detected Small Device");
     }
+
     private static void adjustToExtremeSmallDevice() {
         LOGGER.info("Detected Extreme Small Device");
     }

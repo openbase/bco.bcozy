@@ -5,6 +5,7 @@
     -small-label-color: lightgray;
 
     -bg-color: rgba(0.0, 0.0, 0.0, 0.9);
+    -bg-color-transparent: rgba(0.0, 0.0, 0.0, 0.2);
     -bg-accent-color: lightgray;
     -controls-color: rgba(255.0, 255.0, 255.0, 0.9);
     -highlight-color: rgba(94.0, 203.0, 234.0, 1.0);
@@ -16,6 +17,12 @@
     -flat-button-text-color: dodgerblue;
     -devider-color: lightgray;
     -icons-color: white;
+    -flat-button-hover-color: linear-gradient(from 50% 10% to 50% 90%,
+        transparent
+        transparent,
+        rgba(30,144,255, 0.4),
+        transparent);
+    -button-hover-color: darkgray /*radial-gradient(center 50% 50%, radius 50%, rgba(180,180,180, 0.8), transparent)*/;
 
     -fx-background-color: -bg-color;
 
@@ -133,6 +140,11 @@
 .button:default:armed {
     -fx-background-color: derive(-highlight-color, -20.0%);
 }
+
+.toggle-switch .thumb {
+    -fx-background-color: -bg-color;
+}
+
 .toggle-switch .thumb-area{
     -fx-background-color: -off-indicator;
 }
@@ -143,6 +155,10 @@
 .transparent-button {
     -fx-background-color: transparent;
     -fx-text-fill: -flat-button-text-color;
+}
+
+.transparent-button:hover {
+    -fx-background-color: -flat-button-hover-color;
 }
 
 /*******************************************************************************
@@ -282,11 +298,18 @@
 
 .choice-box {
     -fx-background-color: -bg-color;
-    -fx-border-color: -border-color;
-    -fx-border-width: 1.0;
+    -fx-border-color:
+            transparent
+            transparent
+            -border-color
+            transparent;
 }
 .choice-box > .open-button {
     -fx-background-color: -bg-color;
+}
+
+.choice-box .context-menu {
+    -fx-background-color: derive(-bg-color, 70%);
 }
 
 .radio-menu-item:checked > .left-container > .radio,
@@ -377,15 +400,18 @@
 }
 
 .progress-bar > .bar {
-    -fx-background-color: linear-gradient(
-            from 0px .75em to .75em 0px,
-            repeat,
-            slategrey 0%,
-            slategrey 49%,
-            derive(slategrey, 30%) 50%,
-            derive(slategrey, 30%) 99%
-    );
+    /* barrier tape style*/
+    /*-fx-background-color: linear-gradient(*/
+    /*from 0px .75em to .75em 0px,*/
+    /*repeat,*/
+    /*slategrey 0%,*/
+    /*slategrey 49%,*/
+    /*derive(slategrey, 30%) 50%,*/
+    /*derive(slategrey, 30%) 99%*/
+    /*);*/
+    -fx-background-color: slategray;
 }
+
 
 /*******************************************************************************
  *                                                                             *
@@ -415,18 +441,20 @@
  *                                                                             *
  ******************************************************************************/
 
-.titled-pane .widget-pane > .title > .arrow-button .arrow {
-    visibility: hidden;
-}
-
 .titled-pane > .title {
     -fx-background-color: -bg-color;
-    -fx-border-color: -border-color;
-    -fx-border-width: 1.0;
 }
 
 .titled-pane > .content {
     -fx-background-color: -bg-color;
+}
+
+.titled-pane > .title > .arrow-button .arrow {
+    -fx-background-color: derive(-fx-text-fill, 70%);
+}
+.titled-pane:focused > .title > .arrow-button .arrow {
+    -fx-effect: none;
+    -fx-background-color: derive(-fx-text-fill, 70%);
 }
 
 /*******************************************************************************
@@ -438,20 +466,11 @@
 .body-pane {
     -fx-text-fill: -fx-text-base-color;
     -fx-background-color: -bg-color;
-    /*-fx-background-color:*/
-            /*-fx-box-border, linear-gradient(to bottom, derive(-fx-color,-02%), derive(-fx-color,65%) 12%,*/
-            /*derive(-fx-color,23%) 88%, derive(-fx-color,50%) 99%, -fx-box-border);*/
-    -fx-border-color:
-            transparent
-            transparent
-            -border-color
-            transparent;
 }
 
 .head-pane {
     -fx-text-fill: -fx-text-base-color;
     -fx-background-color: -bg-color;
-    /*-fx-background-color: -fx-box-border, -fx-inner-border, -fx-body-color;*/
     -fx-border-color:
             transparent
             transparent
@@ -459,7 +478,15 @@
             transparent;
 }
 
+.head-pane:hover {
+    -fx-background-color: -button-hover-color;
+}
+
 
 .background-pane {
-    -fx-background-color: radial-gradient(radius 100%, red, darkgray, black);
+    -fx-background-color: radial-gradient(center 50% 50%, radius 100%, derive(rgb(0.8, 0.8, 0.8), 90%), rgb(0.8, 0.8, 0.8));
+}
+
+.info-pane {
+    -fx-background-color: -bg-color-transparent;
 }

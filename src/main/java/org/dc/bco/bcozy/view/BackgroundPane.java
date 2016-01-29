@@ -37,17 +37,10 @@ public class BackgroundPane extends StackPane {
      * @param foregroundPane The foregroundPane
      */
     public BackgroundPane(final ForegroundPane foregroundPane) {
-        locationPane = new LocationPane(foregroundPane);
+        locationPane = LocationPane.getInstance(foregroundPane);
+
         this.getChildren().add(locationPane);
         this.getStyleClass().add("background-pane");
-
-//        final BackgroundImage backgroundImage = new BackgroundImage(
-//                new Image("backgrounds/blueprint.jpg"),
-//                BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
-//                BackgroundSize.DEFAULT);
-//        this.setBackground(new Background(backgroundImage));
-        //this.setBackground(new Background(new BackgroundFill(Constants.BACKGROUND_COLOR, null, null)));
-
 
         this.setOnMousePressed(event -> {
             this.prevMouseCordX = event.getX();

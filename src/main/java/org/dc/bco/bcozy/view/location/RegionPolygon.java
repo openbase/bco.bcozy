@@ -47,7 +47,7 @@ public class RegionPolygon extends LocationPolygon {
 
     @Override
     protected void setLocationStyle() {
-        this.setFill(Constants.REGION_FILL);
+        this.setMainColor(Constants.REGION_FILL);
         this.setStroke(Color.WHITE);
         this.setStrokeWidth(0);
         this.setMouseTransparent(true);
@@ -56,9 +56,9 @@ public class RegionPolygon extends LocationPolygon {
     @Override
     protected void changeStyleOnSelection(final boolean selected) {
         if (selected) {
-            this.setFill(Constants.TILE_SELECTION);
+            this.setMainColor(Constants.TILE_SELECTION);
         } else {
-            this.setFill(Constants.REGION_FILL);
+            this.setMainColor(Constants.REGION_FILL);
         }
     }
 
@@ -78,6 +78,21 @@ public class RegionPolygon extends LocationPolygon {
             this.getStrokeDashArray().clear();
             this.setStrokeWidth(0.0);
             this.setMouseTransparent(true);
+        }
+    }
+
+    /**
+     * Will be called when either the main or the custom color changes.
+     * The initial values for both colors are Color.TRANSPARENT.
+     * @param mainColor   The main color
+     * @param customColor The custom color
+     */
+    @Override
+    protected void onColorChange(final Color mainColor, final Color customColor) {
+        if (customColor.equals(Color.TRANSPARENT)) {
+            this.setFill(mainColor);
+        } else {
+            this.setFill(mainColor.interpolate(customColor, CUSTOM_COLOR_WEIGHT));
         }
     }
 

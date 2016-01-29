@@ -19,11 +19,6 @@
 
 package org.dc.bco.bcozy.controller;
 
-import org.dc.bco.dal.remote.unit.DALRemoteService;
-import org.dc.bco.registry.location.remote.LocationRegistryRemote;
-import org.dc.jul.exception.CouldNotPerformException;
-import org.dc.jul.exception.printer.ExceptionPrinter;
-import org.dc.jul.exception.printer.LogLevel;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -31,13 +26,17 @@ import javafx.event.EventHandler;
 import org.dc.bco.bcozy.view.ForegroundPane;
 import org.dc.bco.bcozy.view.devicepanes.TitledPaneContainer;
 import org.dc.bco.bcozy.view.location.LocationPane;
+import org.dc.bco.dal.remote.unit.DALRemoteService;
+import org.dc.bco.registry.location.remote.LocationRegistryRemote;
+import org.dc.jul.exception.CouldNotPerformException;
+import org.dc.jul.exception.printer.ExceptionPrinter;
+import org.dc.jul.exception.printer.LogLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.homeautomation.unit.UnitTemplateType.UnitTemplate.UnitType;
-import rst.spatial.LocationConfigType;
+import rst.spatial.LocationConfigType.LocationConfig;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -48,7 +47,6 @@ public class ContextMenuController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ContextMenuController.class);
 
     private final ForegroundPane foregroundPane;
-    private final LocationPane backgroundPane;
     private final RemotePool remotePool;
     private final Map<String, TitledPaneContainer> titledPaneMap;
 
@@ -61,7 +59,6 @@ public class ContextMenuController {
     public ContextMenuController(final ForegroundPane foregroundPane, final LocationPane backgroundPane,
                                  final RemotePool remotePool) {
         this.foregroundPane = foregroundPane;
-        this.backgroundPane = backgroundPane;
         this.remotePool = remotePool;
         this.titledPaneMap = new HashMap<>();
 
@@ -69,14 +66,14 @@ public class ContextMenuController {
             @Override
             public void handle(final ActionEvent event) {
                 try {
-                    setContextMenuDevicePanes("81b9efa4-2dc9-432e-b47c-1d73021ff0f3");
+                    setContextMenuDevicePanes("511adfec-43ed-47f5-bd4d-28f46dc1b5a4");
                 } catch (CouldNotPerformException e) {
                     ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
                 }
             }
         });
 
-        this.backgroundPane.addSelectedLocationIdListener(new ChangeListener<String>() {
+        backgroundPane.addSelectedLocationIdListener(new ChangeListener<String>() {
             @Override
             public void changed(final ObservableValue<? extends String> observable, final String oldValue,
                                 final String newValue) {
@@ -120,25 +117,18 @@ public class ContextMenuController {
         final Map<UnitType, List<DALRemoteService>> unitRemoteMap =
                 remotePool.getUnitRemoteMapOfLocation(locationID);
 
-        final Iterator<Map.Entry<UnitType, List<DALRemoteService>>> entryIterator =
-                unitRemoteMap.entrySet().iterator();
-
-        while (entryIterator.hasNext()) {
-            final Map.Entry<UnitType, List<DALRemoteService>> nextEntry = entryIterator.next();
-
+        for (final Map.Entry<UnitType, List<DALRemoteService>> nextEntry : unitRemoteMap.entrySet()) {
             titledPaneContainer.createAndAddNewTitledPane(nextEntry.getKey(), nextEntry.getValue());
         }
+
+        titledPaneContainer.addDummyPane(); //TODO: Find a way to solve this problem properly...
     }
 
     /**
      * Clears all stored titledPanes and clears the map afterwards.
      */
     public void clearTitledPaneMap() {
-        final Iterator<Map.Entry<String, TitledPaneContainer>> titledPaneIterator =
-                this.titledPaneMap.entrySet().iterator();
-
-        while (titledPaneIterator.hasNext()) {
-            final Map.Entry<String, TitledPaneContainer> nextEntry = titledPaneIterator.next();
+        for (final Map.Entry<String, TitledPaneContainer> nextEntry : this.titledPaneMap.entrySet()) {
             nextEntry.getValue().clearTitledPane();
         }
 
@@ -153,12 +143,7 @@ public class ContextMenuController {
     public void initTitledPaneMap() throws CouldNotPerformException {
         final LocationRegistryRemote locationRegistryRemote = this.remotePool.getLocationRegistryRemote();
 
-        final Iterator<LocationConfigType.LocationConfig> locationConfigIterator =
-                locationRegistryRemote.getLocationConfigs().iterator();
-
-        while (locationConfigIterator.hasNext()) {
-            final LocationConfigType.LocationConfig locationConfig = locationConfigIterator.next();
-
+        for (final LocationConfig locationConfig : locationRegistryRemote.getLocationConfigs()) {
             final String locationID = locationConfig.getId();
 
             final TitledPaneContainer titledPaneContainer = new TitledPaneContainer();

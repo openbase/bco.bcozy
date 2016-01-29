@@ -18,49 +18,48 @@
  */
 package org.dc.bco.bcozy.view.devicepanes;
 
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.materialicons.MaterialIcon;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.SVGIcon;
-import org.dc.bco.dal.remote.unit.BrightnessSensorRemote;
 import org.dc.bco.dal.remote.unit.DALRemoteService;
+import org.dc.bco.dal.remote.unit.MotionSensorRemote;
 import org.dc.jul.exception.CouldNotPerformException;
 import org.dc.jul.exception.printer.ExceptionPrinter;
 import org.dc.jul.exception.printer.LogLevel;
 import org.dc.jul.pattern.Observable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.homeautomation.unit.BrightnessSensorType.BrightnessSensor;
+import rst.homeautomation.state.MotionStateType.MotionState.State;
+import rst.homeautomation.unit.MotionSensorType.MotionSensor;
 
 /**
  * Created by timo on 15.01.16.
  */
-public class BrightnessSensorPane extends UnitPane {
+public class MotionSensorPane extends UnitPane {
     private static final Logger LOGGER = LoggerFactory.getLogger(BatteryPane.class);
 
-    private final BrightnessSensorRemote brightnessSensorRemote;
-    private final SVGIcon brightnessIcon;
-    private final Text brightnessStatus;
-    private final GridPane iconPane;
+    private final MotionSensorRemote motionSensorRemote;
+    private final SVGIcon motionIcon;
+    private final SVGIcon backgroundIcon;
+    private final StackPane iconPane;
     private final BorderPane headContent;
 
     /**
      * Constructor for the BatteryPane.
-     * @param brightnessSensorRemote brightnessSensorRemote
+     * @param brightnessSensorRemote motionSensorRemote
      */
-    public BrightnessSensorPane(final DALRemoteService brightnessSensorRemote) {
-        this.brightnessSensorRemote = (BrightnessSensorRemote) brightnessSensorRemote;
+    public MotionSensorPane(final DALRemoteService brightnessSensorRemote) {
+        this.motionSensorRemote = (MotionSensorRemote) brightnessSensorRemote;
 
         headContent = new BorderPane();
-        brightnessIcon = new SVGIcon(FontAwesomeIcon.CIRCLE, FontAwesomeIcon.CIRCLE_THIN,
-                Constants.SMALL_ICON);
-        brightnessStatus = new Text();
-        iconPane = new GridPane();
+        motionIcon = new SVGIcon(MaterialIcon.BLUR_ON, MaterialIcon.PANORAMA_FISH_EYE, Constants.SMALL_ICON);
+        backgroundIcon = new SVGIcon(MaterialIcon.LENS, Constants.SMALL_ICON, false);
+        iconPane = new StackPane();
 
         initUnitLabel();
         initTitle();
@@ -69,41 +68,35 @@ public class BrightnessSensorPane extends UnitPane {
 
         initEffect();
 
-        this.brightnessSensorRemote.addObserver(this);
+        this.motionSensorRemote.addObserver(this);
     }
 
     private void initEffect() {
-        double brightnessLevel = 0;
+        State motionState = State.UNKNOWN;
 
         try {
-            brightnessLevel = brightnessSensorRemote.getBrightness();
+            motionState = motionSensorRemote.getMotion().getValue();
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
-        setBrightnessLevelTextAndIcon(brightnessLevel);
+        setMotionStateIcon(motionState);
     }
 
-    private void setBrightnessLevelTextAndIcon(final double brightnessLevel) {
-        if (brightnessLevel <= Constants.BRIGHTNESS_MAXIMUM) {
-            this.brightnessIcon.setBackgroundIconColorAnimated(
-                    new Color(brightnessLevel / Constants.BRIGHTNESS_MAXIMUM,
-                            brightnessLevel / Constants.BRIGHTNESS_MAXIMUM, 0, 1));
+    private void setMotionStateIcon(final State motionState) {
+        if (motionState.equals(State.MOVEMENT)) {
+            motionIcon.setBackgroundIconColorAnimated(Color.WHITE);
+        } else if (motionState.equals(State.UNKNOWN)) {
+            motionIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
         } else {
-            this.brightnessIcon.setBackgroundIconColorAnimated(new Color(1, 1, 1, 1));
+            motionIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
         }
-
-        this.brightnessStatus.setText((int) brightnessLevel + "lx");
     }
 
     @Override
     protected void initTitle() {
-        brightnessStatus.getStyleClass().add(Constants.ICONS_CSS_STRING);
+        backgroundIcon.setColor(Color.BLACK);
 
-        brightnessIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
-
-        iconPane.add(brightnessIcon, 0, 0);
-        iconPane.add(brightnessStatus, 1, 0);
-        iconPane.setHgap(Constants.INSETS);
+        iconPane.getChildren().addAll(backgroundIcon, motionIcon);
 
         headContent.setLeft(iconPane);
         headContent.setCenter(getUnitLabel());
@@ -121,7 +114,7 @@ public class BrightnessSensorPane extends UnitPane {
     protected void initUnitLabel() {
         String unitLabel = Constants.UNKNOWN_ID;
         try {
-            unitLabel = this.brightnessSensorRemote.getData().getLabel();
+            unitLabel = this.motionSensorRemote.getData().getLabel();
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
@@ -130,19 +123,19 @@ public class BrightnessSensorPane extends UnitPane {
 
     @Override
     public DALRemoteService getDALRemoteService() {
-        return brightnessSensorRemote;
+        return motionSensorRemote;
     }
 
     @Override
     void removeObserver() {
-        this.brightnessSensorRemote.removeObserver(this);
+        this.motionSensorRemote.removeObserver(this);
     }
 
     @Override
-    public void update(final Observable observable, final Object brightnessSensor) throws java.lang.Exception {
+    public void update(final Observable observable, final Object motionSensor) throws java.lang.Exception {
         Platform.runLater(() -> {
-            final double brightnessLevel = ((BrightnessSensor) brightnessSensor).getBrightness();
-            setBrightnessLevelTextAndIcon(brightnessLevel);
+            final State motionState = ((MotionSensor) motionSensor).getMotionState().getValue();
+            setMotionStateIcon(motionState);
         });
     }
 }

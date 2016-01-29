@@ -19,23 +19,23 @@
 package org.dc.bco.bcozy.view.devicepanes;
 
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
+import javafx.application.Platform;
+import javafx.geometry.Pos;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import org.dc.bco.dal.remote.unit.DALRemoteService;
+import org.dc.bco.bcozy.view.Constants;
+import org.dc.bco.bcozy.view.SVGIcon;
 import org.dc.bco.dal.remote.unit.BatteryRemote;
+import org.dc.bco.dal.remote.unit.DALRemoteService;
 import org.dc.jul.exception.CouldNotPerformException;
 import org.dc.jul.exception.printer.ExceptionPrinter;
 import org.dc.jul.exception.printer.LogLevel;
 import org.dc.jul.pattern.Observable;
-import javafx.application.Platform;
-import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.paint.Color;
-import org.dc.bco.bcozy.view.Constants;
-import org.dc.bco.bcozy.view.SVGIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.homeautomation.state.BatteryStateType;
+import rst.homeautomation.state.BatteryStateType.BatteryState.State;
 import rst.homeautomation.unit.BatteryType.Battery;
 
 /**
@@ -63,89 +63,35 @@ public class BatteryPane extends UnitPane {
         batteryStatus = new Text();
         iconPane = new GridPane();
 
-        try {
-            super.setUnitLabel(this.batteryRemote.getData().getLabel());
-        } catch (CouldNotPerformException e) {
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-            super.setUnitLabel("UnknownID");
-        }
-
+        initUnitLabel();
         initTitle();
         initContent();
         createWidgetPane(headContent);
 
-        try {
-            initEffect();
-        } catch (CouldNotPerformException e) {
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-        }
+        initEffect();
 
         this.batteryRemote.addObserver(this);
     }
 
-    private void initEffect() throws CouldNotPerformException {
-        final double batteryLevel = batteryRemote.getBattery().getLevel();
-        setStatusBatteryIcon(batteryLevel);
+    private void initEffect() {
+        double batteryLevel = 0.0;
+        State batteryState = State.UNKNOWN;
 
-        final BatteryStateType.BatteryState.State batteryState =
-                batteryRemote.getBattery().getValue();
+        try {
+            batteryLevel = batteryRemote.getBattery().getLevel();
+            batteryState = batteryRemote.getBattery().getValue();
+        } catch (CouldNotPerformException e) {
+            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+        }
+        setStatusBatteryIcon(batteryLevel);
         setBatteryStateColorAndIcon(batteryState);
     }
 
-    /**
-     * Method creates the header content of the widgetPane.
-     */
-
-    @Override
-    protected void initTitle() {
-        batteryIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
-
-        iconPane.add(batteryIcon, 0, 0);
-        iconPane.add(batteryStatus, 1, 0);
-
-        headContent.setLeft(iconPane);
-        headContent.setCenter(new Label(super.getUnitLabel()));
-        //Padding values are not available here
-        headContent.prefHeightProperty().set(iconPane.getHeight() + Constants.INSETS);
-    }
-
-    /**
-     * Method creates the body content of the widgetPane.
-     */
-    @Override
-    protected void initContent() {
-        //No body content.
-    }
-
-    @Override
-    public DALRemoteService getDALRemoteService() {
-        return batteryRemote;
-    }
-
-    @Override
-    void removeObserver() {
-        this.batteryRemote.removeObserver(this);
-    }
-
-    @Override
-    public void update(final Observable observable, final Object battery) throws java.lang.Exception {
-        Platform.runLater(() -> {
-            final double batteryLevel = ((Battery) battery).getBatteryState().getLevel();
-            setStatusBatteryIcon(batteryLevel);
-
-
-            batteryIcon.setForegroundIconColorAnimated(Color.BLACK);
-            final BatteryStateType.BatteryState.State batteryState =
-                    ((Battery) battery).getBatteryState().getValue();
-            setBatteryStateColorAndIcon(batteryState);
-        });
-    }
-
-    private void setBatteryStateColorAndIcon(final BatteryStateType.BatteryState.State batteryState) {
+    private void setBatteryStateColorAndIcon(final State batteryState) {
         switch (batteryState) {
             case UNKNOWN:
                 batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_UNKNOWN);
-                batteryIcon.setBackgroundIconColorAnimated(Color.YELLOW);
+                batteryIcon.setBackgroundIconColorAnimated(Color.BLACK);
                 break;
             case OK:
                 batteryIcon.setBackgroundIconColorAnimated(Color.GREEN);
@@ -185,5 +131,59 @@ public class BatteryPane extends UnitPane {
         }
         //CHECKSTYLE.ON: MagicNumber
         //CHECKSTYLE.ON: EmptyBlock
+    }
+
+    @Override
+    protected void initTitle() {
+        batteryStatus.getStyleClass().add(Constants.ICONS_CSS_STRING);
+
+        batteryIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
+
+        iconPane.add(batteryIcon, 0, 0);
+        iconPane.add(batteryStatus, 1, 0);
+
+        headContent.setLeft(iconPane);
+        headContent.setCenter(getUnitLabel());
+        headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
+        //Padding values are not available here
+        headContent.prefHeightProperty().set(iconPane.getHeight() + Constants.INSETS);
+    }
+
+    @Override
+    protected void initContent() {
+        //No body content.
+    }
+
+    @Override
+    protected void initUnitLabel() {
+        String unitLabel = Constants.UNKNOWN_ID;
+        try {
+            unitLabel = this.batteryRemote.getData().getLabel();
+        } catch (CouldNotPerformException e) {
+            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+        }
+        setUnitLabelString(unitLabel);
+    }
+
+    @Override
+    public DALRemoteService getDALRemoteService() {
+        return batteryRemote;
+    }
+
+    @Override
+    void removeObserver() {
+        this.batteryRemote.removeObserver(this);
+    }
+
+    @Override
+    public void update(final Observable observable, final Object battery) throws java.lang.Exception {
+        Platform.runLater(() -> {
+            final double batteryLevel = ((Battery) battery).getBatteryState().getLevel();
+            setStatusBatteryIcon(batteryLevel);
+
+            final State batteryState =
+                    ((Battery) battery).getBatteryState().getValue();
+            setBatteryStateColorAndIcon(batteryState);
+        });
     }
 }

@@ -19,114 +19,54 @@
 package org.dc.bco.bcozy.view.location;
 
 import javafx.collections.ObservableList;
-import javafx.scene.shape.Polygon;
-import org.dc.bco.bcozy.view.Constants;
 
 /**
  * A Polygon that represents different kinds of connections.
  */
-public abstract class ConnectionPolygon extends Polygon {
+public abstract class ConnectionPolygon extends AbstractPolygon {
 
     private boolean open;
-    private final double centerX;
-    private final double centerY;
-    private final String connectionLabel;
-    private final String connectionId;
 
+    private final double minX;
+    private final double maxX;
+    private final double minY;
+    private final double maxY;
     private final boolean horizontal;
-
 
     /**
      * Constructor for the ConnectionPolygon.
-     *
      * @param connectionLabel The name of the location
      * @param connectionId    The ID of the location
      * @param points          Points for the shape
      */
     public ConnectionPolygon(final String connectionLabel, final String connectionId, final double... points) {
-        super(points);
-        this.centerX = (super.getLayoutBounds().getMaxX() + super.getLayoutBounds().getMinX()) / 2;
-        this.centerY = (super.getLayoutBounds().getMaxY() + super.getLayoutBounds().getMinY()) / 2;
-        this.connectionLabel = connectionLabel;
-        this.connectionId = connectionId;
+        super(connectionLabel, connectionId, points);
         this.open = false;
 
         final ObservableList<Double> pointList = super.getPoints();
 
-        double minX = Double.MAX_VALUE;
-        double maxX = Double.MIN_VALUE;
-        double minY = Double.MAX_VALUE;
-        double maxY = Double.MIN_VALUE;
+        double tempMinX = Double.MAX_VALUE;
+        double tempMaxX = Double.MIN_VALUE;
+        double tempMinY = Double.MAX_VALUE;
+        double tempMaxY = Double.MIN_VALUE;
 
         for (int i = 0; i < pointList.size(); i = i + 2) {
-            minX = pointList.get(i) < minX ? pointList.get(i) : minX;
-            maxX = pointList.get(i) > maxX ? pointList.get(i) : maxX;
+            tempMinX = pointList.get(i) < tempMinX ? pointList.get(i) : tempMinX;
+            tempMaxX = pointList.get(i) > tempMaxX ? pointList.get(i) : tempMaxX;
         }
 
         for (int i = 1; i < pointList.size(); i = i + 2) {
-            minY = pointList.get(i) < minY ? pointList.get(i) : minY;
-            maxY = pointList.get(i) > maxY ? pointList.get(i) : maxY;
+            tempMinY = pointList.get(i) < tempMinY ? pointList.get(i) : tempMinY;
+            tempMaxY = pointList.get(i) > tempMaxY ? pointList.get(i) : tempMaxY;
         }
 
+        minX = tempMinX;
+        maxX = tempMaxX;
+        minY = tempMinY;
+        maxY = tempMaxY;
         this.horizontal = (maxX - minX > maxY - minY);
 
-        if (this.horizontal) {
-            for (int i = 1; i < pointList.size(); i = i + 2) {
-                if (pointList.get(i) == minY) {
-                    pointList.set(i, minY - Constants.ROOM_STROKE_WIDTH / 2);
-                } else {
-                    pointList.set(i, maxY + Constants.ROOM_STROKE_WIDTH / 2);
-                }
-            }
-        } else {
-            for (int i = 0; i < pointList.size(); i = i + 2) {
-                if (pointList.get(i) == minX) {
-                    pointList.set(i, minX - Constants.ROOM_STROKE_WIDTH / 2);
-                } else {
-                    pointList.set(i, maxX + Constants.ROOM_STROKE_WIDTH / 2);
-                }
-            }
-        }
-
-        //TODO: Size need to be raised somehow to fully overlap room walls
-
         this.setConnectionStyle();
-    }
-
-    /**
-     * Getter method for the X Coordinate of the center.
-     *
-     * @return x center as a double value
-     */
-    public double getCenterX() {
-        return centerX;
-    }
-
-    /**
-     * Getter method for the Y Coordinate of the center.
-     *
-     * @return y center as a double value
-     */
-    public double getCenterY() {
-        return centerY;
-    }
-
-    /**
-     * Getter for the connection label.
-     *
-     * @return the label as a String
-     */
-    public String getLocationLabel() {
-        return connectionLabel;
-    }
-
-    /**
-     * Getter for the connection id.
-     *
-     * @return the id as a String
-     */
-    public String getLocationId() {
-        return connectionId;
     }
 
     /**
@@ -143,9 +83,54 @@ public abstract class ConnectionPolygon extends Polygon {
      *
      * @param open as a boolean value
      */
-    public void setSelected(final boolean open) {
+    public void setOpen(final boolean open) {
         this.open = open;
         this.changeStyleOnOpening(open);
+    }
+
+    /**
+     * Getter method for the minX value.
+     *
+     * @return minX
+     */
+    protected double getMinX() {
+        return minX;
+    }
+
+    /**
+     * Getter method for the maxX value.
+     *
+     * @return maxX
+     */
+    protected double getMaxX() {
+        return maxX;
+    }
+
+    /**
+     * Getter method for the minY value.
+     *
+     * @return minY
+     */
+    protected double getMinY() {
+        return minY;
+    }
+
+    /**
+     * Getter method for the maxY value.
+     *
+     * @return maxY
+     */
+    protected double getMaxY() {
+        return maxY;
+    }
+
+    /**
+     * Getter method for the horizontal value.
+     *
+     * @return horizontal as a boolean value
+     */
+    protected boolean isHorizontal() {
+        return horizontal;
     }
 
     /**

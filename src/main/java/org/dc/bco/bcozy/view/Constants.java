@@ -198,17 +198,27 @@ public final class Constants {
     /**
      * The color for a region.
      */
-    public static final Color REGION_FILL = new Color(1.0, 1.0, 1.0, 0.08);
+    public static final Color REGION_FILL = new Color(1.0, 1.0, 1.0, 0.04);
 
     /**
      * The color for a door.
      */
-    public static final Color DOOR_FILL = new Color(1.0, 1.0, 1.0, 0.12);
+    public static final Color PASSAGE_FILL = new Color(1.0, 1.0, 1.0, 0.05);
+
+    /**
+     * The color for a zone.
+     */
+    public static final Color ZONE_FILL = new Color(1.0, 1.0, 1.0, 0.25);
+
+    /**
+     * The color for a door.
+     */
+    public static final Color WINDOW_EFFECT = new Color(1.0, 1.0, 1.0, 0.40);
 
     /**
      * The background color.
      */
-    public static final Color BACKGROUND_COLOR = new Color(0.2, 0.2, 0.2, 1.0);
+    public static final Color BACKGROUND_COLOR = new Color(0.25, 0.25, 0.25, 1.0);
 
     /**
      * The width of the zoomPane in the locationPane.
@@ -273,7 +283,7 @@ public final class Constants {
     /**
      * Full circle angle in degree.
      */
-    public static final int ROUND_ANGLE = 360;
+    public static final double ROUND_ANGLE = 360.0;
 
     /**
      * Obtuse angle (270) in degree.
@@ -318,7 +328,7 @@ public final class Constants {
     /**
      * Step value of rollerShutterPane.
      */
-    public static final double ROLLERSHUTTER_STEP = 0.05;
+    public static final double ROLLERSHUTTER_STEP = 0.01;
 
     /**
      * Max value of open ratio @ rollerShutterPane.
@@ -326,9 +336,61 @@ public final class Constants {
     public static final double ROLLERSHUTTER_MAX_VALUE = 1.0;
 
     /**
-     * Debug flag.
+     * Timeout value in milliseconds for fetching transformations.
      */
-    public static final boolean DEBUG = false;
+    public static final long TRANSFORMATION_TIMEOUT = 1000;
+
+    /**
+     * String for CSS styling of icons.
+     */
+    public static final String ICONS_CSS_STRING = "icons";
+
+    /**
+     * text: "UnknownID".
+     */
+    public static final String UNKNOWN_ID = "UnknownID";
+
+    /**
+     * The minimal temperatur for fading.
+     * Has to be >= 0.
+     */
+    public static final double TEMPERATUR_FADING_MINIMUM = 10.0;
+
+    /**
+     * The maximal temperatur for fading.
+     * Has to be > TEMPERATUR_FADING_MINIMUM.
+     */
+    public static final double TEMPERATUR_FADING_MAXIMUM = 25.0;
+
+    /**
+     * Thin stroke.
+     */
+    public static final double THIN_STROKE = 0.5;
+
+    /**
+     * Normal stroke.
+     */
+    public static final double NORMAL_STROKE = 1.5;
+
+    /**
+     * Highest Brightness for fading.
+     */
+    public static final double BRIGHTNESS_MAXIMUM = 3000;
+
+    /**
+     * Milliseconds timeout for threads.
+     */
+    public static final int THREAD_MILLI_TIMEOUT = 500;
+
+    /**
+     * text: "°C".
+     */
+    public static final String CELSIUS = "°C";
+
+    /**
+     * Scale Factor for Weather Icons (necessary to get constant size)
+     */
+    public static final double WEATHER_ICONS_SCALE = 0.681;
 
     /**
      * Private Constructor.

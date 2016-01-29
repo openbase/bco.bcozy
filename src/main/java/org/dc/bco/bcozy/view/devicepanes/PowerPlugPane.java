@@ -18,22 +18,22 @@
  */
 package org.dc.bco.bcozy.view.devicepanes;
 
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import javafx.application.Platform;
 import javafx.concurrent.Task;
+import javafx.geometry.Pos;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
+import org.controlsfx.control.ToggleSwitch;
+import org.dc.bco.bcozy.view.Constants;
+import org.dc.bco.bcozy.view.SVGIcon;
 import org.dc.bco.dal.remote.unit.DALRemoteService;
 import org.dc.bco.dal.remote.unit.PowerPlugRemote;
 import org.dc.jul.exception.CouldNotPerformException;
 import org.dc.jul.exception.printer.ExceptionPrinter;
 import org.dc.jul.exception.printer.LogLevel;
 import org.dc.jul.pattern.Observable;
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
-import javafx.application.Platform;
-import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.paint.Color;
-import org.controlsfx.control.ToggleSwitch;
-import org.dc.bco.bcozy.view.Constants;
-import org.dc.bco.bcozy.view.SVGIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.homeautomation.state.PowerStateType;
@@ -66,52 +66,49 @@ public class PowerPlugPane extends UnitPane {
         powerStatusIcon = new SVGIcon(FontAwesomeIcon.BOLT, Constants.EXTRA_SMALL_ICON, false);
         iconPane = new GridPane();
 
-        try {
-            super.setUnitLabel(this.powerPlugRemote.getLatestValue().getLabel());
-        } catch (CouldNotPerformException e) {
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-            super.setUnitLabel("UnknownID");
-        }
-
+        initUnitLabel();
         initTitle();
         initContent();
         createWidgetPane(headContent);
 
-        try {
-            initEffectAndSwitch();
-        } catch (CouldNotPerformException e) {
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-        }
+        initEffectAndSwitch();
 
         this.powerPlugRemote.addObserver(this);
     }
 
-    private void initEffectAndSwitch() throws CouldNotPerformException {
-        if (powerPlugRemote.getPower().getValue().equals(State.ON)) {
-            powerStatusIcon.setForegroundIconColorAnimated(Color.LIMEGREEN);
+    private void initEffectAndSwitch() {
+        State powerState = State.OFF;
 
+        try {
+            powerState = powerPlugRemote.getPower().getValue();
+        } catch (CouldNotPerformException e) {
+            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+        }
+        setPowerStateSwitchAndIcon(powerState);
+    }
+
+    private void setPowerStateSwitchAndIcon(final State powerState) {
+        if (powerState.equals(State.ON)) {
+            powerStatusIcon.setColor(Color.YELLOW, Color.BLACK, Constants.THIN_STROKE);
             if (!toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(true);
             }
-        } else if (powerPlugRemote.getPower().getValue().equals(State.OFF)) {
-            powerStatusIcon.setForegroundIconColorAnimated(Color.TRANSPARENT);
-
+        } else {
+            powerStatusIcon.setColor(Color.TRANSPARENT);
             if (toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(false);
             }
         }
     }
 
-    /**
-     * Method creates the header content of the widgetPane.
-     */
     @Override
     protected void initTitle() {
-        powerStatusIcon.setForegroundIconColorAnimated(Color.TRANSPARENT);
-        toggleSwitch.setOnMouseClicked(event -> {
+        toggleSwitch.setMouseTransparent(true);
+        this.setOnMouseClicked(event -> {
             new Thread(new Task() {
                 @Override
                 protected Object call() throws java.lang.Exception {
+                    toggleSwitch.setSelected(!toggleSwitch.isSelected());
                     if (toggleSwitch.isSelected()) {
                         try {
                             powerPlugRemote.setPower(PowerStateType.PowerState.State.ON);
@@ -128,7 +125,6 @@ public class PowerPlugPane extends UnitPane {
                     return null;
                 }
             }).start();
-
         });
 
         //CHECKSTYLE.OFF: MagicNumber
@@ -137,18 +133,27 @@ public class PowerPlugPane extends UnitPane {
         //CHECKSTYLE.ON: MagicNumber
 
         headContent.setLeft(iconPane);
-        headContent.setCenter(new Label(super.getUnitLabel()));
+        headContent.setCenter(getUnitLabel());
+        headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
         headContent.setRight(toggleSwitch);
         //Padding values are not available here
         headContent.prefHeightProperty().set(iconPane.getHeight() + Constants.INSETS);
     }
 
-    /**
-     * Method creates the body content of the widgetPane.
-     */
     @Override
     protected void initContent() {
         //No body content.
+    }
+
+    @Override
+    protected void initUnitLabel() {
+        String unitLabel = Constants.UNKNOWN_ID;
+        try {
+            unitLabel = this.powerPlugRemote.getData().getLabel();
+        } catch (CouldNotPerformException e) {
+            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+        }
+        setUnitLabelString(unitLabel);
     }
 
     @Override
@@ -164,17 +169,8 @@ public class PowerPlugPane extends UnitPane {
     @Override
     public void update(final Observable observable, final Object powerPlug) throws java.lang.Exception {
         Platform.runLater(() -> {
-            if (((PowerPlug) powerPlug).getPowerState().getValue().equals(State.ON)) {
-                powerStatusIcon.setForegroundIconColorAnimated(Color.LIMEGREEN);
-                if (!toggleSwitch.isSelected()) {
-                    toggleSwitch.setSelected(true);
-                }
-            } else {
-                powerStatusIcon.setForegroundIconColorAnimated(Color.TRANSPARENT);
-                if (toggleSwitch.isSelected()) {
-                    toggleSwitch.setSelected(false);
-                }
-            }
+            final State powerState = ((PowerPlug) powerPlug).getPowerState().getValue();
+            setPowerStateSwitchAndIcon(powerState);
         });
     }
 }

@@ -18,36 +18,33 @@
  */
 package org.dc.bco.bcozy.controller; //NOPMD
 
-import org.dc.bco.dal.remote.unit.DALRemoteService;
-import org.dc.bco.dal.remote.unit.UnitRemoteFactory;
-import org.dc.bco.dal.remote.unit.UnitRemoteFactoryInterface;
-import org.dc.bco.registry.device.remote.DeviceRegistryRemote;
-import org.dc.jul.exception.CouldNotPerformException;
-import org.dc.jul.exception.printer.ExceptionPrinter;
-import org.dc.jul.exception.printer.LogLevel;
-import org.dc.bco.registry.location.remote.LocationRegistryRemote;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.ProgressIndicator;
 import org.dc.bco.bcozy.view.ForegroundPane;
+import org.dc.bco.dal.remote.unit.DALRemoteService;
+import org.dc.bco.dal.remote.unit.UnitRemoteFactory;
+import org.dc.bco.dal.remote.unit.UnitRemoteFactoryInterface;
+import org.dc.bco.registry.device.remote.DeviceRegistryRemote;
+import org.dc.bco.registry.location.remote.LocationRegistryRemote;
+import org.dc.jul.exception.CouldNotPerformException;
+import org.dc.jul.exception.printer.ExceptionPrinter;
+import org.dc.jul.exception.printer.LogLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rct.TransformReceiver;
 import rct.TransformerFactory;
-import rst.homeautomation.unit.UnitConfigType;
-import rst.spatial.LocationConfigType;
+import rst.homeautomation.unit.UnitConfigType.UnitConfig;
 import rst.homeautomation.unit.UnitTemplateType.UnitTemplate.UnitType;
+import rst.spatial.LocationConfigType.LocationConfig;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.TreeMap;
-
 
 
 /**
@@ -56,8 +53,6 @@ import java.util.TreeMap;
 public class RemotePool {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RemotePool.class);
-
-    private final ForegroundPane foregroundPane;
 
     private final Map<String, DALRemoteService> deviceMap;
     private final Map<String, Map<String, DALRemoteService>> locationMap;
@@ -74,9 +69,7 @@ public class RemotePool {
      * @param foregroundPane ForegroundPane
      */
     public RemotePool(final ForegroundPane foregroundPane) {
-        this.foregroundPane = foregroundPane;
-
-        this.foregroundPane.getMainMenu().addInitRemoteButtonEventHandler(new EventHandler<ActionEvent>() {
+        foregroundPane.getMainMenu().addInitRemoteButtonEventHandler(new EventHandler<ActionEvent>() {
             @Override
             public void handle(final ActionEvent event) {
                 final Task task = new Task() {
@@ -98,16 +91,15 @@ public class RemotePool {
                     @Override
                     protected void succeeded() {
                         super.succeeded();
-                        Platform.runLater(() -> {
-                            foregroundPane.getContextMenu().getChildren().remove(progressIndicator);
-                        });
+                        Platform.runLater(() ->
+                                foregroundPane.getContextMenu().getChildren().remove(progressIndicator));
                     }
                 };
                 new Thread(task).start();
             }
         });
 
-        this.foregroundPane.getMainMenu().addFillHashesButtonEventHandler(new EventHandler<ActionEvent>() {
+        foregroundPane.getMainMenu().addFillHashesButtonEventHandler(new EventHandler<ActionEvent>() {
             @Override
             public void handle(final ActionEvent event) {
                 final Task task = new Task() {
@@ -129,9 +121,8 @@ public class RemotePool {
                     @Override
                     protected void succeeded() {
                         super.succeeded();
-                        Platform.runLater(() -> {
-                            foregroundPane.getContextMenu().getChildren().remove(progressIndicator);
-                        });
+                        Platform.runLater(() ->
+                                foregroundPane.getContextMenu().getChildren().remove(progressIndicator));
                     }
                 };
                 new Thread(task).start();
@@ -193,7 +184,6 @@ public class RemotePool {
     /**
      * Fills the device and the location hashmap with all remotes. All remotes will be initialized and activated.
      * @throws CouldNotPerformException CouldNotPerformException
-     * @throws InterruptedException InterruptedException
      */
     public void fillDeviceAndLocationMap() throws CouldNotPerformException {
         checkInit();
@@ -202,23 +192,15 @@ public class RemotePool {
         }
         fillDeviceMap();
 
-        final ListIterator<LocationConfigType.LocationConfig> locationConfigListIterator =
-                locationRegistryRemote.getLocationConfigs().listIterator();
-
-        while (locationConfigListIterator.hasNext()) {
-            final LocationConfigType.LocationConfig currentLocationConfig = locationConfigListIterator.next();
+        for (final LocationConfig currentLocationConfig : locationRegistryRemote.getLocationConfigs()) {
             LOGGER.info("INFO: Room: " + currentLocationConfig.getId());
 
-            final ListIterator<String> unitIDStringListIterator = currentLocationConfig.getUnitIdList().listIterator();
-
-            while (unitIDStringListIterator.hasNext()) {
-                final String unitId = unitIDStringListIterator.next();
-
+            for (final String unitId : currentLocationConfig.getUnitIdList()) {
                 LOGGER.info("INFO: Unit: " + unitId);
 
-                final DALRemoteService currentDalRemoteService = deviceMap.get(unitId);
+                if (deviceMap.containsKey(unitId)) {
+                    final DALRemoteService currentDalRemoteService = deviceMap.get(unitId);
 
-                if (currentDalRemoteService != null) {
                     if (!locationMap.containsKey(currentLocationConfig.getId())) {
                         locationMap.put(currentLocationConfig.getId(), new TreeMap<>());
                     }
@@ -232,11 +214,9 @@ public class RemotePool {
 
     private void fillDeviceMap() throws CouldNotPerformException {
         final UnitRemoteFactoryInterface unitRemoteFactoryInterface = UnitRemoteFactory.getInstance();
-        final Iterator<UnitConfigType.UnitConfig> unitConfigIterator = deviceRegistryRemote.getUnitConfigs().iterator();
 
-        while (unitConfigIterator.hasNext()) {
-            final UnitConfigType.UnitConfig currentUnitConfig = unitConfigIterator.next();
-            DALRemoteService currentDalRemoteService = null;
+        for (final UnitConfig currentUnitConfig : deviceRegistryRemote.getUnitConfigs()) {
+            DALRemoteService currentDalRemoteService;
 
             try {
                 currentDalRemoteService = unitRemoteFactoryInterface.createAndInitUnitRemote(currentUnitConfig);
@@ -300,11 +280,9 @@ public class RemotePool {
         checkInit();
 
         final List<Remote> unitRemoteList = new ArrayList<>();
-        final Iterator<Map.Entry<String, DALRemoteService>> unitIterator =
-                deviceMap.entrySet().iterator();
 
-        while (unitIterator.hasNext()) {
-            final DALRemoteService currentDalRemoteService = unitIterator.next().getValue();
+        for (final Map.Entry<String, DALRemoteService> stringDALRemoteServiceEntry : deviceMap.entrySet()) {
+            final DALRemoteService currentDalRemoteService = stringDALRemoteServiceEntry.getValue();
             if (currentDalRemoteService.getClass().equals(remoteClass)) {
                 unitRemoteList.add((Remote) currentDalRemoteService);
             }
@@ -324,13 +302,13 @@ public class RemotePool {
         checkInit();
 
         final List<DALRemoteService> unitRemoteList = new ArrayList<>();
-        final Map<String, DALRemoteService> unitRemoteHashOfLocation = locationMap.get(locationId);
 
-        final Iterator<Map.Entry<String, DALRemoteService>> unitIterator =
-                unitRemoteHashOfLocation.entrySet().iterator();
-        while (unitIterator.hasNext()) {
-            final Map.Entry<String, DALRemoteService> currentEntry = unitIterator.next();
-            unitRemoteList.add(currentEntry.getValue());
+        if (locationMap.containsKey(locationId)) {
+            final Map<String, DALRemoteService> unitRemoteHashOfLocation = locationMap.get(locationId);
+
+            for (final Map.Entry<String, DALRemoteService> currentEntry : unitRemoteHashOfLocation.entrySet()) {
+                unitRemoteList.add(currentEntry.getValue());
+            }
         }
 
         return unitRemoteList;
@@ -376,17 +354,15 @@ public class RemotePool {
         checkInit();
 
         final List<Remote> unitRemoteList = new ArrayList<>();
-        final Map<String, DALRemoteService> unitRemoteHashOfLocation = locationMap.get(locationId);
+        if (locationMap.containsKey(locationId)) {
+            final Map<String, DALRemoteService> unitRemoteHashOfLocation = locationMap.get(locationId);
 
-        final Iterator<Map.Entry<String, DALRemoteService>> unitIterator =
-                unitRemoteHashOfLocation.entrySet().iterator();
-        while (unitIterator.hasNext()) {
-            final Map.Entry<String, DALRemoteService> currentEntry = unitIterator.next();
-            if (currentEntry.getValue().getClass() == remoteClass) {
-                unitRemoteList.add((Remote) currentEntry.getValue());
+            for (final Map.Entry<String, DALRemoteService> currentEntry : unitRemoteHashOfLocation.entrySet()) {
+                if (currentEntry.getValue().getClass() == remoteClass) {
+                    unitRemoteList.add((Remote) currentEntry.getValue());
+                }
             }
         }
-
         return unitRemoteList;
     }
 
@@ -405,9 +381,8 @@ public class RemotePool {
      * Shut down all DALRemotes.
      */
     public void shutdownDALRemotes() {
-        final Iterator<Map.Entry<String, DALRemoteService>> unitIterator = deviceMap.entrySet().iterator();
-        while (unitIterator.hasNext()) {
-            final DALRemoteService remote = unitIterator.next().getValue();
+        for (final Map.Entry<String, DALRemoteService> stringDALRemoteServiceEntry : deviceMap.entrySet()) {
+            final DALRemoteService remote = stringDALRemoteServiceEntry.getValue();
             remote.shutdown();
         }
     }
@@ -418,9 +393,8 @@ public class RemotePool {
     public void shutdownAllRemotes() {
         //TODO: somehow not shutting down properly?!
 
-        final Iterator<Map.Entry<String, DALRemoteService>> unitIterator = deviceMap.entrySet().iterator();
-        while (unitIterator.hasNext()) {
-            final DALRemoteService remote = unitIterator.next().getValue();
+        for (final Map.Entry<String, DALRemoteService> stringDALRemoteServiceEntry : deviceMap.entrySet()) {
+            final DALRemoteService remote = stringDALRemoteServiceEntry.getValue();
             remote.shutdown();
         }
 

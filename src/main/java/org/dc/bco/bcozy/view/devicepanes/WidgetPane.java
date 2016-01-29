@@ -51,6 +51,7 @@ public class WidgetPane extends VBox {
 
     /**
      * Method creates a sliding widget pane, which includes a header(listener) and a body(sliding) with content.
+     *
      * @param headContent Content of the header.
      * @param bodyContent Content of the sliding body.
      */
@@ -76,6 +77,7 @@ public class WidgetPane extends VBox {
 
     /**
      * Method creates a sliding widget pane, which includes a header(listener) and a body(sliding) with content.
+     *
      * @param headContent Content of the header.
      */
     public void createWidgetPane(final BorderPane headContent) {
@@ -86,6 +88,7 @@ public class WidgetPane extends VBox {
 
     /**
      * Method adds style and listener to the head content and integrates it to the ground pane.
+     *
      * @param headContent Content of the header.
      */
     private void headPart(final BorderPane headContent) {
@@ -99,6 +102,7 @@ public class WidgetPane extends VBox {
 
     /**
      * Method adds style to the body content and integrates it to the ground pane.
+     *
      * @param bodyContent Content of the sliding body.
      */
     private void bodyPart(final Pane bodyContent) {
@@ -163,6 +167,20 @@ public class WidgetPane extends VBox {
         final KeyFrame kfUp = new KeyFrame(Duration.millis(Constants.ANIMATION_TIME), kvUp1, kvUp2, kvUp3,
                 kvUp4, kvUp5, kvUp6);
         timelineUp.getKeyFrames().add(kfUp);
+    }
+
+    /**
+     * Enables or disables the Widgetpane.
+     *
+     * @param disabled disabled
+     */
+    public void setWidgetPaneDisable(final boolean disabled) {
+        if (disabled) {
+            this.setDisable(true);
+            this.isExpanded.set(false);
+        } else {
+            this.setDisable(false);
+        }
     }
 }
 

@@ -19,7 +19,6 @@
 package org.dc.bco.bcozy.view.location;
 
 import javafx.scene.shape.Path;
-import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Shape;
 
 import java.util.List;
@@ -27,16 +26,12 @@ import java.util.List;
 /**
  *  A Polygon that represents different kinds of locations.
  */
-public abstract class LocationPolygon extends Polygon {
+public abstract class LocationPolygon extends AbstractPolygon {
 
     private boolean selected;
-    private final double centerX;
-    private final double centerY;
-    private final String locationLabel;
-    private final String locationId;
-    private final List<String> childIds;
     private Shape cuttingShape;
 
+    private final List<String> childIds;
 
     /**
      * Constructor for the LocationPolygon.
@@ -47,49 +42,12 @@ public abstract class LocationPolygon extends Polygon {
      */
     public LocationPolygon(final String locationLabel, final String locationId,
                            final List<String> childIds, final double... points) {
-        super(points);
-        this.centerX = (super.getLayoutBounds().getMaxX() + super.getLayoutBounds().getMinX()) / 2;
-        this.centerY = (super.getLayoutBounds().getMaxY() + super.getLayoutBounds().getMinY()) / 2;
-        this.locationLabel = locationLabel;
-        this.locationId = locationId;
+        super(locationLabel, locationId, points);
         this.childIds = childIds;
         this.selected = false;
         this.cuttingShape = this;
 
-
         this.setLocationStyle();
-    }
-
-    /**
-     * Getter method for the X Coordinate of the center.
-     * @return x center as a double value
-     */
-    public double getCenterX() {
-        return centerX;
-    }
-
-    /**
-     * Getter method for the Y Coordinate of the center.
-     * @return y center as a double value
-     */
-    public double getCenterY() {
-        return centerY;
-    }
-
-    /**
-     * Getter for the location label.
-     * @return the label as a String
-     */
-    public String getLocationLabel() {
-        return locationLabel;
-    }
-
-    /**
-     * Getter for the location id.
-     * @return the id as a String
-     */
-    public String getLocationId() {
-        return locationId;
     }
 
     /**

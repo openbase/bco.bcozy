@@ -19,6 +19,9 @@
 package org.dc.bco.bcozy.model;
 
 
+import org.dc.bco.bcozy.jp.JPLanguage;
+import org.dc.jps.core.JPService;
+
 import java.util.Locale;
 import java.util.Observable;
 

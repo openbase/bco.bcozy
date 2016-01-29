@@ -30,7 +30,6 @@ import javafx.scene.text.Text;
  */
 public class SVGIcon extends StackPane {
 
-    private static final String ICONS_CSS_STRING = "icons";
     private Text backgroundIcon;
     private Text backgroundFadeIcon;
     private Text foregroundIcon; //NOPMD
@@ -56,8 +55,8 @@ public class SVGIcon extends StackPane {
         backgroundIcon = null;
         backgroundFadeIcon = null;
         if (styled) {
-            foregroundIcon.getStyleClass().add(ICONS_CSS_STRING);
-            foregroundFadeIcon.getStyleClass().add(ICONS_CSS_STRING);
+            foregroundIcon.getStyleClass().add(Constants.ICONS_CSS_STRING);
+            foregroundFadeIcon.getStyleClass().add(Constants.ICONS_CSS_STRING);
         }
         this.getChildren().addAll(foregroundIcon, foregroundFadeIcon);
     }
@@ -79,11 +78,11 @@ public class SVGIcon extends StackPane {
         this.foregroundIcon = createIcon(foregroundIcon, String.valueOf(size));
         this.foregroundIcon.setSmooth(true);
         this.foregroundIcon.getStyleClass().clear();
-        this.foregroundIcon.getStyleClass().add(ICONS_CSS_STRING);
+        this.foregroundIcon.getStyleClass().add(Constants.ICONS_CSS_STRING);
         this.foregroundFadeIcon = createIcon(foregroundIcon, String.valueOf(size));
         this.foregroundFadeIcon.setSmooth(true);
         this.foregroundFadeIcon.getStyleClass().clear();
-        this.foregroundFadeIcon.getStyleClass().add(ICONS_CSS_STRING);
+        this.foregroundFadeIcon.getStyleClass().add(Constants.ICONS_CSS_STRING);
         this.foregroundFadeIcon.setOpacity(Constants.FULLY_TRANSPARENT);
 
         this.getChildren().addAll(this.backgroundIcon, this.backgroundFadeIcon, this.foregroundIcon,
@@ -140,6 +139,20 @@ public class SVGIcon extends StackPane {
      */
     public void setColor(final Color color) {
         foregroundIcon.setFill(color);
+        foregroundIcon.setStroke(Color.TRANSPARENT);
+        foregroundIcon.setStrokeWidth(0);
+    }
+
+    /**
+     * Method sets the icon color and a stroke with a given color and width.
+     * @param color color for the foregroundIcon icon to be set
+     * @param outline color for the stroke
+     * @param width width of the stroke
+     */
+    public void setColor(final Color color, final Color outline, final double width) {
+        foregroundIcon.setFill(color);
+        foregroundIcon.setStroke(outline);
+        foregroundIcon.setStrokeWidth(width);
     }
 
     private void setAnimatedColor(final Text node, final Color color) {
