@@ -61,8 +61,10 @@ public class TemperatureSensorPane extends UnitPane {
     public TemperatureSensorPane(final DALRemoteService temperatureSensorRemote) {
         this.temperatureSensorRemote = (TemperatureSensorRemote) temperatureSensorRemote;
 
-        thermometerIconBackground = new SVGIcon(WeatherIcon.THERMOMETER_EXTERIOR, Constants.SMALL_ICON, true);
-        thermometerIconForeground = new SVGIcon(WeatherIcon.THERMOMETER_INTERNAL, Constants.SMALL_ICON, false);
+        thermometerIconBackground = new SVGIcon(WeatherIcon.THERMOMETER_EXTERIOR,
+                Constants.SMALL_ICON * Constants.WEATHER_ICONS_SCALE, true);
+        thermometerIconForeground = new SVGIcon(WeatherIcon.THERMOMETER_INTERNAL,
+                Constants.SMALL_ICON * Constants.WEATHER_ICONS_SCALE, false);
         alarmIcon = new SVGIcon(FontAwesomeIcon.EXCLAMATION_TRIANGLE, Constants.SMALL_ICON, false);
         temperatureStatus = new Text();
         iconPane = new GridPane();
@@ -143,7 +145,7 @@ public class TemperatureSensorPane extends UnitPane {
         headContent.setCenter(getUnitLabel());
         headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
         headContent.setRight(alarmIcon);
-        headContent.prefHeightProperty().set(Constants.SMALL_ICON + Constants.INSETS);
+        headContent.prefHeightProperty().set(thermometerIconBackground.getSize() + Constants.INSETS);
     }
 
     @Override
