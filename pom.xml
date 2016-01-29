@@ -125,6 +125,11 @@
             <version>${dependency.jul.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.dc</groupId>
+            <artifactId>jul.schedule</artifactId>
+            <version>${dependency.jul.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.dc.bco</groupId>
             <artifactId>dal.remote</artifactId>
             <version>${dependency.bco.dal.version}</version>
