@@ -24,7 +24,6 @@ import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -38,6 +37,7 @@ import org.dc.jul.exception.CouldNotPerformException;
 import org.dc.jul.exception.printer.ExceptionPrinter;
 import org.dc.jul.exception.printer.LogLevel;
 import org.dc.jul.pattern.Observable;
+import org.dc.jul.schedule.RecurrenceEventFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.homeautomation.unit.TemperatureControllerType;
@@ -60,6 +60,7 @@ public class TemperatureControllerPane extends UnitPane {
     private final Button actual;
     private final Button target;
     private final DecimalFormat decimalFormat;
+    private final RecurrenceEventFilter recurrenceEventFilter;
     private double actualTemperature;
     private double targetTemperature;
 
@@ -71,13 +72,13 @@ public class TemperatureControllerPane extends UnitPane {
         this.temperatureControllerRemote = (TemperatureControllerRemote) temperatureControllerRemote;
 
         temperatureControllerIcon = new SVGIcon(MaterialDesignIcon.RADIATOR, Constants.SMALL_ICON, true);
+        decimalFormat = new DecimalFormat("#.#");
         headContent = new BorderPane();
         bodyContent = new VBox();
         slider = new Slider();
         vBox = new VBox();
         actual = new Button();
         target = new Button();
-        decimalFormat = new DecimalFormat("#.#");
 
         initUnitLabel();
         initTitle();
@@ -86,6 +87,15 @@ public class TemperatureControllerPane extends UnitPane {
         initEffectSlider();
 
         this.temperatureControllerRemote.addObserver(this);
+
+        //TODO
+        this.recurrenceEventFilter =  new RecurrenceEventFilter(100L) {
+            @Override
+            public void relay() throws Exception {
+
+            }
+        };
+        recurrenceEventFilter.trigger();
     }
 
     private void initEffectSlider() {

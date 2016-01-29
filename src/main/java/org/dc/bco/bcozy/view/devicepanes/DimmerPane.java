@@ -25,6 +25,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Slider;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
@@ -59,6 +60,7 @@ public class DimmerPane extends UnitPane {
     private final Slider slider;
     private final ProgressBar progressBar;
     private final StackPane stackPane;
+    private final Tooltip tooltip;
 
     /**
      * Constructor for the DimmerPane.
@@ -75,6 +77,7 @@ public class DimmerPane extends UnitPane {
         headContent = new BorderPane();
         bodyContent = new VBox();
         stackPane = new StackPane();
+        tooltip = new Tooltip();
 
         initUnitLabel();
         initTitle();
@@ -106,19 +109,24 @@ public class DimmerPane extends UnitPane {
             lightBulbIcon.setBackgroundIconColorAnimated(color);
             slider.setValue(brightness * slider.getMax());
             progressBar.setProgress(brightness);
+            tooltip.setText("On");
 
             if (!toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(true);
             }
-        } else {
+        } else if (powerState.equals(State.OFF)) {
             lightBulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
             slider.setValue(0);
             progressBar.setProgress(0);
+            tooltip.setText("Off");
 
             if (toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(false);
             }
+        } else {
+            tooltip.setText("Unknown");
         }
+        Tooltip.install(lightBulbIcon, tooltip);
     }
 
     /**
