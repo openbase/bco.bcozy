@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.dc.bco</groupId>
     <artifactId>bcozy</artifactId>
-    <version>0.1.3-SNAPSHOT</version>
+    <version>0.2.3-SNAPSHOT</version>
 
     <packaging>jar</packaging>
 
@@ -13,21 +13,6 @@
         <url>https://github.com/divinecooperation</url>
     </organization>
     <developers>
-        <!-- please list all devs here -->
-        <developer>
-            <id>DivineThreepwood</id>
-            <name>Marian Pohling</name>
-
-            <email>divinethreepwood@gmail.com</email>
-            <url>https://github.com/DivineThreepwood</url>
-            <organization>DivineCooperation</organization>
-            <organizationUrl>https://github.com/divinecooperation</organizationUrl>
-            <roles>
-                <role>architect</role>
-                <role>developer</role>
-            </roles>
-            <timezone>+1</timezone>
-        </developer>
         <developer>
             <id>agatting</id>
             <name>Andreas Gatting</name>
@@ -84,6 +69,20 @@
             </roles>
             <timezone>+1</timezone>
         </developer>
+        <developer>
+            <id>DivineThreepwood</id>
+            <name>Marian Pohling</name>
+
+            <email>divinethreepwood@gmail.com</email>
+            <url>https://github.com/DivineThreepwood</url>
+            <organization>DivineCooperation</organization>
+            <organizationUrl>https://github.com/divinecooperation</organizationUrl>
+            <roles>
+                <role>architect</role>
+                <role>developer</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
     </developers>
 
     <scm>
@@ -99,9 +98,9 @@
         <plugin.pmd.version>3.5</plugin.pmd.version>
         <plugin.javadoc.version>2.10.3</plugin.javadoc.version>
         <failOnStyleError>false</failOnStyleError>
-        <dependency.jul.version>[1.0,1.1-SNAPSHOT]</dependency.jul.version>
-        <dependency.bco.dal.version>[1.0,1.1-SNAPSHOT]</dependency.bco.dal.version>
-        <dependency.bco.manager.version>[1.0,1.1-SNAPSHOT]</dependency.bco.manager.version>
+        <dependency.jul.version>1.1-SNAPSHOT</dependency.jul.version>
+        <dependency.bco.dal.version>1.1-SNAPSHOT</dependency.bco.dal.version>
+        <dependency.bco.manager.version>1.1-SNAPSHOT</dependency.bco.manager.version>
     </properties>
 
     <dependencies>
