@@ -66,7 +66,7 @@ public class ContextMenuController {
             @Override
             public void handle(final ActionEvent event) {
                 try {
-                    setContextMenuDevicePanes("81b9efa4-2dc9-432e-b47c-1d73021ff0f3");
+                    setContextMenuDevicePanes("511adfec-43ed-47f5-bd4d-28f46dc1b5a4");
                 } catch (CouldNotPerformException e) {
                     ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
                 }

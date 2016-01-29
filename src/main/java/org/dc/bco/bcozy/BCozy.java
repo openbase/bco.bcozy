@@ -19,15 +19,8 @@
 package org.dc.bco.bcozy;
 
 import com.guigarage.responsive.ResponsiveHandler;
-import javafx.concurrent.Task;
-import org.dc.bco.bcozy.jp.JPLanguage;
-import org.dc.bco.bcozy.view.InfoPane;
-import org.dc.jps.core.JPService;
-import org.dc.jps.exception.JPNotAvailableException;
-import org.dc.jps.preset.JPDebugMode;
-import org.dc.jul.exception.printer.ExceptionPrinter;
-import org.dc.jul.exception.printer.LogLevel;
 import javafx.application.Application;
+import javafx.concurrent.Task;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Screen;
@@ -37,10 +30,17 @@ import org.dc.bco.bcozy.controller.ContextMenuController;
 import org.dc.bco.bcozy.controller.LocationController;
 import org.dc.bco.bcozy.controller.MainMenuController;
 import org.dc.bco.bcozy.controller.RemotePool;
+import org.dc.bco.bcozy.jp.JPLanguage;
 import org.dc.bco.bcozy.view.BackgroundPane;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.ForegroundPane;
 import org.dc.bco.bcozy.view.ImageViewProvider;
+import org.dc.bco.bcozy.view.InfoPane;
+import org.dc.jps.core.JPService;
+import org.dc.jps.exception.JPNotAvailableException;
+import org.dc.jps.preset.JPDebugMode;
+import org.dc.jul.exception.printer.ExceptionPrinter;
+import org.dc.jul.exception.printer.LogLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,6 +66,7 @@ public class BCozy extends Application {
     private RemotePool remotePool;
     private ContextMenuController contextMenuController;
     private LocationController locationController;
+    private Thread initThread;
 
     /**
      * Main Method starting JavaFX Environment.
@@ -147,7 +148,7 @@ public class BCozy extends Application {
     }
 
     private void initRemotesAndLocation() {
-        new Thread(new Task() {
+         initThread = new Thread(new Task() {
             @Override
             protected Object call() throws java.lang.Exception {
                 infoPane.setTextLabelIdentifier("initRemotes");
@@ -170,11 +171,20 @@ public class BCozy extends Application {
                 super.succeeded();
                 infoPane.setVisible(false);
             }
-        }).start();
+        });
+        initThread.start();
     }
 
     @Override
     public void stop() {
+        if (initThread != null && initThread.isAlive()) {
+            initThread.interrupt();
+            try {
+                initThread.join();
+            } catch (InterruptedException e) {
+                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+            }
+        }
         try {
             super.stop();
         } catch (Exception e) { //NOPMD

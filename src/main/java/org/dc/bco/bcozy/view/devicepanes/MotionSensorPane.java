@@ -22,9 +22,8 @@ import de.jensd.fx.glyphs.materialicons.MaterialIcon;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.SVGIcon;
 import org.dc.bco.dal.remote.unit.DALRemoteService;
@@ -45,9 +44,9 @@ public class MotionSensorPane extends UnitPane {
     private static final Logger LOGGER = LoggerFactory.getLogger(BatteryPane.class);
 
     private final MotionSensorRemote motionSensorRemote;
-    private final SVGIcon brightnessIcon;
-    private final Text brightnessStatus;
-    private final GridPane iconPane;
+    private final SVGIcon motionIcon;
+    private final SVGIcon backgroundIcon;
+    private final StackPane iconPane;
     private final BorderPane headContent;
 
     /**
@@ -58,9 +57,9 @@ public class MotionSensorPane extends UnitPane {
         this.motionSensorRemote = (MotionSensorRemote) brightnessSensorRemote;
 
         headContent = new BorderPane();
-        brightnessIcon = new SVGIcon(MaterialIcon.BLUR_ON, Constants.SMALL_ICON, false);
-        brightnessStatus = new Text();
-        iconPane = new GridPane();
+        motionIcon = new SVGIcon(MaterialIcon.BLUR_ON, MaterialIcon.PANORAMA_FISH_EYE, Constants.SMALL_ICON);
+        backgroundIcon = new SVGIcon(MaterialIcon.LENS, Constants.SMALL_ICON, false);
+        iconPane = new StackPane();
 
         initUnitLabel();
         initTitle();
@@ -85,22 +84,19 @@ public class MotionSensorPane extends UnitPane {
 
     private void setMotionStateIcon(final State motionState) {
         if (motionState.equals(State.MOVEMENT)) {
-            brightnessIcon.setColor(Color.WHITE, Color.BLACK, Constants.THIN_STROKE);
+            motionIcon.setBackgroundIconColorAnimated(Color.WHITE);
         } else if (motionState.equals(State.UNKNOWN)) {
-            brightnessIcon.setColor(Color.BLACK);
+            motionIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
         } else {
-            brightnessIcon.setColor(Color.TRANSPARENT);
+            motionIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
         }
     }
 
     @Override
     protected void initTitle() {
-        brightnessStatus.getStyleClass().add(Constants.ICONS_CSS_STRING);
+        backgroundIcon.setColor(Color.BLACK);
 
-        brightnessIcon.setColor(Color.TRANSPARENT);
-
-        iconPane.add(brightnessIcon, 0, 0);
-        iconPane.add(brightnessStatus, 1, 0);
+        iconPane.getChildren().addAll(backgroundIcon, motionIcon);
 
         headContent.setLeft(iconPane);
         headContent.setCenter(getUnitLabel());
