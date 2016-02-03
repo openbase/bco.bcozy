@@ -21,6 +21,7 @@ package org.dc.bco.bcozy.view.devicepanes;
 import de.jensd.fx.glyphs.materialicons.MaterialIcon;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -48,6 +49,7 @@ public class MotionSensorPane extends UnitPane {
     private final SVGIcon backgroundIcon;
     private final StackPane iconPane;
     private final BorderPane headContent;
+    private final Tooltip tooltip;
 
     /**
      * Constructor for the BatteryPane.
@@ -60,6 +62,7 @@ public class MotionSensorPane extends UnitPane {
         motionIcon = new SVGIcon(MaterialIcon.BLUR_ON, MaterialIcon.PANORAMA_FISH_EYE, Constants.SMALL_ICON);
         backgroundIcon = new SVGIcon(MaterialIcon.LENS, Constants.SMALL_ICON, false);
         iconPane = new StackPane();
+        tooltip = new Tooltip();
 
         initUnitLabel();
         initTitle();
@@ -85,11 +88,15 @@ public class MotionSensorPane extends UnitPane {
     private void setMotionStateIcon(final State motionState) {
         if (motionState.equals(State.MOVEMENT)) {
             motionIcon.setBackgroundIconColorAnimated(Color.WHITE);
-        } else if (motionState.equals(State.UNKNOWN)) {
+            tooltip.setText("Movement");
+        } else if (motionState.equals(State.NO_MOVEMENT)) {
             motionIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
+            tooltip.setText("No Movement");
         } else {
             motionIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
+            tooltip.setText("Unknown");
         }
+        Tooltip.install(iconPane, tooltip);
     }
 
     @Override

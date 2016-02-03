@@ -76,7 +76,7 @@ public class ReedSwitchPane extends UnitPane {
     }
 
     private void initEffectAndText() {
-        State reedSwitchState = State.CLOSED;
+        State reedSwitchState = State.UNKNOWN;
 
         try {
             reedSwitchState = reedSwitchRemote.getReedSwitch().getValue();
@@ -90,21 +90,16 @@ public class ReedSwitchPane extends UnitPane {
         if (reedSwitchState.equals(State.CLOSED)) {
             reedSwitchIcon.changeForegroundIcon(MaterialIcon.RADIO_BUTTON_CHECKED);
             alarmIcon.setColor(Color.TRANSPARENT);
-
             tooltip.setText("Closed");
-            Tooltip.install(iconPane, tooltip);
         } else if (reedSwitchState.equals(State.OPEN)) {
             reedSwitchIcon.changeForegroundIcon(MaterialIcon.RADIO_BUTTON_UNCHECKED);
             alarmIcon.setColor(Color.TRANSPARENT);
-
             tooltip.setText("Open");
-            Tooltip.install(iconPane, tooltip);
         } else {
             alarmIcon.setColor(Color.YELLOW, Color.BLACK, Constants.NORMAL_STROKE);
-
             tooltip.setText("Unknown");
-            Tooltip.install(iconPane, tooltip);
         }
+        Tooltip.install(iconPane, tooltip);
     }
 
     @Override

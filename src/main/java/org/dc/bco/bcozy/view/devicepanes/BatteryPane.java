@@ -21,6 +21,7 @@ package org.dc.bco.bcozy.view.devicepanes;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
@@ -49,6 +50,7 @@ public class BatteryPane extends UnitPane {
     private final Text batteryStatus;
     private final GridPane iconPane;
     private final BorderPane headContent;
+    private final Tooltip tooltip;
 
     /**
      * Constructor for the BatteryPane.
@@ -62,6 +64,7 @@ public class BatteryPane extends UnitPane {
                 Constants.SMALL_ICON);
         batteryStatus = new Text();
         iconPane = new GridPane();
+        tooltip = new Tooltip();
 
         initUnitLabel();
         initTitle();
@@ -92,20 +95,25 @@ public class BatteryPane extends UnitPane {
             case UNKNOWN:
                 batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_UNKNOWN);
                 batteryIcon.setBackgroundIconColorAnimated(Color.BLACK);
+                tooltip.setText("Unknown");
                 break;
             case OK:
                 batteryIcon.setBackgroundIconColorAnimated(Color.GREEN);
+                tooltip.setText("Ok");
                 break;
             case CRITICAL:
                 batteryIcon.setBackgroundIconColorAnimated(Color.RED);
+                tooltip.setText("Critical");
                 break;
             case INSUFFICIENT:
                 batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_ALERT);
                 batteryIcon.setBackgroundIconColorAnimated(Color.RED);
+                tooltip.setText("Insufficient");
                 break;
             default:
                 break;
         }
+        Tooltip.install(batteryIcon, tooltip);
     }
 
     private void setStatusBatteryIcon(final double batteryLevel) {

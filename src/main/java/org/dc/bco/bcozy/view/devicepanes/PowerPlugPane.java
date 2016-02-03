@@ -22,6 +22,7 @@ import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.geometry.Pos;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
@@ -52,6 +53,7 @@ public class PowerPlugPane extends UnitPane {
     private final GridPane iconPane;
     private final ToggleSwitch toggleSwitch;
     private final BorderPane headContent;
+    private final Tooltip tooltip;
 
     /**
      * Constructor for the PowerPlugPane.
@@ -65,6 +67,7 @@ public class PowerPlugPane extends UnitPane {
         powerPlugIcon = new SVGIcon(FontAwesomeIcon.PLUG, Constants.SMALL_ICON, true);
         powerStatusIcon = new SVGIcon(FontAwesomeIcon.BOLT, Constants.EXTRA_SMALL_ICON, false);
         iconPane = new GridPane();
+        tooltip = new Tooltip();
 
         initUnitLabel();
         initTitle();
@@ -90,15 +93,22 @@ public class PowerPlugPane extends UnitPane {
     private void setPowerStateSwitchAndIcon(final State powerState) {
         if (powerState.equals(State.ON)) {
             powerStatusIcon.setColor(Color.YELLOW, Color.BLACK, Constants.THIN_STROKE);
+            tooltip.setText("On");
+
             if (!toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(true);
             }
-        } else {
+        } else if (powerState.equals(State.OFF)) {
             powerStatusIcon.setColor(Color.TRANSPARENT);
+            tooltip.setText("Off");
+
             if (toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(false);
             }
+        } else {
+            tooltip.setText("Unknown");
         }
+        Tooltip.install(iconPane, tooltip);
     }
 
     @Override

@@ -22,6 +22,7 @@ import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.geometry.Pos;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import org.controlsfx.control.ToggleSwitch;
@@ -46,9 +47,10 @@ public class LightPane extends UnitPane {
     private static final Logger LOGGER = LoggerFactory.getLogger(LightPane.class);
 
     private final LightRemote lightRemote;
-    private final SVGIcon lightbulbIcon;
+    private final SVGIcon lightBulbIcon;
     private final ToggleSwitch toggleSwitch;
     private final BorderPane headContent;
+    private final Tooltip tooltip;
 
     /**
      * Constructor for the LightPane.
@@ -58,9 +60,10 @@ public class LightPane extends UnitPane {
         this.lightRemote = (LightRemote) lightRemote;
 
         toggleSwitch = new ToggleSwitch();
-        lightbulbIcon =
+        lightBulbIcon =
                 new SVGIcon(MaterialDesignIcon.LIGHTBULB, MaterialDesignIcon.LIGHTBULB_OUTLINE, Constants.SMALL_ICON);
         headContent = new BorderPane();
+        tooltip = new Tooltip();
 
         initUnitLabel();
         initTitle();
@@ -85,17 +88,21 @@ public class LightPane extends UnitPane {
 
     private void setPowerStateSwitchAndIcon(final State powerState) {
         if (powerState.equals(State.ON)) {
-            lightbulbIcon.setBackgroundIconColorAnimated(Constants.LIGHTBULB_COLOR);
+            lightBulbIcon.setBackgroundIconColorAnimated(Constants.LIGHTBULB_COLOR);
+            tooltip.setText("On");
 
             if (!toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(true);
             }
-        } else {
-            lightbulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
+        } else if (powerState.equals(State.OFF)) {
+            lightBulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
+            tooltip.setText("Off");
 
             if (toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(false);
             }
+        } else {
+            tooltip.setText("Unknown");
         }
     }
 
@@ -125,14 +132,14 @@ public class LightPane extends UnitPane {
             }).start();
         });
 
-        lightbulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
+        lightBulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
 
-        headContent.setLeft(lightbulbIcon);
+        headContent.setLeft(lightBulbIcon);
         headContent.setCenter(getUnitLabel());
         headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
         headContent.setRight(toggleSwitch);
         //Padding values are not available here
-        headContent.prefHeightProperty().set(lightbulbIcon.getSize() + Constants.INSETS);
+        headContent.prefHeightProperty().set(lightBulbIcon.getSize() + Constants.INSETS);
     }
 
     @Override

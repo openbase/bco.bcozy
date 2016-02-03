@@ -22,6 +22,7 @@ import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.weathericons.WeatherIcon;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
@@ -53,6 +54,7 @@ public class TemperatureSensorPane extends UnitPane {
     private final SVGIcon alarmIcon;
     private final Text temperatureStatus;
     private final GridPane iconPane;
+    private final Tooltip tooltip;
 
     /**
      * Constructor for TemperatureSensorPane.
@@ -66,10 +68,11 @@ public class TemperatureSensorPane extends UnitPane {
         thermometerIconForeground = new SVGIcon(WeatherIcon.THERMOMETER_INTERNAL,
                 Constants.SMALL_ICON * Constants.WEATHER_ICONS_SCALE, false);
         alarmIcon = new SVGIcon(FontAwesomeIcon.EXCLAMATION_TRIANGLE, Constants.SMALL_ICON, false);
-        temperatureStatus = new Text();
-        iconPane = new GridPane();
 
         headContent = new BorderPane();
+        temperatureStatus = new Text();
+        iconPane = new GridPane();
+        tooltip = new Tooltip();
 
         initUnitLabel();
         initTitle();
@@ -103,18 +106,22 @@ public class TemperatureSensorPane extends UnitPane {
     private void setAlarmStateIcon(final State alarmState) {
         if (alarmState.equals(State.ALARM)) {
             alarmIcon.setColor(Color.RED, Color.BLACK, Constants.NORMAL_STROKE);
+            tooltip.setText("Alarm");
         } else if (alarmState.equals(State.UNKNOWN)) {
             alarmIcon.setColor(Color.YELLOW, Color.BLACK, Constants.NORMAL_STROKE);
+            tooltip.setText("Unknown");
         } else {
             alarmIcon.setColor(Color.TRANSPARENT);
+            tooltip.setText("No Alarm");
         }
+        Tooltip.install(iconPane, tooltip);
     }
 
     private void setEffectTemperature(final double temperature) {
         if (temperature == Double.NEGATIVE_INFINITY) {
             temperatureStatus.setText("??°C");
         } else {
-            temperatureStatus.setText((int) temperature + "°C");
+            temperatureStatus.setText((int) temperature + Constants.CELSIUS);
             if (temperature <= Constants.TEMPERATUR_FADING_MINIMUM) {
                 thermometerIconForeground.setForegroundIconColorAnimated(Color.BLUE);
             } else if (temperature < Constants.TEMPERATUR_FADING_MAXIMUM) {
