@@ -21,7 +21,7 @@ package org.dc.bco.bcozy.view.devicepanes;
 import javafx.scene.Node;
 import javafx.scene.layout.VBox;
 import org.dc.bco.bcozy.view.mainmenupanes.ObserverTitledPane;
-import org.dc.bco.dal.remote.unit.DALRemoteService;
+import org.dc.jul.extension.rsb.com.AbstractIdentifiableRemote;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.homeautomation.unit.UnitTemplateType.UnitTemplate.UnitType;
@@ -53,78 +53,78 @@ public class UnitPaneContainer extends ObserverTitledPane {
     }
 
     /**
-     * Takes a List of DALRemoteService and creates new UnitPanes for each.
+     * Takes a List of AbstractIdentifiableRemote and creates new UnitPanes for each.
      * @param unitType unitType
      * @param dalRemoteServiceList dalRemoteServiceList
      * @return true if unitType is handled, otherwise false
      */
     public boolean createAndAddNewUnitPanes(final UnitType unitType, //NOPMD
-                                         final List<DALRemoteService> dalRemoteServiceList) {
+                                         final List<AbstractIdentifiableRemote> dalRemoteServiceList) {
         this.setExpanded(false);
 
         if (unitType.equals(UnitType.AMBIENT_LIGHT)) {
-            for (final DALRemoteService dalRemoteService : dalRemoteServiceList) {
+            for (final AbstractIdentifiableRemote dalRemoteService : dalRemoteServiceList) {
                 final AmbientLightPane ambientLightPane = new AmbientLightPane(dalRemoteService);
 
                 vBox.getChildren().add(ambientLightPane);
             }
         } else if (unitType.equals(UnitType.BATTERY)) {
-            for (final DALRemoteService dalRemoteService : dalRemoteServiceList) {
+            for (final AbstractIdentifiableRemote dalRemoteService : dalRemoteServiceList) {
                 final BatteryPane batteryPanePane = new BatteryPane(dalRemoteService);
 
                 vBox.getChildren().add(batteryPanePane);
             }
         } else if (unitType.equals(UnitType.BRIGHTNESS_SENSOR)) {
-            for (final DALRemoteService dalRemoteService : dalRemoteServiceList) {
+            for (final AbstractIdentifiableRemote dalRemoteService : dalRemoteServiceList) {
                 final BrightnessSensorPane brightnessSensorPane = new BrightnessSensorPane(dalRemoteService);
 
                 vBox.getChildren().add(brightnessSensorPane);
             }
         } else if (unitType.equals(UnitType.DIMMER)) {
-            for (final DALRemoteService dalRemoteService : dalRemoteServiceList) {
+            for (final AbstractIdentifiableRemote dalRemoteService : dalRemoteServiceList) {
                 final DimmerPane dimmerPane = new DimmerPane(dalRemoteService);
 
                 vBox.getChildren().add(dimmerPane);
             }
         } else if (unitType.equals(UnitType.LIGHT)) {
-            for (final DALRemoteService dalRemoteService : dalRemoteServiceList) {
+            for (final AbstractIdentifiableRemote dalRemoteService : dalRemoteServiceList) {
                 final LightPane lightPane = new LightPane(dalRemoteService);
 
                 vBox.getChildren().add(lightPane);
             }
         } else if (unitType.equals(UnitType.MOTION_SENSOR)) {
-            for (final DALRemoteService dalRemoteService : dalRemoteServiceList) {
+            for (final AbstractIdentifiableRemote dalRemoteService : dalRemoteServiceList) {
                 final MotionSensorPane motionSensorPane = new MotionSensorPane(dalRemoteService);
 
                 vBox.getChildren().add(motionSensorPane);
             }
         } else if (unitType.equals(UnitType.POWER_PLUG)) {
-            for (final DALRemoteService dalRemoteService : dalRemoteServiceList) {
+            for (final AbstractIdentifiableRemote dalRemoteService : dalRemoteServiceList) {
                 final PowerPlugPane powerPlugPane = new PowerPlugPane(dalRemoteService);
 
                 vBox.getChildren().add(powerPlugPane);
             }
         } else if (unitType.equals(UnitType.REED_SWITCH)) {
-            for (final DALRemoteService dalRemoteService : dalRemoteServiceList) {
+            for (final AbstractIdentifiableRemote dalRemoteService : dalRemoteServiceList) {
                 final ReedSwitchPane reedSwitchPane = new ReedSwitchPane(dalRemoteService);
 
                 vBox.getChildren().add(reedSwitchPane);
             }
         } else if (unitType.equals(UnitType.ROLLERSHUTTER)) {
-            for (final DALRemoteService dalRemoteService : dalRemoteServiceList) {
+            for (final AbstractIdentifiableRemote dalRemoteService : dalRemoteServiceList) {
                 final RollerShutterPane rollerShutterPane = new RollerShutterPane(dalRemoteService);
 
                 vBox.getChildren().add(rollerShutterPane);
             }
         } else if (unitType.equals(UnitType.TEMPERATURE_CONTROLLER)) {
-            for (final DALRemoteService dalRemoteService : dalRemoteServiceList) {
+            for (final AbstractIdentifiableRemote dalRemoteService : dalRemoteServiceList) {
                 final TemperatureControllerPane temperatureControllerPane
                         = new TemperatureControllerPane(dalRemoteService);
 
                 vBox.getChildren().add(temperatureControllerPane);
             }
         } else if (unitType.equals(UnitType.TEMPERATURE_SENSOR)) {
-            for (final DALRemoteService dalRemoteService : dalRemoteServiceList) {
+            for (final AbstractIdentifiableRemote dalRemoteService : dalRemoteServiceList) {
                 final TemperatureSensorPane temperatureSensorPane = new TemperatureSensorPane(dalRemoteService);
 
                 vBox.getChildren().add(temperatureSensorPane);

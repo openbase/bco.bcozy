@@ -28,7 +28,7 @@ import javafx.scene.paint.Color;
 import org.controlsfx.control.ToggleSwitch;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.SVGIcon;
-import org.dc.bco.dal.remote.unit.DALRemoteService;
+import org.dc.jul.extension.rsb.com.AbstractIdentifiableRemote;
 import org.dc.bco.dal.remote.unit.PowerPlugRemote;
 import org.dc.jul.exception.CouldNotPerformException;
 import org.dc.jul.exception.printer.ExceptionPrinter;
@@ -57,7 +57,7 @@ public class PowerPlugPane extends UnitPane {
      * Constructor for the PowerPlugPane.
      * @param powerPlugRemote powerPlugRemote
      */
-    public PowerPlugPane(final DALRemoteService powerPlugRemote) {
+    public PowerPlugPane(final AbstractIdentifiableRemote powerPlugRemote) {
         this.powerPlugRemote = (PowerPlugRemote) powerPlugRemote;
 
         toggleSwitch = new ToggleSwitch();
@@ -157,7 +157,7 @@ public class PowerPlugPane extends UnitPane {
     }
 
     @Override
-    public DALRemoteService getDALRemoteService() {
+    public AbstractIdentifiableRemote getDALRemoteService() {
         return powerPlugRemote;
     }
 

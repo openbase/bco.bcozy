@@ -33,7 +33,7 @@ import javafx.scene.paint.Color;
 import org.controlsfx.control.ToggleSwitch;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.SVGIcon;
-import org.dc.bco.dal.remote.unit.DALRemoteService;
+import org.dc.jul.extension.rsb.com.AbstractIdentifiableRemote;
 import org.dc.bco.dal.remote.unit.DimmerRemote;
 import org.dc.jul.exception.CouldNotPerformException;
 import org.dc.jul.exception.printer.ExceptionPrinter;
@@ -64,7 +64,7 @@ public class DimmerPane extends UnitPane {
      * Constructor for the DimmerPane.
      * @param dimmerRemote dimmerRemote.
      */
-    public DimmerPane(final DALRemoteService dimmerRemote) {
+    public DimmerPane(final AbstractIdentifiableRemote dimmerRemote) {
         this.dimmerRemote = (DimmerRemote) dimmerRemote;
 
         toggleSwitch = new ToggleSwitch();
@@ -210,7 +210,7 @@ public class DimmerPane extends UnitPane {
     }
 
     @Override
-    public DALRemoteService getDALRemoteService() {
+    public AbstractIdentifiableRemote getDALRemoteService() {
         return dimmerRemote;
     }
 

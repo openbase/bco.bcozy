@@ -32,7 +32,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.SVGIcon;
-import org.dc.bco.dal.remote.unit.DALRemoteService;
+import org.dc.jul.extension.rsb.com.AbstractIdentifiableRemote;
 import org.dc.bco.dal.remote.unit.TemperatureControllerRemote;
 import org.dc.jul.exception.CouldNotPerformException;
 import org.dc.jul.exception.printer.ExceptionPrinter;
@@ -65,9 +65,9 @@ public class TemperatureControllerPane extends UnitPane {
 
     /**
      * Constructor for a TemperatureControllerPane.
-     * @param temperatureControllerRemote DALRemoteService
+     * @param temperatureControllerRemote AbstractIdentifiableRemote
      */
-    public TemperatureControllerPane(final DALRemoteService temperatureControllerRemote) {
+    public TemperatureControllerPane(final AbstractIdentifiableRemote temperatureControllerRemote) {
         this.temperatureControllerRemote = (TemperatureControllerRemote) temperatureControllerRemote;
 
         temperatureControllerIcon = new SVGIcon(MaterialDesignIcon.RADIATOR, Constants.SMALL_ICON, true);
@@ -190,7 +190,7 @@ public class TemperatureControllerPane extends UnitPane {
     }
 
     @Override
-    public DALRemoteService getDALRemoteService() {
+    public AbstractIdentifiableRemote getDALRemoteService() {
         return temperatureControllerRemote;
     }
 

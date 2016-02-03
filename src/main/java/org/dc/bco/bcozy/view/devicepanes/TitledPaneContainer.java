@@ -23,7 +23,7 @@ import javafx.scene.Node;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import org.dc.bco.dal.remote.unit.DALRemoteService;
+import org.dc.jul.extension.rsb.com.AbstractIdentifiableRemote;
 import rst.homeautomation.unit.UnitTemplateType.UnitTemplate.UnitType;
 
 import java.util.List;
@@ -38,7 +38,7 @@ public class TitledPaneContainer extends VBox {
      * @param unitType unitType
      * @param dalRemoteServiceList dalRemoteServiceList
      */
-    public void createAndAddNewTitledPane(final UnitType unitType, final List<DALRemoteService> dalRemoteServiceList) {
+    public void createAndAddNewTitledPane(final UnitType unitType, final List<AbstractIdentifiableRemote> dalRemoteServiceList) {
         final UnitPaneContainer unitPaneContainer = new UnitPaneContainer(unitType.toString());
         if (unitPaneContainer.createAndAddNewUnitPanes(unitType, dalRemoteServiceList)) {
             this.getChildren().add(unitPaneContainer);

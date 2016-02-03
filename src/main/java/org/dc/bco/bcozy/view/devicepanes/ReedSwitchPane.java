@@ -28,7 +28,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.SVGIcon;
-import org.dc.bco.dal.remote.unit.DALRemoteService;
+import org.dc.jul.extension.rsb.com.AbstractIdentifiableRemote;
 import org.dc.bco.dal.remote.unit.ReedSwitchRemote;
 import org.dc.jul.exception.CouldNotPerformException;
 import org.dc.jul.exception.printer.ExceptionPrinter;
@@ -56,7 +56,7 @@ public class ReedSwitchPane extends UnitPane {
      * Constructor for the ReedSwitchPane.
      * @param reedSwitchRemote reedSwitchRemote
      */
-    public ReedSwitchPane(final DALRemoteService reedSwitchRemote) {
+    public ReedSwitchPane(final AbstractIdentifiableRemote reedSwitchRemote) {
         this.reedSwitchRemote = (ReedSwitchRemote) reedSwitchRemote;
 
         reedSwitchIcon = new SVGIcon(MaterialIcon.RADIO_BUTTON_CHECKED, Constants.SMALL_ICON, true);
@@ -136,7 +136,7 @@ public class ReedSwitchPane extends UnitPane {
     }
 
     @Override
-    public DALRemoteService getDALRemoteService() {
+    public AbstractIdentifiableRemote getDALRemoteService() {
         return reedSwitchRemote;
     }
 
