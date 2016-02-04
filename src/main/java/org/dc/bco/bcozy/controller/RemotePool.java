@@ -25,8 +25,8 @@ import javafx.event.EventHandler;
 import javafx.scene.control.ProgressIndicator;
 import org.dc.bco.bcozy.view.ForegroundPane;
 import org.dc.jul.extension.rsb.com.AbstractIdentifiableRemote;
+import org.dc.bco.dal.remote.unit.UnitRemoteFactoryImpl;
 import org.dc.bco.dal.remote.unit.UnitRemoteFactory;
-import org.dc.bco.dal.remote.unit.UnitRemoteFactoryInterface;
 import org.dc.bco.registry.device.remote.DeviceRegistryRemote;
 import org.dc.bco.registry.location.remote.LocationRegistryRemote;
 import org.dc.jul.exception.CouldNotPerformException;
@@ -213,7 +213,7 @@ public class RemotePool {
     }
 
     private void fillDeviceMap() throws CouldNotPerformException {
-        final UnitRemoteFactoryInterface unitRemoteFactoryInterface = UnitRemoteFactory.getInstance();
+        final UnitRemoteFactory unitRemoteFactoryInterface = UnitRemoteFactoryImpl.getInstance();
 
         for (final UnitConfig currentUnitConfig : deviceRegistryRemote.getUnitConfigs()) {
             AbstractIdentifiableRemote currentDalRemoteService;
@@ -326,7 +326,7 @@ public class RemotePool {
 
         for (final UnitType type : unitTypes) {
             try {
-                final Class<? extends AbstractIdentifiableRemote> remote = UnitRemoteFactory.loadUnitRemoteClass(type);
+                final Class<? extends AbstractIdentifiableRemote> remote = UnitRemoteFactoryImpl.loadUnitRemoteClass(type);
                 final List<AbstractIdentifiableRemote> unitRemoteList =
                         this.getUnitRemoteListOfLocationAndClass(locationId, remote);
                 if (!unitRemoteList.isEmpty()) {
