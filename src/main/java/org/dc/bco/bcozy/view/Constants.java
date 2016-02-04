@@ -388,7 +388,7 @@ public final class Constants {
     public static final String CELSIUS = "°C";
 
     /**
-     * Scale Factor for Weather Icons (necessary to get constant size)
+     * Scale Factor for Weather Icons (necessary to get constant size).
      */
     public static final double WEATHER_ICONS_SCALE = 0.681;
 

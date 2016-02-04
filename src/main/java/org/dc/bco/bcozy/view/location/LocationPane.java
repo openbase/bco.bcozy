@@ -255,8 +255,9 @@ public final class LocationPane extends Pane {
      * @param onActionHandler The Handler that gets activated when the button is pressed
      * @param position The position where the button is to be placed
      */
-    public void addUnit(SVGIcon svgIcon, EventHandler<ActionEvent> onActionHandler, Point2D position) {
-        UnitButton unitButton = new UnitButton(svgIcon, onActionHandler);
+    public void addUnit(final SVGIcon svgIcon, final EventHandler<ActionEvent> onActionHandler,
+                        final Point2D position) {
+        final UnitButton unitButton = new UnitButton(svgIcon, onActionHandler);
         unitButton.setTranslateX(position.getX());
         unitButton.setTranslateY(position.getY());
         this.getChildren().add(unitButton);
