@@ -464,20 +464,26 @@
  *                                                                             *
  ******************************************************************************/
 
+.widget-pane {
+    -fx-border-radius: 0.0;
+    -fx-background-radius: 0px;
+    -fx-padding: 0;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-insets: 0 2 0 2;
+}
+
 .body-pane {
     -fx-border-radius: 0.0;
     -fx-background-radius: 0px;
     -fx-padding: 5.0 10.0 5.0 10.0;
-    -fx-border-width: 0 0 1 0;
-    -fx-border-insets: 0 2 0 2;
+    -fx-border-width: 0 0 0 0;
 }
 
 .head-pane {
     -fx-border-radius: 0.0;
     -fx-background-radius: 0px;
     -fx-padding: 5.0 10.0 5.0 10.0;
-    -fx-border-width: 0 0 1 0;
-    -fx-border-insets: 0 2 0 2;
+    -fx-border-width: 0 0 0 0;
 }
 
 /*******************************************************************************

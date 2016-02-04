@@ -45,8 +45,7 @@ public class WidgetPane extends VBox {
      * Constructor for the widget pane.
      */
     public WidgetPane() {
-        //this.setMinHeight(Constants.SMALL_ICON);
-        //this.setMaxHeight(Constants.SMALL_ICON);
+        this.getStyleClass().add("widget-pane");
     }
 
     /**
