@@ -34,7 +34,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.SVGIcon;
-import org.dc.bco.dal.remote.unit.DALRemoteService;
+import org.dc.jul.extension.rsb.com.AbstractIdentifiableRemote;
 import org.dc.bco.dal.remote.unit.RollershutterRemote;
 import org.dc.jul.exception.CouldNotPerformException;
 import org.dc.jul.exception.printer.ExceptionPrinter;
@@ -72,9 +72,9 @@ public class RollerShutterPane extends UnitPane {
 
     /**
      * Constructor for a RollerShutterPane.
-     * @param rollerShutterRemote DALRemoteService
+     * @param rollerShutterRemote AbstractIdentifiableRemote
      */
-    public RollerShutterPane(final DALRemoteService rollerShutterRemote) {
+    public RollerShutterPane(final AbstractIdentifiableRemote rollerShutterRemote) {
         this.rollershutterRemote = (RollershutterRemote) rollerShutterRemote;
 
         rollerShutterIconBackground = new SVGIcon(MaterialDesignIcon.FORMAT_ALIGN_JUSTIFY, Constants.SMALL_ICON, false);
@@ -270,7 +270,7 @@ public class RollerShutterPane extends UnitPane {
     }
 
     @Override
-    public DALRemoteService getDALRemoteService() {
+    public AbstractIdentifiableRemote getDALRemoteService() {
         return rollershutterRemote;
     }
 

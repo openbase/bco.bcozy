@@ -29,7 +29,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.SVGIcon;
-import org.dc.bco.dal.remote.unit.DALRemoteService;
+import org.dc.jul.extension.rsb.com.AbstractIdentifiableRemote;
 import org.dc.bco.dal.remote.unit.TemperatureSensorRemote;
 import org.dc.jul.exception.CouldNotPerformException;
 import org.dc.jul.exception.printer.ExceptionPrinter;
@@ -58,9 +58,9 @@ public class TemperatureSensorPane extends UnitPane {
 
     /**
      * Constructor for TemperatureSensorPane.
-     * @param temperatureSensorRemote DALRemoteService
+     * @param temperatureSensorRemote AbstractIdentifiableRemote
      */
-    public TemperatureSensorPane(final DALRemoteService temperatureSensorRemote) {
+    public TemperatureSensorPane(final AbstractIdentifiableRemote temperatureSensorRemote) {
         this.temperatureSensorRemote = (TemperatureSensorRemote) temperatureSensorRemote;
 
         thermometerIconBackground = new SVGIcon(WeatherIcon.THERMOMETER_EXTERIOR,
@@ -172,7 +172,7 @@ public class TemperatureSensorPane extends UnitPane {
     }
 
     @Override
-    public DALRemoteService getDALRemoteService() {
+    public AbstractIdentifiableRemote getDALRemoteService() {
         return temperatureSensorRemote;
     }
 

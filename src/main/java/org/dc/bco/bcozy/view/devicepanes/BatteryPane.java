@@ -29,7 +29,7 @@ import javafx.scene.text.Text;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.SVGIcon;
 import org.dc.bco.dal.remote.unit.BatteryRemote;
-import org.dc.bco.dal.remote.unit.DALRemoteService;
+import org.dc.jul.extension.rsb.com.AbstractIdentifiableRemote;
 import org.dc.jul.exception.CouldNotPerformException;
 import org.dc.jul.exception.printer.ExceptionPrinter;
 import org.dc.jul.exception.printer.LogLevel;
@@ -56,7 +56,7 @@ public class BatteryPane extends UnitPane {
      * Constructor for the BatteryPane.
      * @param batteryRemote batteryRemote
      */
-    public BatteryPane(final DALRemoteService batteryRemote) {
+    public BatteryPane(final AbstractIdentifiableRemote batteryRemote) {
         this.batteryRemote = (BatteryRemote) batteryRemote;
 
         headContent = new BorderPane();
@@ -174,7 +174,7 @@ public class BatteryPane extends UnitPane {
     }
 
     @Override
-    public DALRemoteService getDALRemoteService() {
+    public AbstractIdentifiableRemote getDALRemoteService() {
         return batteryRemote;
     }
 

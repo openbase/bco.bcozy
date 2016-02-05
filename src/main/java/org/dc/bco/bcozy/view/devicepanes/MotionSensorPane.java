@@ -27,7 +27,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.SVGIcon;
-import org.dc.bco.dal.remote.unit.DALRemoteService;
+import org.dc.jul.extension.rsb.com.AbstractIdentifiableRemote;
 import org.dc.bco.dal.remote.unit.MotionSensorRemote;
 import org.dc.jul.exception.CouldNotPerformException;
 import org.dc.jul.exception.printer.ExceptionPrinter;
@@ -55,7 +55,7 @@ public class MotionSensorPane extends UnitPane {
      * Constructor for the BatteryPane.
      * @param brightnessSensorRemote motionSensorRemote
      */
-    public MotionSensorPane(final DALRemoteService brightnessSensorRemote) {
+    public MotionSensorPane(final AbstractIdentifiableRemote brightnessSensorRemote) {
         this.motionSensorRemote = (MotionSensorRemote) brightnessSensorRemote;
 
         headContent = new BorderPane();
@@ -129,7 +129,7 @@ public class MotionSensorPane extends UnitPane {
     }
 
     @Override
-    public DALRemoteService getDALRemoteService() {
+    public AbstractIdentifiableRemote getDALRemoteService() {
         return motionSensorRemote;
     }
 

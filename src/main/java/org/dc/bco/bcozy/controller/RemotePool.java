@@ -24,9 +24,9 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.ProgressIndicator;
 import org.dc.bco.bcozy.view.ForegroundPane;
-import org.dc.bco.dal.remote.unit.DALRemoteService;
+import org.dc.jul.extension.rsb.com.AbstractIdentifiableRemote;
+import org.dc.bco.dal.remote.unit.UnitRemoteFactoryImpl;
 import org.dc.bco.dal.remote.unit.UnitRemoteFactory;
-import org.dc.bco.dal.remote.unit.UnitRemoteFactoryInterface;
 import org.dc.bco.registry.device.remote.DeviceRegistryRemote;
 import org.dc.bco.registry.location.remote.LocationRegistryRemote;
 import org.dc.jul.exception.CouldNotPerformException;
@@ -54,8 +54,8 @@ public class RemotePool {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RemotePool.class);
 
-    private final Map<String, DALRemoteService> deviceMap;
-    private final Map<String, Map<String, DALRemoteService>> locationMap;
+    private final Map<String, AbstractIdentifiableRemote> deviceMap;
+    private final Map<String, Map<String, AbstractIdentifiableRemote>> locationMap;
     private LocationRegistryRemote locationRegistryRemote = null;
     private DeviceRegistryRemote deviceRegistryRemote = null;
     private TransformReceiver transformReceiver;
@@ -199,7 +199,7 @@ public class RemotePool {
                 LOGGER.info("INFO: Unit: " + unitId);
 
                 if (deviceMap.containsKey(unitId)) {
-                    final DALRemoteService currentDalRemoteService = deviceMap.get(unitId);
+                    final AbstractIdentifiableRemote currentDalRemoteService = deviceMap.get(unitId);
 
                     if (!locationMap.containsKey(currentLocationConfig.getId())) {
                         locationMap.put(currentLocationConfig.getId(), new TreeMap<>());
@@ -213,10 +213,10 @@ public class RemotePool {
     }
 
     private void fillDeviceMap() throws CouldNotPerformException {
-        final UnitRemoteFactoryInterface unitRemoteFactoryInterface = UnitRemoteFactory.getInstance();
+        final UnitRemoteFactory unitRemoteFactoryInterface = UnitRemoteFactoryImpl.getInstance();
 
         for (final UnitConfig currentUnitConfig : deviceRegistryRemote.getUnitConfigs()) {
-            DALRemoteService currentDalRemoteService;
+            AbstractIdentifiableRemote currentDalRemoteService;
 
             try {
                 currentDalRemoteService = unitRemoteFactoryInterface.createAndInitUnitRemote(currentUnitConfig);
@@ -237,14 +237,14 @@ public class RemotePool {
     }
 
     /**
-     * Returns the DALRemoteService to the given unitId and class.
+     * Returns the AbstractIdentifiableRemote to the given unitId and class.
      * @param unitId the unit ID
      * @param <Remote> the corresponding class of the remote
-     * @return the DALRemoteService casted to the given remote class
+     * @return the AbstractIdentifiableRemote casted to the given remote class
      * @throws CouldNotPerformException CouldNotPerformException
      */
     @SuppressWarnings("unchecked")
-    public <Remote extends DALRemoteService> Remote getUnitRemoteById(
+    public <Remote extends AbstractIdentifiableRemote> Remote getUnitRemoteById(
             final String unitId) throws CouldNotPerformException {
         checkInit();
 
@@ -252,15 +252,15 @@ public class RemotePool {
     }
 
     /**
-     * Returns the DALRemoteService to the given unitId and locationId.
+     * Returns the AbstractIdentifiableRemote to the given unitId and locationId.
      * @param unitId the unit ID
      * @param locationId the location ID
      * @param <Remote> the corresponding class of the remote
-     * @return the DALRemoteService
+     * @return the AbstractIdentifiableRemote
      * @throws CouldNotPerformException CouldNotPerformException
      */
     @SuppressWarnings("unchecked")
-    public <Remote extends  DALRemoteService> Remote getUnitRemoteByIdAndLocation(
+    public <Remote extends  AbstractIdentifiableRemote> Remote getUnitRemoteByIdAndLocation(
             final String unitId, final String locationId) throws CouldNotPerformException {
         checkInit();
 
@@ -275,14 +275,14 @@ public class RemotePool {
      * @throws CouldNotPerformException CouldNotPerformException
      */
     @SuppressWarnings("unchecked")
-    public <Remote extends DALRemoteService> List<Remote> getUnitRemoteListOfClass(
+    public <Remote extends AbstractIdentifiableRemote> List<Remote> getUnitRemoteListOfClass(
             final Class<? extends Remote> remoteClass) throws CouldNotPerformException {
         checkInit();
 
         final List<Remote> unitRemoteList = new ArrayList<>();
 
-        for (final Map.Entry<String, DALRemoteService> stringDALRemoteServiceEntry : deviceMap.entrySet()) {
-            final DALRemoteService currentDalRemoteService = stringDALRemoteServiceEntry.getValue();
+        for (final Map.Entry<String, AbstractIdentifiableRemote> stringDALRemoteServiceEntry : deviceMap.entrySet()) {
+            final AbstractIdentifiableRemote currentDalRemoteService = stringDALRemoteServiceEntry.getValue();
             if (currentDalRemoteService.getClass().equals(remoteClass)) {
                 unitRemoteList.add((Remote) currentDalRemoteService);
             }
@@ -297,16 +297,16 @@ public class RemotePool {
      * @return the List of DALRemoteServices
      * @throws CouldNotPerformException CouldNotPerformException
      */
-    public List<DALRemoteService> getUnitRemoteListOfLocation(
+    public List<AbstractIdentifiableRemote> getUnitRemoteListOfLocation(
             final String locationId) throws CouldNotPerformException {
         checkInit();
 
-        final List<DALRemoteService> unitRemoteList = new ArrayList<>();
+        final List<AbstractIdentifiableRemote> unitRemoteList = new ArrayList<>();
 
         if (locationMap.containsKey(locationId)) {
-            final Map<String, DALRemoteService> unitRemoteHashOfLocation = locationMap.get(locationId);
+            final Map<String, AbstractIdentifiableRemote> unitRemoteHashOfLocation = locationMap.get(locationId);
 
-            for (final Map.Entry<String, DALRemoteService> currentEntry : unitRemoteHashOfLocation.entrySet()) {
+            for (final Map.Entry<String, AbstractIdentifiableRemote> currentEntry : unitRemoteHashOfLocation.entrySet()) {
                 unitRemoteList.add(currentEntry.getValue());
             }
         }
@@ -319,15 +319,15 @@ public class RemotePool {
      * @param locationId locationId
      * @return the Map of DALRemoteServices
      */
-    public Map<UnitType, List<DALRemoteService>> getUnitRemoteMapOfLocation(final String locationId) {
-        final Map<UnitType, List<DALRemoteService>> unitRemoteMap = new TreeMap<>();
+    public Map<UnitType, List<AbstractIdentifiableRemote>> getUnitRemoteMapOfLocation(final String locationId) {
+        final Map<UnitType, List<AbstractIdentifiableRemote>> unitRemoteMap = new TreeMap<>();
 
         final UnitType[] unitTypes = UnitType.values();
 
         for (final UnitType type : unitTypes) {
             try {
-                final Class<? extends DALRemoteService> remote = UnitRemoteFactory.loadUnitRemoteClass(type);
-                final List<DALRemoteService> unitRemoteList =
+                final Class<? extends AbstractIdentifiableRemote> remote = UnitRemoteFactoryImpl.loadUnitRemoteClass(type);
+                final List<AbstractIdentifiableRemote> unitRemoteList =
                         this.getUnitRemoteListOfLocationAndClass(locationId, remote);
                 if (!unitRemoteList.isEmpty()) {
                     unitRemoteMap.put(type, unitRemoteList);
@@ -341,23 +341,23 @@ public class RemotePool {
     }
 
     /**
-     * Returns a List of all DALRemoteServices to a given locationId and inherited Class of DALRemoteService.
+     * Returns a List of all DALRemoteServices to a given locationId and inherited Class of AbstractIdentifiableRemote.
      * @param locationId the location ID
-     * @param remoteClass the inherited Class of DALRemoteService
+     * @param remoteClass the inherited Class of AbstractIdentifiableRemote
      * @param <Remote> the corresponding class of the remote
      * @return the List of DALRemoteServices
      * @throws CouldNotPerformException CouldNotPerformException
      */
     @SuppressWarnings("unchecked")
-    public <Remote extends DALRemoteService> List<Remote> getUnitRemoteListOfLocationAndClass(
+    public <Remote extends AbstractIdentifiableRemote> List<Remote> getUnitRemoteListOfLocationAndClass(
             final String locationId, final Class<? extends Remote> remoteClass) throws CouldNotPerformException {
         checkInit();
 
         final List<Remote> unitRemoteList = new ArrayList<>();
         if (locationMap.containsKey(locationId)) {
-            final Map<String, DALRemoteService> unitRemoteHashOfLocation = locationMap.get(locationId);
+            final Map<String, AbstractIdentifiableRemote> unitRemoteHashOfLocation = locationMap.get(locationId);
 
-            for (final Map.Entry<String, DALRemoteService> currentEntry : unitRemoteHashOfLocation.entrySet()) {
+            for (final Map.Entry<String, AbstractIdentifiableRemote> currentEntry : unitRemoteHashOfLocation.entrySet()) {
                 if (currentEntry.getValue().getClass() == remoteClass) {
                     unitRemoteList.add((Remote) currentEntry.getValue());
                 }
@@ -381,8 +381,8 @@ public class RemotePool {
      * Shut down all DALRemotes.
      */
     public void shutdownDALRemotes() {
-        for (final Map.Entry<String, DALRemoteService> stringDALRemoteServiceEntry : deviceMap.entrySet()) {
-            final DALRemoteService remote = stringDALRemoteServiceEntry.getValue();
+        for (final Map.Entry<String, AbstractIdentifiableRemote> stringDALRemoteServiceEntry : deviceMap.entrySet()) {
+            final AbstractIdentifiableRemote remote = stringDALRemoteServiceEntry.getValue();
             remote.shutdown();
         }
     }
@@ -393,8 +393,8 @@ public class RemotePool {
     public void shutdownAllRemotes() {
         //TODO: somehow not shutting down properly?!
 
-        for (final Map.Entry<String, DALRemoteService> stringDALRemoteServiceEntry : deviceMap.entrySet()) {
-            final DALRemoteService remote = stringDALRemoteServiceEntry.getValue();
+        for (final Map.Entry<String, AbstractIdentifiableRemote> stringDALRemoteServiceEntry : deviceMap.entrySet()) {
+            final AbstractIdentifiableRemote remote = stringDALRemoteServiceEntry.getValue();
             remote.shutdown();
         }
 

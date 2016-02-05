@@ -55,7 +55,7 @@ import org.controlsfx.control.ToggleSwitch;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.SVGIcon;
 import org.dc.bco.dal.remote.unit.AmbientLightRemote;
-import org.dc.bco.dal.remote.unit.DALRemoteService;
+import org.dc.jul.extension.rsb.com.AbstractIdentifiableRemote;
 import org.dc.jul.exception.CouldNotPerformException;
 import org.dc.jul.exception.printer.ExceptionPrinter;
 import org.dc.jul.exception.printer.LogLevel;
@@ -95,7 +95,7 @@ public class AmbientLightPane extends UnitPane {
      * Constructor for the AmbientLightPane.
      * @param ambientLightRemote ambientLightRemote
      */
-    public AmbientLightPane(final DALRemoteService ambientLightRemote) {
+    public AmbientLightPane(final AbstractIdentifiableRemote ambientLightRemote) {
         this.ambientLightRemote = (AmbientLightRemote) ambientLightRemote;
 
         toggleSwitch = new ToggleSwitch();
@@ -527,7 +527,7 @@ public class AmbientLightPane extends UnitPane {
     }
 
     @Override
-    public DALRemoteService getDALRemoteService() {
+    public AbstractIdentifiableRemote getDALRemoteService() {
         return ambientLightRemote;
     }
 
