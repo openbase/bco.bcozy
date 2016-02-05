@@ -105,21 +105,21 @@ public class TemperatureSensorPane extends UnitPane {
 
     private void setAlarmStateIcon(final State alarmState) {
         if (alarmState.equals(State.ALARM)) {
-            alarmIcon.setColor(Color.RED, Color.BLACK, Constants.NORMAL_STROKE);
-            tooltip.setText("Alarm");
+            alarmIcon.setForegroundIconColor(Color.RED, Color.BLACK, Constants.NORMAL_STROKE);
+            tooltip.setText(Constants.ALARM);
         } else if (alarmState.equals(State.UNKNOWN)) {
-            alarmIcon.setColor(Color.YELLOW, Color.BLACK, Constants.NORMAL_STROKE);
-            tooltip.setText("Unknown");
+            alarmIcon.setForegroundIconColor(Color.YELLOW, Color.BLACK, Constants.NORMAL_STROKE);
+            tooltip.setText(Constants.UNKNOWN);
         } else {
-            alarmIcon.setColor(Color.TRANSPARENT);
-            tooltip.setText("No Alarm");
+            alarmIcon.setForegroundIconColor(Color.TRANSPARENT);
+            tooltip.setText(Constants.NO_ALARM);
         }
         Tooltip.install(iconPane, tooltip);
     }
 
     private void setEffectTemperature(final double temperature) {
         if (temperature == Double.NEGATIVE_INFINITY) {
-            temperatureStatus.setText("??°C");
+            temperatureStatus.setText("??" + Constants.CELSIUS);
         } else {
             temperatureStatus.setText((int) temperature + Constants.CELSIUS);
             if (temperature <= Constants.TEMPERATUR_FADING_MINIMUM) {
@@ -139,9 +139,9 @@ public class TemperatureSensorPane extends UnitPane {
 
     @Override
     protected void initTitle() {
-        thermometerIconBackground.setColor(Color.BLACK);
-        thermometerIconForeground.setColor(Color.RED);
-        alarmIcon.setColor(Color.TRANSPARENT);
+        thermometerIconBackground.setForegroundIconColor(Color.BLACK);
+        thermometerIconForeground.setForegroundIconColor(Color.RED);
+        alarmIcon.setForegroundIconColor(Color.TRANSPARENT);
 
         iconPane.add(thermometerIconBackground, 0, 0);
         iconPane.add(thermometerIconForeground, 0, 0);

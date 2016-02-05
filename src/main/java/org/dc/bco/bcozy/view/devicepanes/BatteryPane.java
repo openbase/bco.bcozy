@@ -95,20 +95,20 @@ public class BatteryPane extends UnitPane {
             case UNKNOWN:
                 batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_UNKNOWN);
                 batteryIcon.setBackgroundIconColorAnimated(Color.BLACK);
-                tooltip.setText("Unknown");
+                tooltip.setText(Constants.UNKNOWN);
                 break;
             case OK:
                 batteryIcon.setBackgroundIconColorAnimated(Color.GREEN);
-                tooltip.setText("Ok");
+                tooltip.setText(Constants.OK);
                 break;
             case CRITICAL:
                 batteryIcon.setBackgroundIconColorAnimated(Color.RED);
-                tooltip.setText("Critical");
+                tooltip.setText(Constants.CRITICAL);
                 break;
             case INSUFFICIENT:
                 batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_ALERT);
                 batteryIcon.setBackgroundIconColorAnimated(Color.RED);
-                tooltip.setText("Insufficient");
+                tooltip.setText(Constants.INSUFFICIENT);
                 break;
             default:
                 break;

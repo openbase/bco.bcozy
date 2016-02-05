@@ -137,10 +137,20 @@ public class SVGIcon extends StackPane {
      * Method sets the icon color only.
      * @param color the color for the foregroundIcon icon to be set
      */
-    public void setColor(final Color color) {
+    public void setForegroundIconColor(final Color color) {
         foregroundIcon.setFill(color);
         foregroundIcon.setStroke(Color.TRANSPARENT);
         foregroundIcon.setStrokeWidth(0);
+    }
+
+    /**
+     * Method sets the icon color only.
+     * @param color the color for the backgroundIcon icon to be set
+     */
+    public void setBackgroundIconColor(final Color color) {
+        backgroundIcon.setFill(color);
+        backgroundIcon.setStroke(Color.TRANSPARENT);
+        backgroundIcon.setStrokeWidth(0);
     }
 
     /**
@@ -149,7 +159,7 @@ public class SVGIcon extends StackPane {
      * @param outline color for the stroke
      * @param width width of the stroke
      */
-    public void setColor(final Color color, final Color outline, final double width) {
+    public void setForegroundIconColor(final Color color, final Color outline, final double width) {
         foregroundIcon.setFill(color);
         foregroundIcon.setStroke(outline);
         foregroundIcon.setStrokeWidth(width);

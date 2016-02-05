@@ -109,7 +109,7 @@ public class DimmerPane extends UnitPane {
             lightBulbIcon.setBackgroundIconColorAnimated(color);
             slider.setValue(brightness * slider.getMax());
             progressBar.setProgress(brightness);
-            tooltip.setText("On");
+            tooltip.setText(Constants.LIGHT_ON);
 
             if (!toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(true);
@@ -118,13 +118,13 @@ public class DimmerPane extends UnitPane {
             lightBulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
             slider.setValue(0);
             progressBar.setProgress(0);
-            tooltip.setText("Off");
+            tooltip.setText(Constants.LIGHT_OFF);
 
             if (toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(false);
             }
         } else {
-            tooltip.setText("Unknown");
+            tooltip.setText(Constants.UNKNOWN);
         }
         Tooltip.install(lightBulbIcon, tooltip);
     }

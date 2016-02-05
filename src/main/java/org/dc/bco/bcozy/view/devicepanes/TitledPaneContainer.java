@@ -57,7 +57,7 @@ public class TitledPaneContainer extends VBox {
     }
 
     /**
-     * Workaround Method to cope with the missing 15 pixel
+     * Workaround Method to cope with the missing 15 pixel.
      */
     public void addDummyPane() {
         //CHECKSTYLE.OFF: MagicNumber

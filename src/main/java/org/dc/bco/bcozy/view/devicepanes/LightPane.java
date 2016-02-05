@@ -89,20 +89,20 @@ public class LightPane extends UnitPane {
     private void setPowerStateSwitchAndIcon(final State powerState) {
         if (powerState.equals(State.ON)) {
             lightBulbIcon.setBackgroundIconColorAnimated(Constants.LIGHTBULB_COLOR);
-            tooltip.setText("On");
+            tooltip.setText(Constants.LIGHT_ON);
 
             if (!toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(true);
             }
         } else if (powerState.equals(State.OFF)) {
             lightBulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
-            tooltip.setText("Off");
+            tooltip.setText(Constants.LIGHT_OFF);
 
             if (toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(false);
             }
         } else {
-            tooltip.setText("Unknown");
+            tooltip.setText(Constants.UNKNOWN);
         }
     }
 

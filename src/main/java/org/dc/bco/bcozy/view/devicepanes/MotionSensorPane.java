@@ -88,20 +88,20 @@ public class MotionSensorPane extends UnitPane {
     private void setMotionStateIcon(final State motionState) {
         if (motionState.equals(State.MOVEMENT)) {
             motionIcon.setBackgroundIconColorAnimated(Color.WHITE);
-            tooltip.setText("Movement");
+            tooltip.setText(Constants.MOVEMENT);
         } else if (motionState.equals(State.NO_MOVEMENT)) {
             motionIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
-            tooltip.setText("No Movement");
+            tooltip.setText(Constants.NO_MOVEMENT);
         } else {
             motionIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
-            tooltip.setText("Unknown");
+            tooltip.setText(Constants.UNKNOWN);
         }
         Tooltip.install(iconPane, tooltip);
     }
 
     @Override
     protected void initTitle() {
-        backgroundIcon.setColor(Color.BLACK);
+        backgroundIcon.setForegroundIconColor(Color.BLACK);
 
         iconPane.getChildren().addAll(backgroundIcon, motionIcon);
 

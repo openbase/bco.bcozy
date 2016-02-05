@@ -47,7 +47,8 @@ public class ReedSwitchPane extends UnitPane {
 
     private final ReedSwitchRemote reedSwitchRemote;
     private final SVGIcon reedSwitchIcon;
-    private final SVGIcon alarmIcon;
+    private final SVGIcon unknownForegroundIcon;
+    private final SVGIcon unknownBackgroundIcon;
     private final BorderPane headContent;
     private final GridPane iconPane;
     private final Tooltip tooltip;
@@ -60,7 +61,9 @@ public class ReedSwitchPane extends UnitPane {
         this.reedSwitchRemote = (ReedSwitchRemote) reedSwitchRemote;
 
         reedSwitchIcon = new SVGIcon(MaterialIcon.RADIO_BUTTON_CHECKED, Constants.SMALL_ICON, true);
-        alarmIcon = new SVGIcon(FontAwesomeIcon.EXCLAMATION_TRIANGLE, Constants.SMALL_ICON, false);
+        unknownBackgroundIcon = new SVGIcon(FontAwesomeIcon.CIRCLE, Constants.SMALL_ICON, true);
+        unknownForegroundIcon = new SVGIcon(FontAwesomeIcon.QUESTION_CIRCLE, Constants.SMALL_ICON, false);
+
         headContent = new BorderPane();
         iconPane = new GridPane();
         tooltip = new Tooltip();
@@ -87,27 +90,35 @@ public class ReedSwitchPane extends UnitPane {
     }
 
     private void setReedSwitchIconAndTooltip(final State reedSwitchState) {
+        headContent.setRight(null);
+
         if (reedSwitchState.equals(State.CLOSED)) {
             reedSwitchIcon.changeForegroundIcon(MaterialIcon.RADIO_BUTTON_CHECKED);
-            alarmIcon.setColor(Color.TRANSPARENT);
-            tooltip.setText("Closed");
+            headContent.setLeft(reedSwitchIcon);
+            tooltip.setText(Constants.CLOSED);
+            Tooltip.install(reedSwitchIcon, tooltip);
         } else if (reedSwitchState.equals(State.OPEN)) {
+            headContent.setLeft(reedSwitchIcon);
             reedSwitchIcon.changeForegroundIcon(MaterialIcon.RADIO_BUTTON_UNCHECKED);
-            alarmIcon.setColor(Color.TRANSPARENT);
-            tooltip.setText("Open");
+            tooltip.setText(Constants.OPEN);
+            Tooltip.install(reedSwitchIcon, tooltip);
         } else {
-            alarmIcon.setColor(Color.YELLOW, Color.BLACK, Constants.NORMAL_STROKE);
-            tooltip.setText("Unknown");
+            headContent.setLeft(iconPane);
+            tooltip.setText(Constants.UNKNOWN);
+            Tooltip.install(iconPane, tooltip);
         }
-        Tooltip.install(iconPane, tooltip);
     }
 
     @Override
     protected void initTitle() {
-        iconPane.add(reedSwitchIcon, 0, 0);
-        iconPane.add(alarmIcon, 1, 0);
+        iconPane.add(unknownBackgroundIcon, 0, 0);
+        iconPane.add(unknownForegroundIcon, 0, 0);
+        iconPane.getStyleClass().clear();
+        iconPane.getStyleClass().add(Constants.ICON_GAP);
+        reedSwitchIcon.getStyleClass().clear();
+        reedSwitchIcon.getStyleClass().add(Constants.ICON_GAP);
+        unknownForegroundIcon.setForegroundIconColor(Color.BLUE);
 
-        headContent.setLeft(iconPane);
         headContent.setCenter(getUnitLabel());
         headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
         //Padding values are not available here

@@ -393,6 +393,86 @@ public final class Constants {
     public static final double WEATHER_ICONS_SCALE = 0.681;
 
     /**
+     * String for tooltip unknown.
+     */
+    public static final String UNKNOWN = "Unknown";
+
+    /**
+     * String for tooltip open.
+     */
+    public static final String OPEN = "Open";
+
+    /**
+     * String for tooltip closed.
+     */
+    public static final String CLOSED = "Closed";
+
+    /**
+     * String for tooltip on.
+     */
+    public static final String LIGHT_ON = "On";
+
+    /**
+     * String for tooltip off.
+     */
+    public static final String LIGHT_OFF = "Off";
+
+    /**
+     * String for tooltip ok.
+     */
+    public static final String OK = "Ok";
+
+    /**
+     * String for tooltip critical.
+     */
+    public static final String CRITICAL = "Critical";
+
+    /**
+     * String for tooltip insufficient.
+     */
+    public static final String INSUFFICIENT = "Insufficient";
+
+    /**
+     * String for tooltip movement.
+     */
+    public static final String MOVEMENT = "Movement";
+
+    /**
+     * String for tooltip no movement.
+     */
+    public static final String NO_MOVEMENT = "No Movement";
+
+    /**
+     * String for tooltip down.
+     */
+    public static final String DOWN = "Down";
+
+    /**
+     * String for tooltip up.
+     */
+    public static final String UP = "Up";
+
+    /**
+     * String for tooltip stop.
+     */
+    public static final String STOP = "Stop";
+
+    /**
+     * String for tooltip alarm.
+     */
+    public static final String ALARM = "Alarm";
+
+    /**
+     * String for tooltip no alarm.
+     */
+    public static final String NO_ALARM = "No Alarm";
+
+    /**
+     * String for CSS icon gap.
+     */
+    public static final String ICON_GAP = "icon-gap";
+
+    /**
      * Private Constructor.
      */
     private Constants() { }
