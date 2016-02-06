@@ -34,7 +34,7 @@ public class UnitButton extends Button {
      * @param svgIcon The Icon displayed in the button
      * @param onActionHandler The ActionHandler that gets active when the button is clicked
      */
-    public UnitButton(SVGIcon svgIcon, EventHandler<ActionEvent> onActionHandler) {
+    public UnitButton(final SVGIcon svgIcon, final EventHandler<ActionEvent> onActionHandler) {
         this.setGraphic(svgIcon);
         this.setOnAction(onActionHandler);
     }

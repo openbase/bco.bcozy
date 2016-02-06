@@ -89,10 +89,10 @@ public class UserPane extends BorderPane {
     public void setAtHome(final boolean atHome) {
         if (atHome) {
             atHomeIcon = new SVGIcon(MaterialIcon.HOME, Constants.EXTRA_SMALL_ICON, true);
-            userIcon.setColor(Color.DODGERBLUE);
+            userIcon.setForegroundIconColor(Color.DODGERBLUE);
         } else {
             atHomeIcon = new SVGIcon(MaterialIcon.DIRECTIONS_WALK, Constants.EXTRA_SMALL_ICON, true);
-            userIcon.setColor(Color.LIGHTGRAY);
+            userIcon.setForegroundIconColor(Color.LIGHTGRAY);
         }
     }
 

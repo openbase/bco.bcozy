@@ -19,7 +19,7 @@
 package org.dc.bco.bcozy.view.devicepanes;
 
 import javafx.scene.control.Label;
-import org.dc.bco.dal.remote.unit.DALRemoteService;
+import org.dc.jul.extension.rsb.com.AbstractIdentifiableRemote;
 import org.dc.jul.pattern.Observer;
 
 /**
@@ -64,10 +64,10 @@ public abstract class UnitPane extends WidgetPane implements Observer {
     }
 
     /**
-     * Returns the DALRemoteService.
-     * @return DALRemoteService
+     * Returns the AbstractIdentifiableRemote.
+     * @return AbstractIdentifiableRemote
      */
-    abstract DALRemoteService getDALRemoteService();
+    abstract AbstractIdentifiableRemote getDALRemoteService();
 
     /**
      * Initialize the TitlePane.

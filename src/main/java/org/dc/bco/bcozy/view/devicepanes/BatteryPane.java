@@ -29,7 +29,7 @@ import javafx.scene.text.Text;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.SVGIcon;
 import org.dc.bco.dal.remote.unit.BatteryRemote;
-import org.dc.bco.dal.remote.unit.DALRemoteService;
+import org.dc.jul.extension.rsb.com.AbstractIdentifiableRemote;
 import org.dc.jul.exception.CouldNotPerformException;
 import org.dc.jul.exception.printer.ExceptionPrinter;
 import org.dc.jul.exception.printer.LogLevel;
@@ -56,7 +56,7 @@ public class BatteryPane extends UnitPane {
      * Constructor for the BatteryPane.
      * @param batteryRemote batteryRemote
      */
-    public BatteryPane(final DALRemoteService batteryRemote) {
+    public BatteryPane(final AbstractIdentifiableRemote batteryRemote) {
         this.batteryRemote = (BatteryRemote) batteryRemote;
 
         headContent = new BorderPane();
@@ -95,20 +95,20 @@ public class BatteryPane extends UnitPane {
             case UNKNOWN:
                 batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_UNKNOWN);
                 batteryIcon.setBackgroundIconColorAnimated(Color.BLACK);
-                tooltip.setText("Unknown");
+                tooltip.setText(Constants.UNKNOWN);
                 break;
             case OK:
                 batteryIcon.setBackgroundIconColorAnimated(Color.GREEN);
-                tooltip.setText("Ok");
+                tooltip.setText(Constants.OK);
                 break;
             case CRITICAL:
                 batteryIcon.setBackgroundIconColorAnimated(Color.RED);
-                tooltip.setText("Critical");
+                tooltip.setText(Constants.CRITICAL);
                 break;
             case INSUFFICIENT:
                 batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_ALERT);
                 batteryIcon.setBackgroundIconColorAnimated(Color.RED);
-                tooltip.setText("Insufficient");
+                tooltip.setText(Constants.INSUFFICIENT);
                 break;
             default:
                 break;
@@ -174,7 +174,7 @@ public class BatteryPane extends UnitPane {
     }
 
     @Override
-    public DALRemoteService getDALRemoteService() {
+    public AbstractIdentifiableRemote getDALRemoteService() {
         return batteryRemote;
     }
 

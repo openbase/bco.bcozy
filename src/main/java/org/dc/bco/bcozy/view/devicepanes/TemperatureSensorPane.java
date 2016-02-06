@@ -29,7 +29,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.SVGIcon;
-import org.dc.bco.dal.remote.unit.DALRemoteService;
+import org.dc.jul.extension.rsb.com.AbstractIdentifiableRemote;
 import org.dc.bco.dal.remote.unit.TemperatureSensorRemote;
 import org.dc.jul.exception.CouldNotPerformException;
 import org.dc.jul.exception.printer.ExceptionPrinter;
@@ -58,9 +58,9 @@ public class TemperatureSensorPane extends UnitPane {
 
     /**
      * Constructor for TemperatureSensorPane.
-     * @param temperatureSensorRemote DALRemoteService
+     * @param temperatureSensorRemote AbstractIdentifiableRemote
      */
-    public TemperatureSensorPane(final DALRemoteService temperatureSensorRemote) {
+    public TemperatureSensorPane(final AbstractIdentifiableRemote temperatureSensorRemote) {
         this.temperatureSensorRemote = (TemperatureSensorRemote) temperatureSensorRemote;
 
         thermometerIconBackground = new SVGIcon(WeatherIcon.THERMOMETER_EXTERIOR,
@@ -105,21 +105,21 @@ public class TemperatureSensorPane extends UnitPane {
 
     private void setAlarmStateIcon(final State alarmState) {
         if (alarmState.equals(State.ALARM)) {
-            alarmIcon.setColor(Color.RED, Color.BLACK, Constants.NORMAL_STROKE);
-            tooltip.setText("Alarm");
+            alarmIcon.setForegroundIconColor(Color.RED, Color.BLACK, Constants.NORMAL_STROKE);
+            tooltip.setText(Constants.ALARM);
         } else if (alarmState.equals(State.UNKNOWN)) {
-            alarmIcon.setColor(Color.YELLOW, Color.BLACK, Constants.NORMAL_STROKE);
-            tooltip.setText("Unknown");
+            alarmIcon.setForegroundIconColor(Color.YELLOW, Color.BLACK, Constants.NORMAL_STROKE);
+            tooltip.setText(Constants.UNKNOWN);
         } else {
-            alarmIcon.setColor(Color.TRANSPARENT);
-            tooltip.setText("No Alarm");
+            alarmIcon.setForegroundIconColor(Color.TRANSPARENT);
+            tooltip.setText(Constants.NO_ALARM);
         }
         Tooltip.install(iconPane, tooltip);
     }
 
     private void setEffectTemperature(final double temperature) {
         if (temperature == Double.NEGATIVE_INFINITY) {
-            temperatureStatus.setText("??°C");
+            temperatureStatus.setText("??" + Constants.CELSIUS);
         } else {
             temperatureStatus.setText((int) temperature + Constants.CELSIUS);
             if (temperature <= Constants.TEMPERATUR_FADING_MINIMUM) {
@@ -139,9 +139,9 @@ public class TemperatureSensorPane extends UnitPane {
 
     @Override
     protected void initTitle() {
-        thermometerIconBackground.setColor(Color.BLACK);
-        thermometerIconForeground.setColor(Color.RED);
-        alarmIcon.setColor(Color.TRANSPARENT);
+        thermometerIconBackground.setForegroundIconColor(Color.BLACK);
+        thermometerIconForeground.setForegroundIconColor(Color.RED);
+        alarmIcon.setForegroundIconColor(Color.TRANSPARENT);
 
         iconPane.add(thermometerIconBackground, 0, 0);
         iconPane.add(thermometerIconForeground, 0, 0);
@@ -172,7 +172,7 @@ public class TemperatureSensorPane extends UnitPane {
     }
 
     @Override
-    public DALRemoteService getDALRemoteService() {
+    public AbstractIdentifiableRemote getDALRemoteService() {
         return temperatureSensorRemote;
     }
 

@@ -29,7 +29,7 @@ import javafx.scene.paint.Color;
 import org.controlsfx.control.ToggleSwitch;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.SVGIcon;
-import org.dc.bco.dal.remote.unit.DALRemoteService;
+import org.dc.jul.extension.rsb.com.AbstractIdentifiableRemote;
 import org.dc.bco.dal.remote.unit.PowerPlugRemote;
 import org.dc.jul.exception.CouldNotPerformException;
 import org.dc.jul.exception.printer.ExceptionPrinter;
@@ -59,7 +59,7 @@ public class PowerPlugPane extends UnitPane {
      * Constructor for the PowerPlugPane.
      * @param powerPlugRemote powerPlugRemote
      */
-    public PowerPlugPane(final DALRemoteService powerPlugRemote) {
+    public PowerPlugPane(final AbstractIdentifiableRemote powerPlugRemote) {
         this.powerPlugRemote = (PowerPlugRemote) powerPlugRemote;
 
         toggleSwitch = new ToggleSwitch();
@@ -92,21 +92,21 @@ public class PowerPlugPane extends UnitPane {
 
     private void setPowerStateSwitchAndIcon(final State powerState) {
         if (powerState.equals(State.ON)) {
-            powerStatusIcon.setColor(Color.YELLOW, Color.BLACK, Constants.THIN_STROKE);
-            tooltip.setText("On");
+            powerStatusIcon.setForegroundIconColor(Color.YELLOW, Color.BLACK, Constants.THIN_STROKE);
+            tooltip.setText(Constants.LIGHT_ON);
 
             if (!toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(true);
             }
         } else if (powerState.equals(State.OFF)) {
-            powerStatusIcon.setColor(Color.TRANSPARENT);
-            tooltip.setText("Off");
+            powerStatusIcon.setForegroundIconColor(Color.TRANSPARENT);
+            tooltip.setText(Constants.LIGHT_OFF);
 
             if (toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(false);
             }
         } else {
-            tooltip.setText("Unknown");
+            tooltip.setText(Constants.UNKNOWN);
         }
         Tooltip.install(iconPane, tooltip);
     }
@@ -167,7 +167,7 @@ public class PowerPlugPane extends UnitPane {
     }
 
     @Override
-    public DALRemoteService getDALRemoteService() {
+    public AbstractIdentifiableRemote getDALRemoteService() {
         return powerPlugRemote;
     }
 

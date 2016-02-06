@@ -26,7 +26,7 @@ import javafx.event.EventHandler;
 import org.dc.bco.bcozy.view.ForegroundPane;
 import org.dc.bco.bcozy.view.devicepanes.TitledPaneContainer;
 import org.dc.bco.bcozy.view.location.LocationPane;
-import org.dc.bco.dal.remote.unit.DALRemoteService;
+import org.dc.jul.extension.rsb.com.AbstractIdentifiableRemote;
 import org.dc.bco.registry.location.remote.LocationRegistryRemote;
 import org.dc.jul.exception.CouldNotPerformException;
 import org.dc.jul.exception.printer.ExceptionPrinter;
@@ -114,10 +114,10 @@ public class ContextMenuController {
     private void fillTitledPaneContainer(final TitledPaneContainer titledPaneContainer, final String locationID) {
         this.titledPaneMap.put(locationID, titledPaneContainer);
 
-        final Map<UnitType, List<DALRemoteService>> unitRemoteMap =
+        final Map<UnitType, List<AbstractIdentifiableRemote>> unitRemoteMap =
                 remotePool.getUnitRemoteMapOfLocation(locationID);
 
-        for (final Map.Entry<UnitType, List<DALRemoteService>> nextEntry : unitRemoteMap.entrySet()) {
+        for (final Map.Entry<UnitType, List<AbstractIdentifiableRemote>> nextEntry : unitRemoteMap.entrySet()) {
             titledPaneContainer.createAndAddNewTitledPane(nextEntry.getKey(), nextEntry.getValue());
         }
 

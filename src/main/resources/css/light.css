@@ -482,9 +482,7 @@
  *                                                                             *
  ******************************************************************************/
 
-.body-pane {
-    -fx-text-fill: -fx-text-base-color;
-    -fx-background-color: transparent;
+.widget-pane {
     -fx-border-color:
             transparent
             transparent
@@ -492,14 +490,14 @@
             transparent;
 }
 
+.body-pane {
+    -fx-text-fill: -fx-text-base-color;
+    -fx-background-color: transparent;
+}
+
 .head-pane {
     -fx-text-fill: -fx-text-base-color;
     -fx-background-color: transparent;
-    -fx-border-color:
-            transparent
-            transparent
-            -border-color
-            transparent;
 }
 
 .head-pane:hover {
