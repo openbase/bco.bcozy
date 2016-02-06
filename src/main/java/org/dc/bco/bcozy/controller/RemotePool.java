@@ -27,8 +27,10 @@ import org.dc.bco.bcozy.view.ForegroundPane;
 import org.dc.bco.dal.remote.unit.DALRemoteService;
 import org.dc.bco.dal.remote.unit.UnitRemoteFactory;
 import org.dc.bco.dal.remote.unit.UnitRemoteFactoryInterface;
+import org.dc.bco.manager.user.remote.UserRemote;
 import org.dc.bco.registry.device.remote.DeviceRegistryRemote;
 import org.dc.bco.registry.location.remote.LocationRegistryRemote;
+import org.dc.bco.registry.user.remote.UserRegistryRemote;
 import org.dc.jul.exception.CouldNotPerformException;
 import org.dc.jul.exception.printer.ExceptionPrinter;
 import org.dc.jul.exception.printer.LogLevel;
@@ -36,6 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rct.TransformReceiver;
 import rct.TransformerFactory;
+import rst.authorization.UserConfigType;
 import rst.homeautomation.unit.UnitConfigType.UnitConfig;
 import rst.homeautomation.unit.UnitTemplateType.UnitTemplate.UnitType;
 import rst.spatial.LocationConfigType.LocationConfig;
@@ -56,8 +59,10 @@ public class RemotePool {
 
     private final Map<String, DALRemoteService> deviceMap;
     private final Map<String, Map<String, DALRemoteService>> locationMap;
-    private LocationRegistryRemote locationRegistryRemote = null;
-    private DeviceRegistryRemote deviceRegistryRemote = null;
+    private final Map<String, UserRemote> userMap;
+    private LocationRegistryRemote locationRegistryRemote;
+    private DeviceRegistryRemote deviceRegistryRemote;
+    private UserRegistryRemote userRegistryRemote;
     private TransformReceiver transformReceiver;
 
     private boolean init;
@@ -131,7 +136,7 @@ public class RemotePool {
 
         deviceMap = new HashMap<>();
         locationMap = new HashMap<>();
-
+        userMap = new HashMap<>();
 
         init = false;
         mapsFilled = false;
@@ -164,10 +169,21 @@ public class RemotePool {
         }
 
         try {
+            userRegistryRemote = new UserRegistryRemote();
+            userRegistryRemote.init();
+            userRegistryRemote.activate();
+        } catch (CouldNotPerformException | InterruptedException e) {
+            locationRegistryRemote.shutdown();
+            deviceRegistryRemote.shutdown();
+            throw e;
+        }
+
+        try {
             this.transformReceiver = TransformerFactory.getInstance().createTransformReceiver();
         } catch (TransformerFactory.TransformerFactoryException e) {
             locationRegistryRemote.shutdown();
             deviceRegistryRemote.shutdown();
+            userRegistryRemote.shutdown();
             throw e;
         }
 
@@ -233,6 +249,23 @@ public class RemotePool {
             }
 
             deviceMap.put(currentUnitConfig.getId(), currentDalRemoteService);
+        }
+    }
+
+    /**
+     * Fills the user map with all remotes. All remotes will be initialized and activated.
+     * @throws CouldNotPerformException CouldNotPerformException
+     */
+    public void fillUserMap() throws CouldNotPerformException {
+        for (final UserConfigType.UserConfig currentUserConfig : userRegistryRemote.getUserConfigs()) {
+            UserRemote currentUserRemote = new UserRemote();
+            currentUserRemote.init(currentUserConfig);
+            try {
+                currentUserRemote.activate();
+            } catch (InterruptedException e) {
+                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                continue;
+            }
         }
     }
 
@@ -364,6 +397,22 @@ public class RemotePool {
             }
         }
         return unitRemoteList;
+    }
+
+    /**
+     * Returns a List of all UserRemotes.
+     * @return the List of UserRemotes
+     * @throws CouldNotPerformException CouldNotPerformException
+     */
+    public List<UserRemote> getUserRemoteList() throws CouldNotPerformException {
+        checkInit();
+
+        final List<UserRemote> userRemoteList = new ArrayList<>();
+
+        for (Map.Entry<String, UserRemote> userRemoteEntry : userMap.entrySet()) {
+            userRemoteList.add(userRemoteEntry.getValue());
+        }
+        return userRemoteList;
     }
 
     /**

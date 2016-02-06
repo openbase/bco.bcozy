@@ -157,6 +157,9 @@ public class BCozy extends Application {
                 infoPane.setTextLabelIdentifier("fillDeviceAndLocationMap");
                 remotePool.fillDeviceAndLocationMap();
 
+                infoPane.setTextLabelIdentifier("fillUserMap");
+                remotePool.fillUserMap();
+
                 infoPane.setTextLabelIdentifier("fillContextMenu");
                 contextMenuController.initTitledPaneMap();
 

@@ -139,6 +139,11 @@
             <artifactId>manager.location.remote</artifactId>
             <version>${dependency.bco.manager.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.dc.bco</groupId>
+            <artifactId>manager.user.remote</artifactId>
+            <version>${dependency.bco.manager.version}</version>
+        </dependency>
         <!-- Just so maven doesn't complain about a missing version. -->
         <dependency>
             <groupId>org.apache.maven.plugins</groupId>
