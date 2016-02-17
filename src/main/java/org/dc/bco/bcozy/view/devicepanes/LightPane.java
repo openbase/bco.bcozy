@@ -41,7 +41,7 @@ import rst.homeautomation.state.PowerStateType.PowerState.State;
 import rst.homeautomation.unit.LightType.Light;
 
 /**
- * Created by timo on 08.01.16.
+ * Created by tmichalski on 08.01.16.
  */
 public class LightPane extends UnitPane {
     private static final Logger LOGGER = LoggerFactory.getLogger(LightPane.class);

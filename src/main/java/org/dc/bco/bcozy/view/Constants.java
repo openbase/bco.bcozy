@@ -420,7 +420,7 @@ public final class Constants {
     /**
      * String for tooltip ok.
      */
-    public static final String OK = "Ok";
+    public static final String OK_STRING = "Ok";
 
     /**
      * String for tooltip critical.
@@ -450,7 +450,7 @@ public final class Constants {
     /**
      * String for tooltip up.
      */
-    public static final String UP = "Up";
+    public static final String UP_STRING = "Up";
 
     /**
      * String for tooltip stop.

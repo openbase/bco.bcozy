@@ -42,7 +42,7 @@ import rst.homeautomation.state.PowerStateType.PowerState.State;
 import rst.homeautomation.unit.PowerPlugType.PowerPlug;
 
 /**
- * Created by timo on 08.01.16.
+ * Created by tmichalski on 08.01.16.
  */
 public class PowerPlugPane extends UnitPane {
     private static final Logger LOGGER = LoggerFactory.getLogger(PowerPlugPane.class);
@@ -106,6 +106,7 @@ public class PowerPlugPane extends UnitPane {
                 toggleSwitch.setSelected(false);
             }
         } else {
+            powerStatusIcon.setForegroundIconColor(Color.TRANSPARENT);
             tooltip.setText(Constants.UNKNOWN);
         }
         Tooltip.install(iconPane, tooltip);

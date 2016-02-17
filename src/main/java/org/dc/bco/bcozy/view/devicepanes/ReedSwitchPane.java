@@ -18,7 +18,7 @@
  */
 package org.dc.bco.bcozy.view.devicepanes;
 
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import de.jensd.fx.glyphs.materialicons.MaterialIcon;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
@@ -61,8 +61,8 @@ public class ReedSwitchPane extends UnitPane {
         this.reedSwitchRemote = (ReedSwitchRemote) reedSwitchRemote;
 
         reedSwitchIcon = new SVGIcon(MaterialIcon.RADIO_BUTTON_CHECKED, Constants.SMALL_ICON, true);
-        unknownBackgroundIcon = new SVGIcon(FontAwesomeIcon.CIRCLE, Constants.SMALL_ICON, true);
-        unknownForegroundIcon = new SVGIcon(FontAwesomeIcon.QUESTION_CIRCLE, Constants.SMALL_ICON, false);
+        unknownBackgroundIcon = new SVGIcon(MaterialDesignIcon.CHECKBOX_BLANK_CIRCLE, Constants.SMALL_ICON - 2, false);
+        unknownForegroundIcon = new SVGIcon(MaterialDesignIcon.HELP_CIRCLE, Constants.SMALL_ICON, false);
 
         headContent = new BorderPane();
         iconPane = new GridPane();
@@ -113,15 +113,14 @@ public class ReedSwitchPane extends UnitPane {
     protected void initTitle() {
         iconPane.add(unknownBackgroundIcon, 0, 0);
         iconPane.add(unknownForegroundIcon, 0, 0);
-        iconPane.getStyleClass().clear();
-        iconPane.getStyleClass().add(Constants.ICON_GAP);
         reedSwitchIcon.getStyleClass().clear();
         reedSwitchIcon.getStyleClass().add(Constants.ICON_GAP);
         unknownForegroundIcon.setForegroundIconColor(Color.BLUE);
+        unknownBackgroundIcon.setForegroundIconColor(Color.WHITE);
 
+        headContent.setLeft(iconPane);
         headContent.setCenter(getUnitLabel());
         headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
-        //Padding values are not available here
         headContent.prefHeightProperty().set(reedSwitchIcon.getSize() + Constants.INSETS);
     }
 

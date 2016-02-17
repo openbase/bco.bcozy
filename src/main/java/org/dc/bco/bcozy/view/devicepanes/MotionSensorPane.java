@@ -39,7 +39,7 @@ import rst.homeautomation.state.MotionStateType.MotionState.State;
 import rst.homeautomation.unit.MotionSensorType.MotionSensor;
 
 /**
- * Created by timo on 15.01.16.
+ * Created by tmichalski on 15.01.16.
  */
 public class MotionSensorPane extends UnitPane {
     private static final Logger LOGGER = LoggerFactory.getLogger(BatteryPane.class);

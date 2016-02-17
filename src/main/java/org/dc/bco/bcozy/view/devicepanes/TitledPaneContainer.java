@@ -38,7 +38,8 @@ public class TitledPaneContainer extends VBox {
      * @param unitType unitType
      * @param dalRemoteServiceList dalRemoteServiceList
      */
-    public void createAndAddNewTitledPane(final UnitType unitType, final List<AbstractIdentifiableRemote> dalRemoteServiceList) {
+    public void createAndAddNewTitledPane(final UnitType unitType,
+                                          final List<AbstractIdentifiableRemote> dalRemoteServiceList) {
         final UnitPaneContainer unitPaneContainer = new UnitPaneContainer(unitType.toString());
         if (unitPaneContainer.createAndAddNewUnitPanes(unitType, dalRemoteServiceList)) {
             this.getChildren().add(unitPaneContainer);

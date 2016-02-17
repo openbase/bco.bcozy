@@ -192,7 +192,7 @@ public class RollerShutterPane extends UnitPane {
             if (shutterState.equals(State.DOWN)) {
                 tooltip.setText(Constants.DOWN);
             } else if (shutterState.equals(State.UP)) {
-                tooltip.setText(Constants.UP);
+                tooltip.setText(Constants.UP_STRING);
             } else {
                 tooltip.setText(Constants.STOP);
             }

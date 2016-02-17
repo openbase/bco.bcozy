@@ -18,7 +18,7 @@
  */
 package org.dc.bco.bcozy.view.devicepanes;
 
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.layout.BorderPane;
@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 import rst.homeautomation.unit.BrightnessSensorType.BrightnessSensor;
 
 /**
- * Created by timo on 15.01.16.
+ * Created by tmichalski on 15.01.16.
  */
 public class BrightnessSensorPane extends UnitPane {
     private static final Logger LOGGER = LoggerFactory.getLogger(BatteryPane.class);
@@ -57,8 +57,8 @@ public class BrightnessSensorPane extends UnitPane {
         this.brightnessSensorRemote = (BrightnessSensorRemote) brightnessSensorRemote;
 
         headContent = new BorderPane();
-        brightnessIcon = new SVGIcon(FontAwesomeIcon.CIRCLE, FontAwesomeIcon.CIRCLE_THIN,
-                Constants.SMALL_ICON);
+        brightnessIcon = new SVGIcon(MaterialDesignIcon.CHECKBOX_BLANK_CIRCLE,
+                MaterialDesignIcon.CHECKBOX_BLANK_CIRCLE_OUTLINE, Constants.SMALL_ICON);
         brightnessStatus = new Text();
         iconPane = new GridPane();
 

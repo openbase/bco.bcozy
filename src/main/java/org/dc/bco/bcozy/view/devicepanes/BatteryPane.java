@@ -40,7 +40,7 @@ import rst.homeautomation.state.BatteryStateType.BatteryState.State;
 import rst.homeautomation.unit.BatteryType.Battery;
 
 /**
- * Created by timo on 13.01.16.
+ * Created by tmichalski on 13.01.16.
  */
 public class BatteryPane extends UnitPane {
     private static final Logger LOGGER = LoggerFactory.getLogger(BatteryPane.class);
@@ -99,7 +99,7 @@ public class BatteryPane extends UnitPane {
                 break;
             case OK:
                 batteryIcon.setBackgroundIconColorAnimated(Color.GREEN);
-                tooltip.setText(Constants.OK);
+                tooltip.setText(Constants.OK_STRING);
                 break;
             case CRITICAL:
                 batteryIcon.setBackgroundIconColorAnimated(Color.RED);

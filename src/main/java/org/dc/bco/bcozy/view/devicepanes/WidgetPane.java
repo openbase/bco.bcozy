@@ -22,6 +22,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.geometry.Insets;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -96,6 +97,12 @@ public class WidgetPane extends VBox {
         head.getStyleClass().add("head-pane");
         head.setOnMouseClicked(paramT -> toggleVisibility());
 
+        if (headContent.getCenter() != null) {
+            BorderPane.setMargin(headContent.getCenter(), new Insets(0.0, 0.0, 0.0, Constants.INSETS));
+        }
+        if (headContent.getRight() != null) {
+            BorderPane.setMargin(headContent.getRight(), new Insets(0.0, Constants.INSETS, 0.0, 0.0));
+        }
         this.getChildren().add(head);
     }
 

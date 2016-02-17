@@ -29,7 +29,7 @@ import rst.homeautomation.unit.UnitTemplateType.UnitTemplate.UnitType;
 import java.util.List;
 
 /**
- * Created by timo on 03.12.15.
+ * Created by tmichalksi on 03.12.15.
  */
 public class UnitPaneContainer extends ObserverTitledPane {
 

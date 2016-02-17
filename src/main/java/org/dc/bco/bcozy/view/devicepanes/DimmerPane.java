@@ -83,7 +83,6 @@ public class DimmerPane extends UnitPane {
         initTitle();
         initContent();
         createWidgetPane(headContent, bodyContent);
-
         initEffectAndSwitch();
 
         this.dimmerRemote.addObserver(this);
