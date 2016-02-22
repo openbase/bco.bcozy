@@ -298,7 +298,7 @@ public final class Constants {
     /**
      * 255 (1 byte) for rgb color.
      */
-    public static final int RGB_8_BIT = 255;
+    public static final int RGB255 = 255;
 
     /**
      * Number Six.
@@ -324,16 +324,6 @@ public final class Constants {
      * Yellow color like a lightbulb.
      */
     public static final Color LIGHTBULB_COLOR = new Color(1.0, 1.0, 0.3, 1.0);
-
-    /**
-     * Step value of rollerShutterPane.
-     */
-    public static final double ROLLERSHUTTER_STEP = 0.01;
-
-    /**
-     * Max value of open ratio @ rollerShutterPane.
-     */
-    public static final double ROLLERSHUTTER_MAX_VALUE = 1.0;
 
     /**
      * Timeout value in milliseconds for fetching transformations.
@@ -466,11 +456,6 @@ public final class Constants {
      * String for tooltip no alarm.
      */
     public static final String NO_ALARM = "No Alarm";
-
-    /**
-     * String for CSS icon gap.
-     */
-    public static final String ICON_GAP = "icon-gap";
 
     /**
      * Private Constructor.

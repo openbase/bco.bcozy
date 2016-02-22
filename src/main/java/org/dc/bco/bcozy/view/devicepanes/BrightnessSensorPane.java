@@ -50,7 +50,7 @@ public class BrightnessSensorPane extends UnitPane {
     private final BorderPane headContent;
 
     /**
-     * Constructor for the BatteryPane.
+     * Constructor for the BrightnessSensorPane.
      * @param brightnessSensorRemote brightnessSensorRemote
      */
     public BrightnessSensorPane(final AbstractIdentifiableRemote brightnessSensorRemote) {

@@ -39,6 +39,7 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -78,14 +79,17 @@ public class AmbientLightPane extends UnitPane {
 
     private final AmbientLightRemote ambientLightRemote;
     private final SVGIcon lightBulbIcon;
+    private final SVGIcon unknownForegroundIcon;
+    private final SVGIcon unknownBackgroundIcon;
     private final ToggleSwitch toggleSwitch;
     private final BorderPane headContent;
-    private final DoubleProperty hueValue = new SimpleDoubleProperty(0);
-    private final DoubleProperty saturation = new SimpleDoubleProperty(0);
-    private final DoubleProperty brightness = new SimpleDoubleProperty(0);
+    private final DoubleProperty hueValue = new SimpleDoubleProperty(0.0);
+    private final DoubleProperty saturation = new SimpleDoubleProperty(Constants.ONE_HUNDRED / 2);
+    private final DoubleProperty brightness = new SimpleDoubleProperty(Constants.ONE_HUNDRED / 2);
     private final Rectangle rectangleSelector;
     private final Pane colorCircleContainer;
     private final Tooltip tooltip;
+    private final GridPane iconPane;
     private double rectX;
     private double rectY;
     private double angle;
@@ -98,18 +102,20 @@ public class AmbientLightPane extends UnitPane {
     public AmbientLightPane(final AbstractIdentifiableRemote ambientLightRemote) {
         this.ambientLightRemote = (AmbientLightRemote) ambientLightRemote;
 
-        toggleSwitch = new ToggleSwitch();
         lightBulbIcon =
                 new SVGIcon(MaterialDesignIcon.LIGHTBULB, MaterialDesignIcon.LIGHTBULB_OUTLINE, Constants.SMALL_ICON);
-        headContent = new BorderPane();
-        tooltip = new Tooltip();
+        unknownBackgroundIcon = new SVGIcon(MaterialDesignIcon.CHECKBOX_BLANK_CIRCLE, Constants.SMALL_ICON - 2, false);
+        unknownForegroundIcon = new SVGIcon(MaterialDesignIcon.HELP_CIRCLE, Constants.SMALL_ICON, false);
         rectangleSelector = new Rectangle();
+        toggleSwitch = new ToggleSwitch();
         colorCircleContainer = new Pane();
+        headContent = new BorderPane();
+        iconPane = new GridPane();
+        tooltip = new Tooltip();
 
         initUnitLabel();
         initTitle();
         initContent();
-
         createWidgetPane(headContent, bodyContent);
         initEffectAndSwitch();
 
@@ -122,16 +128,22 @@ public class AmbientLightPane extends UnitPane {
 
         try {
             powerState = ambientLightRemote.getPower().getValue();
+            if (powerState == State.UNKNOWN) {
+                powerState = State.OFF;
+            }
             currentColor = ambientLightRemote.getColor();
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
-        final Color color = Color.hsb(currentColor.getHue(), currentColor.getSaturation() / Constants.ONE_HUNDRED,
+        Color color = Color.hsb(currentColor.getHue(), currentColor.getSaturation() / Constants.ONE_HUNDRED,
                 currentColor.getValue() / Constants.ONE_HUNDRED);
 
+        if (color.getBrightness() != 0.0 && color.getSaturation() != 0.0 && color.getHue() != 0.0) {
+            saturation.set(color.getSaturation() * Constants.ONE_HUNDRED);
+            brightness.set(color.getBrightness() * Constants.ONE_HUNDRED);
+        }
+
         hueValue.set(color.getHue());
-        saturation.set(color.getSaturation() * Constants.ONE_HUNDRED);
-        brightness.set(color.getBrightness() * Constants.ONE_HUNDRED);
         angle = color.getHue();
         rectangleSelector.setY(0);
         rectSelectorCoordinates();
@@ -142,25 +154,34 @@ public class AmbientLightPane extends UnitPane {
         setEffectColorAndSwitch(powerState, color);
     }
 
-    private void setEffectColorAndSwitch(final State powerState, final Color color) {
-        if (powerState.equals(State.ON)) {
-            lightBulbIcon.setBackgroundIconColorAnimated(color);
-            tooltip.setText(Constants.LIGHT_ON);
+    private void setEffectColorAndSwitch(final State powerState, Color color) {
+        headContent.setLeft(lightBulbIcon);
 
-            if (!toggleSwitch.isSelected()) {
-                toggleSwitch.setSelected(true);
+        if (powerState.equals(State.ON)) {
+            if (color.getBrightness() == 0.0 && color.getSaturation() == 0.0 && color.getHue() == 0.0) {
+                sendHSV2Remote();
+            } else {
+                lightBulbIcon.setBackgroundIconColorAnimated(color);
+                tooltip.setText(Constants.LIGHT_ON);
+                Tooltip.install(lightBulbIcon, tooltip);
+
+                if (!toggleSwitch.isSelected()) {
+                    toggleSwitch.setSelected(true);
+                }
             }
         } else if (powerState.equals(State.OFF)) {
             lightBulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
             tooltip.setText(Constants.LIGHT_OFF);
+            Tooltip.install(lightBulbIcon, tooltip);
 
             if (toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(false);
             }
         } else {
+            headContent.setLeft(iconPane);
             tooltip.setText(Constants.UNKNOWN);
+            Tooltip.install(iconPane, tooltip);
         }
-        Tooltip.install(lightBulbIcon, tooltip);
     }
 
     /**
@@ -240,11 +261,11 @@ public class AmbientLightPane extends UnitPane {
     private Stop[] hueStops() {
         double offset;
         int hue;
-        Stop[] stops = new Stop[Constants.RGB_8_BIT];
+        Stop[] stops = new Stop[Constants.RGB255];
 
-        for (int i = 0; i < Constants.RGB_8_BIT; i++) {
-            offset = (1.0 / Constants.RGB_8_BIT) * i;
-            hue = (int) ((i / (float) Constants.RGB_8_BIT) * Constants.ROUND_ANGLE);
+        for (int i = 0; i < Constants.RGB255; i++) {
+            offset = (1.0 / Constants.RGB255) * i;
+            hue = (int) ((i / (float) Constants.RGB255) * Constants.ROUND_ANGLE);
             stops[i] = new Stop(offset, Color.hsb(hue, 1, 1));
         }
         return stops;
@@ -313,9 +334,9 @@ public class AmbientLightPane extends UnitPane {
         colorRectSaturation.setPrefSize(colorCircleContainer.getPrefWidth(), colorCircleContainer.getPrefHeight());
         colorRectSaturation.setMinSize(colorCircleContainer.getMinWidth(), colorCircleContainer.getMinHeight());
         colorRectSaturation.setBackground(new Background(new BackgroundFill(new LinearGradient(0.0, 0.0, 1.0, 0.0, true,
-                CycleMethod.NO_CYCLE, new Stop(0.0, Color.rgb(Constants.RGB_8_BIT, Constants.RGB_8_BIT,
-                Constants.RGB_8_BIT, 1.0)), new Stop(1, Color.rgb(Constants.RGB_8_BIT, Constants.RGB_8_BIT,
-                Constants.RGB_8_BIT, 0.0))), CornerRadii.EMPTY, Insets.EMPTY)));
+                CycleMethod.NO_CYCLE, new Stop(0.0, Color.rgb(Constants.RGB255, Constants.RGB255,
+                Constants.RGB255, 1.0)), new Stop(1, Color.rgb(Constants.RGB255, Constants.RGB255,
+                Constants.RGB255, 0.0))), CornerRadii.EMPTY, Insets.EMPTY)));
 
         return colorRectSaturation;
     }
@@ -390,11 +411,28 @@ public class AmbientLightPane extends UnitPane {
             }
         }).start());
 
-        headContent.setLeft(lightBulbIcon);
+        iconPane.add(unknownBackgroundIcon, 0, 0);
+        iconPane.add(unknownForegroundIcon, 0, 0);
+        unknownForegroundIcon.setForegroundIconColor(Color.BLUE);
+        unknownBackgroundIcon.setForegroundIconColor(Color.WHITE);
+
         headContent.setCenter(getUnitLabel());
         headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
         headContent.setRight(toggleSwitch);
         headContent.prefHeightProperty().set(lightBulbIcon.getSize() + Constants.INSETS + 1);
+    }
+
+    private void sendHSV2Remote() {
+        HSVColor hsvColor = HSVColor.newBuilder().setHue(hueValue.floatValue())
+                .setSaturation(saturation.floatValue()).setValue(brightness.floatValue()).build();
+        try {
+            ambientLightRemote.callMethodAsync("setColor", hsvColor)
+                    .get(Constants.THREAD_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
+            //ambientLightRemote.setColor(hsvColor);
+        } catch (InterruptedException | ExecutionException | TimeoutException | CouldNotPerformException e) {
+            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+            setWidgetPaneDisable(true);
+        }
     }
 
     @Override
@@ -416,17 +454,7 @@ public class AmbientLightPane extends UnitPane {
         final EventHandler<MouseEvent> sendingColorHandler = event -> new Thread(new Task() {
             @Override
             protected Object call() {
-                HSVColor hsvColor = HSVColor.newBuilder().setHue(hueValue.floatValue())
-                        .setSaturation(saturation.floatValue()).setValue(brightness.floatValue()).build();
-                try {
-                    ambientLightRemote.callMethodAsync("setColor", hsvColor)
-                            .get(Constants.THREAD_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
-                    //ambientLightRemote.setColor(hsvColor);
-                } catch (InterruptedException | ExecutionException | TimeoutException
-                        | CouldNotPerformException e) {
-                    ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-                    setWidgetPaneDisable(true);
-                }
+                sendHSV2Remote();
                 return null;
             }
         }).start();

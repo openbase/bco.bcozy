@@ -46,9 +46,9 @@ public class ReedSwitchPane extends UnitPane {
     private static final Logger LOGGER = LoggerFactory.getLogger(ReedSwitchPane.class);
 
     private final ReedSwitchRemote reedSwitchRemote;
-    private final SVGIcon reedSwitchIcon;
     private final SVGIcon unknownForegroundIcon;
     private final SVGIcon unknownBackgroundIcon;
+    private final SVGIcon reedSwitchIcon;
     private final BorderPane headContent;
     private final GridPane iconPane;
     private final Tooltip tooltip;
@@ -63,7 +63,6 @@ public class ReedSwitchPane extends UnitPane {
         reedSwitchIcon = new SVGIcon(MaterialIcon.RADIO_BUTTON_CHECKED, Constants.SMALL_ICON, true);
         unknownBackgroundIcon = new SVGIcon(MaterialDesignIcon.CHECKBOX_BLANK_CIRCLE, Constants.SMALL_ICON - 2, false);
         unknownForegroundIcon = new SVGIcon(MaterialDesignIcon.HELP_CIRCLE, Constants.SMALL_ICON, false);
-
         headContent = new BorderPane();
         iconPane = new GridPane();
         tooltip = new Tooltip();
@@ -91,14 +90,13 @@ public class ReedSwitchPane extends UnitPane {
 
     private void setReedSwitchIconAndTooltip(final State reedSwitchState) {
         headContent.setRight(null);
+        headContent.setLeft(reedSwitchIcon);
 
         if (reedSwitchState.equals(State.CLOSED)) {
             reedSwitchIcon.changeForegroundIcon(MaterialIcon.RADIO_BUTTON_CHECKED);
-            headContent.setLeft(reedSwitchIcon);
             tooltip.setText(Constants.CLOSED);
             Tooltip.install(reedSwitchIcon, tooltip);
         } else if (reedSwitchState.equals(State.OPEN)) {
-            headContent.setLeft(reedSwitchIcon);
             reedSwitchIcon.changeForegroundIcon(MaterialIcon.RADIO_BUTTON_UNCHECKED);
             tooltip.setText(Constants.OPEN);
             Tooltip.install(reedSwitchIcon, tooltip);
@@ -113,12 +111,9 @@ public class ReedSwitchPane extends UnitPane {
     protected void initTitle() {
         iconPane.add(unknownBackgroundIcon, 0, 0);
         iconPane.add(unknownForegroundIcon, 0, 0);
-        reedSwitchIcon.getStyleClass().clear();
-        reedSwitchIcon.getStyleClass().add(Constants.ICON_GAP);
         unknownForegroundIcon.setForegroundIconColor(Color.BLUE);
         unknownBackgroundIcon.setForegroundIconColor(Color.WHITE);
 
-        headContent.setLeft(iconPane);
         headContent.setCenter(getUnitLabel());
         headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
         headContent.prefHeightProperty().set(reedSwitchIcon.getSize() + Constants.INSETS);

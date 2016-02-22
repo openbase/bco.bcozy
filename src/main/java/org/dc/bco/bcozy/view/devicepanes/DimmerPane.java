@@ -28,6 +28,7 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -52,15 +53,18 @@ import rst.homeautomation.unit.DimmerType;
 public class DimmerPane extends UnitPane {
     private static final Logger LOGGER = LoggerFactory.getLogger(DimmerPane.class);
 
+    private final SVGIcon unknownForegroundIcon;
+    private final SVGIcon unknownBackgroundIcon;
     private final DimmerRemote dimmerRemote;
-    private final SVGIcon lightBulbIcon;
     private final ToggleSwitch toggleSwitch;
-    private final BorderPane headContent;
-    private final VBox bodyContent;
-    private final Slider slider;
     private final ProgressBar progressBar;
+    private final BorderPane headContent;
+    private final SVGIcon lightBulbIcon;
     private final StackPane stackPane;
+    private final GridPane iconPane;
+    private final VBox bodyContent;
     private final Tooltip tooltip;
+    private final Slider slider;
 
     /**
      * Constructor for the DimmerPane.
@@ -69,15 +73,18 @@ public class DimmerPane extends UnitPane {
     public DimmerPane(final AbstractIdentifiableRemote dimmerRemote) {
         this.dimmerRemote = (DimmerRemote) dimmerRemote;
 
-        toggleSwitch = new ToggleSwitch();
-        progressBar = new ProgressBar();
-        slider = new Slider();
         lightBulbIcon =
                 new SVGIcon(MaterialDesignIcon.LIGHTBULB, MaterialDesignIcon.LIGHTBULB_OUTLINE, Constants.SMALL_ICON);
+        unknownBackgroundIcon = new SVGIcon(MaterialDesignIcon.CHECKBOX_BLANK_CIRCLE, Constants.SMALL_ICON - 2, false);
+        unknownForegroundIcon = new SVGIcon(MaterialDesignIcon.HELP_CIRCLE, Constants.SMALL_ICON, false);
+        toggleSwitch = new ToggleSwitch();
+        progressBar = new ProgressBar();
         headContent = new BorderPane();
-        bodyContent = new VBox();
         stackPane = new StackPane();
+        iconPane = new GridPane();
+        bodyContent = new VBox();
         tooltip = new Tooltip();
+        slider = new Slider();
 
         initUnitLabel();
         initTitle();
@@ -94,38 +101,58 @@ public class DimmerPane extends UnitPane {
 
         try {
             powerState = dimmerRemote.getPower().getValue();
+            if (powerState == State.UNKNOWN) {
+                powerState = State.OFF;
+            }
             brightness = dimmerRemote.getDim() / Constants.ONE_HUNDRED;
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
+
         setEffectColorAndSlider(powerState, brightness);
     }
 
     private void setEffectColorAndSlider(final State powerState, final double brightness) {
-        if (powerState.equals(State.ON)) {
-            final Color color = Color.hsb(Constants.LIGHTBULB_COLOR.getHue(),
-                    Constants.LIGHTBULB_COLOR.getSaturation(), brightness, Constants.LIGHTBULB_COLOR.getOpacity());
-            lightBulbIcon.setBackgroundIconColorAnimated(color);
-            slider.setValue(brightness * slider.getMax());
-            progressBar.setProgress(brightness);
-            tooltip.setText(Constants.LIGHT_ON);
+        headContent.setLeft(lightBulbIcon);
 
-            if (!toggleSwitch.isSelected()) {
-                toggleSwitch.setSelected(true);
+        if (powerState.equals(State.ON)) {
+            if (brightness == 0.0) {
+                try {
+                    slider.setValue(Constants.ONE_HUNDRED / 2);
+                    dimmerRemote.setDim(slider.getValue());
+                } catch (CouldNotPerformException e) {
+                    ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                }
+            } else {
+                final Color color = Color.hsb(Constants.LIGHTBULB_COLOR.getHue(),
+                        Constants.LIGHTBULB_COLOR.getSaturation(), brightness, Constants.LIGHTBULB_COLOR.getOpacity());
+                lightBulbIcon.setBackgroundIconColorAnimated(color);
+                slider.setValue(brightness * slider.getMax());
+                progressBar.setProgress(brightness);
+
+                tooltip.setText(Constants.LIGHT_ON);
+                Tooltip.install(lightBulbIcon, tooltip);
+
+                if (!toggleSwitch.isSelected()) {
+                    toggleSwitch.setSelected(true);
+                }
             }
         } else if (powerState.equals(State.OFF)) {
             lightBulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
-            slider.setValue(0);
             progressBar.setProgress(0);
+            slider.setValue(0);
+
             tooltip.setText(Constants.LIGHT_OFF);
+            Tooltip.install(lightBulbIcon, tooltip);
 
             if (toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(false);
             }
         } else {
+            headContent.setLeft(iconPane);
             tooltip.setText(Constants.UNKNOWN);
+            Tooltip.install(iconPane, tooltip);
         }
-        Tooltip.install(lightBulbIcon, tooltip);
     }
 
     /**
@@ -134,29 +161,31 @@ public class DimmerPane extends UnitPane {
     @Override
     protected void initTitle() {
         lightBulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
-        toggleSwitch.setOnMouseClicked(event -> {
-            new Thread(new Task() {
-                @Override
-                protected Object call() throws java.lang.Exception {
-                    if (toggleSwitch.isSelected()) {
-                        try {
-                            dimmerRemote.setPower(PowerStateType.PowerState.State.ON);
-                        } catch (CouldNotPerformException e) {
-                            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-                        }
-                    } else {
-                        try {
-                            dimmerRemote.setPower(PowerStateType.PowerState.State.OFF);
-                        } catch (CouldNotPerformException e) {
-                            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-                        }
+        toggleSwitch.setOnMouseClicked(event -> new Thread(new Task() {
+            @Override
+            protected Object call() throws Exception {
+                if (toggleSwitch.isSelected()) {
+                    try {
+                        dimmerRemote.setPower(PowerStateType.PowerState.State.ON);
+                    } catch (CouldNotPerformException e) {
+                        ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
                     }
-                    return null;
+                } else {
+                    try {
+                        dimmerRemote.setPower(PowerStateType.PowerState.State.OFF);
+                    } catch (CouldNotPerformException e) {
+                        ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                    }
                 }
-            }).start();
-        });
+                return null;
+            }
+        }).start());
 
-        headContent.setLeft(lightBulbIcon);
+        iconPane.add(unknownBackgroundIcon, 0, 0);
+        iconPane.add(unknownForegroundIcon, 0, 0);
+        unknownForegroundIcon.setForegroundIconColor(Color.BLUE);
+        unknownBackgroundIcon.setForegroundIconColor(Color.WHITE);
+
         headContent.setCenter(getUnitLabel());
         headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
         headContent.setRight(toggleSwitch);
