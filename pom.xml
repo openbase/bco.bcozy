@@ -88,8 +88,9 @@
     </developers>
 
     <scm>
-        <developerConnection>scm:git:https://github.com/divinethreepwood/bcozy.git</developerConnection>
-        <url>https://github.com/divinecooperation/bco.core-manager.git</url>
+        <connection>scm:git:git@github.com/divinecooperation/bco.bcozy.git</connection>
+        <developerConnection>scm:git:git@github.com/divinecooperation/bco.bcozy.git</developerConnection>
+        <url>git@github.com/divinecooperation/bco.bcozy.git</url>
     </scm>
 
     <properties>
