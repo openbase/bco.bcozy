@@ -72,7 +72,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 /**
- * Created on 03.12.15.
+ * Created by agatting on 03.12.15.
  */
 public class AmbientLightPane extends UnitPane {
     private static final Logger LOGGER = LoggerFactory.getLogger(AmbientLightPane.class);
@@ -155,33 +155,34 @@ public class AmbientLightPane extends UnitPane {
     }
 
     private void setEffectColorAndSwitch(final State powerState, Color color) {
-        headContent.setLeft(lightBulbIcon);
+        iconPane.getChildren().clear();
 
         if (powerState.equals(State.ON)) {
             if (color.getBrightness() == 0.0 && color.getSaturation() == 0.0 && color.getHue() == 0.0) {
                 sendHSV2Remote();
             } else {
+                iconPane.add(lightBulbIcon, 0, 0);
                 lightBulbIcon.setBackgroundIconColorAnimated(color);
                 tooltip.setText(Constants.LIGHT_ON);
-                Tooltip.install(lightBulbIcon, tooltip);
 
                 if (!toggleSwitch.isSelected()) {
                     toggleSwitch.setSelected(true);
                 }
             }
         } else if (powerState.equals(State.OFF)) {
+            iconPane.add(lightBulbIcon, 0, 0);
             lightBulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
             tooltip.setText(Constants.LIGHT_OFF);
-            Tooltip.install(lightBulbIcon, tooltip);
 
             if (toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(false);
             }
         } else {
-            headContent.setLeft(iconPane);
+            iconPane.add(unknownBackgroundIcon, 0, 0);
+            iconPane.add(unknownForegroundIcon, 0, 0);
             tooltip.setText(Constants.UNKNOWN);
-            Tooltip.install(iconPane, tooltip);
         }
+        Tooltip.install(iconPane, tooltip);
     }
 
     /**
@@ -379,7 +380,6 @@ public class AmbientLightPane extends UnitPane {
     @Override
     protected void initTitle() {
         final String setPowerString = "setPower";
-        lightBulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
 
         toggleSwitch.setOnMouseClicked(event -> new Thread(new Task() {
             @Override
@@ -411,11 +411,11 @@ public class AmbientLightPane extends UnitPane {
             }
         }).start());
 
-        iconPane.add(unknownBackgroundIcon, 0, 0);
-        iconPane.add(unknownForegroundIcon, 0, 0);
         unknownForegroundIcon.setForegroundIconColor(Color.BLUE);
         unknownBackgroundIcon.setForegroundIconColor(Color.WHITE);
+        lightBulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
 
+        headContent.setLeft(iconPane);
         headContent.setCenter(getUnitLabel());
         headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
         headContent.setRight(toggleSwitch);

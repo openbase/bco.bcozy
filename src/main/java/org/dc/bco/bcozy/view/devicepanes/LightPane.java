@@ -24,6 +24,7 @@ import javafx.concurrent.Task;
 import javafx.geometry.Pos;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import org.controlsfx.control.ToggleSwitch;
 import org.dc.bco.bcozy.view.Constants;
@@ -46,11 +47,14 @@ import rst.homeautomation.unit.LightType.Light;
 public class LightPane extends UnitPane {
     private static final Logger LOGGER = LoggerFactory.getLogger(LightPane.class);
 
+    private final SVGIcon unknownForegroundIcon;
+    private final SVGIcon unknownBackgroundIcon;
     private final LightRemote lightRemote;
     private final SVGIcon lightBulbIcon;
     private final ToggleSwitch toggleSwitch;
     private final BorderPane headContent;
     private final Tooltip tooltip;
+    private final GridPane iconPane;
 
     /**
      * Constructor for the LightPane.
@@ -62,14 +66,16 @@ public class LightPane extends UnitPane {
         toggleSwitch = new ToggleSwitch();
         lightBulbIcon =
                 new SVGIcon(MaterialDesignIcon.LIGHTBULB, MaterialDesignIcon.LIGHTBULB_OUTLINE, Constants.SMALL_ICON);
+        unknownBackgroundIcon = new SVGIcon(MaterialDesignIcon.CHECKBOX_BLANK_CIRCLE, Constants.SMALL_ICON - 2, false);
+        unknownForegroundIcon = new SVGIcon(MaterialDesignIcon.HELP_CIRCLE, Constants.SMALL_ICON, false);
         headContent = new BorderPane();
         tooltip = new Tooltip();
+        iconPane = new GridPane();
 
         initUnitLabel();
         initTitle();
         initContent();
         createWidgetPane(headContent);
-
         initEffectAndSwitch();
 
         this.lightRemote.addObserver(this);
@@ -80,6 +86,9 @@ public class LightPane extends UnitPane {
 
         try {
             powerState = lightRemote.getPower().getValue();
+            if (powerState == State.UNKNOWN) {
+                powerState = State.OFF;
+            }
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
@@ -87,7 +96,10 @@ public class LightPane extends UnitPane {
     }
 
     private void setPowerStateSwitchAndIcon(final State powerState) {
+        iconPane.getChildren().clear();
+
         if (powerState.equals(State.ON)) {
+            iconPane.add(lightBulbIcon, 0, 0);
             lightBulbIcon.setBackgroundIconColorAnimated(Constants.LIGHTBULB_COLOR);
             tooltip.setText(Constants.LIGHT_ON);
 
@@ -95,6 +107,7 @@ public class LightPane extends UnitPane {
                 toggleSwitch.setSelected(true);
             }
         } else if (powerState.equals(State.OFF)) {
+            iconPane.add(lightBulbIcon, 0, 0);
             lightBulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
             tooltip.setText(Constants.LIGHT_OFF);
 
@@ -102,39 +115,42 @@ public class LightPane extends UnitPane {
                 toggleSwitch.setSelected(false);
             }
         } else {
+            iconPane.add(unknownBackgroundIcon, 0, 0);
+            iconPane.add(unknownForegroundIcon, 0, 0);
             tooltip.setText(Constants.UNKNOWN);
         }
+        Tooltip.install(iconPane, tooltip);
     }
 
     @Override
     protected void initTitle() {
         toggleSwitch.setMouseTransparent(true);
-        this.setOnMouseClicked(event -> {
-            new Thread(new Task() {
-                @Override
-                protected Object call() throws java.lang.Exception {
-                    toggleSwitch.setSelected(!toggleSwitch.isSelected());
-                    if (toggleSwitch.isSelected()) {
-                        try {
-                            lightRemote.setPower(PowerStateType.PowerState.State.ON);
-                        } catch (CouldNotPerformException e) {
-                            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-                        }
-                    } else {
-                        try {
-                            lightRemote.setPower(PowerStateType.PowerState.State.OFF);
-                        } catch (CouldNotPerformException e) {
-                            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-                        }
+        this.setOnMouseClicked(event -> new Thread(new Task() {
+            @Override
+            protected Object call() throws Exception {
+                toggleSwitch.setSelected(!toggleSwitch.isSelected());
+                if (toggleSwitch.isSelected()) {
+                    try {
+                        lightRemote.setPower(PowerStateType.PowerState.State.ON);
+                    } catch (CouldNotPerformException e) {
+                        ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
                     }
-                    return null;
+                } else {
+                    try {
+                        lightRemote.setPower(PowerStateType.PowerState.State.OFF);
+                    } catch (CouldNotPerformException e) {
+                        ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                    }
                 }
-            }).start();
-        });
+                return null;
+            }
+        }).start());
 
+        unknownForegroundIcon.setForegroundIconColor(Color.BLUE);
+        unknownBackgroundIcon.setForegroundIconColor(Color.WHITE);
         lightBulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
 
-        headContent.setLeft(lightBulbIcon);
+        headContent.setLeft(iconPane);
         headContent.setCenter(getUnitLabel());
         headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
         headContent.setRight(toggleSwitch);

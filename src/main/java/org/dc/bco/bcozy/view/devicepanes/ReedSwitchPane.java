@@ -82,6 +82,9 @@ public class ReedSwitchPane extends UnitPane {
 
         try {
             reedSwitchState = reedSwitchRemote.getReedSwitch().getValue();
+            if (reedSwitchState == State.UNKNOWN) {
+                reedSwitchState = State.CLOSED;
+            }
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
@@ -89,31 +92,30 @@ public class ReedSwitchPane extends UnitPane {
     }
 
     private void setReedSwitchIconAndTooltip(final State reedSwitchState) {
-        headContent.setRight(null);
-        headContent.setLeft(reedSwitchIcon);
+        iconPane.getChildren().clear();
 
         if (reedSwitchState.equals(State.CLOSED)) {
             reedSwitchIcon.changeForegroundIcon(MaterialIcon.RADIO_BUTTON_CHECKED);
+            iconPane.add(reedSwitchIcon, 0, 0);
             tooltip.setText(Constants.CLOSED);
-            Tooltip.install(reedSwitchIcon, tooltip);
         } else if (reedSwitchState.equals(State.OPEN)) {
             reedSwitchIcon.changeForegroundIcon(MaterialIcon.RADIO_BUTTON_UNCHECKED);
+            iconPane.add(reedSwitchIcon, 0, 0);
             tooltip.setText(Constants.OPEN);
-            Tooltip.install(reedSwitchIcon, tooltip);
         } else {
-            headContent.setLeft(iconPane);
+            iconPane.add(unknownBackgroundIcon, 0, 0);
+            iconPane.add(unknownForegroundIcon, 0, 0);
             tooltip.setText(Constants.UNKNOWN);
-            Tooltip.install(iconPane, tooltip);
         }
+        Tooltip.install(iconPane, tooltip);
     }
 
     @Override
     protected void initTitle() {
-        iconPane.add(unknownBackgroundIcon, 0, 0);
-        iconPane.add(unknownForegroundIcon, 0, 0);
         unknownForegroundIcon.setForegroundIconColor(Color.BLUE);
         unknownBackgroundIcon.setForegroundIconColor(Color.WHITE);
 
+        headContent.setLeft(iconPane);
         headContent.setCenter(getUnitLabel());
         headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
         headContent.prefHeightProperty().set(reedSwitchIcon.getSize() + Constants.INSETS);

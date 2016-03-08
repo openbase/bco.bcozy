@@ -19,6 +19,7 @@
 package org.dc.bco.bcozy.view.devicepanes;
 
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import de.jensd.fx.glyphs.weathericons.WeatherIcon;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
@@ -51,9 +52,12 @@ public class TemperatureSensorPane extends UnitPane {
     private final BorderPane headContent;
     private final SVGIcon thermometerIconBackground;
     private final SVGIcon thermometerIconForeground;
+    private final SVGIcon unknownForegroundIcon;
+    private final SVGIcon unknownBackgroundIcon;
     private final SVGIcon alarmIcon;
     private final Text temperatureStatus;
-    private final GridPane iconPane;
+    private final GridPane iconPaneAlarm;
+    private final GridPane iconPaneTemperature;
     private final Tooltip tooltip;
 
     /**
@@ -68,17 +72,19 @@ public class TemperatureSensorPane extends UnitPane {
         thermometerIconForeground = new SVGIcon(WeatherIcon.THERMOMETER_INTERNAL,
                 Constants.SMALL_ICON * Constants.WEATHER_ICONS_SCALE, false);
         alarmIcon = new SVGIcon(FontAwesomeIcon.EXCLAMATION_TRIANGLE, Constants.SMALL_ICON, false);
+        unknownBackgroundIcon = new SVGIcon(MaterialDesignIcon.CHECKBOX_BLANK_CIRCLE, Constants.SMALL_ICON - 2, false);
+        unknownForegroundIcon = new SVGIcon(MaterialDesignIcon.HELP_CIRCLE, Constants.SMALL_ICON, false);
 
         headContent = new BorderPane();
         temperatureStatus = new Text();
-        iconPane = new GridPane();
+        iconPaneAlarm = new GridPane();
+        iconPaneTemperature = new GridPane();
         tooltip = new Tooltip();
 
         initUnitLabel();
         initTitle();
         initContent();
         initEffect();
-
         createWidgetPane(headContent);
 
         this.temperatureSensorRemote.addObserver(this);
@@ -104,17 +110,22 @@ public class TemperatureSensorPane extends UnitPane {
     }
 
     private void setAlarmStateIcon(final State alarmState) {
+        iconPaneAlarm.getChildren().clear();
+
         if (alarmState.equals(State.ALARM)) {
+            iconPaneAlarm.add(alarmIcon, 0, 0);
             alarmIcon.setForegroundIconColor(Color.RED, Color.BLACK, Constants.NORMAL_STROKE);
             tooltip.setText(Constants.ALARM);
-        } else if (alarmState.equals(State.UNKNOWN)) {
-            alarmIcon.setForegroundIconColor(Color.YELLOW, Color.BLACK, Constants.NORMAL_STROKE);
-            tooltip.setText(Constants.UNKNOWN);
-        } else {
+        } else if (alarmState.equals(State.NO_ALARM)) {
+            iconPaneAlarm.add(alarmIcon, 0, 0);
             alarmIcon.setForegroundIconColor(Color.TRANSPARENT);
             tooltip.setText(Constants.NO_ALARM);
+        } else {
+            iconPaneAlarm.add(unknownBackgroundIcon, 0, 0);
+            iconPaneAlarm.add(unknownForegroundIcon, 0, 0);
+            tooltip.setText(Constants.UNKNOWN);
         }
-        Tooltip.install(iconPane, tooltip);
+        Tooltip.install(iconPaneAlarm, tooltip);
     }
 
     private void setEffectTemperature(final double temperature) {
@@ -134,24 +145,24 @@ public class TemperatureSensorPane extends UnitPane {
                 thermometerIconForeground.setForegroundIconColorAnimated(Color.RED);
             }
         }
-
     }
 
     @Override
     protected void initTitle() {
+        unknownForegroundIcon.setForegroundIconColor(Color.BLUE);
+        unknownBackgroundIcon.setForegroundIconColor(Color.WHITE);
         thermometerIconBackground.setForegroundIconColor(Color.BLACK);
         thermometerIconForeground.setForegroundIconColor(Color.RED);
-        alarmIcon.setForegroundIconColor(Color.TRANSPARENT);
 
-        iconPane.add(thermometerIconBackground, 0, 0);
-        iconPane.add(thermometerIconForeground, 0, 0);
-        iconPane.add(temperatureStatus, 1, 0);
-        iconPane.setHgap(Constants.INSETS);
+        iconPaneTemperature.add(thermometerIconBackground, 0, 0);
+        iconPaneTemperature.add(thermometerIconForeground, 0, 0);
+        iconPaneTemperature.add(temperatureStatus, 1, 0);
+        iconPaneTemperature.setHgap(Constants.INSETS);
 
-        headContent.setLeft(iconPane);
+        headContent.setLeft(iconPaneTemperature);
         headContent.setCenter(getUnitLabel());
         headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
-        headContent.setRight(alarmIcon);
+        headContent.setRight(iconPaneAlarm);
         headContent.prefHeightProperty().set(thermometerIconBackground.getSize() + Constants.INSETS);
     }
 
@@ -191,6 +202,5 @@ public class TemperatureSensorPane extends UnitPane {
                     ((TemperatureSensor) temperatureSensor).getTemperatureAlarmState().getValue();
             setAlarmStateIcon(alarmState);
         });
-
     }
 }

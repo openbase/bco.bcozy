@@ -98,7 +98,6 @@ public class BrightnessSensorPane extends UnitPane {
     @Override
     protected void initTitle() {
         brightnessStatus.getStyleClass().add(Constants.ICONS_CSS_STRING);
-
         brightnessIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
 
         iconPane.add(brightnessIcon, 0, 0);

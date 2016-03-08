@@ -18,12 +18,13 @@
  */
 package org.dc.bco.bcozy.view.devicepanes;
 
+import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import de.jensd.fx.glyphs.materialicons.MaterialIcon;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.SVGIcon;
@@ -45,11 +46,14 @@ public class MotionSensorPane extends UnitPane {
     private static final Logger LOGGER = LoggerFactory.getLogger(BatteryPane.class);
 
     private final MotionSensorRemote motionSensorRemote;
-    private final SVGIcon motionIcon;
+    private final SVGIcon unknownForegroundIcon;
+    private final SVGIcon unknownBackgroundIcon;
     private final SVGIcon backgroundIcon;
-    private final StackPane iconPane;
+    private final SVGIcon motionIcon;
+    private final GridPane iconPane;
     private final BorderPane headContent;
     private final Tooltip tooltip;
+
 
     /**
      * Constructor for the BatteryPane.
@@ -59,9 +63,11 @@ public class MotionSensorPane extends UnitPane {
         this.motionSensorRemote = (MotionSensorRemote) brightnessSensorRemote;
 
         headContent = new BorderPane();
+        unknownBackgroundIcon = new SVGIcon(MaterialDesignIcon.CHECKBOX_BLANK_CIRCLE, Constants.SMALL_ICON - 2, false);
+        unknownForegroundIcon = new SVGIcon(MaterialDesignIcon.HELP_CIRCLE, Constants.SMALL_ICON, false);
         motionIcon = new SVGIcon(MaterialIcon.BLUR_ON, MaterialIcon.PANORAMA_FISH_EYE, Constants.SMALL_ICON);
         backgroundIcon = new SVGIcon(MaterialIcon.LENS, Constants.SMALL_ICON, false);
-        iconPane = new StackPane();
+        iconPane = new GridPane();
         tooltip = new Tooltip();
 
         initUnitLabel();
@@ -79,21 +85,31 @@ public class MotionSensorPane extends UnitPane {
 
         try {
             motionState = motionSensorRemote.getMotion().getValue();
+            if (motionState == State.UNKNOWN) {
+                motionState = State.NO_MOVEMENT;
+            }
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
-        setMotionStateIcon(motionState);
+        setMotionStateIconAndTooltip(motionState);
     }
 
-    private void setMotionStateIcon(final State motionState) {
+    private void setMotionStateIconAndTooltip(final State motionState) {
+        iconPane.getChildren().clear();
+
         if (motionState.equals(State.MOVEMENT)) {
             motionIcon.setBackgroundIconColorAnimated(Color.WHITE);
+            iconPane.add(backgroundIcon, 0, 0);
+            iconPane.add(motionIcon, 0, 0);
             tooltip.setText(Constants.MOVEMENT);
         } else if (motionState.equals(State.NO_MOVEMENT)) {
             motionIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
+            iconPane.add(backgroundIcon, 0, 0);
+            iconPane.add(motionIcon, 0, 0);
             tooltip.setText(Constants.NO_MOVEMENT);
         } else {
-            motionIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
+            iconPane.add(unknownBackgroundIcon, 0, 0);
+            iconPane.add(unknownForegroundIcon, 0, 0);
             tooltip.setText(Constants.UNKNOWN);
         }
         Tooltip.install(iconPane, tooltip);
@@ -101,9 +117,9 @@ public class MotionSensorPane extends UnitPane {
 
     @Override
     protected void initTitle() {
+        unknownForegroundIcon.setForegroundIconColor(Color.BLUE);
+        unknownBackgroundIcon.setForegroundIconColor(Color.WHITE);
         backgroundIcon.setForegroundIconColor(Color.BLACK);
-
-        iconPane.getChildren().addAll(backgroundIcon, motionIcon);
 
         headContent.setLeft(iconPane);
         headContent.setCenter(getUnitLabel());
@@ -142,7 +158,7 @@ public class MotionSensorPane extends UnitPane {
     public void update(final Observable observable, final Object motionSensor) throws java.lang.Exception {
         Platform.runLater(() -> {
             final State motionState = ((MotionSensor) motionSensor).getMotionState().getValue();
-            setMotionStateIcon(motionState);
+            setMotionStateIconAndTooltip(motionState);
         });
     }
 }

@@ -59,6 +59,8 @@ public class RollerShutterPane extends UnitPane {
     private final HBox bodyContent;
     private final SVGIcon rollerShutterIconBackground;
     private final SVGIcon rollerShutterIconForeground;
+    private final SVGIcon unknownForegroundIcon;
+    private final SVGIcon unknownBackgroundIcon;
     private final Rectangle clip;
     private final Text rollerShutterStatus;
     private final RecurrenceEventFilter recurrenceEventFilter;
@@ -79,6 +81,8 @@ public class RollerShutterPane extends UnitPane {
 
         rollerShutterIconBackground = new SVGIcon(MaterialDesignIcon.FORMAT_ALIGN_JUSTIFY, Constants.SMALL_ICON, false);
         rollerShutterIconForeground = new SVGIcon(MaterialDesignIcon.FORMAT_ALIGN_JUSTIFY, Constants.SMALL_ICON, true);
+        unknownBackgroundIcon = new SVGIcon(MaterialDesignIcon.CHECKBOX_BLANK_CIRCLE, Constants.SMALL_ICON - 2, false);
+        unknownForegroundIcon = new SVGIcon(MaterialDesignIcon.HELP_CIRCLE, Constants.SMALL_ICON, false);
         headContent = new BorderPane();
         bodyContent = new HBox();
         rollerShutterStatus = new Text();
@@ -100,7 +104,6 @@ public class RollerShutterPane extends UnitPane {
         };
 
         recurrenceEventFilter.trigger();
-
 
         this.rollershutterRemote.addObserver(this);
     }
@@ -181,13 +184,14 @@ public class RollerShutterPane extends UnitPane {
     }
 
     private void setEffectOpeningRatio(final double percentage, final State shutterState) {
+        iconPane.getChildren().clear();
+
         if (shutterState.equals(State.UNKNOWN)) {
+            rollerShutterStatus.setText((int) (Constants.ONE_HUNDRED * percentage) + "%");
+
+            iconPane.add(unknownBackgroundIcon, 0, 0);
+            iconPane.add(unknownForegroundIcon, 0, 0);
             tooltip.setText(Constants.UNKNOWN);
-            rollerShutterStatus.setText("??%");
-            rollerShutterIconBackground.changeBackgroundIcon(MaterialDesignIcon.FORMAT_ALIGN_JUSTIFY);
-            rollerShutterIconBackground.setForegroundIconColor(Color.YELLOW);
-            rollerShutterIconForeground.changeForegroundIcon(MaterialDesignIcon.FORMAT_ALIGN_JUSTIFY);
-            ((Rectangle) rollerShutterIconForeground.getClip()).setHeight(Constants.SMALL_ICON * percentage);
         } else  {
             if (shutterState.equals(State.DOWN)) {
                 tooltip.setText(Constants.DOWN);
@@ -199,18 +203,24 @@ public class RollerShutterPane extends UnitPane {
             rollerShutterIconBackground.changeBackgroundIcon(MaterialDesignIcon.FORMAT_ALIGN_JUSTIFY);
             rollerShutterIconBackground.setForegroundIconColor(Color.YELLOW);
             rollerShutterIconForeground.changeForegroundIcon(MaterialDesignIcon.FORMAT_ALIGN_JUSTIFY);
-
             ((Rectangle) rollerShutterIconForeground.getClip()).setHeight(Constants.SMALL_ICON * percentage);
+
             rollerShutterStatus.setText((int) (Constants.ONE_HUNDRED * percentage) + "%");
+
+            iconPane.add(rollerShutterIconBackground, 0, 0);
+            iconPane.add(rollerShutterIconForeground, 0, 0);
         }
+        iconPane.add(rollerShutterStatus, 1, 0);
         Tooltip.install(iconPane, tooltip);
     }
 
     @Override
     protected void initTitle() {
-        iconPane.add(rollerShutterIconBackground, 0, 0);
-        iconPane.add(rollerShutterIconForeground, 0, 0);
-        iconPane.add(rollerShutterStatus, 1, 0);
+        rollerShutterStatus.getStyleClass().add(Constants.ICONS_CSS_STRING);
+        unknownForegroundIcon.setForegroundIconColor(Color.BLUE);
+        unknownBackgroundIcon.setForegroundIconColor(Color.WHITE);
+
+        iconPane.setHgap(Constants.INSETS);
 
         headContent.setLeft(iconPane);
         headContent.setCenter(getUnitLabel());

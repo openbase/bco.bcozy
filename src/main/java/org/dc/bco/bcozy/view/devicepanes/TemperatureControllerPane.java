@@ -66,7 +66,7 @@ public class TemperatureControllerPane extends UnitPane {
 
     /**
      * Constructor for a TemperatureControllerPane.
-     * @param temperatureControllerRemote AbstractIdentifiableRemote
+     * @param temperatureControllerRemote temperatureControllerRemote
      */
     public TemperatureControllerPane(final AbstractIdentifiableRemote temperatureControllerRemote) {
         this.temperatureControllerRemote = (TemperatureControllerRemote) temperatureControllerRemote;

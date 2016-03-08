@@ -113,7 +113,7 @@ public class DimmerPane extends UnitPane {
     }
 
     private void setEffectColorAndSlider(final State powerState, final double brightness) {
-        headContent.setLeft(lightBulbIcon);
+        iconPane.getChildren().clear();
 
         if (powerState.equals(State.ON)) {
             if (brightness == 0.0) {
@@ -124,35 +124,38 @@ public class DimmerPane extends UnitPane {
                     ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
                 }
             } else {
+                iconPane.add(lightBulbIcon, 0, 0);
+
                 final Color color = Color.hsb(Constants.LIGHTBULB_COLOR.getHue(),
                         Constants.LIGHTBULB_COLOR.getSaturation(), brightness, Constants.LIGHTBULB_COLOR.getOpacity());
                 lightBulbIcon.setBackgroundIconColorAnimated(color);
-                slider.setValue(brightness * slider.getMax());
                 progressBar.setProgress(brightness);
+                slider.setValue(brightness * slider.getMax());
 
                 tooltip.setText(Constants.LIGHT_ON);
-                Tooltip.install(lightBulbIcon, tooltip);
 
                 if (!toggleSwitch.isSelected()) {
                     toggleSwitch.setSelected(true);
                 }
             }
         } else if (powerState.equals(State.OFF)) {
+            iconPane.add(lightBulbIcon, 0, 0);
+
             lightBulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
             progressBar.setProgress(0);
             slider.setValue(0);
 
             tooltip.setText(Constants.LIGHT_OFF);
-            Tooltip.install(lightBulbIcon, tooltip);
 
             if (toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(false);
             }
         } else {
-            headContent.setLeft(iconPane);
+            iconPane.add(unknownBackgroundIcon, 0, 0);
+            iconPane.add(unknownForegroundIcon, 0, 0);
             tooltip.setText(Constants.UNKNOWN);
-            Tooltip.install(iconPane, tooltip);
         }
+        Tooltip.install(iconPane, tooltip);
     }
 
     /**
@@ -181,11 +184,10 @@ public class DimmerPane extends UnitPane {
             }
         }).start());
 
-        iconPane.add(unknownBackgroundIcon, 0, 0);
-        iconPane.add(unknownForegroundIcon, 0, 0);
         unknownForegroundIcon.setForegroundIconColor(Color.BLUE);
         unknownBackgroundIcon.setForegroundIconColor(Color.WHITE);
 
+        headContent.setLeft(iconPane);
         headContent.setCenter(getUnitLabel());
         headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
         headContent.setRight(toggleSwitch);
