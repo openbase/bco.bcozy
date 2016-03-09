@@ -40,7 +40,13 @@ public class UserPane extends BorderPane {
     private Label userNameLabel;
     private ObserverLabel userStateLabel;
 
-
+    /**
+     * Constructor for UserPane.
+     * @param userName userName.
+     * @param guest guest.
+     * @param userState userState.
+     * @param atHome atHome.
+     */
     public UserPane(final String userName, final boolean guest, final String userState, final boolean atHome) {
         init(userName, guest, userState, atHome);
     }
@@ -59,9 +65,9 @@ public class UserPane extends BorderPane {
         //CHECKSTYLE.ON: MagicNumbers
 
         userNameLabel = new Label(userName);
-        userNameLabel.getStyleClass().add("bold-label");
+        userNameLabel.getStyleClass().add(Constants.BOLD_LABEL);
         final ObserverLabel guestLabel = new ObserverLabel("guest");
-        guestLabel.getStyleClass().add("bold-label");
+        guestLabel.getStyleClass().add(Constants.BOLD_LABEL);
         if (guest) {
             guestLabel.setVisible(true);
         } else {

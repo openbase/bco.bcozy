@@ -138,7 +138,7 @@ public class AmbientLightPane extends UnitPane {
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
-        Color color = Color.hsb(currentColor.getHue(), currentColor.getSaturation() / Constants.ONE_HUNDRED,
+        final Color color = Color.hsb(currentColor.getHue(), currentColor.getSaturation() / Constants.ONE_HUNDRED,
                 currentColor.getValue() / Constants.ONE_HUNDRED);
         currentState = powerState;
 
@@ -157,7 +157,7 @@ public class AmbientLightPane extends UnitPane {
         setEffectColorAndSwitch(powerState, color);
     }
 
-    private void setEffectColorAndSwitch(final State powerState, Color color) {
+    private void setEffectColorAndSwitch(final State powerState, final Color color) {
         iconPane.getChildren().clear();
 
         if (powerState.equals(State.ON)) {
@@ -335,7 +335,7 @@ public class AmbientLightPane extends UnitPane {
 
         toggleSwitch.setOnMouseClicked(event -> new Thread(new Task() {
             @Override
-            protected Object call() throws Exception {
+            protected Object call() {
                 if (toggleSwitch.isSelected()) {
                     try {
                         ambientLightRemote.callMethodAsync(setPowerString, PowerStateType.PowerState.newBuilder()
@@ -375,7 +375,7 @@ public class AmbientLightPane extends UnitPane {
     }
 
     private void sendHSV2Remote() {
-        HSVColor hsvColor = HSVColor.newBuilder().setHue(hueValue.floatValue())
+        final HSVColor hsvColor = HSVColor.newBuilder().setHue(hueValue.floatValue())
                 .setSaturation(saturation.floatValue()).setValue(brightness.floatValue()).build();
         try {
             ambientLightRemote.callMethodAsync("setColor", hsvColor)
@@ -438,7 +438,7 @@ public class AmbientLightPane extends UnitPane {
 
                 recurrenceEventFilter = new RecurrenceEventFilter() {
                     @Override
-                    public void relay() throws Exception {
+                    public void relay() {
                         sendHSV2Remote();
                     }
                 };
@@ -476,7 +476,7 @@ public class AmbientLightPane extends UnitPane {
 
                 recurrenceEventFilter = new RecurrenceEventFilter() {
                     @Override
-                    public void relay() throws Exception {
+                    public void relay() {
                         sendHSV2Remote();
                     }
                 };
@@ -546,7 +546,8 @@ public class AmbientLightPane extends UnitPane {
                     ((AmbientLight) ambientLight).getColor().getSaturation() / Constants.ONE_HUNDRED,
                     ((AmbientLight) ambientLight).getColor().getValue() / Constants.ONE_HUNDRED);
 
-            if (currentState == State.OFF && powerState == State.ON && color.getBrightness() == 0.0 && color.getSaturation() == 0.0) {
+            if (currentState == State.OFF && powerState == State.ON && color.getBrightness() == 0.0
+                    && color.getSaturation() == 0.0) {
                 currentState = powerState;
                 sendHSV2Remote();
             } else {

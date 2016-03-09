@@ -48,6 +48,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 
 /**
@@ -258,7 +259,7 @@ public class RemotePool {
      */
     public void fillUserMap() throws CouldNotPerformException {
         for (final UserConfigType.UserConfig currentUserConfig : userRegistryRemote.getUserConfigs()) {
-            UserRemote currentUserRemote = new UserRemote();
+            final UserRemote currentUserRemote = new UserRemote();
             try {
                 currentUserRemote.init(currentUserConfig);
                 currentUserRemote.activate();
@@ -339,7 +340,8 @@ public class RemotePool {
         if (locationMap.containsKey(locationId)) {
             final Map<String, AbstractIdentifiableRemote> unitRemoteHashOfLocation = locationMap.get(locationId);
 
-            for (final Map.Entry<String, AbstractIdentifiableRemote> currentEntry : unitRemoteHashOfLocation.entrySet()) {
+            for (final Map.Entry<String,
+                    AbstractIdentifiableRemote> currentEntry : unitRemoteHashOfLocation.entrySet()) {
                 unitRemoteList.add(currentEntry.getValue());
             }
         }
@@ -359,7 +361,8 @@ public class RemotePool {
 
         for (final UnitType type : unitTypes) {
             try {
-                final Class<? extends AbstractIdentifiableRemote> remote = UnitRemoteFactoryImpl.loadUnitRemoteClass(type);
+                final Class<? extends AbstractIdentifiableRemote> remote
+                        = UnitRemoteFactoryImpl.loadUnitRemoteClass(type);
                 final List<AbstractIdentifiableRemote> unitRemoteList =
                         this.getUnitRemoteListOfLocationAndClass(locationId, remote);
                 if (!unitRemoteList.isEmpty()) {
@@ -390,7 +393,8 @@ public class RemotePool {
         if (locationMap.containsKey(locationId)) {
             final Map<String, AbstractIdentifiableRemote> unitRemoteHashOfLocation = locationMap.get(locationId);
 
-            for (final Map.Entry<String, AbstractIdentifiableRemote> currentEntry : unitRemoteHashOfLocation.entrySet()) {
+            for (final Map.Entry<String,
+                    AbstractIdentifiableRemote> currentEntry : unitRemoteHashOfLocation.entrySet()) {
                 if (currentEntry.getValue().getClass() == remoteClass) {
                     unitRemoteList.add((Remote) currentEntry.getValue());
                 }
@@ -407,11 +411,9 @@ public class RemotePool {
     public List<UserRemote> getUserRemoteList() throws CouldNotPerformException {
         checkInit();
 
-        final List<UserRemote> userRemoteList = new ArrayList<>();
+        final List<UserRemote> userRemoteList
+                = userMap.entrySet().stream().map(Map.Entry::getValue).collect(Collectors.toList());
 
-        for (Map.Entry<String, UserRemote> userRemoteEntry : userMap.entrySet()) {
-            userRemoteList.add(userRemoteEntry.getValue());
-        }
         return userRemoteList;
     }
 

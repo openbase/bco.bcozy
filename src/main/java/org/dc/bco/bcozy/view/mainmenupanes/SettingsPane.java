@@ -70,6 +70,7 @@ public class SettingsPane extends PaneElement {
 
         availableLanguages = FXCollections.observableArrayList("English", "Deutsch");
         languageChoice = new ChoiceBox<>(availableLanguages);
+        //CHECKSTYLE.OFF: MagicNumber
         languageChoice.setPrefWidth(250);
 
         availableThemes = FXCollections.observableArrayList(
@@ -77,6 +78,7 @@ public class SettingsPane extends PaneElement {
                 languageBundle.getString(Constants.DARK_THEME_CSS_NAME));
         themeChoice = new ChoiceBox<>(availableThemes);
         themeChoice.setPrefWidth(250);
+        //CHECKSTYLE.ON: MagicNumber
 
         //verticalLayout.setFillWidth(true);
         //verticalLayout.getChildren().addAll(languageChoice, themeChoice);

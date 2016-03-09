@@ -378,6 +378,11 @@ public final class Constants {
     public static final String CELSIUS = "°C";
 
     /**
+     * text: "%".
+     */
+    public static final String PERCENTAGE = "%";
+
+    /**
      * Scale Factor for Weather Icons (necessary to get constant size).
      */
     public static final double WEATHER_ICONS_SCALE = 0.681;
@@ -456,6 +461,21 @@ public final class Constants {
      * String for tooltip no alarm.
      */
     public static final String NO_ALARM = "No Alarm";
+
+    /**
+     * String for CSS styling of UserPane.
+     */
+    public static final String BOLD_LABEL = "bold-label";
+
+    /**
+     * String for CSS styling of AdvancedHorizontalSlider.
+     */
+    public static final String SMALL_LABEL = "small-label";
+
+    /**
+     * Event filter time.
+     */
+    public static final long FILTER_TIME = 100L;
 
     /**
      * Private Constructor.

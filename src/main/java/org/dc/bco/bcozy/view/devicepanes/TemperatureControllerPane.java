@@ -64,6 +64,21 @@ public class TemperatureControllerPane extends UnitPane {
     private double actualTemperature;
     private double targetTemperature;
 
+    private final EventHandler<MouseEvent> sendingTargetTemperature = event -> new Thread(new Task() {
+        @Override
+        protected Object call() {
+            try {
+                temperatureControllerRemote.setTargetTemperature(slider.getValue());
+
+                final StackPane track = (StackPane) slider.lookup(".track");
+                target.setTranslateX(track.getLayoutX());
+            } catch (CouldNotPerformException e) {
+                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+            }
+            return null;
+        }
+    }).start();
+
     /**
      * Constructor for a TemperatureControllerPane.
      * @param temperatureControllerRemote temperatureControllerRemote
@@ -118,21 +133,6 @@ public class TemperatureControllerPane extends UnitPane {
 //                * (slider.getMinWidth() / (slider.getMax() - slider.getMin())) - (slider.getMinWidth() / 2));
     }
 
-    final EventHandler<MouseEvent> sendingTargetTemperature = event -> new Thread(new Task() {
-        @Override
-        protected Object call() {
-            try {
-                temperatureControllerRemote.setTargetTemperature(slider.getValue());
-
-                StackPane track = (StackPane) slider.lookup(".track");
-                target.setTranslateX(track.getLayoutX());
-            } catch (CouldNotPerformException e) {
-                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-            }
-            return null;
-        }
-    }).start();
-
     @Override
     protected void initTitle() {
         headContent.setLeft(temperatureControllerIcon);
@@ -164,9 +164,9 @@ public class TemperatureControllerPane extends UnitPane {
 //        target.setTranslateX(-slider.getMinWidth() / 2);
         //CHECKSTYLE.ON: MagicNumber
 
-        this.recurrenceEventFilter =  new RecurrenceEventFilter(100L) {
+        this.recurrenceEventFilter =  new RecurrenceEventFilter(Constants.FILTER_TIME) {
             @Override
-            public void relay() throws Exception {
+            public void relay() {
                 slider.setOnMousePressed(sendingTargetTemperature);
                 slider.setOnMouseDragged(sendingTargetTemperature);
             }

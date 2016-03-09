@@ -127,7 +127,7 @@ public class LightPane extends UnitPane {
         toggleSwitch.setMouseTransparent(true);
         this.setOnMouseClicked(event -> new Thread(new Task() {
             @Override
-            protected Object call() throws Exception {
+            protected Object call() {
                 toggleSwitch.setSelected(!toggleSwitch.isSelected());
                 if (toggleSwitch.isSelected()) {
                     try {

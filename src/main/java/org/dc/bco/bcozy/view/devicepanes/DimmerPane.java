@@ -68,6 +68,18 @@ public class DimmerPane extends UnitPane {
     private final Tooltip tooltip;
     private final Slider slider;
 
+    private final EventHandler<MouseEvent> sendBrightness = event -> new Thread(new Task() {
+        @Override
+        protected Object call() {
+            try {
+                dimmerRemote.setDim(slider.getValue());
+            } catch (CouldNotPerformException e) {
+                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+            }
+            return null;
+        }
+    }).start();
+
     /**
      * Constructor for the DimmerPane.
      * @param dimmerRemote dimmerRemote.
@@ -159,18 +171,6 @@ public class DimmerPane extends UnitPane {
         Tooltip.install(iconPane, tooltip);
     }
 
-    private final EventHandler<MouseEvent> sendBrightness = event -> new Thread(new Task() {
-        @Override
-        protected Object call() {
-            try {
-                dimmerRemote.setDim(slider.getValue());
-            } catch (CouldNotPerformException e) {
-                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-            }
-            return null;
-        }
-    }).start();
-
     /**
      * Method creates the header content of the widgetPane.
      */
@@ -179,7 +179,7 @@ public class DimmerPane extends UnitPane {
         lightBulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
         toggleSwitch.setOnMouseClicked(event -> new Thread(new Task() {
             @Override
-            protected Object call() throws Exception {
+            protected Object call() {
                 if (toggleSwitch.isSelected()) {
                     try {
                         dimmerRemote.setPower(PowerStateType.PowerState.State.ON);
@@ -223,9 +223,9 @@ public class DimmerPane extends UnitPane {
         slider.setMinWidth(sliderWidth);
         slider.setMaxWidth(sliderWidth);
 
-        this.recurrenceEventFilter =  new RecurrenceEventFilter(100L) {
+        this.recurrenceEventFilter =  new RecurrenceEventFilter(Constants.FILTER_TIME) {
             @Override
-            public void relay() throws Exception {
+            public void relay() {
                 slider.setOnMouseDragged(sendBrightness);
                 slider.setOnMouseClicked(sendBrightness);
             }

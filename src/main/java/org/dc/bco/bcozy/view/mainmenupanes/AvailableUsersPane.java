@@ -29,10 +29,6 @@ import org.controlsfx.control.HiddenSidesPane;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.SVGIcon;
 
-import java.util.Locale;
-import java.util.ResourceBundle;
-
-
 /**
  * Created by hoestreich on 12/15/15.
  */
@@ -61,11 +57,11 @@ public class AvailableUsersPane extends PaneElement {
         scrollBar.minProperty().bind(verticalScrollPane.vminProperty());
 //
 //        AdvancedHorizontalSlider advancedHorizontalSlider = new AdvancedHorizontalSlider(10, 30);
-        VBox userPanes = new VBox(Constants.INSETS);
-        UserPane userMarian = new UserPane("Marian", false, "userStateCooking", true);
-        UserPane userTamino = new UserPane("Tamino", true, "userStateWatchingTV", true);
-        UserPane userAndi = new UserPane("Andi", false, "userStateNotAvailable", false);
-        UserPane userJulian = new UserPane("Julian", false, "userStateSleeping", true);
+        final VBox userPanes = new VBox(Constants.INSETS);
+        final UserPane userMarian = new UserPane("Marian", false, "userStateCooking", true);
+        final UserPane userTamino = new UserPane("Tamino", true, "userStateWatchingTV", true);
+        final UserPane userAndi = new UserPane("Andi", false, "userStateNotAvailable", false);
+        final UserPane userJulian = new UserPane("Julian", false, "userStateSleeping", true);
         userPanes.getChildren().addAll(userMarian, userTamino, userAndi, userJulian);
 
         verticalScrollPane.setContent(userPanes);
