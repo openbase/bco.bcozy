@@ -41,6 +41,7 @@ import org.dc.jul.exception.CouldNotPerformException;
 import org.dc.jul.exception.printer.ExceptionPrinter;
 import org.dc.jul.exception.printer.LogLevel;
 import org.dc.jul.pattern.Observable;
+import org.dc.jul.schedule.RecurrenceEventFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.homeautomation.state.PowerStateType;
@@ -53,6 +54,7 @@ import rst.homeautomation.unit.DimmerType;
 public class DimmerPane extends UnitPane {
     private static final Logger LOGGER = LoggerFactory.getLogger(DimmerPane.class);
 
+    private RecurrenceEventFilter recurrenceEventFilter;
     private final SVGIcon unknownForegroundIcon;
     private final SVGIcon unknownBackgroundIcon;
     private final DimmerRemote dimmerRemote;
@@ -108,7 +110,6 @@ public class DimmerPane extends UnitPane {
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
-
         setEffectColorAndSlider(powerState, brightness);
     }
 
@@ -157,6 +158,18 @@ public class DimmerPane extends UnitPane {
         }
         Tooltip.install(iconPane, tooltip);
     }
+
+    private final EventHandler<MouseEvent> sendBrightness = event -> new Thread(new Task() {
+        @Override
+        protected Object call() {
+            try {
+                dimmerRemote.setDim(slider.getValue());
+            } catch (CouldNotPerformException e) {
+                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+            }
+            return null;
+        }
+    }).start();
 
     /**
      * Method creates the header content of the widgetPane.
@@ -210,23 +223,17 @@ public class DimmerPane extends UnitPane {
         slider.setMinWidth(sliderWidth);
         slider.setMaxWidth(sliderWidth);
 
+        this.recurrenceEventFilter =  new RecurrenceEventFilter(100L) {
+            @Override
+            public void relay() throws Exception {
+                slider.setOnMouseDragged(sendBrightness);
+                slider.setOnMouseClicked(sendBrightness);
+            }
+        };
+        recurrenceEventFilter.trigger();
+
         progressBar.setMinWidth(sliderWidth);
         progressBar.setMaxWidth(sliderWidth);
-
-        final EventHandler<MouseEvent> sendingBrightness = event -> new Thread(new Task() {
-            @Override
-            protected Object call() {
-                try {
-                    dimmerRemote.setDim(slider.getValue());
-                } catch (CouldNotPerformException e) {
-                    ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-                }
-                return null;
-            }
-        }).start();
-
-        slider.setOnMouseDragged(sendingBrightness);
-        slider.setOnMouseClicked(sendingBrightness);
 
         stackPane.getStyleClass().clear();
         stackPane.getStyleClass().add("dimmer-body");

@@ -50,6 +50,7 @@ import java.text.DecimalFormat;
  */
 public class TemperatureControllerPane extends UnitPane {
     private static final Logger LOGGER = LoggerFactory.getLogger(TemperatureControllerPane.class);
+    private RecurrenceEventFilter recurrenceEventFilter;
 
     private final TemperatureControllerRemote temperatureControllerRemote;
     private final SVGIcon temperatureControllerIcon;
@@ -60,7 +61,6 @@ public class TemperatureControllerPane extends UnitPane {
     private final Button actual;
     private final Button target;
     private final DecimalFormat decimalFormat;
-    private final RecurrenceEventFilter recurrenceEventFilter;
     private double actualTemperature;
     private double targetTemperature;
 
@@ -87,15 +87,6 @@ public class TemperatureControllerPane extends UnitPane {
         initEffectSlider();
 
         this.temperatureControllerRemote.addObserver(this);
-
-        //TODO
-        this.recurrenceEventFilter =  new RecurrenceEventFilter(100L) {
-            @Override
-            public void relay() throws Exception {
-
-            }
-        };
-        recurrenceEventFilter.trigger();
     }
 
     private void initEffectSlider() {
@@ -127,6 +118,21 @@ public class TemperatureControllerPane extends UnitPane {
 //                * (slider.getMinWidth() / (slider.getMax() - slider.getMin())) - (slider.getMinWidth() / 2));
     }
 
+    final EventHandler<MouseEvent> sendingTargetTemperature = event -> new Thread(new Task() {
+        @Override
+        protected Object call() {
+            try {
+                temperatureControllerRemote.setTargetTemperature(slider.getValue());
+
+                StackPane track = (StackPane) slider.lookup(".track");
+                target.setTranslateX(track.getLayoutX());
+            } catch (CouldNotPerformException e) {
+                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+            }
+            return null;
+        }
+    }).start();
+
     @Override
     protected void initTitle() {
         headContent.setLeft(temperatureControllerIcon);
@@ -150,7 +156,6 @@ public class TemperatureControllerPane extends UnitPane {
         actual.getStyleClass().addAll("temperature-slider-pane-top");
         target.getStyleClass().addAll("temperature-slider-pane-bottom");
 
-
 //        actual.setContentDisplay(ContentDisplay.BOTTOM);
 //        actual.setGraphicTextGap(-12.0);
 //        actual.setTranslateX(-slider.getMinWidth() / 2);
@@ -159,25 +164,14 @@ public class TemperatureControllerPane extends UnitPane {
 //        target.setTranslateX(-slider.getMinWidth() / 2);
         //CHECKSTYLE.ON: MagicNumber
 
-        //TODO add progressbar in slider...?
-
-        final EventHandler<MouseEvent> sendingTargetTemperature = event -> new Thread(new Task() {
+        this.recurrenceEventFilter =  new RecurrenceEventFilter(100L) {
             @Override
-            protected Object call() {
-                try {
-                    temperatureControllerRemote.setTargetTemperature(slider.getValue());
-
-                    StackPane track = (StackPane) slider.lookup(".track");
-                    target.setTranslateX(track.getLayoutX());
-                } catch (CouldNotPerformException e) {
-                    ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-                }
-                return null;
+            public void relay() throws Exception {
+                slider.setOnMousePressed(sendingTargetTemperature);
+                slider.setOnMouseDragged(sendingTargetTemperature);
             }
-        }).start();
-
-        slider.setOnMousePressed(sendingTargetTemperature);
-        slider.setOnMouseDragged(sendingTargetTemperature);
+        };
+        recurrenceEventFilter.trigger();
 
         vBox.getChildren().addAll(actual, slider, target);
         vBox.setAlignment(Pos.CENTER);
@@ -218,6 +212,5 @@ public class TemperatureControllerPane extends UnitPane {
                     ((TemperatureControllerType.TemperatureController) temperatureController).getTargetTemperature();
             setLabelValues();
         });
-
     }
 }

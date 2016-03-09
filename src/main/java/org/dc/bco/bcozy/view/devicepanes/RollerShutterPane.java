@@ -51,8 +51,8 @@ import rst.homeautomation.state.ShutterStateType.ShutterState.State;
  * Created by hoestreich on 11/19/15.
  */
 public class RollerShutterPane extends UnitPane {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(RollerShutterPane.class);
+    private RecurrenceEventFilter recurrenceEventFilter;
 
     private final RollershutterRemote rollershutterRemote;
     private final BorderPane headContent;
@@ -63,14 +63,8 @@ public class RollerShutterPane extends UnitPane {
     private final SVGIcon unknownBackgroundIcon;
     private final Rectangle clip;
     private final Text rollerShutterStatus;
-    private final RecurrenceEventFilter recurrenceEventFilter;
     private final GridPane iconPane;
     private final Tooltip tooltip;
-    private EventHandler<MouseEvent> sendingUp;
-    private EventHandler<MouseEvent> sendingDown;
-    private EventHandler<MouseEvent> sendingStop;
-    private EventHandler<MouseEvent> sendingTotalOpening;
-    private EventHandler<MouseEvent> sendingTotalClosing;
 
     /**
      * Constructor for a RollerShutterPane.
@@ -96,78 +90,7 @@ public class RollerShutterPane extends UnitPane {
         createWidgetPane(headContent, bodyContent);
         initEffect();
 
-        this.recurrenceEventFilter =  new RecurrenceEventFilter(100L) {
-            @Override
-            public void relay() throws Exception {
-                mouseEvents();
-            }
-        };
-
-        recurrenceEventFilter.trigger();
-
         this.rollershutterRemote.addObserver(this);
-    }
-
-    private void mouseEvents() {
-        sendingUp = event -> new Thread(new Task() {
-            @Override
-            protected Object call() {
-                try {
-                    rollershutterRemote.setShutter(ShutterStateType.ShutterState.State.UP);
-                } catch (CouldNotPerformException e) {
-                    ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-                }
-                return null;
-            }
-        }).start();
-
-        sendingDown = event -> new Thread(new Task() {
-            @Override
-            protected Object call() {
-                try {
-                    rollershutterRemote.setShutter(ShutterStateType.ShutterState.State.DOWN);
-                } catch (CouldNotPerformException e) {
-                    ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-                }
-                return null;
-            }
-        }).start();
-
-        sendingStop = event -> new Thread(new Task() {
-            @Override
-            protected Object call() {
-                try {
-                    rollershutterRemote.setShutter(ShutterStateType.ShutterState.State.STOP);
-                } catch (CouldNotPerformException e) {
-                    ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-                }
-                return null;
-            }
-        }).start();
-
-        sendingTotalOpening = event -> new Thread(new Task() {
-            @Override
-            protected Object call() {
-                try {
-                    rollershutterRemote.setOpeningRatio(0.0);
-                } catch (CouldNotPerformException e) {
-                    ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-                }
-                return null;
-            }
-        }).start();
-
-        sendingTotalClosing = event -> new Thread(new Task() {
-            @Override
-            protected Object call() {
-                try {
-                    rollershutterRemote.setOpeningRatio(1.0);
-                } catch (CouldNotPerformException e) {
-                    ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-                }
-                return null;
-            }
-        }).start();
     }
 
     private void initEffect() {
@@ -214,6 +137,66 @@ public class RollerShutterPane extends UnitPane {
         Tooltip.install(iconPane, tooltip);
     }
 
+    private final EventHandler<MouseEvent> sendingUp = event -> new Thread(new Task() {
+        @Override
+        protected Object call() {
+            try {
+                rollershutterRemote.setShutter(ShutterStateType.ShutterState.State.UP);
+            } catch (CouldNotPerformException e) {
+                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+            }
+            return null;
+        }
+    }).start();
+
+    private final EventHandler<MouseEvent> sendingDown = event -> new Thread(new Task() {
+        @Override
+        protected Object call() {
+            try {
+                rollershutterRemote.setShutter(ShutterStateType.ShutterState.State.DOWN);
+            } catch (CouldNotPerformException e) {
+                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+            }
+            return null;
+        }
+    }).start();
+
+    private final EventHandler<MouseEvent> sendingStop = event -> new Thread(new Task() {
+        @Override
+        protected Object call() {
+            try {
+                rollershutterRemote.setShutter(ShutterStateType.ShutterState.State.STOP);
+            } catch (CouldNotPerformException e) {
+                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+            }
+            return null;
+        }
+    }).start();
+
+    private final EventHandler<MouseEvent> sendingTotalOpening = event -> new Thread(new Task() {
+        @Override
+        protected Object call() {
+            try {
+                rollershutterRemote.setOpeningRatio(0.0);
+            } catch (CouldNotPerformException e) {
+                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+            }
+            return null;
+        }
+    }).start();
+
+    private final EventHandler<MouseEvent> sendingTotalClosing = event -> new Thread(new Task() {
+        @Override
+        protected Object call() {
+            try {
+                rollershutterRemote.setOpeningRatio(1.0);
+            } catch (CouldNotPerformException e) {
+                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+            }
+            return null;
+        }
+    }).start();
+
     @Override
     protected void initTitle() {
         rollerShutterStatus.getStyleClass().add(Constants.ICONS_CSS_STRING);
@@ -235,14 +218,28 @@ public class RollerShutterPane extends UnitPane {
 
     @Override
     protected void initContent() { //NOPMD
-        final Button buttonUp = new Button();
-        final Button buttonDown = new Button();
-        final Button buttonOpen = new Button();
-        final Button buttonClose = new Button();
         final SVGIcon arrowUp;
         final SVGIcon arrowDown;
         final SVGIcon arrowDoubleUP;
         final SVGIcon arrowDoubleDown;
+        final Button buttonUp = new Button();
+        final Button buttonDown = new Button();
+        final Button buttonOpen = new Button();
+        final Button buttonClose = new Button();
+
+        this.recurrenceEventFilter =  new RecurrenceEventFilter(100L) {
+            @Override
+            public void relay() throws Exception {
+                buttonOpen.setOnMouseClicked(sendingTotalOpening);
+                buttonClose.setOnMouseClicked(sendingTotalClosing);
+                buttonUp.setOnMousePressed(sendingUp);
+                buttonUp.setOnMouseReleased(sendingStop);
+                buttonDown.setOnMousePressed(sendingDown);
+                buttonDown.setOnMouseReleased(sendingStop);
+            }
+        };
+
+        recurrenceEventFilter.trigger();
 
         arrowUp = new SVGIcon(MaterialDesignIcon.CHEVRON_UP, Constants.SMALL_ICON, true);
         arrowDown = new SVGIcon(MaterialDesignIcon.CHEVRON_DOWN, Constants.SMALL_ICON, true);
@@ -253,13 +250,6 @@ public class RollerShutterPane extends UnitPane {
         buttonDown.setGraphic(arrowDown);
         buttonOpen.setGraphic(arrowDoubleUP);
         buttonClose.setGraphic(arrowDoubleDown);
-
-        buttonOpen.setOnMouseClicked(sendingTotalOpening);
-        buttonClose.setOnMouseClicked(sendingTotalClosing);
-        buttonUp.setOnMousePressed(sendingUp);
-        buttonUp.setOnMouseReleased(sendingStop);
-        buttonDown.setOnMousePressed(sendingDown);
-        buttonDown.setOnMouseReleased(sendingStop);
 
         bodyContent.getChildren().addAll(buttonOpen, buttonUp, buttonDown, buttonClose);
         bodyContent.setAlignment(Pos.CENTER);
