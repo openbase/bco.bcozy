@@ -82,9 +82,6 @@ public class ReedSwitchPane extends UnitPane {
 
         try {
             reedSwitchState = reedSwitchRemote.getReedSwitch().getValue();
-            if (reedSwitchState == State.UNKNOWN) {
-                reedSwitchState = State.CLOSED;
-            }
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }

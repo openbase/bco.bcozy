@@ -86,9 +86,6 @@ public class LightPane extends UnitPane {
 
         try {
             powerState = lightRemote.getPower().getValue();
-            if (powerState == State.UNKNOWN) {
-                powerState = State.OFF;
-            }
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }

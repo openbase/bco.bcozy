@@ -86,8 +86,8 @@ public class AmbientLightPane extends UnitPane {
     private final ToggleSwitch toggleSwitch;
     private final BorderPane headContent;
     private final DoubleProperty hueValue = new SimpleDoubleProperty(0.0);
-    private final DoubleProperty saturation = new SimpleDoubleProperty(Constants.ONE_HUNDRED / 2);
-    private final DoubleProperty brightness = new SimpleDoubleProperty(Constants.ONE_HUNDRED / 2);
+    private final DoubleProperty saturation = new SimpleDoubleProperty(0.0);
+    private final DoubleProperty brightness = new SimpleDoubleProperty(0.0);
     private final Rectangle rectangleSelector;
     private final Pane colorCircleContainer;
     private final Tooltip tooltip;
@@ -96,7 +96,6 @@ public class AmbientLightPane extends UnitPane {
     private double rectY;
     private double angle;
     private HBox bodyContent;
-    private State currentState;
 
     /**
      * Constructor for the AmbientLightPane.
@@ -131,16 +130,12 @@ public class AmbientLightPane extends UnitPane {
 
         try {
             powerState = ambientLightRemote.getPower().getValue();
-            if (powerState == State.UNKNOWN) {
-                powerState = State.OFF;
-            }
             currentColor = ambientLightRemote.getColor();
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
         final Color color = Color.hsb(currentColor.getHue(), currentColor.getSaturation() / Constants.ONE_HUNDRED,
                 currentColor.getValue() / Constants.ONE_HUNDRED);
-        currentState = powerState;
 
         hueValue.set(color.getHue());
         angle = color.getHue();
@@ -150,10 +145,6 @@ public class AmbientLightPane extends UnitPane {
         rectangleSelector.setLayoutY(rectY);
         rectangleSelector.setRotate(angle);
 
-        if (color.getBrightness() != 0.0 && color.getSaturation() != 0.0 && color.getHue() != 0.0) {
-            saturation.set(color.getSaturation() * Constants.ONE_HUNDRED);
-            brightness.set(color.getBrightness() * Constants.ONE_HUNDRED);
-        }
         setEffectColorAndSwitch(powerState, color);
     }
 
@@ -545,15 +536,7 @@ public class AmbientLightPane extends UnitPane {
             final Color color = Color.hsb(((AmbientLight) ambientLight).getColor().getHue(),
                     ((AmbientLight) ambientLight).getColor().getSaturation() / Constants.ONE_HUNDRED,
                     ((AmbientLight) ambientLight).getColor().getValue() / Constants.ONE_HUNDRED);
-
-            if (currentState == State.OFF && powerState == State.ON && color.getBrightness() == 0.0
-                    && color.getSaturation() == 0.0) {
-                currentState = powerState;
-                sendHSV2Remote();
-            } else {
-                currentState = powerState;
-                setEffectColorAndSwitch(powerState, color);
-            }
+            setEffectColorAndSwitch(powerState, color);
         });
     }
 }

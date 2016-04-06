@@ -115,9 +115,6 @@ public class DimmerPane extends UnitPane {
 
         try {
             powerState = dimmerRemote.getPower().getValue();
-            if (powerState == State.UNKNOWN) {
-                powerState = State.OFF;
-            }
             brightness = dimmerRemote.getDim() / Constants.ONE_HUNDRED;
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
@@ -129,28 +126,20 @@ public class DimmerPane extends UnitPane {
         iconPane.getChildren().clear();
 
         if (powerState.equals(State.ON)) {
-            if (brightness == 0.0) {
-                try {
-                    slider.setValue(Constants.ONE_HUNDRED / 2);
-                    dimmerRemote.setDim(slider.getValue());
-                } catch (CouldNotPerformException e) {
-                    ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-                }
-            } else {
-                iconPane.add(lightBulbIcon, 0, 0);
+            iconPane.add(lightBulbIcon, 0, 0);
 
-                final Color color = Color.hsb(Constants.LIGHTBULB_COLOR.getHue(),
-                        Constants.LIGHTBULB_COLOR.getSaturation(), brightness, Constants.LIGHTBULB_COLOR.getOpacity());
-                lightBulbIcon.setBackgroundIconColorAnimated(color);
-                progressBar.setProgress(brightness);
-                slider.setValue(brightness * slider.getMax());
+            final Color color = Color.hsb(Constants.LIGHTBULB_COLOR.getHue(),
+                    Constants.LIGHTBULB_COLOR.getSaturation(), brightness, Constants.LIGHTBULB_COLOR.getOpacity());
+            lightBulbIcon.setBackgroundIconColorAnimated(color);
+            progressBar.setProgress(brightness);
+            slider.setValue(brightness * slider.getMax());
 
-                tooltip.setText(Constants.LIGHT_ON);
+            tooltip.setText(Constants.LIGHT_ON);
 
-                if (!toggleSwitch.isSelected()) {
-                    toggleSwitch.setSelected(true);
-                }
+            if (!toggleSwitch.isSelected()) {
+                toggleSwitch.setSelected(true);
             }
+
         } else if (powerState.equals(State.OFF)) {
             iconPane.add(lightBulbIcon, 0, 0);
 

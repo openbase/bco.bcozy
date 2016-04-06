@@ -85,9 +85,6 @@ public class MotionSensorPane extends UnitPane {
 
         try {
             motionState = motionSensorRemote.getMotion().getValue();
-            if (motionState == State.UNKNOWN) {
-                motionState = State.NO_MOVEMENT;
-            }
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }

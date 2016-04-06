@@ -89,9 +89,6 @@ public class PowerPlugPane extends UnitPane {
 
         try {
             powerState = powerPlugRemote.getPower().getValue();
-            if (powerState == State.UNKNOWN) {
-                powerState = State.OFF;
-            }
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
