@@ -85,7 +85,7 @@ public class TemperatureSensorPane extends UnitPane {
         initTitle();
         initContent();
         initEffect();
-        createWidgetPane(headContent);
+        createWidgetPane(headContent, false);
 
         this.temperatureSensorRemote.addObserver(this);
     }

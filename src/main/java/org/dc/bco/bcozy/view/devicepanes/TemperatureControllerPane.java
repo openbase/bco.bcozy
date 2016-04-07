@@ -98,7 +98,7 @@ public class TemperatureControllerPane extends UnitPane {
         initUnitLabel();
         initTitle();
         initContent();
-        createWidgetPane(headContent, bodyContent);
+        createWidgetPane(headContent, bodyContent, true);
         initEffectSlider();
 
         this.temperatureControllerRemote.addObserver(this);

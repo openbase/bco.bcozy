@@ -103,7 +103,7 @@ public class DimmerPane extends UnitPane {
         initUnitLabel();
         initTitle();
         initContent();
-        createWidgetPane(headContent, bodyContent);
+        createWidgetPane(headContent, bodyContent, true);
         initEffectAndSwitch();
 
         this.dimmerRemote.addObserver(this);
@@ -160,27 +160,38 @@ public class DimmerPane extends UnitPane {
         Tooltip.install(iconPane, tooltip);
     }
 
-    /**
-     * Method creates the header content of the widgetPane.
-     */
+    private void sendStateToRemote(final State state) {
+        try {
+            dimmerRemote.setPower(state);
+        } catch (CouldNotPerformException e) {
+            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+            setWidgetPaneDisable(true);
+        }
+    }
+
     @Override
     protected void initTitle() {
         lightBulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
+
+        getOneClick().addListener((observable, oldValue, newValue) -> new Thread(new Task() {
+            @Override
+            protected Object call() {
+                if (toggleSwitch.isSelected()) {
+                    sendStateToRemote(PowerStateType.PowerState.State.OFF);
+                } else {
+                    sendStateToRemote(PowerStateType.PowerState.State.ON);
+                }
+                return null;
+            }
+        }).start());
+
         toggleSwitch.setOnMouseClicked(event -> new Thread(new Task() {
             @Override
             protected Object call() {
                 if (toggleSwitch.isSelected()) {
-                    try {
-                        dimmerRemote.setPower(PowerStateType.PowerState.State.ON);
-                    } catch (CouldNotPerformException e) {
-                        ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-                    }
+                    sendStateToRemote(PowerStateType.PowerState.State.ON);
                 } else {
-                    try {
-                        dimmerRemote.setPower(PowerStateType.PowerState.State.OFF);
-                    } catch (CouldNotPerformException e) {
-                        ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-                    }
+                    sendStateToRemote(PowerStateType.PowerState.State.OFF);
                 }
                 return null;
             }
@@ -196,9 +207,6 @@ public class DimmerPane extends UnitPane {
         headContent.prefHeightProperty().set(lightBulbIcon.getSize() + Constants.INSETS);
     }
 
-    /**
-     * Method creates the body content of the widgetPane.
-     */
     @Override
     protected void initContent() {
         //CHECKSTYLE.OFF: MagicNumber

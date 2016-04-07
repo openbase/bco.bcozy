@@ -373,6 +373,11 @@ public final class Constants {
     public static final int THREAD_MILLI_TIMEOUT = 500;
 
     /**
+     * Milliseconds interval for click counter(double click).
+     */
+    public static final int CLICK_TIME_INTERVAL_MILLI = 400;
+
+    /**
      * text: "°C".
      */
     public static final String CELSIUS = "°C";

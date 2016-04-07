@@ -118,7 +118,7 @@ public class AmbientLightPane extends UnitPane {
         initUnitLabel();
         initTitle();
         initContent();
-        createWidgetPane(headContent, bodyContent);
+        createWidgetPane(headContent, bodyContent, true);
         initEffectAndSwitch();
 
         this.ambientLightRemote.addObserver(this);
@@ -320,35 +320,41 @@ public class AmbientLightPane extends UnitPane {
         return hollowCircle;
     }
 
+    private void sendStateToRemote(final State state) {
+        final String setPowerString = "setPower";
+        try {
+            ambientLightRemote.callMethodAsync(setPowerString, PowerStateType.PowerState.newBuilder()
+                    .setValue(state).build())
+                    .get(Constants.THREAD_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
+            //ambientLightRemote.setPower(PowerStateType.PowerState.State.ON/OFF);
+        } catch (InterruptedException | ExecutionException | TimeoutException
+                | CouldNotPerformException e) {
+            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+            setWidgetPaneDisable(true);
+        }
+    }
+
     @Override
     protected void initTitle() {
-        final String setPowerString = "setPower";
+        getOneClick().addListener((observable, oldValue, newValue) -> new Thread(new Task() {
+            @Override
+            protected Object call() {
+                if (toggleSwitch.isSelected()) {
+                    sendStateToRemote(PowerStateType.PowerState.State.OFF);
+                } else {
+                    sendStateToRemote(PowerStateType.PowerState.State.ON);
+                }
+                return null;
+            }
+        }).start());
 
         toggleSwitch.setOnMouseClicked(event -> new Thread(new Task() {
             @Override
             protected Object call() {
                 if (toggleSwitch.isSelected()) {
-                    try {
-                        ambientLightRemote.callMethodAsync(setPowerString, PowerStateType.PowerState.newBuilder()
-                                .setValue(PowerStateType.PowerState.State.ON).build())
-                                .get(Constants.THREAD_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
-                        //ambientLightRemote.setPower(PowerStateType.PowerState.State.ON);
-                    } catch (InterruptedException | ExecutionException | TimeoutException
-                            | CouldNotPerformException e) {
-                        ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-                        setWidgetPaneDisable(true);
-                    }
+                    sendStateToRemote(PowerStateType.PowerState.State.ON);
                 } else {
-                    try {
-                        ambientLightRemote.callMethodAsync(setPowerString, PowerStateType.PowerState.newBuilder()
-                                .setValue(PowerStateType.PowerState.State.OFF).build())
-                                .get(Constants.THREAD_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
-                        //ambientLightRemote.setPower(PowerStateType.PowerState.State.OFF);
-                    } catch (InterruptedException | ExecutionException | TimeoutException
-                            | CouldNotPerformException e) {
-                        ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-                        setWidgetPaneDisable(true);
-                    }
+                    sendStateToRemote(PowerStateType.PowerState.State.OFF);
                 }
                 return null;
             }

@@ -73,7 +73,7 @@ public class MotionSensorPane extends UnitPane {
         initUnitLabel();
         initTitle();
         initContent();
-        createWidgetPane(headContent);
+        createWidgetPane(headContent, false);
 
         initEffect();
 

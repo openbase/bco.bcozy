@@ -69,7 +69,7 @@ public class BatteryPane extends UnitPane {
         initUnitLabel();
         initTitle();
         initContent();
-        createWidgetPane(headContent);
+        createWidgetPane(headContent, false);
 
         initEffect();
 

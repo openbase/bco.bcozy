@@ -77,7 +77,7 @@ public class PowerPlugPane extends UnitPane {
         initUnitLabel();
         initTitle();
         initContent();
-        createWidgetPane(headContent);
+        createWidgetPane(headContent, true);
 
         initEffectAndSwitch();
 
@@ -124,25 +124,38 @@ public class PowerPlugPane extends UnitPane {
         Tooltip.install(iconPane, tooltip);
     }
 
+    private void sendStateToRemote(final State state) {
+        try {
+            powerPlugRemote.setPower(state);
+        } catch (CouldNotPerformException e) {
+            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+            setWidgetPaneDisable(true);
+        }
+    }
+
     @Override
     protected void initTitle() {
         toggleSwitch.setMouseTransparent(true);
-        this.setOnMouseClicked(event -> new Thread(new Task() {
+
+        getOneClick().addListener((observable, oldValue, newValue) -> new Thread(new Task() {
             @Override
             protected Object call() {
-                toggleSwitch.setSelected(!toggleSwitch.isSelected());
                 if (toggleSwitch.isSelected()) {
-                    try {
-                        powerPlugRemote.setPower(PowerStateType.PowerState.State.ON);
-                    } catch (CouldNotPerformException e) {
-                        ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-                    }
+                    sendStateToRemote(PowerStateType.PowerState.State.OFF);
                 } else {
-                    try {
-                        powerPlugRemote.setPower(PowerStateType.PowerState.State.OFF);
-                    } catch (CouldNotPerformException e) {
-                        ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-                    }
+                    sendStateToRemote(PowerStateType.PowerState.State.ON);
+                }
+                return null;
+            }
+        }).start());
+
+        toggleSwitch.setOnMouseClicked(event -> new Thread(new Task() {
+            @Override
+            protected Object call() {
+                if (toggleSwitch.isSelected()) {
+                    sendStateToRemote(PowerStateType.PowerState.State.ON);
+                } else {
+                    sendStateToRemote(PowerStateType.PowerState.State.OFF);
                 }
                 return null;
             }

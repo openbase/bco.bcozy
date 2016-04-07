@@ -70,7 +70,7 @@ public class ReedSwitchPane extends UnitPane {
         initUnitLabel();
         initTitle();
         initContent();
-        createWidgetPane(headContent);
+        createWidgetPane(headContent, false);
 
         initEffectAndText();
 

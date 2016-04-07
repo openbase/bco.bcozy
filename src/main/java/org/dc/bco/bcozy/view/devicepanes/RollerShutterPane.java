@@ -147,7 +147,7 @@ public class RollerShutterPane extends UnitPane {
         initUnitLabel();
         initTitle();
         initContent();
-        createWidgetPane(headContent, bodyContent);
+        createWidgetPane(headContent, bodyContent, true);
         initEffect();
 
         this.rollershutterRemote.addObserver(this);

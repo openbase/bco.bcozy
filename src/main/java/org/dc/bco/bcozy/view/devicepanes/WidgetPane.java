@@ -20,8 +20,12 @@ package org.dc.bco.bcozy.view.devicepanes;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
+import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.geometry.Insets;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -35,12 +39,12 @@ import org.dc.bco.bcozy.view.Constants;
  */
 public class WidgetPane extends VBox {
 
+    private final BooleanProperty oneClick = new SimpleBooleanProperty(false);
     private BorderPane head;
     private Pane body;
     private final SimpleBooleanProperty isExpanded = new SimpleBooleanProperty();
     private Timeline timelineUp;
     private Timeline timelineDown;
-    private Rectangle rectangleClip;
 
     /**
      * Constructor for the widget pane.
@@ -50,13 +54,23 @@ public class WidgetPane extends VBox {
     }
 
     /**
+     * Method returns changing bool of mouse listener, if only one click is registered.
+     *
+     * @return oneClick.
+     */
+    public BooleanProperty getOneClick() {
+        return oneClick;
+    }
+
+    /**
      * Method creates a sliding widget pane, which includes a header(listener) and a body(sliding) with content.
      *
      * @param headContent Content of the header.
      * @param bodyContent Content of the sliding body.
+     * @param activatable Head of Widget is active or passive (execution).
      */
-    public void createWidgetPane(final BorderPane headContent, final Pane bodyContent) {
-        headPart(headContent);
+    public void createWidgetPane(final BorderPane headContent, final Pane bodyContent, final boolean activatable) {
+        headPart(headContent, true, activatable);
         bodyPart(bodyContent);
 
         setAnimation(headContent, bodyContent);
@@ -76,26 +90,25 @@ public class WidgetPane extends VBox {
     }
 
     /**
-     * Method creates a sliding widget pane, which includes a header(listener) and a body(sliding) with content.
+     * Method creates a sliding widget pane, which includes a header without a body content.
      *
      * @param headContent Content of the header.
+     * @param activatable Head of Widget is active or passive (execution).
      */
-    public void createWidgetPane(final BorderPane headContent) {
-        headPart(headContent);
+    public void createWidgetPane(final BorderPane headContent, final boolean activatable) {
+        headPart(headContent, false, activatable);
 
         isExpanded.set(false);
     }
 
-    /**
-     * Method adds style and listener to the head content and integrates it to the ground pane.
-     *
-     * @param headContent Content of the header.
-     */
-    private void headPart(final BorderPane headContent) {
+    private void headPart(final BorderPane headContent, final boolean withBody, final boolean activatable) {
         head = headContent;
         head.getStyleClass().clear();
         head.getStyleClass().add("head-pane");
-        head.setOnMouseClicked(paramT -> toggleVisibility());
+
+        if (activatable) {
+            observeMouseClicks(withBody);
+        }
 
         if (headContent.getCenter() != null) {
             BorderPane.setMargin(headContent.getCenter(), new Insets(0.0, 0.0, 0.0, Constants.INSETS));
@@ -106,11 +119,34 @@ public class WidgetPane extends VBox {
         this.getChildren().add(head);
     }
 
-    /**
-     * Method adds style to the body content and integrates it to the ground pane.
-     *
-     * @param bodyContent Content of the sliding body.
-     */
+
+    private void observeMouseClicks(final boolean withBody) {
+        if (withBody) {
+            final Duration maxTimeIntervalClick = Duration.millis(Constants.CLICK_TIME_INTERVAL_MILLI);
+            final PauseTransition clickTimer = new PauseTransition(maxTimeIntervalClick);
+            final IntegerProperty clickCnt = new SimpleIntegerProperty(0);
+
+            clickTimer.setOnFinished(event -> {
+                if (clickCnt.get() == 1) {
+                    oneClickBoolFlag();
+                }
+                clickCnt.set(0); // reset
+            });
+
+            head.setOnMouseClicked(event -> {
+                clickCnt.set(clickCnt.get() + 1);
+
+                if (clickCnt.get() == 2) {
+                    toggleVisibility();
+                    clickCnt.set(0); // reset
+                }
+                clickTimer.playFromStart();
+            });
+        } else {
+            head.setOnMouseClicked(event -> oneClickBoolFlag());
+        }
+    }
+
     private void bodyPart(final Pane bodyContent) {
         body = bodyContent;
         body.getStyleClass().clear();
@@ -119,9 +155,14 @@ public class WidgetPane extends VBox {
         this.getChildren().add(body);
     }
 
-    /**
-     * Method changes state of sliding widget via listener of the header.
-     */
+    private void oneClickBoolFlag() {
+        if (oneClick.get()) {
+            oneClick.set(false);
+        } else {
+            oneClick.set(true);
+        }
+    }
+
     private void toggleVisibility() {
         if (isExpanded.get()) {
             isExpanded.set(false);
@@ -136,7 +177,7 @@ public class WidgetPane extends VBox {
     private void setAnimation(final BorderPane headContent, final Pane bodyContent) {
 
         //TODO get generic width
-        rectangleClip = new Rectangle(Integer.MAX_VALUE, headContent.prefHeightProperty().getValue());
+        final Rectangle rectangleClip = new Rectangle(Integer.MAX_VALUE, headContent.prefHeightProperty().getValue());
         this.setClip(rectangleClip);
 
         timelineDown = new Timeline();
