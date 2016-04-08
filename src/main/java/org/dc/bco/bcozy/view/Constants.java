@@ -418,6 +418,16 @@ public final class Constants {
     public static final String LIGHT_OFF = "Off";
 
     /**
+     * String for tooltip power on.
+     */
+    public static final String POWER_ON = "Power on";
+
+    /**
+     * String for tooltip power off.
+     */
+    public static final String POWER_OFF = "Power off";
+
+    /**
      * String for tooltip ok.
      */
     public static final String OK_STRING = "Ok";

@@ -98,6 +98,13 @@ public class UnitPaneContainer extends ObserverTitledPane {
 
                 vBox.getChildren().add(motionSensorPane);
             }
+        } else if (unitType.equals(UnitType.POWER_CONSUMPTION_SENSOR)) {
+            for (final AbstractIdentifiableRemote dalRemoteService : dalRemoteServiceList) {
+                final PowerConsumptionSensorPane powerConsumptionSensorPane
+                        = new PowerConsumptionSensorPane(dalRemoteService);
+
+                vBox.getChildren().add(powerConsumptionSensorPane);
+            }
         } else if (unitType.equals(UnitType.POWER_PLUG)) {
             for (final AbstractIdentifiableRemote dalRemoteService : dalRemoteServiceList) {
                 final PowerPlugPane powerPlugPane = new PowerPlugPane(dalRemoteService);

@@ -175,8 +175,6 @@ public class WidgetPane extends VBox {
      * Method creates animation parameters for scroll down and up.
      */
     private void setAnimation(final BorderPane headContent, final Pane bodyContent) {
-
-        //TODO get generic width
         final Rectangle rectangleClip = new Rectangle(Integer.MAX_VALUE, headContent.prefHeightProperty().getValue());
         this.setClip(rectangleClip);
 
