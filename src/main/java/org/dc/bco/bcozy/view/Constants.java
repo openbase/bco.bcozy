@@ -478,6 +478,16 @@ public final class Constants {
     public static final String NO_ALARM = "No Alarm";
 
     /**
+     * String for tooltip no tamper.
+     */
+    public static final String NO_TAMPER = "No Tamper";
+
+    /**
+     * String for tooltip tamper.
+     */
+    public static final String TAMPER = "Tamper";
+
+    /**
      * String for CSS styling of UserPane.
      */
     public static final String BOLD_LABEL = "bold-label";
