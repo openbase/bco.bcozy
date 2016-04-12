@@ -20,16 +20,13 @@ package org.dc.bco.bcozy.view.devicepanes;
 
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.animation.FadeTransition;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.concurrent.Task;
 import javafx.geometry.Pos;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.SVGIcon;
@@ -60,8 +57,7 @@ public class SmokeDetectorPane extends UnitPane {
     private final GridPane iconPane;
     private final BorderPane headContent;
     private final Tooltip tooltip;
-    private final BooleanProperty flashing = new SimpleBooleanProperty(false);
-    private final FadeTransition flashTransition;
+    private final FadeTransition flashAnimation;
 
     /**
      * Constructor for the TamperSwitchPane.
@@ -79,34 +75,17 @@ public class SmokeDetectorPane extends UnitPane {
         iconPane = new GridPane();
         tooltip = new Tooltip();
 
-        flashTransition = new FadeTransition(Duration.millis(Constants.SMOKE_DETECTOR_FADE_DURATION));
-        flashTransition.setNode(smokeDetectorIconFireFade);
-        flashTransition.setFromValue(0.0);
-        flashTransition.setToValue(1.0);
-        flashTransition.setCycleCount(2);
-        flashTransition.setAutoReverse(true);
-
-        flashing.addListener((observable, oldValue1, newValue1) -> new Thread(new Task() {
-            @Override
-            protected Object call() {
-                flashTransition.setOnFinished(event -> new Thread(new Task() {
-                    @Override
-                    protected Object call() {
-                        if (flashing.getValue()) {
-                            flashTransition.playFromStart();
-                        }
-                        return null;
-                    }
-                }).start());
-                return null;
-            }
-        }).start());
+        flashAnimation = new FadeTransition(Duration.millis(Constants.SMOKE_DETECTOR_FADE_DURATION));
+        flashAnimation.setNode(smokeDetectorIconFireFade);
+        flashAnimation.setFromValue(0.0);
+        flashAnimation.setToValue(1.0);
+        flashAnimation.setCycleCount(Timeline.INDEFINITE);
+        flashAnimation.setAutoReverse(true);
 
         initUnitLabel();
         initTitle();
         initContent();
         createWidgetPane(headContent, false);
-
         initEffect();
 
         this.smokeDetectorRemote.addObserver(this);
@@ -150,10 +129,13 @@ public class SmokeDetectorPane extends UnitPane {
                 smokeDetectorIconFireFade.changeForegroundIcon(MaterialDesignIcon.FIRE);
             } else if (smokeState == SmokeState.State.NO_SMOKE) {
                 smokeDetectorIconFireFade.changeForegroundIcon(MaterialDesignIcon.CHECKBOX_MARKED_CIRCLE);
+                tooltip.setText(Constants.ALARM);
             }
             iconPane.add(smokeDetectorIconFireFade, 0, 0);
-            flashing.set(true);
-            flashTransition.play();
+
+            flashAnimation.play();
+        } else {
+            flashAnimation.stop();
         }
         Tooltip.install(iconPane, tooltip);
     }
