@@ -513,6 +513,21 @@ public final class Constants {
     public static final String SOME_SMOKE = "Some Smoke";
 
     /**
+     * String for tooltip Watt W.
+     */
+    public static final String WATT = "W";
+
+    /**
+     * String for tooltip active.
+     */
+    public static final String ACTIVE = "Active";
+
+    /**
+     * String for tooltip disabled.
+     */
+    public static final String DISABLED = "Disabled";
+
+    /**
      * String for CSS styling of UserPane.
      */
     public static final String BOLD_LABEL = "bold-label";

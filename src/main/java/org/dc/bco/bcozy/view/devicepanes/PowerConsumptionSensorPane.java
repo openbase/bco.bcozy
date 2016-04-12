@@ -112,8 +112,8 @@ public class PowerConsumptionSensorPane extends UnitPane {
             tooltip.setText(Constants.POWER_OFF);
         }
 
-        this.currentPowerConsumption.setText(currentPowerConsumption + "kWh");
-        this.sumPowerConsumption.setText(sumPowerConsumption + "W");
+        this.currentPowerConsumption.setText(currentPowerConsumption + Constants.WATT);
+        this.sumPowerConsumption.setText(sumPowerConsumption + Constants.WATT);
         this.voltagePowerConsumption.setText(voltagePowerConsumption + "V");
 
         Tooltip.install(powerConsumptionIcon, tooltip);

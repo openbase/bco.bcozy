@@ -62,11 +62,23 @@ public class UnitPaneContainer extends ObserverTitledPane {
                                          final List<AbstractIdentifiableRemote> dalRemoteServiceList) {
         this.setExpanded(false);
 
-        if (unitType.equals(UnitType.AMBIENT_LIGHT)) {
+        if (unitType.equals(UnitType.AGENT)) {
+            for (final AbstractIdentifiableRemote dalRemoteService : dalRemoteServiceList) {
+                final AgentPane agentPane = new AgentPane(dalRemoteService);
+
+                vBox.getChildren().add(agentPane);
+            }
+        } else if (unitType.equals(UnitType.AMBIENT_LIGHT)) {
             for (final AbstractIdentifiableRemote dalRemoteService : dalRemoteServiceList) {
                 final AmbientLightPane ambientLightPane = new AmbientLightPane(dalRemoteService);
 
                 vBox.getChildren().add(ambientLightPane);
+            }
+        } else if (unitType.equals(UnitType.APP)) {
+            for (final AbstractIdentifiableRemote dalRemoteService : dalRemoteServiceList) {
+                final AppPane appPane = new AppPane(dalRemoteService);
+
+                vBox.getChildren().add(appPane);
             }
         } else if (unitType.equals(UnitType.BATTERY)) {
             for (final AbstractIdentifiableRemote dalRemoteService : dalRemoteServiceList) {
@@ -122,6 +134,12 @@ public class UnitPaneContainer extends ObserverTitledPane {
                 final RollerShutterPane rollerShutterPane = new RollerShutterPane(dalRemoteService);
 
                 vBox.getChildren().add(rollerShutterPane);
+            }
+        } else if (unitType.equals(UnitType.SCENE)) {
+            for (final AbstractIdentifiableRemote dalRemoteService : dalRemoteServiceList) {
+                final ScenePane scenePane = new ScenePane(dalRemoteService);
+
+                vBox.getChildren().add(scenePane);
             }
         } else if (unitType.equals(UnitType.SMOKE_DETECTOR)) {
             for (final AbstractIdentifiableRemote dalRemoteService : dalRemoteServiceList) {
