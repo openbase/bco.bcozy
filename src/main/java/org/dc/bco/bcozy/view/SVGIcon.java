@@ -226,4 +226,11 @@ public class SVGIcon extends StackPane {
         return size;
     }
 
+    /**
+     * Getter for the color of the foreground icons.
+     * @return color value
+     */
+    public Color getForegroundIconColor() {
+        return (Color) foregroundIcon.getFill();
+    }
 }

@@ -123,6 +123,12 @@ public class UnitPaneContainer extends ObserverTitledPane {
 
                 vBox.getChildren().add(rollerShutterPane);
             }
+        } else if (unitType.equals(UnitType.SMOKE_DETECTOR)) {
+            for (final AbstractIdentifiableRemote dalRemoteService : dalRemoteServiceList) {
+                final SmokeDetectorPane smokeDetectorPane = new SmokeDetectorPane(dalRemoteService);
+
+                vBox.getChildren().add(smokeDetectorPane);
+            }
         } else if (unitType.equals(UnitType.TAMPER_SWITCH)) {
             for (final AbstractIdentifiableRemote dalRemoteService : dalRemoteServiceList) {
                 final TamperSwitchPane tamperSwitchPane = new TamperSwitchPane(dalRemoteService);

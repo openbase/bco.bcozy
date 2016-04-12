@@ -49,7 +49,6 @@ public class TamperSwitchPane extends UnitPane {
     private final SVGIcon tamperSwitchIconManipulation;
     private final SVGIcon unknownForegroundIcon;
     private final SVGIcon unknownBackgroundIcon;
-    //private final Text currentPowerConsumption;
     private final GridPane iconPane;
     private final BorderPane headContent;
     private final Tooltip tooltip;
@@ -87,10 +86,10 @@ public class TamperSwitchPane extends UnitPane {
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
-        setPowerConsumptionIconAndText(tamperSwitchState);
+        setTamperSwitchIconAndText(tamperSwitchState);
     }
 
-    private void setPowerConsumptionIconAndText(final State tamperSwitchState) {
+    private void setTamperSwitchIconAndText(final State tamperSwitchState) {
         iconPane.getChildren().clear();
 
         if (tamperSwitchState == State.NO_TAMPER) {
@@ -151,7 +150,7 @@ public class TamperSwitchPane extends UnitPane {
         Platform.runLater(() -> {
             final State tamperSwitchState = ((TamperSwitchType.TamperSwitch) tamperSwitch).getTamperState().getValue();
 
-            setPowerConsumptionIconAndText(tamperSwitchState);
+            setTamperSwitchIconAndText(tamperSwitchState);
         });
     }
 }

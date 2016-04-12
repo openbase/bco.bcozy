@@ -171,6 +171,11 @@ public final class Constants {
     public static final double NEARLY_TRANSPARENT = 0.3;
 
     /**
+     * The opacity value for half opaque style.
+     */
+    public static final double HALF_TRANSPARENT = 0.5;
+
+    /**
      * The duration for a pretty fast fade animation.
      */
     public static final double FASTFADEDURATION = 100.0;
@@ -189,6 +194,11 @@ public final class Constants {
      * The duration for a glowing fade animation.
      */
     public static final double GLOWING_FADE_DURATION = 1000.0;
+
+    /**
+     * The duration for fade animation of smoke detector.
+     */
+    public static final double SMOKE_DETECTOR_FADE_DURATION = 1000.0;
 
     /**
      * The color for a selected tile.
@@ -486,6 +496,21 @@ public final class Constants {
      * String for tooltip tamper.
      */
     public static final String TAMPER = "Tamper";
+
+    /**
+     * String for tooltip smoke.
+     */
+    public static final String SMOKE = "Smoke";
+
+    /**
+     * String for tooltip no smoke.
+     */
+    public static final String NO_SMOKE = "No Smoke";
+
+    /**
+     * String for tooltip some smoke.
+     */
+    public static final String SOME_SMOKE = "Some Smoke";
 
     /**
      * String for CSS styling of UserPane.
