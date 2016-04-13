@@ -23,9 +23,7 @@ import javafx.animation.FadeTransition;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import org.dc.bco.bcozy.view.Constants;
@@ -54,9 +52,7 @@ public class SmokeDetectorPane extends UnitPane {
     private final SVGIcon smokeDetectorIconFireFade;
     private final SVGIcon unknownForegroundIcon;
     private final SVGIcon unknownBackgroundIcon;
-    private final GridPane iconPane;
     private final BorderPane headContent;
-    private final Tooltip tooltip;
     private final FadeTransition flashAnimation;
 
     /**
@@ -72,8 +68,6 @@ public class SmokeDetectorPane extends UnitPane {
         smokeDetectorIconFireFade = new SVGIcon(MaterialDesignIcon.FIRE, Constants.SMALL_ICON, false);
         unknownBackgroundIcon = new SVGIcon(MaterialDesignIcon.CHECKBOX_BLANK_CIRCLE, Constants.SMALL_ICON - 2, false);
         unknownForegroundIcon = new SVGIcon(MaterialDesignIcon.HELP_CIRCLE, Constants.SMALL_ICON, false);
-        iconPane = new GridPane();
-        tooltip = new Tooltip();
 
         flashAnimation = new FadeTransition(Duration.millis(Constants.SMOKE_DETECTOR_FADE_DURATION));
         flashAnimation.setNode(smokeDetectorIconFireFade);
@@ -87,6 +81,7 @@ public class SmokeDetectorPane extends UnitPane {
         initContent();
         createWidgetPane(headContent, false);
         initEffect();
+        tooltip.textProperty().bind(observerText.textProperty());
 
         this.smokeDetectorRemote.addObserver(this);
     }
@@ -110,18 +105,18 @@ public class SmokeDetectorPane extends UnitPane {
         if (smokeState == SmokeState.State.SMOKE) {
             smokeDetectorIconFire.setForegroundIconColor(Color.color(0, 0, 0, 1.0));
             iconPane.add(smokeDetectorIconFire, 0, 0);
-            tooltip.setText(Constants.SMOKE);
+            observerText.setIdentifier("smoke");
         } else if (smokeState == SmokeState.State.SOME_SMOKE) {
             smokeDetectorIconFire.setForegroundIconColor(Color.color(0, 0, 0, Constants.HALF_TRANSPARENT));
             iconPane.add(smokeDetectorIconFire, 0, 0);
-            tooltip.setText(Constants.SOME_SMOKE);
+            observerText.setIdentifier("someSmoke");
         } else if (smokeState == SmokeState.State.NO_SMOKE) {
             iconPane.add(smokeDetectorIconNoFire, 0, 0);
-            tooltip.setText(Constants.NO_SMOKE);
+            observerText.setIdentifier("noSmoke");
         } else if (smokeState == SmokeState.State.UNKNOWN || alarmState == State.UNKNOWN) {
             iconPane.add(unknownBackgroundIcon, 0, 0);
             iconPane.add(unknownForegroundIcon, 0, 0);
-            tooltip.setText(Constants.UNKNOWN);
+            observerText.setIdentifier("unknown");
         }
 
         if (alarmState == State.ALARM && smokeState != SmokeState.State.UNKNOWN) {
@@ -129,7 +124,7 @@ public class SmokeDetectorPane extends UnitPane {
                 smokeDetectorIconFireFade.changeForegroundIcon(MaterialDesignIcon.FIRE);
             } else if (smokeState == SmokeState.State.NO_SMOKE) {
                 smokeDetectorIconFireFade.changeForegroundIcon(MaterialDesignIcon.CHECKBOX_MARKED_CIRCLE);
-                tooltip.setText(Constants.ALARM);
+                observerText.setIdentifier("alarm");
             }
             iconPane.add(smokeDetectorIconFireFade, 0, 0);
 
@@ -137,7 +132,6 @@ public class SmokeDetectorPane extends UnitPane {
         } else {
             flashAnimation.stop();
         }
-        Tooltip.install(iconPane, tooltip);
     }
 
     @Override
@@ -147,7 +141,6 @@ public class SmokeDetectorPane extends UnitPane {
 
         smokeDetectorIconFireFade.setForegroundIconColor(Color.RED);
 
-        headContent.setLeft(iconPane);
         headContent.setCenter(getUnitLabel());
         headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
         headContent.prefHeightProperty().set(smokeDetectorIconFire.getSize() + Constants.INSETS);

@@ -22,11 +22,8 @@ import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.geometry.Pos;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
-import org.controlsfx.control.ToggleSwitch;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.SVGIcon;
 import org.dc.jul.extension.rsb.com.AbstractIdentifiableRemote;
@@ -51,10 +48,7 @@ public class LightPane extends UnitPane {
     private final SVGIcon unknownBackgroundIcon;
     private final LightRemote lightRemote;
     private final SVGIcon lightBulbIcon;
-    private final ToggleSwitch toggleSwitch;
     private final BorderPane headContent;
-    private final Tooltip tooltip;
-    private final GridPane iconPane;
 
     /**
      * Constructor for the LightPane.
@@ -63,20 +57,18 @@ public class LightPane extends UnitPane {
     public LightPane(final AbstractIdentifiableRemote lightRemote) {
         this.lightRemote = (LightRemote) lightRemote;
 
-        toggleSwitch = new ToggleSwitch();
         lightBulbIcon =
                 new SVGIcon(MaterialDesignIcon.LIGHTBULB, MaterialDesignIcon.LIGHTBULB_OUTLINE, Constants.SMALL_ICON);
         unknownBackgroundIcon = new SVGIcon(MaterialDesignIcon.CHECKBOX_BLANK_CIRCLE, Constants.SMALL_ICON - 2, false);
         unknownForegroundIcon = new SVGIcon(MaterialDesignIcon.HELP_CIRCLE, Constants.SMALL_ICON, false);
         headContent = new BorderPane();
-        tooltip = new Tooltip();
-        iconPane = new GridPane();
 
         initUnitLabel();
         initTitle();
         initContent();
         createWidgetPane(headContent, true);
         initEffectAndSwitch();
+        tooltip.textProperty().bind(observerText.textProperty());
 
         this.lightRemote.addObserver(this);
     }
@@ -98,7 +90,7 @@ public class LightPane extends UnitPane {
         if (powerState.equals(State.ON)) {
             iconPane.add(lightBulbIcon, 0, 0);
             lightBulbIcon.setBackgroundIconColorAnimated(Constants.LIGHTBULB_COLOR);
-            tooltip.setText(Constants.LIGHT_ON);
+            observerText.setIdentifier("lightOn");
 
             if (!toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(true);
@@ -106,7 +98,7 @@ public class LightPane extends UnitPane {
         } else if (powerState.equals(State.OFF)) {
             iconPane.add(lightBulbIcon, 0, 0);
             lightBulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
-            tooltip.setText(Constants.LIGHT_OFF);
+            observerText.setIdentifier("lightOff");
 
             if (toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(false);
@@ -114,9 +106,8 @@ public class LightPane extends UnitPane {
         } else {
             iconPane.add(unknownBackgroundIcon, 0, 0);
             iconPane.add(unknownForegroundIcon, 0, 0);
-            tooltip.setText(Constants.UNKNOWN);
+            observerText.setIdentifier("unknown");
         }
-        Tooltip.install(iconPane, tooltip);
     }
 
     private void sendStateToRemote(final State state) {
@@ -130,9 +121,7 @@ public class LightPane extends UnitPane {
 
     @Override
     protected void initTitle() {
-        toggleSwitch.setMouseTransparent(true);
-
-        getOneClick().addListener((observable, oldValue, newValue) -> new Thread(new Task() {
+        oneClick.addListener((observable, oldValue, newValue) -> new Thread(new Task() {
             @Override
             protected Object call() {
                 if (toggleSwitch.isSelected()) {
@@ -160,11 +149,8 @@ public class LightPane extends UnitPane {
         unknownBackgroundIcon.setForegroundIconColor(Color.WHITE);
         lightBulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
 
-        headContent.setLeft(iconPane);
         headContent.setCenter(getUnitLabel());
         headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
-        headContent.setRight(toggleSwitch);
-        //Padding values are not available here
         headContent.prefHeightProperty().set(lightBulbIcon.getSize() + Constants.INSETS);
     }
 

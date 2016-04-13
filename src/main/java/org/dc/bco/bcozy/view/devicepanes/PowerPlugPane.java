@@ -23,11 +23,8 @@ import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.geometry.Pos;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
-import org.controlsfx.control.ToggleSwitch;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.SVGIcon;
 import org.dc.jul.extension.rsb.com.AbstractIdentifiableRemote;
@@ -53,10 +50,7 @@ public class PowerPlugPane extends UnitPane {
     private final SVGIcon powerStatusIcon;
     private final SVGIcon unknownForegroundIcon;
     private final SVGIcon unknownBackgroundIcon;
-    private final GridPane iconPane;
-    private final ToggleSwitch toggleSwitch;
     private final BorderPane headContent;
-    private final Tooltip tooltip;
 
     /**
      * Constructor for the PowerPlugPane.
@@ -65,21 +59,18 @@ public class PowerPlugPane extends UnitPane {
     public PowerPlugPane(final AbstractIdentifiableRemote powerPlugRemote) {
         this.powerPlugRemote = (PowerPlugRemote) powerPlugRemote;
 
-        toggleSwitch = new ToggleSwitch();
         headContent = new BorderPane();
         powerPlugIcon = new SVGIcon(FontAwesomeIcon.PLUG, Constants.SMALL_ICON, true);
         powerStatusIcon = new SVGIcon(FontAwesomeIcon.BOLT, Constants.EXTRA_SMALL_ICON, false);
         unknownBackgroundIcon = new SVGIcon(MaterialDesignIcon.CHECKBOX_BLANK_CIRCLE, Constants.SMALL_ICON - 2, false);
         unknownForegroundIcon = new SVGIcon(MaterialDesignIcon.HELP_CIRCLE, Constants.SMALL_ICON, false);
-        iconPane = new GridPane();
-        tooltip = new Tooltip();
 
         initUnitLabel();
         initTitle();
         initContent();
         createWidgetPane(headContent, true);
-
         initEffectAndSwitch();
+        tooltip.textProperty().bind(observerText.textProperty());
 
         this.powerPlugRemote.addObserver(this);
     }
@@ -101,7 +92,7 @@ public class PowerPlugPane extends UnitPane {
         if (powerState.equals(State.ON)) {
             powerStatusIcon.setForegroundIconColor(Color.YELLOW, Color.BLACK, Constants.THIN_STROKE);
             iconPane.add(powerPlugIcon, 1, 0, 3, 2);
-            tooltip.setText(Constants.LIGHT_ON);
+            observerText.setIdentifier("powerOn");
 
             if (!toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(true);
@@ -109,7 +100,7 @@ public class PowerPlugPane extends UnitPane {
         } else if (powerState.equals(State.OFF)) {
             powerStatusIcon.setForegroundIconColor(Color.TRANSPARENT);
             iconPane.add(powerPlugIcon, 1, 0, 3, 2);
-            tooltip.setText(Constants.LIGHT_OFF);
+            observerText.setIdentifier("powerOff");
 
             if (toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(false);
@@ -118,10 +109,9 @@ public class PowerPlugPane extends UnitPane {
             powerStatusIcon.setForegroundIconColor(Color.TRANSPARENT);
             iconPane.add(unknownBackgroundIcon, 1, 0, 3, 2);
             iconPane.add(unknownForegroundIcon, 1, 0, 3, 2);
-            tooltip.setText(Constants.UNKNOWN);
+            observerText.setIdentifier("unknown");
         }
         iconPane.add(powerStatusIcon, 0, 0);
-        Tooltip.install(iconPane, tooltip);
     }
 
     private void sendStateToRemote(final State state) {
@@ -135,9 +125,7 @@ public class PowerPlugPane extends UnitPane {
 
     @Override
     protected void initTitle() {
-        toggleSwitch.setMouseTransparent(true);
-
-        getOneClick().addListener((observable, oldValue, newValue) -> new Thread(new Task() {
+        oneClick.addListener((observable, oldValue, newValue) -> new Thread(new Task() {
             @Override
             protected Object call() {
                 if (toggleSwitch.isSelected()) {
@@ -164,11 +152,8 @@ public class PowerPlugPane extends UnitPane {
         unknownForegroundIcon.setForegroundIconColor(Color.BLUE);
         unknownBackgroundIcon.setForegroundIconColor(Color.WHITE);
 
-        headContent.setLeft(iconPane);
         headContent.setCenter(getUnitLabel());
         headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
-        headContent.setRight(toggleSwitch);
-        //Padding values are not available here
         headContent.prefHeightProperty().set(iconPane.getHeight() + Constants.INSETS);
     }
 

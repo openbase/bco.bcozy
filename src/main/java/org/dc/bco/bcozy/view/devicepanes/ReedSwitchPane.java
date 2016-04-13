@@ -22,9 +22,7 @@ import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import de.jensd.fx.glyphs.materialicons.MaterialIcon;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.SVGIcon;
@@ -50,8 +48,6 @@ public class ReedSwitchPane extends UnitPane {
     private final SVGIcon unknownBackgroundIcon;
     private final SVGIcon reedSwitchIcon;
     private final BorderPane headContent;
-    private final GridPane iconPane;
-    private final Tooltip tooltip;
 
     /**
      * Constructor for the ReedSwitchPane.
@@ -64,15 +60,13 @@ public class ReedSwitchPane extends UnitPane {
         unknownBackgroundIcon = new SVGIcon(MaterialDesignIcon.CHECKBOX_BLANK_CIRCLE, Constants.SMALL_ICON - 2, false);
         unknownForegroundIcon = new SVGIcon(MaterialDesignIcon.HELP_CIRCLE, Constants.SMALL_ICON, false);
         headContent = new BorderPane();
-        iconPane = new GridPane();
-        tooltip = new Tooltip();
 
         initUnitLabel();
         initTitle();
         initContent();
         createWidgetPane(headContent, false);
-
         initEffectAndText();
+        tooltip.textProperty().bind(observerText.textProperty());
 
         this.reedSwitchRemote.addObserver(this);
     }
@@ -94,17 +88,16 @@ public class ReedSwitchPane extends UnitPane {
         if (reedSwitchState.equals(State.CLOSED)) {
             reedSwitchIcon.changeForegroundIcon(MaterialIcon.RADIO_BUTTON_CHECKED);
             iconPane.add(reedSwitchIcon, 0, 0);
-            tooltip.setText(Constants.CLOSED);
+            observerText.setIdentifier("closed");
         } else if (reedSwitchState.equals(State.OPEN)) {
             reedSwitchIcon.changeForegroundIcon(MaterialIcon.RADIO_BUTTON_UNCHECKED);
             iconPane.add(reedSwitchIcon, 0, 0);
-            tooltip.setText(Constants.OPEN);
+            observerText.setIdentifier("open");
         } else {
             iconPane.add(unknownBackgroundIcon, 0, 0);
             iconPane.add(unknownForegroundIcon, 0, 0);
-            tooltip.setText(Constants.UNKNOWN);
+            observerText.setIdentifier("unknown");
         }
-        Tooltip.install(iconPane, tooltip);
     }
 
     @Override
@@ -112,7 +105,6 @@ public class ReedSwitchPane extends UnitPane {
         unknownForegroundIcon.setForegroundIconColor(Color.BLUE);
         unknownBackgroundIcon.setForegroundIconColor(Color.WHITE);
 
-        headContent.setLeft(iconPane);
         headContent.setCenter(getUnitLabel());
         headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
         headContent.prefHeightProperty().set(reedSwitchIcon.getSize() + Constants.INSETS);

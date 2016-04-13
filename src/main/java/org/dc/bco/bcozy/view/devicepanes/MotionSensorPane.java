@@ -22,9 +22,7 @@ import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import de.jensd.fx.glyphs.materialicons.MaterialIcon;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.SVGIcon;
@@ -50,9 +48,7 @@ public class MotionSensorPane extends UnitPane {
     private final SVGIcon unknownBackgroundIcon;
     private final SVGIcon backgroundIcon;
     private final SVGIcon motionIcon;
-    private final GridPane iconPane;
     private final BorderPane headContent;
-    private final Tooltip tooltip;
 
 
     /**
@@ -67,15 +63,13 @@ public class MotionSensorPane extends UnitPane {
         unknownForegroundIcon = new SVGIcon(MaterialDesignIcon.HELP_CIRCLE, Constants.SMALL_ICON, false);
         motionIcon = new SVGIcon(MaterialIcon.BLUR_ON, MaterialIcon.PANORAMA_FISH_EYE, Constants.SMALL_ICON);
         backgroundIcon = new SVGIcon(MaterialIcon.LENS, Constants.SMALL_ICON, false);
-        iconPane = new GridPane();
-        tooltip = new Tooltip();
 
         initUnitLabel();
         initTitle();
         initContent();
         createWidgetPane(headContent, false);
-
         initEffect();
+        tooltip.textProperty().bind(observerText.textProperty());
 
         this.motionSensorRemote.addObserver(this);
     }
@@ -98,18 +92,17 @@ public class MotionSensorPane extends UnitPane {
             motionIcon.setBackgroundIconColorAnimated(Color.WHITE);
             iconPane.add(backgroundIcon, 0, 0);
             iconPane.add(motionIcon, 0, 0);
-            tooltip.setText(Constants.MOVEMENT);
+            observerText.setIdentifier("movement");
         } else if (motionState.equals(State.NO_MOVEMENT)) {
             motionIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
             iconPane.add(backgroundIcon, 0, 0);
             iconPane.add(motionIcon, 0, 0);
-            tooltip.setText(Constants.NO_MOVEMENT);
+            observerText.setIdentifier("noMovement");
         } else {
             iconPane.add(unknownBackgroundIcon, 0, 0);
             iconPane.add(unknownForegroundIcon, 0, 0);
-            tooltip.setText(Constants.UNKNOWN);
+            observerText.setIdentifier("unknown");
         }
-        Tooltip.install(iconPane, tooltip);
     }
 
     @Override
@@ -118,10 +111,8 @@ public class MotionSensorPane extends UnitPane {
         unknownBackgroundIcon.setForegroundIconColor(Color.WHITE);
         backgroundIcon.setForegroundIconColor(Color.BLACK);
 
-        headContent.setLeft(iconPane);
         headContent.setCenter(getUnitLabel());
         headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
-        //Padding values are not available here
         headContent.prefHeightProperty().set(iconPane.getHeight() + Constants.INSETS);
     }
 

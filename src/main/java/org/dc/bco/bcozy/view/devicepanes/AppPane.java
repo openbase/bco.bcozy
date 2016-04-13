@@ -22,11 +22,8 @@ import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.geometry.Pos;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
-import org.controlsfx.control.ToggleSwitch;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.SVGIcon;
 import org.dc.bco.manager.app.remote.AppRemote;
@@ -38,7 +35,8 @@ import org.dc.jul.pattern.Observable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.homeautomation.control.agent.AgentDataType;
-import rst.homeautomation.state.ActivationStateType;
+import rst.homeautomation.state.ActivationStateType.ActivationState;
+import rst.homeautomation.state.ActivationStateType.ActivationState.State;
 
 /**
  * Created by agatting on 12.04.16.
@@ -50,10 +48,7 @@ public class AppPane extends UnitPane {
     private final SVGIcon unknownForegroundIcon;
     private final SVGIcon unknownBackgroundIcon;
     private final AppRemote appRemote;
-    private final GridPane iconPane;
     private final BorderPane headContent;
-    private final Tooltip tooltip;
-    private final ToggleSwitch toggleSwitch;
 
     /**
      * Constructor for the AppPane.
@@ -66,22 +61,19 @@ public class AppPane extends UnitPane {
         appIcon = new SVGIcon(MaterialDesignIcon.POWER, Constants.SMALL_ICON, false);
         unknownBackgroundIcon = new SVGIcon(MaterialDesignIcon.CHECKBOX_BLANK_CIRCLE, Constants.SMALL_ICON - 2, false);
         unknownForegroundIcon = new SVGIcon(MaterialDesignIcon.HELP_CIRCLE, Constants.SMALL_ICON, false);
-        iconPane = new GridPane();
-        tooltip = new Tooltip();
-        toggleSwitch = new ToggleSwitch();
 
         initUnitLabel();
         initTitle();
         initContent();
         createWidgetPane(headContent, true);
-
         initEffect();
+        tooltip.textProperty().bind(observerText.textProperty());
 
         this.appRemote.addObserver(this);
     }
 
     private void initEffect() {
-        ActivationStateType.ActivationState.State state = ActivationStateType.ActivationState.State.UNKNOWN;
+        State state = State.UNKNOWN;
 
         try {
             state = appRemote.getData().getActivationState().getValue();
@@ -91,21 +83,21 @@ public class AppPane extends UnitPane {
         setAppIconAndText(state);
     }
 
-    private void setAppIconAndText(final ActivationStateType.ActivationState.State state) {
+    private void setAppIconAndText(final State state) {
         iconPane.getChildren().clear();
 
-        if (state.equals(ActivationStateType.ActivationState.State.ACTIVE)) {
+        if (state.equals(State.ACTIVE)) {
             appIcon.setForegroundIconColor(Color.GREEN);
             iconPane.add(appIcon, 0, 0);
-            tooltip.setText(Constants.ACTIVE);
+            observerText.setIdentifier("active");
 
             if (!toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(true);
             }
-        } else if (state.equals(ActivationStateType.ActivationState.State.DEACTIVE)) {
+        } else if (state.equals(State.DEACTIVE)) {
             appIcon.changeForegroundIcon(MaterialDesignIcon.POWER);
             iconPane.add(appIcon, 0, 0);
-            tooltip.setText(Constants.DISABLED);
+            observerText.setIdentifier("inactive");
 
             if (toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(false);
@@ -113,14 +105,13 @@ public class AppPane extends UnitPane {
         } else {
             iconPane.add(unknownBackgroundIcon, 0, 0);
             iconPane.add(unknownForegroundIcon, 0, 0);
-            tooltip.setText(Constants.UNKNOWN);
+            observerText.setIdentifier("unknown");
         }
-        Tooltip.install(iconPane, tooltip);
     }
 
-    private void sendStateToRemote(final ActivationStateType.ActivationState.State state) {
+    private void sendStateToRemote(final State state) {
         try {
-            appRemote.setActivationState(ActivationStateType.ActivationState.newBuilder().setValue(state).build());
+            appRemote.setActivationState(ActivationState.newBuilder().setValue(state).build());
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
             setWidgetPaneDisable(true);
@@ -129,15 +120,13 @@ public class AppPane extends UnitPane {
 
     @Override
     protected void initTitle() {
-        toggleSwitch.setMouseTransparent(true);
-
-        getOneClick().addListener((observable, oldValue, newValue) -> new Thread(new Task() {
+        oneClick.addListener((observable, oldValue, newValue) -> new Thread(new Task() {
             @Override
             protected Object call() {
                 if (toggleSwitch.isSelected()) {
-                    sendStateToRemote(ActivationStateType.ActivationState.State.DEACTIVE);
+                    sendStateToRemote(ActivationState.State.DEACTIVE);
                 } else {
-                    sendStateToRemote(ActivationStateType.ActivationState.State.ACTIVE);
+                    sendStateToRemote(ActivationState.State.ACTIVE);
                 }
                 return null;
             }
@@ -147,9 +136,9 @@ public class AppPane extends UnitPane {
             @Override
             protected Object call() {
                 if (toggleSwitch.isSelected()) {
-                    sendStateToRemote(ActivationStateType.ActivationState.State.ACTIVE);
+                    sendStateToRemote(ActivationState.State.ACTIVE);
                 } else {
-                    sendStateToRemote(ActivationStateType.ActivationState.State.DEACTIVE);
+                    sendStateToRemote(ActivationState.State.DEACTIVE);
                 }
                 return null;
             }
@@ -158,10 +147,8 @@ public class AppPane extends UnitPane {
         unknownForegroundIcon.setForegroundIconColor(Color.BLUE);
         unknownBackgroundIcon.setForegroundIconColor(Color.WHITE);
 
-        headContent.setLeft(iconPane);
         headContent.setCenter(getUnitLabel());
         headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
-        headContent.setRight(toggleSwitch);
         headContent.prefHeightProperty().set(appIcon.getHeight() + Constants.INSETS);
     }
 
@@ -194,8 +181,7 @@ public class AppPane extends UnitPane {
     @Override
     public void update(final Observable observable, final Object agent) throws java.lang.Exception {
         Platform.runLater(() -> {
-            final ActivationStateType.ActivationState.State state =
-                    ((AgentDataType.AgentData) agent).getActivationState().getValue();
+            final State state = ((AgentDataType.AgentData) agent).getActivationState().getValue();
             setAppIconAndText(state);
         });
     }

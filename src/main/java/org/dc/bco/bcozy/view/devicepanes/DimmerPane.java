@@ -25,14 +25,11 @@ import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Slider;
-import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import org.controlsfx.control.ToggleSwitch;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.SVGIcon;
 import org.dc.jul.extension.rsb.com.AbstractIdentifiableRemote;
@@ -58,14 +55,11 @@ public class DimmerPane extends UnitPane {
     private final SVGIcon unknownForegroundIcon;
     private final SVGIcon unknownBackgroundIcon;
     private final DimmerRemote dimmerRemote;
-    private final ToggleSwitch toggleSwitch;
     private final ProgressBar progressBar;
     private final BorderPane headContent;
     private final SVGIcon lightBulbIcon;
     private final StackPane stackPane;
-    private final GridPane iconPane;
     private final VBox bodyContent;
-    private final Tooltip tooltip;
     private final Slider slider;
 
     private final EventHandler<MouseEvent> sendBrightness = event -> new Thread(new Task() {
@@ -91,13 +85,10 @@ public class DimmerPane extends UnitPane {
                 new SVGIcon(MaterialDesignIcon.LIGHTBULB, MaterialDesignIcon.LIGHTBULB_OUTLINE, Constants.SMALL_ICON);
         unknownBackgroundIcon = new SVGIcon(MaterialDesignIcon.CHECKBOX_BLANK_CIRCLE, Constants.SMALL_ICON - 2, false);
         unknownForegroundIcon = new SVGIcon(MaterialDesignIcon.HELP_CIRCLE, Constants.SMALL_ICON, false);
-        toggleSwitch = new ToggleSwitch();
         progressBar = new ProgressBar();
         headContent = new BorderPane();
         stackPane = new StackPane();
-        iconPane = new GridPane();
         bodyContent = new VBox();
-        tooltip = new Tooltip();
         slider = new Slider();
 
         initUnitLabel();
@@ -105,6 +96,7 @@ public class DimmerPane extends UnitPane {
         initContent();
         createWidgetPane(headContent, bodyContent, true);
         initEffectAndSwitch();
+        tooltip.textProperty().bind(observerText.textProperty());
 
         this.dimmerRemote.addObserver(this);
     }
@@ -134,7 +126,7 @@ public class DimmerPane extends UnitPane {
             progressBar.setProgress(brightness);
             slider.setValue(brightness * slider.getMax());
 
-            tooltip.setText(Constants.LIGHT_ON);
+            observerText.setIdentifier("lightOn");
 
             if (!toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(true);
@@ -147,7 +139,7 @@ public class DimmerPane extends UnitPane {
             progressBar.setProgress(0);
             slider.setValue(0);
 
-            tooltip.setText(Constants.LIGHT_OFF);
+            observerText.setIdentifier("lightOff");
 
             if (toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(false);
@@ -155,9 +147,8 @@ public class DimmerPane extends UnitPane {
         } else {
             iconPane.add(unknownBackgroundIcon, 0, 0);
             iconPane.add(unknownForegroundIcon, 0, 0);
-            tooltip.setText(Constants.UNKNOWN);
+            observerText.setIdentifier("unknown");
         }
-        Tooltip.install(iconPane, tooltip);
     }
 
     private void sendStateToRemote(final State state) {
@@ -173,7 +164,7 @@ public class DimmerPane extends UnitPane {
     protected void initTitle() {
         lightBulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
 
-        getOneClick().addListener((observable, oldValue, newValue) -> new Thread(new Task() {
+        oneClick.addListener((observable, oldValue, newValue) -> new Thread(new Task() {
             @Override
             protected Object call() {
                 if (toggleSwitch.isSelected()) {
@@ -200,10 +191,8 @@ public class DimmerPane extends UnitPane {
         unknownForegroundIcon.setForegroundIconColor(Color.BLUE);
         unknownBackgroundIcon.setForegroundIconColor(Color.WHITE);
 
-        headContent.setLeft(iconPane);
         headContent.setCenter(getUnitLabel());
         headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
-        headContent.setRight(toggleSwitch);
         headContent.prefHeightProperty().set(lightBulbIcon.getSize() + Constants.INSETS);
     }
 

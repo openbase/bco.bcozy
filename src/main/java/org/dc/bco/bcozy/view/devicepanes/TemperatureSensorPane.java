@@ -23,7 +23,6 @@ import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import de.jensd.fx.glyphs.weathericons.WeatherIcon;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
@@ -57,8 +56,6 @@ public class TemperatureSensorPane extends UnitPane {
     private final SVGIcon alarmIcon;
     private final Text temperatureStatus;
     private final GridPane iconPaneAlarm;
-    private final GridPane iconPaneTemperature;
-    private final Tooltip tooltip;
 
     /**
      * Constructor for TemperatureSensorPane.
@@ -78,14 +75,13 @@ public class TemperatureSensorPane extends UnitPane {
         headContent = new BorderPane();
         temperatureStatus = new Text();
         iconPaneAlarm = new GridPane();
-        iconPaneTemperature = new GridPane();
-        tooltip = new Tooltip();
 
         initUnitLabel();
         initTitle();
         initContent();
         initEffect();
         createWidgetPane(headContent, false);
+        tooltip.textProperty().bind(observerText.textProperty());
 
         this.temperatureSensorRemote.addObserver(this);
     }
@@ -115,17 +111,16 @@ public class TemperatureSensorPane extends UnitPane {
         if (alarmState.equals(State.ALARM)) {
             iconPaneAlarm.add(alarmIcon, 0, 0);
             alarmIcon.setForegroundIconColor(Color.RED, Color.BLACK, Constants.NORMAL_STROKE);
-            tooltip.setText(Constants.ALARM);
+            observerText.setIdentifier("alarm");
         } else if (alarmState.equals(State.NO_ALARM)) {
             iconPaneAlarm.add(alarmIcon, 0, 0);
             alarmIcon.setForegroundIconColor(Color.TRANSPARENT);
-            tooltip.setText(Constants.NO_ALARM);
+            observerText.setIdentifier("noAlarm");
         } else {
             iconPaneAlarm.add(unknownBackgroundIcon, 0, 0);
             iconPaneAlarm.add(unknownForegroundIcon, 0, 0);
-            tooltip.setText(Constants.UNKNOWN);
+            observerText.setIdentifier("unknown");
         }
-        Tooltip.install(iconPaneAlarm, tooltip);
     }
 
     private void setEffectTemperature(final double temperature) {
@@ -154,12 +149,12 @@ public class TemperatureSensorPane extends UnitPane {
         thermometerIconBackground.setForegroundIconColor(Color.BLACK);
         thermometerIconForeground.setForegroundIconColor(Color.RED);
 
-        iconPaneTemperature.add(thermometerIconBackground, 0, 0);
-        iconPaneTemperature.add(thermometerIconForeground, 0, 0);
-        iconPaneTemperature.add(temperatureStatus, 1, 0);
-        iconPaneTemperature.setHgap(Constants.INSETS);
+        iconPane.add(thermometerIconBackground, 0, 0);
+        iconPane.add(thermometerIconForeground, 0, 0);
+        iconPane.add(temperatureStatus, 1, 0);
+        iconPane.setHgap(Constants.INSETS);
 
-        headContent.setLeft(iconPaneTemperature);
+        headContent.setLeft(iconPane);
         headContent.setCenter(getUnitLabel());
         headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
         headContent.setRight(iconPaneAlarm);

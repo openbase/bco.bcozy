@@ -27,22 +27,49 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.geometry.Insets;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
+import org.controlsfx.control.ToggleSwitch;
 import org.dc.bco.bcozy.view.Constants;
+import org.dc.bco.bcozy.view.ObserverText;
 
 /**
  * Created by agatting on 10.12.15.
  */
 public class WidgetPane extends VBox {
 
-    private final BooleanProperty oneClick = new SimpleBooleanProperty(false);
-    private BorderPane head;
-    private Pane body;
+    //CHECKSTYLE.OFF: VisibilityModifier
+    /**
+     * Text for tooltip dependent on selected language.
+     */
+    protected final ObserverText observerText = new ObserverText("dummy");
+    /**
+     * Boolean to registry a valid one click scenario.
+     */
+    protected final BooleanProperty oneClick = new SimpleBooleanProperty(false);
+    /**
+     * ToggleSwitch Button on right side of the header Pane. Is visible via activation at
+     * constructor (oneClickActivatable).
+     */
+    protected final ToggleSwitch toggleSwitch = new ToggleSwitch();
+    /**
+     * GridPane as Area on the left side of the header Pane (Icon, tooltip, ...).
+     */
+    protected final GridPane iconPane = new GridPane();
+    /**
+     * Tooltip for Icon description (current state).
+     */
+    protected final Tooltip tooltip = new Tooltip("");
+    //CHECKSTYLE.ON: VisibilityModifier
+
     private final SimpleBooleanProperty isExpanded = new SimpleBooleanProperty();
+    private BorderPane headPane;
+    private Pane bodyPane;
     private Timeline timelineUp;
     private Timeline timelineDown;
 
@@ -54,23 +81,15 @@ public class WidgetPane extends VBox {
     }
 
     /**
-     * Method returns changing bool of mouse listener, if only one click is registered.
-     *
-     * @return oneClick.
-     */
-    public BooleanProperty getOneClick() {
-        return oneClick;
-    }
-
-    /**
      * Method creates a sliding widget pane, which includes a header(listener) and a body(sliding) with content.
      *
      * @param headContent Content of the header.
      * @param bodyContent Content of the sliding body.
-     * @param activatable Head of Widget is active or passive (execution).
+     * @param oneClickActivatable Head of Widget reacts on one click activation (on/off control).
      */
-    public void createWidgetPane(final BorderPane headContent, final Pane bodyContent, final boolean activatable) {
-        headPart(headContent, true, activatable);
+    public void createWidgetPane(final BorderPane headContent, final Pane bodyContent,
+                                 final boolean oneClickActivatable) {
+        headPart(headContent, true, oneClickActivatable);
         bodyPart(bodyContent);
 
         setAnimation(headContent, bodyContent);
@@ -93,34 +112,38 @@ public class WidgetPane extends VBox {
      * Method creates a sliding widget pane, which includes a header without a body content.
      *
      * @param headContent Content of the header.
-     * @param activatable Head of Widget is active or passive (execution).
+     * @param oneClickActivatable Head of Widget reacts on one click activation (on/off control).
      */
-    public void createWidgetPane(final BorderPane headContent, final boolean activatable) {
-        headPart(headContent, false, activatable);
+    public void createWidgetPane(final BorderPane headContent, final boolean oneClickActivatable) {
+        headPart(headContent, false, oneClickActivatable);
 
         isExpanded.set(false);
     }
 
-    private void headPart(final BorderPane headContent, final boolean withBody, final boolean activatable) {
-        head = headContent;
-        head.getStyleClass().clear();
-        head.getStyleClass().add("head-pane");
+    private void headPart(final BorderPane headContent, final boolean withBody, final boolean oneClickActivatable) {
+        headPane = headContent;
+        toggleSwitch.setMouseTransparent(true);
 
-        if (activatable) {
-            observeMouseClicks(withBody);
+        if (oneClickActivatable) {
+            headPane.setRight(toggleSwitch);
         }
+        headPane.getStyleClass().clear();
+        headPane.getStyleClass().add("head-pane");
+        headPane.setLeft(iconPane);
+        observeMouseClicks(withBody, oneClickActivatable);
 
-        if (headContent.getCenter() != null) {
-            BorderPane.setMargin(headContent.getCenter(), new Insets(0.0, 0.0, 0.0, Constants.INSETS));
+        Tooltip.install(iconPane, tooltip);
+
+        if (headPane.getCenter() != null) {
+            BorderPane.setMargin(headPane.getCenter(), new Insets(0.0, 0.0, 0.0, Constants.INSETS));
         }
-        if (headContent.getRight() != null) {
-            BorderPane.setMargin(headContent.getRight(), new Insets(0.0, Constants.INSETS, 0.0, 0.0));
+        if (headPane.getRight() != null) {
+            BorderPane.setMargin(headPane.getRight(), new Insets(0.0, Constants.INSETS, 0.0, 0.0));
         }
-        this.getChildren().add(head);
+        this.getChildren().add(headPane);
     }
 
-
-    private void observeMouseClicks(final boolean withBody) {
+    private void observeMouseClicks(final boolean withBody, final boolean activatable) {
         if (withBody) {
             final Duration maxTimeIntervalClick = Duration.millis(Constants.CLICK_TIME_INTERVAL_MILLI);
             final PauseTransition clickTimer = new PauseTransition(maxTimeIntervalClick);
@@ -133,7 +156,7 @@ public class WidgetPane extends VBox {
                 clickCnt.set(0); // reset
             });
 
-            head.setOnMouseClicked(event -> {
+            headPane.setOnMouseClicked(event -> {
                 clickCnt.set(clickCnt.get() + 1);
 
                 if (clickCnt.get() == 2) {
@@ -142,17 +165,17 @@ public class WidgetPane extends VBox {
                 }
                 clickTimer.playFromStart();
             });
-        } else {
-            head.setOnMouseClicked(event -> oneClickBoolFlag());
+        } else if (activatable) {
+            headPane.setOnMouseClicked(event -> oneClickBoolFlag());
         }
     }
 
     private void bodyPart(final Pane bodyContent) {
-        body = bodyContent;
-        body.getStyleClass().clear();
-        body.getStyleClass().addAll("body-pane");
+        bodyPane = bodyContent;
+        bodyPane.getStyleClass().clear();
+        bodyPane.getStyleClass().addAll("body-pane");
 
-        this.getChildren().add(body);
+        this.getChildren().add(bodyPane);
     }
 
     private void oneClickBoolFlag() {
@@ -171,9 +194,6 @@ public class WidgetPane extends VBox {
         }
     }
 
-    /**
-     * Method creates animation parameters for scroll down and up.
-     */
     private void setAnimation(final BorderPane headContent, final Pane bodyContent) {
         final Rectangle rectangleClip = new Rectangle(Integer.MAX_VALUE, headContent.prefHeightProperty().getValue());
         this.setClip(rectangleClip);
@@ -188,8 +208,9 @@ public class WidgetPane extends VBox {
         final KeyValue kvDwn1 = new KeyValue(rectangleClip.heightProperty(),
                 headContent.prefHeightProperty().getValue() + bodyContent.prefHeightProperty().getValue());
         final KeyValue kvDwn2 = new KeyValue(rectangleClip.translateYProperty(), 0);
-        final KeyValue kvDwn3 = new KeyValue(body.prefHeightProperty(), bodyContent.prefHeightProperty().getValue());
-        final KeyValue kvDwn4 = new KeyValue(body.translateYProperty(), 0);
+        final KeyValue kvDwn3 = new KeyValue(bodyPane.prefHeightProperty(),
+                bodyContent.prefHeightProperty().getValue());
+        final KeyValue kvDwn4 = new KeyValue(bodyPane.translateYProperty(), 0);
         final KeyValue kvDwn5 = new KeyValue(this.maxHeightProperty(),
                 headContent.prefHeightProperty().getValue() + bodyContent.prefHeightProperty().getValue());
         final KeyValue kvDwn6 = new KeyValue(this.minHeightProperty(),
@@ -205,8 +226,8 @@ public class WidgetPane extends VBox {
         final KeyValue kvUp1 = new KeyValue(rectangleClip.heightProperty(),
                 headContent.prefHeightProperty().getValue());
         final KeyValue kvUp2 = new KeyValue(rectangleClip.translateYProperty(), 0);
-        final KeyValue kvUp3 = new KeyValue(body.prefHeightProperty(), 0);
-        final KeyValue kvUp4 = new KeyValue(body.translateYProperty(), 0);
+        final KeyValue kvUp3 = new KeyValue(bodyPane.prefHeightProperty(), 0);
+        final KeyValue kvUp4 = new KeyValue(bodyPane.translateYProperty(), 0);
         final KeyValue kvUp5 = new KeyValue(this.maxHeightProperty(), headContent.prefHeightProperty().getValue());
         final KeyValue kvUp6 = new KeyValue(this.minHeightProperty(), headContent.prefHeightProperty().getValue());
         final KeyFrame kfUp = new KeyFrame(Duration.millis(Constants.ANIMATION_TIME), kvUp1, kvUp2, kvUp3,
@@ -215,7 +236,7 @@ public class WidgetPane extends VBox {
     }
 
     /**
-     * Enables or disables the Widgetpane.
+     * Enables or disables the WidgetPane.
      *
      * @param disabled disabled
      */

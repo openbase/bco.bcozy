@@ -29,7 +29,6 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
-import javafx.scene.control.Tooltip;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelWriter;
@@ -39,7 +38,6 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -52,7 +50,6 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
-import org.controlsfx.control.ToggleSwitch;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.SVGIcon;
 import org.dc.bco.dal.remote.unit.AmbientLightRemote;
@@ -83,19 +80,16 @@ public class AmbientLightPane extends UnitPane {
     private final SVGIcon lightBulbIcon;
     private final SVGIcon unknownForegroundIcon;
     private final SVGIcon unknownBackgroundIcon;
-    private final ToggleSwitch toggleSwitch;
     private final BorderPane headContent;
+    private final HBox bodyContent;
     private final DoubleProperty hueValue = new SimpleDoubleProperty(0.0);
     private final DoubleProperty saturation = new SimpleDoubleProperty(0.0);
     private final DoubleProperty brightness = new SimpleDoubleProperty(0.0);
     private final Rectangle rectangleSelector;
     private final Pane colorCircleContainer;
-    private final Tooltip tooltip;
-    private final GridPane iconPane;
     private double rectX;
     private double rectY;
     private double angle;
-    private HBox bodyContent;
 
     /**
      * Constructor for the AmbientLightPane.
@@ -109,17 +103,16 @@ public class AmbientLightPane extends UnitPane {
         unknownBackgroundIcon = new SVGIcon(MaterialDesignIcon.CHECKBOX_BLANK_CIRCLE, Constants.SMALL_ICON - 2, false);
         unknownForegroundIcon = new SVGIcon(MaterialDesignIcon.HELP_CIRCLE, Constants.SMALL_ICON, false);
         rectangleSelector = new Rectangle();
-        toggleSwitch = new ToggleSwitch();
         colorCircleContainer = new Pane();
         headContent = new BorderPane();
-        iconPane = new GridPane();
-        tooltip = new Tooltip();
+        bodyContent = new HBox();
 
         initUnitLabel();
         initTitle();
         initContent();
         createWidgetPane(headContent, bodyContent, true);
         initEffectAndSwitch();
+        tooltip.textProperty().bind(observerText.textProperty());
 
         this.ambientLightRemote.addObserver(this);
     }
@@ -154,7 +147,7 @@ public class AmbientLightPane extends UnitPane {
         if (powerState.equals(State.ON)) {
             iconPane.add(lightBulbIcon, 0, 0);
             lightBulbIcon.setBackgroundIconColorAnimated(color);
-            tooltip.setText(Constants.LIGHT_ON);
+            observerText.setIdentifier("lightOn");
 
             if (!toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(true);
@@ -162,7 +155,7 @@ public class AmbientLightPane extends UnitPane {
         } else if (powerState.equals(State.OFF)) {
             iconPane.add(lightBulbIcon, 0, 0);
             lightBulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
-            tooltip.setText(Constants.LIGHT_OFF);
+            observerText.setIdentifier("lightOff");
 
             if (toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(false);
@@ -170,9 +163,8 @@ public class AmbientLightPane extends UnitPane {
         } else {
             iconPane.add(unknownBackgroundIcon, 0, 0);
             iconPane.add(unknownForegroundIcon, 0, 0);
-            tooltip.setText(Constants.UNKNOWN);
+            observerText.setIdentifier("unknown");
         }
-        Tooltip.install(iconPane, tooltip);
     }
 
     private Image colorSpectrumImage(final int width, final int height, final Stop... stops) {
@@ -324,11 +316,9 @@ public class AmbientLightPane extends UnitPane {
         final String setPowerString = "setPower";
         try {
             ambientLightRemote.callMethodAsync(setPowerString, PowerStateType.PowerState.newBuilder()
-                    .setValue(state).build())
-                    .get(Constants.THREAD_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
+                    .setValue(state).build()).get(Constants.THREAD_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
             //ambientLightRemote.setPower(PowerStateType.PowerState.State.ON/OFF);
-        } catch (InterruptedException | ExecutionException | TimeoutException
-                | CouldNotPerformException e) {
+        } catch (InterruptedException | ExecutionException | TimeoutException | CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
             setWidgetPaneDisable(true);
         }
@@ -336,7 +326,7 @@ public class AmbientLightPane extends UnitPane {
 
     @Override
     protected void initTitle() {
-        getOneClick().addListener((observable, oldValue, newValue) -> new Thread(new Task() {
+        oneClick.addListener((observable, oldValue, newValue) -> new Thread(new Task() {
             @Override
             protected Object call() {
                 if (toggleSwitch.isSelected()) {
@@ -364,10 +354,8 @@ public class AmbientLightPane extends UnitPane {
         unknownBackgroundIcon.setForegroundIconColor(Color.WHITE);
         lightBulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
 
-        headContent.setLeft(iconPane);
         headContent.setCenter(getUnitLabel());
         headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
-        headContent.setRight(toggleSwitch);
         headContent.prefHeightProperty().set(lightBulbIcon.getSize() + Constants.INSETS + 1);
     }
 
@@ -491,7 +479,6 @@ public class AmbientLightPane extends UnitPane {
         colorCircleContainer.getChildren().addAll(hollowCircle, rectangleSelector);
 
         //hBox includes color elements (colorContainer & pane)
-        bodyContent = new HBox();
         bodyContent.getChildren().addAll(colorRectContainer, colorCircleContainer);
         bodyContent.prefHeightProperty().set(colorCircleContainer.getPrefHeight() + Constants.INSETS);
 

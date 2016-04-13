@@ -22,11 +22,8 @@ import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.geometry.Pos;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
-import org.controlsfx.control.ToggleSwitch;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.SVGIcon;
 import org.dc.bco.manager.agent.remote.AgentRemote;
@@ -38,6 +35,7 @@ import org.dc.jul.pattern.Observable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.homeautomation.state.ActivationStateType.ActivationState;
+import rst.homeautomation.state.ActivationStateType.ActivationState.State;
 import rst.homeautomation.control.agent.AgentDataType.AgentData;
 
 /**
@@ -50,10 +48,7 @@ public class AgentPane extends UnitPane {
     private final SVGIcon unknownForegroundIcon;
     private final SVGIcon unknownBackgroundIcon;
     private final AgentRemote agentRemote;
-    private final GridPane iconPane;
     private final BorderPane headContent;
-    private final Tooltip tooltip;
-    private final ToggleSwitch toggleSwitch;
 
     /**
      * Constructor for the AgentPane.
@@ -66,22 +61,19 @@ public class AgentPane extends UnitPane {
         agentIcon = new SVGIcon(MaterialDesignIcon.POWER, Constants.SMALL_ICON, false);
         unknownBackgroundIcon = new SVGIcon(MaterialDesignIcon.CHECKBOX_BLANK_CIRCLE, Constants.SMALL_ICON - 2, false);
         unknownForegroundIcon = new SVGIcon(MaterialDesignIcon.HELP_CIRCLE, Constants.SMALL_ICON, false);
-        iconPane = new GridPane();
-        tooltip = new Tooltip();
-        toggleSwitch = new ToggleSwitch();
 
         initUnitLabel();
         initTitle();
         initContent();
         createWidgetPane(headContent, true);
-
         initEffect();
+        tooltip.textProperty().bind(observerText.textProperty());
 
         this.agentRemote.addObserver(this);
     }
 
     private void initEffect() {
-        ActivationState.State state = ActivationState.State.UNKNOWN;
+        State state = State.UNKNOWN;
 
         try {
             state = agentRemote.getData().getActivationState().getValue();
@@ -91,21 +83,21 @@ public class AgentPane extends UnitPane {
         setAgentIconAndText(state);
     }
 
-    private void setAgentIconAndText(final ActivationState.State state) {
+    private void setAgentIconAndText(final State state) {
         iconPane.getChildren().clear();
 
-        if (state.equals(ActivationState.State.ACTIVE)) {
+        if (state.equals(State.ACTIVE)) {
             agentIcon.setForegroundIconColor(Color.GREEN);
             iconPane.add(agentIcon, 0, 0);
-            tooltip.setText(Constants.ACTIVE);
+            observerText.setIdentifier("active");
 
             if (!toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(true);
             }
-        } else if (state.equals(ActivationState.State.DEACTIVE)) {
+        } else if (state.equals(State.DEACTIVE)) {
             agentIcon.changeForegroundIcon(MaterialDesignIcon.POWER);
             iconPane.add(agentIcon, 0, 0);
-            tooltip.setText(Constants.DISABLED);
+            observerText.setIdentifier("inactive");
 
             if (toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(false);
@@ -113,12 +105,11 @@ public class AgentPane extends UnitPane {
         } else {
             iconPane.add(unknownBackgroundIcon, 0, 0);
             iconPane.add(unknownForegroundIcon, 0, 0);
-            tooltip.setText(Constants.UNKNOWN);
+            observerText.setIdentifier("unknown");
         }
-        Tooltip.install(iconPane, tooltip);
     }
 
-    private void sendStateToRemote(final ActivationState.State state) {
+    private void sendStateToRemote(final State state) {
         try {
             agentRemote.setActivationState(ActivationState.newBuilder().setValue(state).build());
         } catch (CouldNotPerformException e) {
@@ -129,9 +120,7 @@ public class AgentPane extends UnitPane {
 
     @Override
     protected void initTitle() {
-        toggleSwitch.setMouseTransparent(true);
-
-        getOneClick().addListener((observable, oldValue, newValue) -> new Thread(new Task() {
+        oneClick.addListener((observable, oldValue, newValue) -> new Thread(new Task() {
             @Override
             protected Object call() {
                 if (toggleSwitch.isSelected()) {
@@ -158,10 +147,8 @@ public class AgentPane extends UnitPane {
         unknownForegroundIcon.setForegroundIconColor(Color.BLUE);
         unknownBackgroundIcon.setForegroundIconColor(Color.WHITE);
 
-        headContent.setLeft(iconPane);
         headContent.setCenter(getUnitLabel());
         headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
-        headContent.setRight(toggleSwitch);
         headContent.prefHeightProperty().set(agentIcon.getHeight() + Constants.INSETS);
     }
 
@@ -194,7 +181,7 @@ public class AgentPane extends UnitPane {
     @Override
     public void update(final Observable observable, final Object agent) throws java.lang.Exception {
         Platform.runLater(() -> {
-            final ActivationState.State state = ((AgentData) agent).getActivationState().getValue();
+            final State state = ((AgentData) agent).getActivationState().getValue();
             setAgentIconAndText(state);
         });
     }

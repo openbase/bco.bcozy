@@ -21,9 +21,7 @@ package org.dc.bco.bcozy.view.devicepanes;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import org.dc.bco.bcozy.view.Constants;
@@ -48,9 +46,7 @@ public class BatteryPane extends UnitPane {
     private final BatteryRemote batteryRemote;
     private final SVGIcon batteryIcon;
     private final Text batteryStatus;
-    private final GridPane iconPane;
     private final BorderPane headContent;
-    private final Tooltip tooltip;
 
     /**
      * Constructor for the BatteryPane.
@@ -63,15 +59,13 @@ public class BatteryPane extends UnitPane {
         batteryIcon = new SVGIcon(MaterialDesignIcon.BATTERY, MaterialDesignIcon.BATTERY_OUTLINE,
                 Constants.SMALL_ICON);
         batteryStatus = new Text();
-        iconPane = new GridPane();
-        tooltip = new Tooltip();
 
         initUnitLabel();
         initTitle();
         initContent();
         createWidgetPane(headContent, false);
-
         initEffect();
+        tooltip.textProperty().bind(observerText.textProperty());
 
         this.batteryRemote.addObserver(this);
     }
@@ -95,25 +89,24 @@ public class BatteryPane extends UnitPane {
             case UNKNOWN:
                 batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_UNKNOWN);
                 batteryIcon.setBackgroundIconColorAnimated(Color.BLACK);
-                tooltip.setText(Constants.UNKNOWN);
+                observerText.setIdentifier("unknown");
                 break;
             case OK:
                 batteryIcon.setBackgroundIconColorAnimated(Color.GREEN);
-                tooltip.setText(Constants.OK_STRING);
+                observerText.setIdentifier("okay");
                 break;
             case CRITICAL:
                 batteryIcon.setBackgroundIconColorAnimated(Color.RED);
-                tooltip.setText(Constants.CRITICAL);
+                observerText.setIdentifier("critical");
                 break;
             case INSUFFICIENT:
                 batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_ALERT);
                 batteryIcon.setBackgroundIconColorAnimated(Color.RED);
-                tooltip.setText(Constants.INSUFFICIENT);
+                observerText.setIdentifier("insufficient");
                 break;
             default:
                 break;
         }
-        Tooltip.install(batteryIcon, tooltip);
     }
 
     private void setStatusBatteryIcon(final double batteryLevel) {
@@ -150,10 +143,8 @@ public class BatteryPane extends UnitPane {
         iconPane.add(batteryIcon, 0, 0);
         iconPane.add(batteryStatus, 1, 0);
 
-        headContent.setLeft(iconPane);
         headContent.setCenter(getUnitLabel());
         headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
-        //Padding values are not available here
         headContent.prefHeightProperty().set(iconPane.getHeight() + Constants.INSETS);
     }
 

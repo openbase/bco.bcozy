@@ -98,8 +98,9 @@ public class TemperatureControllerPane extends UnitPane {
         initUnitLabel();
         initTitle();
         initContent();
-        createWidgetPane(headContent, bodyContent, true);
+        createWidgetPane(headContent, bodyContent, false);
         initEffectSlider();
+        tooltip.textProperty().bind(observerText.textProperty());
 
         this.temperatureControllerRemote.addObserver(this);
     }
@@ -129,13 +130,12 @@ public class TemperatureControllerPane extends UnitPane {
         actual.setTranslateX((actualTemperature - slider.getMin())
                 * (slider.getMinWidth() / (slider.getMax() - slider.getMin())) - (slider.getMinWidth() / 2));
         target.setText(decimalFormat.format(targetTemperature) + Constants.CELSIUS);
-//        target.setTranslateX((targetTemperature - slider.getMin())
-//                * (slider.getMinWidth() / (slider.getMax() - slider.getMin())) - (slider.getMinWidth() / 2));
     }
 
     @Override
     protected void initTitle() {
-        headContent.setLeft(temperatureControllerIcon);
+        observerText.setIdentifier("heating");
+        iconPane.add(temperatureControllerIcon, 0, 0);
         headContent.setCenter(getUnitLabel());
         headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
         headContent.prefHeightProperty().set(temperatureControllerIcon.getSize() + Constants.INSETS);
@@ -143,7 +143,6 @@ public class TemperatureControllerPane extends UnitPane {
 
     @Override
     protected void initContent() {
-        //CHECKSTYLE.OFF: MagicNumber
         final double sliderWidth = 200;
 
         slider.setPrefHeight(25);
@@ -155,13 +154,6 @@ public class TemperatureControllerPane extends UnitPane {
         slider.getStyleClass().add("temperature-slider");
         actual.getStyleClass().addAll("temperature-slider-pane-top");
         target.getStyleClass().addAll("temperature-slider-pane-bottom");
-
-//        actual.setContentDisplay(ContentDisplay.BOTTOM);
-//        actual.setGraphicTextGap(-12.0);
-//        actual.setTranslateX(-slider.getMinWidth() / 2);
-//        target.setContentDisplay(ContentDisplay.TOP);
-//        target.setGraphicTextGap(-12.0);
-//        target.setTranslateX(-slider.getMinWidth() / 2);
         //CHECKSTYLE.ON: MagicNumber
 
         this.recurrenceEventFilter =  new RecurrenceEventFilter(Constants.FILTER_TIME) {

@@ -24,10 +24,8 @@ import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -63,8 +61,6 @@ public class RollerShutterPane extends UnitPane {
     private final SVGIcon unknownBackgroundIcon;
     private final Rectangle clip;
     private final Text rollerShutterStatus;
-    private final GridPane iconPane;
-    private final Tooltip tooltip;
 
     private final EventHandler<MouseEvent> sendingUp = event -> new Thread(new Task() {
         @Override
@@ -140,15 +136,14 @@ public class RollerShutterPane extends UnitPane {
         headContent = new BorderPane();
         bodyContent = new HBox();
         rollerShutterStatus = new Text();
-        iconPane = new GridPane();
-        tooltip = new Tooltip();
         clip = new Rectangle();
 
         initUnitLabel();
         initTitle();
         initContent();
-        createWidgetPane(headContent, bodyContent, true);
+        createWidgetPane(headContent, bodyContent, false);
         initEffect();
+        tooltip.textProperty().bind(observerText.textProperty());
 
         this.rollershutterRemote.addObserver(this);
     }
@@ -174,14 +169,14 @@ public class RollerShutterPane extends UnitPane {
 
             iconPane.add(unknownBackgroundIcon, 0, 0);
             iconPane.add(unknownForegroundIcon, 0, 0);
-            tooltip.setText(Constants.UNKNOWN);
+            observerText.setIdentifier("unknown");
         } else  {
             if (shutterState.equals(State.DOWN)) {
-                tooltip.setText(Constants.DOWN);
+                observerText.setIdentifier("down");
             } else if (shutterState.equals(State.UP)) {
-                tooltip.setText(Constants.UP_STRING);
+                observerText.setIdentifier("up");
             } else {
-                tooltip.setText(Constants.STOP);
+                observerText.setIdentifier("stop");
             }
             rollerShutterIconBackground.changeBackgroundIcon(MaterialDesignIcon.FORMAT_ALIGN_JUSTIFY);
             rollerShutterIconBackground.setForegroundIconColor(Color.YELLOW);
@@ -194,7 +189,6 @@ public class RollerShutterPane extends UnitPane {
             iconPane.add(rollerShutterIconForeground, 0, 0);
         }
         iconPane.add(rollerShutterStatus, 1, 0);
-        Tooltip.install(iconPane, tooltip);
     }
 
     @Override
@@ -204,8 +198,6 @@ public class RollerShutterPane extends UnitPane {
         unknownBackgroundIcon.setForegroundIconColor(Color.WHITE);
 
         iconPane.setHgap(Constants.INSETS);
-
-        headContent.setLeft(iconPane);
         headContent.setCenter(getUnitLabel());
         headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
         headContent.prefHeightProperty().set(Constants.SMALL_ICON + Constants.INSETS);

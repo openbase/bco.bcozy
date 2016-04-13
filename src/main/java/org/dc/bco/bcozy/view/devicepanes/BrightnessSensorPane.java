@@ -22,7 +22,6 @@ import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import org.dc.bco.bcozy.view.Constants;
@@ -46,7 +45,6 @@ public class BrightnessSensorPane extends UnitPane {
     private final BrightnessSensorRemote brightnessSensorRemote;
     private final SVGIcon brightnessIcon;
     private final Text brightnessStatus;
-    private final GridPane iconPane;
     private final BorderPane headContent;
 
     /**
@@ -60,14 +58,13 @@ public class BrightnessSensorPane extends UnitPane {
         brightnessIcon = new SVGIcon(MaterialDesignIcon.CHECKBOX_BLANK_CIRCLE,
                 MaterialDesignIcon.CHECKBOX_BLANK_CIRCLE_OUTLINE, Constants.SMALL_ICON);
         brightnessStatus = new Text();
-        iconPane = new GridPane();
 
         initUnitLabel();
         initTitle();
         initContent();
         createWidgetPane(headContent, false);
-
         initEffect();
+        tooltip.textProperty().bind(observerText.textProperty());
 
         this.brightnessSensorRemote.addObserver(this);
     }
@@ -88,9 +85,11 @@ public class BrightnessSensorPane extends UnitPane {
             this.brightnessIcon.setBackgroundIconColorAnimated(
                     new Color(brightnessLevel / Constants.BRIGHTNESS_MAXIMUM,
                             brightnessLevel / Constants.BRIGHTNESS_MAXIMUM, 0, 1));
+
         } else {
             this.brightnessIcon.setBackgroundIconColorAnimated(new Color(1, 1, 1, 1));
         }
+        observerText.setIdentifier("brightness");
 
         this.brightnessStatus.setText((int) brightnessLevel + "lx");
     }
@@ -104,10 +103,8 @@ public class BrightnessSensorPane extends UnitPane {
         iconPane.add(brightnessStatus, 1, 0);
         iconPane.setHgap(Constants.INSETS);
 
-        headContent.setLeft(iconPane);
         headContent.setCenter(getUnitLabel());
         headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
-        //Padding values are not available here
         headContent.prefHeightProperty().set(iconPane.getHeight() + Constants.INSETS);
     }
 

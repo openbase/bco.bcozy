@@ -21,9 +21,7 @@ package org.dc.bco.bcozy.view.devicepanes;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import org.dc.bco.bcozy.view.Constants;
 import org.dc.bco.bcozy.view.SVGIcon;
@@ -49,9 +47,7 @@ public class TamperSwitchPane extends UnitPane {
     private final SVGIcon tamperSwitchIconManipulation;
     private final SVGIcon unknownForegroundIcon;
     private final SVGIcon unknownBackgroundIcon;
-    private final GridPane iconPane;
     private final BorderPane headContent;
-    private final Tooltip tooltip;
 
     /**
      * Constructor for the TamperSwitchPane.
@@ -65,15 +61,13 @@ public class TamperSwitchPane extends UnitPane {
         tamperSwitchIconManipulation = new SVGIcon(MaterialDesignIcon.ALERT_CIRCLE, Constants.SMALL_ICON, false);
         unknownBackgroundIcon = new SVGIcon(MaterialDesignIcon.CHECKBOX_BLANK_CIRCLE, Constants.SMALL_ICON - 2, false);
         unknownForegroundIcon = new SVGIcon(MaterialDesignIcon.HELP_CIRCLE, Constants.SMALL_ICON, false);
-        iconPane = new GridPane();
-        tooltip = new Tooltip();
 
         initUnitLabel();
         initTitle();
         initContent();
         createWidgetPane(headContent, false);
-
         initEffect();
+        tooltip.textProperty().bind(observerText.textProperty());
 
         this.tamperSwitchRemote.addObserver(this);
     }
@@ -94,16 +88,15 @@ public class TamperSwitchPane extends UnitPane {
 
         if (tamperSwitchState == State.NO_TAMPER) {
             iconPane.add(tamperSwitchIconOk, 0, 0);
-            tooltip.setText(Constants.NO_TAMPER);
+            observerText.setIdentifier("noTamper");
         } else if (tamperSwitchState == State.TAMPER) {
             iconPane.add(tamperSwitchIconManipulation, 0, 0);
-            tooltip.setText(Constants.TAMPER);
+            observerText.setIdentifier("tamper");
         } else {
             iconPane.add(unknownBackgroundIcon, 0, 0);
             iconPane.add(unknownForegroundIcon, 0, 0);
-            tooltip.setText(Constants.UNKNOWN);
+            observerText.setIdentifier("unknown");
         }
-        Tooltip.install(iconPane, tooltip);
     }
 
     @Override
@@ -113,7 +106,6 @@ public class TamperSwitchPane extends UnitPane {
         tamperSwitchIconOk.setForegroundIconColor(Color.GREEN);
         tamperSwitchIconManipulation.setForegroundIconColor(Color.RED);
 
-        headContent.setLeft(iconPane);
         headContent.setCenter(getUnitLabel());
         headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
         headContent.prefHeightProperty().set(tamperSwitchIconOk.getSize() + Constants.INSETS);

@@ -21,7 +21,6 @@ package org.dc.bco.bcozy.view.devicepanes;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
@@ -47,9 +46,7 @@ public class PowerConsumptionSensorPane extends UnitPane {
     private final PowerConsumptionSensorRemote powerConsumptionSensorRemote;
     private final SVGIcon powerConsumptionIcon;
     private final Text currentPowerConsumption;
-    private final GridPane iconPane;
     private final BorderPane headContent;
-    private final Tooltip tooltip;
     private final Text sumPowerConsumption;
     private final Text voltagePowerConsumption;
     private final Text sumLabelText;
@@ -71,15 +68,13 @@ public class PowerConsumptionSensorPane extends UnitPane {
         voltagePowerConsumption = new Text();
         sumLabelText = new Text("Power Consumption:");
         voltageLabelText = new Text("Current Voltage:");
-        iconPane = new GridPane();
-        tooltip = new Tooltip();
 
         initUnitLabel();
         initTitle();
         initContent();
-        createWidgetPane(headContent, bodyContent, true);
-
+        createWidgetPane(headContent, bodyContent, false);
         initEffect();
+        tooltip.textProperty().bind(observerText.textProperty());
 
         this.powerConsumptionSensorRemote.addObserver(this);
     }
@@ -104,17 +99,15 @@ public class PowerConsumptionSensorPane extends UnitPane {
                                                 final double voltagePowerConsumption) {
         if (currentPowerConsumption == 0.0) {
             powerConsumptionIcon.changeForegroundIcon(MaterialDesignIcon.POWER);
-            tooltip.setText(Constants.POWER_OFF);
+            observerText.setIdentifier("powerOff");
         } else {
             powerConsumptionIcon.setForegroundIconColor(Color.GREEN);
-            tooltip.setText(Constants.POWER_ON);
+            observerText.setIdentifier("powerOn");
         }
 
         this.currentPowerConsumption.setText(currentPowerConsumption + Constants.WATT);
         this.sumPowerConsumption.setText(sumPowerConsumption + Constants.WATT);
         this.voltagePowerConsumption.setText(voltagePowerConsumption + "V");
-
-        Tooltip.install(powerConsumptionIcon, tooltip);
     }
 
     @Override
@@ -124,7 +117,6 @@ public class PowerConsumptionSensorPane extends UnitPane {
         iconPane.add(powerConsumptionIcon, 0, 0);
         iconPane.add(currentPowerConsumption, 1, 0);
 
-        headContent.setLeft(iconPane);
         headContent.setCenter(getUnitLabel());
         headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
         headContent.prefHeightProperty().set(powerConsumptionIcon.getSize() + Constants.INSETS);

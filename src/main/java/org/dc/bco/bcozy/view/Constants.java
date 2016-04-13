@@ -405,127 +405,12 @@ public final class Constants {
     /**
      * String for tooltip unknown.
      */
-    public static final String UNKNOWN = "Unknown";
-
-    /**
-     * String for tooltip open.
-     */
-    public static final String OPEN = "Open";
-
-    /**
-     * String for tooltip closed.
-     */
-    public static final String CLOSED = "Closed";
-
-    /**
-     * String for tooltip on.
-     */
-    public static final String LIGHT_ON = "On";
-
-    /**
-     * String for tooltip off.
-     */
-    public static final String LIGHT_OFF = "Off";
-
-    /**
-     * String for tooltip power on.
-     */
-    public static final String POWER_ON = "Power on";
-
-    /**
-     * String for tooltip power off.
-     */
-    public static final String POWER_OFF = "Power off";
-
-    /**
-     * String for tooltip ok.
-     */
-    public static final String OK_STRING = "Ok";
-
-    /**
-     * String for tooltip critical.
-     */
-    public static final String CRITICAL = "Critical";
-
-    /**
-     * String for tooltip insufficient.
-     */
-    public static final String INSUFFICIENT = "Insufficient";
-
-    /**
-     * String for tooltip movement.
-     */
-    public static final String MOVEMENT = "Movement";
-
-    /**
-     * String for tooltip no movement.
-     */
-    public static final String NO_MOVEMENT = "No Movement";
-
-    /**
-     * String for tooltip down.
-     */
-    public static final String DOWN = "Down";
-
-    /**
-     * String for tooltip up.
-     */
-    public static final String UP_STRING = "Up";
-
-    /**
-     * String for tooltip stop.
-     */
-    public static final String STOP = "Stop";
-
-    /**
-     * String for tooltip alarm.
-     */
-    public static final String ALARM = "Alarm";
-
-    /**
-     * String for tooltip no alarm.
-     */
-    public static final String NO_ALARM = "No Alarm";
-
-    /**
-     * String for tooltip no tamper.
-     */
-    public static final String NO_TAMPER = "No Tamper";
-
-    /**
-     * String for tooltip tamper.
-     */
-    public static final String TAMPER = "Tamper";
-
-    /**
-     * String for tooltip smoke.
-     */
-    public static final String SMOKE = "Smoke";
-
-    /**
-     * String for tooltip no smoke.
-     */
-    public static final String NO_SMOKE = "No Smoke";
-
-    /**
-     * String for tooltip some smoke.
-     */
-    public static final String SOME_SMOKE = "Some Smoke";
+    //public static final String UNKNOWN = "Unknown";
 
     /**
      * String for tooltip Watt W.
      */
     public static final String WATT = "W";
-
-    /**
-     * String for tooltip active.
-     */
-    public static final String ACTIVE = "Active";
-
-    /**
-     * String for tooltip disabled.
-     */
-    public static final String DISABLED = "Disabled";
 
     /**
      * String for CSS styling of UserPane.
