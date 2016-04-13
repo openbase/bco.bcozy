@@ -103,7 +103,7 @@ public class AgentPane extends UnitPane {
                 toggleSwitch.setSelected(true);
             }
         } else if (state.equals(ActivationState.State.DEACTIVE)) {
-            agentIcon.setForegroundIconColor(Color.RED);
+            agentIcon.changeForegroundIcon(MaterialDesignIcon.POWER);
             iconPane.add(agentIcon, 0, 0);
             tooltip.setText(Constants.DISABLED);
 

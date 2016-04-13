@@ -88,10 +88,10 @@ public class ScenePane extends UnitPane {
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
-        setAgentIconAndText(state);
+        setSceneIconAndText(state);
     }
 
-    private void setAgentIconAndText(final ActivationStateType.ActivationState.State state) {
+    private void setSceneIconAndText(final ActivationStateType.ActivationState.State state) {
         iconPane.getChildren().clear();
 
         if (state.equals(ActivationStateType.ActivationState.State.ACTIVE)) {
@@ -103,7 +103,7 @@ public class ScenePane extends UnitPane {
                 toggleSwitch.setSelected(true);
             }
         } else if (state.equals(ActivationStateType.ActivationState.State.DEACTIVE)) {
-            sceneIcon.setForegroundIconColor(Color.RED);
+            sceneIcon.changeForegroundIcon(MaterialDesignIcon.POWER);
             iconPane.add(sceneIcon, 0, 0);
             tooltip.setText(Constants.DISABLED);
 
@@ -196,7 +196,7 @@ public class ScenePane extends UnitPane {
         Platform.runLater(() -> {
             final ActivationStateType.ActivationState.State state =
                     ((AgentDataType.AgentData) agent).getActivationState().getValue();
-            setAgentIconAndText(state);
+            setSceneIconAndText(state);
         });
     }
 }

@@ -88,10 +88,10 @@ public class AppPane extends UnitPane {
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
-        setAgentIconAndText(state);
+        setAppIconAndText(state);
     }
 
-    private void setAgentIconAndText(final ActivationStateType.ActivationState.State state) {
+    private void setAppIconAndText(final ActivationStateType.ActivationState.State state) {
         iconPane.getChildren().clear();
 
         if (state.equals(ActivationStateType.ActivationState.State.ACTIVE)) {
@@ -103,7 +103,7 @@ public class AppPane extends UnitPane {
                 toggleSwitch.setSelected(true);
             }
         } else if (state.equals(ActivationStateType.ActivationState.State.DEACTIVE)) {
-            appIcon.setForegroundIconColor(Color.RED);
+            appIcon.changeForegroundIcon(MaterialDesignIcon.POWER);
             iconPane.add(appIcon, 0, 0);
             tooltip.setText(Constants.DISABLED);
 
@@ -196,7 +196,7 @@ public class AppPane extends UnitPane {
         Platform.runLater(() -> {
             final ActivationStateType.ActivationState.State state =
                     ((AgentDataType.AgentData) agent).getActivationState().getValue();
-            setAgentIconAndText(state);
+            setAppIconAndText(state);
         });
     }
 }

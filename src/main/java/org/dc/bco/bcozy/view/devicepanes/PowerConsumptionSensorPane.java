@@ -85,31 +85,29 @@ public class PowerConsumptionSensorPane extends UnitPane {
     }
 
     private void initEffect() {
-        boolean isPowerConsumption = false;
         double currentPowerConsumption = 0.0;
         double sumPowerConsumption = 0.0;
         double voltagePowerConsumption = 0.0;
 
         try {
-            isPowerConsumption = powerConsumptionSensorRemote.getPowerConsumption().hasCurrent();
             currentPowerConsumption = powerConsumptionSensorRemote.getPowerConsumption().getCurrent();
             sumPowerConsumption = powerConsumptionSensorRemote.getPowerConsumption().getConsumption();
             voltagePowerConsumption = powerConsumptionSensorRemote.getPowerConsumption().getVoltage();
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
-        setPowerConsumptionIconAndText(isPowerConsumption, currentPowerConsumption, sumPowerConsumption,
+        setPowerConsumptionIconAndText(currentPowerConsumption, sumPowerConsumption,
                 voltagePowerConsumption);
     }
 
-    private void setPowerConsumptionIconAndText(final boolean powerConsumptionState, final double
-            currentPowerConsumption, final double sumPowerConsumption, final double voltagePowerConsumption) {
-        if (powerConsumptionState) {
-            powerConsumptionIcon.setForegroundIconColor(Color.GREEN);
-            tooltip.setText(Constants.POWER_ON);
-        } else {
+    private void setPowerConsumptionIconAndText(final double currentPowerConsumption, final double sumPowerConsumption,
+                                                final double voltagePowerConsumption) {
+        if (currentPowerConsumption == 0.0) {
             powerConsumptionIcon.changeForegroundIcon(MaterialDesignIcon.POWER);
             tooltip.setText(Constants.POWER_OFF);
+        } else {
+            powerConsumptionIcon.setForegroundIconColor(Color.GREEN);
+            tooltip.setText(Constants.POWER_ON);
         }
 
         this.currentPowerConsumption.setText(currentPowerConsumption + Constants.WATT);
@@ -177,10 +175,8 @@ public class PowerConsumptionSensorPane extends UnitPane {
                     powerConsumption).getPowerConsumptionState().getCurrent();
             final double sumPowerConsumption = ((PowerConsumptionSensorType.PowerConsumptionSensor)
                     powerConsumption).getPowerConsumptionState().getConsumption();
-            final boolean statePowerConsumption = ((PowerConsumptionSensorType.PowerConsumptionSensor)
-                    powerConsumption).getPowerConsumptionState().hasCurrent();
 
-            setPowerConsumptionIconAndText(statePowerConsumption, currentPowerConsumption, sumPowerConsumption,
+            setPowerConsumptionIconAndText(currentPowerConsumption, sumPowerConsumption,
                     voltagePowerConsumption);
         });
     }
