@@ -85,11 +85,11 @@ public class ReedSwitchPane extends UnitPane {
     private void setReedSwitchIconAndTooltip(final State reedSwitchState) {
         iconPane.getChildren().clear();
 
-        if (reedSwitchState.equals(State.CLOSED)) {
+        if (reedSwitchState == State.CLOSED) {
             reedSwitchIcon.changeForegroundIcon(MaterialIcon.RADIO_BUTTON_CHECKED);
             iconPane.add(reedSwitchIcon, 0, 0);
             observerText.setIdentifier("closed");
-        } else if (reedSwitchState.equals(State.OPEN)) {
+        } else if (reedSwitchState == State.OPEN) {
             reedSwitchIcon.changeForegroundIcon(MaterialIcon.RADIO_BUTTON_UNCHECKED);
             iconPane.add(reedSwitchIcon, 0, 0);
             observerText.setIdentifier("open");
@@ -140,6 +140,7 @@ public class ReedSwitchPane extends UnitPane {
     public void update(final Observable observable, final Object reedSwitch) throws java.lang.Exception {
         Platform.runLater(() -> {
             final State reedSwitchState = ((ReedSwitchType.ReedSwitch) reedSwitch).getReedSwitchState().getValue();
+
             setReedSwitchIconAndTooltip(reedSwitchState);
         });
     }

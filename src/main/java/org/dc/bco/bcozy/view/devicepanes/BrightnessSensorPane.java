@@ -82,10 +82,9 @@ public class BrightnessSensorPane extends UnitPane {
 
     private void setBrightnessLevelTextAndIcon(final double brightnessLevel) {
         if (brightnessLevel <= Constants.BRIGHTNESS_MAXIMUM) {
-            this.brightnessIcon.setBackgroundIconColorAnimated(
-                    new Color(brightnessLevel / Constants.BRIGHTNESS_MAXIMUM,
-                            brightnessLevel / Constants.BRIGHTNESS_MAXIMUM, 0, 1));
-
+            //root function to get a not linear representation of the brightness (icon color).
+            final double rootFunction = Math.sqrt(brightnessLevel / Constants.BRIGHTNESS_MAXIMUM);
+            this.brightnessIcon.setBackgroundIconColorAnimated(new Color(rootFunction, rootFunction, 0, 1));
         } else {
             this.brightnessIcon.setBackgroundIconColorAnimated(new Color(1, 1, 1, 1));
         }

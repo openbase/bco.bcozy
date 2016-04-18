@@ -116,6 +116,7 @@ public class PowerConsumptionSensorPane extends UnitPane {
 
         iconPane.add(powerConsumptionIcon, 0, 0);
         iconPane.add(currentPowerConsumption, 1, 0);
+        iconPane.setHgap(Constants.INSETS);
 
         headContent.setCenter(getUnitLabel());
         headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
