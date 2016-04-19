@@ -74,9 +74,9 @@ import java.util.concurrent.TimeoutException;
  */
 public class AmbientLightPane extends UnitPane {
     private static final Logger LOGGER = LoggerFactory.getLogger(AmbientLightPane.class);
+    private static final double COLOR_BOX_SIZE = 150.0;
 
     private final AmbientLightRemote ambientLightRemote;
-    private RecurrenceEventFilter recurrenceEventFilter;
     private final SVGIcon lightBulbIcon;
     private final SVGIcon unknownForegroundIcon;
     private final SVGIcon unknownBackgroundIcon;
@@ -86,7 +86,6 @@ public class AmbientLightPane extends UnitPane {
     private final DoubleProperty saturation = new SimpleDoubleProperty(0.0);
     private final DoubleProperty brightness = new SimpleDoubleProperty(0.0);
     private final Rectangle rectangleSelector;
-    private final Pane colorCircleContainer;
     private double rectX;
     private double rectY;
     private double angle;
@@ -103,7 +102,6 @@ public class AmbientLightPane extends UnitPane {
         unknownBackgroundIcon = new SVGIcon(MaterialDesignIcon.CHECKBOX_BLANK_CIRCLE, Constants.SMALL_ICON - 2, false);
         unknownForegroundIcon = new SVGIcon(MaterialDesignIcon.HELP_CIRCLE, Constants.SMALL_ICON, false);
         rectangleSelector = new Rectangle();
-        colorCircleContainer = new Pane();
         headContent = new BorderPane();
         bodyContent = new HBox();
 
@@ -232,37 +230,19 @@ public class AmbientLightPane extends UnitPane {
     }
 
     private Circle circleSelector() {
-        final Circle circle = new Circle(colorCircleContainer.getPrefWidth() / Constants.FIFTEEN,
-                Color.web(Constants.WHITE, 0.0));
+        final Circle circle = new Circle(COLOR_BOX_SIZE / Constants.FIFTEEN, Color.web(Constants.WHITE, 0.0));
 
         circle.getStyleClass().add("circle-selector");
         circle.setMouseTransparent(true);
         circle.setStroke(Color.web(Constants.WHITE, 1.0));
         circle.setCache(true);
         circle.setManaged(false);
-        circle.setEffect(shadowMaker());
+        circle.setEffect(dropShadow());
 
         return circle;
     }
 
-    private void rectSelector() {
-        rectangleSelector.setWidth(colorCircleContainer.getPrefWidth() / Constants.TEN);
-        rectangleSelector.setHeight(colorCircleContainer.getPrefHeight() / Constants.SIX);
-        rectangleSelector.setFill(Color.web(Constants.WHITE, 0.0));
-        rectangleSelector.getStyleClass().add("rectangle-selector");
-        rectangleSelector.setMouseTransparent(true);
-        rectangleSelector.setTranslateX(-rectangleSelector.getWidth() / 2.0);
-        rectangleSelector.setTranslateY(-rectangleSelector.getHeight() / 2.0);
-        rectangleSelector.setLayoutX(colorCircleContainer.getPrefWidth() / 2.0);
-        rectangleSelector.setLayoutY(colorCircleContainer.getPrefHeight() / 2.0);
-        rectangleSelector.setY((rectangleSelector.getHeight() - colorCircleContainer.getPrefHeight()) / 2.0);
-        rectangleSelector.setStroke(Color.web(Constants.WHITE, 1.0));
-        rectangleSelector.setCache(true);
-        rectangleSelector.setManaged(false);
-        rectangleSelector.setEffect(shadowMaker());
-    }
-
-    private DropShadow shadowMaker() {
+    private DropShadow dropShadow() {
         final DropShadow dropShadow = new DropShadow();
 
         dropShadow.setOffsetX(1.0);
@@ -275,8 +255,8 @@ public class AmbientLightPane extends UnitPane {
     private Pane saturationRect() {
         final Pane colorRectSaturation = new Pane();
 
-        colorRectSaturation.setPrefSize(colorCircleContainer.getPrefWidth(), colorCircleContainer.getPrefHeight());
-        colorRectSaturation.setMinSize(colorCircleContainer.getMinWidth(), colorCircleContainer.getMinHeight());
+        colorRectSaturation.setPrefSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
+        colorRectSaturation.setMinSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
         colorRectSaturation.setBackground(new Background(new BackgroundFill(new LinearGradient(0.0, 0.0, 1.0, 0.0, true,
                 CycleMethod.NO_CYCLE, new Stop(0.0, Color.rgb(Constants.RGB255, Constants.RGB255,
                 Constants.RGB255, 1.0)), new Stop(1, Color.rgb(Constants.RGB255, Constants.RGB255,
@@ -288,8 +268,8 @@ public class AmbientLightPane extends UnitPane {
     private Pane brightnessRect() {
         final Pane colorRectBrightness = new Pane();
 
-        colorRectBrightness.setPrefSize(colorCircleContainer.getPrefWidth(), colorCircleContainer.getPrefHeight());
-        colorRectBrightness.setMinSize(colorCircleContainer.getMinWidth(), colorCircleContainer.getMinHeight());
+        colorRectBrightness.setPrefSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
+        colorRectBrightness.setMinSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
         colorRectBrightness.setBackground(new Background(new BackgroundFill(new LinearGradient(0, 0, 0, 1, true,
                 CycleMethod.NO_CYCLE, new Stop(0, Color.rgb(0, 0, 0, 0)), new Stop(1, Color.rgb(0, 0, 0, 1))),
                 CornerRadii.EMPTY, Insets.EMPTY)));
@@ -298,13 +278,12 @@ public class AmbientLightPane extends UnitPane {
     }
 
     private Shape hollowCircle() {
-        final Circle circleTall = new Circle(colorCircleContainer.getPrefWidth() / 2);
-        final Circle circleSmall = new Circle(circleTall.getRadius() - colorCircleContainer.getPrefWidth()
-                / Constants.SIX);
+        final Circle circleTall = new Circle(COLOR_BOX_SIZE / 2);
+        final Circle circleSmall = new Circle(circleTall.getRadius() - COLOR_BOX_SIZE / Constants.SIX);
         final Shape hollowCircle = Path.subtract(circleTall, circleSmall);
         final Stop[] hueFraction = hueStops();
-        final ImagePattern imagePattern = new ImagePattern(colorSpectrumImage((int) colorCircleContainer.getPrefWidth(),
-                (int) colorCircleContainer.getPrefHeight(), hueFraction));
+        final ImagePattern imagePattern = new ImagePattern(colorSpectrumImage((int) COLOR_BOX_SIZE,
+                (int) COLOR_BOX_SIZE, hueFraction));
         hollowCircle.setLayoutX(circleTall.getRadius());
         hollowCircle.setLayoutY(circleTall.getRadius());
         hollowCircle.setFill(imagePattern);
@@ -327,8 +306,7 @@ public class AmbientLightPane extends UnitPane {
     @Override
     protected void initTitle() {
         oneClick.addListener((observable, oldValue, newValue) -> new Thread(new Task() {
-            @Override
-            protected Object call() {
+            @Override protected Object call() {
                 if (toggleSwitch.isSelected()) {
                     sendStateToRemote(PowerStateType.PowerState.State.OFF);
                 } else {
@@ -339,8 +317,7 @@ public class AmbientLightPane extends UnitPane {
         }).start());
 
         toggleSwitch.setOnMouseClicked(event -> new Thread(new Task() {
-            @Override
-            protected Object call() {
+            @Override protected Object call() {
                 if (toggleSwitch.isSelected()) {
                     sendStateToRemote(PowerStateType.PowerState.State.ON);
                 } else {
@@ -374,24 +351,19 @@ public class AmbientLightPane extends UnitPane {
 
     @Override
     protected void initContent() {
-        final Pane colorRectContainer;
-        final Pane colorHue;
-        final Circle circle;
-        final Shape hollowCircle;
+        final Pane colorRectContainer = new StackPane();
+        final Pane colorHue = new Pane();
+        final Circle circle = circleSelector();
+        final Shape hollowCircle = hollowCircle();
         final Rectangle clip = new Rectangle(0, 0, 0, 0);
+        final Pane colorCircleContainer = new Pane();
 
-        //CHECKSTYLE.OFF: MagicNumber
-        colorCircleContainer.setPrefSize(150, 150);
-        colorCircleContainer.setMinSize(150, 150);
-        //CHECKSTYLE.ON: MagicNumber
+        colorCircleContainer.setPrefSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
+        colorCircleContainer.setMinSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
         colorCircleContainer.maxHeightProperty().bind(colorCircleContainer.prefWidthProperty());
 
-        rectSelector();
-
-        //saturation & brightness depend on hue value
-        colorHue = new Pane();
-        colorHue.setMinSize(colorCircleContainer.getMinWidth(), colorCircleContainer.getMinHeight());
-        colorHue.setPrefSize(colorCircleContainer.getPrefWidth(), colorCircleContainer.getPrefHeight());
+        colorHue.setMinSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
+        colorHue.setPrefSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
 
         colorHue.backgroundProperty().bind(new ObjectBinding<Background>() {
             {
@@ -404,26 +376,19 @@ public class AmbientLightPane extends UnitPane {
             }
         });
 
-        //circle as selector for colorRectangleContainer
-        circle = circleSelector();
-        circle.layoutXProperty().bind(saturation.divide(Constants.ONE_HUNDRED)
-                .multiply(colorCircleContainer.getPrefWidth()));
+        circle.layoutXProperty().bind(saturation.divide(Constants.ONE_HUNDRED).multiply(COLOR_BOX_SIZE));
         circle.layoutYProperty().bind(Bindings.subtract(1, brightness.divide(Constants.ONE_HUNDRED))
-                .multiply(colorCircleContainer.getPrefHeight()));
+                .multiply(COLOR_BOX_SIZE));
 
-        //mouse event for saturation & brightness rectangle
         final EventHandler<MouseEvent> colorContainerMouseHandler = event -> new Thread(new Task() {
-            @Override
-            protected Object call() {
+            @Override protected Object call() {
                 final double xMouse = event.getX();
                 final double yMouse = event.getY();
-                saturation.set(clamp(xMouse / colorCircleContainer.getPrefWidth()) * Constants.ONE_HUNDRED);
-                brightness.set(Constants.ONE_HUNDRED - (clamp(yMouse / colorCircleContainer.getPrefHeight())
-                        * Constants.ONE_HUNDRED));
+                saturation.set(clamp(xMouse / COLOR_BOX_SIZE) * Constants.ONE_HUNDRED);
+                brightness.set(Constants.ONE_HUNDRED - (clamp(yMouse / COLOR_BOX_SIZE) * Constants.ONE_HUNDRED));
 
-                recurrenceEventFilter = new RecurrenceEventFilter() {
-                    @Override
-                    public void relay() {
+                RecurrenceEventFilter recurrenceEventFilter = new RecurrenceEventFilter() {
+                    @Override public void relay() {
                         sendHSV2Remote();
                     }
                 };
@@ -433,19 +398,30 @@ public class AmbientLightPane extends UnitPane {
             }
         }).start();
 
-        //container/stackPane for saturation/brightness area
-        colorRectContainer = new StackPane();
-        colorRectContainer.setMinSize(colorCircleContainer.getMinWidth(), colorCircleContainer.getMinHeight());
-        colorRectContainer.setPrefSize(colorCircleContainer.getPrefWidth(), colorCircleContainer.getPrefHeight());
+        colorRectContainer.setMinSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
+        colorRectContainer.setPrefSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
         colorRectContainer.maxHeightProperty().bind(colorRectContainer.prefWidthProperty());
         colorRectContainer.getChildren().addAll(colorHue, saturationRect(), brightnessRect(), circle);
         colorRectContainer.setOnMousePressed(colorContainerMouseHandler);
         colorRectContainer.setOnMouseDragged(colorContainerMouseHandler);
 
-        final EventHandler<MouseEvent> colorCircleMouseHandler = event -> new Thread(new Task() {
-            @Override
-            protected Object call() {
+        rectangleSelector.setWidth(COLOR_BOX_SIZE / Constants.TEN);
+        rectangleSelector.setHeight(COLOR_BOX_SIZE / Constants.SIX);
+        rectangleSelector.setFill(Color.web(Constants.WHITE, 0.0));
+        rectangleSelector.getStyleClass().add("rectangle-selector");
+        rectangleSelector.setMouseTransparent(true);
+        rectangleSelector.setTranslateX(-rectangleSelector.getWidth() / 2.0);
+        rectangleSelector.setTranslateY(-rectangleSelector.getHeight() / 2.0);
+        rectangleSelector.setLayoutX(COLOR_BOX_SIZE / 2.0);
+        rectangleSelector.setLayoutY(COLOR_BOX_SIZE / 2.0);
+        rectangleSelector.setY((rectangleSelector.getHeight() - COLOR_BOX_SIZE) / 2.0);
+        rectangleSelector.setStroke(Color.web(Constants.WHITE, 1.0));
+        rectangleSelector.setCache(true);
+        rectangleSelector.setManaged(false);
+        rectangleSelector.setEffect(dropShadow());
 
+        final EventHandler<MouseEvent> colorCircleMouseHandler = event -> new Thread(new Task() {
+            @Override protected Object call() {
                 double yMouse = event.getY();
                 double xMouse = event.getX();
 
@@ -458,8 +434,7 @@ public class AmbientLightPane extends UnitPane {
                 rectangleSelector.setLayoutY(rectY);
                 rectangleSelector.setRotate(angle);
 
-
-                recurrenceEventFilter = new RecurrenceEventFilter() {
+                RecurrenceEventFilter recurrenceEventFilter = new RecurrenceEventFilter() {
                     @Override
                     public void relay() {
                         sendHSV2Remote();
@@ -471,16 +446,12 @@ public class AmbientLightPane extends UnitPane {
             }
         }).start();
 
-        //hollow circle with color spectrum
-        hollowCircle = hollowCircle();
         hollowCircle.setOnMousePressed(colorCircleMouseHandler);
         hollowCircle.setOnMouseDragged(colorCircleMouseHandler);
 
         colorCircleContainer.getChildren().addAll(hollowCircle, rectangleSelector);
-
-        //hBox includes color elements (colorContainer & pane)
         bodyContent.getChildren().addAll(colorRectContainer, colorCircleContainer);
-        bodyContent.prefHeightProperty().set(colorCircleContainer.getPrefHeight() + Constants.INSETS);
+        bodyContent.prefHeightProperty().set(COLOR_BOX_SIZE + Constants.INSETS);
 
         // clipBorderPane (Body) to be sure, that no content overlaps the pane
         clip.widthProperty().bind(bodyContent.widthProperty());
@@ -489,11 +460,9 @@ public class AmbientLightPane extends UnitPane {
     }
 
     private void rectSelectorCoordinates() {
-        rectX = Math.round(colorCircleContainer.getPrefWidth() / 2.0
-                + (colorCircleContainer.getPrefHeight() - rectangleSelector.getHeight()) / 2.0
+        rectX = Math.round(COLOR_BOX_SIZE / 2.0 + (COLOR_BOX_SIZE - rectangleSelector.getHeight()) / 2.0
                 * Math.cos(Math.toRadians((angle + Constants.OBTUSE_ANGLE_270) % Constants.ROUND_ANGLE)));
-        rectY = Math.round(colorCircleContainer.getPrefHeight() / 2.0
-                + (colorCircleContainer.getPrefHeight() - rectangleSelector.getHeight()) / 2.0
+        rectY = Math.round(COLOR_BOX_SIZE / 2.0 + (COLOR_BOX_SIZE - rectangleSelector.getHeight()) / 2.0
                 * Math.sin(Math.toRadians((angle + Constants.OBTUSE_ANGLE_270) % Constants.ROUND_ANGLE)));
     }
 
