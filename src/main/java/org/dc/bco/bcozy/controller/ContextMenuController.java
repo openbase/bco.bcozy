@@ -16,7 +16,6 @@
  * along with org.dc.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
-
 package org.dc.bco.bcozy.controller;
 
 import javafx.beans.value.ChangeListener;
@@ -44,6 +43,7 @@ import java.util.Map;
  * Created by timo on 03.12.15.
  */
 public class ContextMenuController {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ContextMenuController.class);
 
     private final ForegroundPane foregroundPane;
@@ -52,12 +52,13 @@ public class ContextMenuController {
 
     /**
      * Constructor for the ContextMenuController.
+     *
      * @param foregroundPane foregroundPane
      * @param backgroundPane backgroundPane
      * @param remotePool remotePool
      */
     public ContextMenuController(final ForegroundPane foregroundPane, final LocationPane backgroundPane,
-                                 final RemotePool remotePool) {
+            final RemotePool remotePool) {
         this.foregroundPane = foregroundPane;
         this.remotePool = remotePool;
         this.titledPaneMap = new HashMap<>();
@@ -76,7 +77,7 @@ public class ContextMenuController {
         backgroundPane.addSelectedLocationIdListener(new ChangeListener<String>() {
             @Override
             public void changed(final ObservableValue<? extends String> observable, final String oldValue,
-                                final String newValue) {
+                    final String newValue) {
                 if (remotePool.isMapsFilled()) {
                     try {
                         setContextMenuDevicePanes(newValue);
@@ -92,6 +93,7 @@ public class ContextMenuController {
 
     /**
      * Takes a locationId and creates new TitledPanes for all UnitTypes.
+     *
      * @param locationID locationID
      * @throws CouldNotPerformException CouldNotPerformException
      */
@@ -114,11 +116,15 @@ public class ContextMenuController {
     private void fillTitledPaneContainer(final TitledPaneContainer titledPaneContainer, final String locationID) {
         this.titledPaneMap.put(locationID, titledPaneContainer);
 
-        final Map<UnitType, List<AbstractIdentifiableRemote>> unitRemoteMap =
-                remotePool.getUnitRemoteMapOfLocation(locationID);
+        final Map<UnitType, List<AbstractIdentifiableRemote>> unitRemoteMap
+                = remotePool.getUnitRemoteMapOfLocation(locationID);
 
         for (final Map.Entry<UnitType, List<AbstractIdentifiableRemote>> nextEntry : unitRemoteMap.entrySet()) {
-            titledPaneContainer.createAndAddNewTitledPane(nextEntry.getKey(), nextEntry.getValue());
+            try {
+                titledPaneContainer.createAndAddNewTitledPane(nextEntry.getKey(), nextEntry.getValue());
+            } catch (Exception ex) {
+                ExceptionPrinter.printHistory(new CouldNotPerformException("Could not create titledPane!", ex), LOGGER);
+            }
         }
 
         titledPaneContainer.addDummyPane(); //TODO: Find a way to solve this problem properly...
@@ -138,16 +144,21 @@ public class ContextMenuController {
 
     /**
      * Initializes and saves all TitledPanes of all Locations.
+     *
      * @throws CouldNotPerformException CouldNotPerformException
      */
     public void initTitledPaneMap() throws CouldNotPerformException {
-        final LocationRegistryRemote locationRegistryRemote = this.remotePool.getLocationRegistryRemote();
+        try {
+            final LocationRegistryRemote locationRegistryRemote = this.remotePool.getLocationRegistryRemote();
 
-        for (final LocationConfig locationConfig : locationRegistryRemote.getLocationConfigs()) {
-            final String locationID = locationConfig.getId();
+            for (final LocationConfig locationConfig : locationRegistryRemote.getLocationConfigs()) {
+                final String locationID = locationConfig.getId();
 
-            final TitledPaneContainer titledPaneContainer = new TitledPaneContainer();
-            fillTitledPaneContainer(titledPaneContainer, locationID);
+                final TitledPaneContainer titledPaneContainer = new TitledPaneContainer();
+                fillTitledPaneContainer(titledPaneContainer, locationID);
+            }
+        } catch (Exception ex) {
+            ExceptionPrinter.printHistory(new CouldNotPerformException("Could not init initTitledPaneMap!", ex), LOGGER);
         }
     }
 }

@@ -96,7 +96,7 @@ public class BCozy extends Application {
     @Override
     public void start(final Stage primaryStage) {
 
-        this.primaryStage = primaryStage;
+        BCozy.primaryStage = primaryStage;
         final double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
         final double screenHeight = Screen.getPrimary().getVisualBounds().getHeight();
         primaryStage.setTitle("BCozy");
