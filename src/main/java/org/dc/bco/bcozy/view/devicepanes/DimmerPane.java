@@ -3,17 +3,17 @@
  *
  * This file is part of org.dc.bco.bcozy.
  *
- * org.dc.bco.bcozy is free software: you can redistribute it and modify
- * it under the terms of the GNU General Public License (Version 3)
- * as published by the Free Software Foundation.
+ * org.dc.bco.bcozy is free software: you can redistribute it and modify it
+ * under the terms of the GNU General Public License (Version 3) as published by
+ * the Free Software Foundation.
  *
- * org.dc.bco.bcozy is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * org.dc.bco.bcozy is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with org.dc.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * org.dc.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
 package org.dc.bco.bcozy.view.devicepanes;
@@ -49,6 +49,7 @@ import rst.homeautomation.unit.DimmerType;
  * Created by agatting on 12.01.16.
  */
 public class DimmerPane extends UnitPane {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(DimmerPane.class);
 
     private RecurrenceEventFilter recurrenceEventFilter;
@@ -66,7 +67,7 @@ public class DimmerPane extends UnitPane {
         @Override
         protected Object call() {
             try {
-                dimmerRemote.setDim(slider.getValue());
+                dimmerRemote.setBrightness(slider.getValue());
             } catch (CouldNotPerformException e) {
                 ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
             }
@@ -76,13 +77,14 @@ public class DimmerPane extends UnitPane {
 
     /**
      * Constructor for the DimmerPane.
+     *
      * @param dimmerRemote dimmerRemote.
      */
     public DimmerPane(final AbstractIdentifiableRemote dimmerRemote) {
         this.dimmerRemote = (DimmerRemote) dimmerRemote;
 
-        lightBulbIcon =
-                new SVGIcon(MaterialDesignIcon.LIGHTBULB, MaterialDesignIcon.LIGHTBULB_OUTLINE, Constants.SMALL_ICON);
+        lightBulbIcon
+                = new SVGIcon(MaterialDesignIcon.LIGHTBULB, MaterialDesignIcon.LIGHTBULB_OUTLINE, Constants.SMALL_ICON);
         unknownBackgroundIcon = new SVGIcon(MaterialDesignIcon.CHECKBOX_BLANK_CIRCLE, Constants.SMALL_ICON - 2, false);
         unknownForegroundIcon = new SVGIcon(MaterialDesignIcon.HELP_CIRCLE, Constants.SMALL_ICON, false);
         progressBar = new ProgressBar();
@@ -107,7 +109,7 @@ public class DimmerPane extends UnitPane {
 
         try {
             powerState = dimmerRemote.getPower().getValue();
-            brightness = dimmerRemote.getDim() / Constants.ONE_HUNDRED;
+            brightness = dimmerRemote.getBrightness() / Constants.ONE_HUNDRED;
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
@@ -209,7 +211,7 @@ public class DimmerPane extends UnitPane {
         slider.setMinWidth(sliderWidth);
         slider.setMaxWidth(sliderWidth);
 
-        this.recurrenceEventFilter =  new RecurrenceEventFilter(Constants.FILTER_TIME) {
+        this.recurrenceEventFilter = new RecurrenceEventFilter(Constants.FILTER_TIME) {
             @Override
             public void relay() {
                 slider.setOnMouseDragged(sendBrightness);
