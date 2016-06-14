@@ -16,3 +16,8 @@
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
+
+/**
+ * Created by hendrik on 12.11.15.
+ */
+package org.openbase.bco.bcozy.jp;

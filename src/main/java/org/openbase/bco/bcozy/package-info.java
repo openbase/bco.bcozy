@@ -16,3 +16,8 @@
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
+
+/**
+ * Created by hoestreich on 11/4/15.
+ */
+package org.openbase.bco.bcozy;

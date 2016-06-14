@@ -16,3 +16,31 @@
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
+package org.openbase.bco.bcozy.view;
+
+import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
+
+/**
+ * Created by hoestreich on 11/18/15.
+ */
+public class RoomContextInfo extends AnchorPane {
+
+    private final Label roomInfo;
+
+    /**
+     * Constructor for the RoomContextInfo UI Element.
+     */
+    public RoomContextInfo() {
+
+        roomInfo = new Label("No room selected.");
+
+        this.getChildren().add(roomInfo);
+
+        this.setLeftAnchor(roomInfo, Constants.INSETS);
+        this.setRightAnchor(roomInfo, Constants.INSETS);
+        this.setTopAnchor(roomInfo, Constants.INSETS);
+        this.setBottomAnchor(roomInfo, Constants.INSETS);
+    }
+
+}

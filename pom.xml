@@ -1,6 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.dc.bco</groupId>
+    <groupId>org.openbase.bco</groupId>
     <artifactId>bcozy</artifactId>
     <version>0.2.3-SNAPSHOT</version>
 
@@ -8,11 +8,11 @@
 
     <name>BCozy</name>
 
-    <url>https://github.com/divinecooperation/bco.bcozy/wiki</url>
+    <url>https://github.com/openbase/bco.bcozy/wiki</url>
 
     <organization>
-        <name>DivineCooperation</name>
-        <url>https://github.com/divinecooperation</url>
+        <name>openbase.org</name>
+        <url>https://github.com/openbase</url>
     </organization>
     <developers>
         <developer>
@@ -21,8 +21,8 @@
 
             <email>agatting@techfak.uni-bielefeld.de</email>
             <url>https://github.com/agatting</url>
-            <organization>DivineCooperation</organization>
-            <organizationUrl>https://github.com/divinecooperation</organizationUrl>
+            <organization>openbase.org</organization>
+            <organizationUrl>https://github.com/openbase</organizationUrl>
             <roles>
                 <role>architect</role>
                 <role>developer</role>
@@ -35,8 +35,8 @@
 
             <email>hoestreich@techfak.uni-bielefeld.de</email>
             <url>https://github.com/hoestreich</url>
-            <organization>DivineCooperation</organization>
-            <organizationUrl>https://github.com/divinecooperation</organizationUrl>
+            <organization>openbase.org</organization>
+            <organizationUrl>https://github.com/openbase</organizationUrl>
             <roles>
                 <role>architect</role>
                 <role>developer</role>
@@ -49,8 +49,8 @@
 
             <email>jdaberkow@techfak.uni-bielefeld.de</email>
             <url>https://github.com/jdaberkow</url>
-            <organization>DivineCooperation</organization>
-            <organizationUrl>https://github.com/divinecooperation</organizationUrl>
+            <organization>openbase.org</organization>
+            <organizationUrl>https://github.com/openbase</organizationUrl>
             <roles>
                 <role>architect</role>
                 <role>developer</role>
@@ -63,8 +63,8 @@
 
             <email>tmichalski@techfak.uni-bielefeld.de</email>
             <url>https://github.com/tmichalskibi</url>
-            <organization>DivineCooperation</organization>
-            <organizationUrl>https://github.com/divinecooperation</organizationUrl>
+            <organization>openbase.org</organization>
+            <organizationUrl>https://github.com/openbase</organizationUrl>
             <roles>
                 <role>architect</role>
                 <role>developer</role>
@@ -77,8 +77,8 @@
 
             <email>divinethreepwood@gmail.com</email>
             <url>https://github.com/DivineThreepwood</url>
-            <organization>DivineCooperation</organization>
-            <organizationUrl>https://github.com/divinecooperation</organizationUrl>
+            <organization>openbase.org</organization>
+            <organizationUrl>https://github.com/openbase</organizationUrl>
             <roles>
                 <role>architect</role>
                 <role>developer</role>
@@ -88,9 +88,9 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git@github.com/divinecooperation/bco.bcozy.git</connection>
-        <developerConnection>scm:git:git@github.com/divinecooperation/bco.bcozy.git</developerConnection>
-        <url>git@github.com/divinecooperation/bco.bcozy.git</url>
+        <connection>scm:git:git@github.com/openbase/bco.bcozy.git</connection>
+        <developerConnection>scm:git:git@github.com/openbase/bco.bcozy.git</developerConnection>
+        <url>git@github.com/openbase/bco.bcozy.git</url>
     </scm>
 
     <properties>
@@ -123,42 +123,42 @@
             <version>8.8</version>
         </dependency>
         <dependency>
-            <groupId>org.dc</groupId>
+            <groupId>org.openbase</groupId>
             <artifactId>jul.extension.rct</artifactId>
             <version>${dependency.jul.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.dc</groupId>
+            <groupId>org.openbase</groupId>
             <artifactId>jul.schedule</artifactId>
             <version>${dependency.jul.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.dc.bco</groupId>
+            <groupId>org.openbase.bco</groupId>
             <artifactId>dal.remote</artifactId>
             <version>${dependency.bco.dal.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.dc.bco</groupId>
+            <groupId>org.openbase.bco</groupId>
             <artifactId>manager.location.remote</artifactId>
             <version>${dependency.bco.manager.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.dc.bco</groupId>
+            <groupId>org.openbase.bco</groupId>
             <artifactId>manager.user.remote</artifactId>
             <version>${dependency.bco.manager.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.dc.bco</groupId>
+            <groupId>org.openbase.bco</groupId>
             <artifactId>manager.scene.remote</artifactId>
             <version>${dependency.bco.manager.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.dc.bco</groupId>
+            <groupId>org.openbase.bco</groupId>
             <artifactId>manager.app.remote</artifactId>
             <version>${dependency.bco.manager.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.dc.bco</groupId>
+            <groupId>org.openbase.bco</groupId>
             <artifactId>manager.agent.remote</artifactId>
             <version>${dependency.bco.manager.version}</version>
         </dependency>
@@ -205,7 +205,7 @@
                     <repositoryName>share/repository</repositoryName>
                     <programs>
                         <program>
-                            <mainClass>org.dc.bco.bcozy.BCozy</mainClass>
+                            <mainClass>org.openbase.bco.bcozy.BCozy</mainClass>
                             <id>bcozy</id>
                             <platforms>
                                 <platform>unix</platform>

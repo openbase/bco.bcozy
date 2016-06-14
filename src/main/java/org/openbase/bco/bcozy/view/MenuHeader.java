@@ -16,3 +16,34 @@
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
+package org.openbase.bco.bcozy.view;
+
+import javafx.geometry.Pos;
+import javafx.scene.layout.HBox;
+
+/**
+ * Created by hoestreich on 11/10/15.
+ */
+public class MenuHeader extends HBox {
+
+    private final ClockLabel clock;
+
+    /**
+     * Constructor for the MenuHeader.
+     * @param height Height
+     * @param width Width
+     */
+    public MenuHeader(final double height, final double width) {
+
+        this.clock = new ClockLabel();
+        this.setPickOnBounds(false);
+
+        this.getChildren().add(this.clock);
+        this.setAlignment(Pos.CENTER);
+
+        this.setPrefHeight(height);
+        this.setPrefWidth(width);
+
+    }
+
+}

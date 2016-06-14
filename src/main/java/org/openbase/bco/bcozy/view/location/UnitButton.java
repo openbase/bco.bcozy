@@ -16,3 +16,26 @@
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
+
+package org.openbase.bco.bcozy.view.location;
+
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.Button;
+import org.openbase.bco.bcozy.view.SVGIcon;
+
+/**
+ *
+ */
+public class UnitButton extends Button {
+
+    /**
+     * Creates a button with an empty string for its label.
+     * @param svgIcon The Icon displayed in the button
+     * @param onActionHandler The ActionHandler that gets active when the button is clicked
+     */
+    public UnitButton(final SVGIcon svgIcon, final EventHandler<ActionEvent> onActionHandler) {
+        this.setGraphic(svgIcon);
+        this.setOnAction(onActionHandler);
+    }
+}

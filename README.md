@@ -39,7 +39,7 @@ Using the Maven exec plugin one can execute and debug the project directly withi
 Therefor create a Run/Debug Configuration from type Maven. Set the command line entry as follows:
 
 ```
-exec:java -Dexec.mainClass=org.dc.bco.bcozy.BCozy
+exec:java -Dexec.mainClass=org.openbase.bco.bcozy.BCozy
 ```
 
 Additionally add the following "Run Maven" goal in the "Before launch:"-section:
