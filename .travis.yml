@@ -36,8 +36,3 @@ deploy:
         repo: openbase/bco.bcozy
         tags: true
         jdk: oraclejdk8
-
-
-script:
-  - sudo apt-get update && sudo apt-get install oracle-java8-installer
-  - java -version
