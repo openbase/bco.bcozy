@@ -31,8 +31,6 @@ import org.openbase.bco.bcozy.view.mainmenupanes.SettingsPane;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 
 /**
  * Created by hoestreich on 11/24/15.
@@ -65,22 +63,8 @@ public class MainMenuController {
         settingsPane.getStatusIcon().setOnMouseClicked(event -> showHideMainMenu(foregroundPane));
         availableUsersPane.getStatusIcon().setOnMouseClicked(event -> showHideMainMenu(foregroundPane));
         connectionPane.getStatusIcon().setOnMouseClicked(event -> showHideMainMenu(foregroundPane));
-//        settingsPane.getThemeChoice().setOnAction(event -> chooseTheme());
-        settingsPane.getThemeChoice().setOnAction(new EventHandler<ActionEvent>() {
-
-            @Override
-            public void handle(ActionEvent event) {
-                chooseTheme();
-            }
-        });
-//        settingsPane.getLanguageChoice().setOnAction(event -> chooseLanguage());
-        settingsPane.getLanguageChoice().setOnAction(new EventHandler<ActionEvent>() {
-
-            @Override
-            public void handle(ActionEvent event) {
-                chooseLanguage();
-            }
-        });
+        settingsPane.getThemeChoice().setOnAction(event -> chooseTheme());
+        settingsPane.getLanguageChoice().setOnAction(event -> chooseLanguage());
         //Necessary to ensure that the first change is not missed by the ChangeListener
         settingsPane.getThemeChoice().getSelectionModel().select(0);
         settingsPane.getLanguageChoice().getSelectionModel().select(0);
