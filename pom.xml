@@ -1,24 +1,25 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    
     <groupId>org.openbase.bco</groupId>
     <artifactId>bcozy</artifactId>
     <version>0.2.3-SNAPSHOT</version>
 
-    <packaging>jar</packaging>
-
     <name>BCozy</name>
-
+    <inceptionYear>2015</inceptionYear>
+    <description>This is a user centered and location based smarthome visual control interface.</description>
+    
     <url>https://github.com/openbase/bco.bcozy/wiki</url>
 
     <organization>
         <name>openbase.org</name>
         <url>https://github.com/openbase</url>
     </organization>
+    
     <developers>
         <developer>
             <id>agatting</id>
             <name>Andreas Gatting</name>
-
             <email>agatting@techfak.uni-bielefeld.de</email>
             <url>https://github.com/agatting</url>
             <organization>openbase.org</organization>
@@ -32,7 +33,6 @@
         <developer>
             <id>hoestreich</id>
             <name>Hendrik Oestreich</name>
-
             <email>hoestreich@techfak.uni-bielefeld.de</email>
             <url>https://github.com/hoestreich</url>
             <organization>openbase.org</organization>
@@ -46,7 +46,6 @@
         <developer>
             <id>jdaberkow</id>
             <name>Julian Daberkow</name>
-
             <email>jdaberkow@techfak.uni-bielefeld.de</email>
             <url>https://github.com/jdaberkow</url>
             <organization>openbase.org</organization>
@@ -60,7 +59,6 @@
         <developer>
             <id>tmichalskibi</id>
             <name>Timo Michalski</name>
-
             <email>tmichalski@techfak.uni-bielefeld.de</email>
             <url>https://github.com/tmichalskibi</url>
             <organization>openbase.org</organization>
@@ -74,7 +72,6 @@
         <developer>
             <id>DivineThreepwood</id>
             <name>Marian Pohling</name>
-
             <email>divinethreepwood@gmail.com</email>
             <url>https://github.com/DivineThreepwood</url>
             <organization>openbase.org</organization>
@@ -87,16 +84,193 @@
         </developer>
     </developers>
 
+    <licenses>
+        <license>
+            <name>GPLv3</name>
+            <url>http://www.gnu.org/licenses/gpl.html</url>
+        </license>
+    </licenses>
+
+    <packaging>jar</packaging>
+
     <scm>
         <connection>scm:git:git@github.com/openbase/bco.bcozy.git</connection>
         <developerConnection>scm:git:git@github.com/openbase/bco.bcozy.git</developerConnection>
         <url>git@github.com/openbase/bco.bcozy.git</url>
     </scm>
+    
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.5.1</version>
+                <configuration>
+                    <source>${source.java.version}</source>
+                    <target>${target.java.version}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.5.0</version>
+                <configuration>
+                    <executable>java</executable>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>appassembler-maven-plugin</artifactId>
+                <version>1.10</version>
+                <executions>
+                    <execution>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>assemble</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <programs>
+                        <program>
+                            <mainClass>org.openbase.bco.bcozy.BCozy</mainClass>
+                            <id>bcozy</id>
+                            <platforms>
+                                <platform>unix</platform>
+                            </platforms>
+                        </program>
+                    </programs>
+                    <copyConfigurationDirectory>true</copyConfigurationDirectory>
+                </configuration>
+            </plugin>
+            <!-- Generate checkstyle warnings on the command line during compilation -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>${plugin.checkstyle.version}</version>
+                <configuration>
+                    <configLocation>${project.basedir}/codecheck/checkstyle.xml</configLocation>
+                    <propertyExpansion>config_loc=${project.basedir}/codecheck</propertyExpansion>
+                    <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                    <consoleOutput>true</consoleOutput>
+                    <violationSeverity>warning</violationSeverity>
+                    <failOnViolation>${failOnStyleError}</failOnViolation>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>checkstyle-validate</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Generate PMD warnings on the command line during compilation -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>${plugin.pmd.version}</version>
+                <configuration>
+                    <targetJdk>${target.java.version}</targetJdk>
+                    <rulesets>
+                        <ruleset>${project.basedir}/codecheck/pmd-rules.xml</ruleset>
+                    </rulesets>
+                    <failOnViolation>${failOnStyleError}</failOnViolation>
+                    <verbose>true</verbose>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>pmd-check</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>check</goal>
+                            <goal>cpd-check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.18.1</version>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>deploy</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>3.0.0</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>2.10.4</version>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.6</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>sonatype</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>1.6.7</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>ossrh</serverId>
+                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
     <properties>
-        <test.configs>${project.basedir}/target/generated-test-config</test.configs>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <test.configs>${project.basedir}/target/generated-test-config</test.configs>
         <target.java.version>1.8</target.java.version>
+        <source.java.version>1.8</source.java.version>
         <plugin.checkstyle.version>2.15</plugin.checkstyle.version>
         <plugin.pmd.version>3.5</plugin.pmd.version>
         <plugin.javadoc.version>2.10.3</plugin.javadoc.version>
@@ -170,124 +344,7 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.3</version>
-                <configuration>
-                    <source>${target.java.version}</source>
-                    <target>${target.java.version}</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <configuration>
-                    <executable>java</executable>
-                </configuration>
-                <version>1.4.0</version>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>appassembler-maven-plugin</artifactId>
-                <version>1.8.1</version>
-                <executions>
-                    <execution>
-                        <phase>install</phase>
-                        <goals>
-                            <goal>assemble</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <repositoryName>share/repository</repositoryName>
-                    <programs>
-                        <program>
-                            <mainClass>org.openbase.bco.bcozy.BCozy</mainClass>
-                            <id>bcozy</id>
-                            <platforms>
-                                <platform>unix</platform>
-                            </platforms>
-                        </program>
-                    </programs>
-                    <copyConfigurationDirectory>true</copyConfigurationDirectory>
-                </configuration>
-            </plugin>
-
-
-            <!-- Generate checkstyle warnings on the command line during
-                compilation -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>${plugin.checkstyle.version}</version>
-                <configuration>
-                    <configLocation>${project.basedir}/codecheck/checkstyle.xml</configLocation>
-                    <propertyExpansion>config_loc=${project.basedir}/codecheck</propertyExpansion>
-                    <includeTestSourceDirectory>true</includeTestSourceDirectory>
-                    <consoleOutput>true</consoleOutput>
-                    <violationSeverity>warning</violationSeverity>
-                    <failOnViolation>${failOnStyleError}</failOnViolation>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>checkstyle-validate</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- Generate PMD warnings on the command line during compilation -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-pmd-plugin</artifactId>
-                <version>${plugin.pmd.version}</version>
-                <configuration>
-                    <targetJdk>${target.java.version}</targetJdk>
-                    <rulesets>
-                        <ruleset>${project.basedir}/codecheck/pmd-rules.xml</ruleset>
-                    </rulesets>
-                    <failOnViolation>${failOnStyleError}</failOnViolation>
-                    <verbose>true</verbose>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>pmd-check</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>check</goal>
-                            <goal>cpd-check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.18.1</version>
-            </plugin>
-
-            <!-- Copied from reporting section because the documented inheritance
-                of options from the reporting section does not work. Cf. https://maven.apache.org/guides/mini/guide-configuring-plugins.html#Using_the_reporting_Tag_VS_build_Tag -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>${plugin.javadoc.version}</version>
-                <configuration>
-                    <show>protected</show>
-                    <quiet>true</quiet>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
-     <reporting>
+    <reporting>
         <plugins>
             <!-- Generate cross-referenced HTML for the sources. -->
             <plugin>
@@ -332,11 +389,10 @@
                     <includeTestSourceDirectory>true</includeTestSourceDirectory>
                 </configuration>
             </plugin>
-
         </plugins>
     </reporting>
 
-    <repositories>
+<!--    <repositories>
         <repository>
             <id>citec-releases</id>
             <name>CITEC Maven Repository Server</name>
@@ -371,6 +427,17 @@
                 <enabled>true</enabled>
             </snapshots>
         </repository>
-    </repositories>
+    </repositories>-->
+    
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
 
 </project>
