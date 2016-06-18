@@ -1,7 +1,6 @@
 language: java
 
 sudo: required
-
 dist: trusty
 
 addons:
@@ -9,12 +8,22 @@ addons:
     packages: 
         - oracle-java8-installer
 
+
+
 script:
    - sudo apt-get update && sudo apt-get install oracle-java8-installer
    - java -version
 
 jdk:
   - oraclejdk8
+
+install: true
+
+script:
+   - echo start installation
+   - sudo apt-get update && sudo apt-get install oracle-java8-installer
+   - java -version
+   - echo java home: $JAVA_HOME
 
 #cache:
 #  directories:
