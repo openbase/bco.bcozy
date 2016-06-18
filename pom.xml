@@ -392,43 +392,6 @@
         </plugins>
     </reporting>
 
-<!--    <repositories>
-        <repository>
-            <id>citec-releases</id>
-            <name>CITEC Maven Repository Server</name>
-            <url>https://mvn.cit-ec.de/nexus/content/repositories/releases/</url>
-            <layout>default</layout>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </repository>
-        <repository>
-            <id>citec-snapshots</id>
-            <name>CITEC Maven Repository Server</name>
-            <url>https://mvn.cit-ec.de/nexus/content/repositories/snapshots/</url>
-            <layout>default</layout>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>bone-releases</id>
-            <url>http://bone.no-ip.biz:53538/nexus/content/repositories/releases/</url>
-            <layout>default</layout>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </repository>
-        <repository>
-            <id>bone-snapshots</id>
-            <url>http://bone.no-ip.biz:53538/nexus/content/repositories/snapshots/</url>
-            <layout>default</layout>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>-->
-    
     <distributionManagement>
         <snapshotRepository>
             <id>ossrh</id>
