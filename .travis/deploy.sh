@@ -1,1 +1,1 @@
-mvn clean deploy -Pdeploy,sonatype --settings .travis/settings.xml -DskipTests=true -B -U
+mvn deploy -Pdeploy,sonatype --settings .travis/settings.xml -DskipTests=true -B

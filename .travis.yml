@@ -8,7 +8,11 @@ addons:
     packages: 
         - oracle-java8-installer
 
-
+before_install:
+    - echo version before upgrade: `java -version`
+    - sudo apt-get update -q
+    - sudo apt-get install oracle-java8-installer
+    - echo version after upgrade: `java -version`
 
 script:
    - sudo apt-get update && sudo apt-get install oracle-java8-installer
@@ -17,20 +21,12 @@ script:
 jdk:
   - oraclejdk8
 
-install: true
-
-script:
-   - echo start installation
-   - sudo apt-get update && sudo apt-get install oracle-java8-installer
-   - java -version
-   - echo java home: $JAVA_HOME
-
 #cache:
 #  directories:
 #  - $HOME/.m2
   
 install:
-    - mvn --settings .travis/settings.xml clean install -Psonatype -DskipTests=true -Dmaven.javadoc.skip=true -B -V -q
+    - mvn --settings .travis/settings.xml clean install -Psonatype -DskipTests=true -Dmaven.javadoc.skip=true -B -V -U -q
 
 before_install:
   - echo $GPG_SECRET_KEYS | base64 --decode | $GPG_EXECUTABLE --import
