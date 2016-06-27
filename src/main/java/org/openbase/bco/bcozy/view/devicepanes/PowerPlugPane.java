@@ -72,7 +72,7 @@ public class PowerPlugPane extends UnitPane {
         initEffectAndSwitch();
         tooltip.textProperty().bind(observerText.textProperty());
 
-        this.powerPlugRemote.addObserver(this);
+        this.powerPlugRemote.addDataObserver(this);
     }
 
     private void initEffectAndSwitch() {

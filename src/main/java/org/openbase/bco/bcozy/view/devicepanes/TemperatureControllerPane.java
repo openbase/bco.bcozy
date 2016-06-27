@@ -102,7 +102,7 @@ public class TemperatureControllerPane extends UnitPane {
         initEffectSlider();
         tooltip.textProperty().bind(observerText.textProperty());
 
-        this.temperatureControllerRemote.addObserver(this);
+        this.temperatureControllerRemote.addDataObserver(this);
     }
 
     private void initEffectSlider() {

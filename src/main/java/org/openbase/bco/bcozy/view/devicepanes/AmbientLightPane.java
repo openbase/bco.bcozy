@@ -112,7 +112,7 @@ public class AmbientLightPane extends UnitPane {
         initEffectAndSwitch();
         tooltip.textProperty().bind(observerText.textProperty());
 
-        this.ambientLightRemote.addObserver(this);
+        this.ambientLightRemote.addDataObserver(this);
     }
 
     private void initEffectAndSwitch() {

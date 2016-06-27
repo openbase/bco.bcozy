@@ -69,7 +69,7 @@ public class ScenePane extends UnitPane {
         initEffect();
         tooltip.textProperty().bind(observerText.textProperty());
 
-        this.sceneRemote.addObserver(this);
+        this.sceneRemote.addDataObserver(this);
     }
 
     private void initEffect() {

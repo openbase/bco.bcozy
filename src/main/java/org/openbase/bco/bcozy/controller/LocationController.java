@@ -82,7 +82,7 @@ public class LocationController implements Observer<LocationRegistryType.Locatio
         if (remotePool.isInit()) {
             try {
                 locationRegistryRemote = remotePool.getLocationRegistryRemote();
-                locationRegistryRemote.addObserver(this);
+                locationRegistryRemote.addDataObserver(this);
                 updateAndZoomFit();
             } catch (Exception e) { //NOPMD
                 ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);

@@ -69,7 +69,7 @@ public class AgentPane extends UnitPane {
         initEffect();
         tooltip.textProperty().bind(observerText.textProperty());
 
-        this.agentRemote.addObserver(this);
+        this.agentRemote.addDataObserver(this);
     }
 
     private void initEffect() {

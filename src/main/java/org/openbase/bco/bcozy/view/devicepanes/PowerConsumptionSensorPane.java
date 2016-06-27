@@ -76,7 +76,7 @@ public class PowerConsumptionSensorPane extends UnitPane {
         initEffect();
         tooltip.textProperty().bind(observerText.textProperty());
 
-        this.powerConsumptionSensorRemote.addObserver(this);
+        this.powerConsumptionSensorRemote.addDataObserver(this);
     }
 
     private void initEffect() {

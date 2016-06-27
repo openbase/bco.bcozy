@@ -70,7 +70,7 @@ public class LightPane extends UnitPane {
         initEffectAndSwitch();
         tooltip.textProperty().bind(observerText.textProperty());
 
-        this.lightRemote.addObserver(this);
+        this.lightRemote.addDataObserver(this);
     }
 
     private void initEffectAndSwitch() {

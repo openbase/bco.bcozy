@@ -145,7 +145,7 @@ public class RollerShutterPane extends UnitPane {
         initEffect();
         tooltip.textProperty().bind(observerText.textProperty());
 
-        this.rollershutterRemote.addObserver(this);
+        this.rollershutterRemote.addDataObserver(this);
     }
 
     private void initEffect() {

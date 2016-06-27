@@ -68,7 +68,7 @@ public class ReedSwitchPane extends UnitPane {
         initEffectAndText();
         tooltip.textProperty().bind(observerText.textProperty());
 
-        this.reedSwitchRemote.addObserver(this);
+        this.reedSwitchRemote.addDataObserver(this);
     }
 
     private void initEffectAndText() {

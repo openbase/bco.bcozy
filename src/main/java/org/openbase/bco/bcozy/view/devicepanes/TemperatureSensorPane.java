@@ -83,7 +83,7 @@ public class TemperatureSensorPane extends UnitPane {
         createWidgetPane(headContent, false);
         tooltip.textProperty().bind(observerText.textProperty());
 
-        this.temperatureSensorRemote.addObserver(this);
+        this.temperatureSensorRemote.addDataObserver(this);
     }
 
     private void initEffect() {

@@ -83,7 +83,7 @@ public class SmokeDetectorPane extends UnitPane {
         initEffect();
         tooltip.textProperty().bind(observerText.textProperty());
 
-        this.smokeDetectorRemote.addObserver(this);
+        this.smokeDetectorRemote.addDataObserver(this);
     }
 
     private void initEffect() {

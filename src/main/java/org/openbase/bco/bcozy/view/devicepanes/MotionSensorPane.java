@@ -71,7 +71,7 @@ public class MotionSensorPane extends UnitPane {
         initEffect();
         tooltip.textProperty().bind(observerText.textProperty());
 
-        this.motionSensorRemote.addObserver(this);
+        this.motionSensorRemote.addDataObserver(this);
     }
 
     private void initEffect() {

@@ -100,7 +100,7 @@ public class DimmerPane extends UnitPane {
         initEffectAndSwitch();
         tooltip.textProperty().bind(observerText.textProperty());
 
-        this.dimmerRemote.addObserver(this);
+        this.dimmerRemote.addDataObserver(this);
     }
 
     private void initEffectAndSwitch() {

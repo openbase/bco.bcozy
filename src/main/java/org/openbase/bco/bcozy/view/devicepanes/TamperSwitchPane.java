@@ -69,7 +69,7 @@ public class TamperSwitchPane extends UnitPane {
         initEffect();
         tooltip.textProperty().bind(observerText.textProperty());
 
-        this.tamperSwitchRemote.addObserver(this);
+        this.tamperSwitchRemote.addDataObserver(this);
     }
 
     private void initEffect() {
