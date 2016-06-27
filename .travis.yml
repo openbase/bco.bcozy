@@ -20,7 +20,9 @@ script:
    - java -version
 
 notifications:
-      slack: openbase-org:$SLACK_ACCESS_TOCKEN
+    slack: openbase-org:$SLACK_ACCESS_TOCKEN
+    on_failure: change
+    on_success: change	
 
 #jdk:
 #  - oraclejdk8
