@@ -25,9 +25,6 @@ notifications:
 #jdk:
 #  - oraclejdk8
 
-#cache:
-#  directories:
-#  - $HOME/.m2
   
 install:
     - mvn --settings .travis/settings.xml clean install -Psonatype -DskipTests=true -Dmaven.javadoc.skip=true -B -V -U -q
