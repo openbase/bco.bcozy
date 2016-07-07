@@ -5,15 +5,15 @@
     <artifactId>bcozy</artifactId>
     <version>0.2.3-SNAPSHOT</version>
 
-    <name>BCozy</name>
+    <name>BCO BCozy</name>
     <inceptionYear>2015</inceptionYear>
     <description>This is a user centered and location based smarthome visual control interface.</description>
     
-    <url>https://github.com/openbase/bco.bcozy/wiki</url>
+    <url>http://bcozy.org</url>
 
     <organization>
         <name>openbase.org</name>
-        <url>https://github.com/openbase</url>
+        <url>http://openbase.org</url>
     </organization>
     
     <developers>
