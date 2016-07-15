@@ -27,23 +27,23 @@ import javafx.scene.paint.Color;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.SVGIcon;
 import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
-import org.openbase.bco.dal.remote.unit.ReedSwitchRemote;
+import org.openbase.bco.dal.remote.unit.ReedContactRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
 import org.openbase.jul.pattern.Observable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.homeautomation.state.ReedSwitchStateType.ReedSwitchState.State;
-import rst.homeautomation.unit.ReedSwitchType;
+import rst.homeautomation.state.ContactStateType.ContactState.State;
+import rst.homeautomation.unit.ReedContactDataType.ReedContactData;
 
 /**
  * Created by agatting on 27.01.16.
  */
-public class ReedSwitchPane extends UnitPane {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ReedSwitchPane.class);
+public class ReedContactPane extends UnitPane {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReedContactPane.class);
 
-    private final ReedSwitchRemote reedSwitchRemote;
+    private final ReedContactRemote reedContactRemote;
     private final SVGIcon unknownForegroundIcon;
     private final SVGIcon unknownBackgroundIcon;
     private final SVGIcon reedSwitchIcon;
@@ -53,8 +53,8 @@ public class ReedSwitchPane extends UnitPane {
      * Constructor for the ReedSwitchPane.
      * @param reedSwitchRemote reedSwitchRemote
      */
-    public ReedSwitchPane(final AbstractIdentifiableRemote reedSwitchRemote) {
-        this.reedSwitchRemote = (ReedSwitchRemote) reedSwitchRemote;
+    public ReedContactPane(final AbstractIdentifiableRemote reedSwitchRemote) {
+        this.reedContactRemote = (ReedContactRemote) reedSwitchRemote;
 
         reedSwitchIcon = new SVGIcon(MaterialIcon.RADIO_BUTTON_CHECKED, Constants.SMALL_ICON, true);
         unknownBackgroundIcon = new SVGIcon(MaterialDesignIcon.CHECKBOX_BLANK_CIRCLE, Constants.SMALL_ICON - 2, false);
@@ -68,14 +68,14 @@ public class ReedSwitchPane extends UnitPane {
         initEffectAndText();
         tooltip.textProperty().bind(observerText.textProperty());
 
-        this.reedSwitchRemote.addDataObserver(this);
+        this.reedContactRemote.addDataObserver(this);
     }
 
     private void initEffectAndText() {
         State reedSwitchState = State.UNKNOWN;
 
         try {
-            reedSwitchState = reedSwitchRemote.getReedSwitch().getValue();
+            reedSwitchState = reedContactRemote.getContactState().getValue();
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
@@ -119,7 +119,7 @@ public class ReedSwitchPane extends UnitPane {
     protected void initUnitLabel() {
         String unitLabel = Constants.UNKNOWN_ID;
         try {
-            unitLabel = this.reedSwitchRemote.getData().getLabel();
+            unitLabel = this.reedContactRemote.getData().getLabel();
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
@@ -128,18 +128,18 @@ public class ReedSwitchPane extends UnitPane {
 
     @Override
     public AbstractIdentifiableRemote getDALRemoteService() {
-        return reedSwitchRemote;
+        return reedContactRemote;
     }
 
     @Override
     void removeObserver() {
-        this.reedSwitchRemote.removeObserver(this);
+        this.reedContactRemote.removeObserver(this);
     }
 
     @Override
     public void update(final Observable observable, final Object reedSwitch) throws java.lang.Exception {
         Platform.runLater(() -> {
-            final State reedSwitchState = ((ReedSwitchType.ReedSwitch) reedSwitch).getReedSwitchState().getValue();
+            final State reedSwitchState = ((ReedContactData) reedSwitch).getContactState().getValue();
 
             setReedSwitchIconAndTooltip(reedSwitchState);
         });

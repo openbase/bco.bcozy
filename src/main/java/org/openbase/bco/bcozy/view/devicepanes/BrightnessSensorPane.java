@@ -34,7 +34,7 @@ import org.openbase.jul.exception.printer.LogLevel;
 import org.openbase.jul.pattern.Observable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.homeautomation.unit.BrightnessSensorType.BrightnessSensor;
+import rst.homeautomation.unit.BrightnessSensorDataType.BrightnessSensorData;
 
 /**
  * Created by tmichalski on 15.01.16.
@@ -73,7 +73,7 @@ public class BrightnessSensorPane extends UnitPane {
         double brightnessLevel = 0;
 
         try {
-            brightnessLevel = brightnessSensorRemote.getBrightness();
+            brightnessLevel = brightnessSensorRemote.getBrightnessState().getBrightness();
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
@@ -136,7 +136,7 @@ public class BrightnessSensorPane extends UnitPane {
     @Override
     public void update(final Observable observable, final Object brightnessSensor) throws java.lang.Exception {
         Platform.runLater(() -> {
-            final double brightnessLevel = ((BrightnessSensor) brightnessSensor).getBrightness();
+            final double brightnessLevel = ((BrightnessSensorData) brightnessSensor).getBrightnessState().getBrightness();
             setBrightnessLevelTextAndIcon(brightnessLevel);
         });
     }

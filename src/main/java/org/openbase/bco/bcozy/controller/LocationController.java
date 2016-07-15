@@ -35,7 +35,7 @@ import rct.Transform;
 import rst.math.Vec3DDoubleType;
 import rst.spatial.ConnectionConfigType;
 import rst.spatial.LocationConfigType;
-import rst.spatial.LocationRegistryType;
+import rst.spatial.LocationRegistryDataType.LocationRegistryData;
 
 import javax.vecmath.Point3d;
 import java.util.LinkedList;
@@ -48,7 +48,7 @@ import java.util.concurrent.TimeoutException;
 /**
  *
  */
-public class LocationController implements Observer<LocationRegistryType.LocationRegistry> {
+public class LocationController implements Observer<LocationRegistryData> {
 
     /**
      * Application logger.
@@ -224,8 +224,8 @@ public class LocationController implements Observer<LocationRegistryType.Locatio
     }
 
     @Override
-    public void update(final Observable<LocationRegistryType.LocationRegistry> observable,
-                       final LocationRegistryType.LocationRegistry locationRegistry) throws Exception { //NOPMD
+    public void update(final Observable<LocationRegistryData> observable,
+                       final LocationRegistryData locationRegistry) throws Exception { //NOPMD
         Platform.runLater(() -> {
             try {
                 fetchLocations();

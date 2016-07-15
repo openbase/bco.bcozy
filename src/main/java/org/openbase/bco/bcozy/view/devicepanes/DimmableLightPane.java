@@ -33,7 +33,7 @@ import javafx.scene.paint.Color;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.SVGIcon;
 import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
-import org.openbase.bco.dal.remote.unit.DimmerRemote;
+import org.openbase.bco.dal.remote.unit.DimmableLightRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
@@ -41,21 +41,22 @@ import org.openbase.jul.pattern.Observable;
 import org.openbase.jul.schedule.RecurrenceEventFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.homeautomation.state.PowerStateType;
+import rst.homeautomation.state.BrightnessStateType.BrightnessState;
+import rst.homeautomation.state.PowerStateType.PowerState;
 import rst.homeautomation.state.PowerStateType.PowerState.State;
-import rst.homeautomation.unit.DimmerType;
+import rst.homeautomation.unit.DimmableLightDataType.DimmableLightData;
 
 /**
  * Created by agatting on 12.01.16.
  */
-public class DimmerPane extends UnitPane {
+public class DimmableLightPane extends UnitPane {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DimmerPane.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DimmableLightPane.class);
 
     private RecurrenceEventFilter recurrenceEventFilter;
     private final SVGIcon unknownForegroundIcon;
     private final SVGIcon unknownBackgroundIcon;
-    private final DimmerRemote dimmerRemote;
+    private final DimmableLightRemote dimmableLightRemote;
     private final ProgressBar progressBar;
     private final BorderPane headContent;
     private final SVGIcon lightBulbIcon;
@@ -67,7 +68,7 @@ public class DimmerPane extends UnitPane {
         @Override
         protected Object call() {
             try {
-                dimmerRemote.setBrightness(slider.getValue());
+                dimmableLightRemote.setBrightnessState(BrightnessState.newBuilder().setBrightness(slider.getValue()).build());
             } catch (CouldNotPerformException e) {
                 ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
             }
@@ -80,8 +81,8 @@ public class DimmerPane extends UnitPane {
      *
      * @param dimmerRemote dimmerRemote.
      */
-    public DimmerPane(final AbstractIdentifiableRemote dimmerRemote) {
-        this.dimmerRemote = (DimmerRemote) dimmerRemote;
+    public DimmableLightPane(final AbstractIdentifiableRemote dimmerRemote) {
+        this.dimmableLightRemote = (DimmableLightRemote) dimmerRemote;
 
         lightBulbIcon
                 = new SVGIcon(MaterialDesignIcon.LIGHTBULB, MaterialDesignIcon.LIGHTBULB_OUTLINE, Constants.SMALL_ICON);
@@ -100,7 +101,7 @@ public class DimmerPane extends UnitPane {
         initEffectAndSwitch();
         tooltip.textProperty().bind(observerText.textProperty());
 
-        this.dimmerRemote.addDataObserver(this);
+        this.dimmableLightRemote.addDataObserver(this);
     }
 
     private void initEffectAndSwitch() {
@@ -108,8 +109,8 @@ public class DimmerPane extends UnitPane {
         double brightness = 0.0;
 
         try {
-            powerState = dimmerRemote.getPower().getValue();
-            brightness = dimmerRemote.getBrightness() / Constants.ONE_HUNDRED;
+            powerState = dimmableLightRemote.getPowerState().getValue();
+            brightness = dimmableLightRemote.getBrightnessState().getBrightness() / Constants.ONE_HUNDRED;
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
@@ -155,7 +156,7 @@ public class DimmerPane extends UnitPane {
 
     private void sendStateToRemote(final State state) {
         try {
-            dimmerRemote.setPower(state);
+            dimmableLightRemote.setPowerState(state);
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
             setWidgetPaneDisable(true);
@@ -170,9 +171,9 @@ public class DimmerPane extends UnitPane {
             @Override
             protected Object call() {
                 if (toggleSwitch.isSelected()) {
-                    sendStateToRemote(PowerStateType.PowerState.State.OFF);
+                    sendStateToRemote(PowerState.State.OFF);
                 } else {
-                    sendStateToRemote(PowerStateType.PowerState.State.ON);
+                    sendStateToRemote(PowerState.State.ON);
                 }
                 return null;
             }
@@ -182,9 +183,9 @@ public class DimmerPane extends UnitPane {
             @Override
             protected Object call() {
                 if (toggleSwitch.isSelected()) {
-                    sendStateToRemote(PowerStateType.PowerState.State.ON);
+                    sendStateToRemote(PowerState.State.ON);
                 } else {
-                    sendStateToRemote(PowerStateType.PowerState.State.OFF);
+                    sendStateToRemote(PowerState.State.OFF);
                 }
                 return null;
             }
@@ -235,7 +236,7 @@ public class DimmerPane extends UnitPane {
     protected void initUnitLabel() {
         String unitLabel = Constants.UNKNOWN_ID;
         try {
-            unitLabel = this.dimmerRemote.getData().getLabel();
+            unitLabel = this.dimmableLightRemote.getData().getLabel();
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
@@ -244,19 +245,19 @@ public class DimmerPane extends UnitPane {
 
     @Override
     public AbstractIdentifiableRemote getDALRemoteService() {
-        return dimmerRemote;
+        return dimmableLightRemote;
     }
 
     @Override
     void removeObserver() {
-        this.dimmerRemote.removeObserver(this);
+        this.dimmableLightRemote.removeObserver(this);
     }
 
     @Override
     public void update(final Observable observable, final Object dimmer) throws java.lang.Exception {
         Platform.runLater(() -> {
-            final State powerState = ((DimmerType.Dimmer) dimmer).getPowerState().getValue();
-            final double brightness = ((DimmerType.Dimmer) dimmer).getValue() / Constants.ONE_HUNDRED;
+            final State powerState = ((DimmableLightData) dimmer).getPowerState().getValue();
+            final double brightness = ((DimmableLightData) dimmer).getBrightnessState().getBrightness()/ Constants.ONE_HUNDRED;
             setEffectColorAndSlider(powerState, brightness);
         });
     }

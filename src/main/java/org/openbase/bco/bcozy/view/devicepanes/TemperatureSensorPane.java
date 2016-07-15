@@ -38,7 +38,7 @@ import org.openbase.jul.pattern.Observable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.homeautomation.state.AlarmStateType.AlarmState.State;
-import rst.homeautomation.unit.TemperatureSensorType.TemperatureSensor;
+import rst.homeautomation.unit.TemperatureSensorDataType.TemperatureSensorData;
 
 /**
  * Created by tmichalski on 17.01.16.
@@ -90,7 +90,7 @@ public class TemperatureSensorPane extends UnitPane {
         double temperature = Double.NEGATIVE_INFINITY;
         State alarmState = State.UNKNOWN;
         try {
-            temperature = temperatureSensorRemote.getTemperature();
+            temperature = temperatureSensorRemote.getTemperatureState().getTemperature();
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
@@ -190,11 +190,11 @@ public class TemperatureSensorPane extends UnitPane {
     @Override
     public void update(final Observable observable, final Object temperatureSensor) throws java.lang.Exception {
         Platform.runLater(() -> {
-            final double temperature = ((TemperatureSensor) temperatureSensor).getTemperature();
+            final double temperature = ((TemperatureSensorData) temperatureSensor).getTemperatureState().getTemperature();
             setEffectTemperature(temperature);
 
             final State alarmState =
-                    ((TemperatureSensor) temperatureSensor).getTemperatureAlarmState().getValue();
+                    ((TemperatureSensorData) temperatureSensor).getTemperatureAlarmState().getValue();
             setAlarmStateIcon(alarmState);
         });
     }

@@ -4,16 +4,16 @@
  * This file is part of org.openbase.bco.bcozy.
  *
  * org.openbase.bco.bcozy is free software: you can redistribute it and modify
- * it under the terms of the GNU General Public License (Version 3)
- * as published by the Free Software Foundation.
+ * it under the terms of the GNU General Public License (Version 3) as published
+ * by the Free Software Foundation.
  *
- * org.openbase.bco.bcozy is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * org.openbase.bco.bcozy is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
 package org.openbase.bco.bcozy.view.devicepanes;
@@ -33,7 +33,7 @@ import javafx.scene.text.Text;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.SVGIcon;
 import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
-import org.openbase.bco.dal.remote.unit.RollershutterRemote;
+import org.openbase.bco.dal.remote.unit.RollerShutterRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
@@ -41,18 +41,19 @@ import org.openbase.jul.pattern.Observable;
 import org.openbase.jul.schedule.RecurrenceEventFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.homeautomation.state.ShutterStateType;
-import rst.homeautomation.unit.RollershutterType;
-import rst.homeautomation.state.ShutterStateType.ShutterState.State;
+import rst.homeautomation.state.BlindStateType.BlindState;
+import rst.homeautomation.state.BlindStateType.BlindState.MovementState;
+import rst.homeautomation.unit.RollerShutterDataType.RollerShutterData;
 
 /**
  * Created by hoestreich on 11/19/15.
  */
 public class RollerShutterPane extends UnitPane {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(RollerShutterPane.class);
     private RecurrenceEventFilter recurrenceEventFilter;
 
-    private final RollershutterRemote rollershutterRemote;
+    private final RollerShutterRemote rollershutterRemote;
     private final BorderPane headContent;
     private final HBox bodyContent;
     private final SVGIcon rollerShutterIconBackground;
@@ -66,7 +67,7 @@ public class RollerShutterPane extends UnitPane {
         @Override
         protected Object call() {
             try {
-                rollershutterRemote.setShutter(ShutterStateType.ShutterState.State.UP);
+                rollershutterRemote.setBlindState(MovementState.UP);
             } catch (CouldNotPerformException e) {
                 ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
             }
@@ -78,7 +79,7 @@ public class RollerShutterPane extends UnitPane {
         @Override
         protected Object call() {
             try {
-                rollershutterRemote.setShutter(ShutterStateType.ShutterState.State.DOWN);
+                rollershutterRemote.setBlindState(MovementState.DOWN);
             } catch (CouldNotPerformException e) {
                 ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
             }
@@ -90,7 +91,7 @@ public class RollerShutterPane extends UnitPane {
         @Override
         protected Object call() {
             try {
-                rollershutterRemote.setShutter(ShutterStateType.ShutterState.State.STOP);
+                rollershutterRemote.setBlindState(MovementState.STOP);
             } catch (CouldNotPerformException e) {
                 ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
             }
@@ -102,7 +103,7 @@ public class RollerShutterPane extends UnitPane {
         @Override
         protected Object call() {
             try {
-                rollershutterRemote.setOpeningRatio(0.0);
+                rollershutterRemote.setBlindState(BlindState.newBuilder().setOpeningRatio(0.0).setMovementState(MovementState.STOP).build());
             } catch (CouldNotPerformException e) {
                 ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
             }
@@ -114,7 +115,7 @@ public class RollerShutterPane extends UnitPane {
         @Override
         protected Object call() {
             try {
-                rollershutterRemote.setOpeningRatio(1.0);
+                rollershutterRemote.setBlindState(BlindState.newBuilder().setOpeningRatio(1.0).setMovementState(MovementState.STOP).build());
             } catch (CouldNotPerformException e) {
                 ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
             }
@@ -124,10 +125,11 @@ public class RollerShutterPane extends UnitPane {
 
     /**
      * Constructor for a RollerShutterPane.
+     *
      * @param rollerShutterRemote AbstractIdentifiableRemote
      */
     public RollerShutterPane(final AbstractIdentifiableRemote rollerShutterRemote) {
-        this.rollershutterRemote = (RollershutterRemote) rollerShutterRemote;
+        this.rollershutterRemote = (RollerShutterRemote) rollerShutterRemote;
 
         rollerShutterIconBackground = new SVGIcon(MaterialDesignIcon.FORMAT_ALIGN_JUSTIFY, Constants.SMALL_ICON, false);
         rollerShutterIconForeground = new SVGIcon(MaterialDesignIcon.FORMAT_ALIGN_JUSTIFY, Constants.SMALL_ICON, true);
@@ -149,31 +151,31 @@ public class RollerShutterPane extends UnitPane {
     }
 
     private void initEffect() {
-        State shutterState = State.UNKNOWN;
+        MovementState shutterState = MovementState.UNKNOWN;
         double openingPercentage = 0.0;
 
         try {
-            openingPercentage = rollershutterRemote.getOpeningRatio();
-            shutterState = rollershutterRemote.getShutter().getValue();
+            openingPercentage = rollershutterRemote.getBlindState().getOpeningRatio();
+            shutterState = rollershutterRemote.getBlindState().getMovementState();
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
         setEffectOpeningRatio(openingPercentage, shutterState);
     }
 
-    private void setEffectOpeningRatio(final double percentage, final State shutterState) {
+    private void setEffectOpeningRatio(final double percentage, final MovementState shutterState) {
         iconPane.getChildren().clear();
 
-        if (shutterState.equals(State.UNKNOWN)) {
+        if (shutterState.equals(MovementState.UNKNOWN)) {
             rollerShutterStatus.setText((int) (Constants.ONE_HUNDRED * percentage) + Constants.PERCENTAGE);
 
             iconPane.add(unknownBackgroundIcon, 0, 0);
             iconPane.add(unknownForegroundIcon, 0, 0);
             observerText.setIdentifier("unknown");
-        } else  {
-            if (shutterState.equals(State.DOWN)) {
+        } else {
+            if (shutterState.equals(MovementState.DOWN)) {
                 observerText.setIdentifier("down");
-            } else if (shutterState.equals(State.UP)) {
+            } else if (shutterState.equals(MovementState.UP)) {
                 observerText.setIdentifier("up");
             } else {
                 observerText.setIdentifier("stop");
@@ -219,7 +221,7 @@ public class RollerShutterPane extends UnitPane {
         final Button buttonOpen = new Button();
         final Button buttonClose = new Button();
 
-        this.recurrenceEventFilter =  new RecurrenceEventFilter(Constants.FILTER_TIME) {
+        this.recurrenceEventFilter = new RecurrenceEventFilter(Constants.FILTER_TIME) {
             @Override
             public void relay() {
                 buttonOpen.setOnMouseClicked(sendingTotalOpening);
@@ -274,8 +276,8 @@ public class RollerShutterPane extends UnitPane {
     @Override
     public void update(final Observable observable, final Object rollerShutter) throws java.lang.Exception {
         Platform.runLater(() -> {
-            final double openingPercentage = ((RollershutterType.Rollershutter) rollerShutter).getOpeningRatio();
-            final State shutterState = ((RollershutterType.Rollershutter) rollerShutter).getShutterState().getValue();
+            final double openingPercentage = ((RollerShutterData) rollerShutter).getBlindState().getOpeningRatio();
+            final MovementState shutterState = ((RollerShutterData) rollerShutter).getBlindState().getMovementState();
             setEffectOpeningRatio(openingPercentage, shutterState);
         });
 

@@ -36,7 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.homeautomation.state.PowerStateType;
 import rst.homeautomation.state.PowerStateType.PowerState.State;
-import rst.homeautomation.unit.LightType.Light;
+import rst.homeautomation.unit.LightDataType.LightData;
 
 /**
  * Created by tmichalski on 08.01.16.
@@ -77,7 +77,7 @@ public class LightPane extends UnitPane {
         State powerState = State.OFF;
 
         try {
-            powerState = lightRemote.getPower().getValue();
+            powerState = lightRemote.getPowerState().getValue();
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
@@ -112,7 +112,7 @@ public class LightPane extends UnitPane {
 
     private void sendStateToRemote(final State state) {
         try {
-            lightRemote.setPower(state);
+            lightRemote.setPowerState(state);
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
             setWidgetPaneDisable(true);
@@ -183,7 +183,7 @@ public class LightPane extends UnitPane {
     @Override
     public void update(final Observable observable, final Object light) throws java.lang.Exception {
         Platform.runLater(() -> {
-            final State powerState = ((Light) light).getPowerState().getValue();
+            final State powerState = ((LightData) light).getPowerState().getValue();
             setPowerStateSwitchAndIcon(powerState);
         });
     }

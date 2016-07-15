@@ -35,7 +35,7 @@ import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
 import org.openbase.jul.pattern.Observable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.homeautomation.unit.PowerConsumptionSensorType;
+import rst.homeautomation.unit.PowerConsumptionSensorDataType.PowerConsumptionSensorData;
 
 /**
  * Created by andi on 08.04.16.
@@ -85,9 +85,9 @@ public class PowerConsumptionSensorPane extends UnitPane {
         double voltagePowerConsumption = 0.0;
 
         try {
-            currentPowerConsumption = powerConsumptionSensorRemote.getPowerConsumption().getCurrent();
-            sumPowerConsumption = powerConsumptionSensorRemote.getPowerConsumption().getConsumption();
-            voltagePowerConsumption = powerConsumptionSensorRemote.getPowerConsumption().getVoltage();
+            currentPowerConsumption = powerConsumptionSensorRemote.getPowerConsumptionState().getCurrent();
+            sumPowerConsumption = powerConsumptionSensorRemote.getPowerConsumptionState().getConsumption();
+            voltagePowerConsumption = powerConsumptionSensorRemote.getPowerConsumptionState().getVoltage();
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
@@ -162,11 +162,11 @@ public class PowerConsumptionSensorPane extends UnitPane {
     @Override
     public void update(final Observable observable, final Object powerConsumption) throws java.lang.Exception {
         Platform.runLater(() -> {
-            final double voltagePowerConsumption = ((PowerConsumptionSensorType.PowerConsumptionSensor)
+            final double voltagePowerConsumption = ((PowerConsumptionSensorData)
                     powerConsumption).getPowerConsumptionState().getVoltage();
-            final double currentPowerConsumption = ((PowerConsumptionSensorType.PowerConsumptionSensor)
+            final double currentPowerConsumption = ((PowerConsumptionSensorData)
                     powerConsumption).getPowerConsumptionState().getCurrent();
-            final double sumPowerConsumption = ((PowerConsumptionSensorType.PowerConsumptionSensor)
+            final double sumPowerConsumption = ((PowerConsumptionSensorData)
                     powerConsumption).getPowerConsumptionState().getConsumption();
 
             setPowerConsumptionIconAndText(currentPowerConsumption, sumPowerConsumption,

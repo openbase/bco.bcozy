@@ -19,48 +19,50 @@
 package org.openbase.bco.bcozy.view.devicepanes;
 
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
+import de.jensd.fx.glyphs.materialicons.MaterialIcon;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.SVGIcon;
-import org.openbase.bco.dal.remote.unit.TamperSwitchRemote;
+import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
+import org.openbase.bco.dal.remote.unit.MotionDetectorRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
-import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
 import org.openbase.jul.pattern.Observable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.homeautomation.state.TamperStateType.TamperState.State;
-import rst.homeautomation.unit.TamperSwitchType;
+import rst.homeautomation.state.MotionStateType.MotionState.State;
+import rst.homeautomation.unit.MotionDetectorDataType.MotionDetectorData;
 
 /**
- * Created by agatting on 11.04.16.
+ * Created by tmichalski on 15.01.16.
  */
-public class TamperSwitchPane extends UnitPane {
-    private static final Logger LOGGER = LoggerFactory.getLogger(TamperSwitchPane.class);
+public class MotionDetectorPane extends UnitPane {
+    private static final Logger LOGGER = LoggerFactory.getLogger(BatteryPane.class);
 
-    private final TamperSwitchRemote tamperSwitchRemote;
-    private final SVGIcon tamperSwitchIconOk;
-    private final SVGIcon tamperSwitchIconManipulation;
+    private final MotionDetectorRemote motionDetectorRemote;
     private final SVGIcon unknownForegroundIcon;
     private final SVGIcon unknownBackgroundIcon;
+    private final SVGIcon backgroundIcon;
+    private final SVGIcon motionIcon;
     private final BorderPane headContent;
 
+
     /**
-     * Constructor for the TamperSwitchPane.
-     * @param tamperSwitchRemote tamperSwitchRemote
+     * Constructor for the BatteryPane.
+     * @param brightnessSensorRemote motionSensorRemote
      */
-    public TamperSwitchPane(final AbstractIdentifiableRemote tamperSwitchRemote) {
-        this.tamperSwitchRemote = (TamperSwitchRemote) tamperSwitchRemote;
+    public MotionDetectorPane(final AbstractIdentifiableRemote brightnessSensorRemote) {
+        this.motionDetectorRemote = (MotionDetectorRemote) brightnessSensorRemote;
 
         headContent = new BorderPane();
-        tamperSwitchIconOk = new SVGIcon(MaterialDesignIcon.CHECKBOX_MARKED_CIRCLE, Constants.SMALL_ICON, false);
-        tamperSwitchIconManipulation = new SVGIcon(MaterialDesignIcon.ALERT_CIRCLE, Constants.SMALL_ICON, false);
         unknownBackgroundIcon = new SVGIcon(MaterialDesignIcon.CHECKBOX_BLANK_CIRCLE, Constants.SMALL_ICON - 2, false);
         unknownForegroundIcon = new SVGIcon(MaterialDesignIcon.HELP_CIRCLE, Constants.SMALL_ICON, false);
+        motionIcon = new SVGIcon(MaterialIcon.BLUR_ON, MaterialIcon.PANORAMA_FISH_EYE, Constants.SMALL_ICON);
+        backgroundIcon = new SVGIcon(MaterialIcon.LENS, Constants.SMALL_ICON, false);
 
         initUnitLabel();
         initTitle();
@@ -69,29 +71,33 @@ public class TamperSwitchPane extends UnitPane {
         initEffect();
         tooltip.textProperty().bind(observerText.textProperty());
 
-        this.tamperSwitchRemote.addDataObserver(this);
+        this.motionDetectorRemote.addDataObserver(this);
     }
 
     private void initEffect() {
-        State tamperSwitchState = State.UNKNOWN;
+        State motionState = State.UNKNOWN;
 
         try {
-            tamperSwitchState = tamperSwitchRemote.getTamper().getValue();
+            motionState = motionDetectorRemote.getMotionState().getValue();
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
-        setTamperSwitchIconAndText(tamperSwitchState);
+        setMotionStateIconAndTooltip(motionState);
     }
 
-    private void setTamperSwitchIconAndText(final State tamperSwitchState) {
+    private void setMotionStateIconAndTooltip(final State motionState) {
         iconPane.getChildren().clear();
 
-        if (tamperSwitchState == State.NO_TAMPER) {
-            iconPane.add(tamperSwitchIconOk, 0, 0);
-            observerText.setIdentifier("noTamper");
-        } else if (tamperSwitchState == State.TAMPER) {
-            iconPane.add(tamperSwitchIconManipulation, 0, 0);
-            observerText.setIdentifier("tamper");
+        if (motionState.equals(State.MOVEMENT)) {
+            motionIcon.setBackgroundIconColorAnimated(Color.WHITE);
+            iconPane.add(backgroundIcon, 0, 0);
+            iconPane.add(motionIcon, 0, 0);
+            observerText.setIdentifier("movement");
+        } else if (motionState.equals(State.NO_MOVEMENT)) {
+            motionIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
+            iconPane.add(backgroundIcon, 0, 0);
+            iconPane.add(motionIcon, 0, 0);
+            observerText.setIdentifier("noMovement");
         } else {
             iconPane.add(unknownBackgroundIcon, 0, 0);
             iconPane.add(unknownForegroundIcon, 0, 0);
@@ -103,12 +109,11 @@ public class TamperSwitchPane extends UnitPane {
     protected void initTitle() {
         unknownForegroundIcon.setForegroundIconColor(Color.BLUE);
         unknownBackgroundIcon.setForegroundIconColor(Color.WHITE);
-        tamperSwitchIconOk.setForegroundIconColor(Color.GREEN);
-        tamperSwitchIconManipulation.setForegroundIconColor(Color.RED);
+        backgroundIcon.setForegroundIconColor(Color.BLACK);
 
         headContent.setCenter(getUnitLabel());
         headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
-        headContent.prefHeightProperty().set(tamperSwitchIconOk.getSize() + Constants.INSETS);
+        headContent.prefHeightProperty().set(iconPane.getHeight() + Constants.INSETS);
     }
 
     @Override
@@ -120,7 +125,7 @@ public class TamperSwitchPane extends UnitPane {
     protected void initUnitLabel() {
         String unitLabel = Constants.UNKNOWN_ID;
         try {
-            unitLabel = this.tamperSwitchRemote.getData().getLabel();
+            unitLabel = this.motionDetectorRemote.getData().getLabel();
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
@@ -129,20 +134,19 @@ public class TamperSwitchPane extends UnitPane {
 
     @Override
     public AbstractIdentifiableRemote getDALRemoteService() {
-        return tamperSwitchRemote;
+        return motionDetectorRemote;
     }
 
     @Override
     void removeObserver() {
-        this.tamperSwitchRemote.removeObserver(this);
+        this.motionDetectorRemote.removeObserver(this);
     }
 
     @Override
-    public void update(final Observable observable, final Object tamperSwitch) throws java.lang.Exception {
+    public void update(final Observable observable, final Object motionSensor) throws java.lang.Exception {
         Platform.runLater(() -> {
-            final State tamperSwitchState = ((TamperSwitchType.TamperSwitch) tamperSwitch).getTamperState().getValue();
-
-            setTamperSwitchIconAndText(tamperSwitchState);
+            final State motionState = ((MotionDetectorData) motionSensor).getMotionState().getValue();
+            setMotionStateIconAndTooltip(motionState);
         });
     }
 }

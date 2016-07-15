@@ -52,7 +52,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.SVGIcon;
-import org.openbase.bco.dal.remote.unit.AmbientLightRemote;
+import org.openbase.bco.dal.remote.unit.ColorableLightRemote;
 import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
@@ -63,8 +63,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.homeautomation.state.PowerStateType;
 import rst.homeautomation.state.PowerStateType.PowerState.State;
-import rst.homeautomation.unit.AmbientLightType.AmbientLight;
-import rst.vision.HSVColorType.HSVColor;
+import rst.homeautomation.unit.ColorableLightDataType.ColorableLightData;
+import rst.vision.HSBColorType.HSBColor;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -72,11 +72,11 @@ import java.util.concurrent.TimeoutException;
 /**
  * Created by agatting on 03.12.15.
  */
-public class AmbientLightPane extends UnitPane {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AmbientLightPane.class);
+public class ColorableLightPane extends UnitPane {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ColorableLightPane.class);
     private static final double COLOR_BOX_SIZE = 150.0;
 
-    private final AmbientLightRemote ambientLightRemote;
+    private final ColorableLightRemote colorableLightRemote;
     private final SVGIcon lightBulbIcon;
     private final SVGIcon unknownForegroundIcon;
     private final SVGIcon unknownBackgroundIcon;
@@ -94,8 +94,8 @@ public class AmbientLightPane extends UnitPane {
      * Constructor for the AmbientLightPane.
      * @param ambientLightRemote ambientLightRemote
      */
-    public AmbientLightPane(final AbstractIdentifiableRemote ambientLightRemote) {
-        this.ambientLightRemote = (AmbientLightRemote) ambientLightRemote;
+    public ColorableLightPane(final AbstractIdentifiableRemote ambientLightRemote) {
+        this.colorableLightRemote = (ColorableLightRemote) ambientLightRemote;
 
         lightBulbIcon =
                 new SVGIcon(MaterialDesignIcon.LIGHTBULB, MaterialDesignIcon.LIGHTBULB_OUTLINE, Constants.SMALL_ICON);
@@ -112,21 +112,21 @@ public class AmbientLightPane extends UnitPane {
         initEffectAndSwitch();
         tooltip.textProperty().bind(observerText.textProperty());
 
-        this.ambientLightRemote.addDataObserver(this);
+        this.colorableLightRemote.addDataObserver(this);
     }
 
     private void initEffectAndSwitch() {
         State powerState = State.OFF;
-        HSVColor currentColor = HSVColor.newBuilder().build();
+        HSBColor currentColor = HSBColor.newBuilder().build();
 
         try {
-            powerState = ambientLightRemote.getPower().getValue();
-            currentColor = ambientLightRemote.getColor();
+            powerState = colorableLightRemote.getPowerState().getValue();
+            currentColor = colorableLightRemote.getHSBColor();
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
         final Color color = Color.hsb(currentColor.getHue(), currentColor.getSaturation() / Constants.ONE_HUNDRED,
-                currentColor.getValue() / Constants.ONE_HUNDRED);
+                currentColor.getBrightness()/ Constants.ONE_HUNDRED);
 
         hueValue.set(color.getHue());
         angle = color.getHue();
@@ -294,7 +294,7 @@ public class AmbientLightPane extends UnitPane {
     private void sendStateToRemote(final State state) {
         final String setPowerString = "setPower";
         try {
-            ambientLightRemote.callMethodAsync(setPowerString, PowerStateType.PowerState.newBuilder()
+            colorableLightRemote.callMethodAsync(setPowerString, PowerStateType.PowerState.newBuilder()
                     .setValue(state).build()).get(Constants.THREAD_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
             //ambientLightRemote.setPower(PowerStateType.PowerState.State.ON/OFF);
         } catch (InterruptedException | ExecutionException | TimeoutException | CouldNotPerformException e) {
@@ -337,10 +337,10 @@ public class AmbientLightPane extends UnitPane {
     }
 
     private void sendHSV2Remote() {
-        final HSVColor hsvColor = HSVColor.newBuilder().setHue(hueValue.floatValue())
-                .setSaturation(saturation.floatValue()).setValue(brightness.floatValue()).build();
+        final HSBColor hsvColor = HSBColor.newBuilder().setHue(hueValue.floatValue())
+                .setSaturation(saturation.floatValue()).setBrightness(brightness.floatValue()).build();
         try {
-            ambientLightRemote.callMethodAsync("setColor", hsvColor)
+            colorableLightRemote.callMethodAsync("setColor", hsvColor)
                     .get(Constants.THREAD_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
             //ambientLightRemote.setColor(hsvColor);
         } catch (InterruptedException | ExecutionException | TimeoutException | CouldNotPerformException e) {
@@ -470,7 +470,7 @@ public class AmbientLightPane extends UnitPane {
     protected void initUnitLabel() {
         String unitLabel = Constants.UNKNOWN_ID;
         try {
-            unitLabel = this.ambientLightRemote.getData().getLabel();
+            unitLabel = this.colorableLightRemote.getData().getLabel();
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
@@ -479,12 +479,12 @@ public class AmbientLightPane extends UnitPane {
 
     @Override
     public AbstractIdentifiableRemote getDALRemoteService() {
-        return ambientLightRemote;
+        return colorableLightRemote;
     }
 
     @Override
     void removeObserver() {
-        this.ambientLightRemote.removeObserver(this);
+        this.colorableLightRemote.removeObserver(this);
     }
 
     @Override
@@ -494,10 +494,10 @@ public class AmbientLightPane extends UnitPane {
                 setWidgetPaneDisable(false);
             }
 
-            final State powerState = ((AmbientLight) ambientLight).getPowerState().getValue();
-            final Color color = Color.hsb(((AmbientLight) ambientLight).getColor().getHue(),
-                    ((AmbientLight) ambientLight).getColor().getSaturation() / Constants.ONE_HUNDRED,
-                    ((AmbientLight) ambientLight).getColor().getValue() / Constants.ONE_HUNDRED);
+            final State powerState = ((ColorableLightData) ambientLight).getPowerState().getValue();
+            final Color color = Color.hsb(((ColorableLightData) ambientLight).getColorState().getColor().getHsbColor().getHue(),
+                    ((ColorableLightData) ambientLight).getColorState().getColor().getHsbColor().getSaturation() / Constants.ONE_HUNDRED,
+                    ((ColorableLightData) ambientLight).getColorState().getColor().getHsbColor().getBrightness()/ Constants.ONE_HUNDRED);
             setEffectColorAndSwitch(powerState, color);
         });
     }

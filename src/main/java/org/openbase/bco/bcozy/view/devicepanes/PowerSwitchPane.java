@@ -28,7 +28,7 @@ import javafx.scene.paint.Color;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.SVGIcon;
 import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
-import org.openbase.bco.dal.remote.unit.PowerPlugRemote;
+import org.openbase.bco.dal.remote.unit.PowerSwitchRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
@@ -37,15 +37,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.homeautomation.state.PowerStateType;
 import rst.homeautomation.state.PowerStateType.PowerState.State;
-import rst.homeautomation.unit.PowerPlugType.PowerPlug;
+import rst.homeautomation.unit.PowerSwitchDataType.PowerSwitchData;
 
 /**
  * Created by tmichalski on 08.01.16.
  */
-public class PowerPlugPane extends UnitPane {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PowerPlugPane.class);
+public class PowerSwitchPane extends UnitPane {
+    private static final Logger LOGGER = LoggerFactory.getLogger(PowerSwitchPane.class);
 
-    private final PowerPlugRemote powerPlugRemote;
+    private final PowerSwitchRemote powerSwitchRemote;
     private final SVGIcon powerPlugIcon;
     private final SVGIcon powerStatusIcon;
     private final SVGIcon unknownForegroundIcon;
@@ -56,8 +56,8 @@ public class PowerPlugPane extends UnitPane {
      * Constructor for the PowerPlugPane.
      * @param powerPlugRemote powerPlugRemote
      */
-    public PowerPlugPane(final AbstractIdentifiableRemote powerPlugRemote) {
-        this.powerPlugRemote = (PowerPlugRemote) powerPlugRemote;
+    public PowerSwitchPane(final AbstractIdentifiableRemote powerPlugRemote) {
+        this.powerSwitchRemote = (PowerSwitchRemote) powerPlugRemote;
 
         headContent = new BorderPane();
         powerPlugIcon = new SVGIcon(FontAwesomeIcon.PLUG, Constants.SMALL_ICON, true);
@@ -72,14 +72,14 @@ public class PowerPlugPane extends UnitPane {
         initEffectAndSwitch();
         tooltip.textProperty().bind(observerText.textProperty());
 
-        this.powerPlugRemote.addDataObserver(this);
+        this.powerSwitchRemote.addDataObserver(this);
     }
 
     private void initEffectAndSwitch() {
         State powerState = State.OFF;
 
         try {
-            powerState = powerPlugRemote.getPower().getValue();
+            powerState = powerSwitchRemote.getPowerState().getValue();
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
@@ -116,7 +116,7 @@ public class PowerPlugPane extends UnitPane {
 
     private void sendStateToRemote(final State state) {
         try {
-            powerPlugRemote.setPower(state);
+            powerSwitchRemote.setPowerState(state);
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
             setWidgetPaneDisable(true);
@@ -166,7 +166,7 @@ public class PowerPlugPane extends UnitPane {
     protected void initUnitLabel() {
         String unitLabel = Constants.UNKNOWN_ID;
         try {
-            unitLabel = this.powerPlugRemote.getData().getLabel();
+            unitLabel = this.powerSwitchRemote.getData().getLabel();
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
@@ -175,18 +175,18 @@ public class PowerPlugPane extends UnitPane {
 
     @Override
     public AbstractIdentifiableRemote getDALRemoteService() {
-        return powerPlugRemote;
+        return powerSwitchRemote;
     }
 
     @Override
     void removeObserver() {
-        this.powerPlugRemote.removeObserver(this);
+        this.powerSwitchRemote.removeObserver(this);
     }
 
     @Override
     public void update(final Observable observable, final Object powerPlug) throws java.lang.Exception {
         Platform.runLater(() -> {
-            final State powerState = ((PowerPlug) powerPlug).getPowerState().getValue();
+            final State powerState = ((PowerSwitchData) powerPlug).getPowerState().getValue();
             setPowerStateSwitchAndIcon(powerState);
         });
     }

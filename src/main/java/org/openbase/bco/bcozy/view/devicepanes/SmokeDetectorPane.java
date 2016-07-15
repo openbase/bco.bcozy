@@ -38,7 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.homeautomation.state.AlarmStateType.AlarmState.State;
 import rst.homeautomation.state.SmokeStateType.SmokeState;
-import rst.homeautomation.unit.SmokeDetectorType;
+import rst.homeautomation.unit.SmokeDetectorDataType.SmokeDetectorData;
 
 /**
  * Created by agatting on 11.04.16.
@@ -175,9 +175,9 @@ public class SmokeDetectorPane extends UnitPane {
     @Override
     public void update(final Observable observable, final Object smokeDetector) throws java.lang.Exception {
         Platform.runLater(() -> {
-            final State alarmState = ((SmokeDetectorType.SmokeDetector) smokeDetector).getSmokeAlarmState().getValue();
+            final State alarmState = ((SmokeDetectorData) smokeDetector).getSmokeAlarmState().getValue();
             final SmokeState.State smokeState =
-                    ((SmokeDetectorType.SmokeDetector) smokeDetector).getSmokeState().getValue();
+                    ((SmokeDetectorData) smokeDetector).getSmokeState().getValue();
 
             setSmokeDetectorIconAndText(alarmState, smokeState);
         });

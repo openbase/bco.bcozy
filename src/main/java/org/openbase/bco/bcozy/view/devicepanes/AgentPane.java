@@ -42,7 +42,7 @@ import rst.homeautomation.control.agent.AgentDataType.AgentData;
  * Created by agatting on 12.04.16.
  */
 public class AgentPane extends UnitPane {
-    private static final Logger LOGGER = LoggerFactory.getLogger(TamperSwitchPane.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TamperDetectorPane.class);
 
     private final SVGIcon agentIcon;
     private final SVGIcon unknownForegroundIcon;

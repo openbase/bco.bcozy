@@ -42,7 +42,7 @@ import rst.homeautomation.state.ActivationStateType.ActivationState.State;
  * Created by agatting on 12.04.16.
  */
 public class AppPane extends UnitPane {
-    private static final Logger LOGGER = LoggerFactory.getLogger(TamperSwitchPane.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TamperDetectorPane.class);
 
     private final SVGIcon appIcon;
     private final SVGIcon unknownForegroundIcon;

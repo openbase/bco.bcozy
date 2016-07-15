@@ -68,9 +68,9 @@ public class UnitPaneContainer extends ObserverTitledPane {
 
                 vBox.getChildren().add(agentPane);
             }
-        } else if (unitType.equals(UnitType.AMBIENT_LIGHT)) {
+        } else if (unitType.equals(UnitType.COLORABLE_LIGHT)) {
             for (final AbstractIdentifiableRemote dalRemoteService : dalRemoteServiceList) {
-                final AmbientLightPane ambientLightPane = new AmbientLightPane(dalRemoteService);
+                final ColorableLightPane ambientLightPane = new ColorableLightPane(dalRemoteService);
 
                 vBox.getChildren().add(ambientLightPane);
             }
@@ -92,9 +92,9 @@ public class UnitPaneContainer extends ObserverTitledPane {
 
                 vBox.getChildren().add(brightnessSensorPane);
             }
-        } else if (unitType.equals(UnitType.DIMMER)) {
+        } else if (unitType.equals(UnitType.DIMMABLE_LIGHT)) {
             for (final AbstractIdentifiableRemote dalRemoteService : dalRemoteServiceList) {
-                final DimmerPane dimmerPane = new DimmerPane(dalRemoteService);
+                final DimmableLightPane dimmerPane = new DimmableLightPane(dalRemoteService);
 
                 vBox.getChildren().add(dimmerPane);
             }
@@ -104,9 +104,9 @@ public class UnitPaneContainer extends ObserverTitledPane {
 
                 vBox.getChildren().add(lightPane);
             }
-        } else if (unitType.equals(UnitType.MOTION_SENSOR)) {
+        } else if (unitType.equals(UnitType.MOTION_DETECTOR)) {
             for (final AbstractIdentifiableRemote dalRemoteService : dalRemoteServiceList) {
-                final MotionSensorPane motionSensorPane = new MotionSensorPane(dalRemoteService);
+                final MotionDetectorPane motionSensorPane = new MotionDetectorPane(dalRemoteService);
 
                 vBox.getChildren().add(motionSensorPane);
             }
@@ -117,19 +117,19 @@ public class UnitPaneContainer extends ObserverTitledPane {
 
                 vBox.getChildren().add(powerConsumptionSensorPane);
             }
-        } else if (unitType.equals(UnitType.POWER_PLUG)) {
+        } else if (unitType.equals(UnitType.POWER_SWITCH)) {
             for (final AbstractIdentifiableRemote dalRemoteService : dalRemoteServiceList) {
-                final PowerPlugPane powerPlugPane = new PowerPlugPane(dalRemoteService);
+                final PowerSwitchPane powerPlugPane = new PowerSwitchPane(dalRemoteService);
 
                 vBox.getChildren().add(powerPlugPane);
             }
-        } else if (unitType.equals(UnitType.REED_SWITCH)) {
+        } else if (unitType.equals(UnitType.REED_CONTACT)) {
             for (final AbstractIdentifiableRemote dalRemoteService : dalRemoteServiceList) {
-                final ReedSwitchPane reedSwitchPane = new ReedSwitchPane(dalRemoteService);
+                final ReedContactPane reedSwitchPane = new ReedContactPane(dalRemoteService);
 
                 vBox.getChildren().add(reedSwitchPane);
             }
-        } else if (unitType.equals(UnitType.ROLLERSHUTTER)) {
+        } else if (unitType.equals(UnitType.ROLLER_SHUTTER)) {
             for (final AbstractIdentifiableRemote dalRemoteService : dalRemoteServiceList) {
                 final RollerShutterPane rollerShutterPane = new RollerShutterPane(dalRemoteService);
 
@@ -147,9 +147,9 @@ public class UnitPaneContainer extends ObserverTitledPane {
 
                 vBox.getChildren().add(smokeDetectorPane);
             }
-        } else if (unitType.equals(UnitType.TAMPER_SWITCH)) {
+        } else if (unitType.equals(UnitType.TAMPER_DETECTOR)) {
             for (final AbstractIdentifiableRemote dalRemoteService : dalRemoteServiceList) {
-                final TamperSwitchPane tamperSwitchPane = new TamperSwitchPane(dalRemoteService);
+                final TamperDetectorPane tamperSwitchPane = new TamperDetectorPane(dalRemoteService);
 
                 vBox.getChildren().add(tamperSwitchPane);
             }

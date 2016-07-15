@@ -35,7 +35,7 @@ import org.openbase.jul.pattern.Observable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.homeautomation.state.BatteryStateType.BatteryState.State;
-import rst.homeautomation.unit.BatteryType.Battery;
+import rst.homeautomation.unit.BatteryDataType.BatteryData;
 
 /**
  * Created by tmichalski on 13.01.16.
@@ -75,8 +75,8 @@ public class BatteryPane extends UnitPane {
         State batteryState = State.UNKNOWN;
 
         try {
-            batteryLevel = batteryRemote.getBattery().getLevel();
-            batteryState = batteryRemote.getBattery().getValue();
+            batteryLevel = batteryRemote.getBatteryState().getLevel();
+            batteryState = batteryRemote.getBatteryState().getValue();
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
@@ -177,11 +177,11 @@ public class BatteryPane extends UnitPane {
     @Override
     public void update(final Observable observable, final Object battery) throws java.lang.Exception {
         Platform.runLater(() -> {
-            final double batteryLevel = ((Battery) battery).getBatteryState().getLevel();
+            final double batteryLevel = ((BatteryData) battery).getBatteryState().getLevel();
             setStatusBatteryIcon(batteryLevel);
 
             final State batteryState =
-                    ((Battery) battery).getBatteryState().getValue();
+                    ((BatteryData) battery).getBatteryState().getValue();
             setBatteryStateColorAndIcon(batteryState);
         });
     }
