@@ -26,11 +26,11 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.SVGIcon;
-import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
 import org.openbase.bco.dal.remote.unit.MotionDetectorRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
+import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
 import org.openbase.jul.pattern.Observable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +41,7 @@ import rst.homeautomation.unit.MotionDetectorDataType.MotionDetectorData;
  * Created by tmichalski on 15.01.16.
  */
 public class MotionDetectorPane extends UnitPane {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(BatteryPane.class);
 
     private final MotionDetectorRemote motionDetectorRemote;
@@ -50,9 +51,9 @@ public class MotionDetectorPane extends UnitPane {
     private final SVGIcon motionIcon;
     private final BorderPane headContent;
 
-
     /**
      * Constructor for the BatteryPane.
+     *
      * @param brightnessSensorRemote motionSensorRemote
      */
     public MotionDetectorPane(final AbstractIdentifiableRemote brightnessSensorRemote) {
@@ -88,12 +89,12 @@ public class MotionDetectorPane extends UnitPane {
     private void setMotionStateIconAndTooltip(final State motionState) {
         iconPane.getChildren().clear();
 
-        if (motionState.equals(State.MOVEMENT)) {
+        if (motionState.equals(State.MOTION)) {
             motionIcon.setBackgroundIconColorAnimated(Color.WHITE);
             iconPane.add(backgroundIcon, 0, 0);
             iconPane.add(motionIcon, 0, 0);
             observerText.setIdentifier("movement");
-        } else if (motionState.equals(State.NO_MOVEMENT)) {
+        } else if (motionState.equals(State.NO_MOTION)) {
             motionIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
             iconPane.add(backgroundIcon, 0, 0);
             iconPane.add(motionIcon, 0, 0);
