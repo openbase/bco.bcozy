@@ -8,6 +8,11 @@ dist: trusty
 #   packages: 
 #        - oracle-java8-installer
 
+branches:
+  only:
+  - master
+  - latest-stable
+
 before_install:
     - echo version before upgrade: `java -version`
     - sudo add-apt-repository ppa:webupd8team/java
@@ -20,7 +25,7 @@ script:
    - java -version
 
 notifications:
-    slack: openbase-org:$SLACK_ACCESS_TOCKEN
+    slack: openbase-org:vGz7LO4CvGoGMneYkEm3ON7E
     on_failure: change
     on_success: change	
 
