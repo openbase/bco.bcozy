@@ -14,11 +14,13 @@ branches:
     - latest-stable
 
 before_install:
-  - echo version before upgrade: `java -version`
+  - echo version before upgrade
+  - java -version
   - sudo add-apt-repository ppa:webupd8team/java
   - sudo apt-get update -q
   - sudo apt-get install oracle-java8-installer
-  - echo version after upgrade: `java -version`
+  - echo version after upgrade: 
+  - java -version
 
 script:
   - sudo apt-get update && sudo apt-get install oracle-java8-installer
