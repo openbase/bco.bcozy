@@ -352,13 +352,13 @@ public final class Constants {
 
     /**
      * The minimal temperatur for fading.
-     * Has to be >= 0.
+     * Has to be &gt;= 0.
      */
     public static final double TEMPERATUR_FADING_MINIMUM = 10.0;
 
     /**
      * The maximal temperatur for fading.
-     * Has to be > TEMPERATUR_FADING_MINIMUM.
+     * Has to be &gt; TEMPERATUR_FADING_MINIMUM.
      */
     public static final double TEMPERATUR_FADING_MAXIMUM = 25.0;
 
@@ -406,7 +406,6 @@ public final class Constants {
      * String for tooltip unknown.
      */
     //public static final String UNKNOWN = "Unknown";
-
     /**
      * String for tooltip Watt W.
      */
@@ -430,5 +429,6 @@ public final class Constants {
     /**
      * Private Constructor.
      */
-    private Constants() { }
+    private Constants() {
+    }
 }
