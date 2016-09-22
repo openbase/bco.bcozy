@@ -298,7 +298,7 @@
         <dependency>
             <groupId>org.controlsfx</groupId>
             <artifactId>controlsfx</artifactId>
-            <version>8.40.10</version>
+            <version>8.40.12</version>
         </dependency>
         <dependency>
             <groupId>de.jensd</groupId>
