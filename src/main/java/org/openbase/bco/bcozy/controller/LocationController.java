@@ -18,8 +18,15 @@
  */
 package org.openbase.bco.bcozy.controller;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import javafx.application.Platform;
 import javafx.geometry.Point2D;
+import javax.vecmath.Point3d;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ForegroundPane;
 import org.openbase.bco.bcozy.view.location.LocationPane;
@@ -32,18 +39,10 @@ import org.openbase.jul.pattern.Observer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rct.Transform;
+import rst.homeautomation.unit.UnitConfigType.UnitConfig;
 import rst.math.Vec3DDoubleType;
-import rst.spatial.ConnectionConfigType;
 import rst.spatial.LocationConfigType;
 import rst.spatial.LocationRegistryDataType.LocationRegistryData;
-
-import javax.vecmath.Point3d;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 /**
  *
@@ -64,11 +63,11 @@ public class LocationController implements Observer<LocationRegistryData> {
      * The constructor.
      *
      * @param foregroundPane the foreground pane
-     * @param locationPane   the location pane
-     * @param remotePool     the remotePool
+     * @param locationPane the location pane
+     * @param remotePool the remotePool
      */
     public LocationController(final ForegroundPane foregroundPane, final LocationPane locationPane,
-                              final RemotePool remotePool) {
+            final RemotePool remotePool) {
         this.foregroundPane = foregroundPane;
         this.locationPane = locationPane;
         this.remotePool = remotePool;
@@ -94,18 +93,18 @@ public class LocationController implements Observer<LocationRegistryData> {
     }
 
     private void fetchLocations() throws CouldNotPerformException {
-        final List<LocationConfigType.LocationConfig> list = locationRegistryRemote.getLocationConfigs();
+        final List<UnitConfig> locationUnitConfigList = locationRegistryRemote.getLocationConfigs();
 
         locationPane.clearLocations();
 
         //lookup root location frame id
-        final String rootLocationFrameId =
-                locationRegistryRemote.getRootLocationConfig().getPlacementConfig().getTransformationFrameId();
+        final String rootLocationFrameId
+                = locationRegistryRemote.getRootLocationConfig().getPlacementConfig().getTransformationFrameId();
 
-        for (final LocationConfigType.LocationConfig locationConfig : list) {
+        for (final UnitConfig locationUnitConfig : locationUnitConfigList) {
             try {
                 //skip locations without a shape
-                if (locationConfig.getPlacementConfig().getShape().getFloorCount() == 0) {
+                if (locationUnitConfig.getPlacementConfig().getShape().getFloorCount() == 0) {
                     continue;
                 }
 
@@ -114,12 +113,12 @@ public class LocationController implements Observer<LocationRegistryData> {
                 // Get the transformation for the current room
                 final Future<Transform> transform = remotePool.getTransformReceiver().requestTransform(
                         rootLocationFrameId,
-                        locationConfig.getPlacementConfig().getTransformationFrameId(),
+                        locationUnitConfig.getPlacementConfig().getTransformationFrameId(),
                         System.currentTimeMillis());
 
                 // Get the shape of the room
                 final List<Vec3DDoubleType.Vec3DDouble> shape
-                        = locationConfig.getPlacementConfig().getShape().getFloorList();
+                        = locationUnitConfig.getPlacementConfig().getShape().getFloorList();
 
                 // Iterate over all vertices
                 for (final Vec3DDoubleType.Vec3DDouble rstVertex : shape) {
@@ -132,30 +131,30 @@ public class LocationController implements Observer<LocationRegistryData> {
                     vertices.add(new Point2D(vertex.x, vertex.y));
                 }
 
-                locationPane.addLocation(locationConfig.getId(), locationConfig.getLabel(),
-                        locationConfig.getChildIdList(), vertices, locationConfig.getType().toString());
+                locationPane.addLocation(locationUnitConfig.getId(), locationUnitConfig.getLabel(),
+                        locationUnitConfig.getLocationConfig().getChildIdList(), vertices, locationUnitConfig.getType().toString());
             } catch (InterruptedException | ExecutionException | TimeoutException e) {
                 ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-                LOGGER.error("Error while fetching transformation for location \"" + locationConfig.getLabel()
-                        + "\", locationID: " + locationConfig.getId());
+                LOGGER.error("Error while fetching transformation for location \"" + locationUnitConfig.getLabel()
+                        + "\", locationID: " + locationUnitConfig.getId());
             }
         }
     }
 
     private void fetchConnections() throws CouldNotPerformException {
-        final List<ConnectionConfigType.ConnectionConfig> list = locationRegistryRemote.getConnectionConfigs();
+        final List<UnitConfig> connectionUnitConfigList = locationRegistryRemote.getConnectionConfigs();
 
         locationPane.clearConnections();
 
         //lookup root location frame id
-        final String rootLocationFrameId =
-                locationRegistryRemote.getRootLocationConfig().getPlacementConfig().getTransformationFrameId();
+        final String rootLocationFrameId
+                = locationRegistryRemote.getRootLocationConfig().getPlacementConfig().getTransformationFrameId();
 
         //check which connection has a shape
-        for (final ConnectionConfigType.ConnectionConfig connectionConfig : list) {
+        for (final UnitConfig connectionUnitConfig : connectionUnitConfigList) {
             try {
                 //skip connections without a shape
-                if (connectionConfig.getPlacementConfig().getShape().getFloorCount() == 0) {
+                if (connectionUnitConfig.getPlacementConfig().getShape().getFloorCount() == 0) {
                     continue;
                 }
 
@@ -163,12 +162,12 @@ public class LocationController implements Observer<LocationRegistryData> {
 
                 final Future<Transform> transform = remotePool.getTransformReceiver().requestTransform(
                         rootLocationFrameId,
-                        connectionConfig.getPlacementConfig().getTransformationFrameId(),
+                        connectionUnitConfig.getPlacementConfig().getTransformationFrameId(),
                         System.currentTimeMillis());
 
                 // Get the shape of the room
                 final List<Vec3DDoubleType.Vec3DDouble> shape
-                        = connectionConfig.getPlacementConfig().getShape().getFloorList();
+                        = connectionUnitConfig.getPlacementConfig().getShape().getFloorList();
 
                 // Iterate over all vertices
                 for (final Vec3DDoubleType.Vec3DDouble rstVertex : shape) {
@@ -181,12 +180,12 @@ public class LocationController implements Observer<LocationRegistryData> {
                     vertices.add(new Point2D(vertex.x, vertex.y));
                 }
 
-                locationPane.addConnection(connectionConfig.getId(), connectionConfig.getLabel(),
-                        vertices, connectionConfig.getType().toString(), connectionConfig.getTileIdList());
+                locationPane.addConnection(connectionUnitConfig.getId(), connectionUnitConfig.getLabel(),
+                        vertices, connectionUnitConfig.getType().toString(), connectionUnitConfig.getConnectionConfig().getTileIdList());
             } catch (InterruptedException | ExecutionException | TimeoutException e) {
                 ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-                LOGGER.error("Error while fetching transformation for connection \"" + connectionConfig.getLabel()
-                        + "\", connectionID: " + connectionConfig.getId());
+                LOGGER.error("Error while fetching transformation for connection \"" + connectionUnitConfig.getLabel()
+                        + "\", connectionID: " + connectionUnitConfig.getId());
             }
         }
     }
@@ -225,7 +224,7 @@ public class LocationController implements Observer<LocationRegistryData> {
 
     @Override
     public void update(final Observable<LocationRegistryData> observable,
-                       final LocationRegistryData locationRegistry) throws Exception { //NOPMD
+            final LocationRegistryData locationRegistry) throws Exception { //NOPMD
         Platform.runLater(() -> {
             try {
                 fetchLocations();

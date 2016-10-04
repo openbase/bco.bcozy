@@ -18,39 +18,37 @@
  */
 package org.openbase.bco.bcozy.controller; //NOPMD
 
-import javafx.application.Platform;
-import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.control.ProgressIndicator;
-import org.openbase.bco.bcozy.view.ForegroundPane;
-import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
-import org.openbase.bco.dal.remote.unit.UnitRemoteFactoryImpl;
-import org.openbase.bco.dal.remote.unit.UnitRemoteFactory;
-import org.openbase.bco.manager.user.remote.UserRemote;
-import org.openbase.bco.registry.device.remote.DeviceRegistryRemote;
-import org.openbase.bco.registry.location.remote.LocationRegistryRemote;
-import org.openbase.bco.registry.user.remote.UserRegistryRemote;
-import org.openbase.jul.exception.CouldNotPerformException;
-import org.openbase.jul.exception.printer.ExceptionPrinter;
-import org.openbase.jul.exception.printer.LogLevel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import rct.TransformReceiver;
-import rct.TransformerFactory;
-import rst.authorization.UserConfigType;
-import rst.homeautomation.device.DeviceConfigType.DeviceConfig;
-import rst.homeautomation.unit.UnitConfigType.UnitConfig;
-import rst.homeautomation.unit.UnitTemplateType.UnitTemplate.UnitType;
-import rst.spatial.LocationConfigType.LocationConfig;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.ProgressIndicator;
+import org.openbase.bco.bcozy.view.ForegroundPane;
+import org.openbase.bco.dal.remote.unit.UnitRemoteFactory;
+import org.openbase.bco.dal.remote.unit.UnitRemoteFactoryImpl;
+import org.openbase.bco.manager.user.remote.UserRemote;
+import org.openbase.bco.registry.device.remote.CachedDeviceRegistryRemote;
+import org.openbase.bco.registry.device.remote.DeviceRegistryRemote;
+import org.openbase.bco.registry.location.remote.LocationRegistryRemote;
+import org.openbase.bco.registry.user.remote.UserRegistryRemote;
+import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.openbase.jul.exception.printer.LogLevel;
+import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import rct.TransformReceiver;
+import rct.TransformerFactory;
+import rst.authorization.UserConfigType;
 import rst.homeautomation.state.InventoryStateType;
+import rst.homeautomation.unit.UnitConfigType.UnitConfig;
+import rst.homeautomation.unit.UnitTemplateType.UnitTemplate.UnitType;
 
 /**
  * Created by tmichalski on 25.11.15.
@@ -217,20 +215,20 @@ public class RemotePool {
         }
         fillDeviceMap();
 
-        for (final LocationConfig currentLocationConfig : locationRegistryRemote.getLocationConfigs()) {
-            LOGGER.info("INFO: Room: " + currentLocationConfig.getId());
+        for (final UnitConfig currentLocationUnitConfig : locationRegistryRemote.getLocationConfigs()) {
+            LOGGER.info("INFO: Room: " + currentLocationUnitConfig.getId());
 
-            for (final String unitId : currentLocationConfig.getUnitIdList()) {
+            for (final String unitId : currentLocationUnitConfig.getLocationConfig().getUnitIdList()) {
                 LOGGER.info("INFO: Unit: " + unitId);
 
                 if (deviceMap.containsKey(unitId)) {
                     final AbstractIdentifiableRemote currentDalRemoteService = deviceMap.get(unitId);
 
-                    if (!locationMap.containsKey(currentLocationConfig.getId())) {
-                        locationMap.put(currentLocationConfig.getId(), new TreeMap<>());
+                    if (!locationMap.containsKey(currentLocationUnitConfig.getId())) {
+                        locationMap.put(currentLocationUnitConfig.getId(), new TreeMap<>());
                     }
 
-                    locationMap.get(currentLocationConfig.getId()).put(unitId, currentDalRemoteService);
+                    locationMap.get(currentLocationUnitConfig.getId()).put(unitId, currentDalRemoteService);
                 }
             }
         }
@@ -240,12 +238,13 @@ public class RemotePool {
     private void fillDeviceMap() throws CouldNotPerformException {
         final UnitRemoteFactory unitRemoteFactoryInterface = UnitRemoteFactoryImpl.getInstance();
 
-        for (final DeviceConfig deviceConfig : deviceRegistryRemote.getDeviceConfigs()) {
-            if (deviceConfig.getInventoryState().getValue() != InventoryStateType.InventoryState.State.INSTALLED) {
+        for (final UnitConfig deviceUnitConfig : deviceRegistryRemote.getDeviceConfigs()) {
+            if (deviceUnitConfig.getDeviceConfig().getInventoryState().getValue() != InventoryStateType.InventoryState.State.INSTALLED) {
                 continue;
             }
+            CachedDeviceRegistryRemote
 
-            for (final UnitConfig currentUnitConfig : deviceConfig.getUnitConfigList()) {
+            for (final UnitConfig currentUnitConfig : deviceUnitConfig.getDeviceConfig().getUnitConfigList()) {
                 AbstractIdentifiableRemote currentDalRemoteService;
 
                 try {

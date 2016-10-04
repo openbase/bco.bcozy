@@ -18,6 +18,9 @@
  */
 package org.openbase.bco.bcozy.controller;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -25,19 +28,15 @@ import javafx.event.EventHandler;
 import org.openbase.bco.bcozy.view.ForegroundPane;
 import org.openbase.bco.bcozy.view.devicepanes.TitledPaneContainer;
 import org.openbase.bco.bcozy.view.location.LocationPane;
-import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
 import org.openbase.bco.registry.location.remote.LocationRegistryRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
+import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rst.homeautomation.unit.UnitConfigType.UnitConfig;
 import rst.homeautomation.unit.UnitTemplateType.UnitTemplate.UnitType;
-import rst.spatial.LocationConfigType.LocationConfig;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by timo on 03.12.15.
@@ -151,8 +150,8 @@ public class ContextMenuController {
         try {
             final LocationRegistryRemote locationRegistryRemote = this.remotePool.getLocationRegistryRemote();
 
-            for (final LocationConfig locationConfig : locationRegistryRemote.getLocationConfigs()) {
-                final String locationID = locationConfig.getId();
+            for (final UnitConfig locationUnitConfig : locationRegistryRemote.getLocationConfigs()) {
+                final String locationID = locationUnitConfig.getId();
 
                 final TitledPaneContainer titledPaneContainer = new TitledPaneContainer();
                 fillTitledPaneContainer(titledPaneContainer, locationID);
