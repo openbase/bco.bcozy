@@ -33,14 +33,16 @@ import org.openbase.bco.bcozy.view.ForegroundPane;
 import org.openbase.bco.dal.remote.unit.UnitRemoteFactory;
 import org.openbase.bco.dal.remote.unit.UnitRemoteFactoryImpl;
 import org.openbase.bco.manager.user.remote.UserRemote;
-import org.openbase.bco.registry.device.remote.CachedDeviceRegistryRemote;
 import org.openbase.bco.registry.device.remote.DeviceRegistryRemote;
 import org.openbase.bco.registry.location.remote.LocationRegistryRemote;
+import org.openbase.bco.registry.unit.lib.UnitRegistry;
+import org.openbase.bco.registry.unit.remote.CachedUnitRegistryRemote;
 import org.openbase.bco.registry.user.remote.UserRegistryRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
 import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
+import org.openbase.jul.schedule.GlobalExecutionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rct.TransformReceiver;
@@ -63,13 +65,14 @@ public class RemotePool {
     private LocationRegistryRemote locationRegistryRemote;
     private DeviceRegistryRemote deviceRegistryRemote;
     private UserRegistryRemote userRegistryRemote;
+    private UnitRegistry unitRegistry;
     private TransformReceiver transformReceiver;
 
     private boolean init;
     private boolean mapsFilled;
 
     /**
-     * Constructor for the Remotecontroller.
+     * Constructor for the RemotePool.
      *
      * @param foregroundPane ForegroundPane
      */
@@ -105,36 +108,32 @@ public class RemotePool {
             }
         });
 
-        foregroundPane.getMainMenu().addFillHashesButtonEventHandler(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(final ActionEvent event) {
-                final Task task = new Task() {
-                    private final ProgressIndicator progressIndicator = new ProgressIndicator(-1);
+        foregroundPane.getMainMenu().addFillHashesButtonEventHandler((final ActionEvent event) -> {
+            final Task task = new Task() {
+                private final ProgressIndicator progressIndicator = new ProgressIndicator(-1);
 
-                    @Override
-                    protected Object call() throws java.lang.Exception {
-                        Platform.runLater(() -> {
-                            foregroundPane.getContextMenu().getTitledPaneContainer().clearTitledPane();
-                            foregroundPane.getContextMenu().getChildren().add(progressIndicator);
-                        });
-                        try {
-                            fillDeviceAndLocationMap();
-                        } catch (CouldNotPerformException e) {
-                            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-                            shutdownDALRemotesAndClearMaps();
-                        }
-                        return null;
+                @Override
+                protected Object call() throws java.lang.Exception {
+                    Platform.runLater(() -> {
+                        foregroundPane.getContextMenu().getTitledPaneContainer().clearTitledPane();
+                        foregroundPane.getContextMenu().getChildren().add(progressIndicator);
+                    });
+                    try {
+                        fillDeviceAndLocationMap();
+                    } catch (CouldNotPerformException e) {
+                        ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                        shutdownDALRemotesAndClearMaps();
                     }
+                    return null;
+                }
 
-                    @Override
-                    protected void succeeded() {
-                        super.succeeded();
-                        Platform.runLater(()
-                                -> foregroundPane.getContextMenu().getChildren().remove(progressIndicator));
-                    }
-                };
-                new Thread(task).start();
-            }
+                @Override
+                protected void succeeded() {
+                    super.succeeded();
+                    Platform.runLater(() -> foregroundPane.getContextMenu().getChildren().remove(progressIndicator));
+                }
+            };
+            GlobalExecutionService.execute(task);
         });
 
         deviceMap = new HashMap<>();
@@ -158,7 +157,11 @@ public class RemotePool {
         if (init) {
             LOGGER.info("INFO: RegistryRemotes were already initialized.");
             return;
+
         }
+
+        unitRegistry = CachedUnitRegistryRemote.getRegistry();
+        CachedUnitRegistryRemote.waitForData();
 
         locationRegistryRemote = new LocationRegistryRemote();
         locationRegistryRemote.init();
@@ -242,9 +245,14 @@ public class RemotePool {
             if (deviceUnitConfig.getDeviceConfig().getInventoryState().getValue() != InventoryStateType.InventoryState.State.INSTALLED) {
                 continue;
             }
-            CachedDeviceRegistryRemote
 
-            for (final UnitConfig currentUnitConfig : deviceUnitConfig.getDeviceConfig().getUnitConfigList()) {
+            final List<UnitConfig> dalUnitConfigList = new ArrayList<>();
+
+            for (String unitId : deviceUnitConfig.getDeviceConfig().getUnitIdList()) {
+                dalUnitConfigList.add(unitRegistry.getUnitConfigById(unitId));
+            }
+
+            for (final UnitConfig currentUnitConfig : dalUnitConfigList) {
                 AbstractIdentifiableRemote currentDalRemoteService;
 
                 try {
@@ -274,14 +282,13 @@ public class RemotePool {
      * @throws CouldNotPerformException CouldNotPerformException
      */
     public void fillUserMap() throws CouldNotPerformException {
-        for (final UserConfigType.UserConfig currentUserConfig : userRegistryRemote.getUserConfigs()) {
+        for (final UnitConfig currentUserUnitConfig : userRegistryRemote.getUserConfigs()) {
             final UserRemote currentUserRemote = new UserRemote();
             try {
-                currentUserRemote.init(currentUserConfig);
+                currentUserRemote.init(currentUserUnitConfig);
                 currentUserRemote.activate();
             } catch (InterruptedException e) {
                 ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-                continue;
             }
         }
     }
