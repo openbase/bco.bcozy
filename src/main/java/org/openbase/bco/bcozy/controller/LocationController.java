@@ -39,10 +39,10 @@ import org.openbase.jul.pattern.Observer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rct.Transform;
-import rst.homeautomation.unit.UnitConfigType.UnitConfig;
+import rst.domotic.unit.UnitConfigType.UnitConfig;
 import rst.math.Vec3DDoubleType;
-import rst.spatial.LocationConfigType;
-import rst.spatial.LocationRegistryDataType.LocationRegistryData;
+import rst.domotic.unit.location.LocationConfigType;
+import rst.domotic.registry.LocationRegistryDataType.LocationRegistryData;
 
 /**
  *

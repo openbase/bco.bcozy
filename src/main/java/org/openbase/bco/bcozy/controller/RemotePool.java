@@ -47,10 +47,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rct.TransformReceiver;
 import rct.TransformerFactory;
-import rst.authorization.UserConfigType;
-import rst.homeautomation.state.InventoryStateType;
-import rst.homeautomation.unit.UnitConfigType.UnitConfig;
-import rst.homeautomation.unit.UnitTemplateType.UnitTemplate.UnitType;
+import rst.domotic.unit.user.UserConfigType;
+import rst.domotic.state.InventoryStateType;
+import rst.domotic.unit.UnitConfigType.UnitConfig;
+import rst.domotic.unit.UnitTemplateType.UnitTemplate.UnitType;
 
 /**
  * Created by tmichalski on 25.11.15.

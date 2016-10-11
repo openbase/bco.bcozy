@@ -37,8 +37,8 @@ import org.openbase.jul.exception.printer.LogLevel;
 import org.openbase.jul.pattern.Observable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.homeautomation.state.AlarmStateType.AlarmState.State;
-import rst.homeautomation.unit.TemperatureSensorDataType.TemperatureSensorData;
+import rst.domotic.state.AlarmStateType.AlarmState.State;
+import rst.domotic.unit.dal.TemperatureSensorDataType.TemperatureSensorData;
 
 /**
  * Created by tmichalski on 17.01.16.

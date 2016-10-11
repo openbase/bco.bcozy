@@ -35,8 +35,8 @@ import org.openbase.jul.exception.printer.LogLevel;
 import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.homeautomation.unit.UnitConfigType.UnitConfig;
-import rst.homeautomation.unit.UnitTemplateType.UnitTemplate.UnitType;
+import rst.domotic.unit.UnitConfigType.UnitConfig;
+import rst.domotic.unit.UnitTemplateType.UnitTemplate.UnitType;
 
 /**
  * Created by timo on 03.12.15.

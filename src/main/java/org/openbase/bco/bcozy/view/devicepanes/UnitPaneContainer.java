@@ -24,7 +24,7 @@ import org.openbase.bco.bcozy.view.mainmenupanes.ObserverTitledPane;
 import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.homeautomation.unit.UnitTemplateType.UnitTemplate.UnitType;
+import rst.domotic.unit.UnitTemplateType.UnitTemplate.UnitType;
 
 import java.util.List;
 

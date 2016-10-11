@@ -34,9 +34,9 @@ import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
 import org.openbase.jul.pattern.Observable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.homeautomation.state.ActivationStateType.ActivationState;
-import rst.homeautomation.state.ActivationStateType.ActivationState.State;
-import rst.homeautomation.control.agent.AgentDataType.AgentData;
+import rst.domotic.state.ActivationStateType.ActivationState;
+import rst.domotic.state.ActivationStateType.ActivationState.State;
+import rst.domotic.unit.agent.AgentDataType.AgentData;
 
 /**
  * Created by agatting on 12.04.16.

@@ -34,8 +34,8 @@ import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
 import org.openbase.jul.pattern.Observable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.homeautomation.state.MotionStateType.MotionState.State;
-import rst.homeautomation.unit.MotionDetectorDataType.MotionDetectorData;
+import rst.domotic.state.MotionStateType.MotionState.State;
+import rst.domotic.unit.dal.MotionDetectorDataType.MotionDetectorData;
 
 /**
  * Created by tmichalski on 15.01.16.

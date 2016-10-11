@@ -41,10 +41,10 @@ import org.openbase.jul.pattern.Observable;
 import org.openbase.jul.schedule.RecurrenceEventFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.homeautomation.state.BrightnessStateType.BrightnessState;
-import rst.homeautomation.state.PowerStateType.PowerState;
-import rst.homeautomation.state.PowerStateType.PowerState.State;
-import rst.homeautomation.unit.DimmableLightDataType.DimmableLightData;
+import rst.domotic.state.BrightnessStateType.BrightnessState;
+import rst.domotic.state.PowerStateType.PowerState;
+import rst.domotic.state.PowerStateType.PowerState.State;
+import rst.domotic.unit.dal.DimmableLightDataType.DimmableLightData;
 
 /**
  * Created by agatting on 12.01.16.

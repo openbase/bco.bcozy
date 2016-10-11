@@ -40,11 +40,11 @@ import org.openbase.jul.pattern.Observable;
 import org.openbase.jul.schedule.RecurrenceEventFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.homeautomation.unit.TemperatureControllerDataType.TemperatureControllerData;
+import rst.domotic.unit.dal.TemperatureControllerDataType.TemperatureControllerData;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
-import rst.homeautomation.state.TemperatureStateType.TemperatureState;
+import rst.domotic.state.TemperatureStateType.TemperatureState;
 
 /**
  * Created by agatting on 17.01.16.

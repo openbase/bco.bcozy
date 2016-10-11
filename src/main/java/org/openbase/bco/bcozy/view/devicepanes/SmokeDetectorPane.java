@@ -36,9 +36,9 @@ import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
 import org.openbase.jul.pattern.Observable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.homeautomation.state.AlarmStateType.AlarmState.State;
-import rst.homeautomation.state.SmokeStateType.SmokeState;
-import rst.homeautomation.unit.SmokeDetectorDataType.SmokeDetectorData;
+import rst.domotic.state.AlarmStateType.AlarmState.State;
+import rst.domotic.state.SmokeStateType.SmokeState;
+import rst.domotic.unit.dal.SmokeDetectorDataType.SmokeDetectorData;
 
 /**
  * Created by agatting on 11.04.16.

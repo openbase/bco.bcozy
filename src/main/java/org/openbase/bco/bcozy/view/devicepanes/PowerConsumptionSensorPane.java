@@ -35,7 +35,7 @@ import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
 import org.openbase.jul.pattern.Observable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.homeautomation.unit.PowerConsumptionSensorDataType.PowerConsumptionSensorData;
+import rst.domotic.unit.dal.PowerConsumptionSensorDataType.PowerConsumptionSensorData;
 
 /**
  * Created by andi on 08.04.16.

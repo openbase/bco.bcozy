@@ -34,8 +34,8 @@ import org.openbase.jul.exception.printer.LogLevel;
 import org.openbase.jul.pattern.Observable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.homeautomation.state.ContactStateType.ContactState.State;
-import rst.homeautomation.unit.ReedContactDataType.ReedContactData;
+import rst.domotic.state.ContactStateType.ContactState.State;
+import rst.domotic.unit.dal.ReedContactDataType.ReedContactData;
 
 /**
  * Created by agatting on 27.01.16.

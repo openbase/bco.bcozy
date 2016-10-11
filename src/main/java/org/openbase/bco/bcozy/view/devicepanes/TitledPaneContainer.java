@@ -24,7 +24,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
-import rst.homeautomation.unit.UnitTemplateType.UnitTemplate.UnitType;
+import rst.domotic.unit.UnitTemplateType.UnitTemplate.UnitType;
 
 import java.util.List;
 

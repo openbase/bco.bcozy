@@ -41,9 +41,9 @@ import org.openbase.jul.pattern.Observable;
 import org.openbase.jul.schedule.RecurrenceEventFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.homeautomation.state.BlindStateType.BlindState;
-import rst.homeautomation.state.BlindStateType.BlindState.MovementState;
-import rst.homeautomation.unit.RollerShutterDataType.RollerShutterData;
+import rst.domotic.state.BlindStateType.BlindState;
+import rst.domotic.state.BlindStateType.BlindState.MovementState;
+import rst.domotic.unit.dal.RollerShutterDataType.RollerShutterData;
 
 /**
  * Created by hoestreich on 11/19/15.

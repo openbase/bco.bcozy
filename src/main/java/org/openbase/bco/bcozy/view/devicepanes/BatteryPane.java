@@ -34,8 +34,8 @@ import org.openbase.jul.exception.printer.LogLevel;
 import org.openbase.jul.pattern.Observable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.homeautomation.state.BatteryStateType.BatteryState.State;
-import rst.homeautomation.unit.BatteryDataType.BatteryData;
+import rst.domotic.state.BatteryStateType.BatteryState.State;
+import rst.domotic.unit.dal.BatteryDataType.BatteryData;
 
 /**
  * Created by tmichalski on 13.01.16.

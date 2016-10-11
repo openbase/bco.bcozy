@@ -33,8 +33,8 @@ import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
 import org.openbase.jul.pattern.Observable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.homeautomation.state.TamperStateType.TamperState.State;
-import rst.homeautomation.unit.TamperDetectorDataType.TamperDetectorData;
+import rst.domotic.state.TamperStateType.TamperState.State;
+import rst.domotic.unit.dal.TamperDetectorDataType.TamperDetectorData;
 
 /**
  * Created by agatting on 11.04.16.

@@ -34,9 +34,9 @@ import org.openbase.jul.exception.printer.LogLevel;
 import org.openbase.jul.pattern.Observable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.homeautomation.state.PowerStateType;
-import rst.homeautomation.state.PowerStateType.PowerState.State;
-import rst.homeautomation.unit.LightDataType.LightData;
+import rst.domotic.state.PowerStateType;
+import rst.domotic.state.PowerStateType.PowerState.State;
+import rst.domotic.unit.dal.LightDataType.LightData;
 
 /**
  * Created by tmichalski on 08.01.16.

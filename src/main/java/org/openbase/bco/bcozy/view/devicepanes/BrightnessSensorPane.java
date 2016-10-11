@@ -34,7 +34,7 @@ import org.openbase.jul.exception.printer.LogLevel;
 import org.openbase.jul.pattern.Observable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.homeautomation.unit.BrightnessSensorDataType.BrightnessSensorData;
+import rst.domotic.unit.dal.BrightnessSensorDataType.BrightnessSensorData;
 
 /**
  * Created by tmichalski on 15.01.16.
