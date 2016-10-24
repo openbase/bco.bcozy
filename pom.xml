@@ -94,9 +94,9 @@
     <packaging>jar</packaging>
 
     <scm>
-        <connection>scm:git:git@github.com/openbase/bco.bcozy.git</connection>
-        <developerConnection>scm:git:git@github.com/openbase/bco.bcozy.git</developerConnection>
-        <url>git@github.com/openbase/bco.bcozy.git</url>
+        <connection>scm:git:https://github.com/openbase/bco.bcozy.git</connection>
+        <developerConnection>scm:git:https://github.com/openbase/bco.bcozy.git</developerConnection>
+        <url>https://github.com/openbase/bco.bcozy.git</url>
     </scm>
     
     <build>
