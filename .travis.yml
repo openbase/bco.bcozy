@@ -9,9 +9,9 @@ dist: trusty
 #        - oracle-java8-installer
 
 branches:
-  only:
-    - master
-    - latest-stable
+  except:
+  - /^(?i:feature)-.*$/
+  - /^(?i:release)-.*$/
 
 before_install:
   - echo version before upgrade
