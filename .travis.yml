@@ -36,7 +36,7 @@ notifications:
 
   
 install:
-  - mvn --settings .travis/settings.xml clean install -Psonatype -DskipTests=true -Dmaven.javadoc.skip=true -B -V -U -q
+  - mvn --settings .travis/settings.xml clean install -Psonatype -DskipTests=true -Dmaven.javadoc.skip=true -B -V -U
 
 before_install:
   - echo $GPG_SECRET_KEYS | base64 --decode | $GPG_EXECUTABLE --import
