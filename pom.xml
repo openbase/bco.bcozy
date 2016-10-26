@@ -284,9 +284,9 @@
         <plugin.pmd.version>3.5</plugin.pmd.version>
         <plugin.javadoc.version>2.10.3</plugin.javadoc.version>
         <failOnStyleError>false</failOnStyleError>
-        <dependency.jul.version>[1.1,1.2-SNAPSHOT)</dependency.jul.version>
-        <dependency.bco.dal.version>[1.1,1.2-SNAPSHOT)</dependency.bco.dal.version>
-        <dependency.bco.manager.version>[1.1,1.2-SNAPSHOT)</dependency.bco.manager.version>
+        <dependency.jul.version>1.2-SNAPSHOT</dependency.jul.version>
+        <dependency.bco.dal.version>1.2-SNAPSHOT</dependency.bco.dal.version>
+        <dependency.bco.manager.version>1.2-SNAPSHOT</dependency.bco.manager.version>
     </properties>
 
     <dependencies>
