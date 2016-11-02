@@ -3,18 +3,37 @@ language: java
 sudo: required
 dist: trusty
 
+#addons:
+#    apt: 
+#   packages: 
+#        - oracle-java8-installer
+
 branches:
   except:
   - /^(?i:feature)-.*$/
   - /^(?i:release)-.*$/
+
+before_install:
+  #- echo version before upgrade
+  #- java -version
+  #- sudo add-apt-repository ppa:webupd8team/java
+  #- sudo apt-get update -q
+  #- sudo apt-get install oracle-java8-installer
+  #- echo version after upgrade: 
+  - java -version
+
+script:
+  - sudo apt-get update && sudo apt-get install oracle-java8-installer
+  - java -version
 
 notifications:
   slack: openbase-org:vGz7LO4CvGoGMneYkEm3ON7E
   on_failure: change
   on_success: change	
 
-jdk:
-  - oraclejdk8
+#jdk:
+#  - oraclejdk8
+
   
 install:
   - mvn --settings .travis/settings.xml clean install -Psonatype -DskipTests=true -Dmaven.javadoc.skip=true -B -V -U
