@@ -18,15 +18,8 @@
  */
 package org.openbase.bco.bcozy.controller;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import javafx.application.Platform;
 import javafx.geometry.Point2D;
-import javax.vecmath.Point3d;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ForegroundPane;
 import org.openbase.bco.bcozy.view.location.LocationPane;
@@ -39,10 +32,18 @@ import org.openbase.jul.pattern.Observer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rct.Transform;
-import rst.domotic.unit.UnitConfigType.UnitConfig;
-import rst.math.Vec3DDoubleType;
-import rst.domotic.unit.location.LocationConfigType;
 import rst.domotic.registry.LocationRegistryDataType.LocationRegistryData;
+import rst.domotic.unit.UnitConfigType.UnitConfig;
+import rst.domotic.unit.location.LocationConfigType;
+import rst.math.Vec3DDoubleType;
+
+import javax.vecmath.Point3d;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  *
@@ -132,7 +133,7 @@ public class LocationController implements Observer<LocationRegistryData> {
                 }
 
                 locationPane.addLocation(locationUnitConfig.getId(), locationUnitConfig.getLabel(),
-                        locationUnitConfig.getLocationConfig().getChildIdList(), vertices, locationUnitConfig.getType().toString());
+                        locationUnitConfig.getLocationConfig().getChildIdList(), vertices, locationUnitConfig.getLocationConfig().getType().toString());
             } catch (InterruptedException | ExecutionException | TimeoutException e) {
                 ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
                 LOGGER.error("Error while fetching transformation for location \"" + locationUnitConfig.getLabel()
@@ -181,7 +182,7 @@ public class LocationController implements Observer<LocationRegistryData> {
                 }
 
                 locationPane.addConnection(connectionUnitConfig.getId(), connectionUnitConfig.getLabel(),
-                        vertices, connectionUnitConfig.getType().toString(), connectionUnitConfig.getConnectionConfig().getTileIdList());
+                        vertices, connectionUnitConfig.getConnectionConfig().getType().toString(), connectionUnitConfig.getConnectionConfig().getTileIdList());
             } catch (InterruptedException | ExecutionException | TimeoutException e) {
                 ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
                 LOGGER.error("Error while fetching transformation for connection \"" + connectionUnitConfig.getLabel()
