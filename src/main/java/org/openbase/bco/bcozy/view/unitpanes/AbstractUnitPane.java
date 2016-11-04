@@ -16,7 +16,7 @@
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
-package org.openbase.bco.bcozy.view.devicepanes;
+package org.openbase.bco.bcozy.view.unitpanes;
 
 import javafx.scene.control.Label;
 import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
@@ -25,7 +25,7 @@ import org.openbase.jul.pattern.Observer;
 /**
  * Created by tmichalski on 03.12.15.
  */
-public abstract class UnitPane extends WidgetPane implements Observer {
+public abstract class AbstractUnitPane extends WidgetPane implements Observer {
 
     private final Label unitLabel;
     private String unitLabelString;
@@ -33,7 +33,7 @@ public abstract class UnitPane extends WidgetPane implements Observer {
     /**
      * Constructor for the UnitPane.
      */
-    public UnitPane() {
+    public AbstractUnitPane() {
         this.unitLabel = new Label();
         //TODO: Set css styling for unitlabel
     }

@@ -19,6 +19,8 @@
 package org.openbase.bco.bcozy;
 
 import com.guigarage.responsive.ResponsiveHandler;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import javafx.application.Application;
 import javafx.concurrent.Task;
 import javafx.scene.Scene;
@@ -41,9 +43,9 @@ import org.openbase.jps.exception.JPNotAvailableException;
 import org.openbase.jps.preset.JPDebugMode;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
+import org.openbase.jul.schedule.GlobalExecutionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 /**
  * Main Class of the BCozy Program.
@@ -66,7 +68,7 @@ public class BCozy extends Application {
     private RemotePool remotePool;
     private ContextMenuController contextMenuController;
     private LocationController locationController;
-    private Thread initThread;
+    private Future initTask;
 
     /**
      * Main Method starting JavaFX Environment.
@@ -148,14 +150,14 @@ public class BCozy extends Application {
     }
 
     private void initRemotesAndLocation() {
-         initThread = new Thread(new Task() {
+        initTask = GlobalExecutionService.submit(new Task() {
             @Override
             protected Object call() throws java.lang.Exception {
                 infoPane.setTextLabelIdentifier("initRemotes");
                 remotePool.initRegistryRemotes();
 
-                infoPane.setTextLabelIdentifier("fillDeviceAndLocationMap");
-                remotePool.fillDeviceAndLocationMap();
+                infoPane.setTextLabelIdentifier("fillUnitAndLocationMap");
+                remotePool.fillUnitAndLocationMap();
 
                 infoPane.setTextLabelIdentifier("fillUserMap");
                 remotePool.fillUserMap();
@@ -175,16 +177,15 @@ public class BCozy extends Application {
                 infoPane.setVisible(false);
             }
         });
-        initThread.start();
     }
 
     @Override
     public void stop() {
-        if (initThread != null && initThread.isAlive()) {
-            initThread.interrupt();
+        if (initTask != null && !initTask.isDone()) {
+            initTask.cancel(true);
             try {
-                initThread.join();
-            } catch (InterruptedException e) {
+                initTask.get();
+            } catch (InterruptedException | ExecutionException e) {
                 ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
             }
         }
@@ -199,6 +200,7 @@ public class BCozy extends Application {
 
     /**
      * Method to change application wide theme from other locations in the view.
+     *
      * @param themeName the name of the theme to be set
      */
     public static void changeTheme(final String themeName) {

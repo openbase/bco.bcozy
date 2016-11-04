@@ -380,7 +380,7 @@ public final class Constants {
     /**
      * Milliseconds timeout for threads.
      */
-    public static final int THREAD_MILLI_TIMEOUT = 500;
+    public static final int OPERATION_SERVICE_MILLI_TIMEOUT = 3000;
 
     /**
      * Milliseconds interval for click counter(double click).

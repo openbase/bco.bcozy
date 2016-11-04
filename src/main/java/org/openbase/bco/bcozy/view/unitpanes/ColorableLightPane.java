@@ -16,7 +16,7 @@
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
-package org.openbase.bco.bcozy.view.devicepanes; //NOPMD //TODO: Split up in several classes
+package org.openbase.bco.bcozy.view.unitpanes; //NOPMD //TODO: Split up in several classes
 
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.application.Platform;
@@ -68,11 +68,13 @@ import rst.vision.HSBColorType.HSBColor;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import org.openbase.jul.schedule.GlobalExecutionService;
+import rst.domotic.state.PowerStateType.PowerState;
 
 /**
  * Created by agatting on 03.12.15.
  */
-public class ColorableLightPane extends UnitPane {
+public class ColorableLightPane extends AbstractUnitPane {
     private static final Logger LOGGER = LoggerFactory.getLogger(ColorableLightPane.class);
     private static final double COLOR_BOX_SIZE = 150.0;
 
@@ -92,10 +94,10 @@ public class ColorableLightPane extends UnitPane {
 
     /**
      * Constructor for the AmbientLightPane.
-     * @param ambientLightRemote ambientLightRemote
+     * @param colorableLightRemote colorableLightRemote
      */
-    public ColorableLightPane(final AbstractIdentifiableRemote ambientLightRemote) {
-        this.colorableLightRemote = (ColorableLightRemote) ambientLightRemote;
+    public ColorableLightPane(final AbstractIdentifiableRemote colorableLightRemote) {
+        this.colorableLightRemote = (ColorableLightRemote) colorableLightRemote;
 
         lightBulbIcon =
                 new SVGIcon(MaterialDesignIcon.LIGHTBULB, MaterialDesignIcon.LIGHTBULB_OUTLINE, Constants.SMALL_ICON);
@@ -142,26 +144,26 @@ public class ColorableLightPane extends UnitPane {
     private void setEffectColorAndSwitch(final State powerState, final Color color) {
         iconPane.getChildren().clear();
 
-        if (powerState.equals(State.ON)) {
-            iconPane.add(lightBulbIcon, 0, 0);
-            lightBulbIcon.setBackgroundIconColorAnimated(color);
-            observerText.setIdentifier("lightOn");
-
-            if (!toggleSwitch.isSelected()) {
-                toggleSwitch.setSelected(true);
-            }
-        } else if (powerState.equals(State.OFF)) {
-            iconPane.add(lightBulbIcon, 0, 0);
-            lightBulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
-            observerText.setIdentifier("lightOff");
-
-            if (toggleSwitch.isSelected()) {
-                toggleSwitch.setSelected(false);
-            }
-        } else {
-            iconPane.add(unknownBackgroundIcon, 0, 0);
-            iconPane.add(unknownForegroundIcon, 0, 0);
-            observerText.setIdentifier("unknown");
+        switch (powerState) {
+            case ON:
+                iconPane.add(lightBulbIcon, 0, 0);
+                lightBulbIcon.setBackgroundIconColorAnimated(color);
+                observerText.setIdentifier("lightOn");
+                if (!toggleSwitch.isSelected()) {
+                    toggleSwitch.setSelected(true);
+                }   break;
+            case OFF:
+                iconPane.add(lightBulbIcon, 0, 0);
+                lightBulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
+                observerText.setIdentifier("lightOff");
+                if (toggleSwitch.isSelected()) {
+                    toggleSwitch.setSelected(false);
+                }   break;
+            default:
+                iconPane.add(unknownBackgroundIcon, 0, 0);
+                iconPane.add(unknownForegroundIcon, 0, 0);
+                observerText.setIdentifier("unknown");
+                break;
         }
     }
 
@@ -291,21 +293,18 @@ public class ColorableLightPane extends UnitPane {
         return hollowCircle;
     }
 
-    private void sendStateToRemote(final State state) {
-        final String setPowerString = "setPower";
+    private void sendStateToRemote(final PowerState.State powerState) {
         try {
-            colorableLightRemote.callMethodAsync(setPowerString, PowerStateType.PowerState.newBuilder()
-                    .setValue(state).build()).get(Constants.THREAD_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
-            //ambientLightRemote.setPower(PowerStateType.PowerState.State.ON/OFF);
+            colorableLightRemote.setPowerState(powerState).get(Constants.OPERATION_SERVICE_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
         } catch (InterruptedException | ExecutionException | TimeoutException | CouldNotPerformException e) {
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+            ExceptionPrinter.printHistory(e, LOGGER);
             setWidgetPaneDisable(true);
         }
     }
 
     @Override
     protected void initTitle() {
-        oneClick.addListener((observable, oldValue, newValue) -> new Thread(new Task() {
+        oneClick.addListener((observable, oldValue, newValue) -> GlobalExecutionService.submit(new Task() {
             @Override protected Object call() {
                 if (toggleSwitch.isSelected()) {
                     sendStateToRemote(PowerStateType.PowerState.State.OFF);
@@ -314,9 +313,9 @@ public class ColorableLightPane extends UnitPane {
                 }
                 return null;
             }
-        }).start());
+        }));
 
-        toggleSwitch.setOnMouseClicked(event -> new Thread(new Task() {
+        toggleSwitch.setOnMouseClicked(event -> GlobalExecutionService.submit(new Task() {
             @Override protected Object call() {
                 if (toggleSwitch.isSelected()) {
                     sendStateToRemote(PowerStateType.PowerState.State.ON);
@@ -325,7 +324,7 @@ public class ColorableLightPane extends UnitPane {
                 }
                 return null;
             }
-        }).start());
+        }));
 
         unknownForegroundIcon.setForegroundIconColor(Color.BLUE);
         unknownBackgroundIcon.setForegroundIconColor(Color.WHITE);
@@ -340,11 +339,9 @@ public class ColorableLightPane extends UnitPane {
         final HSBColor hsvColor = HSBColor.newBuilder().setHue(hueValue.floatValue())
                 .setSaturation(saturation.floatValue()).setBrightness(brightness.floatValue()).build();
         try {
-            colorableLightRemote.callMethodAsync("setColor", hsvColor)
-                    .get(Constants.THREAD_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
-            //ambientLightRemote.setColor(hsvColor);
-        } catch (InterruptedException | ExecutionException | TimeoutException | CouldNotPerformException e) {
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+            colorableLightRemote.setColor(hsvColor).get(Constants.OPERATION_SERVICE_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException | ExecutionException | TimeoutException | CouldNotPerformException ex) {
+            ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
             setWidgetPaneDisable(true);
         }
     }
@@ -380,7 +377,7 @@ public class ColorableLightPane extends UnitPane {
         circle.layoutYProperty().bind(Bindings.subtract(1, brightness.divide(Constants.ONE_HUNDRED))
                 .multiply(COLOR_BOX_SIZE));
 
-        final EventHandler<MouseEvent> colorContainerMouseHandler = event -> new Thread(new Task() {
+        final EventHandler<MouseEvent> colorContainerMouseHandler = event -> GlobalExecutionService.submit(new Task() {
             @Override protected Object call() {
                 final double xMouse = event.getX();
                 final double yMouse = event.getY();
@@ -396,7 +393,7 @@ public class ColorableLightPane extends UnitPane {
 
                 return null;
             }
-        }).start();
+        });
 
         colorRectContainer.setMinSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
         colorRectContainer.setPrefSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
@@ -420,7 +417,7 @@ public class ColorableLightPane extends UnitPane {
         rectangleSelector.setManaged(false);
         rectangleSelector.setEffect(dropShadow());
 
-        final EventHandler<MouseEvent> colorCircleMouseHandler = event -> new Thread(new Task() {
+        final EventHandler<MouseEvent> colorCircleMouseHandler = event -> GlobalExecutionService.submit(new Task() {
             @Override protected Object call() {
                 double yMouse = event.getY();
                 double xMouse = event.getX();
@@ -444,7 +441,7 @@ public class ColorableLightPane extends UnitPane {
 
                 return null;
             }
-        }).start();
+        });
 
         hollowCircle.setOnMousePressed(colorCircleMouseHandler);
         hollowCircle.setOnMouseDragged(colorCircleMouseHandler);
@@ -488,16 +485,16 @@ public class ColorableLightPane extends UnitPane {
     }
 
     @Override
-    public void update(final Observable observable, final Object ambientLight) throws java.lang.Exception {
+    public void update(final Observable observable, final Object colorableLight) throws java.lang.Exception {
         Platform.runLater(() -> {
             if (this.isDisabled()) {
                 setWidgetPaneDisable(false);
             }
 
-            final State powerState = ((ColorableLightData) ambientLight).getPowerState().getValue();
-            final Color color = Color.hsb(((ColorableLightData) ambientLight).getColorState().getColor().getHsbColor().getHue(),
-                    ((ColorableLightData) ambientLight).getColorState().getColor().getHsbColor().getSaturation() / Constants.ONE_HUNDRED,
-                    ((ColorableLightData) ambientLight).getColorState().getColor().getHsbColor().getBrightness()/ Constants.ONE_HUNDRED);
+            final State powerState = ((ColorableLightData) colorableLight).getPowerState().getValue();
+            final Color color = Color.hsb(((ColorableLightData) colorableLight).getColorState().getColor().getHsbColor().getHue(),
+                    ((ColorableLightData) colorableLight).getColorState().getColor().getHsbColor().getSaturation() / Constants.ONE_HUNDRED,
+                    ((ColorableLightData) colorableLight).getColorState().getColor().getHsbColor().getBrightness()/ Constants.ONE_HUNDRED);
             setEffectColorAndSwitch(powerState, color);
         });
     }

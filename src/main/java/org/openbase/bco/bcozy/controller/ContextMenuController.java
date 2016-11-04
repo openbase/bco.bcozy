@@ -26,7 +26,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import org.openbase.bco.bcozy.view.ForegroundPane;
-import org.openbase.bco.bcozy.view.devicepanes.TitledPaneContainer;
+import org.openbase.bco.bcozy.view.unitpanes.TitledPaneContainer;
 import org.openbase.bco.bcozy.view.location.LocationPane;
 import org.openbase.bco.registry.location.remote.LocationRegistryRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
@@ -66,7 +66,7 @@ public class ContextMenuController {
             @Override
             public void handle(final ActionEvent event) {
                 try {
-                    setContextMenuDevicePanes("511adfec-43ed-47f5-bd4d-28f46dc1b5a4");
+                    setContextMenuUnitPanes("511adfec-43ed-47f5-bd4d-28f46dc1b5a4");
                 } catch (CouldNotPerformException e) {
                     ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
                 }
@@ -79,7 +79,7 @@ public class ContextMenuController {
                     final String newValue) {
                 if (remotePool.isMapsFilled()) {
                     try {
-                        setContextMenuDevicePanes(newValue);
+                        setContextMenuUnitPanes(newValue);
                     } catch (CouldNotPerformException e) {
                         ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
                     }
@@ -96,7 +96,7 @@ public class ContextMenuController {
      * @param locationID locationID
      * @throws CouldNotPerformException CouldNotPerformException
      */
-    public void setContextMenuDevicePanes(final String locationID) throws CouldNotPerformException {
+    public void setContextMenuUnitPanes(final String locationID) throws CouldNotPerformException {
         if ("none".equals(locationID)) {
             throw new CouldNotPerformException("No location is selected.");
         }
@@ -115,8 +115,7 @@ public class ContextMenuController {
     private void fillTitledPaneContainer(final TitledPaneContainer titledPaneContainer, final String locationID) {
         this.titledPaneMap.put(locationID, titledPaneContainer);
 
-        final Map<UnitType, List<AbstractIdentifiableRemote>> unitRemoteMap
-                = remotePool.getUnitRemoteMapOfLocation(locationID);
+        final Map<UnitType, List<AbstractIdentifiableRemote>> unitRemoteMap = remotePool.getUnitRemoteMapOfLocation(locationID);
 
         for (final Map.Entry<UnitType, List<AbstractIdentifiableRemote>> nextEntry : unitRemoteMap.entrySet()) {
             try {

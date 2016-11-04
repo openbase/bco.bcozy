@@ -16,17 +16,16 @@
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
-package org.openbase.bco.bcozy.view.devicepanes;
+package org.openbase.bco.bcozy.view.unitpanes;
 
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
-import de.jensd.fx.glyphs.materialicons.MaterialIcon;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.SVGIcon;
-import org.openbase.bco.dal.remote.unit.MotionDetectorRemote;
+import org.openbase.bco.dal.remote.unit.TamperDetectorRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
@@ -34,36 +33,34 @@ import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
 import org.openbase.jul.pattern.Observable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.domotic.state.MotionStateType.MotionState.State;
-import rst.domotic.unit.dal.MotionDetectorDataType.MotionDetectorData;
+import rst.domotic.state.TamperStateType.TamperState.State;
+import rst.domotic.unit.dal.TamperDetectorDataType.TamperDetectorData;
 
 /**
- * Created by tmichalski on 15.01.16.
+ * Created by agatting on 11.04.16.
  */
-public class MotionDetectorPane extends UnitPane {
+public class TamperDetectorPane extends AbstractUnitPane {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TamperDetectorPane.class);
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BatteryPane.class);
-
-    private final MotionDetectorRemote motionDetectorRemote;
+    private final TamperDetectorRemote tamperDetectorRemote;
+    private final SVGIcon tamperSwitchIconOk;
+    private final SVGIcon tamperSwitchIconManipulation;
     private final SVGIcon unknownForegroundIcon;
     private final SVGIcon unknownBackgroundIcon;
-    private final SVGIcon backgroundIcon;
-    private final SVGIcon motionIcon;
     private final BorderPane headContent;
 
     /**
-     * Constructor for the BatteryPane.
-     *
-     * @param brightnessSensorRemote motionSensorRemote
+     * Constructor for the TamperSwitchPane.
+     * @param tamperSwitchRemote tamperSwitchRemote
      */
-    public MotionDetectorPane(final AbstractIdentifiableRemote brightnessSensorRemote) {
-        this.motionDetectorRemote = (MotionDetectorRemote) brightnessSensorRemote;
+    public TamperDetectorPane(final AbstractIdentifiableRemote tamperSwitchRemote) {
+        this.tamperDetectorRemote = (TamperDetectorRemote) tamperSwitchRemote;
 
         headContent = new BorderPane();
+        tamperSwitchIconOk = new SVGIcon(MaterialDesignIcon.CHECKBOX_MARKED_CIRCLE, Constants.SMALL_ICON, false);
+        tamperSwitchIconManipulation = new SVGIcon(MaterialDesignIcon.ALERT_CIRCLE, Constants.SMALL_ICON, false);
         unknownBackgroundIcon = new SVGIcon(MaterialDesignIcon.CHECKBOX_BLANK_CIRCLE, Constants.SMALL_ICON - 2, false);
         unknownForegroundIcon = new SVGIcon(MaterialDesignIcon.HELP_CIRCLE, Constants.SMALL_ICON, false);
-        motionIcon = new SVGIcon(MaterialIcon.BLUR_ON, MaterialIcon.PANORAMA_FISH_EYE, Constants.SMALL_ICON);
-        backgroundIcon = new SVGIcon(MaterialIcon.LENS, Constants.SMALL_ICON, false);
 
         initUnitLabel();
         initTitle();
@@ -72,37 +69,37 @@ public class MotionDetectorPane extends UnitPane {
         initEffect();
         tooltip.textProperty().bind(observerText.textProperty());
 
-        this.motionDetectorRemote.addDataObserver(this);
+        this.tamperDetectorRemote.addDataObserver(this);
     }
 
     private void initEffect() {
-        State motionState = State.UNKNOWN;
+        State tamperSwitchState = State.UNKNOWN;
 
         try {
-            motionState = motionDetectorRemote.getMotionState().getValue();
+            tamperSwitchState = tamperDetectorRemote.getTamperState().getValue();
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
-        setMotionStateIconAndTooltip(motionState);
+        setTamperSwitchIconAndText(tamperSwitchState);
     }
 
-    private void setMotionStateIconAndTooltip(final State motionState) {
+    private void setTamperSwitchIconAndText(final State tamperSwitchState) {
         iconPane.getChildren().clear();
 
-        if (motionState.equals(State.MOTION)) {
-            motionIcon.setBackgroundIconColorAnimated(Color.WHITE);
-            iconPane.add(backgroundIcon, 0, 0);
-            iconPane.add(motionIcon, 0, 0);
-            observerText.setIdentifier("movement");
-        } else if (motionState.equals(State.NO_MOTION)) {
-            motionIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
-            iconPane.add(backgroundIcon, 0, 0);
-            iconPane.add(motionIcon, 0, 0);
-            observerText.setIdentifier("noMovement");
-        } else {
-            iconPane.add(unknownBackgroundIcon, 0, 0);
-            iconPane.add(unknownForegroundIcon, 0, 0);
-            observerText.setIdentifier("unknown");
+        if (null != tamperSwitchState) switch (tamperSwitchState) {
+            case NO_TAMPER:
+                iconPane.add(tamperSwitchIconOk, 0, 0);
+                observerText.setIdentifier("noTamper");
+                break;
+            case TAMPER:
+                iconPane.add(tamperSwitchIconManipulation, 0, 0);
+                observerText.setIdentifier("tamper");
+                break;
+            default:
+                iconPane.add(unknownBackgroundIcon, 0, 0);
+                iconPane.add(unknownForegroundIcon, 0, 0);
+                observerText.setIdentifier("unknown");
+                break;
         }
     }
 
@@ -110,11 +107,12 @@ public class MotionDetectorPane extends UnitPane {
     protected void initTitle() {
         unknownForegroundIcon.setForegroundIconColor(Color.BLUE);
         unknownBackgroundIcon.setForegroundIconColor(Color.WHITE);
-        backgroundIcon.setForegroundIconColor(Color.BLACK);
+        tamperSwitchIconOk.setForegroundIconColor(Color.GREEN);
+        tamperSwitchIconManipulation.setForegroundIconColor(Color.RED);
 
         headContent.setCenter(getUnitLabel());
         headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
-        headContent.prefHeightProperty().set(iconPane.getHeight() + Constants.INSETS);
+        headContent.prefHeightProperty().set(tamperSwitchIconOk.getSize() + Constants.INSETS);
     }
 
     @Override
@@ -126,7 +124,7 @@ public class MotionDetectorPane extends UnitPane {
     protected void initUnitLabel() {
         String unitLabel = Constants.UNKNOWN_ID;
         try {
-            unitLabel = this.motionDetectorRemote.getData().getLabel();
+            unitLabel = this.tamperDetectorRemote.getData().getLabel();
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
@@ -135,19 +133,20 @@ public class MotionDetectorPane extends UnitPane {
 
     @Override
     public AbstractIdentifiableRemote getDALRemoteService() {
-        return motionDetectorRemote;
+        return tamperDetectorRemote;
     }
 
     @Override
     void removeObserver() {
-        this.motionDetectorRemote.removeObserver(this);
+        this.tamperDetectorRemote.removeObserver(this);
     }
 
     @Override
-    public void update(final Observable observable, final Object motionSensor) throws java.lang.Exception {
+    public void update(final Observable observable, final Object tamperSwitch) throws java.lang.Exception {
         Platform.runLater(() -> {
-            final State motionState = ((MotionDetectorData) motionSensor).getMotionState().getValue();
-            setMotionStateIconAndTooltip(motionState);
+            final State tamperSwitchState = ((TamperDetectorData) tamperSwitch).getTamperState().getValue();
+
+            setTamperSwitchIconAndText(tamperSwitchState);
         });
     }
 }

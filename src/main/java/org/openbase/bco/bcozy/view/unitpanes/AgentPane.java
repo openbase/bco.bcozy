@@ -16,9 +16,12 @@
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
-package org.openbase.bco.bcozy.view.devicepanes;
+package org.openbase.bco.bcozy.view.unitpanes;
 
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.geometry.Pos;
@@ -26,79 +29,79 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.SVGIcon;
-import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
-import org.openbase.bco.dal.remote.unit.LightRemote;
+import org.openbase.bco.manager.agent.remote.AgentRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
+import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
 import org.openbase.jul.pattern.Observable;
+import org.openbase.jul.schedule.GlobalExecutionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.domotic.state.PowerStateType;
-import rst.domotic.state.PowerStateType.PowerState.State;
-import rst.domotic.unit.dal.LightDataType.LightData;
+import rst.domotic.state.ActivationStateType.ActivationState;
+import rst.domotic.state.ActivationStateType.ActivationState.State;
+import rst.domotic.unit.agent.AgentDataType.AgentData;
 
 /**
- * Created by tmichalski on 08.01.16.
+ * Created by agatting on 12.04.16.
  */
-public class LightPane extends UnitPane {
-    private static final Logger LOGGER = LoggerFactory.getLogger(LightPane.class);
+public class AgentPane extends AbstractUnitPane {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TamperDetectorPane.class);
 
+    private final SVGIcon agentIcon;
     private final SVGIcon unknownForegroundIcon;
     private final SVGIcon unknownBackgroundIcon;
-    private final LightRemote lightRemote;
-    private final SVGIcon lightBulbIcon;
+    private final AgentRemote agentRemote;
     private final BorderPane headContent;
 
     /**
-     * Constructor for the LightPane.
-     * @param lightRemote lightRemote
+     * Constructor for the AgentPane.
+     * @param agentRemote agentRemote
      */
-    public LightPane(final AbstractIdentifiableRemote lightRemote) {
-        this.lightRemote = (LightRemote) lightRemote;
+    public AgentPane(final AbstractIdentifiableRemote agentRemote) {
+        this.agentRemote = (AgentRemote) agentRemote;
 
-        lightBulbIcon =
-                new SVGIcon(MaterialDesignIcon.LIGHTBULB, MaterialDesignIcon.LIGHTBULB_OUTLINE, Constants.SMALL_ICON);
+        headContent = new BorderPane();
+        agentIcon = new SVGIcon(MaterialDesignIcon.POWER, Constants.SMALL_ICON, false);
         unknownBackgroundIcon = new SVGIcon(MaterialDesignIcon.CHECKBOX_BLANK_CIRCLE, Constants.SMALL_ICON - 2, false);
         unknownForegroundIcon = new SVGIcon(MaterialDesignIcon.HELP_CIRCLE, Constants.SMALL_ICON, false);
-        headContent = new BorderPane();
 
         initUnitLabel();
         initTitle();
         initContent();
         createWidgetPane(headContent, true);
-        initEffectAndSwitch();
+        initEffect();
         tooltip.textProperty().bind(observerText.textProperty());
 
-        this.lightRemote.addDataObserver(this);
+        this.agentRemote.addDataObserver(this);
     }
 
-    private void initEffectAndSwitch() {
-        State powerState = State.OFF;
+    private void initEffect() {
+        State state = State.UNKNOWN;
 
         try {
-            powerState = lightRemote.getPowerState().getValue();
+            state = agentRemote.getData().getActivationState().getValue();
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
-        setPowerStateSwitchAndIcon(powerState);
+        setAgentIconAndText(state);
     }
 
-    private void setPowerStateSwitchAndIcon(final State powerState) {
+    private void setAgentIconAndText(final State state) {
         iconPane.getChildren().clear();
 
-        if (powerState.equals(State.ON)) {
-            iconPane.add(lightBulbIcon, 0, 0);
-            lightBulbIcon.setBackgroundIconColorAnimated(Constants.LIGHTBULB_COLOR);
-            observerText.setIdentifier("lightOn");
+        if (state.equals(State.ACTIVE)) {
+            agentIcon.setForegroundIconColor(Color.GREEN);
+            iconPane.add(agentIcon, 0, 0);
+            observerText.setIdentifier("active");
 
             if (!toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(true);
             }
-        } else if (powerState.equals(State.OFF)) {
-            iconPane.add(lightBulbIcon, 0, 0);
-            lightBulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
-            observerText.setIdentifier("lightOff");
+        } else if (state.equals(State.DEACTIVE)) {
+            agentIcon.changeForegroundIcon(MaterialDesignIcon.POWER);
+            iconPane.add(agentIcon, 0, 0);
+            observerText.setIdentifier("inactive");
 
             if (toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(false);
@@ -112,46 +115,45 @@ public class LightPane extends UnitPane {
 
     private void sendStateToRemote(final State state) {
         try {
-            lightRemote.setPowerState(state);
-        } catch (CouldNotPerformException e) {
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+            agentRemote.setActivationState(ActivationState.newBuilder().setValue(state).build()).get(Constants.OPERATION_SERVICE_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException | ExecutionException | TimeoutException | CouldNotPerformException ex) {
+            ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
             setWidgetPaneDisable(true);
         }
     }
 
     @Override
     protected void initTitle() {
-        oneClick.addListener((observable, oldValue, newValue) -> new Thread(new Task() {
+        oneClick.addListener((observable, oldValue, newValue) -> GlobalExecutionService.submit(new Task() {
             @Override
             protected Object call() {
                 if (toggleSwitch.isSelected()) {
-                    sendStateToRemote(PowerStateType.PowerState.State.OFF);
+                    sendStateToRemote(ActivationState.State.DEACTIVE);
                 } else {
-                    sendStateToRemote(PowerStateType.PowerState.State.ON);
+                    sendStateToRemote(ActivationState.State.ACTIVE);
                 }
                 return null;
             }
-        }).start());
+        }));
 
-        toggleSwitch.setOnMouseClicked(event -> new Thread(new Task() {
+        toggleSwitch.setOnMouseClicked(event -> GlobalExecutionService.submit(new Task() {
             @Override
             protected Object call() {
                 if (toggleSwitch.isSelected()) {
-                    sendStateToRemote(PowerStateType.PowerState.State.ON);
+                    sendStateToRemote(ActivationState.State.ACTIVE);
                 } else {
-                    sendStateToRemote(PowerStateType.PowerState.State.OFF);
+                    sendStateToRemote(ActivationState.State.DEACTIVE);
                 }
                 return null;
             }
-        }).start());
+        }));
 
         unknownForegroundIcon.setForegroundIconColor(Color.BLUE);
         unknownBackgroundIcon.setForegroundIconColor(Color.WHITE);
-        lightBulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
 
         headContent.setCenter(getUnitLabel());
         headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
-        headContent.prefHeightProperty().set(lightBulbIcon.getSize() + Constants.INSETS);
+        headContent.prefHeightProperty().set(agentIcon.getHeight() + Constants.INSETS);
     }
 
     @Override
@@ -163,7 +165,7 @@ public class LightPane extends UnitPane {
     protected void initUnitLabel() {
         String unitLabel = Constants.UNKNOWN_ID;
         try {
-            unitLabel = this.lightRemote.getData().getLabel();
+            unitLabel = this.agentRemote.getData().getLabel();
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
@@ -172,19 +174,19 @@ public class LightPane extends UnitPane {
 
     @Override
     public AbstractIdentifiableRemote getDALRemoteService() {
-        return lightRemote;
+        return agentRemote;
     }
 
     @Override
     void removeObserver() {
-        this.lightRemote.removeObserver(this);
+        this.agentRemote.removeObserver(this);
     }
 
     @Override
-    public void update(final Observable observable, final Object light) throws java.lang.Exception {
+    public void update(final Observable observable, final Object agent) throws java.lang.Exception {
         Platform.runLater(() -> {
-            final State powerState = ((LightData) light).getPowerState().getValue();
-            setPowerStateSwitchAndIcon(powerState);
+            final State state = ((AgentData) agent).getActivationState().getValue();
+            setAgentIconAndText(state);
         });
     }
 }

@@ -20,4 +20,4 @@
 /**
  * Created by julian on 12.11.15.
  */
-package org.openbase.bco.bcozy.view.devicepanes;
+package org.openbase.bco.bcozy.view.unitpanes;

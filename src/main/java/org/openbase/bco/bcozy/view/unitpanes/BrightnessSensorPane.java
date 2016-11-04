@@ -16,7 +16,7 @@
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
-package org.openbase.bco.bcozy.view.devicepanes;
+package org.openbase.bco.bcozy.view.unitpanes;
 
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.application.Platform;
@@ -39,7 +39,7 @@ import rst.domotic.unit.dal.BrightnessSensorDataType.BrightnessSensorData;
 /**
  * Created by tmichalski on 15.01.16.
  */
-public class BrightnessSensorPane extends UnitPane {
+public class BrightnessSensorPane extends AbstractUnitPane {
     private static final Logger LOGGER = LoggerFactory.getLogger(BatteryPane.class);
 
     private final BrightnessSensorRemote brightnessSensorRemote;

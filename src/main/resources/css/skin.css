@@ -145,23 +145,23 @@
 .large-button {
     -fx-min-width: 80;
 }
-.large-button:large-device {
+.large-button:large-unit {
     -fx-content-display : top;
     -fx-graphic-text-gap: 5;
     -fx-font-size       : 14;
     -fx-padding         : 0.7em 0.9em 0.7em 0.9em;
 }
-.large-button:medium-device {
+.large-button:medium-unit {
     -fx-graphic-text-gap: 5;
     -fx-font-size       : 12;
     -fx-padding         : 0.7em 0.5em 0.7em 0.5em;
 }
-.large-button:small-device {
+.large-button:small-unit {
     -fx-graphic-text-gap: 5;
     -fx-font-size       : 10;
     -fx-padding         : 0.5em 0.4em 0.5em 0.4em;
 }
-.large-button:extreme-small-device {
+.large-button:extreme-small-unit {
     -visibility        : visible;
     -fx-font-size       : 8;
     /*-fx-content-display: graphic-only;*/

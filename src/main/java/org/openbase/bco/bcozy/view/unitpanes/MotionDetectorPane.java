@@ -16,7 +16,7 @@
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
-package org.openbase.bco.bcozy.view.devicepanes;
+package org.openbase.bco.bcozy.view.unitpanes;
 
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import de.jensd.fx.glyphs.materialicons.MaterialIcon;
@@ -26,73 +26,79 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.SVGIcon;
-import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
-import org.openbase.bco.dal.remote.unit.ReedContactRemote;
+import org.openbase.bco.dal.remote.unit.MotionDetectorRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
+import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
 import org.openbase.jul.pattern.Observable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.domotic.state.ContactStateType.ContactState.State;
-import rst.domotic.unit.dal.ReedContactDataType.ReedContactData;
+import rst.domotic.state.MotionStateType.MotionState.State;
+import rst.domotic.unit.dal.MotionDetectorDataType.MotionDetectorData;
 
 /**
- * Created by agatting on 27.01.16.
+ * Created by tmichalski on 15.01.16.
  */
-public class ReedContactPane extends UnitPane {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ReedContactPane.class);
+public class MotionDetectorPane extends AbstractUnitPane {
 
-    private final ReedContactRemote reedContactRemote;
+    private static final Logger LOGGER = LoggerFactory.getLogger(BatteryPane.class);
+
+    private final MotionDetectorRemote motionDetectorRemote;
     private final SVGIcon unknownForegroundIcon;
     private final SVGIcon unknownBackgroundIcon;
-    private final SVGIcon reedSwitchIcon;
+    private final SVGIcon backgroundIcon;
+    private final SVGIcon motionIcon;
     private final BorderPane headContent;
 
     /**
-     * Constructor for the ReedSwitchPane.
-     * @param reedSwitchRemote reedSwitchRemote
+     * Constructor for the BatteryPane.
+     *
+     * @param brightnessSensorRemote motionSensorRemote
      */
-    public ReedContactPane(final AbstractIdentifiableRemote reedSwitchRemote) {
-        this.reedContactRemote = (ReedContactRemote) reedSwitchRemote;
+    public MotionDetectorPane(final AbstractIdentifiableRemote brightnessSensorRemote) {
+        this.motionDetectorRemote = (MotionDetectorRemote) brightnessSensorRemote;
 
-        reedSwitchIcon = new SVGIcon(MaterialIcon.RADIO_BUTTON_CHECKED, Constants.SMALL_ICON, true);
+        headContent = new BorderPane();
         unknownBackgroundIcon = new SVGIcon(MaterialDesignIcon.CHECKBOX_BLANK_CIRCLE, Constants.SMALL_ICON - 2, false);
         unknownForegroundIcon = new SVGIcon(MaterialDesignIcon.HELP_CIRCLE, Constants.SMALL_ICON, false);
-        headContent = new BorderPane();
+        motionIcon = new SVGIcon(MaterialIcon.BLUR_ON, MaterialIcon.PANORAMA_FISH_EYE, Constants.SMALL_ICON);
+        backgroundIcon = new SVGIcon(MaterialIcon.LENS, Constants.SMALL_ICON, false);
 
         initUnitLabel();
         initTitle();
         initContent();
         createWidgetPane(headContent, false);
-        initEffectAndText();
+        initEffect();
         tooltip.textProperty().bind(observerText.textProperty());
 
-        this.reedContactRemote.addDataObserver(this);
+        this.motionDetectorRemote.addDataObserver(this);
     }
 
-    private void initEffectAndText() {
-        State reedSwitchState = State.UNKNOWN;
+    private void initEffect() {
+        State motionState = State.UNKNOWN;
 
         try {
-            reedSwitchState = reedContactRemote.getContactState().getValue();
+            motionState = motionDetectorRemote.getMotionState().getValue();
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
-        setReedSwitchIconAndTooltip(reedSwitchState);
+        setMotionStateIconAndTooltip(motionState);
     }
 
-    private void setReedSwitchIconAndTooltip(final State reedSwitchState) {
+    private void setMotionStateIconAndTooltip(final State motionState) {
         iconPane.getChildren().clear();
 
-        if (reedSwitchState == State.CLOSED) {
-            reedSwitchIcon.changeForegroundIcon(MaterialIcon.RADIO_BUTTON_CHECKED);
-            iconPane.add(reedSwitchIcon, 0, 0);
-            observerText.setIdentifier("closed");
-        } else if (reedSwitchState == State.OPEN) {
-            reedSwitchIcon.changeForegroundIcon(MaterialIcon.RADIO_BUTTON_UNCHECKED);
-            iconPane.add(reedSwitchIcon, 0, 0);
-            observerText.setIdentifier("open");
+        if (motionState.equals(State.MOTION)) {
+            motionIcon.setBackgroundIconColorAnimated(Color.WHITE);
+            iconPane.add(backgroundIcon, 0, 0);
+            iconPane.add(motionIcon, 0, 0);
+            observerText.setIdentifier("movement");
+        } else if (motionState.equals(State.NO_MOTION)) {
+            motionIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
+            iconPane.add(backgroundIcon, 0, 0);
+            iconPane.add(motionIcon, 0, 0);
+            observerText.setIdentifier("noMovement");
         } else {
             iconPane.add(unknownBackgroundIcon, 0, 0);
             iconPane.add(unknownForegroundIcon, 0, 0);
@@ -104,10 +110,11 @@ public class ReedContactPane extends UnitPane {
     protected void initTitle() {
         unknownForegroundIcon.setForegroundIconColor(Color.BLUE);
         unknownBackgroundIcon.setForegroundIconColor(Color.WHITE);
+        backgroundIcon.setForegroundIconColor(Color.BLACK);
 
         headContent.setCenter(getUnitLabel());
         headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
-        headContent.prefHeightProperty().set(reedSwitchIcon.getSize() + Constants.INSETS);
+        headContent.prefHeightProperty().set(iconPane.getHeight() + Constants.INSETS);
     }
 
     @Override
@@ -119,7 +126,7 @@ public class ReedContactPane extends UnitPane {
     protected void initUnitLabel() {
         String unitLabel = Constants.UNKNOWN_ID;
         try {
-            unitLabel = this.reedContactRemote.getData().getLabel();
+            unitLabel = this.motionDetectorRemote.getData().getLabel();
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
@@ -128,20 +135,19 @@ public class ReedContactPane extends UnitPane {
 
     @Override
     public AbstractIdentifiableRemote getDALRemoteService() {
-        return reedContactRemote;
+        return motionDetectorRemote;
     }
 
     @Override
     void removeObserver() {
-        this.reedContactRemote.removeObserver(this);
+        this.motionDetectorRemote.removeObserver(this);
     }
 
     @Override
-    public void update(final Observable observable, final Object reedSwitch) throws java.lang.Exception {
+    public void update(final Observable observable, final Object motionSensor) throws java.lang.Exception {
         Platform.runLater(() -> {
-            final State reedSwitchState = ((ReedContactData) reedSwitch).getContactState().getValue();
-
-            setReedSwitchIconAndTooltip(reedSwitchState);
+            final State motionState = ((MotionDetectorData) motionSensor).getMotionState().getValue();
+            setMotionStateIconAndTooltip(motionState);
         });
     }
 }

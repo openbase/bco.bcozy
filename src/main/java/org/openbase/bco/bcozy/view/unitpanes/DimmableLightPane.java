@@ -16,9 +16,12 @@
  * org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
-package org.openbase.bco.bcozy.view.devicepanes;
+package org.openbase.bco.bcozy.view.unitpanes;
 
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
@@ -38,6 +41,7 @@ import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
 import org.openbase.jul.pattern.Observable;
+import org.openbase.jul.schedule.GlobalExecutionService;
 import org.openbase.jul.schedule.RecurrenceEventFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +53,7 @@ import rst.domotic.unit.dal.DimmableLightDataType.DimmableLightData;
 /**
  * Created by agatting on 12.01.16.
  */
-public class DimmableLightPane extends UnitPane {
+public class DimmableLightPane extends AbstractUnitPane {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DimmableLightPane.class);
 
@@ -64,17 +68,18 @@ public class DimmableLightPane extends UnitPane {
     private final VBox bodyContent;
     private final Slider slider;
 
-    private final EventHandler<MouseEvent> sendBrightness = event -> new Thread(new Task() {
+    private final EventHandler<MouseEvent> sendBrightness = event -> GlobalExecutionService.submit(new Task() {
         @Override
         protected Object call() {
             try {
-                dimmableLightRemote.setBrightnessState(BrightnessState.newBuilder().setBrightness(slider.getValue()).build());
-            } catch (CouldNotPerformException e) {
-                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                dimmableLightRemote.setBrightnessState(BrightnessState.newBuilder().setBrightness(slider.getValue()).build()).get(Constants.OPERATION_SERVICE_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
+            } catch (InterruptedException | ExecutionException | TimeoutException | CouldNotPerformException ex) {
+                ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
+                setWidgetPaneDisable(true);
             }
             return null;
         }
-    }).start();
+    });
 
     /**
      * Constructor for the DimmerPane.
@@ -156,9 +161,9 @@ public class DimmableLightPane extends UnitPane {
 
     private void sendStateToRemote(final State state) {
         try {
-            dimmableLightRemote.setPowerState(state);
-        } catch (CouldNotPerformException e) {
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+            dimmableLightRemote.setPowerState(state).get(Constants.OPERATION_SERVICE_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException | ExecutionException | TimeoutException | CouldNotPerformException ex) {
+            ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
             setWidgetPaneDisable(true);
         }
     }
@@ -167,7 +172,7 @@ public class DimmableLightPane extends UnitPane {
     protected void initTitle() {
         lightBulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
 
-        oneClick.addListener((observable, oldValue, newValue) -> new Thread(new Task() {
+        oneClick.addListener((observable, oldValue, newValue) -> GlobalExecutionService.submit(new Task() {
             @Override
             protected Object call() {
                 if (toggleSwitch.isSelected()) {
@@ -177,9 +182,9 @@ public class DimmableLightPane extends UnitPane {
                 }
                 return null;
             }
-        }).start());
+        }));
 
-        toggleSwitch.setOnMouseClicked(event -> new Thread(new Task() {
+        toggleSwitch.setOnMouseClicked(event -> GlobalExecutionService.submit(new Task() {
             @Override
             protected Object call() {
                 if (toggleSwitch.isSelected()) {
@@ -189,7 +194,7 @@ public class DimmableLightPane extends UnitPane {
                 }
                 return null;
             }
-        }).start());
+        }));
 
         unknownForegroundIcon.setForegroundIconColor(Color.BLUE);
         unknownBackgroundIcon.setForegroundIconColor(Color.WHITE);
@@ -257,7 +262,7 @@ public class DimmableLightPane extends UnitPane {
     public void update(final Observable observable, final Object dimmer) throws java.lang.Exception {
         Platform.runLater(() -> {
             final State powerState = ((DimmableLightData) dimmer).getPowerState().getValue();
-            final double brightness = ((DimmableLightData) dimmer).getBrightnessState().getBrightness()/ Constants.ONE_HUNDRED;
+            final double brightness = ((DimmableLightData) dimmer).getBrightnessState().getBrightness() / Constants.ONE_HUNDRED;
             setEffectColorAndSlider(powerState, brightness);
         });
     }

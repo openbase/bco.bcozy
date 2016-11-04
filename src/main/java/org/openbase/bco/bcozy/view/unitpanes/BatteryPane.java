@@ -16,7 +16,7 @@
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
-package org.openbase.bco.bcozy.view.devicepanes;
+package org.openbase.bco.bcozy.view.unitpanes;
 
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.application.Platform;
@@ -40,7 +40,7 @@ import rst.domotic.unit.dal.BatteryDataType.BatteryData;
 /**
  * Created by tmichalski on 13.01.16.
  */
-public class BatteryPane extends UnitPane {
+public class BatteryPane extends AbstractUnitPane {
     private static final Logger LOGGER = LoggerFactory.getLogger(BatteryPane.class);
 
     private final BatteryRemote batteryRemote;
@@ -56,8 +56,7 @@ public class BatteryPane extends UnitPane {
         this.batteryRemote = (BatteryRemote) batteryRemote;
 
         headContent = new BorderPane();
-        batteryIcon = new SVGIcon(MaterialDesignIcon.BATTERY, MaterialDesignIcon.BATTERY_OUTLINE,
-                Constants.SMALL_ICON);
+        batteryIcon = new SVGIcon(MaterialDesignIcon.BATTERY, MaterialDesignIcon.BATTERY_OUTLINE, Constants.SMALL_ICON);
         batteryStatus = new Text();
 
         initUnitLabel();
