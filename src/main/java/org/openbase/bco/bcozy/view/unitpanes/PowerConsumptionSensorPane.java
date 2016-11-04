@@ -16,7 +16,7 @@
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
-package org.openbase.bco.bcozy.view.devicepanes;
+package org.openbase.bco.bcozy.view.unitpanes;
 
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.application.Platform;
@@ -40,7 +40,7 @@ import rst.domotic.unit.dal.PowerConsumptionSensorDataType.PowerConsumptionSenso
 /**
  * Created by andi on 08.04.16.
  */
-public class PowerConsumptionSensorPane extends UnitPane {
+public class PowerConsumptionSensorPane extends AbstractUnitPane {
     private static final Logger LOGGER = LoggerFactory.getLogger(PowerConsumptionSensorPane.class);
 
     private final PowerConsumptionSensorRemote powerConsumptionSensorRemote;

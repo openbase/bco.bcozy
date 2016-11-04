@@ -17,7 +17,7 @@
  * ==================================================================
  */
 
-package org.openbase.bco.bcozy.view.devicepanes;
+package org.openbase.bco.bcozy.view.unitpanes;
 
 import javafx.scene.Node;
 import javafx.scene.layout.VBox;

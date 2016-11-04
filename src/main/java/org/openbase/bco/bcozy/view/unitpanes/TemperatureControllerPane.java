@@ -16,7 +16,7 @@
  * org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
-package org.openbase.bco.bcozy.view.devicepanes;
+package org.openbase.bco.bcozy.view.unitpanes;
 
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.application.Platform;
@@ -44,12 +44,16 @@ import rst.domotic.unit.dal.TemperatureControllerDataType.TemperatureControllerD
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import org.openbase.jul.schedule.GlobalExecutionService;
 import rst.domotic.state.TemperatureStateType.TemperatureState;
 
 /**
  * Created by agatting on 17.01.16.
  */
-public class TemperatureControllerPane extends UnitPane {
+public class TemperatureControllerPane extends AbstractUnitPane {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TemperatureControllerPane.class);
     private RecurrenceEventFilter recurrenceEventFilter;
@@ -66,20 +70,21 @@ public class TemperatureControllerPane extends UnitPane {
     private double actualTemperature;
     private double targetTemperature;
 
-    private final EventHandler<MouseEvent> sendingTargetTemperature = event -> new Thread(new Task() {
+    private final EventHandler<MouseEvent> sendingTargetTemperature = event -> GlobalExecutionService.submit(new Task() {
         @Override
         protected Object call() {
             try {
-                temperatureControllerRemote.setTargetTemperatureState(TemperatureState.newBuilder().setTemperature(slider.getValue()).build());
+                temperatureControllerRemote.setTargetTemperatureState(TemperatureState.newBuilder().setTemperature(slider.getValue()).build()).get(Constants.OPERATION_SERVICE_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
 
                 final StackPane track = (StackPane) slider.lookup(".track");
                 target.setTranslateX(track.getLayoutX());
-            } catch (CouldNotPerformException e) {
-                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+            } catch (InterruptedException | ExecutionException | TimeoutException | CouldNotPerformException ex) {
+                ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
+                setWidgetPaneDisable(true);
             }
             return null;
         }
-    }).start();
+    });
 
     /**
      * Constructor for a TemperatureControllerPane.

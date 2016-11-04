@@ -16,82 +16,83 @@
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
-package org.openbase.bco.bcozy.view.devicepanes;
+package org.openbase.bco.bcozy.view.unitpanes;
 
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
+import de.jensd.fx.glyphs.materialicons.MaterialIcon;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.SVGIcon;
-import org.openbase.bco.dal.remote.unit.TamperDetectorRemote;
+import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
+import org.openbase.bco.dal.remote.unit.ReedContactRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
-import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
 import org.openbase.jul.pattern.Observable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.domotic.state.TamperStateType.TamperState.State;
-import rst.domotic.unit.dal.TamperDetectorDataType.TamperDetectorData;
+import rst.domotic.state.ContactStateType.ContactState.State;
+import rst.domotic.unit.dal.ReedContactDataType.ReedContactData;
 
 /**
- * Created by agatting on 11.04.16.
+ * Created by agatting on 27.01.16.
  */
-public class TamperDetectorPane extends UnitPane {
-    private static final Logger LOGGER = LoggerFactory.getLogger(TamperDetectorPane.class);
+public class ReedContactPane extends AbstractUnitPane {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReedContactPane.class);
 
-    private final TamperDetectorRemote tamperDetectorRemote;
-    private final SVGIcon tamperSwitchIconOk;
-    private final SVGIcon tamperSwitchIconManipulation;
+    private final ReedContactRemote reedContactRemote;
     private final SVGIcon unknownForegroundIcon;
     private final SVGIcon unknownBackgroundIcon;
+    private final SVGIcon reedSwitchIcon;
     private final BorderPane headContent;
 
     /**
-     * Constructor for the TamperSwitchPane.
-     * @param tamperSwitchRemote tamperSwitchRemote
+     * Constructor for the ReedSwitchPane.
+     * @param reedSwitchRemote reedSwitchRemote
      */
-    public TamperDetectorPane(final AbstractIdentifiableRemote tamperSwitchRemote) {
-        this.tamperDetectorRemote = (TamperDetectorRemote) tamperSwitchRemote;
+    public ReedContactPane(final AbstractIdentifiableRemote reedSwitchRemote) {
+        this.reedContactRemote = (ReedContactRemote) reedSwitchRemote;
 
-        headContent = new BorderPane();
-        tamperSwitchIconOk = new SVGIcon(MaterialDesignIcon.CHECKBOX_MARKED_CIRCLE, Constants.SMALL_ICON, false);
-        tamperSwitchIconManipulation = new SVGIcon(MaterialDesignIcon.ALERT_CIRCLE, Constants.SMALL_ICON, false);
+        reedSwitchIcon = new SVGIcon(MaterialIcon.RADIO_BUTTON_CHECKED, Constants.SMALL_ICON, true);
         unknownBackgroundIcon = new SVGIcon(MaterialDesignIcon.CHECKBOX_BLANK_CIRCLE, Constants.SMALL_ICON - 2, false);
         unknownForegroundIcon = new SVGIcon(MaterialDesignIcon.HELP_CIRCLE, Constants.SMALL_ICON, false);
+        headContent = new BorderPane();
 
         initUnitLabel();
         initTitle();
         initContent();
         createWidgetPane(headContent, false);
-        initEffect();
+        initEffectAndText();
         tooltip.textProperty().bind(observerText.textProperty());
 
-        this.tamperDetectorRemote.addDataObserver(this);
+        this.reedContactRemote.addDataObserver(this);
     }
 
-    private void initEffect() {
-        State tamperSwitchState = State.UNKNOWN;
+    private void initEffectAndText() {
+        State reedSwitchState = State.UNKNOWN;
 
         try {
-            tamperSwitchState = tamperDetectorRemote.getTamperState().getValue();
+            reedSwitchState = reedContactRemote.getContactState().getValue();
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
-        setTamperSwitchIconAndText(tamperSwitchState);
+        setReedSwitchIconAndTooltip(reedSwitchState);
     }
 
-    private void setTamperSwitchIconAndText(final State tamperSwitchState) {
+    private void setReedSwitchIconAndTooltip(final State reedSwitchState) {
         iconPane.getChildren().clear();
 
-        if (tamperSwitchState == State.NO_TAMPER) {
-            iconPane.add(tamperSwitchIconOk, 0, 0);
-            observerText.setIdentifier("noTamper");
-        } else if (tamperSwitchState == State.TAMPER) {
-            iconPane.add(tamperSwitchIconManipulation, 0, 0);
-            observerText.setIdentifier("tamper");
+        if (reedSwitchState == State.CLOSED) {
+            reedSwitchIcon.changeForegroundIcon(MaterialIcon.RADIO_BUTTON_CHECKED);
+            iconPane.add(reedSwitchIcon, 0, 0);
+            observerText.setIdentifier("closed");
+        } else if (reedSwitchState == State.OPEN) {
+            reedSwitchIcon.changeForegroundIcon(MaterialIcon.RADIO_BUTTON_UNCHECKED);
+            iconPane.add(reedSwitchIcon, 0, 0);
+            observerText.setIdentifier("open");
         } else {
             iconPane.add(unknownBackgroundIcon, 0, 0);
             iconPane.add(unknownForegroundIcon, 0, 0);
@@ -103,12 +104,10 @@ public class TamperDetectorPane extends UnitPane {
     protected void initTitle() {
         unknownForegroundIcon.setForegroundIconColor(Color.BLUE);
         unknownBackgroundIcon.setForegroundIconColor(Color.WHITE);
-        tamperSwitchIconOk.setForegroundIconColor(Color.GREEN);
-        tamperSwitchIconManipulation.setForegroundIconColor(Color.RED);
 
         headContent.setCenter(getUnitLabel());
         headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
-        headContent.prefHeightProperty().set(tamperSwitchIconOk.getSize() + Constants.INSETS);
+        headContent.prefHeightProperty().set(reedSwitchIcon.getSize() + Constants.INSETS);
     }
 
     @Override
@@ -120,7 +119,7 @@ public class TamperDetectorPane extends UnitPane {
     protected void initUnitLabel() {
         String unitLabel = Constants.UNKNOWN_ID;
         try {
-            unitLabel = this.tamperDetectorRemote.getData().getLabel();
+            unitLabel = this.reedContactRemote.getData().getLabel();
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
@@ -129,20 +128,20 @@ public class TamperDetectorPane extends UnitPane {
 
     @Override
     public AbstractIdentifiableRemote getDALRemoteService() {
-        return tamperDetectorRemote;
+        return reedContactRemote;
     }
 
     @Override
     void removeObserver() {
-        this.tamperDetectorRemote.removeObserver(this);
+        this.reedContactRemote.removeObserver(this);
     }
 
     @Override
-    public void update(final Observable observable, final Object tamperSwitch) throws java.lang.Exception {
+    public void update(final Observable observable, final Object reedSwitch) throws java.lang.Exception {
         Platform.runLater(() -> {
-            final State tamperSwitchState = ((TamperDetectorData) tamperSwitch).getTamperState().getValue();
+            final State reedSwitchState = ((ReedContactData) reedSwitch).getContactState().getValue();
 
-            setTamperSwitchIconAndText(tamperSwitchState);
+            setReedSwitchIconAndTooltip(reedSwitchState);
         });
     }
 }

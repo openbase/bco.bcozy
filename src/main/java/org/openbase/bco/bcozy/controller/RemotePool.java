@@ -33,11 +33,10 @@ import org.openbase.bco.bcozy.view.ForegroundPane;
 import org.openbase.bco.dal.remote.unit.UnitRemoteFactory;
 import org.openbase.bco.dal.remote.unit.UnitRemoteFactoryImpl;
 import org.openbase.bco.manager.user.remote.UserRemote;
-import org.openbase.bco.registry.device.remote.DeviceRegistryRemote;
+import org.openbase.bco.registry.unit.remote.UnitRegistryRemote;
 import org.openbase.bco.registry.location.remote.LocationRegistryRemote;
 import org.openbase.bco.registry.unit.lib.UnitRegistry;
 import org.openbase.bco.registry.unit.remote.CachedUnitRegistryRemote;
-import org.openbase.bco.registry.user.remote.UserRegistryRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
@@ -47,8 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rct.TransformReceiver;
 import rct.TransformerFactory;
-import rst.domotic.unit.user.UserConfigType;
-import rst.domotic.state.InventoryStateType;
+import rst.domotic.state.EnablingStateType;
 import rst.domotic.unit.UnitConfigType.UnitConfig;
 import rst.domotic.unit.UnitTemplateType.UnitTemplate.UnitType;
 
@@ -59,12 +57,11 @@ public class RemotePool {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RemotePool.class);
 
-    private final Map<String, AbstractIdentifiableRemote> deviceMap;
+    private final Map<String, AbstractIdentifiableRemote> unitMap;
     private final Map<String, Map<String, AbstractIdentifiableRemote>> locationMap;
     private final Map<String, UserRemote> userMap;
     private LocationRegistryRemote locationRegistryRemote;
-    private DeviceRegistryRemote deviceRegistryRemote;
-    private UserRegistryRemote userRegistryRemote;
+    private UnitRegistryRemote unitRegistryRemote;
     private UnitRegistry unitRegistry;
     private TransformReceiver transformReceiver;
 
@@ -104,7 +101,7 @@ public class RemotePool {
                                 -> foregroundPane.getContextMenu().getChildren().remove(progressIndicator));
                     }
                 };
-                new Thread(task).start();
+                GlobalExecutionService.submit(task);
             }
         });
 
@@ -119,7 +116,7 @@ public class RemotePool {
                         foregroundPane.getContextMenu().getChildren().add(progressIndicator);
                     });
                     try {
-                        fillDeviceAndLocationMap();
+                        fillUnitAndLocationMap();
                     } catch (CouldNotPerformException e) {
                         ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
                         shutdownDALRemotesAndClearMaps();
@@ -136,7 +133,7 @@ public class RemotePool {
             GlobalExecutionService.execute(task);
         });
 
-        deviceMap = new HashMap<>();
+        unitMap = new HashMap<>();
         locationMap = new HashMap<>();
         userMap = new HashMap<>();
 
@@ -168,21 +165,11 @@ public class RemotePool {
         locationRegistryRemote.activate();
 
         try {
-            deviceRegistryRemote = new DeviceRegistryRemote();
-            deviceRegistryRemote.init();
-            deviceRegistryRemote.activate();
+            unitRegistryRemote = new UnitRegistryRemote();
+            unitRegistryRemote.init();
+            unitRegistryRemote.activate();
         } catch (CouldNotPerformException | InterruptedException e) {
             locationRegistryRemote.shutdown();
-            throw e;
-        }
-
-        try {
-            userRegistryRemote = new UserRegistryRemote();
-            userRegistryRemote.init();
-            userRegistryRemote.activate();
-        } catch (CouldNotPerformException | InterruptedException e) {
-            locationRegistryRemote.shutdown();
-            deviceRegistryRemote.shutdown();
             throw e;
         }
 
@@ -190,8 +177,7 @@ public class RemotePool {
             this.transformReceiver = TransformerFactory.getInstance().createTransformReceiver();
         } catch (TransformerFactory.TransformerFactoryException e) {
             locationRegistryRemote.shutdown();
-            deviceRegistryRemote.shutdown();
-            userRegistryRemote.shutdown();
+            unitRegistryRemote.shutdown();
             throw e;
         }
 
@@ -206,73 +192,64 @@ public class RemotePool {
     }
 
     /**
-     * Fills the device and the location hashmap with all remotes. All remotes
+     * Fills the unit and the location hashmap with all remotes. All remotes
      * will be initialized and activated.
      *
      * @throws CouldNotPerformException CouldNotPerformException
      */
-    public void fillDeviceAndLocationMap() throws CouldNotPerformException {
+    public void fillUnitAndLocationMap() throws CouldNotPerformException {
         checkInit();
         if (mapsFilled) {
             shutdownDALRemotesAndClearMaps();
         }
-        fillDeviceMap();
+        fillUnitMap();
 
-        for (final UnitConfig currentLocationUnitConfig : locationRegistryRemote.getLocationConfigs()) {
-            LOGGER.info("INFO: Room: " + currentLocationUnitConfig.getId());
+        for (final UnitConfig locationUnitConfig : locationRegistryRemote.getLocationConfigs()) {
+            LOGGER.debug("Loading Room[" + locationUnitConfig.getId() + "] ...");
 
-            for (final String unitId : currentLocationUnitConfig.getLocationConfig().getUnitIdList()) {
-                LOGGER.info("INFO: Unit: " + unitId);
+            for (final String unitId : locationUnitConfig.getLocationConfig().getUnitIdList()) {
+                LOGGER.debug("Loading Unit[" + unitId + "]");
 
-                if (deviceMap.containsKey(unitId)) {
-                    final AbstractIdentifiableRemote currentDalRemoteService = deviceMap.get(unitId);
+                if (unitMap.containsKey(unitId)) {
+                    final AbstractIdentifiableRemote currentDalRemoteService = unitMap.get(unitId);
 
-                    if (!locationMap.containsKey(currentLocationUnitConfig.getId())) {
-                        locationMap.put(currentLocationUnitConfig.getId(), new TreeMap<>());
+                    if (!locationMap.containsKey(locationUnitConfig.getId())) {
+                        locationMap.put(locationUnitConfig.getId(), new TreeMap<>());
                     }
 
-                    locationMap.get(currentLocationUnitConfig.getId()).put(unitId, currentDalRemoteService);
+                    locationMap.get(locationUnitConfig.getId()).put(unitId, currentDalRemoteService);
                 }
             }
         }
         mapsFilled = true;
     }
 
-    private void fillDeviceMap() throws CouldNotPerformException {
+    private void fillUnitMap() throws CouldNotPerformException {
         final UnitRemoteFactory unitRemoteFactoryInterface = UnitRemoteFactoryImpl.getInstance();
 
-        for (final UnitConfig deviceUnitConfig : deviceRegistryRemote.getDeviceConfigs()) {
-            if (deviceUnitConfig.getDeviceConfig().getInventoryState().getValue() != InventoryStateType.InventoryState.State.INSTALLED) {
+        for (final UnitConfig dalUnitConfig : unitRegistryRemote.getDalUnitConfigs()) {
+            if (dalUnitConfig.getEnablingState().getValue() != EnablingStateType.EnablingState.State.ENABLED) {
+                LOGGER.debug("Skip Unit[" + dalUnitConfig.getLabel() + "] because it is not enabled!");
                 continue;
             }
 
-            final List<UnitConfig> dalUnitConfigList = new ArrayList<>();
+            AbstractIdentifiableRemote currentDalRemoteService;
 
-            for (String unitId : deviceUnitConfig.getDeviceConfig().getUnitIdList()) {
-                dalUnitConfigList.add(unitRegistry.getUnitConfigById(unitId));
+            try {
+                currentDalRemoteService = unitRemoteFactoryInterface.createAndInitUnitRemote(dalUnitConfig);
+            } catch (CouldNotPerformException e) {
+                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                continue;
             }
 
-            for (final UnitConfig currentUnitConfig : dalUnitConfigList) {
-                AbstractIdentifiableRemote currentDalRemoteService;
-
-                try {
-                    currentDalRemoteService = unitRemoteFactoryInterface.createAndInitUnitRemote(currentUnitConfig);
-                } catch (CouldNotPerformException e) {
-                    ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-                    continue;
-                }
-
-                try {
-                    currentDalRemoteService.activate();
-                } catch (InterruptedException | CouldNotPerformException e) {
-                    ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-                    continue;
-                }
-
-                deviceMap.put(currentUnitConfig.getId(), currentDalRemoteService);
+            try {
+                currentDalRemoteService.activate();
+            } catch (InterruptedException | CouldNotPerformException e) {
+                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                continue;
             }
+            unitMap.put(dalUnitConfig.getId(), currentDalRemoteService);
         }
-
     }
 
     /**
@@ -282,7 +259,7 @@ public class RemotePool {
      * @throws CouldNotPerformException CouldNotPerformException
      */
     public void fillUserMap() throws CouldNotPerformException {
-        for (final UnitConfig currentUserUnitConfig : userRegistryRemote.getUserConfigs()) {
+        for (final UnitConfig currentUserUnitConfig : unitRegistryRemote.getUnitConfigs(UnitType.USER)) {
             final UserRemote currentUserRemote = new UserRemote();
             try {
                 currentUserRemote.init(currentUserUnitConfig);
@@ -306,7 +283,7 @@ public class RemotePool {
             final String unitId) throws CouldNotPerformException {
         checkInit();
 
-        return (Remote) deviceMap.get(unitId);
+        return (Remote) unitMap.get(unitId);
     }
 
     /**
@@ -342,7 +319,7 @@ public class RemotePool {
 
         final List<Remote> unitRemoteList = new ArrayList<>();
 
-        for (final Map.Entry<String, AbstractIdentifiableRemote> stringDALRemoteServiceEntry : deviceMap.entrySet()) {
+        for (final Map.Entry<String, AbstractIdentifiableRemote> stringDALRemoteServiceEntry : unitMap.entrySet()) {
             final AbstractIdentifiableRemote currentDalRemoteService = stringDALRemoteServiceEntry.getValue();
             if (currentDalRemoteService.getClass().equals(remoteClass)) {
                 unitRemoteList.add((Remote) currentDalRemoteService);
@@ -390,10 +367,8 @@ public class RemotePool {
 
         for (final UnitType type : unitTypes) {
             try {
-                final Class<? extends AbstractIdentifiableRemote> remote
-                        = UnitRemoteFactoryImpl.loadUnitRemoteClass(type);
-                final List<AbstractIdentifiableRemote> unitRemoteList
-                        = this.getUnitRemoteListOfLocationAndClass(locationId, remote);
+                final Class<? extends AbstractIdentifiableRemote> remoteClass = UnitRemoteFactoryImpl.loadUnitRemoteClass(type);
+                final List<AbstractIdentifiableRemote> unitRemoteList = getUnitRemoteListOfLocationAndClass(locationId, remoteClass);
                 if (!unitRemoteList.isEmpty()) {
                     unitRemoteMap.put(type, unitRemoteList);
                 }
@@ -449,11 +424,11 @@ public class RemotePool {
     }
 
     /**
-     * Shut down all DALRemotes and clear the deviceMap and the locationMap.
+     * Shut down all DALRemotes and clear the unitMap and the locationMap.
      */
     public void shutdownDALRemotesAndClearMaps() {
         shutdownDALRemotes();
-        this.deviceMap.clear();
+        this.unitMap.clear();
         this.locationMap.clear();
 
         mapsFilled = false;
@@ -463,7 +438,7 @@ public class RemotePool {
      * Shut down all DALRemotes.
      */
     public void shutdownDALRemotes() {
-        for (final Map.Entry<String, AbstractIdentifiableRemote> stringDALRemoteServiceEntry : deviceMap.entrySet()) {
+        for (final Map.Entry<String, AbstractIdentifiableRemote> stringDALRemoteServiceEntry : unitMap.entrySet()) {
             final AbstractIdentifiableRemote remote = stringDALRemoteServiceEntry.getValue();
             remote.shutdown();
         }
@@ -475,7 +450,7 @@ public class RemotePool {
     public void shutdownAllRemotes() {
         //TODO: somehow not shutting down properly?!
 
-        for (final Map.Entry<String, AbstractIdentifiableRemote> stringDALRemoteServiceEntry : deviceMap.entrySet()) {
+        for (final Map.Entry<String, AbstractIdentifiableRemote> stringDALRemoteServiceEntry : unitMap.entrySet()) {
             final AbstractIdentifiableRemote remote = stringDALRemoteServiceEntry.getValue();
             remote.shutdown();
         }
@@ -485,9 +460,9 @@ public class RemotePool {
             locationRegistryRemote.shutdown();
         }
 
-        if (deviceRegistryRemote != null) {
-            LOGGER.info("Shutting down deviceRegistryRemote...");
-            deviceRegistryRemote.shutdown();
+        if (unitRegistryRemote != null) {
+            LOGGER.info("Shutting down unitRegistryRemote...");
+            unitRegistryRemote.shutdown();
         }
 
         TransformerFactory.killInstance(); //TODO mpohling: how to shutdown transformer factory?
@@ -495,15 +470,15 @@ public class RemotePool {
     }
 
     /**
-     * Returns the DeviceRegistryRemote.
+     * Returns the UnitRegistryRemote.
      *
-     * @return DeviceRegistryRemote
+     * @return UnitRegistryRemote
      * @throws CouldNotPerformException CouldNotPerformException
      */
-    public DeviceRegistryRemote getDeviceRegistryRemote() throws CouldNotPerformException {
+    public UnitRegistryRemote getUnitRegistryRemote() throws CouldNotPerformException {
         checkInit();
 
-        return deviceRegistryRemote;
+        return unitRegistryRemote;
     }
 
     /**

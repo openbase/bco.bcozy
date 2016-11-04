@@ -25,7 +25,7 @@ import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.HiddenSidesPane;
-import org.openbase.bco.bcozy.view.devicepanes.TitledPaneContainer;
+import org.openbase.bco.bcozy.view.unitpanes.TitledPaneContainer;
 
 /**
  * Created by hoestreich on 11/10/15.

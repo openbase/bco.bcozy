@@ -16,7 +16,7 @@
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
-package org.openbase.bco.bcozy.view.devicepanes;
+package org.openbase.bco.bcozy.view.unitpanes;
 
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.animation.FadeTransition;
@@ -43,7 +43,7 @@ import rst.domotic.unit.dal.SmokeDetectorDataType.SmokeDetectorData;
 /**
  * Created by agatting on 11.04.16.
  */
-public class SmokeDetectorPane extends UnitPane {
+public class SmokeDetectorPane extends AbstractUnitPane {
     private static final Logger LOGGER = LoggerFactory.getLogger(SmokeDetectorPane.class);
 
     private final SmokeDetectorRemote smokeDetectorRemote;

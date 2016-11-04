@@ -16,7 +16,7 @@
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
-package org.openbase.bco.bcozy.view.devicepanes;
+package org.openbase.bco.bcozy.view.unitpanes;
 
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
@@ -43,7 +43,7 @@ import rst.domotic.unit.dal.TemperatureSensorDataType.TemperatureSensorData;
 /**
  * Created by tmichalski on 17.01.16.
  */
-public class TemperatureSensorPane extends UnitPane {
+public class TemperatureSensorPane extends AbstractUnitPane {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RollerShutterPane.class);
 
@@ -59,6 +59,7 @@ public class TemperatureSensorPane extends UnitPane {
 
     /**
      * Constructor for TemperatureSensorPane.
+     *
      * @param temperatureSensorRemote AbstractIdentifiableRemote
      */
     public TemperatureSensorPane(final AbstractIdentifiableRemote temperatureSensorRemote) {
@@ -108,18 +109,22 @@ public class TemperatureSensorPane extends UnitPane {
     private void setAlarmStateIcon(final State alarmState) {
         iconPaneAlarm.getChildren().clear();
 
-        if (alarmState.equals(State.ALARM)) {
-            iconPaneAlarm.add(alarmIcon, 0, 0);
-            alarmIcon.setForegroundIconColor(Color.RED, Color.BLACK, Constants.NORMAL_STROKE);
-            observerText.setIdentifier("alarm");
-        } else if (alarmState.equals(State.NO_ALARM)) {
-            iconPaneAlarm.add(alarmIcon, 0, 0);
-            alarmIcon.setForegroundIconColor(Color.TRANSPARENT);
-            observerText.setIdentifier("noAlarm");
-        } else {
-            iconPaneAlarm.add(unknownBackgroundIcon, 0, 0);
-            iconPaneAlarm.add(unknownForegroundIcon, 0, 0);
-            observerText.setIdentifier("unknown");
+        switch (alarmState) {
+            case ALARM:
+                iconPaneAlarm.add(alarmIcon, 0, 0);
+                alarmIcon.setForegroundIconColor(Color.RED, Color.BLACK, Constants.NORMAL_STROKE);
+                observerText.setIdentifier("alarm");
+                break;
+            case NO_ALARM:
+                iconPaneAlarm.add(alarmIcon, 0, 0);
+                alarmIcon.setForegroundIconColor(Color.TRANSPARENT);
+                observerText.setIdentifier("noAlarm");
+                break;
+            default:
+                iconPaneAlarm.add(unknownBackgroundIcon, 0, 0);
+                iconPaneAlarm.add(unknownForegroundIcon, 0, 0);
+                observerText.setIdentifier("unknown");
+                break;
         }
     }
 
@@ -193,8 +198,8 @@ public class TemperatureSensorPane extends UnitPane {
             final double temperature = ((TemperatureSensorData) temperatureSensor).getTemperatureState().getTemperature();
             setEffectTemperature(temperature);
 
-            final State alarmState =
-                    ((TemperatureSensorData) temperatureSensor).getTemperatureAlarmState().getValue();
+            final State alarmState
+                    = ((TemperatureSensorData) temperatureSensor).getTemperatureAlarmState().getValue();
             setAlarmStateIcon(alarmState);
         });
     }

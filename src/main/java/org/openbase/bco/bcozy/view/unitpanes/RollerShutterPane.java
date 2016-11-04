@@ -16,9 +16,12 @@
  * org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
-package org.openbase.bco.bcozy.view.devicepanes;
+package org.openbase.bco.bcozy.view.unitpanes;
 
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
@@ -38,6 +41,7 @@ import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
 import org.openbase.jul.pattern.Observable;
+import org.openbase.jul.schedule.GlobalExecutionService;
 import org.openbase.jul.schedule.RecurrenceEventFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +52,7 @@ import rst.domotic.unit.dal.RollerShutterDataType.RollerShutterData;
 /**
  * Created by hoestreich on 11/19/15.
  */
-public class RollerShutterPane extends UnitPane {
+public class RollerShutterPane extends AbstractUnitPane {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RollerShutterPane.class);
     private RecurrenceEventFilter recurrenceEventFilter;
@@ -63,65 +67,70 @@ public class RollerShutterPane extends UnitPane {
     private final Rectangle clip;
     private final Text rollerShutterStatus;
 
-    private final EventHandler<MouseEvent> sendingUp = event -> new Thread(new Task() {
+    private final EventHandler<MouseEvent> sendingUp = event -> GlobalExecutionService.submit(new Task() {
         @Override
         protected Object call() {
             try {
-                rollershutterRemote.setBlindState(MovementState.UP);
-            } catch (CouldNotPerformException e) {
-                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                rollershutterRemote.setBlindState(MovementState.UP).get(Constants.OPERATION_SERVICE_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
+            } catch (InterruptedException | ExecutionException | TimeoutException | CouldNotPerformException ex) {
+                ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
+                setWidgetPaneDisable(true);
             }
             return null;
         }
-    }).start();
+    });
 
-    private final EventHandler<MouseEvent> sendingDown = event -> new Thread(new Task() {
+    private final EventHandler<MouseEvent> sendingDown = event -> GlobalExecutionService.submit(new Task() {
         @Override
         protected Object call() {
             try {
-                rollershutterRemote.setBlindState(MovementState.DOWN);
-            } catch (CouldNotPerformException e) {
-                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                rollershutterRemote.setBlindState(MovementState.DOWN).get(Constants.OPERATION_SERVICE_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
+            } catch (InterruptedException | ExecutionException | TimeoutException | CouldNotPerformException ex) {
+                ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
+                setWidgetPaneDisable(true);
             }
             return null;
         }
-    }).start();
+    });
 
-    private final EventHandler<MouseEvent> sendingStop = event -> new Thread(new Task() {
+    private final EventHandler<MouseEvent> sendingStop = event -> GlobalExecutionService.submit(new Task() {
         @Override
         protected Object call() {
             try {
-                rollershutterRemote.setBlindState(MovementState.STOP);
-            } catch (CouldNotPerformException e) {
-                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                rollershutterRemote.setBlindState(MovementState.STOP).get(Constants.OPERATION_SERVICE_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
+            } catch (InterruptedException | ExecutionException | TimeoutException | CouldNotPerformException ex) {
+                ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
+                setWidgetPaneDisable(true);
             }
             return null;
         }
-    }).start();
+    });
 
-    private final EventHandler<MouseEvent> sendingTotalOpening = event -> new Thread(new Task() {
+    private final EventHandler<MouseEvent> sendingTotalOpening = event -> GlobalExecutionService.submit(new Task() {
         @Override
         protected Object call() {
             try {
-                rollershutterRemote.setBlindState(BlindState.newBuilder().setOpeningRatio(0.0).setMovementState(MovementState.STOP).build());
-            } catch (CouldNotPerformException e) {
-                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                rollershutterRemote.setBlindState(BlindState.newBuilder().setOpeningRatio(0.0).setMovementState(MovementState.STOP).build()).get(Constants.OPERATION_SERVICE_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
+            } catch (InterruptedException | ExecutionException | TimeoutException | CouldNotPerformException ex) {
+                ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
+                setWidgetPaneDisable(true);
             }
             return null;
         }
-    }).start();
+    });
 
-    private final EventHandler<MouseEvent> sendingTotalClosing = event -> new Thread(new Task() {
+    private final EventHandler<MouseEvent> sendingTotalClosing = event -> GlobalExecutionService.submit(new Task() {
         @Override
         protected Object call() {
             try {
-                rollershutterRemote.setBlindState(BlindState.newBuilder().setOpeningRatio(1.0).setMovementState(MovementState.STOP).build());
-            } catch (CouldNotPerformException e) {
-                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                rollershutterRemote.setBlindState(BlindState.newBuilder().setOpeningRatio(1.0).setMovementState(MovementState.STOP).build()).get(Constants.OPERATION_SERVICE_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
+            } catch (InterruptedException | ExecutionException | TimeoutException | CouldNotPerformException ex) {
+                ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
+                setWidgetPaneDisable(true);
             }
             return null;
         }
-    }).start();
+    });
 
     /**
      * Constructor for a RollerShutterPane.
@@ -173,12 +182,16 @@ public class RollerShutterPane extends UnitPane {
             iconPane.add(unknownForegroundIcon, 0, 0);
             observerText.setIdentifier("unknown");
         } else {
-            if (shutterState.equals(MovementState.DOWN)) {
-                observerText.setIdentifier("down");
-            } else if (shutterState.equals(MovementState.UP)) {
-                observerText.setIdentifier("up");
-            } else {
-                observerText.setIdentifier("stop");
+            switch (shutterState) {
+                case DOWN:
+                    observerText.setIdentifier("down");
+                    break;
+                case UP:
+                    observerText.setIdentifier("up");
+                    break;
+                default:
+                    observerText.setIdentifier("stop");
+                    break;
             }
             rollerShutterIconBackground.changeBackgroundIcon(MaterialDesignIcon.FORMAT_ALIGN_JUSTIFY);
             rollerShutterIconBackground.setForegroundIconColor(Color.YELLOW);
@@ -280,6 +293,5 @@ public class RollerShutterPane extends UnitPane {
             final MovementState shutterState = ((RollerShutterData) rollerShutter).getBlindState().getMovementState();
             setEffectOpeningRatio(openingPercentage, shutterState);
         });
-
     }
 }

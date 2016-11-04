@@ -16,10 +16,13 @@
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
-package org.openbase.bco.bcozy.view.devicepanes;
+package org.openbase.bco.bcozy.view.unitpanes;
 
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.geometry.Pos;
@@ -33,6 +36,7 @@ import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
 import org.openbase.jul.pattern.Observable;
+import org.openbase.jul.schedule.GlobalExecutionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.domotic.state.PowerStateType;
@@ -42,7 +46,7 @@ import rst.domotic.unit.dal.PowerSwitchDataType.PowerSwitchData;
 /**
  * Created by tmichalski on 08.01.16.
  */
-public class PowerSwitchPane extends UnitPane {
+public class PowerSwitchPane extends AbstractUnitPane {
     private static final Logger LOGGER = LoggerFactory.getLogger(PowerSwitchPane.class);
 
     private final PowerSwitchRemote powerSwitchRemote;
@@ -89,43 +93,43 @@ public class PowerSwitchPane extends UnitPane {
     private void setPowerStateSwitchAndIcon(final State powerState) {
         iconPane.getChildren().clear();
 
-        if (powerState.equals(State.ON)) {
-            powerStatusIcon.setForegroundIconColor(Color.YELLOW, Color.BLACK, Constants.THIN_STROKE);
-            iconPane.add(powerPlugIcon, 1, 0, 3, 2);
-            observerText.setIdentifier("powerOn");
-
-            if (!toggleSwitch.isSelected()) {
-                toggleSwitch.setSelected(true);
-            }
-        } else if (powerState.equals(State.OFF)) {
-            powerStatusIcon.setForegroundIconColor(Color.TRANSPARENT);
-            iconPane.add(powerPlugIcon, 1, 0, 3, 2);
-            observerText.setIdentifier("powerOff");
-
-            if (toggleSwitch.isSelected()) {
-                toggleSwitch.setSelected(false);
-            }
-        } else {
-            powerStatusIcon.setForegroundIconColor(Color.TRANSPARENT);
-            iconPane.add(unknownBackgroundIcon, 1, 0, 3, 2);
-            iconPane.add(unknownForegroundIcon, 1, 0, 3, 2);
-            observerText.setIdentifier("unknown");
+        switch (powerState) {
+            case ON:
+                powerStatusIcon.setForegroundIconColor(Color.YELLOW, Color.BLACK, Constants.THIN_STROKE);
+                iconPane.add(powerPlugIcon, 1, 0, 3, 2);
+                observerText.setIdentifier("powerOn");
+                if (!toggleSwitch.isSelected()) {
+                    toggleSwitch.setSelected(true);
+                }   break;
+            case OFF:
+                powerStatusIcon.setForegroundIconColor(Color.TRANSPARENT);
+                iconPane.add(powerPlugIcon, 1, 0, 3, 2);
+                observerText.setIdentifier("powerOff");
+                if (toggleSwitch.isSelected()) {
+                    toggleSwitch.setSelected(false);
+                }   break;
+            default:
+                powerStatusIcon.setForegroundIconColor(Color.TRANSPARENT);
+                iconPane.add(unknownBackgroundIcon, 1, 0, 3, 2);
+                iconPane.add(unknownForegroundIcon, 1, 0, 3, 2);
+                observerText.setIdentifier("unknown");
+                break;
         }
         iconPane.add(powerStatusIcon, 0, 0);
     }
 
     private void sendStateToRemote(final State state) {
         try {
-            powerSwitchRemote.setPowerState(state);
-        } catch (CouldNotPerformException e) {
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+            powerSwitchRemote.setPowerState(state).get(Constants.OPERATION_SERVICE_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException | ExecutionException | TimeoutException | CouldNotPerformException ex) {
+            ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
             setWidgetPaneDisable(true);
         }
     }
 
     @Override
     protected void initTitle() {
-        oneClick.addListener((observable, oldValue, newValue) -> new Thread(new Task() {
+        oneClick.addListener((observable, oldValue, newValue) -> GlobalExecutionService.submit(new Task() {
             @Override
             protected Object call() {
                 if (toggleSwitch.isSelected()) {
@@ -135,9 +139,9 @@ public class PowerSwitchPane extends UnitPane {
                 }
                 return null;
             }
-        }).start());
+        }));
 
-        toggleSwitch.setOnMouseClicked(event -> new Thread(new Task() {
+        toggleSwitch.setOnMouseClicked(event -> GlobalExecutionService.submit(new Task() {
             @Override
             protected Object call() {
                 if (toggleSwitch.isSelected()) {
@@ -147,7 +151,7 @@ public class PowerSwitchPane extends UnitPane {
                 }
                 return null;
             }
-        }).start());
+        }));
 
         unknownForegroundIcon.setForegroundIconColor(Color.BLUE);
         unknownBackgroundIcon.setForegroundIconColor(Color.WHITE);

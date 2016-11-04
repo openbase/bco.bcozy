@@ -16,9 +16,12 @@
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
-package org.openbase.bco.bcozy.view.devicepanes;
+package org.openbase.bco.bcozy.view.unitpanes;
 
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.geometry.Pos;
@@ -26,39 +29,40 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.SVGIcon;
-import org.openbase.bco.manager.agent.remote.AgentRemote;
+import org.openbase.bco.manager.app.remote.AppRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
 import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
 import org.openbase.jul.pattern.Observable;
+import org.openbase.jul.schedule.GlobalExecutionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rst.domotic.unit.agent.AgentDataType;
 import rst.domotic.state.ActivationStateType.ActivationState;
 import rst.domotic.state.ActivationStateType.ActivationState.State;
-import rst.domotic.unit.agent.AgentDataType.AgentData;
 
 /**
  * Created by agatting on 12.04.16.
  */
-public class AgentPane extends UnitPane {
+public class AppPane extends AbstractUnitPane {
     private static final Logger LOGGER = LoggerFactory.getLogger(TamperDetectorPane.class);
 
-    private final SVGIcon agentIcon;
+    private final SVGIcon appIcon;
     private final SVGIcon unknownForegroundIcon;
     private final SVGIcon unknownBackgroundIcon;
-    private final AgentRemote agentRemote;
+    private final AppRemote appRemote;
     private final BorderPane headContent;
 
     /**
-     * Constructor for the AgentPane.
-     * @param agentRemote agentRemote
+     * Constructor for the AppPane.
+     * @param appRemote appRemote
      */
-    public AgentPane(final AbstractIdentifiableRemote agentRemote) {
-        this.agentRemote = (AgentRemote) agentRemote;
+    public AppPane(final AbstractIdentifiableRemote appRemote) {
+        this.appRemote = (AppRemote) appRemote;
 
         headContent = new BorderPane();
-        agentIcon = new SVGIcon(MaterialDesignIcon.POWER, Constants.SMALL_ICON, false);
+        appIcon = new SVGIcon(MaterialDesignIcon.POWER, Constants.SMALL_ICON, false);
         unknownBackgroundIcon = new SVGIcon(MaterialDesignIcon.CHECKBOX_BLANK_CIRCLE, Constants.SMALL_ICON - 2, false);
         unknownForegroundIcon = new SVGIcon(MaterialDesignIcon.HELP_CIRCLE, Constants.SMALL_ICON, false);
 
@@ -69,34 +73,34 @@ public class AgentPane extends UnitPane {
         initEffect();
         tooltip.textProperty().bind(observerText.textProperty());
 
-        this.agentRemote.addDataObserver(this);
+        this.appRemote.addDataObserver(this);
     }
 
     private void initEffect() {
         State state = State.UNKNOWN;
 
         try {
-            state = agentRemote.getData().getActivationState().getValue();
+            state = appRemote.getData().getActivationState().getValue();
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
-        setAgentIconAndText(state);
+        setAppIconAndText(state);
     }
 
-    private void setAgentIconAndText(final State state) {
+    private void setAppIconAndText(final State state) {
         iconPane.getChildren().clear();
 
         if (state.equals(State.ACTIVE)) {
-            agentIcon.setForegroundIconColor(Color.GREEN);
-            iconPane.add(agentIcon, 0, 0);
+            appIcon.setForegroundIconColor(Color.GREEN);
+            iconPane.add(appIcon, 0, 0);
             observerText.setIdentifier("active");
 
             if (!toggleSwitch.isSelected()) {
                 toggleSwitch.setSelected(true);
             }
         } else if (state.equals(State.DEACTIVE)) {
-            agentIcon.changeForegroundIcon(MaterialDesignIcon.POWER);
-            iconPane.add(agentIcon, 0, 0);
+            appIcon.changeForegroundIcon(MaterialDesignIcon.POWER);
+            iconPane.add(appIcon, 0, 0);
             observerText.setIdentifier("inactive");
 
             if (toggleSwitch.isSelected()) {
@@ -111,16 +115,16 @@ public class AgentPane extends UnitPane {
 
     private void sendStateToRemote(final State state) {
         try {
-            agentRemote.setActivationState(ActivationState.newBuilder().setValue(state).build());
-        } catch (CouldNotPerformException e) {
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+            appRemote.setActivationState(ActivationState.newBuilder().setValue(state).build()).get(Constants.OPERATION_SERVICE_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException | ExecutionException | TimeoutException | CouldNotPerformException ex) {
+            ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
             setWidgetPaneDisable(true);
         }
     }
 
     @Override
     protected void initTitle() {
-        oneClick.addListener((observable, oldValue, newValue) -> new Thread(new Task() {
+        oneClick.addListener((observable, oldValue, newValue) -> GlobalExecutionService.submit(new Task() {
             @Override
             protected Object call() {
                 if (toggleSwitch.isSelected()) {
@@ -130,9 +134,9 @@ public class AgentPane extends UnitPane {
                 }
                 return null;
             }
-        }).start());
+        }));
 
-        toggleSwitch.setOnMouseClicked(event -> new Thread(new Task() {
+        toggleSwitch.setOnMouseClicked(event -> GlobalExecutionService.submit(new Task() {
             @Override
             protected Object call() {
                 if (toggleSwitch.isSelected()) {
@@ -142,14 +146,14 @@ public class AgentPane extends UnitPane {
                 }
                 return null;
             }
-        }).start());
+        }));
 
         unknownForegroundIcon.setForegroundIconColor(Color.BLUE);
         unknownBackgroundIcon.setForegroundIconColor(Color.WHITE);
 
         headContent.setCenter(getUnitLabel());
         headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
-        headContent.prefHeightProperty().set(agentIcon.getHeight() + Constants.INSETS);
+        headContent.prefHeightProperty().set(appIcon.getHeight() + Constants.INSETS);
     }
 
     @Override
@@ -161,7 +165,7 @@ public class AgentPane extends UnitPane {
     protected void initUnitLabel() {
         String unitLabel = Constants.UNKNOWN_ID;
         try {
-            unitLabel = this.agentRemote.getData().getLabel();
+            unitLabel = this.appRemote.getData().getLabel();
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
@@ -170,19 +174,19 @@ public class AgentPane extends UnitPane {
 
     @Override
     public AbstractIdentifiableRemote getDALRemoteService() {
-        return agentRemote;
+        return appRemote;
     }
 
     @Override
     void removeObserver() {
-        this.agentRemote.removeObserver(this);
+        this.appRemote.removeObserver(this);
     }
 
     @Override
     public void update(final Observable observable, final Object agent) throws java.lang.Exception {
         Platform.runLater(() -> {
-            final State state = ((AgentData) agent).getActivationState().getValue();
-            setAgentIconAndText(state);
+            final State state = ((AgentDataType.AgentData) agent).getActivationState().getValue();
+            setAppIconAndText(state);
         });
     }
 }
