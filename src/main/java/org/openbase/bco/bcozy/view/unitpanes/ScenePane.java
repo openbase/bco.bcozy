@@ -29,7 +29,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.SVGIcon;
-import org.openbase.bco.manager.scene.remote.SceneRemote;
+import org.openbase.bco.dal.remote.unit.scene.SceneRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
