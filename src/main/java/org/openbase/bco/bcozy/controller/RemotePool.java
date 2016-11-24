@@ -32,7 +32,7 @@ import javafx.scene.control.ProgressIndicator;
 import org.openbase.bco.bcozy.view.ForegroundPane;
 import org.openbase.bco.dal.remote.unit.UnitRemoteFactory;
 import org.openbase.bco.dal.remote.unit.UnitRemoteFactoryImpl;
-import org.openbase.bco.manager.user.remote.UserRemote;
+import org.openbase.bco.dal.remote.unit.user.UserRemote;
 import org.openbase.bco.registry.unit.remote.UnitRegistryRemote;
 import org.openbase.bco.registry.location.remote.LocationRegistryRemote;
 import org.openbase.bco.registry.unit.lib.UnitRegistry;
