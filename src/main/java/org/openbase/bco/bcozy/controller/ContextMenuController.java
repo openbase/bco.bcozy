@@ -28,7 +28,7 @@ import javafx.event.EventHandler;
 import org.openbase.bco.bcozy.view.ForegroundPane;
 import org.openbase.bco.bcozy.view.unitpanes.TitledPaneContainer;
 import org.openbase.bco.bcozy.view.location.LocationPane;
-import org.openbase.bco.registry.location.remote.LocationRegistryRemote;
+import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
@@ -144,18 +144,17 @@ public class ContextMenuController {
      * Initializes and saves all TitledPanes of all Locations.
      *
      * @throws CouldNotPerformException CouldNotPerformException
+     * @throws java.lang.InterruptedException
      */
-    public void initTitledPaneMap() throws CouldNotPerformException {
+    public void initTitledPaneMap() throws CouldNotPerformException, InterruptedException {
         try {
-            final LocationRegistryRemote locationRegistryRemote = this.remotePool.getLocationRegistryRemote();
-
-            for (final UnitConfig locationUnitConfig : locationRegistryRemote.getLocationConfigs()) {
+            for (final UnitConfig locationUnitConfig : Registries.getLocationRegistry().getLocationConfigs()) {
                 final String locationID = locationUnitConfig.getId();
 
                 final TitledPaneContainer titledPaneContainer = new TitledPaneContainer();
                 fillTitledPaneContainer(titledPaneContainer, locationID);
             }
-        } catch (Exception ex) {
+        } catch (CouldNotPerformException | NullPointerException ex) {
             ExceptionPrinter.printHistory(new CouldNotPerformException("Could not init initTitledPaneMap!", ex), LOGGER);
         }
     }

@@ -27,14 +27,14 @@ import java.util.stream.Collectors;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.control.ProgressIndicator;
 import org.openbase.bco.bcozy.view.ForegroundPane;
 import org.openbase.bco.dal.remote.unit.UnitRemoteFactory;
 import org.openbase.bco.dal.remote.unit.UnitRemoteFactoryImpl;
 import org.openbase.bco.dal.remote.unit.user.UserRemote;
-import org.openbase.bco.registry.unit.remote.UnitRegistryRemote;
-import org.openbase.bco.registry.location.remote.LocationRegistryRemote;
+import org.openbase.bco.registry.location.lib.LocationRegistry;
+import org.openbase.bco.registry.location.remote.CachedLocationRegistryRemote;
+import org.openbase.bco.registry.remote.Registries;
 import org.openbase.bco.registry.unit.lib.UnitRegistry;
 import org.openbase.bco.registry.unit.remote.CachedUnitRegistryRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
@@ -60,9 +60,6 @@ public class RemotePool {
     private final Map<String, AbstractIdentifiableRemote> unitMap;
     private final Map<String, Map<String, AbstractIdentifiableRemote>> locationMap;
     private final Map<String, UserRemote> userMap;
-    private LocationRegistryRemote locationRegistryRemote;
-    private UnitRegistryRemote unitRegistryRemote;
-    private UnitRegistry unitRegistry;
     private TransformReceiver transformReceiver;
 
     private boolean init;
@@ -74,35 +71,32 @@ public class RemotePool {
      * @param foregroundPane ForegroundPane
      */
     public RemotePool(final ForegroundPane foregroundPane) {
-        foregroundPane.getMainMenu().addInitRemoteButtonEventHandler(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(final ActionEvent event) {
-                final Task task = new Task() {
-                    private final ProgressIndicator progressIndicator = new ProgressIndicator(-1);
-
-                    @Override
-                    protected Object call() throws java.lang.Exception {
-                        Platform.runLater(() -> {
-                            foregroundPane.getContextMenu().getTitledPaneContainer().clearTitledPane();
-                            foregroundPane.getContextMenu().getChildren().add(progressIndicator);
-                        });
-                        try {
-                            initRegistryRemotes();
-                        } catch (InterruptedException | CouldNotPerformException | TransformerFactory.TransformerFactoryException e) {
-                            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-                        }
-                        return null;
+        foregroundPane.getMainMenu().addInitRemoteButtonEventHandler((final ActionEvent event) -> {
+            final Task task = new Task() {
+                private final ProgressIndicator progressIndicator = new ProgressIndicator(-1);
+                
+                @Override
+                protected Object call() throws java.lang.Exception {
+                    Platform.runLater(() -> {
+                        foregroundPane.getContextMenu().getTitledPaneContainer().clearTitledPane();
+                        foregroundPane.getContextMenu().getChildren().add(progressIndicator);
+                    });
+                    try {
+                        initRegistryRemotes();
+                    } catch (InterruptedException | CouldNotPerformException | TransformerFactory.TransformerFactoryException e) {
+                        ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
                     }
-
-                    @Override
-                    protected void succeeded() {
-                        super.succeeded();
-                        Platform.runLater(()
-                                -> foregroundPane.getContextMenu().getChildren().remove(progressIndicator));
-                    }
-                };
-                GlobalExecutionService.submit(task);
-            }
+                    return null;
+                }
+                
+                @Override
+                protected void succeeded() {
+                    super.succeeded();
+                    Platform.runLater(()
+                            -> foregroundPane.getContextMenu().getChildren().remove(progressIndicator));
+                }
+            };
+            GlobalExecutionService.submit(task);
         });
 
         foregroundPane.getMainMenu().addFillHashesButtonEventHandler((final ActionEvent event) -> {
@@ -149,35 +143,21 @@ public class RemotePool {
      * @throws TransformerFactory.TransformerFactoryException
      * TransformerFactoryException
      */
-    public void initRegistryRemotes() throws CouldNotPerformException, InterruptedException,
-            TransformerFactory.TransformerFactoryException {
+    public void initRegistryRemotes() throws CouldNotPerformException, InterruptedException,  TransformerFactory.TransformerFactoryException {
         if (init) {
             LOGGER.info("INFO: RegistryRemotes were already initialized.");
             return;
 
         }
 
-        unitRegistry = CachedUnitRegistryRemote.getRegistry();
+        // wait for registry data
         CachedUnitRegistryRemote.waitForData();
+        CachedLocationRegistryRemote.waitForData();
 
-        locationRegistryRemote = new LocationRegistryRemote();
-        locationRegistryRemote.init();
-        locationRegistryRemote.activate();
-
-        try {
-            unitRegistryRemote = new UnitRegistryRemote();
-            unitRegistryRemote.init();
-            unitRegistryRemote.activate();
-        } catch (CouldNotPerformException | InterruptedException e) {
-            locationRegistryRemote.shutdown();
-            throw e;
-        }
 
         try {
             this.transformReceiver = TransformerFactory.getInstance().createTransformReceiver();
         } catch (TransformerFactory.TransformerFactoryException e) {
-            locationRegistryRemote.shutdown();
-            unitRegistryRemote.shutdown();
             throw e;
         }
 
@@ -196,15 +176,16 @@ public class RemotePool {
      * will be initialized and activated.
      *
      * @throws CouldNotPerformException CouldNotPerformException
+     * @throws java.lang.InterruptedException
      */
-    public void fillUnitAndLocationMap() throws CouldNotPerformException {
+    public void fillUnitAndLocationMap() throws CouldNotPerformException, InterruptedException {
         checkInit();
         if (mapsFilled) {
             shutdownDALRemotesAndClearMaps();
         }
         fillUnitMap();
 
-        for (final UnitConfig locationUnitConfig : locationRegistryRemote.getLocationConfigs()) {
+        for (final UnitConfig locationUnitConfig : Registries.getLocationRegistry().getLocationConfigs()) {
             LOGGER.debug("Loading Room[" + locationUnitConfig.getId() + "] ...");
 
             for (final String unitId : locationUnitConfig.getLocationConfig().getUnitIdList()) {
@@ -224,10 +205,10 @@ public class RemotePool {
         mapsFilled = true;
     }
 
-    private void fillUnitMap() throws CouldNotPerformException {
+    private void fillUnitMap() throws CouldNotPerformException, InterruptedException {
         final UnitRemoteFactory unitRemoteFactoryInterface = UnitRemoteFactoryImpl.getInstance();
 
-        for (final UnitConfig dalUnitConfig : unitRegistryRemote.getDalUnitConfigs()) {
+        for (final UnitConfig dalUnitConfig : Registries.getUnitRegistry().getDalUnitConfigs()) {
             if (dalUnitConfig.getEnablingState().getValue() != EnablingStateType.EnablingState.State.ENABLED) {
                 LOGGER.debug("Skip Unit[" + dalUnitConfig.getLabel() + "] because it is not enabled!");
                 continue;
@@ -257,9 +238,10 @@ public class RemotePool {
      * activated.
      *
      * @throws CouldNotPerformException CouldNotPerformException
+     * @throws java.lang.InterruptedException
      */
-    public void fillUserMap() throws CouldNotPerformException {
-        for (final UnitConfig currentUserUnitConfig : unitRegistryRemote.getUnitConfigs(UnitType.USER)) {
+    public void fillUserMap() throws CouldNotPerformException, InterruptedException {
+        for (final UnitConfig currentUserUnitConfig : Registries.getUnitRegistry().getUnitConfigs(UnitType.USER)) {
             final UserRemote currentUserRemote = new UserRemote();
             try {
                 currentUserRemote.init(currentUserUnitConfig);
@@ -455,42 +437,8 @@ public class RemotePool {
             remote.shutdown();
         }
 
-        if (locationRegistryRemote != null) {
-            LOGGER.info("Shutting down locationRegistryRemote...");
-            locationRegistryRemote.shutdown();
-        }
-
-        if (unitRegistryRemote != null) {
-            LOGGER.info("Shutting down unitRegistryRemote...");
-            unitRegistryRemote.shutdown();
-        }
-
         TransformerFactory.killInstance(); //TODO mpohling: how to shutdown transformer factory?
         init = false;
-    }
-
-    /**
-     * Returns the UnitRegistryRemote.
-     *
-     * @return UnitRegistryRemote
-     * @throws CouldNotPerformException CouldNotPerformException
-     */
-    public UnitRegistryRemote getUnitRegistryRemote() throws CouldNotPerformException {
-        checkInit();
-
-        return unitRegistryRemote;
-    }
-
-    /**
-     * Returns the LocationRegistryRemote.
-     *
-     * @return LocationRegistryRemote
-     * @throws CouldNotPerformException CouldNotPerformException
-     */
-    public LocationRegistryRemote getLocationRegistryRemote() throws CouldNotPerformException {
-        checkInit();
-
-        return locationRegistryRemote;
     }
 
     /**

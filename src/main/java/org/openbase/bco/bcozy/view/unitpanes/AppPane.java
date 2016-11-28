@@ -29,7 +29,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.SVGIcon;
-import org.openbase.bco.manager.app.remote.AppRemote;
+import org.openbase.bco.dal.remote.unit.app.AppRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
@@ -46,6 +46,7 @@ import rst.domotic.state.ActivationStateType.ActivationState.State;
  * Created by agatting on 12.04.16.
  */
 public class AppPane extends AbstractUnitPane {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(TamperDetectorPane.class);
 
     private final SVGIcon appIcon;
@@ -56,6 +57,7 @@ public class AppPane extends AbstractUnitPane {
 
     /**
      * Constructor for the AppPane.
+     *
      * @param appRemote appRemote
      */
     public AppPane(final AbstractIdentifiableRemote appRemote) {
@@ -90,26 +92,26 @@ public class AppPane extends AbstractUnitPane {
     private void setAppIconAndText(final State state) {
         iconPane.getChildren().clear();
 
-        if (state.equals(State.ACTIVE)) {
-            appIcon.setForegroundIconColor(Color.GREEN);
-            iconPane.add(appIcon, 0, 0);
-            observerText.setIdentifier("active");
-
-            if (!toggleSwitch.isSelected()) {
-                toggleSwitch.setSelected(true);
-            }
-        } else if (state.equals(State.DEACTIVE)) {
-            appIcon.changeForegroundIcon(MaterialDesignIcon.POWER);
-            iconPane.add(appIcon, 0, 0);
-            observerText.setIdentifier("inactive");
-
-            if (toggleSwitch.isSelected()) {
-                toggleSwitch.setSelected(false);
-            }
-        } else {
-            iconPane.add(unknownBackgroundIcon, 0, 0);
-            iconPane.add(unknownForegroundIcon, 0, 0);
-            observerText.setIdentifier("unknown");
+        switch (state) {
+            case ACTIVE:
+                appIcon.setForegroundIconColor(Color.GREEN);
+                iconPane.add(appIcon, 0, 0);
+                observerText.setIdentifier("active");
+                if (!toggleSwitch.isSelected()) {
+                    toggleSwitch.setSelected(true);
+                }   break;
+            case DEACTIVE:
+                appIcon.changeForegroundIcon(MaterialDesignIcon.POWER);
+                iconPane.add(appIcon, 0, 0);
+                observerText.setIdentifier("inactive");
+                if (toggleSwitch.isSelected()) {
+                    toggleSwitch.setSelected(false);
+                }   break;
+            default:
+                iconPane.add(unknownBackgroundIcon, 0, 0);
+                iconPane.add(unknownForegroundIcon, 0, 0);
+                observerText.setIdentifier("unknown");
+                break;
         }
     }
 

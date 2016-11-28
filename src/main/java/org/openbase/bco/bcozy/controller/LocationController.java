@@ -23,7 +23,6 @@ import javafx.geometry.Point2D;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ForegroundPane;
 import org.openbase.bco.bcozy.view.location.LocationPane;
-import org.openbase.bco.registry.location.remote.LocationRegistryRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
@@ -44,6 +43,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import org.openbase.bco.registry.location.lib.LocationRegistry;
+import org.openbase.bco.registry.remote.Registries;
 
 /**
  *
@@ -58,7 +59,7 @@ public class LocationController implements Observer<LocationRegistryData> {
     private final ForegroundPane foregroundPane;
     private final LocationPane locationPane;
     private final RemotePool remotePool;
-    private LocationRegistryRemote locationRegistryRemote;
+    private LocationRegistry locationRegistry;
 
     /**
      * The constructor.
@@ -67,8 +68,7 @@ public class LocationController implements Observer<LocationRegistryData> {
      * @param locationPane the location pane
      * @param remotePool the remotePool
      */
-    public LocationController(final ForegroundPane foregroundPane, final LocationPane locationPane,
-            final RemotePool remotePool) {
+    public LocationController(final ForegroundPane foregroundPane, final LocationPane locationPane, final RemotePool remotePool) {
         this.foregroundPane = foregroundPane;
         this.locationPane = locationPane;
         this.remotePool = remotePool;
@@ -81,8 +81,7 @@ public class LocationController implements Observer<LocationRegistryData> {
     public void connectLocationRemote() {
         if (remotePool.isInit()) {
             try {
-                locationRegistryRemote = remotePool.getLocationRegistryRemote();
-                locationRegistryRemote.addDataObserver(this);
+                Registries.getLocationRegistry().addDataObserver(this);
                 updateAndZoomFit();
             } catch (Exception e) { //NOPMD
                 ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
@@ -94,13 +93,13 @@ public class LocationController implements Observer<LocationRegistryData> {
     }
 
     private void fetchLocations() throws CouldNotPerformException {
-        final List<UnitConfig> locationUnitConfigList = locationRegistryRemote.getLocationConfigs();
+        final List<UnitConfig> locationUnitConfigList = locationRegistry.getLocationConfigs();
 
         locationPane.clearLocations();
 
         //lookup root location frame id
         final String rootLocationFrameId
-                = locationRegistryRemote.getRootLocationConfig().getPlacementConfig().getTransformationFrameId();
+                = locationRegistry.getRootLocationConfig().getPlacementConfig().getTransformationFrameId();
 
         for (final UnitConfig locationUnitConfig : locationUnitConfigList) {
             try {
@@ -143,13 +142,13 @@ public class LocationController implements Observer<LocationRegistryData> {
     }
 
     private void fetchConnections() throws CouldNotPerformException {
-        final List<UnitConfig> connectionUnitConfigList = locationRegistryRemote.getConnectionConfigs();
+        final List<UnitConfig> connectionUnitConfigList = locationRegistry.getConnectionConfigs();
 
         locationPane.clearConnections();
 
         //lookup root location frame id
         final String rootLocationFrameId
-                = locationRegistryRemote.getRootLocationConfig().getPlacementConfig().getTransformationFrameId();
+                = locationRegistry.getRootLocationConfig().getPlacementConfig().getTransformationFrameId();
 
         //check which connection has a shape
         for (final UnitConfig connectionUnitConfig : connectionUnitConfigList) {
