@@ -434,9 +434,10 @@ public class RemotePool {
             remote.shutdown();
         }
 
-        if (transformReceiver != null) {
-            transformReceiver.shutdown();
-        }
+// TODO should be activated after rsb 16 adjustments.
+//        if (transformReceiver != null) {
+//            transformReceiver.shutdown();
+//        }
 
         TransformerFactory.killInstance();
 
