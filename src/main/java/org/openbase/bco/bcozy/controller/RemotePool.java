@@ -32,10 +32,8 @@ import org.openbase.bco.bcozy.view.ForegroundPane;
 import org.openbase.bco.dal.remote.unit.UnitRemoteFactory;
 import org.openbase.bco.dal.remote.unit.UnitRemoteFactoryImpl;
 import org.openbase.bco.dal.remote.unit.user.UserRemote;
-import org.openbase.bco.registry.location.lib.LocationRegistry;
 import org.openbase.bco.registry.location.remote.CachedLocationRegistryRemote;
 import org.openbase.bco.registry.remote.Registries;
-import org.openbase.bco.registry.unit.lib.UnitRegistry;
 import org.openbase.bco.registry.unit.remote.CachedUnitRegistryRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
@@ -74,7 +72,7 @@ public class RemotePool {
         foregroundPane.getMainMenu().addInitRemoteButtonEventHandler((final ActionEvent event) -> {
             final Task task = new Task() {
                 private final ProgressIndicator progressIndicator = new ProgressIndicator(-1);
-                
+
                 @Override
                 protected Object call() throws java.lang.Exception {
                     Platform.runLater(() -> {
@@ -88,7 +86,7 @@ public class RemotePool {
                     }
                     return null;
                 }
-                
+
                 @Override
                 protected void succeeded() {
                     super.succeeded();
@@ -143,7 +141,7 @@ public class RemotePool {
      * @throws TransformerFactory.TransformerFactoryException
      * TransformerFactoryException
      */
-    public void initRegistryRemotes() throws CouldNotPerformException, InterruptedException,  TransformerFactory.TransformerFactoryException {
+    public void initRegistryRemotes() throws CouldNotPerformException, InterruptedException, TransformerFactory.TransformerFactoryException {
         if (init) {
             LOGGER.info("INFO: RegistryRemotes were already initialized.");
             return;
@@ -153,7 +151,6 @@ public class RemotePool {
         // wait for registry data
         CachedUnitRegistryRemote.waitForData();
         CachedLocationRegistryRemote.waitForData();
-
 
         try {
             this.transformReceiver = TransformerFactory.getInstance().createTransformReceiver();
@@ -437,7 +434,12 @@ public class RemotePool {
             remote.shutdown();
         }
 
-        TransformerFactory.killInstance(); //TODO mpohling: how to shutdown transformer factory?
+        if (transformReceiver != null) {
+            transformReceiver.shutdown();
+        }
+
+        TransformerFactory.killInstance();
+
         init = false;
     }
 
