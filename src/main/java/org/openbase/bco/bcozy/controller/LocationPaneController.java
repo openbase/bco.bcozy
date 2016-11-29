@@ -43,23 +43,23 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import org.openbase.bco.registry.location.lib.LocationRegistry;
 import org.openbase.bco.registry.remote.Registries;
+import org.openbase.jul.exception.InitializationException;
+import org.openbase.jul.iface.DefaultInitializable;
 
 /**
  *
  */
-public class LocationController implements Observer<LocationRegistryData> {
+public class LocationPaneController implements Observer<LocationRegistryData>, DefaultInitializable {
 
     /**
      * Application logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(LocationController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LocationPaneController.class);
 
     private final ForegroundPane foregroundPane;
     private final LocationPane locationPane;
     private final RemotePool remotePool;
-    private LocationRegistry locationRegistry;
 
     /**
      * The constructor.
@@ -68,11 +68,20 @@ public class LocationController implements Observer<LocationRegistryData> {
      * @param locationPane the location pane
      * @param remotePool the remotePool
      */
-    public LocationController(final ForegroundPane foregroundPane, final LocationPane locationPane, final RemotePool remotePool) {
+    public LocationPaneController(final ForegroundPane foregroundPane, final LocationPane locationPane, final RemotePool remotePool) {
         this.foregroundPane = foregroundPane;
         this.locationPane = locationPane;
         this.remotePool = remotePool;
         this.foregroundPane.getMainMenu().addFetchLocationButtonEventHandler(event -> connectLocationRemote());
+    }
+
+    @Override
+    public void init() throws InitializationException, InterruptedException {
+        try {
+            Registries.getLocationRegistry().waitForData();
+        } catch (CouldNotPerformException ex) {
+            throw new InitializationException(this, ex);
+        }
     }
 
     /**
@@ -92,14 +101,13 @@ public class LocationController implements Observer<LocationRegistryData> {
         }
     }
 
-    private void fetchLocations() throws CouldNotPerformException {
-        final List<UnitConfig> locationUnitConfigList = locationRegistry.getLocationConfigs();
+    private void fetchLocations() throws CouldNotPerformException, InterruptedException {
+        final List<UnitConfig> locationUnitConfigList = Registries.getLocationRegistry().getLocationConfigs();
 
         locationPane.clearLocations();
 
         //lookup root location frame id
-        final String rootLocationFrameId
-                = locationRegistry.getRootLocationConfig().getPlacementConfig().getTransformationFrameId();
+        final String rootLocationFrameId = Registries.getLocationRegistry().getRootLocationConfig().getPlacementConfig().getTransformationFrameId();
 
         for (final UnitConfig locationUnitConfig : locationUnitConfigList) {
             try {
@@ -141,14 +149,14 @@ public class LocationController implements Observer<LocationRegistryData> {
         }
     }
 
-    private void fetchConnections() throws CouldNotPerformException {
-        final List<UnitConfig> connectionUnitConfigList = locationRegistry.getConnectionConfigs();
+    private void fetchConnections() throws CouldNotPerformException, InterruptedException {
+        final List<UnitConfig> connectionUnitConfigList = Registries.getLocationRegistry().getConnectionConfigs();
 
         locationPane.clearConnections();
 
         //lookup root location frame id
         final String rootLocationFrameId
-                = locationRegistry.getRootLocationConfig().getPlacementConfig().getTransformationFrameId();
+                = Registries.getLocationRegistry().getRootLocationConfig().getPlacementConfig().getTransformationFrameId();
 
         //check which connection has a shape
         for (final UnitConfig connectionUnitConfig : connectionUnitConfigList) {
@@ -230,7 +238,7 @@ public class LocationController implements Observer<LocationRegistryData> {
                 fetchLocations();
                 fetchConnections();
                 locationPane.updateLocationPane();
-            } catch (CouldNotPerformException e) {
+            } catch (CouldNotPerformException | InterruptedException e) {
                 ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
             }
         });
@@ -249,7 +257,7 @@ public class LocationController implements Observer<LocationRegistryData> {
                 fetchConnections();
                 locationPane.updateLocationPane();
                 locationPane.zoomFit();
-            } catch (CouldNotPerformException e) {
+            } catch (CouldNotPerformException | InterruptedException e) {
                 ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
             }
         });

@@ -29,7 +29,7 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.openbase.bco.bcozy.controller.CenterPaneController;
 import org.openbase.bco.bcozy.controller.ContextMenuController;
-import org.openbase.bco.bcozy.controller.LocationController;
+import org.openbase.bco.bcozy.controller.LocationPaneController;
 import org.openbase.bco.bcozy.controller.MainMenuController;
 import org.openbase.bco.bcozy.controller.RemotePool;
 import org.openbase.bco.bcozy.jp.JPLanguage;
@@ -41,6 +41,7 @@ import org.openbase.bco.bcozy.view.InfoPane;
 import org.openbase.jps.core.JPService;
 import org.openbase.jps.exception.JPNotAvailableException;
 import org.openbase.jps.preset.JPDebugMode;
+import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
 import org.openbase.jul.schedule.GlobalExecutionService;
@@ -67,7 +68,7 @@ public class BCozy extends Application {
     private InfoPane infoPane;
     private RemotePool remotePool;
     private ContextMenuController contextMenuController;
-    private LocationController locationController;
+    private LocationPaneController locationPaneController;
     private Future initTask;
 
     /**
@@ -96,7 +97,7 @@ public class BCozy extends Application {
     }
 
     @Override
-    public void start(final Stage primaryStage) {
+    public void start(final Stage primaryStage) throws InitializationException, InterruptedException {
 
         BCozy.primaryStage = primaryStage;
         final double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
@@ -135,7 +136,8 @@ public class BCozy extends Application {
         contextMenuController = new ContextMenuController(foregroundPane, backgroundPane.getLocationPane(), remotePool);
 
         //instantiate LocationController
-        locationController = new LocationController(foregroundPane, backgroundPane.getLocationPane(), remotePool);
+        locationPaneController = new LocationPaneController(foregroundPane, backgroundPane.getLocationPane(), remotePool);
+        locationPaneController.init();
 
         try {
             if (JPService.getProperty(JPDebugMode.class).getValue()) {
@@ -166,7 +168,7 @@ public class BCozy extends Application {
                 contextMenuController.initTitledPaneMap();
 
                 infoPane.setTextLabelIdentifier("connectLocationRemote");
-                locationController.connectLocationRemote();
+                locationPaneController.connectLocationRemote();
 
                 return null;
             }
