@@ -211,7 +211,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>org.openbase.bco.dal.visual.DalVisualRemote</mainClass>
+                            <mainClass>org.openbase.bco.bcozy.BCozy</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
