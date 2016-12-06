@@ -32,6 +32,7 @@
     </rule>
     <rule ref="rulesets/java/logging-java.xml">
         <exclude name="GuardLogStatementJavaUtil" />
+        <exclude name="InvalidSlf4jMessageFormat" />
     </rule>
     <rule ref="rulesets/java/migrating_to_15.xml" />
     <rule ref="rulesets/java/migrating_to_junit4.xml" />
