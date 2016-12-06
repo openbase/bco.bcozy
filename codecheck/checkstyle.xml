@@ -118,7 +118,7 @@
     <property name="checkFormat" value="$1"/>
   </module>
   <module name="SuppressionFilter">
-    <property name="file" value="${config_loc}/checkstyle-suppressions.xml"/>
+    <property name="file" value="codecheck/checkstyle-suppressions.xml"/>
   </module>
   <module name="JavadocPackage"/>
   <module name="NewlineAtEndOfFile"/>
@@ -130,7 +130,7 @@
     <property name="message" value="Line has trailing spaces."/>
   </module>
   <module name="Header">
-    <property name="headerFile" value="${config_loc}/header.txt"/>
+    <property name="headerFile" value="codecheck/header.txt"/>
     <property name="ignoreLines" value="6"/>
   </module>
   <module name="RegexpMultiline">

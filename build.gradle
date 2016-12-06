@@ -1,0 +1,44 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'application'
+apply plugin: 'checkstyle'
+apply plugin: 'pmd'
+
+group = 'org.openbase.bco'
+version = '0.2.4-SNAPSHOT'
+
+description = "BCO BCozy"
+mainClassName = "org.openbase.bco.bcozy.BCozy"
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+tasks.withType(JavaCompile) {
+	options.encoding = 'UTF-8'
+}
+
+checkstyle {
+    configFile = rootProject.file('codecheck/checkstyle.xml')
+    showViolations = true
+}
+
+pmd {
+    ruleSetFiles = files("codecheck/pmd-rules.xml")
+    ignoreFailures = true
+    consoleOutput = true
+}
+
+repositories {
+     maven { url "https://oss.sonatype.org/content/groups/public/" }
+     maven { url "http://repo.maven.apache.org/maven2" }
+     maven { url "https://mvn.cit-ec.de/nexus/content/repositories/releases"}
+     maven { url "https://mvn.cit-ec.de/nexus/content/repositories/snapshots"}
+}
+dependencies {
+    compile group: 'com.guigarage', name: 'responsivefx', version:'0.8'
+    compile group: 'org.controlsfx', name: 'controlsfx', version:'8.40.12'
+    compile group: 'de.jensd', name: 'fontawesomefx', version:'8.9'
+    compile group: 'org.openbase', name: 'jul.extension.rct', version:'1.2-SNAPSHOT'
+    compile group: 'org.openbase', name: 'jul.schedule', version:'1.2-SNAPSHOT'
+    compile group: 'org.openbase.bco', name: 'dal.remote', version:'1.2-SNAPSHOT'
+    compile group: 'org.apache.maven.plugins', name: 'maven-project-info-reports-plugin', version:'2.9'
+}
