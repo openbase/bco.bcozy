@@ -41,7 +41,7 @@ import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
 import org.openbase.jul.pattern.Observable;
-import org.openbase.jul.schedule.GlobalExecutionService;
+import org.openbase.jul.schedule.GlobalCachedExecutorService;
 import org.openbase.jul.schedule.RecurrenceEventFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,7 +67,7 @@ public class RollerShutterPane extends AbstractUnitPane {
     private final Rectangle clip;
     private final Text rollerShutterStatus;
 
-    private final EventHandler<MouseEvent> sendingUp = event -> GlobalExecutionService.submit(new Task() {
+    private final EventHandler<MouseEvent> sendingUp = event -> GlobalCachedExecutorService.submit(new Task() {
         @Override
         protected Object call() {
             try {
@@ -80,7 +80,7 @@ public class RollerShutterPane extends AbstractUnitPane {
         }
     });
 
-    private final EventHandler<MouseEvent> sendingDown = event -> GlobalExecutionService.submit(new Task() {
+    private final EventHandler<MouseEvent> sendingDown = event -> GlobalCachedExecutorService.submit(new Task() {
         @Override
         protected Object call() {
             try {
@@ -93,7 +93,7 @@ public class RollerShutterPane extends AbstractUnitPane {
         }
     });
 
-    private final EventHandler<MouseEvent> sendingStop = event -> GlobalExecutionService.submit(new Task() {
+    private final EventHandler<MouseEvent> sendingStop = event -> GlobalCachedExecutorService.submit(new Task() {
         @Override
         protected Object call() {
             try {
@@ -106,7 +106,7 @@ public class RollerShutterPane extends AbstractUnitPane {
         }
     });
 
-    private final EventHandler<MouseEvent> sendingTotalOpening = event -> GlobalExecutionService.submit(new Task() {
+    private final EventHandler<MouseEvent> sendingTotalOpening = event -> GlobalCachedExecutorService.submit(new Task() {
         @Override
         protected Object call() {
             try {
@@ -119,7 +119,7 @@ public class RollerShutterPane extends AbstractUnitPane {
         }
     });
 
-    private final EventHandler<MouseEvent> sendingTotalClosing = event -> GlobalExecutionService.submit(new Task() {
+    private final EventHandler<MouseEvent> sendingTotalClosing = event -> GlobalCachedExecutorService.submit(new Task() {
         @Override
         protected Object call() {
             try {

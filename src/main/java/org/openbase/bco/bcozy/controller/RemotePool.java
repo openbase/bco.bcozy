@@ -39,7 +39,7 @@ import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
 import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
-import org.openbase.jul.schedule.GlobalExecutionService;
+import org.openbase.jul.schedule.GlobalCachedExecutorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rct.TransformReceiver;
@@ -94,7 +94,7 @@ public class RemotePool {
                             -> foregroundPane.getContextMenu().getChildren().remove(progressIndicator));
                 }
             };
-            GlobalExecutionService.submit(task);
+            GlobalCachedExecutorService.submit(task);
         });
 
         foregroundPane.getMainMenu().addFillHashesButtonEventHandler((final ActionEvent event) -> {
@@ -122,7 +122,7 @@ public class RemotePool {
                     Platform.runLater(() -> foregroundPane.getContextMenu().getChildren().remove(progressIndicator));
                 }
             };
-            GlobalExecutionService.execute(task);
+            GlobalCachedExecutorService.execute(task);
         });
 
         unitMap = new HashMap<>();
