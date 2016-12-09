@@ -68,7 +68,7 @@ import rst.vision.HSBColorType.HSBColor;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import org.openbase.jul.schedule.GlobalExecutionService;
+import org.openbase.jul.schedule.GlobalCachedExecutorService;
 import rst.domotic.state.PowerStateType.PowerState;
 
 /**
@@ -304,7 +304,7 @@ public class ColorableLightPane extends AbstractUnitPane {
 
     @Override
     protected void initTitle() {
-        oneClick.addListener((observable, oldValue, newValue) -> GlobalExecutionService.submit(new Task() {
+        oneClick.addListener((observable, oldValue, newValue) -> GlobalCachedExecutorService.submit(new Task() {
             @Override protected Object call() {
                 if (toggleSwitch.isSelected()) {
                     sendStateToRemote(PowerStateType.PowerState.State.OFF);
@@ -315,7 +315,7 @@ public class ColorableLightPane extends AbstractUnitPane {
             }
         }));
 
-        toggleSwitch.setOnMouseClicked(event -> GlobalExecutionService.submit(new Task() {
+        toggleSwitch.setOnMouseClicked(event -> GlobalCachedExecutorService.submit(new Task() {
             @Override protected Object call() {
                 if (toggleSwitch.isSelected()) {
                     sendStateToRemote(PowerStateType.PowerState.State.ON);
@@ -377,7 +377,7 @@ public class ColorableLightPane extends AbstractUnitPane {
         circle.layoutYProperty().bind(Bindings.subtract(1, brightness.divide(Constants.ONE_HUNDRED))
                 .multiply(COLOR_BOX_SIZE));
 
-        final EventHandler<MouseEvent> colorContainerMouseHandler = event -> GlobalExecutionService.submit(new Task() {
+        final EventHandler<MouseEvent> colorContainerMouseHandler = event -> GlobalCachedExecutorService.submit(new Task() {
             @Override protected Object call() {
                 final double xMouse = event.getX();
                 final double yMouse = event.getY();
@@ -417,7 +417,7 @@ public class ColorableLightPane extends AbstractUnitPane {
         rectangleSelector.setManaged(false);
         rectangleSelector.setEffect(dropShadow());
 
-        final EventHandler<MouseEvent> colorCircleMouseHandler = event -> GlobalExecutionService.submit(new Task() {
+        final EventHandler<MouseEvent> colorCircleMouseHandler = event -> GlobalCachedExecutorService.submit(new Task() {
             @Override protected Object call() {
                 double yMouse = event.getY();
                 double xMouse = event.getX();

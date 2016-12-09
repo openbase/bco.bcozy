@@ -41,7 +41,7 @@ import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
 import org.openbase.jul.pattern.Observable;
-import org.openbase.jul.schedule.GlobalExecutionService;
+import org.openbase.jul.schedule.GlobalCachedExecutorService;
 import org.openbase.jul.schedule.RecurrenceEventFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,7 +68,7 @@ public class DimmableLightPane extends AbstractUnitPane {
     private final VBox bodyContent;
     private final Slider slider;
 
-    private final EventHandler<MouseEvent> sendBrightness = event -> GlobalExecutionService.submit(new Task() {
+    private final EventHandler<MouseEvent> sendBrightness = event -> GlobalCachedExecutorService.submit(new Task() {
         @Override
         protected Object call() {
             try {
@@ -172,7 +172,7 @@ public class DimmableLightPane extends AbstractUnitPane {
     protected void initTitle() {
         lightBulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
 
-        oneClick.addListener((observable, oldValue, newValue) -> GlobalExecutionService.submit(new Task() {
+        oneClick.addListener((observable, oldValue, newValue) -> GlobalCachedExecutorService.submit(new Task() {
             @Override
             protected Object call() {
                 if (toggleSwitch.isSelected()) {
@@ -184,7 +184,7 @@ public class DimmableLightPane extends AbstractUnitPane {
             }
         }));
 
-        toggleSwitch.setOnMouseClicked(event -> GlobalExecutionService.submit(new Task() {
+        toggleSwitch.setOnMouseClicked(event -> GlobalCachedExecutorService.submit(new Task() {
             @Override
             protected Object call() {
                 if (toggleSwitch.isSelected()) {

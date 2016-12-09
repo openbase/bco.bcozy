@@ -47,7 +47,7 @@ import java.text.DecimalFormat;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import org.openbase.jul.schedule.GlobalExecutionService;
+import org.openbase.jul.schedule.GlobalCachedExecutorService;
 import rst.domotic.state.TemperatureStateType.TemperatureState;
 
 /**
@@ -70,7 +70,7 @@ public class TemperatureControllerPane extends AbstractUnitPane {
     private double actualTemperature;
     private double targetTemperature;
 
-    private final EventHandler<MouseEvent> sendingTargetTemperature = event -> GlobalExecutionService.submit(new Task() {
+    private final EventHandler<MouseEvent> sendingTargetTemperature = event -> GlobalCachedExecutorService.submit(new Task() {
         @Override
         protected Object call() {
             try {

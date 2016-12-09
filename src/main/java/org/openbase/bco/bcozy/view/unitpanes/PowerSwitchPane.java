@@ -36,7 +36,7 @@ import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
 import org.openbase.jul.pattern.Observable;
-import org.openbase.jul.schedule.GlobalExecutionService;
+import org.openbase.jul.schedule.GlobalCachedExecutorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.domotic.state.PowerStateType;
@@ -129,7 +129,7 @@ public class PowerSwitchPane extends AbstractUnitPane {
 
     @Override
     protected void initTitle() {
-        oneClick.addListener((observable, oldValue, newValue) -> GlobalExecutionService.submit(new Task() {
+        oneClick.addListener((observable, oldValue, newValue) -> GlobalCachedExecutorService.submit(new Task() {
             @Override
             protected Object call() {
                 if (toggleSwitch.isSelected()) {
@@ -141,7 +141,7 @@ public class PowerSwitchPane extends AbstractUnitPane {
             }
         }));
 
-        toggleSwitch.setOnMouseClicked(event -> GlobalExecutionService.submit(new Task() {
+        toggleSwitch.setOnMouseClicked(event -> GlobalCachedExecutorService.submit(new Task() {
             @Override
             protected Object call() {
                 if (toggleSwitch.isSelected()) {
