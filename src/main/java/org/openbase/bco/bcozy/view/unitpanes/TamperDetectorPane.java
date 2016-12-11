@@ -42,7 +42,7 @@ import rst.domotic.unit.dal.TamperDetectorDataType.TamperDetectorData;
 public class TamperDetectorPane extends AbstractUnitPane {
     private static final Logger LOGGER = LoggerFactory.getLogger(TamperDetectorPane.class);
 
-    private final TamperDetectorRemote tamperDetectorRemote;
+    private final TamperDetectorRemote remote;
     private final SVGIcon tamperSwitchIconOk;
     private final SVGIcon tamperSwitchIconManipulation;
     private final SVGIcon unknownForegroundIcon;
@@ -54,7 +54,7 @@ public class TamperDetectorPane extends AbstractUnitPane {
      * @param tamperSwitchRemote tamperSwitchRemote
      */
     public TamperDetectorPane(final AbstractIdentifiableRemote tamperSwitchRemote) {
-        this.tamperDetectorRemote = (TamperDetectorRemote) tamperSwitchRemote;
+        this.remote = (TamperDetectorRemote) tamperSwitchRemote;
 
         headContent = new BorderPane();
         tamperSwitchIconOk = new SVGIcon(MaterialDesignIcon.CHECKBOX_MARKED_CIRCLE, Constants.SMALL_ICON, false);
@@ -69,14 +69,14 @@ public class TamperDetectorPane extends AbstractUnitPane {
         initEffect();
         tooltip.textProperty().bind(observerText.textProperty());
 
-        this.tamperDetectorRemote.addDataObserver(this);
+        this.remote.addDataObserver(this);
     }
 
     private void initEffect() {
         State tamperSwitchState = State.UNKNOWN;
 
         try {
-            tamperSwitchState = tamperDetectorRemote.getTamperState().getValue();
+            tamperSwitchState = remote.getTamperState().getValue();
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
@@ -124,7 +124,7 @@ public class TamperDetectorPane extends AbstractUnitPane {
     protected void initUnitLabel() {
         String unitLabel = Constants.UNKNOWN_ID;
         try {
-            unitLabel = this.tamperDetectorRemote.getData().getLabel();
+            unitLabel = remote.getLocationConfig().getLabel() + " " +  remote.getData().getLabel();
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
@@ -133,12 +133,12 @@ public class TamperDetectorPane extends AbstractUnitPane {
 
     @Override
     public AbstractIdentifiableRemote getDALRemoteService() {
-        return tamperDetectorRemote;
+        return remote;
     }
 
     @Override
     void removeObserver() {
-        this.tamperDetectorRemote.removeObserver(this);
+        this.remote.removeObserver(this);
     }
 
     @Override

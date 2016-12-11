@@ -44,7 +44,7 @@ public class MotionDetectorPane extends AbstractUnitPane {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BatteryPane.class);
 
-    private final MotionDetectorRemote motionDetectorRemote;
+    private final MotionDetectorRemote remote;
     private final SVGIcon unknownForegroundIcon;
     private final SVGIcon unknownBackgroundIcon;
     private final SVGIcon backgroundIcon;
@@ -57,7 +57,7 @@ public class MotionDetectorPane extends AbstractUnitPane {
      * @param brightnessSensorRemote motionSensorRemote
      */
     public MotionDetectorPane(final AbstractIdentifiableRemote brightnessSensorRemote) {
-        this.motionDetectorRemote = (MotionDetectorRemote) brightnessSensorRemote;
+        this.remote = (MotionDetectorRemote) brightnessSensorRemote;
 
         headContent = new BorderPane();
         unknownBackgroundIcon = new SVGIcon(MaterialDesignIcon.CHECKBOX_BLANK_CIRCLE, Constants.SMALL_ICON - 2, false);
@@ -72,14 +72,14 @@ public class MotionDetectorPane extends AbstractUnitPane {
         initEffect();
         tooltip.textProperty().bind(observerText.textProperty());
 
-        this.motionDetectorRemote.addDataObserver(this);
+        this.remote.addDataObserver(this);
     }
 
     private void initEffect() {
         State motionState = State.UNKNOWN;
 
         try {
-            motionState = motionDetectorRemote.getMotionState().getValue();
+            motionState = remote.getMotionState().getValue();
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
@@ -126,7 +126,7 @@ public class MotionDetectorPane extends AbstractUnitPane {
     protected void initUnitLabel() {
         String unitLabel = Constants.UNKNOWN_ID;
         try {
-            unitLabel = this.motionDetectorRemote.getData().getLabel();
+            unitLabel = remote.getLocationConfig().getLabel() + " " +  remote.getData().getLabel();
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
@@ -135,12 +135,12 @@ public class MotionDetectorPane extends AbstractUnitPane {
 
     @Override
     public AbstractIdentifiableRemote getDALRemoteService() {
-        return motionDetectorRemote;
+        return remote;
     }
 
     @Override
     void removeObserver() {
-        this.motionDetectorRemote.removeObserver(this);
+        this.remote.removeObserver(this);
     }
 
     @Override
