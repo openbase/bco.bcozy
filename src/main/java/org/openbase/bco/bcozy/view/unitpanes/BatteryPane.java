@@ -41,6 +41,7 @@ import rst.domotic.unit.dal.BatteryDataType.BatteryData;
  * Created by tmichalski on 13.01.16.
  */
 public class BatteryPane extends AbstractUnitPane {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(BatteryPane.class);
 
     private final BatteryRemote batteryRemote;
@@ -50,6 +51,7 @@ public class BatteryPane extends AbstractUnitPane {
 
     /**
      * Constructor for the BatteryPane.
+     *
      * @param batteryRemote batteryRemote
      */
     public BatteryPane(final AbstractIdentifiableRemote batteryRemote) {
@@ -118,15 +120,15 @@ public class BatteryPane extends AbstractUnitPane {
             batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_90);
         } else if (batteryLevel > 75) {
             batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_80);
-        }  else if (batteryLevel > 55) {
+        } else if (batteryLevel > 55) {
             batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_60);
-        }  else if (batteryLevel > 35) {
+        } else if (batteryLevel > 35) {
             batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_40);
         } else if (batteryLevel > 25) {
             batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_30);
         } else if (batteryLevel > 15) {
             batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_20);
-        }  else {
+        } else {
             batteryIcon.changeBackgroundIcon(MaterialDesignIcon.BATTERY_OUTLINE);
         }
         //CHECKSTYLE.ON: MagicNumber
@@ -156,7 +158,7 @@ public class BatteryPane extends AbstractUnitPane {
     protected void initUnitLabel() {
         String unitLabel = Constants.UNKNOWN_ID;
         try {
-            unitLabel = this.batteryRemote.getData().getLabel();
+            unitLabel = batteryRemote.getLocationConfig().getLabel() + " " + batteryRemote.getData().getLabel();
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
@@ -179,8 +181,8 @@ public class BatteryPane extends AbstractUnitPane {
             final double batteryLevel = ((BatteryData) battery).getBatteryState().getLevel();
             setStatusBatteryIcon(batteryLevel);
 
-            final State batteryState =
-                    ((BatteryData) battery).getBatteryState().getValue();
+            final State batteryState
+                    = ((BatteryData) battery).getBatteryState().getValue();
             setBatteryStateColorAndIcon(batteryState);
         });
     }

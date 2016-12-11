@@ -44,9 +44,10 @@ import rst.domotic.unit.dal.SmokeDetectorDataType.SmokeDetectorData;
  * Created by agatting on 11.04.16.
  */
 public class SmokeDetectorPane extends AbstractUnitPane {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(SmokeDetectorPane.class);
 
-    private final SmokeDetectorRemote smokeDetectorRemote;
+    private final SmokeDetectorRemote remote;
     private final SVGIcon smokeDetectorIconFire;
     private final SVGIcon smokeDetectorIconNoFire;
     private final SVGIcon smokeDetectorIconFireFade;
@@ -57,10 +58,11 @@ public class SmokeDetectorPane extends AbstractUnitPane {
 
     /**
      * Constructor for the TamperSwitchPane.
+     *
      * @param smokeDetectorRemote smokeDetectorRemote.
      */
     public SmokeDetectorPane(final AbstractIdentifiableRemote smokeDetectorRemote) {
-        this.smokeDetectorRemote = (SmokeDetectorRemote) smokeDetectorRemote;
+        this.remote = (SmokeDetectorRemote) smokeDetectorRemote;
 
         headContent = new BorderPane();
         smokeDetectorIconFire = new SVGIcon(MaterialDesignIcon.FIRE, Constants.SMALL_ICON, false);
@@ -83,7 +85,7 @@ public class SmokeDetectorPane extends AbstractUnitPane {
         initEffect();
         tooltip.textProperty().bind(observerText.textProperty());
 
-        this.smokeDetectorRemote.addDataObserver(this);
+        this.remote.addDataObserver(this);
     }
 
     private void initEffect() {
@@ -91,8 +93,8 @@ public class SmokeDetectorPane extends AbstractUnitPane {
         SmokeState.State smokeState = SmokeState.State.UNKNOWN;
 
         try {
-            alarmState = smokeDetectorRemote.getSmokeAlarmState().getValue();
-            smokeState = smokeDetectorRemote.getSmokeState().getValue();
+            alarmState = remote.getSmokeAlarmState().getValue();
+            smokeState = remote.getSmokeState().getValue();
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
@@ -155,7 +157,7 @@ public class SmokeDetectorPane extends AbstractUnitPane {
     protected void initUnitLabel() {
         String unitLabel = Constants.UNKNOWN_ID;
         try {
-            unitLabel = this.smokeDetectorRemote.getData().getLabel();
+            unitLabel = remote.getLocationConfig().getLabel() + " " + remote.getData().getLabel();
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
@@ -164,20 +166,20 @@ public class SmokeDetectorPane extends AbstractUnitPane {
 
     @Override
     public AbstractIdentifiableRemote getDALRemoteService() {
-        return smokeDetectorRemote;
+        return remote;
     }
 
     @Override
     void removeObserver() {
-        this.smokeDetectorRemote.removeObserver(this);
+        this.remote.removeObserver(this);
     }
 
     @Override
     public void update(final Observable observable, final Object smokeDetector) throws java.lang.Exception {
         Platform.runLater(() -> {
             final State alarmState = ((SmokeDetectorData) smokeDetector).getSmokeAlarmState().getValue();
-            final SmokeState.State smokeState =
-                    ((SmokeDetectorData) smokeDetector).getSmokeState().getValue();
+            final SmokeState.State smokeState
+                    = ((SmokeDetectorData) smokeDetector).getSmokeState().getValue();
 
             setSmokeDetectorIconAndText(alarmState, smokeState);
         });
