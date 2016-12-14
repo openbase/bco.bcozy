@@ -35,7 +35,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.SVGIcon;
-import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
+import org.openbase.bco.dal.remote.unit.UnitRemote;
 import org.openbase.bco.dal.remote.unit.DimmableLightRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
@@ -86,7 +86,7 @@ public class DimmableLightPane extends AbstractUnitPane {
      *
      * @param dimmerRemote dimmerRemote.
      */
-    public DimmableLightPane(final AbstractIdentifiableRemote dimmerRemote) {
+    public DimmableLightPane(final UnitRemote dimmerRemote) {
         this.dimmableLightRemote = (DimmableLightRemote) dimmerRemote;
 
         lightBulbIcon
@@ -249,7 +249,7 @@ public class DimmableLightPane extends AbstractUnitPane {
     }
 
     @Override
-    public AbstractIdentifiableRemote getDALRemoteService() {
+    public UnitRemote getDALRemoteService() {
         return dimmableLightRemote;
     }
 

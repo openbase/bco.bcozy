@@ -31,7 +31,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.SVGIcon;
-import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
+import org.openbase.bco.dal.remote.unit.UnitRemote;
 import org.openbase.bco.dal.remote.unit.TemperatureControllerRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
@@ -91,7 +91,7 @@ public class TemperatureControllerPane extends AbstractUnitPane {
      *
      * @param temperatureControllerRemote temperatureControllerRemote
      */
-    public TemperatureControllerPane(final AbstractIdentifiableRemote temperatureControllerRemote) {
+    public TemperatureControllerPane(final UnitRemote temperatureControllerRemote) {
         this.temperatureControllerRemote = (TemperatureControllerRemote) temperatureControllerRemote;
 
         temperatureControllerIcon = new SVGIcon(MaterialDesignIcon.RADIATOR, Constants.SMALL_ICON, true);
@@ -194,7 +194,7 @@ public class TemperatureControllerPane extends AbstractUnitPane {
     }
 
     @Override
-    public AbstractIdentifiableRemote getDALRemoteService() {
+    public UnitRemote getDALRemoteService() {
         return temperatureControllerRemote;
     }
 

@@ -26,7 +26,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.SVGIcon;
-import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
+import org.openbase.bco.dal.remote.unit.UnitRemote;
 import org.openbase.bco.dal.remote.unit.ReedContactRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
@@ -53,7 +53,7 @@ public class ReedContactPane extends AbstractUnitPane {
      * Constructor for the ReedSwitchPane.
      * @param reedSwitchRemote reedSwitchRemote
      */
-    public ReedContactPane(final AbstractIdentifiableRemote reedSwitchRemote) {
+    public ReedContactPane(final UnitRemote reedSwitchRemote) {
         this.reedContactRemote = (ReedContactRemote) reedSwitchRemote;
 
         reedSwitchIcon = new SVGIcon(MaterialIcon.RADIO_BUTTON_CHECKED, Constants.SMALL_ICON, true);
@@ -127,7 +127,7 @@ public class ReedContactPane extends AbstractUnitPane {
     }
 
     @Override
-    public AbstractIdentifiableRemote getDALRemoteService() {
+    public UnitRemote getDALRemoteService() {
         return reedContactRemote;
     }
 

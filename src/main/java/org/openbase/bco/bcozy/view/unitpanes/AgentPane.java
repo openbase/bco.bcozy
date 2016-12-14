@@ -33,7 +33,7 @@ import org.openbase.bco.dal.remote.unit.agent.AgentRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
-import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
+import org.openbase.bco.dal.remote.unit.UnitRemote;
 import org.openbase.jul.pattern.Observable;
 import org.openbase.jul.schedule.GlobalCachedExecutorService;
 import org.slf4j.Logger;
@@ -58,7 +58,7 @@ public class AgentPane extends AbstractUnitPane {
      * Constructor for the AgentPane.
      * @param agentRemote agentRemote
      */
-    public AgentPane(final AbstractIdentifiableRemote agentRemote) {
+    public AgentPane(final UnitRemote agentRemote) {
         this.agentRemote = (AgentRemote) agentRemote;
 
         headContent = new BorderPane();
@@ -115,7 +115,8 @@ public class AgentPane extends AbstractUnitPane {
 
     private void sendStateToRemote(final State state) {
         try {
-            agentRemote.setActivationState(ActivationState.newBuilder().setValue(state).build()).get(Constants.OPERATION_SERVICE_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
+            agentRemote.setActivationState(ActivationState.newBuilder().setValue(state).build())
+                    .get(Constants.OPERATION_SERVICE_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
         } catch (InterruptedException | ExecutionException | TimeoutException | CouldNotPerformException ex) {
             ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
             setWidgetPaneDisable(true);
@@ -173,7 +174,7 @@ public class AgentPane extends AbstractUnitPane {
     }
 
     @Override
-    public AbstractIdentifiableRemote getDALRemoteService() {
+    public UnitRemote getDALRemoteService() {
         return agentRemote;
     }
 

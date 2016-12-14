@@ -29,7 +29,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.SVGIcon;
-import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
+import org.openbase.bco.dal.remote.unit.UnitRemote;
 import org.openbase.bco.dal.remote.unit.TemperatureSensorRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
@@ -60,9 +60,9 @@ public class TemperatureSensorPane extends AbstractUnitPane {
     /**
      * Constructor for TemperatureSensorPane.
      *
-     * @param temperatureSensorRemote AbstractIdentifiableRemote
+     * @param temperatureSensorRemote UnitRemote
      */
-    public TemperatureSensorPane(final AbstractIdentifiableRemote temperatureSensorRemote) {
+    public TemperatureSensorPane(final UnitRemote temperatureSensorRemote) {
         this.temperatureSensorRemote = (TemperatureSensorRemote) temperatureSensorRemote;
 
         thermometerIconBackground = new SVGIcon(WeatherIcon.THERMOMETER_EXTERIOR,
@@ -183,7 +183,7 @@ public class TemperatureSensorPane extends AbstractUnitPane {
     }
 
     @Override
-    public AbstractIdentifiableRemote getDALRemoteService() {
+    public UnitRemote getDALRemoteService() {
         return temperatureSensorRemote;
     }
 

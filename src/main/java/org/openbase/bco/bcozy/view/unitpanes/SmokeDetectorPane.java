@@ -32,7 +32,7 @@ import org.openbase.bco.dal.remote.unit.SmokeDetectorRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
-import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
+import org.openbase.bco.dal.remote.unit.UnitRemote;
 import org.openbase.jul.pattern.Observable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +61,7 @@ public class SmokeDetectorPane extends AbstractUnitPane {
      *
      * @param smokeDetectorRemote smokeDetectorRemote.
      */
-    public SmokeDetectorPane(final AbstractIdentifiableRemote smokeDetectorRemote) {
+    public SmokeDetectorPane(final UnitRemote smokeDetectorRemote) {
         this.remote = (SmokeDetectorRemote) smokeDetectorRemote;
 
         headContent = new BorderPane();
@@ -165,7 +165,7 @@ public class SmokeDetectorPane extends AbstractUnitPane {
     }
 
     @Override
-    public AbstractIdentifiableRemote getDALRemoteService() {
+    public UnitRemote getDALRemoteService() {
         return remote;
     }
 

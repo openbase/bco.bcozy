@@ -27,7 +27,7 @@ import javafx.scene.text.Text;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.SVGIcon;
 import org.openbase.bco.dal.remote.unit.BatteryRemote;
-import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
+import org.openbase.bco.dal.remote.unit.UnitRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
@@ -54,7 +54,7 @@ public class BatteryPane extends AbstractUnitPane {
      *
      * @param batteryRemote batteryRemote
      */
-    public BatteryPane(final AbstractIdentifiableRemote batteryRemote) {
+    public BatteryPane(final UnitRemote batteryRemote) {
         this.batteryRemote = (BatteryRemote) batteryRemote;
 
         headContent = new BorderPane();
@@ -166,7 +166,7 @@ public class BatteryPane extends AbstractUnitPane {
     }
 
     @Override
-    public AbstractIdentifiableRemote getDALRemoteService() {
+    public UnitRemote getDALRemoteService() {
         return batteryRemote;
     }
 

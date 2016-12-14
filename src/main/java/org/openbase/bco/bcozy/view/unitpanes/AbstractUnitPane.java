@@ -19,7 +19,7 @@
 package org.openbase.bco.bcozy.view.unitpanes;
 
 import javafx.scene.control.Label;
-import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
+import org.openbase.bco.dal.remote.unit.UnitRemote;
 import org.openbase.jul.pattern.Observer;
 
 /**
@@ -64,10 +64,10 @@ public abstract class AbstractUnitPane extends WidgetPane implements Observer {
     }
 
     /**
-     * Returns the AbstractIdentifiableRemote.
-     * @return AbstractIdentifiableRemote
+     * Returns the UnitRemote.
+     * @return UnitRemote
      */
-    abstract AbstractIdentifiableRemote getDALRemoteService();
+    abstract UnitRemote getDALRemoteService();
 
     /**
      * Initialize the TitlePane.
