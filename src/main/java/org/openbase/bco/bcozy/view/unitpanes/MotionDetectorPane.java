@@ -30,7 +30,7 @@ import org.openbase.bco.dal.remote.unit.MotionDetectorRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
-import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
+import org.openbase.bco.dal.remote.unit.UnitRemote;
 import org.openbase.jul.pattern.Observable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +56,7 @@ public class MotionDetectorPane extends AbstractUnitPane {
      *
      * @param brightnessSensorRemote motionSensorRemote
      */
-    public MotionDetectorPane(final AbstractIdentifiableRemote brightnessSensorRemote) {
+    public MotionDetectorPane(final UnitRemote brightnessSensorRemote) {
         this.remote = (MotionDetectorRemote) brightnessSensorRemote;
 
         headContent = new BorderPane();
@@ -134,7 +134,7 @@ public class MotionDetectorPane extends AbstractUnitPane {
     }
 
     @Override
-    public AbstractIdentifiableRemote getDALRemoteService() {
+    public UnitRemote getDALRemoteService() {
         return remote;
     }
 

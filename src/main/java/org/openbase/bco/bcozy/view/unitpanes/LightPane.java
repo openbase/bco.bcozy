@@ -29,7 +29,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.SVGIcon;
-import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
+import org.openbase.bco.dal.remote.unit.UnitRemote;
 import org.openbase.bco.dal.remote.unit.LightRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
@@ -58,7 +58,7 @@ public class LightPane extends AbstractUnitPane {
      * Constructor for the LightPane.
      * @param lightRemote lightRemote
      */
-    public LightPane(final AbstractIdentifiableRemote lightRemote) {
+    public LightPane(final UnitRemote lightRemote) {
         this.lightRemote = (LightRemote) lightRemote;
 
         lightBulbIcon =
@@ -175,7 +175,7 @@ public class LightPane extends AbstractUnitPane {
     }
 
     @Override
-    public AbstractIdentifiableRemote getDALRemoteService() {
+    public UnitRemote getDALRemoteService() {
         return lightRemote;
     }
 

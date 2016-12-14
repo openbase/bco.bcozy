@@ -33,7 +33,7 @@ import org.openbase.bco.dal.remote.unit.scene.SceneRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
-import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
+import org.openbase.bco.dal.remote.unit.UnitRemote;
 import org.openbase.jul.pattern.Observable;
 import org.openbase.jul.schedule.GlobalCachedExecutorService;
 import org.slf4j.Logger;
@@ -58,7 +58,7 @@ public class ScenePane extends AbstractUnitPane {
      * Constructor for the ScenePane.
      * @param sceneRemote sceneRemote
      */
-    public ScenePane(final AbstractIdentifiableRemote sceneRemote) {
+    public ScenePane(final UnitRemote sceneRemote) {
         this.sceneRemote = (SceneRemote) sceneRemote;
 
         headContent = new BorderPane();
@@ -173,7 +173,7 @@ public class ScenePane extends AbstractUnitPane {
     }
 
     @Override
-    public AbstractIdentifiableRemote getDALRemoteService() {
+    public UnitRemote getDALRemoteService() {
         return sceneRemote;
     }
 

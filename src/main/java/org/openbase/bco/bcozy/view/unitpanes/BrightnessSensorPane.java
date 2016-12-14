@@ -27,7 +27,7 @@ import javafx.scene.text.Text;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.SVGIcon;
 import org.openbase.bco.dal.remote.unit.BrightnessSensorRemote;
-import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
+import org.openbase.bco.dal.remote.unit.UnitRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
@@ -51,7 +51,7 @@ public class BrightnessSensorPane extends AbstractUnitPane {
      * Constructor for the BrightnessSensorPane.
      * @param brightnessSensorRemote brightnessSensorRemote
      */
-    public BrightnessSensorPane(final AbstractIdentifiableRemote brightnessSensorRemote) {
+    public BrightnessSensorPane(final UnitRemote brightnessSensorRemote) {
         this.brightnessSensorRemote = (BrightnessSensorRemote) brightnessSensorRemote;
 
         headContent = new BorderPane();
@@ -124,7 +124,7 @@ public class BrightnessSensorPane extends AbstractUnitPane {
     }
 
     @Override
-    public AbstractIdentifiableRemote getDALRemoteService() {
+    public UnitRemote getDALRemoteService() {
         return brightnessSensorRemote;
     }
 
@@ -136,7 +136,8 @@ public class BrightnessSensorPane extends AbstractUnitPane {
     @Override
     public void update(final Observable observable, final Object brightnessSensor) throws java.lang.Exception {
         Platform.runLater(() -> {
-            final double brightnessLevel = ((BrightnessSensorData) brightnessSensor).getBrightnessState().getBrightness();
+            final double brightnessLevel =
+                    ((BrightnessSensorData) brightnessSensor).getBrightnessState().getBrightness();
             setBrightnessLevelTextAndIcon(brightnessLevel);
         });
     }

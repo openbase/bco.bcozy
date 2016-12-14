@@ -53,7 +53,7 @@ import javafx.scene.shape.Shape;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.SVGIcon;
 import org.openbase.bco.dal.remote.unit.ColorableLightRemote;
-import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
+import org.openbase.bco.dal.remote.unit.UnitRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
@@ -96,7 +96,7 @@ public class ColorableLightPane extends AbstractUnitPane {
      * Constructor for the AmbientLightPane.
      * @param colorableLightRemote colorableLightRemote
      */
-    public ColorableLightPane(final AbstractIdentifiableRemote colorableLightRemote) {
+    public ColorableLightPane(final UnitRemote colorableLightRemote) {
         this.colorableLightRemote = (ColorableLightRemote) colorableLightRemote;
 
         lightBulbIcon =
@@ -128,7 +128,7 @@ public class ColorableLightPane extends AbstractUnitPane {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
         final Color color = Color.hsb(currentColor.getHue(), currentColor.getSaturation() / Constants.ONE_HUNDRED,
-                currentColor.getBrightness()/ Constants.ONE_HUNDRED);
+                currentColor.getBrightness() / Constants.ONE_HUNDRED);
 
         hueValue.set(color.getHue());
         angle = color.getHue();
@@ -151,14 +151,16 @@ public class ColorableLightPane extends AbstractUnitPane {
                 observerText.setIdentifier("lightOn");
                 if (!toggleSwitch.isSelected()) {
                     toggleSwitch.setSelected(true);
-                }   break;
+                }
+                break;
             case OFF:
                 iconPane.add(lightBulbIcon, 0, 0);
                 lightBulbIcon.setBackgroundIconColorAnimated(Color.TRANSPARENT);
                 observerText.setIdentifier("lightOff");
                 if (toggleSwitch.isSelected()) {
                     toggleSwitch.setSelected(false);
-                }   break;
+                }
+                break;
             default:
                 iconPane.add(unknownBackgroundIcon, 0, 0);
                 iconPane.add(unknownForegroundIcon, 0, 0);
@@ -295,7 +297,8 @@ public class ColorableLightPane extends AbstractUnitPane {
 
     private void sendStateToRemote(final PowerState.State powerState) {
         try {
-            colorableLightRemote.setPowerState(powerState).get(Constants.OPERATION_SERVICE_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
+            colorableLightRemote.setPowerState(powerState)
+                    .get(Constants.OPERATION_SERVICE_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
         } catch (InterruptedException | ExecutionException | TimeoutException | CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER);
             setWidgetPaneDisable(true);
@@ -339,7 +342,8 @@ public class ColorableLightPane extends AbstractUnitPane {
         final HSBColor hsvColor = HSBColor.newBuilder().setHue(hueValue.floatValue())
                 .setSaturation(saturation.floatValue()).setBrightness(brightness.floatValue()).build();
         try {
-            colorableLightRemote.setColor(hsvColor).get(Constants.OPERATION_SERVICE_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
+            colorableLightRemote.setColor(hsvColor)
+                    .get(Constants.OPERATION_SERVICE_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
         } catch (InterruptedException | ExecutionException | TimeoutException | CouldNotPerformException ex) {
             ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
             setWidgetPaneDisable(true);
@@ -377,7 +381,8 @@ public class ColorableLightPane extends AbstractUnitPane {
         circle.layoutYProperty().bind(Bindings.subtract(1, brightness.divide(Constants.ONE_HUNDRED))
                 .multiply(COLOR_BOX_SIZE));
 
-        final EventHandler<MouseEvent> colorContainerMouseHandler = event -> GlobalCachedExecutorService.submit(new Task() {
+        final EventHandler<MouseEvent> colorContainerMouseHandler = event -> GlobalCachedExecutorService.submit(
+                new Task() {
             @Override protected Object call() {
                 final double xMouse = event.getX();
                 final double yMouse = event.getY();
@@ -417,7 +422,8 @@ public class ColorableLightPane extends AbstractUnitPane {
         rectangleSelector.setManaged(false);
         rectangleSelector.setEffect(dropShadow());
 
-        final EventHandler<MouseEvent> colorCircleMouseHandler = event -> GlobalCachedExecutorService.submit(new Task() {
+        final EventHandler<MouseEvent> colorCircleMouseHandler = event -> GlobalCachedExecutorService.submit(
+                new Task() {
             @Override protected Object call() {
                 double yMouse = event.getY();
                 double xMouse = event.getX();
@@ -475,7 +481,7 @@ public class ColorableLightPane extends AbstractUnitPane {
     }
 
     @Override
-    public AbstractIdentifiableRemote getDALRemoteService() {
+    public UnitRemote getDALRemoteService() {
         return colorableLightRemote;
     }
 
@@ -492,9 +498,12 @@ public class ColorableLightPane extends AbstractUnitPane {
             }
 
             final State powerState = ((ColorableLightData) colorableLight).getPowerState().getValue();
-            final Color color = Color.hsb(((ColorableLightData) colorableLight).getColorState().getColor().getHsbColor().getHue(),
-                    ((ColorableLightData) colorableLight).getColorState().getColor().getHsbColor().getSaturation() / Constants.ONE_HUNDRED,
-                    ((ColorableLightData) colorableLight).getColorState().getColor().getHsbColor().getBrightness()/ Constants.ONE_HUNDRED);
+            final Color color =
+                    Color.hsb(((ColorableLightData) colorableLight).getColorState().getColor().getHsbColor().getHue(),
+                    ((ColorableLightData) colorableLight).getColorState().getColor().getHsbColor().getSaturation()
+                            / Constants.ONE_HUNDRED,
+                    ((ColorableLightData) colorableLight).getColorState().getColor().getHsbColor().getBrightness()
+                            / Constants.ONE_HUNDRED);
             setEffectColorAndSwitch(powerState, color);
         });
     }

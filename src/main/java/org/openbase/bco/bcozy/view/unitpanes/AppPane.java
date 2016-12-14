@@ -33,7 +33,7 @@ import org.openbase.bco.dal.remote.unit.app.AppRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
-import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
+import org.openbase.bco.dal.remote.unit.UnitRemote;
 import org.openbase.jul.pattern.Observable;
 import org.openbase.jul.schedule.GlobalCachedExecutorService;
 import org.slf4j.Logger;
@@ -60,7 +60,7 @@ public class AppPane extends AbstractUnitPane {
      *
      * @param appRemote appRemote
      */
-    public AppPane(final AbstractIdentifiableRemote appRemote) {
+    public AppPane(final UnitRemote appRemote) {
         this.appRemote = (AppRemote) appRemote;
 
         headContent = new BorderPane();
@@ -99,14 +99,16 @@ public class AppPane extends AbstractUnitPane {
                 observerText.setIdentifier("active");
                 if (!toggleSwitch.isSelected()) {
                     toggleSwitch.setSelected(true);
-                }   break;
+                }
+                break;
             case DEACTIVE:
                 appIcon.changeForegroundIcon(MaterialDesignIcon.POWER);
                 iconPane.add(appIcon, 0, 0);
                 observerText.setIdentifier("inactive");
                 if (toggleSwitch.isSelected()) {
                     toggleSwitch.setSelected(false);
-                }   break;
+                }
+                break;
             default:
                 iconPane.add(unknownBackgroundIcon, 0, 0);
                 iconPane.add(unknownForegroundIcon, 0, 0);
@@ -117,7 +119,8 @@ public class AppPane extends AbstractUnitPane {
 
     private void sendStateToRemote(final State state) {
         try {
-            appRemote.setActivationState(ActivationState.newBuilder().setValue(state).build()).get(Constants.OPERATION_SERVICE_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
+            appRemote.setActivationState(ActivationState.newBuilder().setValue(state).build())
+                    .get(Constants.OPERATION_SERVICE_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
         } catch (InterruptedException | ExecutionException | TimeoutException | CouldNotPerformException ex) {
             ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
             setWidgetPaneDisable(true);
@@ -175,7 +178,7 @@ public class AppPane extends AbstractUnitPane {
     }
 
     @Override
-    public AbstractIdentifiableRemote getDALRemoteService() {
+    public UnitRemote getDALRemoteService() {
         return appRemote;
     }
 

@@ -29,7 +29,7 @@ import org.openbase.bco.dal.remote.unit.TamperDetectorRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
-import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
+import org.openbase.bco.dal.remote.unit.UnitRemote;
 import org.openbase.jul.pattern.Observable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +53,7 @@ public class TamperDetectorPane extends AbstractUnitPane {
      * Constructor for the TamperSwitchPane.
      * @param tamperSwitchRemote tamperSwitchRemote
      */
-    public TamperDetectorPane(final AbstractIdentifiableRemote tamperSwitchRemote) {
+    public TamperDetectorPane(final UnitRemote tamperSwitchRemote) {
         this.remote = (TamperDetectorRemote) tamperSwitchRemote;
 
         headContent = new BorderPane();
@@ -132,7 +132,7 @@ public class TamperDetectorPane extends AbstractUnitPane {
     }
 
     @Override
-    public AbstractIdentifiableRemote getDALRemoteService() {
+    public UnitRemote getDALRemoteService() {
         return remote;
     }
 

@@ -31,7 +31,7 @@ import org.openbase.bco.dal.remote.unit.PowerConsumptionSensorRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
-import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
+import org.openbase.bco.dal.remote.unit.UnitRemote;
 import org.openbase.jul.pattern.Observable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +57,7 @@ public class PowerConsumptionSensorPane extends AbstractUnitPane {
      * Constructor for the PowerConsumptionSensorPane.
      * @param powerConsumptionSensorRemote powerConsumptionSensorRemote
      */
-    public PowerConsumptionSensorPane(final AbstractIdentifiableRemote powerConsumptionSensorRemote) {
+    public PowerConsumptionSensorPane(final UnitRemote powerConsumptionSensorRemote) {
         this.powerConsumptionSensorRemote = (PowerConsumptionSensorRemote) powerConsumptionSensorRemote;
 
         headContent = new BorderPane();
@@ -150,7 +150,7 @@ public class PowerConsumptionSensorPane extends AbstractUnitPane {
     }
 
     @Override
-    public AbstractIdentifiableRemote getDALRemoteService() {
+    public UnitRemote getDALRemoteService() {
         return powerConsumptionSensorRemote;
     }
 

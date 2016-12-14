@@ -28,11 +28,11 @@ import javafx.event.EventHandler;
 import org.openbase.bco.bcozy.view.ForegroundPane;
 import org.openbase.bco.bcozy.view.unitpanes.TitledPaneContainer;
 import org.openbase.bco.bcozy.view.location.LocationPane;
+import org.openbase.bco.dal.remote.unit.UnitRemote;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
-import org.openbase.jul.extension.rsb.com.AbstractIdentifiableRemote;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.domotic.unit.UnitConfigType.UnitConfig;
@@ -115,9 +115,9 @@ public class ContextMenuController {
     private void fillTitledPaneContainer(final TitledPaneContainer titledPaneContainer, final String locationID) {
         this.titledPaneMap.put(locationID, titledPaneContainer);
 
-        final Map<UnitType, List<AbstractIdentifiableRemote>> unitRemoteMap = remotePool.getUnitRemoteMapOfLocation(locationID);
+        final Map<UnitType, List<UnitRemote>> unitRemoteMap = remotePool.getUnitRemoteMapOfLocation(locationID);
 
-        for (final Map.Entry<UnitType, List<AbstractIdentifiableRemote>> nextEntry : unitRemoteMap.entrySet()) {
+        for (final Map.Entry<UnitType, List<UnitRemote>> nextEntry : unitRemoteMap.entrySet()) {
             try {
                 titledPaneContainer.createAndAddNewTitledPane(nextEntry.getKey(), nextEntry.getValue());
             } catch (Exception ex) {
