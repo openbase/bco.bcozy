@@ -19,6 +19,7 @@
 package org.openbase.bco.bcozy.view;
 
 import de.jensd.fx.glyphs.materialicons.MaterialIcon;
+import java.util.logging.Level;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -32,6 +33,8 @@ import org.openbase.bco.bcozy.view.mainmenupanes.SettingsPane;
 import org.openbase.jps.core.JPService;
 import org.openbase.jps.exception.JPNotAvailableException;
 import org.openbase.jps.preset.JPDebugMode;
+import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
 import org.slf4j.Logger;
@@ -41,7 +44,6 @@ import org.slf4j.LoggerFactory;
  * Created by hoestreich on 11/10/15.
  */
 public class MainMenu extends StackPane {
-
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MainMenu.class);
 
@@ -64,10 +66,11 @@ public class MainMenu extends StackPane {
 
     /**
      * Constructor for the MainMenu.
+     *
      * @param height Height
      * @param width Width
      */
-    public MainMenu(final double height, final double width) {
+    public MainMenu(final double height, final double width) throws InterruptedException {
 
         // Initializing the container (StackPane)
         this.height = height;
@@ -75,14 +78,11 @@ public class MainMenu extends StackPane {
         this.maximized = true;
         this.setMinHeight(height);
         this.setMinWidth(width);
-
         // Initializing components
         verticalLayout = new VBox(Constants.INSETS);
         verticalLayout.setAlignment(Pos.TOP_CENTER);
-
         verticalLayoutSmall = new VBox(Constants.INSETS * 2);
         verticalLayoutSmall.setAlignment(Pos.TOP_CENTER);
-
         loginPane = new LoginPane();
 
         initRemoteButton = new Button("Init RegistryRemotes");
@@ -96,19 +96,14 @@ public class MainMenu extends StackPane {
         logoViewSmall = ImageViewProvider.createImageView("/icons/bc.png", Constants.MIDDLE_ICON);
 
         connectionPane = new ConnectionPane();
-
         availableUsersPanePane = new AvailableUsersPane();
-
         settingsPane = new SettingsPane();
-
         mainMenuFloatingButton = new FloatingButton(new SVGIcon(MaterialIcon.MENU, Constants.MIDDLE_ICON, true));
-
         // Setting Alignment in Stackpane
         StackPane.setAlignment(mainMenuFloatingButton, Pos.TOP_RIGHT);
         StackPane.setAlignment(verticalLayout, Pos.TOP_CENTER);
         StackPane.setAlignment(verticalLayoutSmall, Pos.TOP_CENTER);
         mainMenuFloatingButton.translateYProperty().set(-(Constants.FLOATING_BUTTON_OFFSET));
-
         // Adding components to their parents
         try {
             if (JPService.getProperty(JPDebugMode.class).getValue()) {
@@ -125,15 +120,29 @@ public class MainMenu extends StackPane {
                     .addAll(logoView, connectionPane, loginPane, availableUsersPanePane, settingsPane);
         }
         this.getChildren().addAll(verticalLayout, mainMenuFloatingButton);
-
         // Styling components with CSS
         //CHECKSTYLE.OFF: MultipleStringLiterals
         this.getStyleClass().addAll("main-menu");
         //CHECKSTYLE.ON: MultipleStringLiterals
+        
+        try {
+            init();
+        } catch (InitializationException ex) {
+            ExceptionPrinter.printHistory(ex, LOGGER);
+        }
+    }
+
+    public void init() throws InitializationException, InterruptedException {
+        try {
+            availableUsersPanePane.init();
+        } catch (CouldNotPerformException ex) {
+            new InitializationException(this, ex);
+        }
     }
 
     /**
      * Configure the initRemoteButton.
+     *
      * @param eventHandler EventHandler
      */
     public void addInitRemoteButtonEventHandler(final EventHandler<ActionEvent> eventHandler) {
@@ -142,6 +151,7 @@ public class MainMenu extends StackPane {
 
     /**
      * Configure the fetchLocationButton.
+     *
      * @param eventHandler EventHandler
      */
     public void addFetchLocationButtonEventHandler(final EventHandler<ActionEvent> eventHandler) {
@@ -150,6 +160,7 @@ public class MainMenu extends StackPane {
 
     /**
      * Configure the fillHashesButton.
+     *
      * @param eventHandler EventHandler
      */
     public void addFillHashesButtonEventHandler(final EventHandler<ActionEvent> eventHandler) {
@@ -158,6 +169,7 @@ public class MainMenu extends StackPane {
 
     /**
      * Configure the fillContextMenuButton.
+     *
      * @param eventHandler EventHandler
      */
     public void addFillContextMenuButtonEventHandler(final EventHandler<ActionEvent> eventHandler) {
@@ -166,6 +178,7 @@ public class MainMenu extends StackPane {
 
     /**
      * Getter for the main menu button.
+     *
      * @return the instance of the main menu button
      */
     public FloatingButton getMainMenuFloatingButton() {
@@ -174,6 +187,7 @@ public class MainMenu extends StackPane {
 
     /**
      * Getter for the LoginPane.
+     *
      * @return the instance of the loginPane
      */
     public LoginPane getLoginPane() {
@@ -182,6 +196,7 @@ public class MainMenu extends StackPane {
 
     /**
      * Getter for the settingsPane.
+     *
      * @return the instance of the settingsPane
      */
     public SettingsPane getSettingsPane() {
@@ -190,6 +205,7 @@ public class MainMenu extends StackPane {
 
     /**
      * Getter for the availableUsersPanePane.
+     *
      * @return the instance of the availableUsersPanePane
      */
     public AvailableUsersPane getAvailableUsersPanePane() {
@@ -198,6 +214,7 @@ public class MainMenu extends StackPane {
 
     /**
      * Getter for the connectionPane.
+     *
      * @return the instance of the connectionPane
      */
     public ConnectionPane getConnectionPane() {
@@ -206,6 +223,7 @@ public class MainMenu extends StackPane {
 
     /**
      * Getter for the current display state.
+     *
      * @return true if maximzed, false if minimized
      */
     public boolean isMaximized() {
