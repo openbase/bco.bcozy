@@ -19,6 +19,9 @@
 package org.openbase.bco.bcozy.view.mainmenupanes;
 
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
+import java.util.ArrayList;
+import java.util.MissingResourceException;
+import javafx.application.Platform;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollBar;
@@ -28,18 +31,35 @@ import javafx.scene.layout.VBox;
 import org.controlsfx.control.HiddenSidesPane;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.SVGIcon;
+import org.openbase.bco.registry.remote.Registries;
+import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.InitializationException;
+import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.openbase.jul.pattern.Observable;
+import org.openbase.jul.pattern.Observer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import rst.domotic.registry.UserRegistryDataType.UserRegistryData;
+import rst.domotic.unit.UnitConfigType.UnitConfig;
 
 /**
  * Created by hoestreich on 12/15/15.
+ *
+ * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>
  */
 public class AvailableUsersPane extends PaneElement {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AvailableUsersPane.class);
+
     private final BorderPane statusIcon;
+    private final VBox userPanes;
+
     /**
      * Constructor for the AvailableUsersPane.
      */
     public AvailableUsersPane() {
-
+//        try {
+        userPanes = new VBox(Constants.INSETS);
         statusIcon = new BorderPane(new SVGIcon(MaterialDesignIcon.ACCOUNT_CIRCLE, Constants.MIDDLE_ICON, true));
 
         final ScrollPane verticalScrollPane = new ScrollPane();
@@ -57,18 +77,51 @@ public class AvailableUsersPane extends PaneElement {
         scrollBar.minProperty().bind(verticalScrollPane.vminProperty());
 //
 //        AdvancedHorizontalSlider advancedHorizontalSlider = new AdvancedHorizontalSlider(10, 30);
-        final VBox userPanes = new VBox(Constants.INSETS);
-        final UserPane userMarian = new UserPane("Marian", false, "userStateCooking", true);
-        final UserPane userTamino = new UserPane("Tamino", true, "userStateWatchingTV", true);
-        final UserPane userAndi = new UserPane("Andi", false, "userStateNotAvailable", false);
-        final UserPane userJulian = new UserPane("Julian", false, "userStateSleeping", true);
-        userPanes.getChildren().addAll(userMarian, userTamino, userAndi, userJulian);
 
         verticalScrollPane.setContent(userPanes);
         verticalScrollPane.setFitToWidth(true);
         this.getChildren().addAll(hiddenSidesPane);
+        //        } catch (CouldNotPerformException ex) {
+        //            throw new org.openbase.jul.exception.InstantiationException(this, ex);
+        //        }
     }
 
+    public void init() throws InitializationException, InterruptedException {
+        try {
+            Registries.getUserRegistry().addDataObserver(new Observer<UserRegistryData>() {
+                @Override
+                public void update(Observable<UserRegistryData> source, UserRegistryData data) throws Exception {
+                    Platform.runLater(() -> {
+                        updateDynamicComponents();
+                    });
+                }
+            });
+            updateDynamicComponents();
+        } catch (CouldNotPerformException ex) {
+            throw new InitializationException(this, ex);
+        }
+    }
+
+    public void updateDynamicComponents() {
+        try {
+            if (!Registries.getUserRegistry().isDataAvailable()) {
+                return;
+            }
+
+            new ArrayList<>(userPanes.getChildren()).forEach((userPane) -> {
+                ((UserPane) userPane).shutdown();
+                userPanes.getChildren().remove(userPane);
+            });
+
+            for (final UnitConfig userUniConfig : Registries.getUserRegistry().getUserConfigs()) {
+                final UserPane userPane = new UserPane();
+                userPane.init(userUniConfig);
+                userPanes.getChildren().add(userPane);
+            }
+        } catch (CouldNotPerformException | MissingResourceException | InterruptedException ex) {
+            ExceptionPrinter.printHistory(new CouldNotPerformException(ex), LOGGER);
+        }
+    }
 
     @Override
     public Node getStatusIcon() {

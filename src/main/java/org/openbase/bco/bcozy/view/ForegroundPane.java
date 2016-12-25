@@ -37,7 +37,7 @@ public class ForegroundPane extends BorderPane {
      * @param height Height of the application window
      * @param width Width of the application window
      */
-    public ForegroundPane(final double height, final double width) {
+    public ForegroundPane(final double height, final double width) throws InterruptedException {
         //CHECKSTYLE.OFF: MagicNumber
         this.mainMenu = new MainMenu(height - 150, 300);
         this.contextMenu = new ContextMenu(height - 150, 300);
