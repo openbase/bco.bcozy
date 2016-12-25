@@ -56,8 +56,10 @@ public abstract class AbstractPolygon extends Polygon implements Colorable {
         this.label = label;
         this.uuid = uuid;
 
-        this.mainColor = Color.TRANSPARENT;
-        this.customColor = Color.TRANSPARENT;
+        this.mainColor = Color.BLUE;
+        this.customColor = Color.ORANGE;
+//        this.mainColor = Color.TRANSPARENT;
+//        this.customColor = Color.TRANSPARENT;
     }
 
 

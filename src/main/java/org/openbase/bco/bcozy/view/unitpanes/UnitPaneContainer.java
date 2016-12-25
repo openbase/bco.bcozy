@@ -47,8 +47,8 @@ public class UnitPaneContainer extends ObserverTitledPane {
 
         this.vBox = new VBox();
         //CHECKSTYLE.OFF: MultipleStringLiterals
-        this.vBox.getStyleClass().add(java.util.ResourceBundle.getBundle("languages/languages").getString("OBSERVER-TITLED-PANE"));
-        this.getStyleClass().add(java.util.ResourceBundle.getBundle("languages/languages").getString("OBSERVER-TITLED-PANE"));
+        this.vBox.getStyleClass().add("observer-titled-pane");
+        this.getStyleClass().add("observer-titled-pane");
         //CHECKSTYLE.ON: MultipleStringLiterals
         this.setContent(vBox);
     }
@@ -187,7 +187,7 @@ public class UnitPaneContainer extends ObserverTitledPane {
                 }
                 break;
             default:
-                LOGGER.info(java.util.ResourceBundle.getBundle("languages/languages").getString("INFO: UNIT TYPE IS NOT SUPPORTED YET: ").concat(unitType.toString()));
+                LOGGER.info("UnitType["+unitType+"] is not supported yet!");
                 return false;
         }
         return true;

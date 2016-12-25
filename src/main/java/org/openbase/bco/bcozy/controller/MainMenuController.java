@@ -31,12 +31,16 @@ import org.openbase.bco.bcozy.view.mainmenupanes.SettingsPane;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by hoestreich on 11/24/15.
  */
 public class MainMenuController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(MainMenuController.class);
+    
     private final LoginPane loginPane;
     private final SettingsPane settingsPane;
     private final AvailableUsersPane availableUsersPane;

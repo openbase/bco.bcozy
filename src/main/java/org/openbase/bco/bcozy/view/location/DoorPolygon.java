@@ -64,7 +64,8 @@ public class DoorPolygon extends ConnectionPolygon {
 
     @Override
     protected void setConnectionStyle() {
-        this.setMainColor(Color.TRANSPARENT);
+//        this.setMainColor(Color.TRANSPARENT);
+        this.setMainColor(Color.AZURE);
         this.setStroke(Color.WHITE);
         this.getStrokeDashArray().addAll(Constants.DOOR_DASH_WIDTH, Constants.DOOR_DASH_WIDTH * 2);
         this.setStrokeWidth(Constants.ROOM_STROKE_WIDTH);
