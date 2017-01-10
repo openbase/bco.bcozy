@@ -33,7 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Created by hoestreich on 1/2/16.
+ * @author hoestreich
  * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>
  */
 public class ObserverLabel extends Label implements Observer {
@@ -47,7 +47,7 @@ public class ObserverLabel extends Label implements Observer {
     /**
      * Constructor to create a label which is capable of observing language changes in the application.
      *
-     * @param languageString The language string which combined with the actual language selection determines the
+     * @param identifier The language string which combined with the actual language selection determines the
      * actual label
      */
     public ObserverLabel(final String identifier) {
@@ -59,7 +59,7 @@ public class ObserverLabel extends Label implements Observer {
     /**
      * Constructor to create a label which is capable of observing language changes in the application.
      *
-     * @param languageString The language string which combined with the actual language selection determines the
+     * @param identifier The language string which combined with the actual language selection determines the
      * actual label
      * @param graphic the graphic which should be displayed next to the label
      */
