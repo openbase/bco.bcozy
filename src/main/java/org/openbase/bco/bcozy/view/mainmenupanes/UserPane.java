@@ -137,7 +137,6 @@ public class UserPane extends BorderPane implements Shutdownable {
 //            guestLabel.setVisible(false);
 
 //        }
-            
             updateBounds();
 
             userStateLabel.setText(StringProcessor.transformUpperCaseToCamelCase(user.getUserActivityState().getCurrentActivity().name()));
@@ -148,8 +147,6 @@ public class UserPane extends BorderPane implements Shutdownable {
 
     /**
      * Visualize the presence state of the user.
-     *
-     * @param atHome true if at home, false if on the way
      */
     public void updateUserPresenceState() {
 
@@ -175,7 +172,7 @@ public class UserPane extends BorderPane implements Shutdownable {
                     ExceptionPrinter.printHistory(new EnumNotSupportedException(user.getUserPresenceState().getValue(), this), LOGGER);
                     return;
             }
-        } catch (NotAvailableException ex) {
+        } catch (final NotAvailableException ex) {
             // Unknown
         }
         atHomeIcon = new SVGIcon(MaterialIcon.SEARCH, Constants.EXTRA_SMALL_ICON, true);
