@@ -314,6 +314,7 @@
         <plugin.javadoc.version>2.10.3</plugin.javadoc.version>
         <failOnStyleError>false</failOnStyleError>
         <dependency.bco.dal.version>[1.2,1.3-SNAPSHOT)</dependency.bco.dal.version>
+        <dependency.jul.version>[1.2,1.3-SNAPSHOT)</dependency.jul.version>
     </properties>
     
     <pluginRepositories>
