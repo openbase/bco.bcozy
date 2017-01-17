@@ -315,7 +315,6 @@
         <failOnStyleError>false</failOnStyleError>
         <dependency.jul.version>1.2-SNAPSHOT</dependency.jul.version>
         <dependency.bco.dal.version>1.2-SNAPSHOT</dependency.bco.dal.version>
-        <dependency.bco.manager.version>1.2-SNAPSHOT</dependency.bco.manager.version>
     </properties>
     
     <pluginRepositories>
