@@ -99,7 +99,7 @@ public class AgentPane extends AbstractUnitPane {
                 toggleSwitch.setSelected(true);
             }
         } else if (state.equals(State.DEACTIVE)) {
-            agentIcon.changeForegroundIcon(MaterialDesignIcon.POWER);
+            agentIcon.setForegroundIconColor(Color.BLACK);
             iconPane.add(agentIcon, 0, 0);
             observerText.setIdentifier("inactive");
 

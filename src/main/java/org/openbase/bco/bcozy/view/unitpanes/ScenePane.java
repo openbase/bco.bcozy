@@ -38,9 +38,9 @@ import org.openbase.jul.pattern.Observable;
 import org.openbase.jul.schedule.GlobalCachedExecutorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.domotic.unit.agent.AgentDataType;
 import rst.domotic.state.ActivationStateType.ActivationState;
 import rst.domotic.state.ActivationStateType.ActivationState.State;
+import rst.domotic.unit.scene.SceneDataType;
 
 /**
  * Created by agatting on 12.04.16.
@@ -99,7 +99,7 @@ public class ScenePane extends AbstractUnitPane {
                     toggleSwitch.setSelected(true);
                 }   break;
             case DEACTIVE:
-                sceneIcon.changeForegroundIcon(MaterialDesignIcon.POWER);
+                sceneIcon.setForegroundIconColor(Color.BLACK);
                 iconPane.add(sceneIcon, 0, 0);
                 observerText.setIdentifier("inactive");
                 if (toggleSwitch.isSelected()) {
@@ -183,9 +183,9 @@ public class ScenePane extends AbstractUnitPane {
     }
 
     @Override
-    public void update(final Observable observable, final Object agent) throws java.lang.Exception {
+    public void update(final Observable observable, final Object scene) throws java.lang.Exception {
         Platform.runLater(() -> {
-            final State state = ((AgentDataType.AgentData) agent).getActivationState().getValue();
+            final State state = ((SceneDataType.SceneData) scene).getActivationState().getValue();
             setSceneIconAndText(state);
         });
     }

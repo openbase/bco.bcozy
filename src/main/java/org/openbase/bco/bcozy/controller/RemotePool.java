@@ -178,6 +178,8 @@ public class RemotePool {
         }
         fillUnitMap();
         fillUnitMapAgents();
+        fillUnitMapApps();
+        fillUnitMapScenes();
 
         for (final UnitConfig locationUnitConfig : Registries.getLocationRegistry().getLocationConfigs()) {
             LOGGER.debug("Loading Room[" + locationUnitConfig.getId() + "] ...");
@@ -266,6 +268,76 @@ public class RemotePool {
                 continue;
             }
             unitMap.put(agentUnitConfig.getId(), currentDalRemoteService);
+        }
+    }
+
+    private void fillUnitMapApps() throws CouldNotPerformException, InterruptedException {
+        final UnitRemoteFactory unitRemoteFactoryInterface = UnitRemoteFactoryImpl.getInstance();
+
+        for (final UnitConfig appUnitConfig : Registries.getAppRegistry().getAppConfigs()) {
+            if (appUnitConfig.getEnablingState().getValue() != EnablingStateType.EnablingState.State.ENABLED) {
+                LOGGER.debug("Skip Unit[" + appUnitConfig.getLabel() + "] because it is not enabled!");
+                continue;
+            }
+
+            UnitRemote currentDalRemoteService;
+
+            try {
+                currentDalRemoteService = unitRemoteFactoryInterface.newInstance(appUnitConfig);
+            } catch (CouldNotPerformException e) {
+                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                continue;
+            }
+
+            try {
+                currentDalRemoteService.init(appUnitConfig);
+            } catch (InterruptedException | CouldNotPerformException e) {
+                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                continue;
+            }
+
+            try {
+                currentDalRemoteService.activate();
+            } catch (InterruptedException | CouldNotPerformException e) {
+                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                continue;
+            }
+            unitMap.put(appUnitConfig.getId(), currentDalRemoteService);
+        }
+    }
+
+    private void fillUnitMapScenes() throws CouldNotPerformException, InterruptedException {
+        final UnitRemoteFactory unitRemoteFactoryInterface = UnitRemoteFactoryImpl.getInstance();
+
+        for (final UnitConfig sceneUnitConfig : Registries.getSceneRegistry().getSceneConfigs()) {
+            if (sceneUnitConfig.getEnablingState().getValue() != EnablingStateType.EnablingState.State.ENABLED) {
+                LOGGER.debug("Skip Unit[" + sceneUnitConfig.getLabel() + "] because it is not enabled!");
+                continue;
+            }
+
+            UnitRemote currentDalRemoteService;
+
+            try {
+                currentDalRemoteService = unitRemoteFactoryInterface.newInstance(sceneUnitConfig);
+            } catch (CouldNotPerformException e) {
+                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                continue;
+            }
+
+            try {
+                currentDalRemoteService.init(sceneUnitConfig);
+            } catch (InterruptedException | CouldNotPerformException e) {
+                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                continue;
+            }
+
+            try {
+                currentDalRemoteService.activate();
+            } catch (InterruptedException | CouldNotPerformException e) {
+                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                continue;
+            }
+            unitMap.put(sceneUnitConfig.getId(), currentDalRemoteService);
         }
     }
 
