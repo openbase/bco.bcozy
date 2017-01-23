@@ -24,6 +24,8 @@ import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 import org.openbase.bco.bcozy.view.Constants;
+import org.openbase.jul.exception.InstantiationException;
+import rst.domotic.unit.connection.ConnectionDataType;
 
 /**
  *
@@ -34,14 +36,17 @@ public class WindowPolygon extends ConnectionPolygon {
     /**
      * Constructor for the WindowPolygon.
      *
-     * @param connectionLabel The label of the connection.
-     * @param connectionId    The ID of the connection.
-     * @param points          The vertices of the connection.
+     * @param points The vertices of the connection.
+     * @throws org.openbase.jul.exception.InstantiationException
      */
-    public WindowPolygon(final String connectionLabel, final String connectionId, final double... points) {
-        super(connectionLabel, connectionId, points);
+    public WindowPolygon(final double... points) throws InstantiationException {
+        super(points);
     }
 
+    @Override
+    public void applyDataUpdate(ConnectionDataType.ConnectionData unitData) {
+    }
+    
     @Override
     protected void setConnectionStyle() {
         this.setStroke(Color.WHITE);

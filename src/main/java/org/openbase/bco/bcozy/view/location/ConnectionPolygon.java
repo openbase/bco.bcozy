@@ -18,12 +18,17 @@
  */
 package org.openbase.bco.bcozy.view.location;
 
+import com.google.protobuf.GeneratedMessage;
 import javafx.collections.ObservableList;
+import org.openbase.bco.dal.remote.unit.UnitRemote;
+import org.openbase.bco.dal.remote.unit.connection.ConnectionRemote;
+import org.openbase.jul.exception.InstantiationException;
+import rst.domotic.unit.connection.ConnectionDataType.ConnectionData;
 
 /**
  * A Polygon that represents different kinds of connections.
  */
-public abstract class ConnectionPolygon extends AbstractPolygon {
+public abstract class ConnectionPolygon extends AbstractUnitPolygon<ConnectionData, ConnectionRemote> {
 
     private boolean open;
 
@@ -35,12 +40,13 @@ public abstract class ConnectionPolygon extends AbstractPolygon {
 
     /**
      * Constructor for the ConnectionPolygon.
+     *
      * @param connectionLabel The name of the location
-     * @param connectionId    The ID of the location
-     * @param points          Points for the shape
+     * @param connectionId The ID of the location
+     * @param points Points for the shape
      */
-    public ConnectionPolygon(final String connectionLabel, final String connectionId, final double... points) {
-        super(connectionLabel, connectionId, points);
+    public ConnectionPolygon(final double... points) throws InstantiationException {
+        super(points);
         this.open = false;
 
         final ObservableList<Double> pointList = super.getPoints();

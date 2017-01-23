@@ -21,11 +21,13 @@ package org.openbase.bco.bcozy.view.location;
 
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
+import org.openbase.jul.iface.Identifiable;
+import org.openbase.jul.iface.provider.LabelProvider;
 
 /**
  *
  */
-public abstract class AbstractPolygon extends Polygon implements Colorable {
+public abstract class AbstractPolygon extends Polygon implements Colorable, LabelProvider, Identifiable<String> {
 
     /**
      * The value how much the custom color will be weighted against the main color.
@@ -37,29 +39,21 @@ public abstract class AbstractPolygon extends Polygon implements Colorable {
 
     private final double centerX;
     private final double centerY;
-    private final String label;
-    private final String uuid;
 
     /**
      * Creates a new instance of Polygon.
      *
-     * @param label The name of the polygon
      * @param uuid The UUID of the polygon
      * @param points the coordinates of the polygon vertices
      */
-    public AbstractPolygon(final String label, final String uuid, final double... points) {
+    public AbstractPolygon(final double... points) {
         super(points);
 
         this.centerX = (super.getLayoutBounds().getMaxX() + super.getLayoutBounds().getMinX()) / 2;
         this.centerY = (super.getLayoutBounds().getMaxY() + super.getLayoutBounds().getMinY()) / 2;
 
-        this.label = label;
-        this.uuid = uuid;
-
-        this.mainColor = Color.BLUE;
-        this.customColor = Color.ORANGE;
-//        this.mainColor = Color.TRANSPARENT;
-//        this.customColor = Color.TRANSPARENT;
+        this.mainColor = Color.TRANSPARENT;
+        this.customColor = Color.TRANSPARENT;
     }
 
 
@@ -78,22 +72,6 @@ public abstract class AbstractPolygon extends Polygon implements Colorable {
      */
     public double getCenterY() {
         return centerY;
-    }
-
-    /**
-     * Getter method for the label.
-     * @return the label as a String
-     */
-    public String getLabel() {
-        return label;
-    }
-
-    /**
-     * Getter method for the UUID.
-     * @return the UUID as a String
-     */
-    public String getUuid() {
-        return uuid;
     }
 
     /**

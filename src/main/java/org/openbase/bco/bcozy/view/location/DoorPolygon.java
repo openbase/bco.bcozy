@@ -16,13 +16,18 @@
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
-
 package org.openbase.bco.bcozy.view.location;
 
 import javafx.collections.ObservableList;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
 import org.openbase.bco.bcozy.view.Constants;
+import org.openbase.jul.exception.EnumNotSupportedException;
+import org.openbase.jul.exception.InstantiationException;
+import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import rst.domotic.unit.connection.ConnectionDataType.ConnectionData;
 
 /**
  *
@@ -30,14 +35,18 @@ import org.openbase.bco.bcozy.view.Constants;
 public class DoorPolygon extends ConnectionPolygon {
 
     /**
+     * Application logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(DoorPolygon.class);
+
+    /**
      * Constructor for the DoorPolygon.
      *
-     * @param connectionLabel The label of the connection.
-     * @param connectionId    The ID of the connection.
-     * @param points          The vertices of the connection.
+     * @param points The vertices of the connection.
+     * @throws org.openbase.jul.exception.InstantiationException
      */
-    public DoorPolygon(final String connectionLabel, final String connectionId, final double... points) {
-        super(connectionLabel, connectionId, points);
+    public DoorPolygon(final double... points) throws InstantiationException {
+        super(points);
 
         final ObservableList<Double> pointList = super.getPoints();
 
@@ -60,12 +69,27 @@ public class DoorPolygon extends ConnectionPolygon {
         }
     }
 
-
+    @Override
+    public void applyDataUpdate(ConnectionData unitData) {
+        switch (unitData.getDoorState().getValue()) {
+            case CLOSED:
+                setCustomColor(Color.GREEN);
+                break;
+            case IN_BETWEEN:
+            case OPEN:
+                setCustomColor(Color.BLUE);
+                break;
+            case UNKNOWN:
+                setCustomColor(Color.ORANGE);
+                break;
+            default:
+                ExceptionPrinter.printHistory(new EnumNotSupportedException(unitData.getDoorState().getValue(), this), LOGGER);
+        }
+    }
 
     @Override
     protected void setConnectionStyle() {
-//        this.setMainColor(Color.TRANSPARENT);
-        this.setMainColor(Color.AZURE);
+        this.setMainColor(Color.TRANSPARENT);
         this.setStroke(Color.WHITE);
         this.getStrokeDashArray().addAll(Constants.DOOR_DASH_WIDTH, Constants.DOOR_DASH_WIDTH * 2);
         this.setStrokeWidth(Constants.ROOM_STROKE_WIDTH);
@@ -80,7 +104,8 @@ public class DoorPolygon extends ConnectionPolygon {
 
     /**
      * Will be called when either the main or the custom color changes.
-     * @param mainColor   The main color
+     *
+     * @param mainColor The main color
      * @param customColor The custom color
      */
     @Override

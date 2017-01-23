@@ -42,6 +42,7 @@ import org.openbase.jps.core.JPService;
 import org.openbase.jps.exception.JPNotAvailableException;
 import org.openbase.jps.preset.JPDebugMode;
 import org.openbase.jul.exception.InitializationException;
+import org.openbase.jul.exception.InstantiationException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
 import org.openbase.jul.schedule.GlobalCachedExecutorService;
@@ -97,7 +98,7 @@ public class BCozy extends Application {
     }
 
     @Override
-    public void start(final Stage primaryStage) throws InitializationException, InterruptedException {
+    public void start(final Stage primaryStage) throws InitializationException, InterruptedException, InstantiationException {
 
         BCozy.primaryStage = primaryStage;
         final double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();

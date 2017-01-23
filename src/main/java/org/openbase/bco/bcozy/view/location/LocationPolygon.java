@@ -22,44 +22,49 @@ import javafx.scene.shape.Path;
 import javafx.scene.shape.Shape;
 
 import java.util.List;
+import org.openbase.bco.dal.remote.unit.location.LocationRemote;
+import org.openbase.jul.exception.InstantiationException;
+import org.openbase.jul.exception.NotAvailableException;
+import rst.domotic.unit.location.LocationDataType.LocationData;
 
 /**
- *  A Polygon that represents different kinds of locations.
+ * A Polygon that represents different kinds of locations.
  */
-public abstract class LocationPolygon extends AbstractPolygon {
+public abstract class LocationPolygon extends AbstractUnitPolygon<LocationData, LocationRemote> {
 
     private boolean selected;
     private Shape cuttingShape;
 
-    private final List<String> childIds;
-
     /**
      * Constructor for the LocationPolygon.
-     * @param locationLabel The name of the location
-     * @param locationId The ID of the location
+     *
+     * @param unitId the id of this unit.
      * @param childIds The ids of the children
      * @param points Points for the shape
      */
-    public LocationPolygon(final String locationLabel, final String locationId,
-                           final List<String> childIds, final double... points) {
-        super(locationLabel, locationId, points);
-        this.childIds = childIds;
+    public LocationPolygon(final double... points) throws InstantiationException {
+        super(points);
         this.selected = false;
         this.cuttingShape = this;
-
         this.setLocationStyle();
     }
 
     /**
      * Method to get all the childIds from the Tile.
+     *
      * @return A list of childIds.
      */
-    public List<String> getChildIds() {
-        return childIds;
+    public List<String> getChildIds() throws NotAvailableException {
+        try {
+            return getUnitRemote().getConfig().getLocationConfig().getChildIdList();
+        } catch (NullPointerException ex) {
+            throw new NotAvailableException("ChildIdList", ex);
+        }
     }
 
     /**
      * Getter method for the selected boolean.
+     *
      * @return selected as a boolean value
      */
     public boolean isSelected() {
@@ -68,6 +73,7 @@ public abstract class LocationPolygon extends AbstractPolygon {
 
     /**
      * Setter method for the selected boolean.
+     *
      * @param selected as a boolean value
      */
     public void setSelected(final boolean selected) {
@@ -87,6 +93,7 @@ public abstract class LocationPolygon extends AbstractPolygon {
 
     /**
      * Will be called when the selection of the Polygon has been toggled.
+     *
      * @param selected boolean for the selection status
      */
     protected abstract void changeStyleOnSelection(final boolean selected);
@@ -95,6 +102,5 @@ public abstract class LocationPolygon extends AbstractPolygon {
      * Will be called when the Polygon is constructed and can be used to apply specific styles.
      */
     protected abstract void setLocationStyle();
-
 
 }

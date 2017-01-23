@@ -33,9 +33,7 @@ import org.slf4j.LoggerFactory;
 import rct.Transform;
 import rst.domotic.registry.LocationRegistryDataType.LocationRegistryData;
 import rst.domotic.unit.UnitConfigType.UnitConfig;
-import rst.domotic.unit.location.LocationConfigType;
 import rst.math.Vec3DDoubleType;
-
 import javax.vecmath.Point3d;
 import java.util.LinkedList;
 import java.util.List;
@@ -50,7 +48,7 @@ import org.openbase.jul.iface.DefaultInitializable;
 /**
  *
  */
-public class LocationPaneController implements Observer<LocationRegistryData>, DefaultInitializable {
+public class LocationPaneController implements DefaultInitializable {
 
     /**
      * Application logger.
@@ -88,16 +86,25 @@ public class LocationPaneController implements Observer<LocationRegistryData>, D
      * Establishes the connection with the RemoteRegistry.
      */
     public void connectLocationRemote() {
-        if (remotePool.isInit()) {
-            try {
-                Registries.getLocationRegistry().addDataObserver(this);
-                updateAndZoomFit();
-            } catch (Exception e) { //NOPMD
-                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-            }
-        } else {
-            LOGGER.warn("Registry Remotes are not initialized. Thus a Dummy Location will be loaded.");
-            this.fetchDummyLocation();
+        try {
+            Registries.getLocationRegistry().waitForData();
+            Registries.getLocationRegistry().addDataObserver(new Observer<LocationRegistryData>() {
+                @Override
+                public void update(Observable<LocationRegistryData> source, LocationRegistryData data) throws Exception {
+                    Platform.runLater(() -> {
+                        try {
+                            fetchLocations();
+                            fetchConnections();
+                            locationPane.updateLocationPane();
+                        } catch (CouldNotPerformException | InterruptedException e) {
+                            ExceptionPrinter.printHistory(e, LOGGER);
+                        }
+                    });
+                }
+            });
+            updateAndZoomFit();
+        } catch (Exception e) { //NOPMD
+            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
     }
 
@@ -139,8 +146,8 @@ public class LocationPaneController implements Observer<LocationRegistryData>, D
                     vertices.add(new Point2D(vertex.x, vertex.y));
                 }
 
-                locationPane.addLocation(locationUnitConfig.getId(), locationUnitConfig.getLabel(),
-                        locationUnitConfig.getLocationConfig().getChildIdList(), vertices, locationUnitConfig.getLocationConfig().getType().toString());
+//                locationPane.addLocation(locationUnitConfig.getId(), locationUnitConfig.getLocationConfig().getChildIdList(), vertices, locationUnitConfig.getLocationConfig().getType().toString());
+                locationPane.addLocation(locationUnitConfig, vertices);
             } catch (InterruptedException | ExecutionException | TimeoutException e) {
                 ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
                 LOGGER.error("Error while fetching transformation for location \"" + locationUnitConfig.getLabel()
@@ -188,60 +195,13 @@ public class LocationPaneController implements Observer<LocationRegistryData>, D
                     vertices.add(new Point2D(vertex.x, vertex.y));
                 }
 
-                locationPane.addConnection(connectionUnitConfig.getId(), connectionUnitConfig.getLabel(),
-                        vertices, connectionUnitConfig.getConnectionConfig().getType().toString(), connectionUnitConfig.getConnectionConfig().getTileIdList());
+                locationPane.addConnection(connectionUnitConfig, vertices);
             } catch (InterruptedException | ExecutionException | TimeoutException e) {
                 ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
                 LOGGER.error("Error while fetching transformation for connection \"" + connectionUnitConfig.getLabel()
                         + "\", connectionID: " + connectionUnitConfig.getId());
             }
         }
-    }
-
-    private void fetchDummyLocation() {
-        locationPane.clearLocations();
-
-        //CHECKSTYLE.OFF: MagicNumber
-        final List<Point2D> zoneVertices = new LinkedList<>();
-        zoneVertices.add(new Point2D(0, 0));
-        zoneVertices.add(new Point2D(10, 0));
-        zoneVertices.add(new Point2D(10, 10));
-        zoneVertices.add(new Point2D(0, 10));
-        locationPane.addLocation("DummyID0", "DummyLabel0", new LinkedList<>(), zoneVertices,
-                LocationConfigType.LocationConfig.LocationType.ZONE.toString());
-
-        final List<Point2D> tile0Vertices = new LinkedList<>();
-        tile0Vertices.add(new Point2D(1, 1));
-        tile0Vertices.add(new Point2D(5, 1));
-        tile0Vertices.add(new Point2D(5, 3));
-        tile0Vertices.add(new Point2D(1, 3));
-        locationPane.addLocation("DummyID1", "DummyLabel1", new LinkedList<>(), tile0Vertices,
-                LocationConfigType.LocationConfig.LocationType.TILE.toString());
-
-        final List<Point2D> tile1Vertices = new LinkedList<>();
-        tile1Vertices.add(new Point2D(6, 1));
-        tile1Vertices.add(new Point2D(6, 8));
-        tile1Vertices.add(new Point2D(8, 8));
-        tile1Vertices.add(new Point2D(8, 1));
-        locationPane.addLocation("DummyID2", "DummyLabel2", new LinkedList<>(), tile1Vertices,
-                LocationConfigType.LocationConfig.LocationType.TILE.toString());
-        //CHECKSTYLE.ON: MagicNumber
-
-        locationPane.zoomFit();
-    }
-
-    @Override
-    public void update(final Observable<LocationRegistryData> observable,
-            final LocationRegistryData locationRegistry) throws Exception { //NOPMD
-        Platform.runLater(() -> {
-            try {
-                fetchLocations();
-                fetchConnections();
-                locationPane.updateLocationPane();
-            } catch (CouldNotPerformException | InterruptedException e) {
-                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-            }
-        });
     }
 
     /**
@@ -258,7 +218,7 @@ public class LocationPaneController implements Observer<LocationRegistryData>, D
                 locationPane.updateLocationPane();
                 locationPane.zoomFit();
             } catch (CouldNotPerformException | InterruptedException e) {
-                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                ExceptionPrinter.printHistory(e, LOGGER);
             }
         });
     }

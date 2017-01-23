@@ -16,11 +16,12 @@
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
-
 package org.openbase.bco.bcozy.view;
 
 import javafx.scene.layout.StackPane;
 import org.openbase.bco.bcozy.view.location.LocationPane;
+import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.InstantiationException;
 
 /**
  *
@@ -36,40 +37,44 @@ public class BackgroundPane extends StackPane {
      *
      * @param foregroundPane The foregroundPane
      */
-    public BackgroundPane(final ForegroundPane foregroundPane) {
-        locationPane = LocationPane.getInstance(foregroundPane);
+    public BackgroundPane(final ForegroundPane foregroundPane) throws InstantiationException, InterruptedException {
+        try {
+            locationPane = LocationPane.getInstance(foregroundPane);
 
-        this.getChildren().add(locationPane);
-        this.getStyleClass().add("background-pane");
+            this.getChildren().add(locationPane);
+            this.getStyleClass().add("background-pane");
 
-        this.setOnMousePressed(event -> {
-            this.prevMouseCordX = event.getX();
-            this.prevMouseCordY = event.getY();
-        });
+            this.setOnMousePressed(event -> {
+                this.prevMouseCordX = event.getX();
+                this.prevMouseCordY = event.getY();
+            });
 
-        this.setOnMouseDragged(event -> {
-            locationPane.setTranslateX(locationPane.getTranslateX() + (event.getX() - prevMouseCordX));
-            locationPane.setTranslateY(locationPane.getTranslateY() + (event.getY() - prevMouseCordY));
-            this.prevMouseCordX = event.getX();
-            this.prevMouseCordY = event.getY();
-        });
+            this.setOnMouseDragged(event -> {
+                locationPane.setTranslateX(locationPane.getTranslateX() + (event.getX() - prevMouseCordX));
+                locationPane.setTranslateY(locationPane.getTranslateY() + (event.getY() - prevMouseCordY));
+                this.prevMouseCordX = event.getX();
+                this.prevMouseCordY = event.getY();
+            });
 
-        this.setOnScroll(event -> {
-            event.consume();
+            this.setOnScroll(event -> {
+                event.consume();
 
-            if (event.getDeltaY() == 0) {
-                return;
-            }
+                if (event.getDeltaY() == 0) {
+                    return;
+                }
 
-            final double scaleFactor = (event.getDeltaY() > 0) ? Constants.SCALE_DELTA : 1 / Constants.SCALE_DELTA;
+                final double scaleFactor = (event.getDeltaY() > 0) ? Constants.SCALE_DELTA : 1 / Constants.SCALE_DELTA;
 
-            locationPane.setScaleX(locationPane.getScaleX() * scaleFactor);
-            locationPane.setScaleY(locationPane.getScaleY() * scaleFactor);
-            locationPane.setTranslateX(locationPane.getTranslateX() * scaleFactor);
-            locationPane.setTranslateY(locationPane.getTranslateY() * scaleFactor);
-        });
+                locationPane.setScaleX(locationPane.getScaleX() * scaleFactor);
+                locationPane.setScaleY(locationPane.getScaleY() * scaleFactor);
+                locationPane.setTranslateX(locationPane.getTranslateX() * scaleFactor);
+                locationPane.setTranslateY(locationPane.getTranslateY() * scaleFactor);
+            });
 
-        this.setOnMouseClicked(locationPane.getOnEmptyAreaClickHandler());
+            this.setOnMouseClicked(locationPane.getOnEmptyAreaClickHandler());
+        } catch (CouldNotPerformException ex) {
+            throw new InstantiationException(this, ex);
+        }
     }
 
     /**

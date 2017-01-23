@@ -16,13 +16,13 @@
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
-
 package org.openbase.bco.bcozy.view.location;
 
 import javafx.scene.paint.Color;
 import org.openbase.bco.bcozy.view.Constants;
 
-import java.util.List;
+import org.openbase.jul.exception.InstantiationException;
+import rst.domotic.unit.location.LocationDataType.LocationData;
 
 /**
  *
@@ -32,14 +32,15 @@ public class ZonePolygon extends LocationPolygon {
     /**
      * The Constructor for a ZonePolygon.
      *
-     * @param locationLabel The label of the location
-     * @param locationId The id of the location
-     * @param childIds The ids of the children
      * @param points The vertices of the location
+     * @throws org.openbase.jul.exception.InstantiationException
      */
-    public ZonePolygon(final String locationLabel, final String locationId,
-                       final List<String> childIds, final double... points) {
-        super(locationLabel, locationId, childIds, points);
+    public ZonePolygon(final double... points) throws InstantiationException {
+        super(points);
+    }
+
+    @Override
+    public void applyDataUpdate(LocationData unitData) {
     }
 
     @Override
@@ -60,7 +61,8 @@ public class ZonePolygon extends LocationPolygon {
     /**
      * Will be called when either the main or the custom color changes.
      * The initial values for both colors are Color.TRANSPARENT.
-     * @param mainColor   The main color
+     *
+     * @param mainColor The main color
      * @param customColor The custom color
      */
     @Override

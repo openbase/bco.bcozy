@@ -22,22 +22,21 @@ package org.openbase.bco.bcozy.view.location;
 import javafx.collections.ObservableList;
 import javafx.scene.paint.Color;
 import org.openbase.bco.bcozy.view.Constants;
+import org.openbase.jul.exception.InstantiationException;
+import rst.domotic.unit.connection.ConnectionDataType;
 
 /**
  *
  */
 public class PassagePolygon extends ConnectionPolygon {
 
-
     /**
      * Constructor for the PassagePolygon.
      *
-     * @param connectionLabel The label of the connection.
-     * @param connectionId    The ID of the connection.
      * @param points          The vertices of the connection.
      */
-    public PassagePolygon(final String connectionLabel, final String connectionId, final double... points) {
-        super(connectionLabel, connectionId, points);
+    public PassagePolygon(final double... points) throws InstantiationException {
+        super(points);
 
         final ObservableList<Double> pointList = super.getPoints();
 
@@ -116,7 +115,10 @@ public class PassagePolygon extends ConnectionPolygon {
         //CHECKSTYLE.ON: MagicNumber
     }
 
-
+    @Override
+    public void applyDataUpdate(ConnectionDataType.ConnectionData unitData) {
+    }
+    
     @Override
     protected void setConnectionStyle() {
         this.setMainColor(Constants.PASSAGE_FILL);
