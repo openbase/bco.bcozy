@@ -438,34 +438,39 @@ public final class LocationPane extends Pane {
         System.out.println("Last:" + lastSelectedTile);
         try {
             if (!selectedLocation.equals(newSelectedLocation)) {
-                if (!newSelectedLocation.getClass().equals(RegionPolygon.class)) {
-                    lastSelectedTile.getChildIds().forEach(childId -> {
-                        try {
-                            regionMap.get(childId).changeStyleOnSelectable(false);
-                        } catch (Exception ex) {
-                            ExceptionPrinter.printHistory(ex, LOGGER);
-                        }
-                    });
-                }
-
-                if (newSelectedLocation.getClass().equals(TilePolygon.class)) {
-                    lastSelectedTile = newSelectedLocation;
-                    newSelectedLocation.getChildIds().forEach(childId -> {
-                        try {
-                            regionMap.get(childId).changeStyleOnSelectable(true);
-                        } catch (Exception ex) {
-                            ExceptionPrinter.printHistory(ex, LOGGER);
-                        }
-                    });
-                }
-
-                selectedLocation.setSelected(false);
-                newSelectedLocation.setSelected(true);
-                selectedLocation = newSelectedLocation;
-                selectedLocationId.set(newSelectedLocation.getUnitId());
-
-                foregroundPane.getContextMenu().getRoomInfo().setText(selectedLocation.getLabel());
+                // already selected
+                return;
             }
+
+            // make sub sub regions unselectable
+            if (!newSelectedLocation.getClass().equals(RegionPolygon.class)) {
+                lastSelectedTile.getChildIds().forEach(childId -> {
+                    // make all regions non selecable
+                    if (regionMap.containsKey(childId)) {
+                        regionMap.get(childId).changeStyleOnSelectable(false);
+                    }
+                });
+            }
+
+            // allow selection of sub regions.
+            if (newSelectedLocation.getClass().equals(TilePolygon.class)) {
+                lastSelectedTile = newSelectedLocation;
+                newSelectedLocation.getChildIds().forEach(childId -> {
+                    try {
+                        regionMap.get(childId).changeStyleOnSelectable(true);
+                    } catch (Exception ex) {
+                        ExceptionPrinter.printHistory(ex, LOGGER);
+                    }
+                });
+            }
+
+            selectedLocation.setSelected(false);
+            newSelectedLocation.setSelected(true);
+            selectedLocation = newSelectedLocation;
+            selectedLocationId.set(newSelectedLocation.getUnitId());
+
+            foregroundPane.getContextMenu().getRoomInfo().setText(selectedLocation.getLabel());
+
         } catch (CouldNotPerformException ex) {
             throw new CouldNotPerformException("Could not select location polygon!", ex);
         }

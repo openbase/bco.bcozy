@@ -73,14 +73,14 @@ public class DoorPolygon extends ConnectionPolygon {
     public void applyDataUpdate(ConnectionData unitData) {
         switch (unitData.getDoorState().getValue()) {
             case CLOSED:
-                setCustomColor(Color.GREEN);
+                setCustomColor(Color.GREEN.brighter());
                 break;
             case IN_BETWEEN:
             case OPEN:
-                setCustomColor(Color.BLUE);
+                setCustomColor(Color.BLUE.brighter());
                 break;
             case UNKNOWN:
-                setCustomColor(Color.ORANGE);
+                setCustomColor(Color.ORANGE.brighter());
                 break;
             default:
                 ExceptionPrinter.printHistory(new EnumNotSupportedException(unitData.getDoorState().getValue(), this), LOGGER);
