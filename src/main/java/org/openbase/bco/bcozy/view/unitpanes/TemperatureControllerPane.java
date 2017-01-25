@@ -80,7 +80,6 @@ public class TemperatureControllerPane extends AbstractUnitPane {
                 target.setTranslateX(track.getLayoutX());
             } catch (InterruptedException | ExecutionException | TimeoutException | CouldNotPerformException ex) {
                 ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
-                setWidgetPaneDisable(true);
             }
             return null;
         }
@@ -110,7 +109,7 @@ public class TemperatureControllerPane extends AbstractUnitPane {
         initEffectSlider();
         tooltip.textProperty().bind(observerText.textProperty());
 
-        this.temperatureControllerRemote.addDataObserver(this);
+        addObserverAndInitDisableState(this.temperatureControllerRemote);
     }
 
     private void initEffectSlider() {

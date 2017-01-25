@@ -66,7 +66,7 @@ public class BrightnessSensorPane extends AbstractUnitPane {
         initEffect();
         tooltip.textProperty().bind(observerText.textProperty());
 
-        this.brightnessSensorRemote.addDataObserver(this);
+        addObserverAndInitDisableState(this.brightnessSensorRemote);
     }
 
     private void initEffect() {

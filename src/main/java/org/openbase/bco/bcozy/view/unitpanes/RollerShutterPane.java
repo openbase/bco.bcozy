@@ -74,7 +74,6 @@ public class RollerShutterPane extends AbstractUnitPane {
                 rollershutterRemote.setBlindState(MovementState.UP).get(Constants.OPERATION_SERVICE_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
             } catch (InterruptedException | ExecutionException | TimeoutException | CouldNotPerformException ex) {
                 ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
-                setWidgetPaneDisable(true);
             }
             return null;
         }
@@ -87,7 +86,6 @@ public class RollerShutterPane extends AbstractUnitPane {
                 rollershutterRemote.setBlindState(MovementState.DOWN).get(Constants.OPERATION_SERVICE_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
             } catch (InterruptedException | ExecutionException | TimeoutException | CouldNotPerformException ex) {
                 ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
-                setWidgetPaneDisable(true);
             }
             return null;
         }
@@ -100,7 +98,6 @@ public class RollerShutterPane extends AbstractUnitPane {
                 rollershutterRemote.setBlindState(MovementState.STOP).get(Constants.OPERATION_SERVICE_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
             } catch (InterruptedException | ExecutionException | TimeoutException | CouldNotPerformException ex) {
                 ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
-                setWidgetPaneDisable(true);
             }
             return null;
         }
@@ -113,7 +110,6 @@ public class RollerShutterPane extends AbstractUnitPane {
                 rollershutterRemote.setBlindState(BlindState.newBuilder().setOpeningRatio(0.0).setMovementState(MovementState.STOP).build()).get(Constants.OPERATION_SERVICE_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
             } catch (InterruptedException | ExecutionException | TimeoutException | CouldNotPerformException ex) {
                 ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
-                setWidgetPaneDisable(true);
             }
             return null;
         }
@@ -126,7 +122,6 @@ public class RollerShutterPane extends AbstractUnitPane {
                 rollershutterRemote.setBlindState(BlindState.newBuilder().setOpeningRatio(1.0).setMovementState(MovementState.STOP).build()).get(Constants.OPERATION_SERVICE_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
             } catch (InterruptedException | ExecutionException | TimeoutException | CouldNotPerformException ex) {
                 ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
-                setWidgetPaneDisable(true);
             }
             return null;
         }
@@ -156,7 +151,7 @@ public class RollerShutterPane extends AbstractUnitPane {
         initEffect();
         tooltip.textProperty().bind(observerText.textProperty());
 
-        this.rollershutterRemote.addDataObserver(this);
+        addObserverAndInitDisableState(this.rollershutterRemote);
     }
 
     private void initEffect() {

@@ -76,7 +76,7 @@ public class PowerSwitchPane extends AbstractUnitPane {
         initEffectAndSwitch();
         tooltip.textProperty().bind(observerText.textProperty());
 
-        this.powerSwitchRemote.addDataObserver(this);
+        addObserverAndInitDisableState(this.powerSwitchRemote);
     }
 
     private void initEffectAndSwitch() {
@@ -123,7 +123,6 @@ public class PowerSwitchPane extends AbstractUnitPane {
             powerSwitchRemote.setPowerState(state).get(Constants.OPERATION_SERVICE_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
         } catch (InterruptedException | ExecutionException | TimeoutException | CouldNotPerformException ex) {
             ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
-            setWidgetPaneDisable(true);
         }
     }
 

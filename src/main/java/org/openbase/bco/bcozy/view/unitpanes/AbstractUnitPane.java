@@ -19,8 +19,10 @@
 package org.openbase.bco.bcozy.view.unitpanes;
 
 import javafx.scene.control.Label;
+import org.openbase.bco.dal.remote.unit.AbstractUnitRemote;
 import org.openbase.bco.dal.remote.unit.UnitRemote;
 import org.openbase.jul.pattern.Observer;
+import org.openbase.jul.pattern.Remote;
 
 /**
  * Created by tmichalski on 03.12.15.
@@ -36,6 +38,21 @@ public abstract class AbstractUnitPane extends WidgetPane implements Observer {
     public AbstractUnitPane() {
         this.unitLabel = new Label();
         //TODO: Set css styling for unitlabel
+    }
+
+    protected void addObserverAndInitDisableState(AbstractUnitRemote remote) {
+        remote.addDataObserver(this);
+        remote.addConnectionStateObserver((source, data) -> {
+            if (data.equals(Remote.ConnectionState.CONNECTED) && this.isDisabled()) {
+                setWidgetPaneDisable(false);
+            } else if (!this.isDisabled()) {
+                setWidgetPaneDisable(true);
+            }
+        });
+
+        if (!remote.isConnected()) {
+            setWidgetPaneDisable(true);
+        }
     }
 
     /**

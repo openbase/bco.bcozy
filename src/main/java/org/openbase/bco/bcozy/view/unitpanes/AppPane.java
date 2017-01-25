@@ -75,7 +75,7 @@ public class AppPane extends AbstractUnitPane {
         initEffect();
         tooltip.textProperty().bind(observerText.textProperty());
 
-        this.appRemote.addDataObserver(this);
+        addObserverAndInitDisableState(this.appRemote);
     }
 
     private void initEffect() {
@@ -123,7 +123,6 @@ public class AppPane extends AbstractUnitPane {
                     .get(Constants.OPERATION_SERVICE_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
         } catch (InterruptedException | ExecutionException | TimeoutException | CouldNotPerformException ex) {
             ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
-            setWidgetPaneDisable(true);
         }
     }
 

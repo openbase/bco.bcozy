@@ -73,7 +73,7 @@ public class ScenePane extends AbstractUnitPane {
         initEffect();
         tooltip.textProperty().bind(observerText.textProperty());
 
-        this.sceneRemote.addDataObserver(this);
+        addObserverAndInitDisableState(this.sceneRemote);
     }
 
     private void initEffect() {
@@ -118,7 +118,6 @@ public class ScenePane extends AbstractUnitPane {
             sceneRemote.setActivationState(ActivationState.newBuilder().setValue(state).build()).get(Constants.OPERATION_SERVICE_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
             } catch (InterruptedException | ExecutionException | TimeoutException | CouldNotPerformException ex) {
                 ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
-                setWidgetPaneDisable(true);
             }
     }
 

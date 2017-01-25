@@ -74,7 +74,7 @@ public class LightPane extends AbstractUnitPane {
         initEffectAndSwitch();
         tooltip.textProperty().bind(observerText.textProperty());
 
-        this.lightRemote.addDataObserver(this);
+        addObserverAndInitDisableState(this.lightRemote);
     }
 
     private void initEffectAndSwitch() {
@@ -119,7 +119,6 @@ public class LightPane extends AbstractUnitPane {
             lightRemote.setPowerState(state).get(Constants.OPERATION_SERVICE_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
         } catch (InterruptedException | ExecutionException | TimeoutException | CouldNotPerformException ex) {
             ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
-            setWidgetPaneDisable(true);
         }
     }
 

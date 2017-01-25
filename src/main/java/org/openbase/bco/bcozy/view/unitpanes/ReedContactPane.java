@@ -68,7 +68,7 @@ public class ReedContactPane extends AbstractUnitPane {
         initEffectAndText();
         tooltip.textProperty().bind(observerText.textProperty());
 
-        this.reedContactRemote.addDataObserver(this);
+        addObserverAndInitDisableState(this.reedContactRemote);
     }
 
     private void initEffectAndText() {
