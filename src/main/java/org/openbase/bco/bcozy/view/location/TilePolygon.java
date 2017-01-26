@@ -41,8 +41,6 @@ public class TilePolygon extends LocationPolygon {
     /**
      * The Constructor for a TilePolygon.
      *
-     * @param unitId The id of this unit
-     * @param childIds The ids of the children
      * @param points The vertices of the location
      * @throws org.openbase.jul.exception.InstantiationException
      */

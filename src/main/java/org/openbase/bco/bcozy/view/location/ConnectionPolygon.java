@@ -41,9 +41,8 @@ public abstract class ConnectionPolygon extends AbstractUnitPolygon<ConnectionDa
     /**
      * Constructor for the ConnectionPolygon.
      *
-     * @param connectionLabel The name of the location
-     * @param connectionId The ID of the location
      * @param points Points for the shape
+     * @throws org.openbase.jul.exception.InstantiationException
      */
     public ConnectionPolygon(final double... points) throws InstantiationException {
         super(points);

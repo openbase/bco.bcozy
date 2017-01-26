@@ -38,9 +38,8 @@ public abstract class LocationPolygon extends AbstractUnitPolygon<LocationData, 
     /**
      * Constructor for the LocationPolygon.
      *
-     * @param unitId the id of this unit.
-     * @param childIds The ids of the children
      * @param points Points for the shape
+     * @throws org.openbase.jul.exception.InstantiationException
      */
     public LocationPolygon(final double... points) throws InstantiationException {
         super(points);
@@ -53,6 +52,7 @@ public abstract class LocationPolygon extends AbstractUnitPolygon<LocationData, 
      * Method to get all the childIds from the Tile.
      *
      * @return A list of childIds.
+     * @throws org.openbase.jul.exception.NotAvailableException
      */
     public List<String> getChildIds() throws NotAvailableException {
         try {

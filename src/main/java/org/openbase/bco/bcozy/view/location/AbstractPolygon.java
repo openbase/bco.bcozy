@@ -43,7 +43,6 @@ public abstract class AbstractPolygon extends Polygon implements Colorable, Labe
     /**
      * Creates a new instance of Polygon.
      *
-     * @param uuid The UUID of the polygon
      * @param points the coordinates of the polygon vertices
      */
     public AbstractPolygon(final double... points) {
