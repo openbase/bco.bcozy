@@ -40,7 +40,11 @@ public abstract class AbstractUnitPane extends WidgetPane implements Observer {
         //TODO: Set css styling for unitlabel
     }
 
-    protected void addObserverAndInitDisableState(AbstractUnitRemote remote) {
+    /**
+     * Sets the object as dataObserver of remote and adds connetionStateObserver to disable/enable pane.
+     * @param remote UnitRemote
+     */
+    protected void addObserverAndInitDisableState(final AbstractUnitRemote remote) {
         remote.addDataObserver(this);
         remote.addConnectionStateObserver((source, data) -> {
             if (data.equals(Remote.ConnectionState.CONNECTED) && this.isDisabled()) {

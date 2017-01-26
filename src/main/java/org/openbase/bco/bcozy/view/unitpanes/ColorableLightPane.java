@@ -92,7 +92,7 @@ public class ColorableLightPane extends AbstractUnitPane {
     private double rectY;
     private double angle;
 
-    RecurrenceEventFilter recurrenceEventFilterHSV = new RecurrenceEventFilter(Constants.RECURRENCE_EVENT_FILTER_MILLI_TIMEOUT) {
+    private RecurrenceEventFilter recurrenceEventFilterHSV = new RecurrenceEventFilter(Constants.RECURRENCE_EVENT_FILTER_MILLI_TIMEOUT) {
         @Override
         public void relay() {
             sendColorToRemote();
