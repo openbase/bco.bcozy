@@ -435,9 +435,8 @@ public final class LocationPane extends Pane {
     }
 
     private void setSelectedLocation(final LocationPolygon newSelectedLocation) throws CouldNotPerformException {
-        System.out.println("Last:" + lastSelectedTile);
         try {
-            if (!selectedLocation.equals(newSelectedLocation)) {
+            if (selectedLocation.equals(newSelectedLocation)) {
                 // already selected
                 return;
             }
@@ -445,9 +444,13 @@ public final class LocationPane extends Pane {
             // make sub sub regions unselectable
             if (!newSelectedLocation.getClass().equals(RegionPolygon.class)) {
                 lastSelectedTile.getChildIds().forEach(childId -> {
-                    // make all regions non selecable
-                    if (regionMap.containsKey(childId)) {
-                        regionMap.get(childId).changeStyleOnSelectable(false);
+                    try {
+                        // make all regions non selecable
+                        if (regionMap.containsKey(childId)) {
+                            regionMap.get(childId).changeStyleOnSelectable(false);
+                        }
+                    } catch (Exception ex) {
+                        ExceptionPrinter.printHistory(ex, LOGGER);
                     }
                 });
             }

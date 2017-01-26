@@ -48,9 +48,7 @@ public abstract class AbstractUnitPolygon<M extends GeneratedMessage, UR extends
     public void init(final UnitConfig unitConfig) throws InitializationException, InterruptedException {
         try {
             init = true;
-            System.out.println("INIT: " + unitConfig.getLabel());
             this.unitRemote = (UR) Units.getUnit(unitConfig, false);
-            System.out.println("++++++ UnitRemote : " + unitRemote);
         } catch (final CouldNotPerformException ex) {
             throw new InitializationException(this, ex);
         }
@@ -88,7 +86,6 @@ public abstract class AbstractUnitPolygon<M extends GeneratedMessage, UR extends
      * @throws NotAvailableException
      */
     public UR getUnitRemote() throws NotAvailableException {
-        System.out.println("++++++ "+getClass().getSimpleName()+" return UnitRemote[active:"+active+" init:"+init+"] : " + unitRemote);
         if (unitRemote == null) {
             throw new NotAvailableException("UnitRemote");
         }
