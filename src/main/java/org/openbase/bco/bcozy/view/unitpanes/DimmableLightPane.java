@@ -57,7 +57,6 @@ public class DimmableLightPane extends AbstractUnitPane {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DimmableLightPane.class);
 
-    private RecurrenceEventFilter recurrenceEventFilter;
     private final SVGIcon unknownForegroundIcon;
     private final SVGIcon unknownBackgroundIcon;
     private final DimmableLightRemote dimmableLightRemote;
@@ -68,15 +67,17 @@ public class DimmableLightPane extends AbstractUnitPane {
     private final VBox bodyContent;
     private final Slider slider;
 
+    private RecurrenceEventFilter recurrenceEventFilter = new RecurrenceEventFilter(Constants.RECURRENCE_EVENT_FILTER_MILLI_TIMEOUT) {
+        @Override
+        public void relay() {
+            sendBrightnessStateToRemote();
+        }
+    };
+
     private final EventHandler<MouseEvent> sendBrightness = event -> GlobalCachedExecutorService.submit(new Task() {
         @Override
         protected Object call() {
-            try {
-                dimmableLightRemote.setBrightnessState(BrightnessState.newBuilder().setBrightness(slider.getValue()).build()).get(Constants.OPERATION_SERVICE_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
-            } catch (InterruptedException | ExecutionException | TimeoutException | CouldNotPerformException ex) {
-                ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
-                setWidgetPaneDisable(true);
-            }
+            recurrenceEventFilter.trigger();
             return null;
         }
     });
@@ -106,7 +107,7 @@ public class DimmableLightPane extends AbstractUnitPane {
         initEffectAndSwitch();
         tooltip.textProperty().bind(observerText.textProperty());
 
-        this.dimmableLightRemote.addDataObserver(this);
+        addObserverAndInitDisableState(this.dimmableLightRemote);
     }
 
     private void initEffectAndSwitch() {
@@ -164,7 +165,14 @@ public class DimmableLightPane extends AbstractUnitPane {
             dimmableLightRemote.setPowerState(state).get(Constants.OPERATION_SERVICE_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
         } catch (InterruptedException | ExecutionException | TimeoutException | CouldNotPerformException ex) {
             ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
-            setWidgetPaneDisable(true);
+        }
+    }
+
+    private void sendBrightnessStateToRemote() {
+        try {
+            dimmableLightRemote.setBrightnessState(BrightnessState.newBuilder().setBrightness(slider.getValue()).build()).get(Constants.OPERATION_SERVICE_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException | ExecutionException | TimeoutException | CouldNotPerformException ex) {
+            ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
         }
     }
 
@@ -217,14 +225,8 @@ public class DimmableLightPane extends AbstractUnitPane {
         slider.setMinWidth(sliderWidth);
         slider.setMaxWidth(sliderWidth);
 
-        this.recurrenceEventFilter = new RecurrenceEventFilter(Constants.FILTER_TIME) {
-            @Override
-            public void relay() {
-                slider.setOnMouseDragged(sendBrightness);
-                slider.setOnMouseClicked(sendBrightness);
-            }
-        };
-        recurrenceEventFilter.trigger();
+        slider.setOnMouseDragged(sendBrightness);
+        slider.setOnMouseClicked(sendBrightness);
 
         progressBar.setMinWidth(sliderWidth);
         progressBar.setMaxWidth(sliderWidth);

@@ -56,7 +56,6 @@ import rst.domotic.state.TemperatureStateType.TemperatureState;
 public class TemperatureControllerPane extends AbstractUnitPane {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TemperatureControllerPane.class);
-    private RecurrenceEventFilter recurrenceEventFilter;
 
     private final TemperatureControllerRemote temperatureControllerRemote;
     private final SVGIcon temperatureControllerIcon;
@@ -70,18 +69,17 @@ public class TemperatureControllerPane extends AbstractUnitPane {
     private double actualTemperature;
     private double targetTemperature;
 
+    private RecurrenceEventFilter recurrenceEventFilter = new RecurrenceEventFilter(Constants.RECURRENCE_EVENT_FILTER_MILLI_TIMEOUT) {
+        @Override
+        public void relay() {
+            sendTemperatureStateToRemote();
+        }
+    };
+
     private final EventHandler<MouseEvent> sendingTargetTemperature = event -> GlobalCachedExecutorService.submit(new Task() {
         @Override
         protected Object call() {
-            try {
-                temperatureControllerRemote.setTargetTemperatureState(TemperatureState.newBuilder().setTemperature(slider.getValue()).build()).get(Constants.OPERATION_SERVICE_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
-
-                final StackPane track = (StackPane) slider.lookup(".track");
-                target.setTranslateX(track.getLayoutX());
-            } catch (InterruptedException | ExecutionException | TimeoutException | CouldNotPerformException ex) {
-                ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
-                setWidgetPaneDisable(true);
-            }
+            recurrenceEventFilter.trigger();
             return null;
         }
     });
@@ -110,7 +108,7 @@ public class TemperatureControllerPane extends AbstractUnitPane {
         initEffectSlider();
         tooltip.textProperty().bind(observerText.textProperty());
 
-        this.temperatureControllerRemote.addDataObserver(this);
+        addObserverAndInitDisableState(this.temperatureControllerRemote);
     }
 
     private void initEffectSlider() {
@@ -140,6 +138,17 @@ public class TemperatureControllerPane extends AbstractUnitPane {
         target.setText(decimalFormat.format(targetTemperature) + Constants.CELSIUS);
     }
 
+    private void sendTemperatureStateToRemote() {
+        try {
+            temperatureControllerRemote.setTargetTemperatureState(TemperatureState.newBuilder().setTemperature(slider.getValue()).build()).get(Constants.OPERATION_SERVICE_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
+
+            final StackPane track = (StackPane) slider.lookup(".track");
+            target.setTranslateX(track.getLayoutX());
+        } catch (InterruptedException | ExecutionException | TimeoutException | CouldNotPerformException ex) {
+            ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
+        }
+    }
+
     @Override
     protected void initTitle() {
         observerText.setIdentifier("heating");
@@ -164,14 +173,8 @@ public class TemperatureControllerPane extends AbstractUnitPane {
         target.getStyleClass().addAll("temperature-slider-pane-bottom");
         //CHECKSTYLE.ON: MagicNumber
 
-        this.recurrenceEventFilter = new RecurrenceEventFilter(Constants.FILTER_TIME) {
-            @Override
-            public void relay() {
-                slider.setOnMousePressed(sendingTargetTemperature);
-                slider.setOnMouseDragged(sendingTargetTemperature);
-            }
-        };
-        recurrenceEventFilter.trigger();
+        slider.setOnMousePressed(sendingTargetTemperature);
+        slider.setOnMouseDragged(sendingTargetTemperature);
 
         vBox.getChildren().addAll(actual, slider, target);
         vBox.setAlignment(Pos.CENTER);

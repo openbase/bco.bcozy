@@ -44,7 +44,7 @@ public class MotionDetectorPane extends AbstractUnitPane {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BatteryPane.class);
 
-    private final MotionDetectorRemote remote;
+    private final MotionDetectorRemote motionDetectorRemote;
     private final SVGIcon unknownForegroundIcon;
     private final SVGIcon unknownBackgroundIcon;
     private final SVGIcon backgroundIcon;
@@ -57,7 +57,7 @@ public class MotionDetectorPane extends AbstractUnitPane {
      * @param brightnessSensorRemote motionSensorRemote
      */
     public MotionDetectorPane(final UnitRemote brightnessSensorRemote) {
-        this.remote = (MotionDetectorRemote) brightnessSensorRemote;
+        this.motionDetectorRemote = (MotionDetectorRemote) brightnessSensorRemote;
 
         headContent = new BorderPane();
         unknownBackgroundIcon = new SVGIcon(MaterialDesignIcon.CHECKBOX_BLANK_CIRCLE, Constants.SMALL_ICON - 2, false);
@@ -72,14 +72,14 @@ public class MotionDetectorPane extends AbstractUnitPane {
         initEffect();
         tooltip.textProperty().bind(observerText.textProperty());
 
-        this.remote.addDataObserver(this);
+        addObserverAndInitDisableState(this.motionDetectorRemote);
     }
 
     private void initEffect() {
         State motionState = State.UNKNOWN;
 
         try {
-            motionState = remote.getMotionState().getValue();
+            motionState = motionDetectorRemote.getMotionState().getValue();
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
@@ -126,7 +126,7 @@ public class MotionDetectorPane extends AbstractUnitPane {
     protected void initUnitLabel() {
         String unitLabel = Constants.UNKNOWN_ID;
         try {
-            unitLabel = remote.getLocationConfig().getLabel() + " " +  remote.getData().getLabel();
+            unitLabel = motionDetectorRemote.getLocationConfig().getLabel() + " " +  motionDetectorRemote.getData().getLabel();
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
@@ -135,12 +135,12 @@ public class MotionDetectorPane extends AbstractUnitPane {
 
     @Override
     public UnitRemote getDALRemoteService() {
-        return remote;
+        return motionDetectorRemote;
     }
 
     @Override
     void removeObserver() {
-        this.remote.removeObserver(this);
+        this.motionDetectorRemote.removeObserver(this);
     }
 
     @Override

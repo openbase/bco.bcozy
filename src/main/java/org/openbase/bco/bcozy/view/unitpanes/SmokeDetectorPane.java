@@ -47,7 +47,7 @@ public class SmokeDetectorPane extends AbstractUnitPane {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SmokeDetectorPane.class);
 
-    private final SmokeDetectorRemote remote;
+    private final SmokeDetectorRemote smokeDetectorRemote;
     private final SVGIcon smokeDetectorIconFire;
     private final SVGIcon smokeDetectorIconNoFire;
     private final SVGIcon smokeDetectorIconFireFade;
@@ -62,7 +62,7 @@ public class SmokeDetectorPane extends AbstractUnitPane {
      * @param smokeDetectorRemote smokeDetectorRemote.
      */
     public SmokeDetectorPane(final UnitRemote smokeDetectorRemote) {
-        this.remote = (SmokeDetectorRemote) smokeDetectorRemote;
+        this.smokeDetectorRemote = (SmokeDetectorRemote) smokeDetectorRemote;
 
         headContent = new BorderPane();
         smokeDetectorIconFire = new SVGIcon(MaterialDesignIcon.FIRE, Constants.SMALL_ICON, false);
@@ -85,7 +85,7 @@ public class SmokeDetectorPane extends AbstractUnitPane {
         initEffect();
         tooltip.textProperty().bind(observerText.textProperty());
 
-        this.remote.addDataObserver(this);
+        addObserverAndInitDisableState(this.smokeDetectorRemote);
     }
 
     private void initEffect() {
@@ -93,8 +93,8 @@ public class SmokeDetectorPane extends AbstractUnitPane {
         SmokeState.State smokeState = SmokeState.State.UNKNOWN;
 
         try {
-            alarmState = remote.getSmokeAlarmState().getValue();
-            smokeState = remote.getSmokeState().getValue();
+            alarmState = smokeDetectorRemote.getSmokeAlarmState().getValue();
+            smokeState = smokeDetectorRemote.getSmokeState().getValue();
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
@@ -157,7 +157,7 @@ public class SmokeDetectorPane extends AbstractUnitPane {
     protected void initUnitLabel() {
         String unitLabel = Constants.UNKNOWN_ID;
         try {
-            unitLabel = remote.getLocationConfig().getLabel() + " " + remote.getData().getLabel();
+            unitLabel = smokeDetectorRemote.getLocationConfig().getLabel() + " " + smokeDetectorRemote.getData().getLabel();
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
@@ -166,12 +166,12 @@ public class SmokeDetectorPane extends AbstractUnitPane {
 
     @Override
     public UnitRemote getDALRemoteService() {
-        return remote;
+        return smokeDetectorRemote;
     }
 
     @Override
     void removeObserver() {
-        this.remote.removeObserver(this);
+        this.smokeDetectorRemote.removeObserver(this);
     }
 
     @Override

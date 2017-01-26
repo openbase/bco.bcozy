@@ -383,6 +383,11 @@ public final class Constants {
     public static final int OPERATION_SERVICE_MILLI_TIMEOUT = 3000;
 
     /**
+     * Milliseconds timeout for recurrenceEventFilter.
+     */
+    public static final int RECURRENCE_EVENT_FILTER_MILLI_TIMEOUT = 300;
+
+    /**
      * Milliseconds interval for click counter(double click).
      */
     public static final int CLICK_TIME_INTERVAL_MILLI = 400;

@@ -68,7 +68,7 @@ public class BatteryPane extends AbstractUnitPane {
         initEffect();
         tooltip.textProperty().bind(observerText.textProperty());
 
-        this.batteryRemote.addDataObserver(this);
+        addObserverAndInitDisableState(this.batteryRemote);
     }
 
     private void initEffect() {

@@ -92,6 +92,13 @@ public class ColorableLightPane extends AbstractUnitPane {
     private double rectY;
     private double angle;
 
+    private RecurrenceEventFilter recurrenceEventFilterHSV = new RecurrenceEventFilter(Constants.RECURRENCE_EVENT_FILTER_MILLI_TIMEOUT) {
+        @Override
+        public void relay() {
+            sendColorToRemote();
+        }
+    };
+
     /**
      * Constructor for the AmbientLightPane.
      * @param colorableLightRemote colorableLightRemote
@@ -114,7 +121,7 @@ public class ColorableLightPane extends AbstractUnitPane {
         initEffectAndSwitch();
         tooltip.textProperty().bind(observerText.textProperty());
 
-        this.colorableLightRemote.addDataObserver(this);
+        addObserverAndInitDisableState(this.colorableLightRemote);
     }
 
     private void initEffectAndSwitch() {
@@ -295,13 +302,30 @@ public class ColorableLightPane extends AbstractUnitPane {
         return hollowCircle;
     }
 
+    private void rectSelectorCoordinates() {
+        rectX = Math.round(COLOR_BOX_SIZE / 2.0 + (COLOR_BOX_SIZE - rectangleSelector.getHeight()) / 2.0
+                * Math.cos(Math.toRadians((angle + Constants.OBTUSE_ANGLE_270) % Constants.ROUND_ANGLE)));
+        rectY = Math.round(COLOR_BOX_SIZE / 2.0 + (COLOR_BOX_SIZE - rectangleSelector.getHeight()) / 2.0
+                * Math.sin(Math.toRadians((angle + Constants.OBTUSE_ANGLE_270) % Constants.ROUND_ANGLE)));
+    }
+
     private void sendStateToRemote(final PowerState.State powerState) {
         try {
             colorableLightRemote.setPowerState(powerState)
                     .get(Constants.OPERATION_SERVICE_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
         } catch (InterruptedException | ExecutionException | TimeoutException | CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER);
-            setWidgetPaneDisable(true);
+        }
+    }
+
+    private void sendColorToRemote() {
+        final HSBColor hsvColor = HSBColor.newBuilder().setHue(hueValue.floatValue())
+                .setSaturation(saturation.floatValue()).setBrightness(brightness.floatValue()).build();
+        try {
+            colorableLightRemote.setColor(hsvColor)
+                    .get(Constants.OPERATION_SERVICE_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException | ExecutionException | TimeoutException | CouldNotPerformException ex) {
+            ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
         }
     }
 
@@ -336,18 +360,6 @@ public class ColorableLightPane extends AbstractUnitPane {
         headContent.setCenter(getUnitLabel());
         headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
         headContent.prefHeightProperty().set(lightBulbIcon.getSize() + Constants.INSETS + 1);
-    }
-
-    private void sendHSV2Remote() {
-        final HSBColor hsvColor = HSBColor.newBuilder().setHue(hueValue.floatValue())
-                .setSaturation(saturation.floatValue()).setBrightness(brightness.floatValue()).build();
-        try {
-            colorableLightRemote.setColor(hsvColor)
-                    .get(Constants.OPERATION_SERVICE_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
-        } catch (InterruptedException | ExecutionException | TimeoutException | CouldNotPerformException ex) {
-            ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
-            setWidgetPaneDisable(true);
-        }
     }
 
     @Override
@@ -389,12 +401,7 @@ public class ColorableLightPane extends AbstractUnitPane {
                 saturation.set(clamp(xMouse / COLOR_BOX_SIZE) * Constants.ONE_HUNDRED);
                 brightness.set(Constants.ONE_HUNDRED - (clamp(yMouse / COLOR_BOX_SIZE) * Constants.ONE_HUNDRED));
 
-                RecurrenceEventFilter recurrenceEventFilter = new RecurrenceEventFilter() {
-                    @Override public void relay() {
-                        sendHSV2Remote();
-                    }
-                };
-                recurrenceEventFilter.trigger();
+                recurrenceEventFilterHSV.trigger();
 
                 return null;
             }
@@ -437,13 +444,7 @@ public class ColorableLightPane extends AbstractUnitPane {
                 rectangleSelector.setLayoutY(rectY);
                 rectangleSelector.setRotate(angle);
 
-                RecurrenceEventFilter recurrenceEventFilter = new RecurrenceEventFilter() {
-                    @Override
-                    public void relay() {
-                        sendHSV2Remote();
-                    }
-                };
-                recurrenceEventFilter.trigger();
+                recurrenceEventFilterHSV.trigger();
 
                 return null;
             }
@@ -460,13 +461,6 @@ public class ColorableLightPane extends AbstractUnitPane {
         clip.widthProperty().bind(bodyContent.widthProperty());
         clip.heightProperty().bind(bodyContent.heightProperty());
         bodyContent.setClip(clip);
-    }
-
-    private void rectSelectorCoordinates() {
-        rectX = Math.round(COLOR_BOX_SIZE / 2.0 + (COLOR_BOX_SIZE - rectangleSelector.getHeight()) / 2.0
-                * Math.cos(Math.toRadians((angle + Constants.OBTUSE_ANGLE_270) % Constants.ROUND_ANGLE)));
-        rectY = Math.round(COLOR_BOX_SIZE / 2.0 + (COLOR_BOX_SIZE - rectangleSelector.getHeight()) / 2.0
-                * Math.sin(Math.toRadians((angle + Constants.OBTUSE_ANGLE_270) % Constants.ROUND_ANGLE)));
     }
 
     @Override
@@ -493,9 +487,6 @@ public class ColorableLightPane extends AbstractUnitPane {
     @Override
     public void update(final Observable observable, final Object colorableLight) throws java.lang.Exception {
         Platform.runLater(() -> {
-            if (this.isDisabled()) {
-                setWidgetPaneDisable(false);
-            }
 
             final State powerState = ((ColorableLightData) colorableLight).getPowerState().getValue();
             final Color color =
