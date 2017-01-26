@@ -42,7 +42,6 @@ import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
 import org.openbase.jul.pattern.Observable;
 import org.openbase.jul.schedule.GlobalCachedExecutorService;
-import org.openbase.jul.schedule.RecurrenceEventFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.domotic.state.BlindStateType.BlindState;
@@ -55,7 +54,6 @@ import rst.domotic.unit.dal.RollerShutterDataType.RollerShutterData;
 public class RollerShutterPane extends AbstractUnitPane {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RollerShutterPane.class);
-    private RecurrenceEventFilter recurrenceEventFilter;
 
     private final RollerShutterRemote rollershutterRemote;
     private final BorderPane headContent;
@@ -229,19 +227,12 @@ public class RollerShutterPane extends AbstractUnitPane {
         final Button buttonOpen = new Button();
         final Button buttonClose = new Button();
 
-        this.recurrenceEventFilter = new RecurrenceEventFilter(Constants.FILTER_TIME) {
-            @Override
-            public void relay() {
-                buttonOpen.setOnMouseClicked(sendingTotalOpening);
-                buttonClose.setOnMouseClicked(sendingTotalClosing);
-                buttonUp.setOnMousePressed(sendingUp);
-                buttonUp.setOnMouseReleased(sendingStop);
-                buttonDown.setOnMousePressed(sendingDown);
-                buttonDown.setOnMouseReleased(sendingStop);
-            }
-        };
-
-        recurrenceEventFilter.trigger();
+        buttonOpen.setOnMouseClicked(sendingTotalOpening);
+        buttonClose.setOnMouseClicked(sendingTotalClosing);
+        buttonUp.setOnMousePressed(sendingUp);
+        buttonUp.setOnMouseReleased(sendingStop);
+        buttonDown.setOnMousePressed(sendingDown);
+        buttonDown.setOnMouseReleased(sendingStop);
 
         arrowUp = new SVGIcon(MaterialDesignIcon.CHEVRON_UP, Constants.SMALL_ICON, true);
         arrowDown = new SVGIcon(MaterialDesignIcon.CHEVRON_DOWN, Constants.SMALL_ICON, true);
