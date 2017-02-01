@@ -210,7 +210,7 @@ public class TemperatureControllerPane extends AbstractUnitPane {
     public void update(final Observable observable, final Object temperatureController) throws java.lang.Exception {
         Platform.runLater(() -> {
             actualTemperature
-                    = ((TemperatureControllerData) temperatureController).getActualTemperatureState().getTemperature();
+                    = ((TemperatureControllerData) temperatureController).getTemperatureState().getTemperature();
             targetTemperature
                     = ((TemperatureControllerData) temperatureController).getTargetTemperatureState().getTemperature();
             setLabelValues();
