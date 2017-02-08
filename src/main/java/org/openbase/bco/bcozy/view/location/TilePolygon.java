@@ -58,7 +58,7 @@ public class TilePolygon extends LocationPolygon {
                 setCustomColor(Color.TRANSPARENT);
                 break;
             case UNKNOWN:
-                setCustomColor(Color.ORANGE.brighter());
+                setCustomColor(Color.YELLOW);
                 break;
             default:
                 ExceptionPrinter.printHistory(new EnumNotSupportedException(unitData.getPresenceState().getValue(), this), LOGGER);

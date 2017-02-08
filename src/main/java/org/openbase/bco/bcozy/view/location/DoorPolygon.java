@@ -80,7 +80,7 @@ public class DoorPolygon extends ConnectionPolygon {
                 setCustomColor(Color.BLUE.brighter());
                 break;
             case UNKNOWN:
-                setCustomColor(Color.ORANGE.brighter());
+                setCustomColor(Color.YELLOW);
                 break;
             default:
                 ExceptionPrinter.printHistory(new EnumNotSupportedException(unitData.getDoorState().getValue(), this), LOGGER);
