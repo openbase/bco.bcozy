@@ -45,7 +45,10 @@ import java.util.stream.Collectors;
 
 /**
  * Created by tmichalski on 25.11.15.
+ *
+ * @deprecated Please use Units.getUnit(...) instead
  */
+@Deprecated
 public class RemotePool {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RemotePool.class);
@@ -451,7 +454,9 @@ public class RemotePool {
      * @return the Map of DALRemoteServices
      */
     public Map<UnitType, List<UnitRemote>> getUnitRemoteMapOfLocation(final String locationId) {
-        if (!mapsFilled) LOGGER.debug("MAPS not filled!");
+        if (!mapsFilled) {
+            LOGGER.debug("MAPS not filled!");
+        }
         final Map<UnitType, List<UnitRemote>> unitRemoteMap = new TreeMap<>();
 
         final UnitType[] unitTypes = UnitType.values();
@@ -485,7 +490,9 @@ public class RemotePool {
     @SuppressWarnings("unchecked")
     public <Remote extends UnitRemote> List<Remote> getUnitRemoteListOfLocationAndClass(
             final String locationId, final Class<? extends Remote> remoteClass) throws CouldNotPerformException {
-        if (!mapsFilled) LOGGER.debug("MAPS not filled!");
+        if (!mapsFilled) {
+            LOGGER.debug("MAPS not filled!");
+        }
         checkInit();
 
         final List<Remote> unitRemoteList = new ArrayList<>();
@@ -552,7 +559,6 @@ public class RemotePool {
 //        if (transformReceiver != null) {
 //            transformReceiver.shutdown();
 //        }
-
         TransformerFactory.killInstance();
 
         init = false;
