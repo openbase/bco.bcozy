@@ -362,89 +362,89 @@ public class RemotePool {
             }
         }
     }
+//
+//    /**
+//     * Returns the UnitRemote to the given unitId and class.
+//     *
+//     * @param unitId the unit ID
+//     * @param <Remote> the corresponding class of the remote
+//     * @return the UnitRemote casted to the given remote class
+//     * @throws CouldNotPerformException CouldNotPerformException
+//     */
+//    @SuppressWarnings("unchecked")
+//    public <Remote extends UnitRemote> Remote getUnitRemoteById(
+//            final String unitId) throws CouldNotPerformException {
+//        checkInit();
+//
+//        return (Remote) unitMap.get(unitId);
+//    }
 
-    /**
-     * Returns the UnitRemote to the given unitId and class.
-     *
-     * @param unitId the unit ID
-     * @param <Remote> the corresponding class of the remote
-     * @return the UnitRemote casted to the given remote class
-     * @throws CouldNotPerformException CouldNotPerformException
-     */
-    @SuppressWarnings("unchecked")
-    public <Remote extends UnitRemote> Remote getUnitRemoteById(
-            final String unitId) throws CouldNotPerformException {
-        checkInit();
+//    /**
+//     * Returns the UnitRemote to the given unitId and
+//     * locationId.
+//     *
+//     * @param unitId the unit ID
+//     * @param locationId the location ID
+//     * @param <Remote> the corresponding class of the remote
+//     * @return the UnitRemote
+//     * @throws CouldNotPerformException CouldNotPerformException
+//     */
+//    @SuppressWarnings("unchecked")
+//    public <Remote extends UnitRemote> Remote getUnitRemoteByIdAndLocation(
+//            final String unitId, final String locationId) throws CouldNotPerformException {
+//        checkInit();
+//
+//        return (Remote) locationMap.get(locationId).get(unitId);
+//    }
 
-        return (Remote) unitMap.get(unitId);
-    }
-
-    /**
-     * Returns the UnitRemote to the given unitId and
-     * locationId.
-     *
-     * @param unitId the unit ID
-     * @param locationId the location ID
-     * @param <Remote> the corresponding class of the remote
-     * @return the UnitRemote
-     * @throws CouldNotPerformException CouldNotPerformException
-     */
-    @SuppressWarnings("unchecked")
-    public <Remote extends UnitRemote> Remote getUnitRemoteByIdAndLocation(
-            final String unitId, final String locationId) throws CouldNotPerformException {
-        checkInit();
-
-        return (Remote) locationMap.get(locationId).get(unitId);
-    }
-
-    /**
-     * Returns a List with all Remotes of the given remote class.
-     *
-     * @param remoteClass the remote class
-     * @param <Remote> the corresponding class of the remote
-     * @return the List of DALRemoteServices
-     * @throws CouldNotPerformException CouldNotPerformException
-     */
-    @SuppressWarnings("unchecked")
-    public <Remote extends UnitRemote> List<Remote> getUnitRemoteListOfClass(
-            final Class<? extends Remote> remoteClass) throws CouldNotPerformException {
-        checkInit();
-
-        final List<Remote> unitRemoteList = new ArrayList<>();
-
-        for (final Map.Entry<String, UnitRemote> stringDALRemoteServiceEntry : unitMap.entrySet()) {
-            final UnitRemote currentDalRemoteService = stringDALRemoteServiceEntry.getValue();
-            if (currentDalRemoteService.getClass().equals(remoteClass)) {
-                unitRemoteList.add((Remote) currentDalRemoteService);
-            }
-        }
-
-        return unitRemoteList;
-    }
-
-    /**
-     * Returns a List of all DALRemoteServices to the given locationId.
-     *
-     * @param locationId the location ID
-     * @return the List of DALRemoteServices
-     * @throws CouldNotPerformException CouldNotPerformException
-     */
-    public List<UnitRemote> getUnitRemoteListOfLocation(
-            final String locationId) throws CouldNotPerformException {
-        checkInit();
-
-        final List<UnitRemote> unitRemoteList = new ArrayList<>();
-
-        if (locationMap.containsKey(locationId)) {
-            final Map<String, UnitRemote> unitRemoteHashOfLocation = locationMap.get(locationId);
-
-            for (final Map.Entry<String, UnitRemote> currentEntry : unitRemoteHashOfLocation.entrySet()) {
-                unitRemoteList.add(currentEntry.getValue());
-            }
-        }
-
-        return unitRemoteList;
-    }
+//    /**
+//     * Returns a List with all Remotes of the given remote class.
+//     *
+//     * @param remoteClass the remote class
+//     * @param <Remote> the corresponding class of the remote
+//     * @return the List of DALRemoteServices
+//     * @throws CouldNotPerformException CouldNotPerformException
+//     */
+//    @SuppressWarnings("unchecked")
+//    public <Remote extends UnitRemote> List<Remote> getUnitRemoteListOfClass(
+//            final Class<? extends Remote> remoteClass) throws CouldNotPerformException {
+//        checkInit();
+//
+//        final List<Remote> unitRemoteList = new ArrayList<>();
+//
+//        for (final Map.Entry<String, UnitRemote> stringDALRemoteServiceEntry : unitMap.entrySet()) {
+//            final UnitRemote currentDalRemoteService = stringDALRemoteServiceEntry.getValue();
+//            if (currentDalRemoteService.getClass().equals(remoteClass)) {
+//                unitRemoteList.add((Remote) currentDalRemoteService);
+//            }
+//        }
+//
+//        return unitRemoteList;
+//    }
+//
+//    /**
+//     * Returns a List of all DALRemoteServices to the given locationId.
+//     *
+//     * @param locationId the location ID
+//     * @return the List of DALRemoteServices
+//     * @throws CouldNotPerformException CouldNotPerformException
+//     */
+//    public List<UnitRemote> getUnitRemoteListOfLocation(
+//            final String locationId) throws CouldNotPerformException {
+//        checkInit();
+//
+//        final List<UnitRemote> unitRemoteList = new ArrayList<>();
+//
+//        if (locationMap.containsKey(locationId)) {
+//            final Map<String, UnitRemote> unitRemoteHashOfLocation = locationMap.get(locationId);
+//
+//            for (final Map.Entry<String, UnitRemote> currentEntry : unitRemoteHashOfLocation.entrySet()) {
+//                unitRemoteList.add(currentEntry.getValue());
+//            }
+//        }
+//
+//        return unitRemoteList;
+//    }
 
     /**
      * Returns a Map of all DALRemoteServices of the given Location sorted by
