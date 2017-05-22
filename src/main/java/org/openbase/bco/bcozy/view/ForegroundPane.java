@@ -21,12 +21,15 @@ package org.openbase.bco.bcozy.view;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.geometry.BoundingBox;
 import javafx.scene.layout.BorderPane;
+import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.InitializationException;
+import org.openbase.jul.iface.DefaultInitializable;
 
 /**
  * @author hoestreich
  * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>
  */
-public class ForegroundPane extends BorderPane {
+public class ForegroundPane extends BorderPane implements DefaultInitializable {
 
     private final MainMenu mainMenu;
     private final ContextMenu contextMenu;
@@ -54,6 +57,15 @@ public class ForegroundPane extends BorderPane {
         this.setCenter(this.centerPane);
         this.setTop(this.menuHeader);
         this.setPickOnBounds(false);
+    }
+    
+    @Override
+    public void init() throws InitializationException, InterruptedException {
+        try {
+            mainMenu.init();
+        } catch (CouldNotPerformException ex) {
+            new InitializationException(this, ex);
+        }
     }
 
     /**

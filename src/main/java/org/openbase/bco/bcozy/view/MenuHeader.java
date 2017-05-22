@@ -43,7 +43,5 @@ public class MenuHeader extends HBox {
 
         this.setPrefHeight(height);
         this.setPrefWidth(width);
-
     }
-
 }

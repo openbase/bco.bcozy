@@ -28,7 +28,7 @@ import org.openbase.bco.bcozy.view.mainmenupanes.LoginPane;
 import org.openbase.bco.bcozy.view.mainmenupanes.SettingsPane;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InitializationException;
-import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.openbase.jul.iface.VoidInitializable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
  * @author hoestreich
  * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>
  */
-public class MainMenu extends StackPane {
+public class MainMenu extends StackPane implements VoidInitializable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MainMenu.class);
 
@@ -95,14 +95,9 @@ public class MainMenu extends StackPane {
 
         // Styling components with CSS
         this.getStyleClass().addAll("main-menu");
-
-        try {
-            init();
-        } catch (InitializationException ex) {
-            ExceptionPrinter.printHistory(ex, LOGGER);
-        }
     }
 
+    @Override
     public void init() throws InitializationException, InterruptedException {
         try {
             availableUsersPane.init();

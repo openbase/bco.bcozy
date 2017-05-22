@@ -80,16 +80,12 @@ public class ContextMenu extends VBox {
         verticalScrollPane.setFitToWidth(true);
         verticalScrollPane.setContent(titledPaneContainer);
         //TODO: Find a nicer way to scale the size of the scroll bar thumb
-        //CHECKSTYLE.OFF: MagicNumber
         scrollBar.setVisibleAmount(0.25);
-        //CHECKSTYLE.ON: MagicNumber
 
         this.getChildren().addAll(roomInfo, hiddenSidesPane);
         //VBox.setVgrow(contextSortingPane, Priority.ALWAYS);
 
-        //CHECKSTYLE.OFF: MultipleStringLiterals
         this.getStyleClass().addAll("detail-menu");
-        //CHECKSTYLE.ON: MultipleStringLiterals
     }
 
     /**

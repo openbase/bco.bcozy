@@ -40,6 +40,7 @@ import org.openbase.bco.bcozy.view.InfoPane;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jps.core.JPService;
 import org.openbase.jps.preset.JPDebugMode;
+import org.openbase.jul.exception.FatalImplementationErrorException;
 import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.exception.InstantiationException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
@@ -69,12 +70,13 @@ public class BCozy extends Application {
      * Application logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(BCozy.class);
-
+    
     private static Stage primaryStage;
-
+    
     private InfoPane infoPane;
     private ContextMenuController contextMenuController;
     private LocationPaneController locationPaneController;
+    private ForegroundPane foregroundPane;
     private Future initTask;
 
     /**
@@ -83,15 +85,15 @@ public class BCozy extends Application {
      * @param args Arguments from commandline.
      */
     public static void main(final String... args) {
-
+        
         LOGGER.info("Start " + APP_NAME + "...");
-
+        
         registerListeners();
         /* Setup JPService */
         JPService.setApplicationName(APP_NAME);
         JPService.registerProperty(JPDebugMode.class);
         JPService.registerProperty(JPLanguage.class);
-
+        
         try {
             JPService.parseAndExitOnError(args);
             launch(args);
@@ -101,59 +103,67 @@ public class BCozy extends Application {
         }
         LOGGER.info(APP_NAME + " finished.");
     }
-
+    
     @Override
     public void start(final Stage primaryStage) throws InitializationException, InterruptedException, InstantiationException {
-
         BCozy.primaryStage = primaryStage;
         final double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
         final double screenHeight = Screen.getPrimary().getVisualBounds().getHeight();
         primaryStage.setTitle("BCozy");
-
+        
         final StackPane root = new StackPane();
-        final ForegroundPane foregroundPane = new ForegroundPane(screenHeight, screenWidth);
+        foregroundPane = new ForegroundPane(screenHeight, screenWidth);
         foregroundPane.setMinHeight(root.getHeight());
         foregroundPane.setMinWidth(root.getWidth());
         final BackgroundPane backgroundPane = new BackgroundPane(foregroundPane);
-
+        
         infoPane = new InfoPane(screenHeight, screenWidth);
         infoPane.setMinHeight(root.getHeight());
         infoPane.setMinWidth(root.getWidth());
         infoPane.setCloseButtonEventHandler(event -> stop());
         root.getChildren().addAll(backgroundPane, foregroundPane, infoPane);
-
+        
         primaryStage.setMinWidth(foregroundPane.getMainMenu().getMinWidth() + foregroundPane.getContextMenu().getMinWidth() + 300);
         primaryStage.setHeight(screenHeight);
         primaryStage.setScene(new Scene(root, screenWidth, screenHeight));
         primaryStage.getScene().getStylesheets().addAll(Constants.DEFAULT_CSS, Constants.LIGHT_THEME_CSS);
-
+        
         ResponsiveHandler.addResponsiveToWindow(primaryStage);
         primaryStage.show();
-
+        
         new MainMenuController(foregroundPane);
         new CenterPaneController(foregroundPane);
-
+        
         contextMenuController = new ContextMenuController(foregroundPane, backgroundPane.getLocationPane());
         locationPaneController = new LocationPaneController(backgroundPane.getLocationPane());
-
+        
         initRemotesAndLocation();
     }
-
+    
     private void initRemotesAndLocation() {
         initTask = GlobalCachedExecutorService.submit(new Task() {
             @Override
             protected Object call() throws java.lang.Exception {
-                infoPane.setTextLabelIdentifier("waitForConnection");
-                Registries.waitForData();
-                infoPane.setTextLabelIdentifier("fillContextMenu");
-                contextMenuController.initTitledPaneMap();
-
-                infoPane.setTextLabelIdentifier("connectLocationRemote");
-                locationPaneController.connectLocationRemote();
-
-                return null;
+                try {
+                    infoPane.setTextLabelIdentifier("waitForConnection");
+                    Registries.waitForData();
+                    
+                    infoPane.setTextLabelIdentifier("fillContextMenu");
+                    foregroundPane.init();
+                    contextMenuController.initTitledPaneMap();
+                    
+                    infoPane.setTextLabelIdentifier("connectLocationRemote");
+                    locationPaneController.connectLocationRemote();
+                    return null;
+                } catch (Exception ex) {
+                    infoPane.setTextLabelIdentifier("errorDuringStartup");
+                    Thread.sleep(3000);
+                    Exception exx = new FatalImplementationErrorException("Could not init panes", this, ex);
+                    ExceptionPrinter.printHistoryAndExit(exx, LOGGER);
+                    throw exx;
+                }
             }
-
+            
             @Override
             protected void succeeded() {
                 super.succeeded();
@@ -161,8 +171,7 @@ public class BCozy extends Application {
             }
         });
     }
-
-    @Override
+    
     public void stop() {
         if (initTask != null && !initTask.isDone()) {
             initTask.cancel(true);
@@ -206,7 +215,7 @@ public class BCozy extends Application {
             }
         }
     }
-
+    
     private static void registerListeners() {
         LOGGER.info("Executing Registration of Listeners");
         ResponsiveHandler.setOnDeviceTypeChanged((over, oldDeviceType, newDeviceType) -> {
@@ -228,19 +237,19 @@ public class BCozy extends Application {
             }
         });
     }
-
+    
     private static void adjustToLargeDevice() {
         LOGGER.info("Detected Large Device");
     }
-
+    
     private static void adjustToMediumDevice() {
         LOGGER.info("Detected Medium Device");
     }
-
+    
     private static void adjustToSmallDevice() {
         LOGGER.info("Detected Small Device");
     }
-
+    
     private static void adjustToExtremeSmallDevice() {
         LOGGER.info("Detected Extreme Small Device");
     }
