@@ -96,7 +96,9 @@ public class AvailableUsersPane extends PaneElement {
                     });
                 }
             });
-            updateDynamicComponents();
+            Platform.runLater(() -> {
+                updateDynamicComponents();
+            });
         } catch (CouldNotPerformException ex) {
             throw new InitializationException(this, ex);
         }

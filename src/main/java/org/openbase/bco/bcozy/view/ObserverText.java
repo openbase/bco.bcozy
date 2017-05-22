@@ -22,43 +22,56 @@ import javafx.scene.text.Text;
 import org.openbase.bco.bcozy.model.LanguageSelection;
 
 import java.util.Locale;
+import java.util.MissingResourceException;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.ResourceBundle;
+import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.openbase.jul.exception.printer.LogLevel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by agatting on 13.04.16.
  */
 public class ObserverText extends Text implements Observer {
+
+    protected final Logger LOGGER = LoggerFactory.getLogger(ObserverText.class);
+
     private String identifier;
-    private ResourceBundle languageBundle = ResourceBundle
-            .getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
+    private ResourceBundle languageBundle = ResourceBundle.getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
 
     /**
      * Constructor to create a text which is capable of observing language changes in the application.
+     *
      * @param languageString The language string which combined with the actual language selection determines the
-     *                       actual text
+     * actual text
      */
-    public ObserverText(final String languageString) {
+    public ObserverText(final String identifier) {
         super();
-        this.identifier = languageString;
-        super.setText(languageBundle.getString(this.identifier));
+        setIdentifier(identifier);
         LanguageSelection.getInstance().addObserver(this);
     }
 
     /**
      * Sets the new identifier for this ObserverText.
+     *
      * @param identifier identifier
      */
     public void setIdentifier(final String identifier) {
         this.identifier = identifier;
         languageBundle = ResourceBundle.getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
-        super.setText(languageBundle.getString(this.identifier));
+
+        try {
+            super.setText(languageBundle.getString(identifier));
+        } catch (MissingResourceException ex) {
+            ExceptionPrinter.printHistory("Could not resolve Identifier ["+identifier+"]!", ex, LOGGER, LogLevel.WARN);
+            super.setText(identifier);
+        }
     }
 
     @Override
     public void update(final Observable observable, final Object arg) {
-        languageBundle = ResourceBundle.getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
-        super.setText(languageBundle.getString(this.identifier));
+        setIdentifier(identifier);
     }
 }

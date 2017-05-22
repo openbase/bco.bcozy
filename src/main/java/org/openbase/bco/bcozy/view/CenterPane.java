@@ -43,8 +43,7 @@ public class CenterPane extends StackPane {
 
         // Initializing components
         popUpParent = new FloatingButton(new SVGIcon(MaterialIcon.SETTINGS, Constants.MIDDLE_ICON, true));
-        popUpChildTop =
-                new FloatingButton(new SVGIcon(MaterialDesignIcon.THERMOMETER_LINES, Constants.SMALL_ICON, true));
+        popUpChildTop = new FloatingButton(new SVGIcon(MaterialDesignIcon.THERMOMETER_LINES, Constants.SMALL_ICON, true));
         popUpChildBottom = new FloatingButton(new SVGIcon(MaterialIcon.VISIBILITY, Constants.SMALL_ICON, true));
         fullscreen = new FloatingButton(new SVGIcon(MaterialIcon.FULLSCREEN, Constants.MIDDLE_ICON, true));
         viewSwitcher = new VBox(Constants.INSETS);
@@ -66,14 +65,12 @@ public class CenterPane extends StackPane {
         this.getChildren().addAll(viewSwitcher, fullscreen);
 
         // Styling components with CSS
-        //CHECKSTYLE.OFF: MultipleStringLiterals
         this.getStyleClass().addAll("padding-small");
-        //CHECKSTYLE.ON: MultipleStringLiterals
-
     }
 
     /**
      * Getter for the fullscreen button.
+     *
      * @return FloatingButton instance
      */
     public FloatingButton getFullscreen() {
@@ -82,6 +79,7 @@ public class CenterPane extends StackPane {
 
     /**
      * Getter for the popUpChildBottom button.
+     *
      * @return FloatingButton instance
      */
     public FloatingButton getPopUpChildBottom() {
@@ -90,6 +88,7 @@ public class CenterPane extends StackPane {
 
     /**
      * Getter for the popUpChildTop button.
+     *
      * @return FloatingButton instance
      */
     public FloatingButton getPopUpChildTop() {
@@ -98,6 +97,7 @@ public class CenterPane extends StackPane {
 
     /**
      * Getter for the popUpParent button.
+     *
      * @return FloatingButton instance
      */
     public FloatingButton getPopUpParent() {
@@ -106,6 +106,7 @@ public class CenterPane extends StackPane {
 
     /**
      * Getter for the PopOver pane.
+     *
      * @param visible value to be set
      */
     public void setViewSwitchingButtonsVisible(final boolean visible) {

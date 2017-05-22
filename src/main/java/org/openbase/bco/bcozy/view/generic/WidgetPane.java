@@ -49,7 +49,7 @@ public class WidgetPane extends VBox implements DynamicPane {
     /**
      * Text for tooltip dependent on selected language.
      */
-    private final ObserverText infoText = new ObserverText("");
+    private final ObserverText infoText = new ObserverText("DUMMY");
 
     /**
      * ToggleSwitch Button on right side of the header Pane. Is visible via activation at

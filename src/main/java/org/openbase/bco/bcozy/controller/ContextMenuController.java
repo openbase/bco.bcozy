@@ -38,7 +38,7 @@ import rst.domotic.unit.UnitConfigType.UnitConfig;
 import rst.domotic.unit.UnitTemplateType.UnitTemplate.UnitType;
 
 /**
- * @author timo
+ * @author tmichalksi
  * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>
  */
 public class ContextMenuController {
