@@ -19,7 +19,6 @@
 package org.openbase.bco.bcozy.view.mainmenupanes;
 
 import de.jensd.fx.glyphs.materialicons.MaterialIcon;
-import java.util.logging.Level;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -31,25 +30,25 @@ import javafx.scene.paint.Color;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ObserverLabel;
 import org.openbase.bco.bcozy.view.SVGIcon;
+import org.openbase.bco.dal.remote.unit.Units;
 import org.openbase.bco.dal.remote.unit.user.UserRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.EnumNotSupportedException;
 import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
-import org.openbase.jul.extension.rsb.iface.RSBListener;
 import org.openbase.jul.iface.Shutdownable;
 import org.openbase.jul.pattern.Observable;
 import org.openbase.jul.pattern.Observer;
 import org.openbase.jul.processing.StringProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.domotic.state.UserPresenceStateType.UserPresenceState;
 import rst.domotic.unit.UnitConfigType.UnitConfig;
 import rst.domotic.unit.user.UserDataType;
 
 /**
- * Created by hoestreich on 1/28/16.
+ * @author hoestreich
+ * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>
  *
  * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>
  */
@@ -65,8 +64,6 @@ public class UserPane extends BorderPane implements Shutdownable {
     private final GridPane userIconPane;
 
     public UserPane() {
-        this.user = new UserRemote();
-
         userIcon = new SVGIcon(MaterialIcon.PERSON, Constants.MIDDLE_ICON, false);
         atHomeIcon = new SVGIcon(MaterialIcon.SEARCH, Constants.EXTRA_SMALL_ICON, true);
         userIconPane = new GridPane();
@@ -106,8 +103,7 @@ public class UserPane extends BorderPane implements Shutdownable {
 //    }
     public void init(final UnitConfig userUniConfig) throws InitializationException, InterruptedException {
         try {
-            user.init(userUniConfig);
-            user.activate();
+            user = Units.getUnit(userUniConfig, false, Units.USER);
             user.addDataObserver(new Observer<UserDataType.UserData>() {
                 @Override
                 public void update(Observable<UserDataType.UserData> source, UserDataType.UserData data) throws Exception {
@@ -125,7 +121,7 @@ public class UserPane extends BorderPane implements Shutdownable {
     private void updateDynamicComponents() {
         try {
             // filter if no data is available
-            if (!user.isDataAvailable()) {
+            if (user == null || !user.isDataAvailable()) {
                 return;
             }
 
@@ -199,6 +195,5 @@ public class UserPane extends BorderPane implements Shutdownable {
 
     @Override
     public void shutdown() {
-        user.shutdown();
     }
 }

@@ -23,12 +23,11 @@ import java.util.List;
 import java.util.Map;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import org.openbase.bco.bcozy.view.ForegroundPane;
-import org.openbase.bco.bcozy.view.unitpanes.TitledPaneContainer;
+import org.openbase.bco.bcozy.view.pane.unit.TitledUnitPaneContainer;
 import org.openbase.bco.bcozy.view.location.LocationPane;
-import org.openbase.bco.dal.remote.unit.UnitRemote;
+import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
+import org.openbase.bco.dal.remote.unit.Units;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
@@ -39,53 +38,37 @@ import rst.domotic.unit.UnitConfigType.UnitConfig;
 import rst.domotic.unit.UnitTemplateType.UnitTemplate.UnitType;
 
 /**
- * Created by timo on 03.12.15.
+ * @author timo
+ * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>
  */
 public class ContextMenuController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ContextMenuController.class);
 
     private final ForegroundPane foregroundPane;
-    private final RemotePool remotePool;
-    private final Map<String, TitledPaneContainer> titledPaneMap;
+    private final Map<String, TitledUnitPaneContainer> titledPaneMap;
 
     /**
      * Constructor for the ContextMenuController.
      *
      * @param foregroundPane foregroundPane
      * @param backgroundPane backgroundPane
-     * @param remotePool remotePool
      */
-    public ContextMenuController(final ForegroundPane foregroundPane, final LocationPane backgroundPane,
-            final RemotePool remotePool) {
+    public ContextMenuController(final ForegroundPane foregroundPane, final LocationPane backgroundPane) {
         this.foregroundPane = foregroundPane;
-        this.remotePool = remotePool;
         this.titledPaneMap = new HashMap<>();
-
-        this.foregroundPane.getMainMenu().addFillContextMenuButtonEventHandler(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(final ActionEvent event) {
-                try {
-                    //TODO: Why is this unit hardcoded?
-                    setContextMenuUnitPanes("511adfec-43ed-47f5-bd4d-28f46dc1b5a4");
-                } catch (CouldNotPerformException e) {
-                    ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-                }
-            }
-        });
 
         backgroundPane.addSelectedLocationIdListener(new ChangeListener<String>() {
             @Override
-            public void changed(final ObservableValue<? extends String> observable, final String oldValue,
-                    final String newValue) {
-                if (remotePool.isMapsFilled()) {
+            public void changed(final ObservableValue<? extends String> observable, final String oldValue, final String location) {
+                if (Registries.isDataAvailable()) {
                     try {
-                        setContextMenuUnitPanes(newValue);
-                    } catch (CouldNotPerformException e) {
-                        ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+                        setContextMenuUnitPanes(location);
+                    } catch (CouldNotPerformException | InterruptedException ex) {
+                        ExceptionPrinter.printHistory("Units for selected location[" + location + "] could not be loaded.", ex, LOGGER, LogLevel.ERROR);
                     }
                 } else {
-                    LOGGER.error("DALRemoteService Maps are not filled. Thus no Context Menu will be loaded!");
+                    LOGGER.warn("Registries not ready yet! Thus no Context Menu will be loaded!");
                 }
             }
         });
@@ -97,43 +80,48 @@ public class ContextMenuController {
      * @param locationID locationID
      * @throws CouldNotPerformException CouldNotPerformException
      */
-    public void setContextMenuUnitPanes(final String locationID) throws CouldNotPerformException {
-        if ("none".equals(locationID)) {
-            throw new CouldNotPerformException("No location is selected.");
-        }
+    public void setContextMenuUnitPanes(final String locationID) throws CouldNotPerformException, InterruptedException {
+        try {
+            if ("none".equals(locationID)) {
+                throw new CouldNotPerformException("No location is selected.");
+            }
 
-        TitledPaneContainer titledPaneContainer;
-        if (this.titledPaneMap.containsKey(locationID)) {
-            titledPaneContainer = this.titledPaneMap.get(locationID);
-        } else {
-            titledPaneContainer = new TitledPaneContainer();
-            fillTitledPaneContainer(titledPaneContainer, locationID);
-        }
+            TitledUnitPaneContainer titledPaneContainer;
+            if (titledPaneMap.containsKey(locationID)) {
+                titledPaneContainer = titledPaneMap.get(locationID);
+            } else {
+                titledPaneContainer = new TitledUnitPaneContainer();
+                fillTitledPaneContainer(titledPaneContainer, locationID);
+            }
 
-        this.foregroundPane.getContextMenu().setTitledPaneContainer(titledPaneContainer);
+            foregroundPane.getContextMenu().setTitledPaneContainer(titledPaneContainer);
+        } catch (CouldNotPerformException ex) {
+            throw new CouldNotPerformException("Could not set context menu.", ex);
+        }
     }
 
-    private void fillTitledPaneContainer(final TitledPaneContainer titledPaneContainer, final String locationID) {
-        this.titledPaneMap.put(locationID, titledPaneContainer);
+    private void fillTitledPaneContainer(final TitledUnitPaneContainer titledPaneContainer, final String locationID) throws CouldNotPerformException, InterruptedException {
+        try {
+            titledPaneMap.put(locationID, titledPaneContainer);
 
-        final Map<UnitType, List<UnitRemote>> unitRemoteMap = remotePool.getUnitRemoteMapOfLocation(locationID);
-
-        for (final Map.Entry<UnitType, List<UnitRemote>> nextEntry : unitRemoteMap.entrySet()) {
-            try {
+            for (final Map.Entry<UnitType, List<UnitRemote>> nextEntry : Units.getUnit(locationID, false, Units.LOCATION).getUnitMap().entrySet()) {
+                if (nextEntry.getValue().isEmpty()) {
+                    continue;
+                }
                 titledPaneContainer.createAndAddNewTitledPane(nextEntry.getKey(), nextEntry.getValue());
-            } catch (Exception ex) {
-                ExceptionPrinter.printHistory(new CouldNotPerformException("Could not create titledPane!", ex), LOGGER);
             }
-        }
 
-        titledPaneContainer.addDummyPane(); //TODO: Find a way to solve this problem properly...
+            titledPaneContainer.addDummyPane(); //TODO: Find a way to solve this problem properly...
+        } catch (CouldNotPerformException ex) {
+            throw new CouldNotPerformException("Could not fill titled pane container.", ex);
+        }
     }
 
     /**
      * Clears all stored titledPanes and clears the map afterwards.
      */
     public void clearTitledPaneMap() {
-        for (final Map.Entry<String, TitledPaneContainer> nextEntry : this.titledPaneMap.entrySet()) {
+        for (final Map.Entry<String, TitledUnitPaneContainer> nextEntry : this.titledPaneMap.entrySet()) {
             nextEntry.getValue().clearTitledPane();
         }
 
@@ -152,7 +140,7 @@ public class ContextMenuController {
             for (final UnitConfig locationUnitConfig : Registries.getLocationRegistry().getLocationConfigs()) {
                 final String locationID = locationUnitConfig.getId();
 
-                final TitledPaneContainer titledPaneContainer = new TitledPaneContainer();
+                final TitledUnitPaneContainer titledPaneContainer = new TitledUnitPaneContainer();
                 fillTitledPaneContainer(titledPaneContainer, locationID);
             }
         } catch (CouldNotPerformException | NullPointerException ex) {

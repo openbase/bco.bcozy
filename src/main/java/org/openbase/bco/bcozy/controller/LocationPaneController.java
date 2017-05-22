@@ -21,7 +21,6 @@ package org.openbase.bco.bcozy.controller;
 import javafx.application.Platform;
 import javafx.geometry.Point2D;
 import org.openbase.bco.bcozy.view.Constants;
-import org.openbase.bco.bcozy.view.ForegroundPane;
 import org.openbase.bco.bcozy.view.location.LocationPane;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
@@ -42,44 +41,27 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import org.openbase.bco.registry.remote.Registries;
-import org.openbase.jul.exception.InitializationException;
-import org.openbase.jul.iface.DefaultInitializable;
 
 /**
- *
+ * @author julian
+ * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>
  */
-public class LocationPaneController implements DefaultInitializable {
+public class LocationPaneController {
 
     /**
      * Application logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(LocationPaneController.class);
 
-    private final ForegroundPane foregroundPane;
     private final LocationPane locationPane;
-    private final RemotePool remotePool;
 
     /**
      * The constructor.
      *
-     * @param foregroundPane the foreground pane
      * @param locationPane the location pane
-     * @param remotePool the remotePool
      */
-    public LocationPaneController(final ForegroundPane foregroundPane, final LocationPane locationPane, final RemotePool remotePool) {
-        this.foregroundPane = foregroundPane;
+    public LocationPaneController(final LocationPane locationPane) {
         this.locationPane = locationPane;
-        this.remotePool = remotePool;
-        this.foregroundPane.getMainMenu().addFetchLocationButtonEventHandler(event -> connectLocationRemote());
-    }
-
-    @Override
-    public void init() throws InitializationException, InterruptedException {
-        try {
-            Registries.getLocationRegistry().waitForData();
-        } catch (CouldNotPerformException ex) {
-            throw new InitializationException(this, ex);
-        }
     }
 
     /**
@@ -113,12 +95,9 @@ public class LocationPaneController implements DefaultInitializable {
 
         locationPane.clearLocations();
 
-        //lookup root location frame id
-        final String rootLocationFrameId = Registries.getLocationRegistry().getRootLocationConfig().getPlacementConfig().getTransformationFrameId();
-
         for (final UnitConfig locationUnitConfig : locationUnitConfigList) {
             try {
-                //skip locations without a shape
+                //skip locations without a shape    
                 if (locationUnitConfig.getPlacementConfig().getShape().getFloorCount() == 0) {
                     continue;
                 }
@@ -126,32 +105,26 @@ public class LocationPaneController implements DefaultInitializable {
                 final List<Point2D> vertices = new LinkedList<>();
 
                 // Get the transformation for the current room
-                final Future<Transform> transform = remotePool.getTransformReceiver().requestTransform(
-                        rootLocationFrameId,
-                        locationUnitConfig.getPlacementConfig().getTransformationFrameId(),
-                        System.currentTimeMillis());
+//                final Future<Transform> transform = Units.getUnitTransformation(locationUnitConfig, Registries.getUnitRegistry().getUnitConfigById(locationUnitConfig.getPlacementConfig().getLocationId()));
+                final Future<Transform> transform = Registries.getLocationRegistry().getUnitTransformation(locationUnitConfig, Registries.getLocationRegistry().getRootLocationConfig());
 
                 // Get the shape of the room
-                final List<Vec3DDoubleType.Vec3DDouble> shape
-                        = locationUnitConfig.getPlacementConfig().getShape().getFloorList();
+                final List<Vec3DDoubleType.Vec3DDouble> shape = locationUnitConfig.getPlacementConfig().getShape().getFloorList();
 
                 // Iterate over all vertices
                 for (final Vec3DDoubleType.Vec3DDouble rstVertex : shape) {
                     // Convert vertex into java type
                     final Point3d vertex = new Point3d(rstVertex.getX(), rstVertex.getY(), rstVertex.getZ());
                     // Transform
-                    transform.get(Constants.TRANSFORMATION_TIMEOUT, TimeUnit.MILLISECONDS)
-                            .getTransform().transform(vertex);
+                    transform.get(Constants.TRANSFORMATION_TIMEOUT, TimeUnit.MILLISECONDS).getTransform().transform(vertex);
                     // Add vertex to list of vertices
                     vertices.add(new Point2D(vertex.x, vertex.y));
                 }
 
-//                locationPane.addLocation(locationUnitConfig.getId(), locationUnitConfig.getLocationConfig().getChildIdList(), vertices, locationUnitConfig.getLocationConfig().getType().toString());
+                // locationPane.addLocation(locationUnitConfig.getId(), locationUnitConfig.getLocationConfig().getChildIdList(), vertices, locationUnitConfig.getLocationConfig().getType().toString());
                 locationPane.addLocation(locationUnitConfig, vertices);
-            } catch (InterruptedException | ExecutionException | TimeoutException e) {
-                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-                LOGGER.error("Error while fetching transformation for location \"" + locationUnitConfig.getLabel()
-                        + "\", locationID: " + locationUnitConfig.getId());
+            } catch (InterruptedException | ExecutionException | TimeoutException ex) {
+                ExceptionPrinter.printHistory("Error while fetching transformation for location \"" + locationUnitConfig.getLabel() + "\", locationID: " + locationUnitConfig.getId(), ex, LOGGER, LogLevel.ERROR);
             }
         }
     }
@@ -160,10 +133,6 @@ public class LocationPaneController implements DefaultInitializable {
         final List<UnitConfig> connectionUnitConfigList = Registries.getLocationRegistry().getConnectionConfigs();
 
         locationPane.clearConnections();
-
-        //lookup root location frame id
-        final String rootLocationFrameId
-                = Registries.getLocationRegistry().getRootLocationConfig().getPlacementConfig().getTransformationFrameId();
 
         //check which connection has a shape
         for (final UnitConfig connectionUnitConfig : connectionUnitConfigList) {
@@ -175,22 +144,18 @@ public class LocationPaneController implements DefaultInitializable {
 
                 final List<Point2D> vertices = new LinkedList<>();
 
-                final Future<Transform> transform = remotePool.getTransformReceiver().requestTransform(
-                        rootLocationFrameId,
-                        connectionUnitConfig.getPlacementConfig().getTransformationFrameId(),
-                        System.currentTimeMillis());
+//                final Future<Transform> transform = Registries.getLocationRegistry().getUnitTransformation(connectionUnitConfig, Registries.getUnitRegistry().getUnitConfigById(connectionUnitConfig.getPlacementConfig().getLocationId()));
+                final Future<Transform> transform = Registries.getLocationRegistry().getUnitTransformation(connectionUnitConfig, Registries.getLocationRegistry().getRootLocationConfig());
 
                 // Get the shape of the room
-                final List<Vec3DDoubleType.Vec3DDouble> shape
-                        = connectionUnitConfig.getPlacementConfig().getShape().getFloorList();
+                final List<Vec3DDoubleType.Vec3DDouble> shape = connectionUnitConfig.getPlacementConfig().getShape().getFloorList();
 
                 // Iterate over all vertices
                 for (final Vec3DDoubleType.Vec3DDouble rstVertex : shape) {
                     // Convert vertex into java type
                     final Point3d vertex = new Point3d(rstVertex.getX(), rstVertex.getY(), rstVertex.getZ());
                     // Transform
-                    transform.get(Constants.TRANSFORMATION_TIMEOUT, TimeUnit.MILLISECONDS)
-                            .getTransform().transform(vertex);
+                    transform.get(Constants.TRANSFORMATION_TIMEOUT, TimeUnit.MILLISECONDS).getTransform().transform(vertex);
                     // Add vertex to list of vertices
                     vertices.add(new Point2D(vertex.x, vertex.y));
                 }
@@ -207,10 +172,8 @@ public class LocationPaneController implements DefaultInitializable {
     /**
      * Method to trigger a complete update of the locationPane.
      * Will furthermore apply a zoomFit after everything is finished.
-     *
-     * @throws Exception The Exception thrown by the runLater method.
      */
-    public void updateAndZoomFit() throws Exception { //NOPMD
+    public void updateAndZoomFit() {
         Platform.runLater(() -> {
             try {
                 fetchLocations();

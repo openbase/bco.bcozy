@@ -16,8 +16,8 @@
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
-
 /**
- * Created by julian on 12.11.15.
+ * @author julian
+ * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>
  */
-package org.openbase.bco.bcozy.view.unitpanes;
+package org.openbase.bco.bcozy.view.pane.unit;

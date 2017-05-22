@@ -19,38 +19,27 @@
 package org.openbase.bco.bcozy.view;
 
 import de.jensd.fx.glyphs.materialicons.MaterialIcon;
-import java.util.logging.Level;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import org.openbase.bco.bcozy.view.mainmenupanes.AvailableUsersPane;
 import org.openbase.bco.bcozy.view.mainmenupanes.ConnectionPane;
 import org.openbase.bco.bcozy.view.mainmenupanes.LoginPane;
 import org.openbase.bco.bcozy.view.mainmenupanes.SettingsPane;
-import org.openbase.jps.core.JPService;
-import org.openbase.jps.exception.JPNotAvailableException;
-import org.openbase.jps.preset.JPDebugMode;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
-import org.openbase.jul.exception.printer.LogLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Created by hoestreich on 11/10/15.
+ * @author hoestreich
+ * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>
  */
 public class MainMenu extends StackPane {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MainMenu.class);
 
-    private final Button initRemoteButton;
-    private final Button fetchLocationButton;
-    private final Button fillHashesButton;
-    private final Button fillContextMenuButton;
     private final LoginPane loginPane;
     private final FloatingButton mainMenuFloatingButton;
     private final VBox verticalLayout;
@@ -59,7 +48,7 @@ public class MainMenu extends StackPane {
     private final double width;
     private boolean maximized;
     private final ConnectionPane connectionPane;
-    private final AvailableUsersPane availableUsersPanePane;
+    private final AvailableUsersPane availableUsersPane;
     private final SettingsPane settingsPane;
     private final ImageView logoView;
     private final ImageView logoViewSmall;
@@ -78,53 +67,35 @@ public class MainMenu extends StackPane {
         this.maximized = true;
         this.setMinHeight(height);
         this.setMinWidth(width);
+
         // Initializing components
-        verticalLayout = new VBox(Constants.INSETS);
-        verticalLayout.setAlignment(Pos.TOP_CENTER);
-        verticalLayoutSmall = new VBox(Constants.INSETS * 2);
-        verticalLayoutSmall.setAlignment(Pos.TOP_CENTER);
-        loginPane = new LoginPane();
+        this.verticalLayout = new VBox(Constants.INSETS);
+        this.verticalLayout.setAlignment(Pos.TOP_CENTER);
+        this.verticalLayoutSmall = new VBox(Constants.INSETS * 2);
+        this.verticalLayoutSmall.setAlignment(Pos.TOP_CENTER);
+        this.loginPane = new LoginPane();
 
-        initRemoteButton = new Button("Init RegistryRemotes");
-        fetchLocationButton = new Button("Fetch Location");
-        fillHashesButton = new Button("Fill Hashes");
-        fillContextMenuButton = new Button("Fill ContextMenu");
+        this.logoView = ImageViewProvider.createImageView("/icons/bcozy.png", Constants.MAXLOGOWIDTH, Double.MAX_VALUE);
+        this.logoViewSmall = ImageViewProvider.createImageView("/icons/bc.png", Constants.MIDDLE_ICON);
 
-        logoView = ImageViewProvider
-                .createImageView("/icons/bcozy.png", Constants.MAXLOGOWIDTH, Double.MAX_VALUE);
+        this.connectionPane = new ConnectionPane();
+        this.availableUsersPane = new AvailableUsersPane();
+        this.settingsPane = new SettingsPane();
+        this.mainMenuFloatingButton = new FloatingButton(new SVGIcon(MaterialIcon.MENU, Constants.MIDDLE_ICON, true));
 
-        logoViewSmall = ImageViewProvider.createImageView("/icons/bc.png", Constants.MIDDLE_ICON);
-
-        connectionPane = new ConnectionPane();
-        availableUsersPanePane = new AvailableUsersPane();
-        settingsPane = new SettingsPane();
-        mainMenuFloatingButton = new FloatingButton(new SVGIcon(MaterialIcon.MENU, Constants.MIDDLE_ICON, true));
         // Setting Alignment in Stackpane
         StackPane.setAlignment(mainMenuFloatingButton, Pos.TOP_RIGHT);
         StackPane.setAlignment(verticalLayout, Pos.TOP_CENTER);
         StackPane.setAlignment(verticalLayoutSmall, Pos.TOP_CENTER);
-        mainMenuFloatingButton.translateYProperty().set(-(Constants.FLOATING_BUTTON_OFFSET));
+        this.mainMenuFloatingButton.translateYProperty().set(-(Constants.FLOATING_BUTTON_OFFSET));
+
         // Adding components to their parents
-        try {
-            if (JPService.getProperty(JPDebugMode.class).getValue()) {
-                verticalLayout.getChildren()
-                        .addAll(logoView, initRemoteButton, fetchLocationButton, fillHashesButton,
-                                fillContextMenuButton, connectionPane, loginPane, availableUsersPanePane, settingsPane);
-            } else {
-                verticalLayout.getChildren()
-                        .addAll(logoView, connectionPane, loginPane, availableUsersPanePane, settingsPane);
-            }
-        } catch (JPNotAvailableException e) {
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-            verticalLayout.getChildren()
-                    .addAll(logoView, connectionPane, loginPane, availableUsersPanePane, settingsPane);
-        }
+        this.verticalLayout.getChildren().addAll(logoView, connectionPane, loginPane, availableUsersPane, settingsPane);
         this.getChildren().addAll(verticalLayout, mainMenuFloatingButton);
+
         // Styling components with CSS
-        //CHECKSTYLE.OFF: MultipleStringLiterals
         this.getStyleClass().addAll("main-menu");
-        //CHECKSTYLE.ON: MultipleStringLiterals
-        
+
         try {
             init();
         } catch (InitializationException ex) {
@@ -134,46 +105,10 @@ public class MainMenu extends StackPane {
 
     public void init() throws InitializationException, InterruptedException {
         try {
-            availableUsersPanePane.init();
+            availableUsersPane.init();
         } catch (CouldNotPerformException ex) {
             new InitializationException(this, ex);
         }
-    }
-
-    /**
-     * Configure the initRemoteButton.
-     *
-     * @param eventHandler EventHandler
-     */
-    public void addInitRemoteButtonEventHandler(final EventHandler<ActionEvent> eventHandler) {
-        initRemoteButton.setOnAction(eventHandler);
-    }
-
-    /**
-     * Configure the fetchLocationButton.
-     *
-     * @param eventHandler EventHandler
-     */
-    public void addFetchLocationButtonEventHandler(final EventHandler<ActionEvent> eventHandler) {
-        fetchLocationButton.setOnAction(eventHandler);
-    }
-
-    /**
-     * Configure the fillHashesButton.
-     *
-     * @param eventHandler EventHandler
-     */
-    public void addFillHashesButtonEventHandler(final EventHandler<ActionEvent> eventHandler) {
-        fillHashesButton.setOnAction(eventHandler);
-    }
-
-    /**
-     * Configure the fillContextMenuButton.
-     *
-     * @param eventHandler EventHandler
-     */
-    public void addFillContextMenuButtonEventHandler(final EventHandler<ActionEvent> eventHandler) {
-        fillContextMenuButton.setOnAction(eventHandler);
     }
 
     /**
@@ -204,12 +139,12 @@ public class MainMenu extends StackPane {
     }
 
     /**
-     * Getter for the availableUsersPanePane.
+     * Getter for the availableUsersPane.
      *
-     * @return the instance of the availableUsersPanePane
+     * @return the instance of the availableUsersPane
      */
     public AvailableUsersPane getAvailableUsersPanePane() {
-        return availableUsersPanePane;
+        return availableUsersPane;
     }
 
     /**
@@ -224,7 +159,7 @@ public class MainMenu extends StackPane {
     /**
      * Getter for the current display state.
      *
-     * @return true if maximzed, false if minimized
+     * @return true if maximized, false if minimized
      */
     public boolean isMaximized() {
         return maximized;
@@ -235,14 +170,16 @@ public class MainMenu extends StackPane {
      * Animations should be added in the future
      */
     public void maximizeMainMenu() {
-        this.maximized = true;
-        this.setMinHeight(height);
-        this.setMinWidth(width);
-        this.getChildren().clear();
+        maximized = true;
+        setMinHeight(height);
+        setMinWidth(width);
+        setPrefHeight(height);
+        setPrefWidth(width);
+        getChildren().clear();
         StackPane.setAlignment(mainMenuFloatingButton, Pos.TOP_RIGHT);
         connectionPane.maximize();
         mainMenuFloatingButton.translateYProperty().set(-(Constants.FLOATING_BUTTON_OFFSET));
-        this.getChildren().addAll(verticalLayout, mainMenuFloatingButton);
+        getChildren().addAll(verticalLayout, mainMenuFloatingButton);
     }
 
     /**
@@ -250,15 +187,15 @@ public class MainMenu extends StackPane {
      * Animations should be added in the future
      */
     public void minimizeMainMenu() {
-        this.maximized = false;
-        this.setMinHeight(height);
-        this.setMinWidth(Constants.SMALL_MAIN_MENU_WIDTH);
+        maximized = false;
+        setMinHeight(height);
+        setPrefHeight(height);
+        setMinWidth(Constants.SMALL_MAIN_MENU_WIDTH);
         StackPane.setAlignment(mainMenuFloatingButton, Pos.TOP_CENTER);
         mainMenuFloatingButton.translateYProperty().set(-(Constants.FLOATING_BUTTON_OFFSET));
         verticalLayoutSmall.getChildren().clear();
-        verticalLayoutSmall.getChildren().addAll(logoViewSmall, connectionPane.getStatusIcon(),
-                loginPane.getStatusIcon(), availableUsersPanePane.getStatusIcon(), settingsPane.getStatusIcon());
-        this.getChildren().clear();
-        this.getChildren().addAll(verticalLayoutSmall, mainMenuFloatingButton);
+        verticalLayoutSmall.getChildren().addAll(logoViewSmall, connectionPane.getStatusIcon(), loginPane.getStatusIcon(), availableUsersPane.getStatusIcon(), settingsPane.getStatusIcon());
+        getChildren().clear();
+        getChildren().addAll(verticalLayoutSmall, mainMenuFloatingButton);
     }
 }
