@@ -128,14 +128,14 @@ public class BCozy extends Application {
         primaryStage.setScene(new Scene(root, screenWidth, screenHeight));
         primaryStage.getScene().getStylesheets().addAll(Constants.DEFAULT_CSS, Constants.LIGHT_THEME_CSS);
         
-        ResponsiveHandler.addResponsiveToWindow(primaryStage);
-        primaryStage.show();
-        
         new MainMenuController(foregroundPane);
         new CenterPaneController(foregroundPane);
         
         contextMenuController = new ContextMenuController(foregroundPane, backgroundPane.getLocationPane());
         locationPaneController = new LocationPaneController(backgroundPane.getLocationPane());
+        
+        ResponsiveHandler.addResponsiveToWindow(primaryStage);
+        primaryStage.show();
         
         initRemotesAndLocation();
     }
@@ -150,6 +150,7 @@ public class BCozy extends Application {
                     
                     infoPane.setTextLabelIdentifier("fillContextMenu");
                     foregroundPane.init();
+                    
                     contextMenuController.initTitledPaneMap();
                     
                     infoPane.setTextLabelIdentifier("connectLocationRemote");
