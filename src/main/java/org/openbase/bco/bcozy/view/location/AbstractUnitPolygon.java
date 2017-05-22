@@ -19,7 +19,7 @@
 package org.openbase.bco.bcozy.view.location;
 
 import com.google.protobuf.GeneratedMessage;
-import org.openbase.bco.dal.remote.unit.UnitRemote;
+import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
 import org.openbase.bco.dal.remote.unit.Units;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InitializationException;

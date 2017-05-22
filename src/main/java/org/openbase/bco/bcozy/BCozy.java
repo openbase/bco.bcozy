@@ -31,15 +31,14 @@ import org.openbase.bco.bcozy.controller.CenterPaneController;
 import org.openbase.bco.bcozy.controller.ContextMenuController;
 import org.openbase.bco.bcozy.controller.LocationPaneController;
 import org.openbase.bco.bcozy.controller.MainMenuController;
-import org.openbase.bco.bcozy.controller.RemotePool;
 import org.openbase.bco.bcozy.jp.JPLanguage;
 import org.openbase.bco.bcozy.view.BackgroundPane;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ForegroundPane;
 import org.openbase.bco.bcozy.view.ImageViewProvider;
 import org.openbase.bco.bcozy.view.InfoPane;
+import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jps.core.JPService;
-import org.openbase.jps.exception.JPNotAvailableException;
 import org.openbase.jps.preset.JPDebugMode;
 import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.exception.InstantiationException;
@@ -50,6 +49,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ *
+ * @author hoestreich
+ * @author timo
+ * @author agatting
+ * @author julian
+ * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>
+ *
  * Main Class of the BCozy Program.
  */
 public class BCozy extends Application {
@@ -67,7 +73,6 @@ public class BCozy extends Application {
     private static Stage primaryStage;
 
     private InfoPane infoPane;
-    private RemotePool remotePool;
     private ContextMenuController contextMenuController;
     private LocationPaneController locationPaneController;
     private Future initTask;
@@ -110,61 +115,36 @@ public class BCozy extends Application {
         foregroundPane.setMinHeight(root.getHeight());
         foregroundPane.setMinWidth(root.getWidth());
         final BackgroundPane backgroundPane = new BackgroundPane(foregroundPane);
+
         infoPane = new InfoPane(screenHeight, screenWidth);
         infoPane.setMinHeight(root.getHeight());
         infoPane.setMinWidth(root.getWidth());
         infoPane.setCloseButtonEventHandler(event -> stop());
-
         root.getChildren().addAll(backgroundPane, foregroundPane, infoPane);
 
-        //CHECKSTYLE.OFF: MagicNumber
-        primaryStage.setMinWidth(foregroundPane.getMainMenu().getMinWidth()
-                + foregroundPane.getContextMenu().getMinWidth() + 300);
+        primaryStage.setMinWidth(foregroundPane.getMainMenu().getMinWidth() + foregroundPane.getContextMenu().getMinWidth() + 300);
         primaryStage.setHeight(screenHeight);
-        //CHECKSTYLE.ON: MagicNumber
-
         primaryStage.setScene(new Scene(root, screenWidth, screenHeight));
-
         primaryStage.getScene().getStylesheets().addAll(Constants.DEFAULT_CSS, Constants.LIGHT_THEME_CSS);
+
         ResponsiveHandler.addResponsiveToWindow(primaryStage);
         primaryStage.show();
 
         new MainMenuController(foregroundPane);
         new CenterPaneController(foregroundPane);
 
-        //instantiate RemotePool
-        remotePool = new RemotePool(foregroundPane);
-        contextMenuController = new ContextMenuController(foregroundPane, backgroundPane.getLocationPane(), remotePool);
+        contextMenuController = new ContextMenuController(foregroundPane, backgroundPane.getLocationPane());
+        locationPaneController = new LocationPaneController(backgroundPane.getLocationPane());
 
-        //instantiate LocationController
-        locationPaneController = new LocationPaneController(foregroundPane, backgroundPane.getLocationPane(), remotePool);
-        locationPaneController.init();
-
-        try {
-            if (JPService.getProperty(JPDebugMode.class).getValue()) {
-                infoPane.setVisible(false);
-            } else {
-                this.initRemotesAndLocation();
-            }
-        } catch (JPNotAvailableException e) {
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
-            this.initRemotesAndLocation();
-        }
+        initRemotesAndLocation();
     }
 
     private void initRemotesAndLocation() {
         initTask = GlobalCachedExecutorService.submit(new Task() {
             @Override
             protected Object call() throws java.lang.Exception {
-                infoPane.setTextLabelIdentifier("initRemotes");
-                remotePool.initRegistryRemotes();
-
-                infoPane.setTextLabelIdentifier("fillUnitAndLocationMap");
-                remotePool.fillUnitAndLocationMap();
-
-                infoPane.setTextLabelIdentifier("fillUserMap");
-                remotePool.fillUserMap();
-
+                infoPane.setTextLabelIdentifier("waitForConnection");
+                Registries.waitForData();
                 infoPane.setTextLabelIdentifier("fillContextMenu");
                 contextMenuController.initTitledPaneMap();
 
@@ -197,7 +177,6 @@ public class BCozy extends Application {
         } catch (Exception e) { //NOPMD
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
-        remotePool.shutdownAllRemotes(); //TODO mpohling: not shutting down properly
         System.exit(0);
     }
 

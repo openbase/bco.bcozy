@@ -25,21 +25,22 @@ import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.HiddenSidesPane;
-import org.openbase.bco.bcozy.view.unitpanes.TitledPaneContainer;
+import org.openbase.bco.bcozy.view.pane.unit.TitledUnitPaneContainer;
 
 /**
- * Created by hoestreich on 11/10/15.
+ * @author hoestreich
+ * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>
  */
 public class ContextMenu extends VBox {
 
     private final ContextSortingPane contextSortingPane;
     private final Label roomInfo;
     private final ScrollPane verticalScrollPane;
-    private TitledPaneContainer titledPaneContainer;
-
+    private TitledUnitPaneContainer titledPaneContainer;
 
     /**
      * Constructor for the ContextMenu.
+     *
      * @param height Height
      * @param width Width
      */
@@ -48,8 +49,7 @@ public class ContextMenu extends VBox {
         this.setMinHeight(height);
         this.setMinWidth(width);
         this.setPrefHeight(height);
-        //this.setPrefWidth(width);
-        this.setMaxWidth(Double.MAX_VALUE);
+        this.setPrefWidth(width);
 
         roomInfo = new Label("No room selected.");
         roomInfo.setAlignment(Pos.CENTER);
@@ -75,7 +75,7 @@ public class ContextMenu extends VBox {
         contextSortingPane = new ContextSortingPane(width + Constants.INSETS);
         contextSortingPane.setMaxWidth(Double.MAX_VALUE);
 
-        titledPaneContainer = new TitledPaneContainer();
+        titledPaneContainer = new TitledUnitPaneContainer();
 
         verticalScrollPane.setFitToWidth(true);
         verticalScrollPane.setContent(titledPaneContainer);
@@ -94,6 +94,7 @@ public class ContextMenu extends VBox {
 
     /**
      * Getter Method for the Label.
+     *
      * @return label
      */
     public Label getRoomInfo() {
@@ -101,18 +102,20 @@ public class ContextMenu extends VBox {
     }
 
     /**
-     * Getter method for the TitledPaneContainer.
-     * @return TitledPaneContainer
+     * Getter method for the TitledUnitPaneContainer.
+     *
+     * @return TitledUnitPaneContainer
      */
-    public TitledPaneContainer getTitledPaneContainer() {
+    public TitledUnitPaneContainer getTitledPaneContainer() {
         return titledPaneContainer;
     }
 
     /**
-     * Set the new TitledPaneContainer and add it to the VerticalScrollPane.
+     * Set the new TitledUnitPaneContainer and add it to the VerticalScrollPane.
+     *
      * @param titledPaneContainer titledPaneContainer
      */
-    public void setTitledPaneContainer(final TitledPaneContainer titledPaneContainer) {
+    public void setTitledPaneContainer(final TitledUnitPaneContainer titledPaneContainer) {
         this.titledPaneContainer = titledPaneContainer;
         verticalScrollPane.setContent(this.titledPaneContainer);
     }

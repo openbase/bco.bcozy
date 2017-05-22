@@ -38,7 +38,6 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.EnumNotSupportedException;
 import org.openbase.jul.exception.NotAvailableException;
@@ -46,11 +45,13 @@ import org.openbase.jul.exception.printer.ExceptionPrinter;
 import rst.domotic.unit.UnitConfigType.UnitConfig;
 
 /**
- *
+ * @author julian
+ * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>
  */
 public final class LocationPane extends Pane {
 
     /**
+     *
      * Singleton instance.
      */
     private static LocationPane instance;
@@ -65,9 +66,9 @@ public final class LocationPane extends Pane {
     private final ForegroundPane foregroundPane;
     private final Map<String, TilePolygon> tileMap;
     private final Map<String, RegionPolygon> regionMap;
-    private final SimpleStringProperty selectedLocationId;
-
     private final Map<String, ConnectionPolygon> connectionMap;
+
+    private final SimpleStringProperty selectedLocationId;
 
     private LocationPolygon lastFirstClickTarget;
     private LocationPolygon lastSelectedTile;
@@ -81,62 +82,58 @@ public final class LocationPane extends Pane {
     private LocationPane(final ForegroundPane foregroundPane) throws org.openbase.jul.exception.InstantiationException, InterruptedException {
         super();
 
-        try {
+//        try {
+        this.foregroundPane = foregroundPane;
 
-            this.foregroundPane = foregroundPane;
+        tileMap = new HashMap<>();
+        regionMap = new HashMap<>();
+        connectionMap = new HashMap<>();
 
-            tileMap = new HashMap<>();
-            regionMap = new HashMap<>();
-            connectionMap = new HashMap<>();
+//            Registries.getLocationRegistry().waitForData();
+//            selectedLocation = new ZonePolygon(0.0, 0.0, 0.0, 0.0);
+//            selectedLocation.init(Registries.getLocationRegistry().getRootLocationConfig());
+//            selectedLocation.activate();
+        selectedLocationId = new SimpleStringProperty(Constants.DUMMY_ROOM_NAME);
 
-            Registries.getLocationRegistry().waitForData();
-            selectedLocation = new ZonePolygon(0.0, 0.0, 0.0, 0.0);
-            selectedLocation.init(Registries.getLocationRegistry().getRootLocationConfig());
-            selectedLocation.activate();
-            selectedLocationId = new SimpleStringProperty(Constants.DUMMY_ROOM_NAME);
+        rootRoom = null;
+//        lastSelectedTile = selectedLocation;
+//        lastFirstClickTarget = selectedLocation;
 
-            rootRoom = null;
-            lastSelectedTile = selectedLocation;
-            lastFirstClickTarget = selectedLocation;
-
-            onEmptyAreaClickHandler = event -> {
-                if (event.isStillSincePress() && rootRoom != null) {
-                    try {
-                        if (event.getClickCount() == 1) {
-                            if (!selectedLocation.equals(rootRoom)) {
-                                selectedLocation.setSelected(false);
-                                rootRoom.setSelected(true);
-                                this.setSelectedLocation(rootRoom);
-                            }
-                        } else if (event.getClickCount() == 2) {
-                            this.autoFocusPolygonAnimated(rootRoom);
+        onEmptyAreaClickHandler = event -> {
+            if (event.isStillSincePress() && rootRoom != null) {
+                try {
+                    if (event.getClickCount() == 1) {
+                        if (!selectedLocation.equals(rootRoom)) {
+                            selectedLocation.setSelected(false);
+                            rootRoom.setSelected(true);
+                            this.setSelectedLocation(rootRoom);
                         }
-
-                        try {
-                            foregroundPane.getContextMenu().getRoomInfo().setText(selectedLocation.getLabel());
-                        } catch (NotAvailableException ex) {
-                            LOGGER.warn("Could not resolve location label!", ex);
-                        }
-                    } catch (CouldNotPerformException ex) {
-                        ExceptionPrinter.printHistory("Could not handle mouse event!", ex, LOGGER);
+                    } else if (event.getClickCount() == 2) {
+                        this.autoFocusPolygonAnimated(rootRoom);
                     }
+
+                    try {
+                        foregroundPane.getContextMenu().getRoomInfo().setText(selectedLocation.getLabel());
+                    } catch (NotAvailableException ex) {
+                        LOGGER.warn("Could not resolve location label!", ex);
+                    }
+                } catch (CouldNotPerformException ex) {
+                    ExceptionPrinter.printHistory("Could not handle mouse event!", ex, LOGGER);
                 }
-            };
+            }
+        };
 
-            this.heightProperty().addListener((observable, oldValue, newValue)
-                    -> this.setTranslateY(this.getTranslateY()
-                            - ((oldValue.doubleValue() - newValue.doubleValue()) / 2) * this.getScaleY()));
+        this.heightProperty().addListener((observable, oldValue, newValue)
+                -> this.setTranslateY(this.getTranslateY() - ((oldValue.doubleValue() - newValue.doubleValue()) / 2) * this.getScaleY()));
 
-            this.widthProperty().addListener((observable, oldValue, newValue)
-                    -> this.setTranslateX(this.getTranslateX()
-                            - ((oldValue.doubleValue() - newValue.doubleValue()) / 2) * this.getScaleX()));
+        this.widthProperty().addListener((observable, oldValue, newValue)
+                -> this.setTranslateX(this.getTranslateX() - ((oldValue.doubleValue() - newValue.doubleValue()) / 2) * this.getScaleX()));
 
-            this.foregroundPane.getMainMenuWidthProperty().addListener((observable, oldValue, newValue)
-                    -> this.setTranslateX(this.getTranslateX()
-                            - ((oldValue.doubleValue() - newValue.doubleValue()) / 2)));
-        } catch (CouldNotPerformException ex) {
-            throw new org.openbase.jul.exception.InstantiationException(this, ex);
-        }
+        this.foregroundPane.getMainMenuWidthProperty().addListener((observable, oldValue, newValue)
+                -> this.setTranslateX(this.getTranslateX() - ((oldValue.doubleValue() - newValue.doubleValue()) / 2)));
+//        } catch (CouldNotPerformException ex) {
+//            throw new org.openbase.jul.exception.InstantiationException(this, ex);
+//        }
     }
 
     /**
@@ -266,11 +263,9 @@ public final class LocationPane extends Pane {
 
             connectionUnitConfig.getConnectionConfig().getTileIdList().forEach(locationId -> {
                 if (tileMap.containsKey(locationId)) {
-                    final LocationPolygon locationPolygon = tileMap.get(locationId);
-                    locationPolygon.addCuttingShape(connectionPolygon);
+                    tileMap.get(locationId).addCuttingShape(connectionPolygon);
                 } else {
-                    LOGGER.error("Location ID \"" + locationId + "\" can not be found in the location Map. "
-                            + "No Cutting will be applied");
+                    LOGGER.error("Location ID \"" + locationId + "\" can not be found in the location Map. No Cutting will be applied");
                 }
             });
         } catch (CouldNotPerformException ex) {
@@ -436,38 +431,42 @@ public final class LocationPane extends Pane {
 
     private void setSelectedLocation(final LocationPolygon newSelectedLocation) throws CouldNotPerformException {
         try {
-            if (selectedLocation.equals(newSelectedLocation)) {
+            if (selectedLocation != null && selectedLocation.equals(newSelectedLocation)) {
                 // already selected
                 return;
             }
 
-            // make sub sub regions unselectable
-            if (!newSelectedLocation.getClass().equals(RegionPolygon.class)) {
-                lastSelectedTile.getChildIds().forEach(childId -> {
-                    try {
-                        // make all regions non selecable
-                        if (regionMap.containsKey(childId)) {
-                            regionMap.get(childId).changeStyleOnSelectable(false);
+            if (lastSelectedTile != null) {
+                // make sub sub regions unselectable
+                if (!newSelectedLocation.getClass().equals(RegionPolygon.class)) {
+                    lastSelectedTile.getChildIds().forEach(childId -> {
+                        try {
+                            // make all regions non selecable
+                            if (regionMap.containsKey(childId)) {
+                                regionMap.get(childId).changeStyleOnSelectable(false);
+                            }
+                        } catch (Exception ex) {
+                            ExceptionPrinter.printHistory(ex, LOGGER);
                         }
-                    } catch (Exception ex) {
-                        ExceptionPrinter.printHistory(ex, LOGGER);
-                    }
-                });
+                    });
+                }
+
+                // allow selection of sub regions.
+                if (newSelectedLocation.getClass().equals(TilePolygon.class)) {
+                    lastSelectedTile = newSelectedLocation;
+                    newSelectedLocation.getChildIds().forEach(childId -> {
+                        try {
+                            regionMap.get(childId).changeStyleOnSelectable(true);
+                        } catch (Exception ex) {
+                            ExceptionPrinter.printHistory(ex, LOGGER);
+                        }
+                    });
+                }
             }
 
-            // allow selection of sub regions.
-            if (newSelectedLocation.getClass().equals(TilePolygon.class)) {
-                lastSelectedTile = newSelectedLocation;
-                newSelectedLocation.getChildIds().forEach(childId -> {
-                    try {
-                        regionMap.get(childId).changeStyleOnSelectable(true);
-                    } catch (Exception ex) {
-                        ExceptionPrinter.printHistory(ex, LOGGER);
-                    }
-                });
+            if (selectedLocation != null) {
+                selectedLocation.setSelected(false);
             }
-
-            selectedLocation.setSelected(false);
             newSelectedLocation.setSelected(true);
             selectedLocation = newSelectedLocation;
             selectedLocationId.set(newSelectedLocation.getUnitId());

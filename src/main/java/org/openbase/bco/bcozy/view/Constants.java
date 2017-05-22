@@ -21,7 +21,8 @@ package org.openbase.bco.bcozy.view;
 import javafx.scene.paint.Color;
 
 /**
- * Created by hoestreich on 11/18/15.
+ * @author hoestreich
+ * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>
  */
 public final class Constants {
 
@@ -343,7 +344,7 @@ public final class Constants {
     /**
      * Timeout value in milliseconds for fetching transformations.
      */
-    public static final long TRANSFORMATION_TIMEOUT = 1000;
+    public static final long TRANSFORMATION_TIMEOUT = 10000;
 
     /**
      * String for CSS styling of icons.

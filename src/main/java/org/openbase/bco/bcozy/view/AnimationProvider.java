@@ -23,7 +23,8 @@ import javafx.scene.Node;
 import javafx.util.Duration;
 
 /**
- * Created by hoestreich on 12/22/15.
+ * @author hoestreich
+ * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>
  */
 public final class AnimationProvider {
 
@@ -33,6 +34,7 @@ public final class AnimationProvider {
 
     /**
      * Method to create a FadeTransition with several parameters.
+     *
      * @param node the node to which the transition should be applied
      * @param fromValue the opacity value from which the transition should start
      * @param toValue the opactity value where the transition should end
@@ -40,8 +42,7 @@ public final class AnimationProvider {
      * @param duration the duration which one animation cycle should take
      * @return an instance of the created FadeTransition
      */
-    public static FadeTransition createFadeTransition(final Node node, final double fromValue, final double toValue,
-                                                      final int cycleCount, final double duration) {
+    public static FadeTransition createFadeTransition(final Node node, final double fromValue, final double toValue, final int cycleCount, final double duration) {
         final FadeTransition fadeTransition = new FadeTransition(Duration.millis(duration), node);
         fadeTransition.setFromValue(fromValue);
         fadeTransition.setToValue(toValue);

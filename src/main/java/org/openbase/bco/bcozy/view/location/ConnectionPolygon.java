@@ -18,15 +18,16 @@
  */
 package org.openbase.bco.bcozy.view.location;
 
-import com.google.protobuf.GeneratedMessage;
 import javafx.collections.ObservableList;
-import org.openbase.bco.dal.remote.unit.UnitRemote;
 import org.openbase.bco.dal.remote.unit.connection.ConnectionRemote;
 import org.openbase.jul.exception.InstantiationException;
 import rst.domotic.unit.connection.ConnectionDataType.ConnectionData;
 
 /**
  * A Polygon that represents different kinds of connections.
+ *
+ * @author julian
+ * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>
  */
 public abstract class ConnectionPolygon extends AbstractUnitPolygon<ConnectionData, ConnectionRemote> {
 

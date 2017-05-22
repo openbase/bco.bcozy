@@ -23,7 +23,8 @@ import javafx.geometry.BoundingBox;
 import javafx.scene.layout.BorderPane;
 
 /**
- * Created by hoestreich on 11/10/15.
+ * @author hoestreich
+ * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>
  */
 public class ForegroundPane extends BorderPane {
 
@@ -32,18 +33,18 @@ public class ForegroundPane extends BorderPane {
     private final CenterPane centerPane;
     private final MenuHeader menuHeader;
     private final InfoFooter infoFooter;
+
     /**
      * Constructor for the ForegroundPane.
+     *
      * @param height Height of the application window
      * @param width Width of the application window
      */
     public ForegroundPane(final double height, final double width) throws InterruptedException {
-        //CHECKSTYLE.OFF: MagicNumber
         this.mainMenu = new MainMenu(height - 150, 300);
         this.contextMenu = new ContextMenu(height - 150, 300);
         this.menuHeader = new MenuHeader(30, width);
         this.infoFooter = new InfoFooter(20, width);
-        //CHECKSTYLE.ON: MagicNumber
         this.centerPane = new CenterPane();
 
         //this.setTop(this.menuHeader);
@@ -57,6 +58,7 @@ public class ForegroundPane extends BorderPane {
 
     /**
      * Getter for the main menu (on the left).
+     *
      * @return MainMenu (VBox)
      */
     public MainMenu getMainMenu() {
@@ -65,6 +67,7 @@ public class ForegroundPane extends BorderPane {
 
     /**
      * Getter for the context menu (bottom or right).
+     *
      * @return ContextMenu Instance (VBox)
      */
     public ContextMenu getContextMenu() {
@@ -73,6 +76,7 @@ public class ForegroundPane extends BorderPane {
 
     /**
      * Getter for the center pane.
+     *
      * @return CenterPane
      */
     public CenterPane getCenterPane() {
@@ -81,6 +85,7 @@ public class ForegroundPane extends BorderPane {
 
     /**
      * Getter for the info footer (bottom).
+     *
      * @return InfoFooter (HBox)
      */
     public InfoFooter getInfoFooter() {
@@ -89,6 +94,7 @@ public class ForegroundPane extends BorderPane {
 
     /**
      * Method to provide a bounding box within which the location should be drawn.
+     *
      * @return a bounding box with the values.
      */
     public BoundingBox getBoundingBox() {
@@ -100,6 +106,7 @@ public class ForegroundPane extends BorderPane {
 
     /**
      * Method to provide the width property of the bounding box within which the location should be drawn.
+     *
      * @return a property of the width from the bounding box.
      */
     public ReadOnlyDoubleProperty getMainMenuWidthProperty() {

@@ -27,8 +27,8 @@ import java.util.MissingResourceException;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.ResourceBundle;
-import org.openbase.bco.bcozy.view.mainmenupanes.UserPane;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.openbase.jul.exception.printer.LogLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,7 +86,7 @@ public class ObserverLabel extends Label implements Observer {
         try {
             super.setText(languageBundle.getString(this.identifier));
         } catch (MissingResourceException ex) {
-            ExceptionPrinter.printHistory("Could not resolve Identifier["+identifier+"]", ex, LOGGER);
+            ExceptionPrinter.printHistory("Could not resolve Identifier["+identifier+"]", ex, LOGGER, LogLevel.WARN);
             super.setText(this.identifier);
         }
     }
