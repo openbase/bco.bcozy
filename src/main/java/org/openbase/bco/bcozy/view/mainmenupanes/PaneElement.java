@@ -32,7 +32,7 @@ public abstract class PaneElement extends VBox {
      * @param content the content which should be placed within this pane.
      */
     public PaneElement(final Node content) {
-        this.init();
+        this();
         this.getChildren().add(content);
     }
 
@@ -40,16 +40,26 @@ public abstract class PaneElement extends VBox {
      * Default Constructor for a Pane Element to guarantee a similar layout for all gui elements.
      */
     public PaneElement() {
-        this.init();
+        this(true);
+    }
+
+
+    /**
+     * Default Constructor for a Pane Element to guarantee a similar layout for all gui elements.
+     */
+    public PaneElement(boolean background) {
+        this.init(background);
     }
 
     /**
      * Method to initialize all gui stuff.
      */
-    private void init() {
+    private void init(boolean background) {
         this.setFillWidth(true);
         this.setAlignment(Pos.CENTER);
-        this.getStyleClass().addAll("floating-box");
+        if (background) {
+            this.getStyleClass().addAll("floating-box");
+        }
     }
 
     /**

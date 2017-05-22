@@ -71,6 +71,11 @@ public final class Constants {
     public static final double MIDDLE_ICON = 48.0;
 
     /**
+     * The size of an LogoPane Icon.
+     */
+    public static final double LOGO_ICON = 40.0;
+
+    /**
      * The size for a small size icon.
      */
     public static final double SMALL_ICON = 32.0;

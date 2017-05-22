@@ -26,10 +26,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import org.openbase.bco.bcozy.view.mainmenupanes.AvailableUsersPane;
-import org.openbase.bco.bcozy.view.mainmenupanes.ConnectionPane;
-import org.openbase.bco.bcozy.view.mainmenupanes.LoginPane;
-import org.openbase.bco.bcozy.view.mainmenupanes.SettingsPane;
+import org.openbase.bco.bcozy.view.mainmenupanes.*;
 import org.openbase.jps.core.JPService;
 import org.openbase.jps.exception.JPNotAvailableException;
 import org.openbase.jps.preset.JPDebugMode;
@@ -63,6 +60,7 @@ public class MainMenu extends StackPane {
     private final SettingsPane settingsPane;
     private final ImageView logoView;
     private final ImageView logoViewSmall;
+    private final LogoPane logoPane;
 
     /**
      * Constructor for the MainMenu.
@@ -96,6 +94,8 @@ public class MainMenu extends StackPane {
         logoViewSmall = ImageViewProvider.createImageView("/icons/bc.png", Constants.MIDDLE_ICON);
 
         connectionPane = new ConnectionPane();
+        logoPane = new LogoPane();
+
         availableUsersPanePane = new AvailableUsersPane();
         settingsPane = new SettingsPane();
         mainMenuFloatingButton = new FloatingButton(new SVGIcon(MaterialIcon.MENU, Constants.MIDDLE_ICON, true));
@@ -108,16 +108,16 @@ public class MainMenu extends StackPane {
         try {
             if (JPService.getProperty(JPDebugMode.class).getValue()) {
                 verticalLayout.getChildren()
-                        .addAll(logoView, initRemoteButton, fetchLocationButton, fillHashesButton,
-                                fillContextMenuButton, connectionPane, loginPane, availableUsersPanePane, settingsPane);
+                        .addAll(logoPane, initRemoteButton, fetchLocationButton, fillHashesButton,
+                                fillContextMenuButton, loginPane, availableUsersPanePane, settingsPane);
             } else {
                 verticalLayout.getChildren()
-                        .addAll(logoView, connectionPane, loginPane, availableUsersPanePane, settingsPane);
+                        .addAll(logoPane, loginPane, availableUsersPanePane, settingsPane);
             }
         } catch (JPNotAvailableException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
             verticalLayout.getChildren()
-                    .addAll(logoView, connectionPane, loginPane, availableUsersPanePane, settingsPane);
+                    .addAll(logoPane, loginPane, availableUsersPanePane, settingsPane);
         }
         this.getChildren().addAll(verticalLayout, mainMenuFloatingButton);
         // Styling components with CSS
@@ -256,7 +256,7 @@ public class MainMenu extends StackPane {
         StackPane.setAlignment(mainMenuFloatingButton, Pos.TOP_CENTER);
         mainMenuFloatingButton.translateYProperty().set(-(Constants.FLOATING_BUTTON_OFFSET));
         verticalLayoutSmall.getChildren().clear();
-        verticalLayoutSmall.getChildren().addAll(logoViewSmall, connectionPane.getStatusIcon(),
+        verticalLayoutSmall.getChildren().addAll(logoPane.getStatusIcon(),
                 loginPane.getStatusIcon(), availableUsersPanePane.getStatusIcon(), settingsPane.getStatusIcon());
         this.getChildren().clear();
         this.getChildren().addAll(verticalLayoutSmall, mainMenuFloatingButton);
