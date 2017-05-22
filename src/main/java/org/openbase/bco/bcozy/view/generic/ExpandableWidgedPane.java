@@ -30,12 +30,14 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import org.openbase.bco.bcozy.view.Constants;
+import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.printer.ExceptionPrinter;
 
 /**
  * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>
  */
 public class ExpandableWidgedPane extends WidgetPane {
-
+    
     final Pane bodyPane;
     private Timeline timelineUp;
     private Timeline timelineDown;
@@ -44,14 +46,14 @@ public class ExpandableWidgedPane extends WidgetPane {
      * Property to define expand state.
      */
     protected final BooleanProperty expansionProperty;
-
+    
     public ExpandableWidgedPane(final boolean initialExpanded, final boolean activateable) {
         super(activateable);
         this.bodyPane = new HBox();
         this.expansionProperty = new SimpleBooleanProperty(false);
         this.initContent();
     }
-
+    
     private void initContent() {
         // init body pane
         bodyPane.getStyleClass().clear();
@@ -69,7 +71,7 @@ public class ExpandableWidgedPane extends WidgetPane {
 //                timelineUp.play();
             }
         });
-
+        
         expansionProperty.set(false);
 
         // make sure pane is not expanded if the pane is disabled
@@ -78,35 +80,41 @@ public class ExpandableWidgedPane extends WidgetPane {
                 expansionProperty.set(false);
             }
         });
-
-        initBodyContent(bodyPane);
+        
+        try {
+            initBodyContent(bodyPane);
+        } catch (CouldNotPerformException | RuntimeException ex) {
+            ExceptionPrinter.printHistory("Could not init body content of " + this, ex, LOGGER);
+        }
 //        setAnimation(headPane, bodyPane);
 
         secondaryActivationProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
             expansionProperty.set(newValue);
         });
-
+        
     }
 
     /**
      * Should be overwritten for custom body content implementation.
+     *
      * @param bodyPane
+     * @throws org.openbase.jul.exception.CouldNotPerformException can be thrown if something went wrong.
      */
-    protected void initBodyContent(final Pane bodyPane) {
-
+    protected void initBodyContent(final Pane bodyPane) throws CouldNotPerformException {
+        
     }
-
+    
     private void setAnimation(final BorderPane headContent, final Pane bodyContent) {
         final Rectangle rectangleClip = new Rectangle(Integer.MAX_VALUE, headContent.prefHeightProperty().getValue());
         this.setClip(rectangleClip);
-
+        
         timelineDown = new Timeline();
         timelineUp = new Timeline();
 
         // animation for scroll down
         timelineDown.setCycleCount(0);
         timelineDown.setAutoReverse(true);
-
+        
         final KeyValue kvDwn1 = new KeyValue(rectangleClip.heightProperty(), headContent.prefHeightProperty().getValue() + bodyContent.prefHeightProperty().getValue());
         final KeyValue kvDwn2 = new KeyValue(rectangleClip.translateYProperty(), 0);
         final KeyValue kvDwn3 = new KeyValue(bodyContent.prefHeightProperty(), bodyContent.prefHeightProperty().getValue());
@@ -119,7 +127,7 @@ public class ExpandableWidgedPane extends WidgetPane {
         // animation for scroll up
         timelineUp.setCycleCount(1);
         timelineUp.setAutoReverse(true);
-
+        
         final KeyValue kvUp1 = new KeyValue(rectangleClip.heightProperty(), headContent.prefHeightProperty().getValue());
         final KeyValue kvUp2 = new KeyValue(rectangleClip.translateYProperty(), 0);
         final KeyValue kvUp3 = new KeyValue(bodyContent.prefHeightProperty(), 0);
@@ -129,7 +137,7 @@ public class ExpandableWidgedPane extends WidgetPane {
         final KeyFrame kfUp = new KeyFrame(Duration.millis(Constants.ANIMATION_TIME), kvUp1, kvUp2, kvUp3, kvUp4, kvUp5, kvUp6);
         timelineUp.getKeyFrames().add(kfUp);
     }
-
+    
     private void toggleVisibility() {
         if (expansionProperty.get()) {
             expansionProperty.set(false);
@@ -137,7 +145,7 @@ public class ExpandableWidgedPane extends WidgetPane {
             expansionProperty.set(true);
         }
     }
-
+    
     public BooleanProperty expansionProperty() {
         return expansionProperty;
     }
