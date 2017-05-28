@@ -12,8 +12,10 @@ import org.openbase.bco.bcozy.view.MainMenu;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 /**
- * Created by vdasilva on 21.05.17.
+ * Contains Application Logo and connection indicator.
+ * @author vdasilva
  */
 public class LogoPane extends HBox{
     private static final Logger LOGGER = LoggerFactory.getLogger(LogoPane.class);

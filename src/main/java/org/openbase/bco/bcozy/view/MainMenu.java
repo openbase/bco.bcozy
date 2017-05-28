@@ -1,17 +1,17 @@
 /**
  * ==================================================================
- *
+ * <p>
  * This file is part of org.openbase.bco.bcozy.
- *
+ * <p>
  * org.openbase.bco.bcozy is free software: you can redistribute it and modify
  * it under the terms of the GNU General Public License (Version 3)
  * as published by the Free Software Foundation.
- *
+ * <p>
  * org.openbase.bco.bcozy is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
@@ -19,7 +19,9 @@
 package org.openbase.bco.bcozy.view;
 
 import de.jensd.fx.glyphs.materialicons.MaterialIcon;
+
 import java.util.logging.Level;
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -38,6 +40,7 @@ import org.slf4j.LoggerFactory;
 /**
  * @author hoestreich
  * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>
+ * @author vdasilva
  */
 public class MainMenu extends StackPane implements VoidInitializable {
 
@@ -56,6 +59,8 @@ public class MainMenu extends StackPane implements VoidInitializable {
     private final ImageView logoView;
     private final ImageView logoViewSmall;
     private final LogoPane logoPane;
+    private final UserActionPane userActionPane;
+    private final RegistrationPane registrationPane;
 
     /**
      * Constructor for the MainMenu.
@@ -78,6 +83,9 @@ public class MainMenu extends StackPane implements VoidInitializable {
         this.verticalLayoutSmall = new VBox(Constants.INSETS * 2);
         this.verticalLayoutSmall.setAlignment(Pos.TOP_CENTER);
         this.loginPane = new LoginPane();
+        this.registrationPane = new RegistrationPane();
+        this.logoPane = new LogoPane();
+        this.userActionPane = new UserActionPane(loginPane, registrationPane);
 
         this.logoView = ImageViewProvider.createImageView("/icons/bcozy.png", Constants.MAXLOGOWIDTH, Double.MAX_VALUE);
         this.logoViewSmall = ImageViewProvider.createImageView("/icons/bc.png", Constants.MIDDLE_ICON);
@@ -94,7 +102,7 @@ public class MainMenu extends StackPane implements VoidInitializable {
         this.mainMenuFloatingButton.translateYProperty().set(-(Constants.FLOATING_BUTTON_OFFSET));
 
         // Adding components to their parents
-        this.verticalLayout.getChildren().addAll(logoView, connectionPane, loginPane, availableUsersPane, settingsPane);
+        this.verticalLayout.getChildren().addAll(logoPane, userActionPane, availableUsersPane, settingsPane);
         this.getChildren().addAll(verticalLayout, mainMenuFloatingButton);
 
         // Styling components with CSS
@@ -176,7 +184,7 @@ public class MainMenu extends StackPane implements VoidInitializable {
         setPrefWidth(width);
         getChildren().clear();
         StackPane.setAlignment(mainMenuFloatingButton, Pos.TOP_RIGHT);
-        connectionPane.maximize();
+        //connectionPane.maximize();
         mainMenuFloatingButton.translateYProperty().set(-(Constants.FLOATING_BUTTON_OFFSET));
         getChildren().addAll(verticalLayout, mainMenuFloatingButton);
     }
@@ -190,10 +198,11 @@ public class MainMenu extends StackPane implements VoidInitializable {
         setMinHeight(height);
         setPrefHeight(height);
         setMinWidth(Constants.SMALL_MAIN_MENU_WIDTH);
+        setPrefWidth(Constants.SMALL_MAIN_MENU_WIDTH);
         StackPane.setAlignment(mainMenuFloatingButton, Pos.TOP_CENTER);
         mainMenuFloatingButton.translateYProperty().set(-(Constants.FLOATING_BUTTON_OFFSET));
         verticalLayoutSmall.getChildren().clear();
-        verticalLayoutSmall.getChildren().addAll(logoPane.getStatusIcon(), loginPane.getStatusIcon(), availableUsersPane.getStatusIcon(), settingsPane.getStatusIcon());
+        verticalLayoutSmall.getChildren().addAll(logoPane.getStatusIcon(), userActionPane.getStatusIcon(), availableUsersPane.getStatusIcon(), settingsPane.getStatusIcon());
         getChildren().clear();
         getChildren().addAll(verticalLayoutSmall, mainMenuFloatingButton);
     }
