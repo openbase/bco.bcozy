@@ -29,6 +29,7 @@ import org.openbase.jul.exception.InstantiationException;
 public class BackgroundPane extends StackPane {
 
     private final LocationPane locationPane;
+	private final UnitSymbolsPane unitsLayerPane;
     private double prevMouseCordX; //NOPMD
     private double prevMouseCordY; //NOPMD
 
@@ -39,9 +40,13 @@ public class BackgroundPane extends StackPane {
      */
     public BackgroundPane(final ForegroundPane foregroundPane) throws InstantiationException, InterruptedException {
         try {
-            locationPane = LocationPane.getInstance(foregroundPane);
+			
+			locationPane = LocationPane.getInstance(foregroundPane);
 
             this.getChildren().add(locationPane);
+			//locationPane.addUnit(new SVGIcon(FontAwesomeIcon.APPLE, 30.0, true), null, new Point2D(5,5));
+			unitsLayerPane = new UnitSymbolsPane(this);
+		 //   this.getChildren().add(unitsLayerPane);
             this.getStyleClass().add("background-pane");
 
             this.setOnMousePressed(event -> {
@@ -77,6 +82,7 @@ public class BackgroundPane extends StackPane {
         }
     }
 
+	
     /**
      * @return The LocationPane.
      */

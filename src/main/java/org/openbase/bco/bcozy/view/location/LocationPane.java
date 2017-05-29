@@ -18,6 +18,7 @@
  */
 package org.openbase.bco.bcozy.view.location;
 
+import java.util.ArrayList;
 import javafx.animation.ParallelTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
@@ -38,11 +39,14 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
+import org.openbase.bco.dal.remote.unit.Units;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.EnumNotSupportedException;
 import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import rst.domotic.unit.UnitConfigType.UnitConfig;
+import rst.domotic.unit.UnitTemplateType;
 
 /**
  * @author julian
@@ -63,10 +67,13 @@ public final class LocationPane extends Pane {
 
     private LocationPolygon selectedLocation;
     private ZonePolygon rootRoom;
+	
+	//private final StackPane backgroundPane;
     private final ForegroundPane foregroundPane;
     private final Map<String, TilePolygon> tileMap;
     private final Map<String, RegionPolygon> regionMap;
     private final Map<String, ConnectionPolygon> connectionMap;
+	private final List<UnitButton> unitSymbols;
 
     private final SimpleStringProperty selectedLocationId;
 
@@ -82,12 +89,17 @@ public final class LocationPane extends Pane {
     private LocationPane(final ForegroundPane foregroundPane) throws org.openbase.jul.exception.InstantiationException, InterruptedException {
         super();
 
-//        try {
+//        try {				
         this.foregroundPane = foregroundPane;
-
+		//this.backgroundPane = background;
+		
         tileMap = new HashMap<>();
         regionMap = new HashMap<>();
         connectionMap = new HashMap<>();
+		unitSymbols = new ArrayList();
+	  /* tileMap = background.getTileMap();
+	   regionMap = background.getRegionMap();
+	   connectionMap = background.getConnectionMap();*/
 
 //            Registries.getLocationRegistry().waitForData();
 //            selectedLocation = new ZonePolygon(0.0, 0.0, 0.0, 0.0);
@@ -163,7 +175,7 @@ public final class LocationPane extends Pane {
             if (LocationPane.instance == null) {
                 LocationPane.instance = new LocationPane(foregroundPane);
             }
-        }
+        }		
         return LocationPane.instance;
     }
 
@@ -213,11 +225,22 @@ public final class LocationPane extends Pane {
                 default:
                     throw new EnumNotSupportedException(locationUnitConfig.getLocationConfig().getType(), this);
             }
-
+			/*for (final Map.Entry<UnitTemplateType.UnitTemplate.UnitType, List<UnitRemote>> nextEntry : Units.getUnit(locationUnitConfig.getId(), false, Units.LOCATION).getUnitMap().entrySet()) {
+                if (nextEntry.getValue().isEmpty()) {
+                    continue;
+                }
+               // AbstractUnitPane blubs = UnitPaneFactoryImpl.getInstance().newInstance(nextEntry.getKey());
+				
+				//this.addUnit(blubs.getIcon(), null, new Point2D(5,5));
+				//for(UnitRemote u: nextEntry.getValue()) {
+			//		u.getConfig().
+		//		}
+            }*/
         } catch (CouldNotPerformException ex) {
             throw new CouldNotPerformException("Could not add location!", ex);
         }
     }
+	
 
     /**
      * Adds a connection to the location Pane.
@@ -287,6 +310,14 @@ public final class LocationPane extends Pane {
         unitButton.setTranslateY(position.getY());
         this.getChildren().add(unitButton);
     }
+	
+	public void addUnit(final SVGIcon svgIcon,
+            final Point2D position) {
+		final UnitButton unitButton = new UnitButton(svgIcon, null);
+        unitButton.setTranslateX(position.getX());
+        unitButton.setTranslateY(position.getY());
+		 unitSymbols.add(unitButton);
+    }
 
     /**
      * Erases all locations from the locationPane.
@@ -342,6 +373,10 @@ public final class LocationPane extends Pane {
             rootRoom.addCuttingShape(connectionPolygon);
             this.getChildren().add(connectionPolygon);
         });
+		
+		unitSymbols.forEach((icon) -> {
+			this.getChildren().add(icon);
+		});
 
         if (rootRoom != null) {
             this.getChildren().add(rootRoom);
