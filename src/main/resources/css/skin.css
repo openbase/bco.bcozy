@@ -473,7 +473,7 @@
 }
 
 .tab-pane:tabcontenthidden {
-    -fx-max-height: 50px;
+    -fx-max-height: 40px;
 }
 
 .tab-button {
@@ -487,6 +487,11 @@
 .tab-button:hover {
     -fx-background-color: white;
 }
+
+.tab-content-area {
+
+}
+
 
 /*******************************************************************************
  *                                                                             *

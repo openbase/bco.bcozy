@@ -90,7 +90,27 @@
     -fx-background-color: -bg-color;
 }
 
-.tab-pane .tab {
+.tab {
+    -fx-background-color: -bg-color;
+    -fx-focus-color: lightgray;
+    -fx-faint-focus-color: lightgray;
+
+}
+
+.tab-content-area {
+    -fx-border-color: f2f2f2;
+    -fx-border-width: 2px;
+}
+
+.tab:selected {
+    -fx-background: -bg-color;
+}
+.tab:selected
+{
+    -fx-background-color: #f2f2f2;
+}
+
+.bg-white {
     -fx-background-color: -bg-color;
 }
 

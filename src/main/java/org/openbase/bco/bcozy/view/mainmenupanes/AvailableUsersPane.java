@@ -75,8 +75,8 @@ public class AvailableUsersPane extends PaneElement {
 
         scrollBar.maxProperty().bind(verticalScrollPane.vmaxProperty());
         scrollBar.minProperty().bind(verticalScrollPane.vminProperty());
-//
-//        AdvancedHorizontalSlider advancedHorizontalSlider = new AdvancedHorizontalSlider(10, 30);
+
+        //AdvancedHorizontalSlider advancedHorizontalSlider = new AdvancedHorizontalSlider(10, 30);
 
         verticalScrollPane.setContent(userPanes);
         verticalScrollPane.setFitToWidth(true);

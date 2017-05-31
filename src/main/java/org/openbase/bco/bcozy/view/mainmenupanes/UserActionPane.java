@@ -64,7 +64,6 @@ public class UserActionPane extends PaneElement {
                 (ov, oldTab, newTab) -> setState(State.OPEN));
 
 
-
         toggleBtn = new Button();
         toggleBtn.setOnAction(e -> toggleState());
         toggleBtn.getStyleClass().add("tab-button");
@@ -76,20 +75,29 @@ public class UserActionPane extends PaneElement {
         // Anchor the controls
         AnchorPane anchor = new AnchorPane();
         anchor.getChildren().addAll(userActionPane, hbox);
+        anchor.getStyleClass().addAll("bg-white");
         AnchorPane.setTopAnchor(hbox, 3.0);
         AnchorPane.setRightAnchor(hbox, 5.0);
-        AnchorPane.setTopAnchor(userActionPane, 1.0);
-        AnchorPane.setRightAnchor(userActionPane, 1.0);
-        AnchorPane.setLeftAnchor(userActionPane, 1.0);
-        AnchorPane.setBottomAnchor(userActionPane, 1.0);
+        AnchorPane.setTopAnchor(userActionPane, -2.0);
+        AnchorPane.setRightAnchor(userActionPane, 10.0);
+        AnchorPane.setLeftAnchor(userActionPane, 10.0);
+        AnchorPane.setBottomAnchor(userActionPane, 10.0);
+
+
 
         Tab loginTab = new Tab();
         loginTab.setGraphic(new SVGIcon(MaterialDesignIcon.LOGIN, Constants.EXTRA_SMALL_ICON, true));
         loginTab.setContent(loginPane);
+        loginPane.getStyleClass().add("tab-content-area");
+        loginTab.getStyleClass().addAll("tab");
+
 
         Tab registerTab = new Tab();
         registerTab.setGraphic(new SVGIcon(MaterialDesignIcon.ACCOUNT_PLUS, Constants.EXTRA_SMALL_ICON, true));
         registerTab.setContent(registrationPane);
+        registrationPane.getStyleClass().addAll("tab-content-area");
+        registerTab.getStyleClass().add("tab");
+
 
         userActionPane.getTabs().addAll(loginTab, registerTab);
         userActionPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
