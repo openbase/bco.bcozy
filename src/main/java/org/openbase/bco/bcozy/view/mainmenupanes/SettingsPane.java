@@ -56,6 +56,7 @@ public class SettingsPane extends PaneElement {
         statusIcon = new SVGIcon(MaterialIcon.TUNE, Constants.SMALL_ICON, true);
 
         final TitledPane settingsPane = new TitledPane();
+        settingsPane.setExpanded(false);
         settingsPane.getStyleClass().add("settings-pane");
         //final HBox settingsHeader = new HBox();
         settingsIcon = new SVGIcon(MaterialIcon.TUNE, Constants.EXTRA_SMALL_ICON, true);

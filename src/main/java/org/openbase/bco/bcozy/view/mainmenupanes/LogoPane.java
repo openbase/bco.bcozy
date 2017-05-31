@@ -36,7 +36,7 @@ public class LogoPane extends HBox{
 
         this.setAlignment(Pos.CENTER);
         this.getChildren().addAll(logoView, connectionPane);
-        this.setSpacing(30);
+        this.setSpacing(10);
 
 
     }

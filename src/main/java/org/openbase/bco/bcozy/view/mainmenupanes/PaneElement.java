@@ -23,7 +23,8 @@ import javafx.scene.Node;
 import javafx.scene.layout.VBox;
 
 /**
- * Created by hoestreich on 11/19/15.
+ * @author hoestreich
+ * @author vdasilva
  */
 public abstract class PaneElement extends VBox {
 
@@ -40,25 +41,28 @@ public abstract class PaneElement extends VBox {
      * Default Constructor for a Pane Element to guarantee a similar layout for all gui elements.
      */
     public PaneElement() {
-        this(true);
+        this(false);
     }
 
 
     /**
-     * Default Constructor for a Pane Element to guarantee a similar layout for all gui elements.
+     * Constructor for a Pane Element to guarantee a similar layout for all gui elements.
      */
-    public PaneElement(boolean background) {
-        this.init(background);
+    public PaneElement(boolean plain) {
+        this.init(plain);
     }
 
     /**
      * Method to initialize all gui stuff.
      */
-    private void init(boolean background) {
+    private void init(boolean plain) {
         this.setFillWidth(true);
         this.setAlignment(Pos.CENTER);
-        if (background) {
+        if (plain) {
+            this.getStyleClass().addAll("floating-box-plain");
+        } else {
             this.getStyleClass().addAll("floating-box");
+
         }
     }
 

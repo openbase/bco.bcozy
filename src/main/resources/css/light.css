@@ -17,7 +17,7 @@
     -devider-color: slategray;
     -icons-color: black;
     -flat-button-hover-color: slategray /*linear-gradient(from 60% 20% to 60% 80%, transparent, lightgray, transparent)*/;
-    -button-hover-color: rgba(228.0, 228.0, 228.0, 1.0);/*radial-gradient(center 50% 50%, radius 50%, rgba(180,180,180, 0.8), transparent)*/;
+    -button-hover-color: rgba(228.0, 228.0, 228.0, 1.0); /*radial-gradient(center 50% 50%, radius 50%, rgba(180,180,180, 0.8), transparent)*/;
 
     -fx-background-color: -bg-color;
 
@@ -28,10 +28,10 @@
 }
 
 /*.glyph-icon{*/
-    /*-fx-fill: -icons-color;*/
+/*-fx-fill: -icons-color;*/
 /*}*/
 
-.icons{
+.icons {
     -fx-fill: -icons-color;
 }
 
@@ -44,11 +44,11 @@
 }
 
 .linear-gradient-left-to-right {
-    -fx-background-color: linear-gradient(to right, rgba(0,0,0,0.8) 80%, rgba(0,0,0,0.5) 90%, rgba(0,0,0,0.0) 100%);
+    -fx-background-color: linear-gradient(to right, rgba(0, 0, 0, 0.8) 80%, rgba(0, 0, 0, 0.5) 90%, rgba(0, 0, 0, 0.0) 100%);
 }
 
 .linear-gradient-right-to-left {
-    -fx-background-color: linear-gradient(to left, rgba(0,0,0,0.8) 80%, rgba(0,0,0,0.5) 90%, rgba(0,0,0,0.0) 100%);
+    -fx-background-color: linear-gradient(to left, rgba(0, 0, 0, 0.8) 80%, rgba(0, 0, 0, 0.5) 90%, rgba(0, 0, 0, 0.0) 100%);
 }
 
 .floating-box {
@@ -64,24 +64,34 @@
 }
 
 /*.info-footer {*/
-    /*-fx-background-color: -bg-color;*/
+/*-fx-background-color: -bg-color;*/
 /*}*/
 
 .floating-button {
     -fx-background-color: -bg-color;
     -fx-effect: dropshadow(gaussian, -shadow-color, 10.0, 0.0, -4.0, 4.0);
 }
+
 .main-menu-pane {
     -fx-background-color: -bg-color;
     -fx-effect: dropshadow(gaussian, -shadow-color, 10.0, 0.0, 0.0, 4.0);
 }
 
 .list-element {
-    -fx-border-color:
-            transparent
-            transparent
-            -devider-color
-            transparent;
+    -fx-border-color: transparent transparent -devider-color transparent;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * TabPane                                                                     *
+ *                                                                             *
+ ******************************************************************************/
+.tab-pane:top *.tab-header-area {
+    -fx-background-color: -bg-color;
+}
+
+.tab-pane .tab {
+    -fx-background-color: -bg-color;
 }
 
 /*******************************************************************************
@@ -120,7 +130,7 @@
  *                                                                             *
  ******************************************************************************/
 
-.toggle-button, .button{
+.toggle-button, .button {
     -fx-background-color: transparent;
     -fx-text-fill: -fx-text-base-color;
 }
@@ -146,10 +156,11 @@
     -fx-background-color: -bg-color;
 }
 
-.toggle-switch .thumb-area{
+.toggle-switch .thumb-area {
     -fx-background-color: -off-indicator;
 }
-.toggle-switch:selected .thumb-area{
+
+.toggle-switch:selected .thumb-area {
     -fx-background-color: -on-indicator;
 }
 
@@ -171,21 +182,13 @@
 
 .text-area, .text-field, .text-input, .password-field {
     -fx-background-color: transparent;
-    -fx-border-color:
-            transparent
-            transparent
-            -border-color
-            transparent;
+    -fx-border-color: transparent transparent -border-color transparent;
     -fx-prompt-text-fill: derive(-bg-color, 50.0%);
     -fx-highlight-fill: -highlight-color;
 }
 
 .text-area-wrong, .text-field-wrong, .text-input-wrong, .password-field-wrong {
-    -fx-border-color:
-            transparent
-            transparent
-            -wrong-indicator
-            transparent;
+    -fx-border-color: transparent transparent -wrong-indicator transparent;
 }
 
 .text-area, .text, .text-field, .text-input, .password-field > * > .text {
@@ -202,7 +205,7 @@
     -fx-text-box-border: transparent;
 }
 
-.text-area:focused  .content {
+.text-area:focused .content {
     -fx-background-color: transparent, -bg-color, transparent, -bg-color;
     -fx-text-box-border: transparent;
 }
@@ -213,7 +216,7 @@
 }
 
 .scroll-bar:vertical > .track-background,
-.scroll-bar:horizontal > .track-background{
+.scroll-bar:horizontal > .track-background {
     -fx-background-color: transparent;
 }
 
@@ -233,7 +236,8 @@
 .scroll-bar > .decrement-button > .decrement-arrow {
     -fx-background-color: -controls-color;
 }
-.scroll-bar > .track-background{
+
+.scroll-bar > .track-background {
     -fx-background-color: transparent;
 }
 
@@ -250,11 +254,11 @@
 }
 
 .plus-minus-slider:horizontal {
-    -fx-background-color: derive(-controls-color,30.0%);
+    -fx-background-color: derive(-controls-color, 30.0%);
 }
 
 .plus-minus-slider:vertical {
-    -fx-background-color: derive(-controls-color,30.0%);
+    -fx-background-color: derive(-controls-color, 30.0%);
 }
 
 .plus-minus-slider > * > .slider > .track {
@@ -270,11 +274,11 @@
 }
 
 .plus-minus-slider > * > .adjust-plus {
-    -fx-background-color: -fx-mark-highlight-color,derive(-controls-color,-45.0%);
+    -fx-background-color: -fx-mark-highlight-color, derive(-controls-color, -45.0%);
 }
 
 .plus-minus-slider > * > .adjust-minus {
-    -fx-background-color: -fx-mark-highlight-color,derive(-controls-color,-45.0%);
+    -fx-background-color: -fx-mark-highlight-color, derive(-controls-color, -45.0%);
 }
 
 /*******************************************************************************
@@ -300,12 +304,9 @@
 
 .choice-box {
     -fx-background-color: -bg-color;
-    -fx-border-color:
-            transparent
-            transparent
-            -border-color
-            transparent;
+    -fx-border-color: transparent transparent -border-color transparent;
 }
+
 .choice-box > .open-button {
     -fx-background-color: -bg-color;
 }
@@ -327,7 +328,6 @@
 .menu-item:focused {
     -fx-background-color: -highlight-color;
 }
-
 
 /*******************************************************************************
  *                                                                             *
@@ -360,7 +360,6 @@
     -fx-background-color: -bg-color;
 }
 
-
 /*******************************************************************************
  *                                                                             *
  * RadioButton                                                                 *
@@ -390,7 +389,6 @@
     -fx-background-color: -bg-color;
 }
 
-
 /*******************************************************************************
  *                                                                             *
  * ProgressBar                                                                 *
@@ -404,12 +402,12 @@
 .progress-bar > .bar {
     /* barrier tape style*/
     /*-fx-background-color: linear-gradient(*/
-            /*from 0px .75em to .75em 0px,*/
-            /*repeat,*/
-            /*slategrey 0%,*/
-            /*slategrey 49%,*/
-            /*derive(slategrey, 30%) 50%,*/
-            /*derive(slategrey, 30%) 99%*/
+    /*from 0px .75em to .75em 0px,*/
+    /*repeat,*/
+    /*slategrey 0%,*/
+    /*slategrey 49%,*/
+    /*derive(slategrey, 30%) 50%,*/
+    /*derive(slategrey, 30%) 99%*/
     /*);*/
     -fx-background-color: -controls-color;
 }
@@ -425,7 +423,7 @@
 }
 
 .progress-indicator > .determinate-indicator > .progress {
-    -fx-background-color:  -highlight-color,  derive(-highlight-color, 50.0%);
+    -fx-background-color: -highlight-color, derive(-highlight-color, 50.0%);
 }
 
 .progress-indicator > .determinate-indicator > .percentage {
@@ -446,6 +444,7 @@
     -fx-border-color: transparent;
     -fx-effect: dropshadow(gaussian, -shadow-color, 10, 0.0, -2, 2);
 }
+
 .titled-pane > .title {
     -fx-background-color: -bg-color;
     -fx-border-color: -border-color;
@@ -459,6 +458,7 @@
 .titled-pane > .title > .arrow-button .arrow {
     -fx-background-color: derive(-fx-text-fill, 70%);
 }
+
 .titled-pane:focused > .title > .arrow-button .arrow {
     -fx-effect: none;
     -fx-background-color: derive(-fx-text-fill, 70%);
@@ -468,6 +468,7 @@
     -fx-border-color: transparent;
     -fx-effect: null;
 }
+
 .settings-pane > .title {
     -fx-background-color: transparent;
 }
@@ -483,11 +484,7 @@
  ******************************************************************************/
 
 .widget-pane {
-    -fx-border-color:
-            transparent
-            transparent
-            -border-color
-            transparent;
+    -fx-border-color: transparent transparent -border-color transparent;
 }
 
 .body-pane {
@@ -505,7 +502,7 @@
 }
 
 .background-pane {
-    -fx-background-color: rgb(64.0 , 64.0, 64.0);
+    -fx-background-color: rgb(64.0, 64.0, 64.0);
 }
 
 .info-pane {
@@ -528,8 +525,7 @@
     -fx-background-color: -controls-color;
 }
 
-
-.temperature-slider-pane-top .temperature-slider-pane-bottom{
+.temperature-slider-pane-top .temperature-slider-pane-bottom {
     -fx-background-color: -controls-color !important;
     -fx-text-fill: -bg-color;
 }

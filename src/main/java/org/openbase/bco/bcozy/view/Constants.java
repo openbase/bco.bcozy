@@ -264,12 +264,17 @@ public final class Constants {
     /**
      * The offset to push the floating button on the border.
      */
-    public static final double FLOATING_BUTTON_OFFSET = 85.0;
+    public static final double FLOATING_BUTTON_OFFSET = 55.0;
 
     /**
      * The size for the small main menu.
      */
     public static final double SMALL_MAIN_MENU_WIDTH = 60.0;
+
+    /**
+     * The pref width for the small main menu.
+     */
+    public static final double SMALL_MAIN_MENU_WIDTH_PREF = 98.0;
 
     /**
      * Divide constant for HSB color init.
@@ -436,6 +441,7 @@ public final class Constants {
      * Event filter time.
      */
     public static final long FILTER_TIME = 100L;
+
 
     /**
      * Private Constructor.

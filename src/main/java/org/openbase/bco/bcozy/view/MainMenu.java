@@ -76,6 +76,7 @@ public class MainMenu extends StackPane implements VoidInitializable {
         this.maximized = true;
         this.setMinHeight(height);
         this.setMinWidth(width);
+        this.setPrefWidth(width);
 
         // Initializing components
         this.verticalLayout = new VBox(Constants.INSETS);
@@ -107,6 +108,7 @@ public class MainMenu extends StackPane implements VoidInitializable {
 
         // Styling components with CSS
         this.getStyleClass().addAll("main-menu");
+
     }
 
     @Override
@@ -198,7 +200,7 @@ public class MainMenu extends StackPane implements VoidInitializable {
         setMinHeight(height);
         setPrefHeight(height);
         setMinWidth(Constants.SMALL_MAIN_MENU_WIDTH);
-        setPrefWidth(Constants.SMALL_MAIN_MENU_WIDTH);
+        setPrefWidth(Constants.SMALL_MAIN_MENU_WIDTH_PREF);
         StackPane.setAlignment(mainMenuFloatingButton, Pos.TOP_CENTER);
         mainMenuFloatingButton.translateYProperty().set(-(Constants.FLOATING_BUTTON_OFFSET));
         verticalLayoutSmall.getChildren().clear();

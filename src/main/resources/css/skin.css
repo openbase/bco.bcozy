@@ -1,5 +1,9 @@
 /**** General Theme Settings (Sizes, Paddings, Insets, etc.) for BCozy *********************************/
 
+.fullwidth {
+    -fx-pref-width: 250px;
+}
+
 .text {
     -fx-font-smoothing-type: lcd;
 }
@@ -8,6 +12,11 @@
     -fx-border-radius: 0.0;
     -fx-background-radius: 0px;
     -fx-padding: 20 20 20 20;
+}
+
+.floating-box-plain {
+    -fx-border-radius: 0.0;
+    -fx-background-radius: 0px;
 }
 
 .connection-indicator {
@@ -38,7 +47,7 @@
     -fx-border-radius: 0.0;
     -fx-background-radius: 0;
     -fx-background-insets: 10.0 0.0 10.0 10.0;
-    -fx-padding: 60.0 10.0 10.0 20.0;
+    -fx-padding: 30.0 10.0 10.0 20.0;
 }
 
 .detail-menu {
@@ -438,6 +447,45 @@
 .progress-indicator > .indeterminate-indicator > .segment {
     -fx-scale-x: 0.05em;
     -fx-scale-y: 0.05em;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * TabPane                                                                  *
+ *                                                                             *
+ ******************************************************************************/
+
+.tab-pane {
+    -fx-tab-min-width: 95px;
+    -fx-tab-max-width: 95px;
+    -fx-max-height: -1;
+
+}
+
+.tab-pane:top *.tab-header-area {
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.416667em 0.166667em 0.0em 10px;
+    -fx-border-width: 2px;
+}
+
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-opacity: 0;
+}
+
+.tab-pane:tabcontenthidden {
+    -fx-max-height: 50px;
+}
+
+.tab-button {
+    -fx-border-width: 0;
+    -fx-background-radius: 0;
+    -fx-background-color: transparent;
+    -fx-content-display: graphic-only;
+    -fx-padding: 15px 10px 0 0;
+}
+
+.tab-button:hover {
+    -fx-background-color: white;
 }
 
 /*******************************************************************************
