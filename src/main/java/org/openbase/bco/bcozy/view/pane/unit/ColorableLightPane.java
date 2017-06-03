@@ -21,7 +21,6 @@ package org.openbase.bco.bcozy.view.pane.unit;
  */
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.beans.binding.Bindings;
-import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.concurrent.Task;
@@ -88,7 +87,6 @@ public class ColorableLightPane extends AbstractUnitPane<ColorableLightRemote, C
     /**
      * Constructor for the AmbientLightPane.
      *
-     * @param colorableLightRemote colorableLightRemotexẑ
      */
     public ColorableLightPane() {
         super(ColorableLightRemote.class, true);
@@ -269,17 +267,16 @@ public class ColorableLightPane extends AbstractUnitPane<ColorableLightRemote, C
         colorHue.setMinSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
         colorHue.setPrefSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
 
-        colorHue.backgroundProperty().bind(new ObjectBinding<Background>() {
-            {
-                bind(hueValue);
-            }
-
-            @Override
-            protected Background computeValue() {
-                return new Background(new BackgroundFill(Color.hsb(hueValue.getValue(), 1.0, 1.0),
-                        CornerRadii.EMPTY, Insets.EMPTY));
-            }
-        });
+//        colorHue.backgroundProperty().bind(new ObjectBinding<Background>() {
+//            {
+//                bind(hueValue);
+//            }
+//
+//            @Override
+//            protected Background computeValue() {
+//                return new Background(new BackgroundFill(Color.hsb(hueValue.getValue(), 1.0, 1.0), CornerRadii.EMPTY, Insets.EMPTY));
+//            }
+//        });
 
         circle.layoutXProperty().bind(saturation.divide(Constants.ONE_HUNDRED).multiply(COLOR_BOX_SIZE));
         circle.layoutYProperty().bind(Bindings.subtract(1, brightness.divide(Constants.ONE_HUNDRED))

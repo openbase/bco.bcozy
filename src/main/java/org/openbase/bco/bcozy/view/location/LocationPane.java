@@ -103,8 +103,10 @@ public final class LocationPane extends Pane {
             if (event.isStillSincePress() && rootRoom != null) {
                 try {
                     if (event.getClickCount() == 1) {
-                        if (!selectedLocation.equals(rootRoom)) {
-                            selectedLocation.setSelected(false);
+                        if (!rootRoom.equals(selectedLocation)) {
+                            if (selectedLocation != null) {
+                                selectedLocation.setSelected(false);
+                            }
                             rootRoom.setSelected(true);
                             this.setSelectedLocation(rootRoom);
                         }

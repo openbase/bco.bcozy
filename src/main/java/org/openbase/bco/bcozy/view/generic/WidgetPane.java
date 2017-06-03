@@ -34,6 +34,7 @@ import org.controlsfx.control.ToggleSwitch;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ObserverText;
 import org.openbase.bco.bcozy.view.SVGIcon;
+import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.schedule.GlobalCachedExecutorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -124,14 +125,22 @@ public class WidgetPane extends VBox implements DynamicPane {
                 toggleActivation();
                 return null;
             }));
+
             headPane.setOnMouseClicked(event -> {
-                switch (event.getClickCount()) {
-                    case 1:
-                        toggleActivation();
-                        break;
-                    case 2:
-                        toggleSecondFunction();
-                        break;
+                if (!event.isStillSincePress()) {
+                    return;
+                }
+                try {
+                    switch (event.getClickCount()) {
+                        case 1:
+                            toggleActivation();
+                            break;
+                        case 2:
+                            toggleSecondFunction();
+                            break;
+                    }
+                } catch (RuntimeException ex) {
+                    ExceptionPrinter.printHistory("Could not handle mouse event!", ex, LOGGER);
                 }
             });
             toggleSwitch.selectedProperty().bindBidirectional(primaryActivationProperty);
