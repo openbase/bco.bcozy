@@ -18,6 +18,8 @@
  */
 package org.openbase.bco.bcozy.view;
 
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import javafx.geometry.Point2D;
 import javafx.scene.layout.StackPane;
 import org.openbase.bco.bcozy.view.location.LocationPane;
 import org.openbase.jul.exception.CouldNotPerformException;
@@ -46,7 +48,8 @@ public class BackgroundPane extends StackPane {
             this.getChildren().add(locationPane);
 			//locationPane.addUnit(new SVGIcon(FontAwesomeIcon.APPLE, 30.0, true), null, new Point2D(5,5));
 			unitsLayerPane = new UnitSymbolsPane(this);
-		 //   this.getChildren().add(unitsLayerPane);
+			//mouseTransparents
+		    this.getChildren().add(unitsLayerPane);
             this.getStyleClass().add("background-pane");
 
             this.setOnMousePressed(event -> {
