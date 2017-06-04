@@ -137,6 +137,8 @@ public class LocationPaneController {
 
                 // locationPane.addLocation(locationUnitConfig.getId(), locationUnitConfig.getLocationConfig().getChildIdList(), vertices, locationUnitConfig.getLocationConfig().getType().toString());
                 locationPane.addLocation(locationUnitConfig, vertices);
+				
+				//Units.getUnit(locationUnitConfig.getId(), false, Units.LOCATION).getUnitMap().
 
 				//get all units in location
 				for (final Map.Entry<UnitTemplateType.UnitTemplate.UnitType, List<UnitRemote>> nextEntry : Units.getUnit(locationUnitConfig.getId(), false, Units.LOCATION).getUnitMap().entrySet()) {
@@ -147,6 +149,7 @@ public class LocationPaneController {
 					nextEntry.getKey().name();
 				//addUnit(blubs.getIcon(), null, new Point2D(5,5));
 					for(UnitRemote<?> u: nextEntry.getValue()) {
+
 						Pose pose = u.getConfig().getPlacementConfig().getPosition();
                                                 //if ( u.getConfig().getId().equals("932b4f48-59d9-474a-b83e-82c4218b5ecf") ){
                                                 if(pose.getTranslation().getX()!=0 && pose.getTranslation().getY()!=0 && !locationUnitConfig.getLabel().equals("Home")) {
@@ -164,6 +167,12 @@ public class LocationPaneController {
                                                         //just leave out unit
                                                     }
                                                 }
+
+						//Registries.getUnitRegistry().getBaseUnitConfigs().get(u.getId());
+						if (u.getConfig().getId().equals("8d310f30-d60a-4627-8884-373c5e2dcbdd")) {
+							double test = u.getConfig().getPlacementConfig().getPosition().getTranslation().getX();
+						}
+
 						
 						//final Point2d test = new Point2d(bb.getLeftFrontBottom().getX(), bb.getWidth()+ bb.getLeftFrontBottom());
 						//locationPane.addUnit(new SVGIcon(FontAwesomeIcon.ARROW_LEFT, 10.0, true),bb.);
