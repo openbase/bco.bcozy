@@ -69,10 +69,10 @@ public class ColorableLightPane extends AbstractUnitPane<ColorableLightRemote, C
     private static final Logger LOGGER = LoggerFactory.getLogger(ColorableLightPane.class);
     private static final double COLOR_BOX_SIZE = 150.0;
 
-    private final DoubleProperty hueValue = new SimpleDoubleProperty(0.0);
-    private final DoubleProperty saturation = new SimpleDoubleProperty(0.0);
-    private final DoubleProperty brightness = new SimpleDoubleProperty(0.0);
-    private final Rectangle rectangleSelector;
+    private DoubleProperty hueValue ;
+    private DoubleProperty saturation ;
+    private DoubleProperty brightness ;
+    private Rectangle rectangleSelector;
     private double rectX;
     private double rectY;
     private double angle;
@@ -92,7 +92,6 @@ public class ColorableLightPane extends AbstractUnitPane<ColorableLightRemote, C
     public ColorableLightPane() {
         super(ColorableLightRemote.class, true);
         this.setIcon(MaterialDesignIcon.LIGHTBULB, MaterialDesignIcon.LIGHTBULB_OUTLINE);
-        this.rectangleSelector = new Rectangle();
     }
 
     private void initEffectAndSwitch() {
@@ -260,6 +259,18 @@ public class ColorableLightPane extends AbstractUnitPane<ColorableLightRemote, C
         final Shape hollowCircle = hollowCircle();
         final Rectangle clip = new Rectangle(0, 0, 0, 0);
         final Pane colorCircleContainer = new Pane();
+        if( this.hueValue==null){
+            this.hueValue= new SimpleDoubleProperty(0.0);
+        }
+    if(this.saturation==null){
+        this.saturation = new SimpleDoubleProperty(0.0);
+    }
+    if(this.brightness==null){
+        this.brightness = new SimpleDoubleProperty(0.0);
+    }
+    if(this.rectangleSelector==null){
+        this.rectangleSelector = new Rectangle();
+    }
 
         colorCircleContainer.setPrefSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
         colorCircleContainer.setMinSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
