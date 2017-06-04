@@ -29,6 +29,9 @@ import org.openbase.bco.bcozy.view.SVGIcon;
  */
 public class UnitButton extends Button {
 
+    private final double centerX;
+    private final double centerY;
+
     /**
      * Creates a button with an empty string for its label.
      * @param svgIcon The Icon displayed in the button
@@ -37,5 +40,16 @@ public class UnitButton extends Button {
     public UnitButton(final SVGIcon svgIcon, final EventHandler<ActionEvent> onActionHandler) {
         this.setGraphic(svgIcon);
         this.setOnAction(onActionHandler);
+        this.centerX = (super.getLayoutBounds().getMaxX() + super.getLayoutBounds().getMinX()) / 2;
+        this.centerY = (super.getLayoutBounds().getMaxY() + super.getLayoutBounds().getMinY()) / 2;
+
+    }
+
+    public double getCenterX() {
+        return centerX;
+    }
+
+    public double getCenterY() {
+        return centerY;
     }
 }

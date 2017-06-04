@@ -21,6 +21,7 @@ package org.openbase.bco.bcozy;
 import com.guigarage.responsive.ResponsiveHandler;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.logging.Level;
 import javafx.application.Application;
 import javafx.concurrent.Task;
 import javafx.scene.Scene;
@@ -40,6 +41,7 @@ import org.openbase.bco.bcozy.view.InfoPane;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jps.core.JPService;
 import org.openbase.jps.preset.JPDebugMode;
+import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.FatalImplementationErrorException;
 import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.exception.InstantiationException;
@@ -138,6 +140,11 @@ public class BCozy extends Application {
         primaryStage.show();
         
         initRemotesAndLocation();
+        try {
+            backgroundPane.getUnitsP().drawIcons();
+        } catch (CouldNotPerformException ex) {
+            java.util.logging.Logger.getLogger(BCozy.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     private void initRemotesAndLocation() {
