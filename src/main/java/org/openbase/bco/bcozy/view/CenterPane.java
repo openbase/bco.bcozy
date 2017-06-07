@@ -68,6 +68,7 @@ public class CenterPane extends StackPane {
         this.getStyleClass().addAll("padding-small");
     }
 
+
     /**
      * Getter for the fullscreen button.
      *
