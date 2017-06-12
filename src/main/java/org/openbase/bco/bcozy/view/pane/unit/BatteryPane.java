@@ -35,9 +35,6 @@ public class BatteryPane extends AbstractUnitPane<BatteryRemote, BatteryData> {
     public BatteryPane() {
         super(BatteryRemote.class, false);
         this.setIcon(MaterialDesignIcon.BATTERY_OUTLINE, MaterialDesignIcon.BATTERY);
-//        getIcon().setBackgroundIcon(MaterialDesignIcon.BATTERY);
-//        getIcon().setForegroundIcon(MaterialDesignIcon.BATTERY_OUTLINE);
-//        getIcon().setBackgroundIconColorAnimated(Color.TRANSPARENT);
     }
 
     @Override

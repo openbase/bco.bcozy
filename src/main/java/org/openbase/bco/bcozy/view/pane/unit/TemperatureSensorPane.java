@@ -16,7 +16,7 @@
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
-package org.openbase.bco.bcozy.view.pane.unit.backup;
+package org.openbase.bco.bcozy.view.pane.unit;
 
 import de.jensd.fx.glyphs.weathericons.WeatherIcon;
 import javafx.scene.paint.Color;
@@ -36,15 +36,12 @@ public class TemperatureSensorPane extends AbstractUnitPane<TemperatureSensorRem
 
     /**
      * Constructor for TemperatureSensorPane.
-     *
-     * @param temperatureSensorRemote UnitRemote
      */
-
     public TemperatureSensorPane() {
         super(TemperatureSensorRemote.class, false);
         getIcon().setBackgroundIcon(WeatherIcon.THERMOMETER_EXTERIOR);
         getIcon().setForegroundIcon(WeatherIcon.THERMOMETER_INTERNAL);
-        
+
 //        thermometerIconBackground = new SVGIcon(WeatherIcon.THERMOMETER_EXTERIOR,
 //                Constants.SMALL_ICON * Constants.WEATHER_ICONS_SCALE, true);
 //        thermometerIconForeground = new SVGIcon(WeatherIcon.THERMOMETER_INTERNAL,
@@ -53,7 +50,7 @@ public class TemperatureSensorPane extends AbstractUnitPane<TemperatureSensorRem
 //        unknownBackgroundIcon = new SVGIcon(MaterialDesignIcon.CHECKBOX_BLANK_CIRCLE, Constants.SMALL_ICON - 2, false);
 //        unknownForegroundIcon = new SVGIcon(MaterialDesignIcon.HELP_CIRCLE, Constants.SMALL_ICON, false);
     }
-    
+
     @Override
     public void updateDynamicContent() {
         super.updateDynamicContent();
@@ -62,9 +59,9 @@ public class TemperatureSensorPane extends AbstractUnitPane<TemperatureSensorRem
 
         try {
             state = getUnitRemote().getData().getTemperatureState();
-            
+
             if (state.getTemperature() == Double.NEGATIVE_INFINITY) {
-                
+
             } else {
 //                temperatureStatus.setText((int) state.getTemperature() + Constants.CELSIUS);
                 if (state.getTemperature() <= Constants.TEMPERATUR_FADING_MINIMUM) {
@@ -79,11 +76,11 @@ public class TemperatureSensorPane extends AbstractUnitPane<TemperatureSensorRem
                     getIcon().setForegroundIconColorAnimated(Color.RED, 1);
                 }
             }
-                   
+
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.DEBUG);
         }
-        
+
 //        // update alarm state
 //                iconPaneAlarm.getChildren().clear();
 //
@@ -101,9 +98,6 @@ public class TemperatureSensorPane extends AbstractUnitPane<TemperatureSensorRem
 //                iconPaneAlarm.add(unknownForegroundIcon, 0, 0);
 //                break;
 //        }
-
-        
-        
     }
 //
 //    private void initEffect() {

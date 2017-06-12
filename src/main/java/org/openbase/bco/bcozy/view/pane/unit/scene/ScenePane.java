@@ -36,8 +36,6 @@ public class ScenePane extends AbstractUnitPane<SceneRemote, SceneData> {
 
     /**
      * Constructor for the ScenePane.
-     *
-     * @param agentRemote agentRemote
      */
     public ScenePane() {
         super(SceneRemote.class, true);

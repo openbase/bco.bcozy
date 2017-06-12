@@ -79,6 +79,7 @@ public class ContextMenuController {
      *
      * @param locationID locationID
      * @throws CouldNotPerformException CouldNotPerformException
+     * @throws java.lang.InterruptedException
      */
     public void setContextMenuUnitPanes(final String locationID) throws CouldNotPerformException, InterruptedException {
         try {
