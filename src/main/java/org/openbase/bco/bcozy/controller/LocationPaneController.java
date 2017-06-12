@@ -162,8 +162,8 @@ public class LocationPaneController {
                         //if ( u.getConfig().getId().equals("932b4f48-59d9-474a-b83e-82c4218b5ecf") ){
                         // if(pose.getTranslation().getX()!=0 && pose.getTranslation().getY()!=0 //&& !locationUnitConfig.getLabel().equals("Home")
                         //  && u.getConfig().getId().equals("02067c8e-eb24-46f7-a725-5e6ba535dea2")) {
-                       if (u.getConfig().getId().equals("066a42fb-7850-481a-a0e9-c11648064e2b")) {
-                           // || type.equals("COLORABLE_LIGHT")) {
+                       if (u.getConfig().getId().equals("066a42fb-7850-481a-a0e9-c11648064e2b")){
+                            //|| type.equals("COLORABLE_LIGHT")) {
                         //   if(locationUnitConfig.getId().equals("cd696027-fb4f-497c-af30-144859a462da")){
                           //     System.out.println("org.openbase.bco.bcozy.controller.LocationPaneController.fetchLocations()");
                          //  }
@@ -173,9 +173,9 @@ public class LocationPaneController {
                                 //double x = pose.getTranslation().getX()+(vertices.get(0).getX()*Constants.METER_TO_PIXEL);
                                 //double y = pose.getTranslation().getY()+(vertices.get(0).getY() *Constants.METER_TO_PIXEL);
                                 //locationPane.addUnit(icon, new Point2D(x,y ));
-                                //final Future<Transform> transform2 = Registries.getLocationRegistry().getUnitTransformation(u.getConfig(), Registries.getLocationRegistry().getRootLocationConfig());
+                                final Future<Transform> transform2 = Registries.getLocationRegistry().getUnitTransformation(u.getConfig(), Registries.getLocationRegistry().getRootLocationConfig());
                                 final Point3d vertex = new Point3d(pose.getTranslation().getX(), pose.getTranslation().getY(), pose.getTranslation().getZ());
-                                transform.get(Constants.TRANSFORMATION_TIMEOUT/10, TimeUnit.MILLISECONDS).getTransform().transform(vertex);
+                                transform2.get(Constants.TRANSFORMATION_TIMEOUT/10, TimeUnit.MILLISECONDS).getTransform().transform(vertex);
                                 Point2D coord = new Point2D(vertex.x, vertex.y);
 
                                 locationPane.addUnit(new SVGIcon(FontAwesomeIcon.LIGHTBULB_ALT, 10.0, true), new Point2D(vertex.y * Constants.METER_TO_PIXEL, vertex.x * Constants.METER_TO_PIXEL));

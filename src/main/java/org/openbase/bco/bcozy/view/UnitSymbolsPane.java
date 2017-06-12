@@ -135,7 +135,7 @@ public class UnitSymbolsPane extends Pane {
                 for (final Vec3DDoubleType.Vec3DDouble rstVertex : shape) {
                     // Convert vertex into java type
                     final Point3d vertex = new Point3d(rstVertex.getX(), rstVertex.getY(), rstVertex.getZ());
-                    if (locationUnitConfig.getId().equals("81b9efa4-2dc9-432e-b47c-1d73021ff0f3")) {
+                    if (locationUnitConfig.getId().equals("066a42fb-7850-481a-a0e9-c11648064e2b")) {
                         System.out.print("x");
                     }
                     // Transform
@@ -176,7 +176,7 @@ public class UnitSymbolsPane extends Pane {
                                 transform.get(Constants.TRANSFORMATION_TIMEOUT / 10, TimeUnit.MILLISECONDS).getTransform().transform(vertex);
                                 Point2D coord = new Point2D(vertex.x, vertex.y);
 
-                                this.addUnit(new SVGIcon(FontAwesomeIcon.LIGHTBULB_ALT, 10.0, true), null, new Point2D(vertex.y * Constants.METER_TO_PIXEL, vertex.x * Constants.METER_TO_PIXEL));
+                                this.addUnit(new SVGIcon(FontAwesomeIcon.AMBULANCE, 10.0, true), null, new Point2D(vertex.y * Constants.METER_TO_PIXEL, vertex.x * Constants.METER_TO_PIXEL));
                             } catch (CouldNotPerformException | TimeoutException e) {
                                 //  ExceptionPrinter.printHistory("Error while transforming \"" + u.getConfig().getLabel() + "\", ID: " + u.getConfig().getId(), e, LOGGER, LogLevel.ERROR);
                             }
