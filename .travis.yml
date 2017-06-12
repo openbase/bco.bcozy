@@ -5,8 +5,8 @@ dist: trusty
 
 branches:
   except:
-  - /^(?i:feature)-.*$/
-  - /^(?i:release)-.*$/
+      #- /^(?i:feature)-.*$/
+      #- /^(?i:release)-.*$/
 
 notifications:
   slack: openbase-org:vGz7LO4CvGoGMneYkEm3ON7E
