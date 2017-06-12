@@ -331,17 +331,17 @@ public final class LocationPane extends Pane {
         this.getChildren().clear();
 
         tileMap.forEach((locationId, locationPolygon) -> {
-            rootRoom.addCuttingShape(locationPolygon);
+            if (rootRoom != null) rootRoom.addCuttingShape(locationPolygon);
             this.getChildren().add(locationPolygon);
         });
 
         regionMap.forEach((locationId, locationPolygon) -> {
-            rootRoom.addCuttingShape(locationPolygon);
+            if (rootRoom != null) rootRoom.addCuttingShape(locationPolygon);
             this.getChildren().add(locationPolygon);
         });
 
         connectionMap.forEach((connectionId, connectionPolygon) -> {
-            rootRoom.addCuttingShape(connectionPolygon);
+            if (rootRoom != null) rootRoom.addCuttingShape(connectionPolygon);
             this.getChildren().add(connectionPolygon);
         });
 
