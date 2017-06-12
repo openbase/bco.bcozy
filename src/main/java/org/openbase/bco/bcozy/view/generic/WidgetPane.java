@@ -18,24 +18,27 @@
  */
 package org.openbase.bco.bcozy.view.generic;
 
+import com.jfoenix.controls.JFXToggleButton;
+import org.openbase.jul.visual.javafx.iface.DynamicPane;
 import de.jensd.fx.glyphs.GlyphIcons;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import org.controlsfx.control.ToggleSwitch;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ObserverText;
 import org.openbase.bco.bcozy.view.SVGIcon;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
-import org.openbase.jul.schedule.GlobalCachedExecutorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +59,7 @@ public class WidgetPane extends VBox implements DynamicPane {
      * ToggleSwitch Button on right side of the header Pane. Is visible via activation at
      * constructor (oneClickActivatable).
      */
-    private final ToggleSwitch toggleSwitch = new ToggleSwitch();
+    private final JFXToggleButton toggleSwitch = new JFXToggleButton();
 
     /**
      * GridPane as Area on the left side of the header Pane (Icon, tooltip, ...).
@@ -92,17 +95,16 @@ public class WidgetPane extends VBox implements DynamicPane {
      */
     public WidgetPane(final boolean activateable) {
         this.activateable = activateable;
-        this.getStyleClass().add("widget-pane");
+//        this.getStyleClass().add("widget-pane");
         this.headPane = new BorderPane();
         this.primaryActivationProperty = new SimpleBooleanProperty();
         this.secondaryActivationProperty = new SimpleBooleanProperty();
         this.mainIcon = new SVGIcon(MaterialDesignIcon.VECTOR_CIRCLE, Constants.SMALL_ICON, false);
         this.widgetLabel = new Label("?");
-        this.initContent();
-        this.updateDynamicContent();
     }
 
-    private void initContent() {
+    @Override
+    public void initContent() {
         toggleSwitch.setMouseTransparent(true);
 
         Tooltip.install(iconPane, tooltip);
@@ -117,40 +119,66 @@ public class WidgetPane extends VBox implements DynamicPane {
         }
         this.getChildren().add(headPane);
 
-        this.minHeightProperty().bind(headPane.prefHeightProperty());
-        this.maxHeightProperty().bind(headPane.prefHeightProperty());
+//        this.minHeightProperty().bind(headPane.prefHeightProperty());
+//        this.maxHeightProperty().bind(headPane.prefHeightProperty());
 
+        // setup mouse handling
         if (activateable) {
-            toggleSwitch.setOnMouseClicked(event -> GlobalCachedExecutorService.submit(() -> {
-                toggleActivation();
-                return null;
-            }));
-
-            headPane.setOnMouseClicked(event -> {
-                if (!event.isStillSincePress()) {
-                    return;
-                }
-                try {
-                    switch (event.getClickCount()) {
-                        case 1:
-                            toggleActivation();
-                            break;
-                        case 2:
-                            toggleSecondFunction();
-                            break;
+            final EventHandler<MouseEvent> mouseEventHandler = new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(final MouseEvent event) {
+                    System.out.println("mouse event...");
+                    if (!event.isStillSincePress()) {
+                        System.out.println("skipped...");
+                        return;
                     }
-                } catch (RuntimeException ex) {
-                    ExceptionPrinter.printHistory("Could not handle mouse event!", ex, LOGGER);
+                    System.out.println("counter: " + event.getClickCount());
+                    try {
+                        switch (event.getButton()) {
+                            case PRIMARY:
+                                System.out.println("isPrimaryButtonDown");
+                                togglePrimaryActivation();
+                                break;
+                            case SECONDARY:
+                                System.out.println("isSecondaryButtonDown");
+                                toggleSecondaryActivation();
+                                break;
+                        }
+                    } catch (RuntimeException ex) {
+                        ExceptionPrinter.printHistory("Could not handle mouse event!", ex, LOGGER);
+                    }
                 }
-            });
+            };
             toggleSwitch.selectedProperty().bindBidirectional(primaryActivationProperty);
+            toggleSwitch.setOnMouseClicked(mouseEventHandler);
+            headPane.setOnMouseClicked(mouseEventHandler);
+            headPane.setOnSwipeDown((event) -> {
+                primaryActivationProperty.set(true);
+            });
+            headPane.setOnSwipeUp((event) -> {
+                primaryActivationProperty.set(false);
+            });
+            headPane.setOnScrollStarted((event) -> {
+                System.out.println("deltaX:"+ event.getDeltaX());
+                System.out.println("deltaY:"+ event.getDeltaY());
+                if(event.getDeltaY() > 0 ) {
+                    primaryActivationProperty.set(true);
+                } else if (event.getDeltaY() < 0 ) {
+                    primaryActivationProperty.set(false);
+                    
+                } 
+            });
         }
     }
 
     public void initHeadPane() {
         headPane.getStyleClass().clear();
         headPane.getStyleClass().add("head-pane");
+        iconPane.getStyleClass().add(Constants.ICONS_CSS_STRING);
         iconPane.add(mainIcon, 0, 0);
+        iconPane.setAlignment(Pos.CENTER);
+        
+        toggleSwitch.setBackground(Background.EMPTY);
 
         headPane.setLeft(iconPane);
         headPane.setAlignment(iconPane, Pos.CENTER);
@@ -160,8 +188,8 @@ public class WidgetPane extends VBox implements DynamicPane {
 
         if (activateable) {
 
-            // workaround to center the toggle switch, default value -1 aligns the switch not in the pane center which looks bad.
-            toggleSwitch.maxHeightProperty().set(1);
+//            // workaround to center the toggle switch, default value -1 aligns the switch not in the pane center which looks bad.
+//            toggleSwitch.maxHeightProperty().set(1);
 
             headPane.setRight(toggleSwitch);
             headPane.setAlignment(toggleSwitch, Pos.CENTER);
@@ -176,22 +204,6 @@ public class WidgetPane extends VBox implements DynamicPane {
     public void setIcon(final GlyphIcons foregroundIcon, final GlyphIcons backgroundIcon) {
         mainIcon.setForegroundIcon(foregroundIcon);
         mainIcon.setBackgroundIcon(backgroundIcon);
-    }
-
-    public void setForegroundIcon(final GlyphIcons icon) {
-        mainIcon.setForegroundIcon(icon);
-    }
-
-    public void setBackgroundIcon(final GlyphIcons icon) {
-        mainIcon.setBackgroundIcon(icon);
-    }
-
-    public void setForegroundIcon(final GlyphIcons icon, final Color color) {
-        mainIcon.setForegroundIcon(icon, color);
-    }
-
-    public void setBackgroundIcon(final GlyphIcons icon, final Color color) {
-        mainIcon.setBackgroundIcon(icon, color);
     }
 
     public void setLabel(final String label) {
@@ -215,11 +227,13 @@ public class WidgetPane extends VBox implements DynamicPane {
         return secondaryActivationProperty;
     }
 
-    public void toggleActivation() {
+    public void togglePrimaryActivation() {
+        System.out.println("toggle toggleActivation");
         primaryActivationProperty.set(!primaryActivationProperty.getValue());
     }
 
-    public void toggleSecondFunction() {
+    public void toggleSecondaryActivation() {
+        System.out.println("toggle toggleSecondaryActivation");
         secondaryActivationProperty.set(!secondaryActivationProperty.getValue());
     }
 

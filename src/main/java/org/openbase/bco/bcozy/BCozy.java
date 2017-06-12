@@ -71,7 +71,7 @@ public class BCozy extends Application {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(BCozy.class);
     
-    private static Stage primaryStage;
+    public static Stage primaryStage;
     
     private InfoPane infoPane;
     private ContextMenuController contextMenuController;

@@ -41,7 +41,7 @@ public class ScenePane extends AbstractUnitPane<SceneRemote, SceneData> {
      */
     public ScenePane() {
         super(SceneRemote.class, true);
-        setForegroundIcon(MaterialDesignIcon.VECTOR_COMBINE);
+        getIcon().setForegroundIcon(MaterialDesignIcon.VECTOR_COMBINE);
     }
 
     @Override
@@ -70,7 +70,7 @@ public class ScenePane extends AbstractUnitPane<SceneRemote, SceneData> {
     }
 
     @Override
-    protected Future applyMainFunctionUpdate(final boolean activation) throws CouldNotPerformException {
+    protected Future applyPrimaryActivationUpdate(final boolean activation) throws CouldNotPerformException {
         return (activation) ? getUnitRemote().setActivationState(State.ACTIVE) : getUnitRemote().setActivationState(State.DEACTIVE);
     }
 }
