@@ -40,7 +40,7 @@ public class AppPane extends AbstractUnitPane<AppRemote, AppData> {
      */
     public AppPane() {
         super(AppRemote.class, true);
-        setForegroundIcon(MaterialDesignIcon.POWER);
+        getIcon().setForegroundIcon(MaterialDesignIcon.POWER);
     }
 
     @Override
@@ -69,7 +69,7 @@ public class AppPane extends AbstractUnitPane<AppRemote, AppData> {
     }
 
     @Override
-    protected Future applyMainFunctionUpdate(final boolean activation) throws CouldNotPerformException {
+    protected Future applyPrimaryActivationUpdate(final boolean activation) throws CouldNotPerformException {
         return (activation) ? getUnitRemote().setActivationState(State.ACTIVE) : getUnitRemote().setActivationState(State.DEACTIVE);
     }
 }

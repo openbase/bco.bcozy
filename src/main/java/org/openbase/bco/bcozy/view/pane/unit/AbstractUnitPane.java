@@ -105,7 +105,7 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
                 if (currentTask != null) {
                     currentTask.cancel(true);
                 }
-                currentTask = applyMainFunctionUpdate(newActivation);
+                currentTask = applyPrimaryActivationUpdate(newActivation);
             } catch (CouldNotPerformException ex) {
                 Logger.getLogger(AbstractUnitPane.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -151,6 +151,7 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
      */
     @Override
     public void init(final UR unitRemote) throws InterruptedException, InitializationException {
+        init();
         clearRemoteObservers();
 
         this.unitRemote = unitRemote;
@@ -277,7 +278,7 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
      * @return should return a future object of the triggered tasks or null if no task was triggered.
      * @throws CouldNotPerformException can be thrown if the update fails.
      */
-    protected Future applyMainFunctionUpdate(final boolean activation) throws CouldNotPerformException {
+    protected Future applyPrimaryActivationUpdate(final boolean activation) throws CouldNotPerformException {
         return null;
     }
 }

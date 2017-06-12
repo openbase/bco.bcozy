@@ -94,18 +94,18 @@ public class ConnectionPane extends PaneElement {
      */
     public void connectionEstablished() {
         connectionSuccessView.setOpacity(Constants.NO_TRANSPARENCY);
-        connectionSuccessView.setForegroundIconColorAnimated(Color.LIMEGREEN);
+        connectionSuccessView.setForegroundIconColorAnimated(Color.LIMEGREEN, 1);
         problemFade.stop();
         connectionProblemView.setOpacity(Constants.FULLY_TRANSPARENT);
     }
 
     /**
-     * Show the question mark to indicate that the connection has problems.
+     * Show the question mark to indicate that the connection has problems.Ŝ
      * Animation should generate attention.
      */
     public void connectionProblem() {
         connectionSuccessView.setOpacity(Constants.FULLY_TRANSPARENT);
-        connectionProblemView.setForegroundIconColorAnimated(Color.TOMATO);
+        connectionProblemView.setForegroundIconColorAnimated(Color.TOMATO, Animation.INDEFINITE);
         problemFade.play();
     }
 

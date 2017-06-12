@@ -117,8 +117,10 @@ public final class LocationPane extends Pane {
             if (event.isStillSincePress() && rootRoom != null) {
                 try {
                     if (event.getClickCount() == 1) {
-                        if (!selectedLocation.equals(rootRoom)) {
-                            selectedLocation.setSelected(false);
+                        if (!rootRoom.equals(selectedLocation)) {
+                            if (selectedLocation != null) {
+                                selectedLocation.setSelected(false);
+                            }
                             rootRoom.setSelected(true);
                             this.setSelectedLocation(rootRoom);
                         }
@@ -378,17 +380,17 @@ public final class LocationPane extends Pane {
         this.getChildren().clear();
 
         tileMap.forEach((locationId, locationPolygon) -> {
-            rootRoom.addCuttingShape(locationPolygon);
+            if (rootRoom != null) rootRoom.addCuttingShape(locationPolygon);
             this.getChildren().add(locationPolygon);
         });
 
         regionMap.forEach((locationId, locationPolygon) -> {
-            rootRoom.addCuttingShape(locationPolygon);
+            if (rootRoom != null) rootRoom.addCuttingShape(locationPolygon);
             this.getChildren().add(locationPolygon);
         });
 
         connectionMap.forEach((connectionId, connectionPolygon) -> {
-            rootRoom.addCuttingShape(connectionPolygon);
+            if (rootRoom != null) rootRoom.addCuttingShape(connectionPolygon);
             this.getChildren().add(connectionPolygon);
         });
 

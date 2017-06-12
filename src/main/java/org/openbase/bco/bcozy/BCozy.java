@@ -73,7 +73,7 @@ public class BCozy extends Application {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(BCozy.class);
     
-    private static Stage primaryStage;
+    public static Stage primaryStage;
     
     private InfoPane infoPane;
     private ContextMenuController contextMenuController;
@@ -140,11 +140,11 @@ public class BCozy extends Application {
         primaryStage.show();
         
         initRemotesAndLocation();
-        try {
+        /*try {
             backgroundPane.getUnitsP().drawIcons();
         } catch (CouldNotPerformException ex) {
             java.util.logging.Logger.getLogger(BCozy.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        }*/
     }
     
     private void initRemotesAndLocation() {

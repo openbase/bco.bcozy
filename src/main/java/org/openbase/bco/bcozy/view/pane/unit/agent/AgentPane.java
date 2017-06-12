@@ -41,7 +41,7 @@ public class AgentPane extends AbstractUnitPane<AgentRemote, AgentData> {
      */
     public AgentPane() {
         super(AgentRemote.class, true);
-        setForegroundIcon(MaterialDesignIcon.POWER);
+        getIcon().setForegroundIcon(MaterialDesignIcon.POWER);
     }
 
     @Override
@@ -70,7 +70,7 @@ public class AgentPane extends AbstractUnitPane<AgentRemote, AgentData> {
     }
 
     @Override
-    protected Future applyMainFunctionUpdate(final boolean activation) throws CouldNotPerformException {
+    protected Future applyPrimaryActivationUpdate(final boolean activation) throws CouldNotPerformException {
         return (activation) ? getUnitRemote().setActivationState(State.ACTIVE) : getUnitRemote().setActivationState(State.DEACTIVE);
     }
 }

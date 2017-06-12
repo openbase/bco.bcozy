@@ -18,6 +18,7 @@
  */
 package org.openbase.bco.bcozy.view.pane.unit.backup;
 
+import de.jensd.fx.glyphs.materialicons.MaterialIcon;
 import org.openbase.bco.bcozy.view.pane.unit.AbstractUnitPane;
 import org.openbase.bco.dal.remote.unit.MotionDetectorRemote;
 import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
@@ -28,14 +29,6 @@ import rst.domotic.unit.dal.MotionDetectorDataType.MotionDetectorData;
  */
 public class MotionDetectorPane extends AbstractUnitPane<MotionDetectorRemote, MotionDetectorData> {
 
-//    private static final Logger LOGGER = LoggerFactory.getLogger(BatteryPane.class);
-//
-//    private final SVGIcon unknownForegroundIcon;
-//    private final SVGIcon unknownBackgroundIcon;
-//    private final SVGIcon backgroundIcon;
-//    private final SVGIcon motionIcon;
-//    private final BorderPane headContent;
-//
 //    /**
 //     * Constructor for the BatteryPane.
 //     *
@@ -43,18 +36,7 @@ public class MotionDetectorPane extends AbstractUnitPane<MotionDetectorRemote, M
 //     */
     public MotionDetectorPane(final UnitRemote brightnessSensorRemote) {
         super(MotionDetectorRemote.class, false);
-//
-//        headContent = new BorderPane();
-//        unknownBackgroundIcon = new SVGIcon(MaterialDesignIcon.CHECKBOX_BLANK_CIRCLE, Constants.SMALL_ICON - 2, false);
-//        unknownForegroundIcon = new SVGIcon(MaterialDesignIcon.HELP_CIRCLE, Constants.SMALL_ICON, false);
-//        motionIcon = new SVGIcon(MaterialIcon.BLUR_ON, MaterialIcon.PANORAMA_FISH_EYE, Constants.SMALL_ICON);
-//        backgroundIcon = new SVGIcon(MaterialIcon.LENS, Constants.SMALL_ICON, false);
-//
-//        initHeadContent();
-//        initBodyContent();
-//        createWidgetPane(headContent, false);
-//        initEffect();
-//        tooltip.textProperty().bind(labelText.textProperty());
+        setIcon(MaterialIcon.BLUR_ON, MaterialIcon.LENS);
     }
 //
 //    private void initEffect() {
@@ -96,17 +78,5 @@ public class MotionDetectorPane extends AbstractUnitPane<MotionDetectorRemote, M
 //        headContent.setCenter(getUnitLabel());
 //        headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
 //        headContent.prefHeightProperty().set(iconPane.getHeight() + Constants.INSETS);
-//    }
-//
-//    @Override
-//    protected void initBodyContent() {
-//        //No body content.
-//    }
-//
-//    @Override
-//    void applyDataUpdate(MotionDetectorData data) {
-//        Platform.runLater(() -> {
-//            setMotionStateIconAndTooltip(data.getMotionState().getValue());
-//        });
 //    }
 }
