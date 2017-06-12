@@ -52,7 +52,7 @@ public class MainMenuController {
      */
     public MainMenuController(final ForegroundPane foregroundPane) {
         loginPane = foregroundPane.getMainMenu().getLoginPane();
-        settingsPane = foregroundPane.getMainMenu().getSettingsPane();
+        settingsPane = foregroundPane.getCenterPane().getSettingsPane();
         availableUsersPane = foregroundPane.getMainMenu().getAvailableUsersPanePane();
         connectionPane = foregroundPane.getMainMenu().getConnectionPane();
         loginPane.getStartLoginBtn().setOnAction(event -> startLogin());
