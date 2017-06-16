@@ -37,7 +37,6 @@ public class AgentPane extends AbstractUnitPane<AgentRemote, AgentData> {
     /**
      * Constructor for the AgentPane.
      *
-     * @param agentRemote agentRemote
      */
     public AgentPane() {
         super(AgentRemote.class, true);

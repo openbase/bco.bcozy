@@ -1,0 +1,14 @@
+com.jfoenix.skins
+org.openbase.bco.bcozy
+org.openbase.bco.bcozy.controller
+org.openbase.bco.bcozy.jp
+org.openbase.bco.bcozy.model
+org.openbase.bco.bcozy.view
+org.openbase.bco.bcozy.view.generic
+org.openbase.bco.bcozy.view.location
+org.openbase.bco.bcozy.view.mainmenupanes
+org.openbase.bco.bcozy.view.pane.unit
+org.openbase.bco.bcozy.view.pane.unit.agent
+org.openbase.bco.bcozy.view.pane.unit.app
+org.openbase.bco.bcozy.view.pane.unit.backup
+org.openbase.bco.bcozy.view.pane.unit.scene

@@ -44,7 +44,7 @@ public class ObserverText extends Text implements Observer {
     /**
      * Constructor to create a text which is capable of observing language changes in the application.
      *
-     * @param languageString The language string which combined with the actual language selection determines the
+     * @param identifier The language string which combined with the actual language selection determines the
      * actual text
      */
     public ObserverText(final String identifier) {
