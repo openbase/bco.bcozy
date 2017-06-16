@@ -321,7 +321,7 @@ public final class LocationPane extends Pane {
         unitButton.setTranslateX(position.getX());
         unitButton.setTranslateY(position.getY());
         this.getChildren().add(unitButton);
-    }  */
+    }  
 
     public void addUnit(final SVGIcon svgIcon,
             final Point2D position) {
@@ -329,7 +329,7 @@ public final class LocationPane extends Pane {
         unitButton.setTranslateX(position.getX());
         unitButton.setTranslateY(position.getY());
         //unitSymbols.add(unitButton);
-    }
+    }*/
 
     /**
      * Erases all locations from the locationPane.
