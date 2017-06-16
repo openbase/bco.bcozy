@@ -25,7 +25,6 @@ import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.input.MouseEvent;
@@ -40,14 +39,11 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
-import org.openbase.bco.dal.remote.unit.Units;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.EnumNotSupportedException;
 import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import rst.domotic.unit.UnitConfigType.UnitConfig;
-import rst.domotic.unit.UnitTemplateType;
 
 /**
  * @author julian
@@ -75,7 +71,6 @@ public final class LocationPane extends Pane {
     private final Map<String, TilePolygon> tileMap;
     private final Map<String, RegionPolygon> regionMap;
     private final Map<String, ConnectionPolygon> connectionMap;
-    private final List<UnitButton> unitSymbols;
 
     private final SimpleStringProperty selectedLocationId;
 
@@ -93,12 +88,10 @@ public final class LocationPane extends Pane {
 
 //        try {				
         this.foregroundPane = foregroundPane;
-        //this.backgroundPane = background;
 
         tileMap = new HashMap<>();
         regionMap = new HashMap<>();
         connectionMap = new HashMap<>();
-        unitSymbols = new ArrayList();
         /* tileMap = background.getTileMap();
 	   regionMap = background.getRegionMap();
 	   connectionMap = background.getConnectionMap();*/
@@ -335,7 +328,7 @@ public final class LocationPane extends Pane {
         final UnitButton unitButton = new UnitButton(svgIcon, null);
         unitButton.setTranslateX(position.getX());
         unitButton.setTranslateY(position.getY());
-        unitSymbols.add(unitButton);
+        //unitSymbols.add(unitButton);
     }
 
     /**
@@ -394,9 +387,9 @@ public final class LocationPane extends Pane {
             this.getChildren().add(connectionPolygon);
         });
 
-        unitSymbols.forEach((icon) -> {
-            this.getChildren().add(icon);
-        });
+       // unitSymbols.forEach((icon) -> {
+        //    this.getChildren().add(icon);
+        //});
 
         if (rootRoom != null) {
             this.getChildren().add(rootRoom);

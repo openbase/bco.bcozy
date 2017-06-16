@@ -31,18 +31,18 @@ import org.openbase.jul.exception.InstantiationException;
 public class BackgroundPane extends StackPane {
 
     private final LocationPane locationPane;
-    private final UnitSymbolsPane unitsLayerPane;
+    private final UnitSymbolsPane unitSymbolsPane;
     private double prevMouseCordX; //NOPMD
     private double prevMouseCordY; //NOPMD
 
     public UnitSymbolsPane getUnitsP() {
-        return unitsLayerPane;
+        return unitSymbolsPane;
     }
-    
-        
-   public LocationPane getLocP() {
+
+    public LocationPane getLocP() {
         return locationPane;
     }
+
     /**
      * The constructor for a BackgroundPane.
      *
@@ -52,15 +52,14 @@ public class BackgroundPane extends StackPane {
      */
     public BackgroundPane(final ForegroundPane foregroundPane) throws InstantiationException, InterruptedException {
         try {
-			
-	    locationPane = LocationPane.getInstance(foregroundPane);
 
-            this.getChildren().add(locationPane);
-			//locationPane.addUnit(new SVGIcon(FontAwesomeIcon.APPLE, 30.0, true), null, new Point2D(5,5));
-	    unitsLayerPane = new UnitSymbolsPane(this);
-            unitsLayerPane.setPickOnBounds(false);
-			//mouseTransparents
-            this.getChildren().add(unitsLayerPane);
+            locationPane = LocationPane.getInstance(foregroundPane);
+            this.getChildren().add(locationPane); 
+            
+            unitSymbolsPane = new UnitSymbolsPane();
+            unitSymbolsPane.setPickOnBounds(false);
+            this.getChildren().add(unitSymbolsPane);
+            
             this.getStyleClass().add("background-pane");
 
             this.setOnMousePressed(event -> {
@@ -96,11 +95,17 @@ public class BackgroundPane extends StackPane {
         }
     }
 
-	
     /**
      * @return The LocationPane.
      */
-    public LocationPane getLocationPane() {
+    public UnitSymbolsPane getUnitsPane() {
+        return unitSymbolsPane;
+    }
+    
+       /**
+     * @return The Location Pane.
+     */
+    public LocationPane getLocationPane() {  
         return locationPane;
     }
 }

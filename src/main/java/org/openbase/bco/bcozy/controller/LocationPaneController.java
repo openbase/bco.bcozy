@@ -19,10 +19,6 @@
  */
 package org.openbase.bco.bcozy.controller;
 
-import ch.qos.logback.core.CoreConstants;
-import de.jensd.fx.glyphs.GlyphIcons;
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
-import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.application.Platform;
 import javafx.geometry.Point2D;
 import org.openbase.bco.bcozy.view.Constants;
@@ -41,23 +37,11 @@ import rst.math.Vec3DDoubleType;
 import javax.vecmath.Point3d;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import org.openbase.bco.bcozy.view.BackgroundPane;
-import org.openbase.bco.bcozy.view.SVGIcon;
-import org.openbase.bco.bcozy.view.UnitSymbolsPane;
-import org.openbase.bco.bcozy.view.pane.unit.UnitPaneFactory;
-import org.openbase.bco.bcozy.view.pane.unit.UnitPaneFactoryImpl;
-import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
-import org.openbase.bco.dal.remote.unit.Units;
 import org.openbase.bco.registry.remote.Registries;
-import rst.domotic.unit.UnitTemplateType;
-import rst.geometry.AxisAlignedBoundingBox3DFloatType;
-import rst.geometry.PoseType;
-import rst.geometry.PoseType.Pose;
 
 /**
  * @author julian
@@ -143,65 +127,10 @@ public class LocationPaneController {
                     // Add vertex to list of vertices
                     vertices.add(new Point2D(vertex.x, vertex.y));
                 }
-
+                
                 // locationPane.addLocation(locationUnitConfig.getId(), locationUnitConfig.getLocationConfig().getChildIdList(), vertices, locationUnitConfig.getLocationConfig().getType().toString());
                 locationPane.addLocation(locationUnitConfig, vertices);
-
-                //Units.getUnit(locationUnitConfig.getId(), false, Units.LOCATION).getUnitMap().
-                //get all units in location
-                for (final Map.Entry<UnitTemplateType.UnitTemplate.UnitType, List<UnitRemote>> nextEntry : Units.getUnit(locationUnitConfig.getId(), false, Units.LOCATION).getUnitMap().entrySet()) {
-                    if (nextEntry.getValue().isEmpty()) {
-                        continue;
-                    }
-                    // AbstractUnitPane blubs = UnitPaneFactoryImpl.getInstance().newInstance(nextEntry.getKey());
-                    String type = nextEntry.getKey().name();
-                    //addUnit(blubs.getIcon(), null, new Point2D(5,5));
-                    for (UnitRemote<?> u : nextEntry.getValue()) {
-
-                        
-                        //if ( u.getConfig().getId().equals("932b4f48-59d9-474a-b83e-82c4218b5ecf") ){
-                        // if(pose.getTranslation().getX()!=0 && pose.getTranslation().getY()!=0 //&& !locationUnitConfig.getLabel().equals("Home")
-                        //  && u.getConfig().getId().equals("02067c8e-eb24-46f7-a725-5e6ba535dea2")) {
-                       if (u.getConfig().getId().equals("066a42fb-7850-481a-a0e9-c11648064e2b")){
-                            //|| type.equals("COLORABLE_LIGHT")) {
-                        //   if(locationUnitConfig.getId().equals("cd696027-fb4f-497c-af30-144859a462da")){
-                          //     System.out.println("org.openbase.bco.bcozy.controller.LocationPaneController.fetchLocations()");
-                         //  }
-                            try {
-                                Pose pose = u.getConfig().getPlacementConfig().getPosition();
-                                //   SVGIcon icon = UnitPaneFactoryImpl.getInstance().newInstance(UnitPaneFactoryImpl.loadUnitPaneClass(u.getType())).getIcon();
-                                //double x = pose.getTranslation().getX()+(vertices.get(0).getX()*Constants.METER_TO_PIXEL);
-                                //double y = pose.getTranslation().getY()+(vertices.get(0).getY() *Constants.METER_TO_PIXEL);
-                                //locationPane.addUnit(icon, new Point2D(x,y ));
-                                final Future<Transform> transform2 = Registries.getLocationRegistry().getUnitTransformation(u.getConfig(), Registries.getLocationRegistry().getRootLocationConfig());
-                                final Point3d vertex = new Point3d(pose.getTranslation().getX(), pose.getTranslation().getY(), pose.getTranslation().getZ());
-                                transform2.get(Constants.TRANSFORMATION_TIMEOUT/10, TimeUnit.MILLISECONDS).getTransform().transform(vertex);
-                                Point2D coord = new Point2D(vertex.x, vertex.y);
-
-                                locationPane.addUnit(new SVGIcon(FontAwesomeIcon.LIGHTBULB_ALT, 10.0, true), new Point2D(vertex.y * Constants.METER_TO_PIXEL, vertex.x * Constants.METER_TO_PIXEL));
-                            } catch (CouldNotPerformException | TimeoutException e) {
-                                ExceptionPrinter.printHistory("Error while transforming \"" + u.getConfig().getLabel() + "\", ID: " + u.getConfig().getId(), e, LOGGER, LogLevel.ERROR);
-                            }
-                        } /*
-                        try {
-                            //Registries.getUnitRegistry().getBaseUnitConfigs().get(u.getId());
-                            // if (u.getConfig().getId().equals("02067c8e-eb24-46f7-a725-5e6ba535dea2")) {
-                            double test = u.getConfig().getPlacementConfig().getPosition().getTranslation().getX();
-                            final Future<Transform> transform2 = Registries.getLocationRegistry().getUnitTransformation(u.getConfig(), Registries.getLocationRegistry().getRootLocationConfig());
-                            final Point3d vertex = new Point3d(pose.getTranslation().getX(), pose.getTranslation().getY(), pose.getTranslation().getZ());
-                            transform2.get(Constants.TRANSFORMATION_TIMEOUT, TimeUnit.MILLISECONDS).getTransform().transform(vertex);
-                            Point2D coord = new Point2D(vertex.x, vertex.y);
-
-                            locationPane.addUnit(new SVGIcon(FontAwesomeIcon.AMBULANCE, 6, true), new Point2D(vertex.y * Constants.METER_TO_PIXEL, vertex.x * Constants.METER_TO_PIXEL));
-                            //    }
-
-                            //final Point2d test = new Point2d(bb.getLeftFrontBottom().getX(), bb.getWidth()+ bb.getLeftFrontBottom());
-                            //locationPane.addUnit(new SVGIcon(FontAweonsomeIcon.ARROW_LEFT, 10.0, true),bb.);
-                        } catch (CouldNotPerformException e) {
-                            //just leave out unit
-                        }*/
-                    }
-                }
+   
             } catch (InterruptedException | ExecutionException | TimeoutException ex) {
                 ExceptionPrinter.printHistory("Error while fetching transformation for location \"" + locationUnitConfig.getLabel() + "\", locationID: " + locationUnitConfig.getId(), ex, LOGGER, LogLevel.ERROR);
             }
@@ -260,7 +189,6 @@ public class LocationPaneController {
                 fetchConnections();
                 locationPane.updateLocationPane();
                 locationPane.zoomFit();
-                //locationPane.addUnit(new SVGIcon(FontAwesomeIcon.APPLE, 30.0, true), null, new Point2D(5,5));
             } catch (CouldNotPerformException | InterruptedException e) {
                 ExceptionPrinter.printHistory(e, LOGGER);
             }

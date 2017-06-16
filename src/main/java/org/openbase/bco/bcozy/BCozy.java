@@ -32,6 +32,7 @@ import org.openbase.bco.bcozy.controller.CenterPaneController;
 import org.openbase.bco.bcozy.controller.ContextMenuController;
 import org.openbase.bco.bcozy.controller.LocationPaneController;
 import org.openbase.bco.bcozy.controller.MainMenuController;
+import org.openbase.bco.bcozy.controller.UnitsPaneController;
 import org.openbase.bco.bcozy.jp.JPLanguage;
 import org.openbase.bco.bcozy.view.BackgroundPane;
 import org.openbase.bco.bcozy.view.Constants;
@@ -79,6 +80,7 @@ public class BCozy extends Application {
     private ContextMenuController contextMenuController;
     private LocationPaneController locationPaneController;
     private ForegroundPane foregroundPane;
+    private UnitsPaneController unitsPaneController;
     private Future initTask;
 
     /**
@@ -135,16 +137,12 @@ public class BCozy extends Application {
         
         contextMenuController = new ContextMenuController(foregroundPane, backgroundPane.getLocationPane());
         locationPaneController = new LocationPaneController(backgroundPane.getLocationPane());
+        unitsPaneController = new UnitsPaneController(backgroundPane.getUnitsPane(), backgroundPane.getLocationPane());
         
         ResponsiveHandler.addResponsiveToWindow(primaryStage);
         primaryStage.show();
         
         initRemotesAndLocation();
-        /*try {
-            backgroundPane.getUnitsP().drawIcons();
-        } catch (CouldNotPerformException ex) {
-            java.util.logging.Logger.getLogger(BCozy.class.getName()).log(Level.SEVERE, null, ex);
-        }*/
     }
     
     private void initRemotesAndLocation() {
@@ -162,6 +160,7 @@ public class BCozy extends Application {
                     
                     infoPane.setTextLabelIdentifier("connectLocationRemote");
                     locationPaneController.connectLocationRemote();
+                    unitsPaneController.connectUnitRemote();
                     return null;
                 } catch (Exception ex) {
                     infoPane.setTextLabelIdentifier("errorDuringStartup");
