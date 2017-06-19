@@ -57,6 +57,7 @@ public class UserActionPane extends PaneElement {
 
 
         Tab loginTab = createTab(this.loginPane, MaterialDesignIcon.LOGIN);
+        loginTab.getContent().maxHeight(100);
 
         Tab registerTab = createTab(this.registrationPane, MaterialDesignIcon.ACCOUNT_PLUS);
 
@@ -68,9 +69,9 @@ public class UserActionPane extends PaneElement {
         tabpaneContentHidden = PseudoClass.getPseudoClass("tabcontenthidden");
         root.setCenter(anchor);
 
+        this.setState(State.CLOSED);
         this.getChildren().addAll(root);
 
-        setState(State.CLOSED);
     }
 
     /**
@@ -99,7 +100,7 @@ public class UserActionPane extends PaneElement {
         return statusIcons;
     }
 
-    private void toggleState(Tab clickedTab) {
+    public void toggleState(Tab clickedTab) {
 
         if (clickedTab.isDisabled()) {
             this.setState(State.CLOSED);
@@ -120,7 +121,7 @@ public class UserActionPane extends PaneElement {
         this.requestLayout();
     }
 
-    enum State {
+    public enum State {
         OPEN(false, new SVGIcon(FontAwesomeIcon.CARET_UP, Constants.EXTRA_SMALL_ICON, true)),
         CLOSED(true, new SVGIcon(FontAwesomeIcon.CARET_DOWN, Constants.EXTRA_SMALL_ICON, true));
 

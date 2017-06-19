@@ -1,17 +1,17 @@
 /**
  * ==================================================================
- *
+ * <p>
  * This file is part of org.openbase.bco.bcozy.
- *
+ * <p>
  * org.openbase.bco.bcozy is free software: you can redistribute it and modify
  * it under the terms of the GNU General Public License (Version 3)
  * as published by the Free Software Foundation.
- *
+ * <p>
  * org.openbase.bco.bcozy is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
@@ -20,6 +20,11 @@ package org.openbase.bco.bcozy.controller;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.scene.text.Text;
 import org.openbase.bco.bcozy.BCozy;
 import org.openbase.bco.bcozy.model.LanguageSelection;
 import org.openbase.bco.bcozy.view.Constants;
@@ -31,6 +36,7 @@ import org.openbase.bco.bcozy.view.mainmenupanes.SettingsPane;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,24 +46,31 @@ import org.slf4j.LoggerFactory;
 public class MainMenuController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MainMenuController.class);
-    
-    private final LoginPane loginPane;
-    private final SettingsPane settingsPane;
-    private final AvailableUsersPane availableUsersPane;
-    private final ConnectionPane connectionPane;
+
+    private LoginPane loginPane;
+    private SettingsPane settingsPane;
+    private AvailableUsersPane availableUsersPane;
+    private ConnectionPane connectionPane;
+
+    public MainMenuController() {
+    }
 
     /**
      * Constructor for the MainMenuController.
      * @param foregroundPane The foregroundPane allows to access all necessary gui elements
      */
     public MainMenuController(final ForegroundPane foregroundPane) {
+        init(foregroundPane);
+    }
+
+    public void init(final ForegroundPane foregroundPane) {
         loginPane = foregroundPane.getMainMenu().getLoginPane();
         settingsPane = foregroundPane.getCenterPane().getSettingsPane();
         availableUsersPane = foregroundPane.getMainMenu().getAvailableUsersPanePane();
         connectionPane = foregroundPane.getMainMenu().getConnectionPane();
         loginPane.getStartLoginBtn().setOnAction(event -> startLogin());
         loginPane.getLoginBtn().setOnAction(event -> loginUser());
-        loginPane.getBackBtn().setOnAction(event -> resetLogin());
+//        loginPane.getBackBtn().setOnAction(event -> resetLogin());
         loginPane.getLogoutBtn().setOnAction(event -> resetLogin());
         loginPane.getPasswordField().setOnAction(event -> loginUser());
         loginPane.getNameTxt().setOnAction(event -> loginUser());
@@ -74,8 +87,8 @@ public class MainMenuController {
         settingsPane.getLanguageChoice().getSelectionModel().select(0);
 
         foregroundPane.getMainMenu().getMainMenuFloatingButton().setOnAction(event -> showHideMainMenu(foregroundPane));
-    }
 
+    }
 
     private void startLogin() {
         loginPane.setState(LoginPane.State.LOGINACTIVE);
@@ -128,18 +141,18 @@ public class MainMenuController {
         settingsPane.getThemeChoice().getSelectionModel().selectedIndexProperty()
                 .addListener(new ChangeListener<Number>() {
 
-            @Override
-            public void changed(final ObservableValue<? extends Number> observableValue, final Number number,
-                                final Number number2) {
-                if (settingsPane.getAvailableThemes().get(number2.intValue())
-                        .equals(languageBundle.getString(Constants.LIGHT_THEME_CSS_NAME))) {
-                    BCozy.changeTheme(Constants.LIGHT_THEME_CSS);
-                } else if (settingsPane.getAvailableThemes().get(number2.intValue())
-                        .equals(languageBundle.getString(Constants.DARK_THEME_CSS_NAME))) {
-                    BCozy.changeTheme(Constants.DARK_THEME_CSS);
-                }
-            }
-        });
+                    @Override
+                    public void changed(final ObservableValue<? extends Number> observableValue, final Number number,
+                                        final Number number2) {
+                        if (settingsPane.getAvailableThemes().get(number2.intValue())
+                                .equals(languageBundle.getString(Constants.LIGHT_THEME_CSS_NAME))) {
+                            BCozy.changeTheme(Constants.LIGHT_THEME_CSS);
+                        } else if (settingsPane.getAvailableThemes().get(number2.intValue())
+                                .equals(languageBundle.getString(Constants.DARK_THEME_CSS_NAME))) {
+                            BCozy.changeTheme(Constants.DARK_THEME_CSS);
+                        }
+                    }
+                });
     }
 
     private void chooseLanguage() {

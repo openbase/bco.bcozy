@@ -32,6 +32,7 @@ import org.openbase.bco.bcozy.view.mainmenupanes.SettingsPane;
 public class CenterPane extends StackPane {
 
     SettingsMenu settingsMenu;
+    FloatingButton fullscreenBtn;
 
     /**
      * Constructor for the center pane.
@@ -39,17 +40,25 @@ public class CenterPane extends StackPane {
     public CenterPane() {
 
         settingsMenu = new SettingsMenu();
+        System.out.println("SETTINGSMENU SIZE" + settingsMenu.getChildren().size());
 
         FloatingPopUp viewModes = new FloatingPopUp(Pos.BOTTOM_RIGHT);
         viewModes.addParentElement(MaterialIcon.SETTINGS, (Runnable) null); //TODO: Add EventHandler when needed
         viewModes.addElement(MaterialDesignIcon.THERMOMETER_LINES, (Runnable) null);//TODO: Add EventHandler when needed
         viewModes.addElement(MaterialIcon.VISIBILITY, (Runnable) null);//TODO: Add EventHandler when needed
 
-        FloatingPopUp settingsModes = new FloatingPopUp(Pos.TOP_RIGHT);
+/*        FloatingPopUp settingsModes = new FloatingPopUp(Pos.TOP_RIGHT);
         settingsModes.addParentElement(MaterialIcon.MORE_VERT, this::hideSettings);
         settingsModes.addElement(MaterialIcon.FULLSCREEN, (Runnable) null);
-        settingsModes.addElement(FontAwesomeIcon.COGS, this::showSettings);
+        settingsModes.addElement(FontAwesomeIcon.COGS, this::showSettings);*/
 
+        fullscreenBtn = new FloatingButton(new SVGIcon(MaterialIcon.FULLSCREEN, Constants.MIDDLE_ICON, true ));
+        FloatingButton settingsBtn = new FloatingButton(new SVGIcon(FontAwesomeIcon.COGS, Constants.MIDDLE_ICON, true ));
+
+        this.setAlignment(fullscreenBtn, Pos.TOP_RIGHT);
+        this.setAlignment(settingsBtn, Pos.TOP_CENTER);
+
+        settingsBtn.setOnAction(e -> toggleSettings());
 
         // Styling components with CSS
         this.getStyleClass().addAll("padding-small");
@@ -57,21 +66,25 @@ public class CenterPane extends StackPane {
 
         this.setPickOnBounds(false);
 
-        this.getChildren().addAll(viewModes, settingsModes);
+        this.getChildren().addAll(viewModes, fullscreenBtn, settingsBtn);
 
     }
 
 
-    private void showSettings() {
-        this.getChildren().add(0, settingsMenu);
-    }
+    private void toggleSettings() {
+        if( this.getChildren().contains(settingsMenu)) {
+            this.getChildren().remove(settingsMenu);
+        } else {
+            this.getChildren().add(0, settingsMenu);
 
-    private void hideSettings() {
-        this.getChildren().remove(settingsMenu);
+        }
     }
-
 
     public SettingsPane getSettingsPane() {
         return settingsMenu.getSettingsPane();
+    }
+
+    public FloatingButton getFullscreen() {
+        return fullscreenBtn;
     }
 }

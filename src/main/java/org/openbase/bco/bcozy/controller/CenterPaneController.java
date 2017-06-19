@@ -55,7 +55,7 @@ public class CenterPaneController {
         isShowing = false;
         activeState = State.SETTINGS;
         centerPane = foregroundPane.getCenterPane();
-//        centerPane.getFullscreen().setOnAction(event -> setMaximizeAction());
+        centerPane.getFullscreen().setOnAction(event -> setMaximizeAction());
 //        centerPane.getPopUpParent().setOnAction(event -> setShowHidePopOver());
 //        centerPane.getPopUpChildBottom().setOnAction(event -> setChooseView(event));
 //        centerPane.getPopUpChildTop().setOnAction(event -> setChooseView(event));
@@ -73,33 +73,33 @@ public class CenterPaneController {
 
         isShowing = false;
         activeState = State.SETTINGS;
-//        centerPane.getFullscreen().setOnAction(event -> setMaximizeAction());
+        centerPane.getFullscreen().setOnAction(event -> setMaximizeAction());
 //        centerPane.getPopUpParent().setOnAction(event -> setShowHidePopOver());
 //        centerPane.getPopUpChildBottom().setOnAction(event -> setChooseView(event));
 //        centerPane.getPopUpChildTop().setOnAction(event -> setChooseView(event));
-//
-//        ((Stage) centerPane.
-//                getScene().
-//                getWindow()).
-//                fullScreenProperty().
-//                addListener((observable, oldValue, newValue) -> {
-//                    if (!newValue) {
-//                        centerPane.getFullscreen().changeIcon(MaterialIcon.FULLSCREEN);
-//                    }
-//                });
+
+        ((Stage) centerPane.
+                getScene().
+                getWindow()).
+                fullScreenProperty().
+                addListener((observable, oldValue, newValue) -> {
+                    if (!newValue) {
+                        centerPane.getFullscreen().changeIcon(MaterialIcon.FULLSCREEN);
+                    }
+                });
     }
 
-//    private void setMaximizeAction() {
-//        final Stage stage = (Stage) centerPane.getScene().getWindow();
-//        if (stage.isFullScreen()) {
-//            centerPane.getFullscreen().changeIcon(MaterialIcon.FULLSCREEN);
-//            stage.setFullScreen(false);
-//        } else {
-//            centerPane.getFullscreen().changeIcon(MaterialIcon.FULLSCREEN_EXIT);
-//            stage.setFullScreen(true);
-//        }
-//    }
-//
+    private void setMaximizeAction() {
+        final Stage stage = (Stage) centerPane.getScene().getWindow();
+        if (stage.isFullScreen()) {
+            centerPane.getFullscreen().changeIcon(MaterialIcon.FULLSCREEN);
+            stage.setFullScreen(false);
+        } else {
+            centerPane.getFullscreen().changeIcon(MaterialIcon.FULLSCREEN_EXIT);
+            stage.setFullScreen(true);
+        }
+    }
+
 //    private void setShowHidePopOver() {
 //        if (isShowing) {
 //            isShowing = false;
@@ -109,8 +109,8 @@ public class CenterPaneController {
 //            centerPane.setViewSwitchingButtonsVisible(true);
 //        }
 //    }
-//
-//    private void setChooseView(final ActionEvent event) {
+
+    private void setChooseView(final ActionEvent event) {
 //        if (event.getSource().equals(centerPane.getPopUpChildTop())) {
 //            if (activeState.equals(State.SETTINGS)) {
 //                activeState = State.MOVEMENT;
@@ -129,7 +129,7 @@ public class CenterPaneController {
 //            }
 //
 //        }
-//
+
 //        if (activeState.equals(State.SETTINGS)) {
 //            centerPane.getPopUpParent().changeIcon(MaterialIcon.SETTINGS);
 //            centerPane.getPopUpChildBottom().changeIcon(MaterialDesignIcon.THERMOMETER_LINES);
@@ -144,5 +144,5 @@ public class CenterPaneController {
 //            centerPane.getPopUpChildBottom().changeIcon(MaterialIcon.VISIBILITY);
 //            centerPane.getPopUpChildTop().changeIcon(MaterialIcon.SETTINGS);
 //        }
-//    }
+    }
 }

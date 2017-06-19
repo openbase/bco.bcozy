@@ -43,7 +43,7 @@ public class LoginPane extends PaneElement {
 
     private final Button startLoginBtn;
     private final ObserverButton loginBtn;
-    private final Button backBtn;
+//    private final Button backBtn;
     private final ObserverButton logoutBtn;
     private final TextField nameTxt;
     private final PasswordField passwordField;
@@ -82,12 +82,12 @@ public class LoginPane extends PaneElement {
         final HBox rightAlignLoginButton = new HBox(loginBtn);
         rightAlignLoginButton.setAlignment(Pos.CENTER_RIGHT);
 
-        backBtn = new Button("", new SVGIcon(FontAwesomeIcon.ARROW_LEFT, Constants.EXTRA_SMALL_ICON, true));
+//        backBtn = new Button("", new SVGIcon(FontAwesomeIcon.ARROW_LEFT, Constants.EXTRA_SMALL_ICON, true));
 
         loginLayout = new VBox(Constants.INSETS);
         final BorderPane loginFirstLineLayout = new BorderPane();
         loginFirstLineLayout.setLeft(nameLbl);
-        loginFirstLineLayout.setRight(backBtn);
+//        loginFirstLineLayout.setRight(backBtn);
         loginLayout.getStyleClass().clear();
         loginLayout.setAlignment(Pos.BOTTOM_LEFT);
         loginLayout.getChildren().addAll(loginFirstLineLayout, nameTxt, pwLbl, passwordField,
@@ -119,6 +119,9 @@ public class LoginPane extends PaneElement {
         logoutBtn.getStyleClass().add("transparent-button");
         //CHECKSTYLE.ON: MultipleStringLiterals
 
+        this.setPrefHeight(100);
+        this.setMaxHeight(100);
+
         this.getChildren().addAll(startLoginBtn);
         this.statusIcon = new VBox(new SVGIcon(MaterialDesignIcon.LOGIN, Constants.MIDDLE_ICON, true));
     }
@@ -146,9 +149,9 @@ public class LoginPane extends PaneElement {
      *
      * @return instance of the button
      */
-    public Button getBackBtn() {
-        return backBtn;
-    }
+//    public Button getBackBtn() {
+//        return backBtn;
+//    }
 
     /**
      * Getter for the name textfield.
