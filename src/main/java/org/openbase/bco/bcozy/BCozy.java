@@ -1,17 +1,17 @@
 /**
  * ==================================================================
- * <p>
+ *
  * This file is part of org.openbase.bco.bcozy.
- * <p>
+ *
  * org.openbase.bco.bcozy is free software: you can redistribute it and modify
  * it under the terms of the GNU General Public License (Version 3)
  * as published by the Free Software Foundation.
- * <p>
+ *
  * org.openbase.bco.bcozy is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * <p>
+ *
  * You should have received a copy of the GNU General Public License
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
@@ -19,10 +19,8 @@
 package org.openbase.bco.bcozy;
 
 import com.guigarage.responsive.ResponsiveHandler;
-
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-
 import javafx.application.Application;
 import javafx.concurrent.Task;
 import javafx.scene.Scene;
@@ -53,13 +51,14 @@ import org.slf4j.LoggerFactory;
 import rst.navigation.ExecutionParametersType;
 
 /**
+ *
  * @author hoestreich
  * @author timo
  * @author agatting
  * @author julian
  * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>
- *         <p>
- *         Main Class of the BCozy Program.
+ *
+ * Main Class of the BCozy Program.
  */
 public class BCozy extends Application {
 
@@ -72,9 +71,9 @@ public class BCozy extends Application {
      * Application logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(BCozy.class);
-
-    private static Stage primaryStage;
-
+    
+    public static Stage primaryStage;
+    
     private InfoPane infoPane;
     private ContextMenuController contextMenuController;
     private LocationPaneController locationPaneController;
@@ -87,15 +86,15 @@ public class BCozy extends Application {
      * @param args Arguments from commandline.
      */
     public static void main(final String... args) {
-
+        
         LOGGER.info("Start " + APP_NAME + "...");
-
+        
         registerListeners();
         /* Setup JPService */
         JPService.setApplicationName(APP_NAME);
         JPService.registerProperty(JPDebugMode.class);
         JPService.registerProperty(JPLanguage.class);
-
+        
         try {
             JPService.parseAndExitOnError(args);
             launch(args);
@@ -112,44 +111,40 @@ public class BCozy extends Application {
         final double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
         final double screenHeight = Screen.getPrimary().getVisualBounds().getHeight();
         primaryStage.setTitle("BCozy");
-
+        
         final StackPane root = new StackPane();
         foregroundPane = new ForegroundPane(screenHeight, screenWidth);
         foregroundPane.setMinHeight(root.getHeight());
         foregroundPane.setMinWidth(root.getWidth());
         final BackgroundPane backgroundPane = new BackgroundPane(foregroundPane);
-
+        
         infoPane = new InfoPane(screenHeight, screenWidth);
         infoPane.setMinHeight(root.getHeight());
         infoPane.setMinWidth(root.getWidth());
         infoPane.setCloseButtonEventHandler(event -> stop());
         root.getChildren().addAll(backgroundPane, foregroundPane, infoPane);
-
+        
         primaryStage.setMinWidth(foregroundPane.getMainMenu().getMinWidth() + foregroundPane.getContextMenu().getMinWidth() + 300);
         primaryStage.setHeight(screenHeight);
         primaryStage.setScene(new Scene(root, screenWidth, screenHeight));
         primaryStage.getScene().getStylesheets().addAll(Constants.DEFAULT_CSS, Constants.LIGHT_THEME_CSS);
-
-
-
-            new MainMenuController(foregroundPane);
-
-
+        
+        new MainMenuController(foregroundPane);
         new CenterPaneController(foregroundPane);
-
+        
         contextMenuController = new ContextMenuController(foregroundPane, backgroundPane.getLocationPane());
         locationPaneController = new LocationPaneController(backgroundPane.getLocationPane());
-
+        
         ResponsiveHandler.addResponsiveToWindow(primaryStage);
         primaryStage.show();
-
+        
         initRemotesAndLocation();
         } catch (Exception ex) {
             ex.printStackTrace();
 
         }
     }
-
+    
     private void initRemotesAndLocation() {
         initTask = GlobalCachedExecutorService.submit(new Task() {
             @Override
@@ -157,12 +152,12 @@ public class BCozy extends Application {
                 try {
                     infoPane.setTextLabelIdentifier("waitForConnection");
                     Registries.waitForData();
-
+                    
                     infoPane.setTextLabelIdentifier("fillContextMenu");
                     foregroundPane.init();
-
+                    
                     contextMenuController.initTitledPaneMap();
-
+                    
                     infoPane.setTextLabelIdentifier("connectLocationRemote");
                     locationPaneController.connectLocationRemote();
                     return null;
@@ -174,7 +169,7 @@ public class BCozy extends Application {
                     throw exx;
                 }
             }
-
+            
             @Override
             protected void succeeded() {
                 super.succeeded();
@@ -182,7 +177,7 @@ public class BCozy extends Application {
             }
         });
     }
-
+    
     public void stop() {
         if (initTask != null && !initTask.isDone()) {
             initTask.cancel(true);
@@ -226,7 +221,7 @@ public class BCozy extends Application {
             }
         }
     }
-
+    
     private static void registerListeners() {
         LOGGER.info("Executing Registration of Listeners");
         ResponsiveHandler.setOnDeviceTypeChanged((over, oldDeviceType, newDeviceType) -> {
@@ -248,19 +243,19 @@ public class BCozy extends Application {
             }
         });
     }
-
+    
     private static void adjustToLargeDevice() {
         LOGGER.info("Detected Large Device");
     }
-
+    
     private static void adjustToMediumDevice() {
         LOGGER.info("Detected Medium Device");
     }
-
+    
     private static void adjustToSmallDevice() {
         LOGGER.info("Detected Small Device");
     }
-
+    
     private static void adjustToExtremeSmallDevice() {
         LOGGER.info("Detected Extreme Small Device");
     }

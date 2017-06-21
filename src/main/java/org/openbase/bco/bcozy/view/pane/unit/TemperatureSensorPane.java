@@ -16,12 +16,17 @@
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
-package org.openbase.bco.bcozy.view.pane.unit.backup;
+package org.openbase.bco.bcozy.view.pane.unit;
 
+import de.jensd.fx.glyphs.weathericons.WeatherIcon;
+import javafx.scene.paint.Color;
+import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.pane.unit.AbstractUnitPane;
 import org.openbase.bco.dal.remote.unit.TemperatureSensorRemote;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.openbase.jul.exception.printer.LogLevel;
+import rst.domotic.state.TemperatureStateType;
 import rst.domotic.unit.dal.TemperatureSensorDataType.TemperatureSensorData;
 
 /**
@@ -29,27 +34,14 @@ import rst.domotic.unit.dal.TemperatureSensorDataType.TemperatureSensorData;
  */
 public class TemperatureSensorPane extends AbstractUnitPane<TemperatureSensorRemote, TemperatureSensorData> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RollerShutterPane.class);
-//
-//    private final TemperatureSensorRemote temperatureSensorRemote;
-//    private final BorderPane headContent;
-//    private final SVGIcon thermometerIconBackground;
-//    private final SVGIcon thermometerIconForeground;
-//    private final SVGIcon unknownForegroundIcon;
-//    private final SVGIcon unknownBackgroundIcon;
-//    private final SVGIcon alarmIcon;
-//    private final Text temperatureStatus;
-//    private final GridPane iconPaneAlarm;
-//
-//    /**
-//     * Constructor for TemperatureSensorPane.
-//     *
-//     * @param temperatureSensorRemote UnitRemote
-//     */
-
+    /**
+     * Constructor for TemperatureSensorPane.
+     */
     public TemperatureSensorPane() {
         super(TemperatureSensorRemote.class, false);
-//
+        getIcon().setBackgroundIcon(WeatherIcon.THERMOMETER_EXTERIOR);
+        getIcon().setForegroundIcon(WeatherIcon.THERMOMETER_INTERNAL);
+
 //        thermometerIconBackground = new SVGIcon(WeatherIcon.THERMOMETER_EXTERIOR,
 //                Constants.SMALL_ICON * Constants.WEATHER_ICONS_SCALE, true);
 //        thermometerIconForeground = new SVGIcon(WeatherIcon.THERMOMETER_INTERNAL,
@@ -57,16 +49,55 @@ public class TemperatureSensorPane extends AbstractUnitPane<TemperatureSensorRem
 //        alarmIcon = new SVGIcon(FontAwesomeIcon.EXCLAMATION_TRIANGLE, Constants.SMALL_ICON, false);
 //        unknownBackgroundIcon = new SVGIcon(MaterialDesignIcon.CHECKBOX_BLANK_CIRCLE, Constants.SMALL_ICON - 2, false);
 //        unknownForegroundIcon = new SVGIcon(MaterialDesignIcon.HELP_CIRCLE, Constants.SMALL_ICON, false);
+    }
+
+    @Override
+    public void updateDynamicContent() {
+        super.updateDynamicContent();
+
+        TemperatureStateType.TemperatureState state;
+
+        try {
+            state = getUnitRemote().getData().getTemperatureState();
+
+            if (state.getTemperature() == Double.NEGATIVE_INFINITY) {
+
+            } else {
+//                temperatureStatus.setText((int) state.getTemperature() + Constants.CELSIUS);
+                if (state.getTemperature() <= Constants.TEMPERATUR_FADING_MINIMUM) {
+                    getIcon().setForegroundIconColorAnimated(Color.BLUE, 1);
+                } else if (state.getTemperature() < Constants.TEMPERATUR_FADING_MAXIMUM) {
+                    final double redChannel = (state.getTemperature() - Constants.TEMPERATUR_FADING_MINIMUM)
+                            / (Constants.TEMPERATUR_FADING_MAXIMUM - Constants.TEMPERATUR_FADING_MINIMUM);
+                    final double blueChannel = 1 - ((state.getTemperature() - Constants.TEMPERATUR_FADING_MINIMUM)
+                            / (Constants.TEMPERATUR_FADING_MAXIMUM - Constants.TEMPERATUR_FADING_MINIMUM));
+                    getIcon().setForegroundIconColor(new Color(redChannel, 0.0, blueChannel, 1.0));
+                } else {
+                    getIcon().setForegroundIconColorAnimated(Color.RED, 1);
+                }
+            }
+
+        } catch (CouldNotPerformException e) {
+            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.DEBUG);
+        }
+
+//        // update alarm state
+//                iconPaneAlarm.getChildren().clear();
 //
-//        headContent = new BorderPane();
-//        temperatureStatus = new Text();
-//        iconPaneAlarm = new GridPane();
-//
-//        initTitle();
-//        initBodyContent();
-//        initEffect();
-//        createWidgetPane(headContent, false);
-//        tooltip.textProperty().bind(labelText.textProperty());
+//        switch (alarmState) {
+//            case ALARM:
+//                iconPaneAlarm.add(alarmIcon, 0, 0);
+//                alarmIcon.setForegroundIconColor(Color.RED, Color.BLACK, Constants.NORMAL_STROKE);
+//                break;
+//            case NO_ALARM:
+//                iconPaneAlarm.add(alarmIcon, 0, 0);
+//                alarmIcon.setForegroundIconColor(Color.TRANSPARENT);
+//                break;
+//            default:
+//                iconPaneAlarm.add(unknownBackgroundIcon, 0, 0);
+//                iconPaneAlarm.add(unknownForegroundIcon, 0, 0);
+//                break;
+//        }
     }
 //
 //    private void initEffect() {
@@ -89,44 +120,7 @@ public class TemperatureSensorPane extends AbstractUnitPane<TemperatureSensorRem
 //    }
 //
 //    private void setAlarmStateIcon(final State alarmState) {
-//        iconPaneAlarm.getChildren().clear();
-//
-//        switch (alarmState) {
-//            case ALARM:
-//                iconPaneAlarm.add(alarmIcon, 0, 0);
-//                alarmIcon.setForegroundIconColor(Color.RED, Color.BLACK, Constants.NORMAL_STROKE);
-//                labelText.setIdentifier("alarm");
-//                break;
-//            case NO_ALARM:
-//                iconPaneAlarm.add(alarmIcon, 0, 0);
-//                alarmIcon.setForegroundIconColor(Color.TRANSPARENT);
-//                labelText.setIdentifier("noAlarm");
-//                break;
-//            default:
-//                iconPaneAlarm.add(unknownBackgroundIcon, 0, 0);
-//                iconPaneAlarm.add(unknownForegroundIcon, 0, 0);
-//                labelText.setIdentifier("unknown");
-//                break;
-//        }
-//    }
-//
-//    private void setEffectTemperature(final double temperature) {
-//        if (temperature == Double.NEGATIVE_INFINITY) {
-//            temperatureStatus.setText("??" + Constants.CELSIUS);
-//        } else {
-//            temperatureStatus.setText((int) temperature + Constants.CELSIUS);
-//            if (temperature <= Constants.TEMPERATUR_FADING_MINIMUM) {
-//                thermometerIconForeground.setForegroundIconColorAnimated(Color.BLUE);
-//            } else if (temperature < Constants.TEMPERATUR_FADING_MAXIMUM) {
-//                final double redChannel = (temperature - Constants.TEMPERATUR_FADING_MINIMUM)
-//                        / (Constants.TEMPERATUR_FADING_MAXIMUM - Constants.TEMPERATUR_FADING_MINIMUM);
-//                final double blueChannel = 1 - ((temperature - Constants.TEMPERATUR_FADING_MINIMUM)
-//                        / (Constants.TEMPERATUR_FADING_MAXIMUM - Constants.TEMPERATUR_FADING_MINIMUM));
-//                thermometerIconForeground.setForegroundIconColorAnimated(new Color(redChannel, 0.0, blueChannel, 1.0));
-//            } else {
-//                thermometerIconForeground.setForegroundIconColorAnimated(Color.RED);
-//            }
-//        }
+
 //    }
 //
 //    @Override
@@ -146,11 +140,6 @@ public class TemperatureSensorPane extends AbstractUnitPane<TemperatureSensorRem
 //        headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
 //        headContent.setRight(iconPaneAlarm);
 //        headContent.prefHeightProperty().set(thermometerIconBackground.getSize() + Constants.INSETS);
-//    }
-//
-//    @Override
-//    protected void initBodyContent() {
-//        //No body content.
 //    }
 //
 //    @Override

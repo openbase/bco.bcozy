@@ -19,6 +19,7 @@
 package org.openbase.bco.bcozy.view.pane.unit;
 
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
+import javafx.animation.Animation;
 import javafx.scene.paint.Color;
 import org.openbase.bco.dal.remote.unit.TamperDetectorRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
@@ -37,11 +38,10 @@ public class TamperDetectorPane extends AbstractUnitPane<TamperDetectorRemote, T
     /**
      * Constructor for the TamperPane.
      *
-     * @param tamperRemote tamperRemote
      */
     public TamperDetectorPane() {
         super(TamperDetectorRemote.class, false);
-        setForegroundIcon(MaterialDesignIcon.CHECKBOX_MARKED_CIRCLE_OUTLINE);
+        getIcon().setForegroundIcon(MaterialDesignIcon.CHECKBOX_MARKED_CIRCLE_OUTLINE);
     }
 
     @Override
@@ -58,12 +58,12 @@ public class TamperDetectorPane extends AbstractUnitPane<TamperDetectorRemote, T
 
         switch (state) {
             case NO_TAMPER:
-                setForegroundIcon(MaterialDesignIcon.CHECKBOX_MARKED_CIRCLE_OUTLINE);
+                getIcon().setForegroundIcon(MaterialDesignIcon.CHECKBOX_MARKED_CIRCLE_OUTLINE);
                 setInfoText("noTamper");
                 break;
             case TAMPER:
-                setForegroundIcon(MaterialDesignIcon.ALERT_CIRCLE, Color.RED);
-                getIcon().setAnimation(true);
+                getIcon().setForegroundIcon(MaterialDesignIcon.ALERT_CIRCLE, Color.RED);
+                getIcon().startForgroundAnimation(Animation.INDEFINITE);
                 setInfoText("tamper");
                 break;
             default:

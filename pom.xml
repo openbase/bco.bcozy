@@ -326,6 +326,28 @@
     </pluginRepositories>
 
     <dependencies>
+        <!-- Openbase Deps -->
+        <dependency>
+            <groupId>org.openbase</groupId>
+            <artifactId>jul.extension.rct</artifactId>
+            <version>${dependency.jul.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openbase</groupId>
+            <artifactId>jul.schedule</artifactId>
+            <version>${dependency.jul.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openbase</groupId>
+            <artifactId>jul.visual.javafx</artifactId>
+            <version>${dependency.jul.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openbase.bco</groupId>
+            <artifactId>dal.remote</artifactId>
+            <version>${dependency.bco.dal.version}</version>
+        </dependency>
+        
         <dependency>
             <groupId>com.guigarage</groupId>
             <artifactId>responsivefx</artifactId>
@@ -341,21 +363,14 @@
             <artifactId>fontawesomefx</artifactId>
             <version>8.9</version>
         </dependency>
+        
+        <!-- Java  FX Material Design Lib -->
         <dependency>
-            <groupId>org.openbase</groupId>
-            <artifactId>jul.extension.rct</artifactId>
-            <version>${dependency.jul.version}</version>
+            <groupId>com.jfoenix</groupId>
+            <artifactId>jfoenix</artifactId>
+            <version>1.5.0</version>
         </dependency>
-        <dependency>
-            <groupId>org.openbase</groupId>
-            <artifactId>jul.schedule</artifactId>
-            <version>${dependency.jul.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openbase.bco</groupId>
-            <artifactId>dal.remote</artifactId>
-            <version>${dependency.bco.dal.version}</version>
-        </dependency>
+
         <!-- Just so maven doesn't complain about a missing version. -->
         <dependency>
             <groupId>org.apache.maven.plugins</groupId>

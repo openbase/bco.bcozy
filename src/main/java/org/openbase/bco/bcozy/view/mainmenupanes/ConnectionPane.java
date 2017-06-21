@@ -134,7 +134,7 @@ public class ConnectionPane extends VBox {
      */
     public void connectionEstablished(SVGIcon successView, SVGIcon problemView,  FadeTransition transition) {
         successView.setOpacity(Constants.NO_TRANSPARENCY);
-        successView.setForegroundIconColorAnimated(Color.LIMEGREEN);
+        successView.setForegroundIconColorAnimated(Color.LIMEGREEN, 1);
         transition.stop();
         problemView.setOpacity(Constants.FULLY_TRANSPARENT);
     }
@@ -145,7 +145,7 @@ public class ConnectionPane extends VBox {
      */
     public void connectionProblem(SVGIcon successView, SVGIcon problemView,  FadeTransition transition) {
         successView.setOpacity(Constants.FULLY_TRANSPARENT);
-        problemView.setForegroundIconColorAnimated(Color.TOMATO);
+        problemView.setForegroundIconColorAnimated(Color.TOMATO, Animation.INDEFINITE);
         transition.play();
     }
 
