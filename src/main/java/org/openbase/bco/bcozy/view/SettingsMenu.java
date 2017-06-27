@@ -52,15 +52,14 @@ public class SettingsMenu extends StackPane {
                 throw new RuntimeException("SettingsMenu.fxml not found");
             }
 
-            System.out.println("vorger");
             FXMLLoader loader = new FXMLLoader(url);
-            System.out.println("Loader init");
             test = loader.load();
-            System.out.println("loaded!");
             this.getChildren().addAll(test);
-            System.out.println("added!");
 
             SettingsController settingsController = (SettingsController) loader.getController();
+
+            settingsController.setSettingsPane(settings);
+
             settingsController.addSettingsTab();
 
 
@@ -77,4 +76,5 @@ public class SettingsMenu extends StackPane {
     public SettingsPane getSettingsPane() {
         return settings;
     }
+
 }

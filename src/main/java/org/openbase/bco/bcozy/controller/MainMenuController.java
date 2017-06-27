@@ -80,11 +80,7 @@ public class MainMenuController {
         settingsPane.getStatusIcon().setOnMouseClicked(event -> showHideMainMenu(foregroundPane));
         availableUsersPane.getStatusIcon().setOnMouseClicked(event -> showHideMainMenu(foregroundPane));
         connectionPane.getStatusIcon().setOnMouseClicked(event -> showHideMainMenu(foregroundPane));
-        settingsPane.getThemeChoice().setOnAction(event -> chooseTheme());
-        settingsPane.getLanguageChoice().setOnAction(event -> chooseLanguage());
-        //Necessary to ensure that the first change is not missed by the ChangeListener
-        settingsPane.getThemeChoice().getSelectionModel().select(0);
-        settingsPane.getLanguageChoice().getSelectionModel().select(0);
+
 
         foregroundPane.getMainMenu().getMainMenuFloatingButton().setOnAction(event -> showHideMainMenu(foregroundPane));
 
@@ -134,40 +130,4 @@ public class MainMenuController {
 
     }
 
-    private void chooseTheme() {
-        final ResourceBundle languageBundle = ResourceBundle
-                .getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
-
-        settingsPane.getThemeChoice().getSelectionModel().selectedIndexProperty()
-                .addListener(new ChangeListener<Number>() {
-
-                    @Override
-                    public void changed(final ObservableValue<? extends Number> observableValue, final Number number,
-                                        final Number number2) {
-                        if (settingsPane.getAvailableThemes().get(number2.intValue())
-                                .equals(languageBundle.getString(Constants.LIGHT_THEME_CSS_NAME))) {
-                            BCozy.changeTheme(Constants.LIGHT_THEME_CSS);
-                        } else if (settingsPane.getAvailableThemes().get(number2.intValue())
-                                .equals(languageBundle.getString(Constants.DARK_THEME_CSS_NAME))) {
-                            BCozy.changeTheme(Constants.DARK_THEME_CSS);
-                        }
-                    }
-                });
-    }
-
-    private void chooseLanguage() {
-        settingsPane.getLanguageChoice().getSelectionModel().selectedIndexProperty()
-                .addListener(new ChangeListener<Number>() {
-
-                    @Override
-                    public void changed(final ObservableValue<? extends Number> observableValue, final Number number,
-                                        final Number number2) {
-                        if (settingsPane.getAvailableLanguages().get(number2.intValue()).equals("English")) {
-                            LanguageSelection.getInstance().setSelectedLocale(new Locale("en", "US"));
-                        } else if (settingsPane.getAvailableLanguages().get(number2.intValue()).equals("Deutsch")) {
-                            LanguageSelection.getInstance().setSelectedLocale(new Locale("de", "DE"));
-                        }
-                    }
-                });
-    }
 }

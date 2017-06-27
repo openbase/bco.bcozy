@@ -40,7 +40,6 @@ public class CenterPane extends StackPane {
     public CenterPane() {
 
         settingsMenu = new SettingsMenu();
-        System.out.println("SETTINGSMENU SIZE" + settingsMenu.getChildren().size());
 
         FloatingPopUp viewModes = new FloatingPopUp(Pos.BOTTOM_RIGHT);
         viewModes.addParentElement(MaterialIcon.SETTINGS, (Runnable) null); //TODO: Add EventHandler when needed
