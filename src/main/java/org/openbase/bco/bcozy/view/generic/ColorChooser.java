@@ -66,7 +66,7 @@ public class ColorChooser extends HBox implements DynamicPane {
     private final DoubleProperty saturationProperty;
     private final DoubleProperty brightnessProperty;
 
-    private final Rectangle rectangleSelector;
+    private final Rectangle hueValueSelector;
     private double rectX;
     private double rectY;
     private double angle;
@@ -75,7 +75,7 @@ public class ColorChooser extends HBox implements DynamicPane {
         this.hueProperty = new SimpleDoubleProperty(0.0);
         this.saturationProperty = new SimpleDoubleProperty(0.0);
         this.brightnessProperty = new SimpleDoubleProperty(0.0);
-        this.rectangleSelector = new Rectangle();
+        this.hueValueSelector = new Rectangle();
         this.selectedColorProperty = new SimpleObjectProperty<>(Color.BLACK);
     }
 
@@ -108,16 +108,16 @@ public class ColorChooser extends HBox implements DynamicPane {
                 return new Background(new BackgroundFill(Color.hsb(hueProperty.getValue(), 1.0, 1.0), CornerRadii.EMPTY, Insets.EMPTY));
             }
         });
-        circle.layoutXProperty().bind(saturationProperty.divide(Constants.ONE_HUNDRED).multiply(COLOR_BOX_SIZE));
-        circle.layoutYProperty().bind(Bindings.subtract(1, brightnessProperty.divide(Constants.ONE_HUNDRED)).multiply(COLOR_BOX_SIZE));
+        circle.layoutXProperty().bind(saturationProperty.multiply(COLOR_BOX_SIZE));
+        circle.layoutYProperty().bind(Bindings.subtract(1, brightnessProperty).multiply(COLOR_BOX_SIZE));
 
         final EventHandler<MouseEvent> colorContainerMouseHandler = event -> GlobalCachedExecutorService.submit(new Task() {
             @Override
             protected Object call() {
                 final double xMouse = event.getX();
                 final double yMouse = event.getY();
-                saturationProperty.set(clamp(xMouse / COLOR_BOX_SIZE) * Constants.ONE_HUNDRED);
-                brightnessProperty.set(Constants.ONE_HUNDRED - (clamp(yMouse / COLOR_BOX_SIZE) * Constants.ONE_HUNDRED));
+                saturationProperty.set(clamp(xMouse / COLOR_BOX_SIZE));
+                brightnessProperty.set(1 - (clamp(yMouse / COLOR_BOX_SIZE)));
 
                 updateColor();
 
@@ -132,20 +132,20 @@ public class ColorChooser extends HBox implements DynamicPane {
         colorRectContainer.setOnMousePressed(colorContainerMouseHandler);
         colorRectContainer.setOnMouseDragged(colorContainerMouseHandler);
 
-        rectangleSelector.setWidth(COLOR_BOX_SIZE / Constants.TEN);
-        rectangleSelector.setHeight(COLOR_BOX_SIZE / Constants.SIX);
-        rectangleSelector.setFill(Color.web(Constants.WHITE, 0.0));
-        rectangleSelector.getStyleClass().add("rectangle-selector");
-        rectangleSelector.setMouseTransparent(true);
-        rectangleSelector.setTranslateX(-rectangleSelector.getWidth() / 2.0);
-        rectangleSelector.setTranslateY(-rectangleSelector.getHeight() / 2.0);
-        rectangleSelector.setLayoutX(COLOR_BOX_SIZE / 2.0);
-        rectangleSelector.setLayoutY(COLOR_BOX_SIZE / 2.0);
-        rectangleSelector.setY((rectangleSelector.getHeight() - COLOR_BOX_SIZE) / 2.0);
-        rectangleSelector.setStroke(Color.web(Constants.WHITE, 1.0));
-        rectangleSelector.setCache(true);
-        rectangleSelector.setManaged(false);
-        rectangleSelector.setEffect(dropShadow());
+        hueValueSelector.setWidth(COLOR_BOX_SIZE / Constants.TEN);
+        hueValueSelector.setHeight(COLOR_BOX_SIZE / Constants.SIX);
+        hueValueSelector.setFill(Color.web(Constants.WHITE, 0.0));
+        hueValueSelector.getStyleClass().add("rectangle-selector");
+        hueValueSelector.setMouseTransparent(true);
+        hueValueSelector.setTranslateX(-hueValueSelector.getWidth() / 2.0);
+        hueValueSelector.setTranslateY(-hueValueSelector.getHeight() / 2.0);
+        hueValueSelector.setLayoutX(COLOR_BOX_SIZE / 2.0);
+        hueValueSelector.setLayoutY(COLOR_BOX_SIZE / 2.0);
+        hueValueSelector.setY((hueValueSelector.getHeight() - COLOR_BOX_SIZE) / 2.0);
+        hueValueSelector.setStroke(Color.web(Constants.WHITE, 1.0));
+        hueValueSelector.setCache(true);
+        hueValueSelector.setManaged(false);
+        hueValueSelector.setEffect(dropShadow());
 
         final EventHandler<MouseEvent> colorCircleMouseHandler = event -> GlobalCachedExecutorService.submit(new Task() {
             @Override
@@ -157,9 +157,9 @@ public class ColorChooser extends HBox implements DynamicPane {
                 hueProperty.set(angle);
 
                 rectSelectorCoordinates();
-                rectangleSelector.setLayoutX(rectX);
-                rectangleSelector.setLayoutY(rectY);
-                rectangleSelector.setRotate(angle);
+                hueValueSelector.setLayoutX(rectX);
+                hueValueSelector.setLayoutY(rectY);
+                hueValueSelector.setRotate(angle);
 
                 updateColor();
                 return null;
@@ -169,7 +169,7 @@ public class ColorChooser extends HBox implements DynamicPane {
         hollowCircle.setOnMousePressed(colorCircleMouseHandler);
         hollowCircle.setOnMouseDragged(colorCircleMouseHandler);
 
-        colorCircleContainer.getChildren().addAll(hollowCircle, rectangleSelector);
+        colorCircleContainer.getChildren().addAll(hollowCircle, hueValueSelector);
         getChildren().addAll(colorRectContainer, colorCircleContainer);
         prefHeightProperty().set(COLOR_BOX_SIZE + Constants.INSETS);
 
@@ -181,16 +181,15 @@ public class ColorChooser extends HBox implements DynamicPane {
     }
 
     private void initEffectAndSwitch() {
-        rectangleSelector.setY(0);
+        hueValueSelector.setY(0);
         rectSelectorCoordinates();
-        rectangleSelector.setLayoutX(rectX);
-        rectangleSelector.setLayoutY(rectY);
-        rectangleSelector.setRotate(angle);
+        hueValueSelector.setLayoutX(rectX);
+        hueValueSelector.setLayoutY(rectY);
+        hueValueSelector.setRotate(angle);
     }
 
     public void updateColor() {
-        selectedColorProperty.setValue(Color.hsb(hueProperty.get(), saturationProperty.get(), brightnessProperty.get()));
-        System.out.println("update color to "+ selectedColorProperty.get());
+            selectedColorProperty.setValue(Color.hsb(hueProperty.get(), saturationProperty.get(), brightnessProperty.get()));
     }
 
     @Override
@@ -296,7 +295,7 @@ public class ColorChooser extends HBox implements DynamicPane {
 
         return dropShadow;
     }
-    
+
     public Color getSelectedColor() {
         return selectedColorProperty.get();
     }
@@ -341,9 +340,9 @@ public class ColorChooser extends HBox implements DynamicPane {
     }
 
     private void rectSelectorCoordinates() {
-        rectX = Math.round(COLOR_BOX_SIZE / 2.0 + (COLOR_BOX_SIZE - rectangleSelector.getHeight()) / 2.0
+        rectX = Math.round(COLOR_BOX_SIZE / 2.0 + (COLOR_BOX_SIZE - hueValueSelector.getHeight()) / 2.0
                 * Math.cos(Math.toRadians((angle + Constants.OBTUSE_ANGLE_270) % Constants.ROUND_ANGLE)));
-        rectY = Math.round(COLOR_BOX_SIZE / 2.0 + (COLOR_BOX_SIZE - rectangleSelector.getHeight()) / 2.0
+        rectY = Math.round(COLOR_BOX_SIZE / 2.0 + (COLOR_BOX_SIZE - hueValueSelector.getHeight()) / 2.0
                 * Math.sin(Math.toRadians((angle + Constants.OBTUSE_ANGLE_270) % Constants.ROUND_ANGLE)));
     }
 }

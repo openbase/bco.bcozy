@@ -18,11 +18,9 @@
  */
 package org.openbase.bco.bcozy.view;
 
+import com.jfoenix.controls.JFXSpinner;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
-import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
@@ -33,11 +31,11 @@ public class InfoPane extends BorderPane {
 
     private final VBox centerPane;
     private final ObserverLabel textLabel;
-    private final ProgressIndicator progressIndicator;
-    private final ObserverButton closeButton;
+    private final JFXSpinner progressSpinner;
 
     /**
      * Constructor for the ForegroundPane.
+     *
      * @param height Height of the application window
      * @param width Width of the application window
      */
@@ -46,33 +44,25 @@ public class InfoPane extends BorderPane {
         this.getStyleClass().add("info-pane");
 
         this.textLabel = new ObserverLabel("initRemotes");
-        this.progressIndicator = new ProgressIndicator(-1);
-        this.closeButton = new ObserverButton("close");
-        this.closeButton.getStyleClass().add("transparent-button");
+
+        this.progressSpinner = new JFXSpinner();
 
         this.centerPane = new VBox(Constants.INSETS);
         this.centerPane.setAlignment(Pos.CENTER);
-        this.centerPane.getChildren().addAll(this.textLabel, this.progressIndicator, this.closeButton);
+        this.centerPane.getChildren().addAll(progressSpinner, textLabel);
 
         this.setCenter(this.centerPane);
     }
 
     /**
      * Sets the new identifier for the TextLabel.
+     *
      * @param identifier identifier
      */
     public void setTextLabelIdentifier(final String identifier) {
+        assert identifier != null;
         Platform.runLater(() -> {
-                this.textLabel.setIdentifier(identifier);
-            }
-        );
-    }
-
-    /**
-     * Sets the eventHandler for the closeButton.
-     * @param eventHandler eventHandler
-     */
-    public void setCloseButtonEventHandler(final EventHandler<ActionEvent> eventHandler) {
-        this.closeButton.setOnAction(eventHandler);
+            textLabel.setIdentifier(identifier);
+        });
     }
 }

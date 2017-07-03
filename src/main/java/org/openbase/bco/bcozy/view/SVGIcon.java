@@ -20,7 +20,6 @@ package org.openbase.bco.bcozy.view;
 
 import de.jensd.fx.glyphs.GlyphIcons;
 import de.jensd.fx.glyphs.GlyphsDude;
-import javafx.animation.Animation;
 import javafx.animation.Animation.Status;
 import javafx.animation.FadeTransition;
 import javafx.beans.value.ObservableValue;
@@ -145,6 +144,7 @@ public class SVGIcon extends StackPane {
         }
 
         public void save(final SVGIcon icon) {
+            assert icon != null;
             foregroundAnimated = icon.foregroundColorFadeAnimation != null && icon.foregroundColorFadeAnimation.getStatus().equals(Status.RUNNING);
             backgroundAnimated = icon.backgroundColorFadeAnimation != null && icon.backgroundColorFadeAnimation.getStatus().equals(Status.RUNNING);
             foregroundColor = icon.getForegroundIconColor();
@@ -307,6 +307,7 @@ public class SVGIcon extends StackPane {
      * @param cycleCount the number of times the animation should be played (use Animation.INDEFINITE for endless)
      */
     public void setForegroundIconColorAnimated(final Color color, final int cycleCount) {
+        assert color != null;
         stopForegroundAnimation();
         foregroundFadeIcon.setFill(color);
         foregroundColorFadeAnimation = AnimationProvider.createFadeTransition(foregroundFadeIcon, Constants.FULLY_TRANSPARENT, Constants.NO_TRANSPARENCY, Animation.INDEFINITE, Constants.LIGHT_CHANGE_FADE_DURATION);
@@ -440,7 +441,7 @@ public class SVGIcon extends StackPane {
 
     /**
      * Changes the foregroundIcon icon.
-     * 
+     *
      * Note: previous color setup and animations are reset as well.
      *
      * @param icon the icon which should be set as the new icon
@@ -451,7 +452,7 @@ public class SVGIcon extends StackPane {
 
     /**
      * Changes the backgroundIcon icon.
-     * 
+     *
      * Note: previous color setup and animations are reset as well.
      *
      * @param icon the icon which should be set as the new icon.
@@ -464,7 +465,7 @@ public class SVGIcon extends StackPane {
      * Changes the foregroundIcon icon.
      *
      * Note: previous color setup and animations are reset as well.
-     * 
+     *
      * @param icon the icon which should be set as the new icon.
      * @param color the color of the new icon.
      */
@@ -496,7 +497,7 @@ public class SVGIcon extends StackPane {
 
     /**
      * Changes the backgroundIcon icon.
-     * 
+     *
      * Note: previous color setup and animations are reset as well.
      *
      * @param icon the icon which should be set as the new icon.

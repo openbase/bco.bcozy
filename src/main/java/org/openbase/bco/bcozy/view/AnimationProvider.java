@@ -28,10 +28,6 @@ import javafx.util.Duration;
  */
 public final class AnimationProvider {
 
-    private AnimationProvider() {
-
-    }
-
     /**
      * Method to create a FadeTransition with several parameters.
      *
@@ -43,6 +39,8 @@ public final class AnimationProvider {
      * @return an instance of the created FadeTransition
      */
     public static FadeTransition createFadeTransition(final Node node, final double fromValue, final double toValue, final int cycleCount, final double duration) {
+        assert node != null;
+        
         final FadeTransition fadeTransition = new FadeTransition(Duration.millis(duration), node);
         fadeTransition.setFromValue(fromValue);
         fadeTransition.setToValue(toValue);
