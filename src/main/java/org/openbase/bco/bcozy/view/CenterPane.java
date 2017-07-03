@@ -20,9 +20,12 @@ package org.openbase.bco.bcozy.view;
 
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import de.jensd.fx.glyphs.materialicons.MaterialIcon;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Pos;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.StackPane;
+import org.openbase.bco.bcozy.controller.CenterPaneController;
 
 /**
  * Created by hoestreich on 11/26/15.
@@ -36,11 +39,15 @@ public class CenterPane extends StackPane {
     private final VBox viewSwitcher;
     private final VBox viewSwitcherPopUp;
 
+    public ObjectProperty<CenterPaneController.State> appStateProperty;
+    
     /**
      * Constructor for the center pane.
      */
     public CenterPane() {
 
+        appStateProperty = new SimpleObjectProperty<>(CenterPaneController.State.SETTINGS);
+        
         // Initializing components
         popUpParent = new FloatingButton(new SVGIcon(MaterialIcon.SETTINGS, Constants.MIDDLE_ICON, true));
         popUpChildTop = new FloatingButton(new SVGIcon(MaterialDesignIcon.THERMOMETER_LINES, Constants.SMALL_ICON, true));

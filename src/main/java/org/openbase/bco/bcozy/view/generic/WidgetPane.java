@@ -35,6 +35,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ObserverText;
 import org.openbase.bco.bcozy.view.SVGIcon;
@@ -74,6 +75,23 @@ public class WidgetPane extends VBox implements DynamicPane {
     private final SVGIcon mainIcon;
 
     private final Label widgetLabel;
+
+    public enum DisplayMode {
+        ICON_ONLY,
+
+    }
+
+    public void setDisplayMode(final DisplayMode displayMode) {
+        headPane.getChildren().clear();
+        switch (displayMode) {
+            case ICON_ONLY:
+                headPane.setCenter(null);
+                headPane.setRight(null);
+                break;
+            default:
+                break;
+        }
+    }
 
     /**
      * Head content pane to visualize the main functionally.
@@ -121,7 +139,6 @@ public class WidgetPane extends VBox implements DynamicPane {
 
 //        this.minHeightProperty().bind(headPane.prefHeightProperty());
 //        this.maxHeightProperty().bind(headPane.prefHeightProperty());
-
         // setup mouse handling
         if (activateable) {
             final EventHandler<MouseEvent> mouseEventHandler = new EventHandler<MouseEvent>() {
@@ -159,14 +176,14 @@ public class WidgetPane extends VBox implements DynamicPane {
                 primaryActivationProperty.set(false);
             });
             headPane.setOnScrollStarted((event) -> {
-                System.out.println("deltaX:"+ event.getDeltaX());
-                System.out.println("deltaY:"+ event.getDeltaY());
-                if(event.getDeltaY() > 0 ) {
+                System.out.println("deltaX:" + event.getDeltaX());
+                System.out.println("deltaY:" + event.getDeltaY());
+                if (event.getDeltaY() > 0) {
                     primaryActivationProperty.set(true);
-                } else if (event.getDeltaY() < 0 ) {
+                } else if (event.getDeltaY() < 0) {
                     primaryActivationProperty.set(false);
-                    
-                } 
+
+                }
             });
         }
     }
@@ -177,7 +194,7 @@ public class WidgetPane extends VBox implements DynamicPane {
         iconPane.getStyleClass().add(Constants.ICONS_CSS_STRING);
         iconPane.add(mainIcon, 0, 0);
         iconPane.setAlignment(Pos.CENTER);
-        
+
         toggleSwitch.setBackground(Background.EMPTY);
 
         headPane.setLeft(iconPane);
@@ -190,7 +207,6 @@ public class WidgetPane extends VBox implements DynamicPane {
 
 //            // workaround to center the toggle switch, default value -1 aligns the switch not in the pane center which looks bad.
 //            toggleSwitch.maxHeightProperty().set(1);
-
             headPane.setRight(toggleSwitch);
             headPane.setAlignment(toggleSwitch, Pos.CENTER);
         }

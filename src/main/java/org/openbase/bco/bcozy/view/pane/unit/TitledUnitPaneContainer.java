@@ -52,6 +52,8 @@ public class TitledUnitPaneContainer extends VBox {
         this.getChildren().add(unitPaneContainer);
     }
 
+    // idea: new method "expand unit pane (unitconfig)"
+    
     /**
      * Deletes and clears all UnitPaneContainer.
      */

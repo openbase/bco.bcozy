@@ -18,31 +18,46 @@
  */
 package org.openbase.bco.bcozy.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.logging.Level;
 import javafx.application.Platform;
 import javafx.geometry.Point2D;
+import javax.vecmath.Point2d;
 import javax.vecmath.Point3d;
+import javax.xml.crypto.dsig.TransformException;
+import org.apache.commons.io.DirectoryWalker;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.UnitSymbolsPane;
 import org.openbase.bco.bcozy.view.location.LocationPane;
+import org.openbase.bco.bcozy.view.pane.unit.TitledUnitPaneContainer;
+import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
+import org.openbase.bco.dal.remote.unit.Units;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
 import org.openbase.jul.pattern.Observable;
 import org.openbase.jul.pattern.Observer;
+import org.openbase.jul.schedule.GlobalCachedExecutorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rct.Transform;
 import rst.domotic.registry.UnitRegistryDataType.UnitRegistryData;
+import rst.domotic.state.EnablingStateType;
 import rst.domotic.unit.UnitConfigType;
+import rst.domotic.unit.UnitConfigType.UnitConfig;
 import rst.domotic.unit.UnitTemplateType;
+import rst.domotic.unit.UnitTemplateType.UnitTemplate.UnitType;
+import rst.geometry.AxisAlignedBoundingBox3DFloatType;
 import rst.geometry.PoseType;
+import rst.geometry.TranslationType;
+import rst.geometry.TranslationType.Translation;
+
 /**
  *
  * @author lili
@@ -52,19 +67,22 @@ public class UnitsPaneController {
     /**
      * Application logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(LocationPaneController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(UnitsPaneController.class);
 
     private final LocationPane locationPane;
     private final UnitSymbolsPane unitPane;
+    private final Map<String, TitledUnitPaneContainer> titledPaneMap;
 
     public UnitsPaneController(UnitSymbolsPane unitPane, LocationPane locationPane) {
         this.locationPane = locationPane;
         this.unitPane = unitPane;
+        this.titledPaneMap = new HashMap<>();
 
         unitPane.scaleXProperty().bind(locationPane.scaleXProperty());
         unitPane.scaleYProperty().bind(locationPane.scaleYProperty());
         unitPane.translateXProperty().bind(locationPane.translateXProperty());
         unitPane.translateYProperty().bind(locationPane.translateYProperty());
+
     }
 
     /**
@@ -72,13 +90,14 @@ public class UnitsPaneController {
      */
     public void connectUnitRemote() {
         try {
-            Registries.getUnitRegistry().waitForData();
+            Registries.waitForData();
             Registries.getUnitRegistry().addDataObserver(new Observer<UnitRegistryData>() {
                 @Override
                 public void update(Observable<UnitRegistryData> source, UnitRegistryData data) throws Exception {
                     Platform.runLater(() -> {
                         try {
-                            fetchUnits();
+                            // fetchUnits();
+                            fetchUnitsByLocation();
                             unitPane.updateUnitsPane();
                         } catch (CouldNotPerformException | InterruptedException e) {
                             ExceptionPrinter.printHistory(e, LOGGER);
@@ -87,42 +106,115 @@ public class UnitsPaneController {
                 }
             });
             updateUnits();
-            // TODO: update view!! (zoom)
         } catch (Exception e) { //NOPMD
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
         }
     }
 
-    public void fetchUnits() throws CouldNotPerformException, InterruptedException {   //TODO extend this to all needed Device configs.
+    public void fetchUnitsByLocation() throws CouldNotPerformException, InterruptedException {
 
-        final List<UnitConfigType.UnitConfig> unitConfigList = Registries.getUnitRegistry().
-            getUnitConfigs(UnitTemplateType.UnitTemplate.UnitType.COLORABLE_LIGHT);
-        
-        unitConfigList.addAll(Registries.getUnitRegistry().
-            getUnitConfigs(UnitTemplateType.UnitTemplate.UnitType.BATTERY));
+        final List<UnitConfig> locationUnitConfigList = Registries.getLocationRegistry().getLocationConfigs();
 
-        for (final UnitConfigType.UnitConfig unitConfig : unitConfigList) {
-            try {
-                PoseType.Pose pose = unitConfig.getPlacementConfig().getPosition();
-                final Future<Transform> transform = Registries.getLocationRegistry().
-                    getUnitTransformation(unitConfig, Registries.getLocationRegistry().getRootLocationConfig());
-                final Point3d vertex = new Point3d(pose.getTranslation().getX(), pose.getTranslation().getY(), pose.getTranslation().getZ());
-                transform.get(Constants.TRANSFORMATION_TIMEOUT / 10, TimeUnit.MILLISECONDS).getTransform().transform(vertex);
-                Point2D coord = new Point2D(vertex.x * Constants.METER_TO_PIXEL, vertex.y * Constants.METER_TO_PIXEL);
+        // get locations
+        for (final UnitConfig config : locationUnitConfigList) {
 
-                unitPane.addUnit(unitConfig, coord);
+            //TODO get bounding box and extract position
+            AxisAlignedBoundingBox3DFloatType.AxisAlignedBoundingBox3DFloat bb
+                = config.getPlacementConfig().getShape().getBoundingBox();
+            double d = bb.getDepth();
+            Translation lfb = bb.getLeftFrontBottom();
+            double w = bb.getWidth();
+            double new_x = lfb.getY() + (d / 2);
+            double new_y = lfb.getX() + (w / 2);
+//
+//            // get all units in this location sorted by type
+//            for (final Map.Entry<UnitTemplateType.UnitTemplate.UnitType, List<UnitRemote>> nextEntry
+//                : Units.getUnit(locationUnitConfig.getId(), false, Units.LOCATION).getUnitMap().entrySet()) {
+//
+//                if (nextEntry.getValue().isEmpty()) {
+//                    continue;
+//                }
+//
+//                //TODO insert here: handle to "all units config" something like...
+//                //   UnitConfig test = Registries.getLocationRegistry().getUnitConfigsByLocation("").get(0);
+//                //   Units.getUnits //unitConfigList.addAll(Registries.getUnitRegistry().getUnitConfigs(UnitTemplateType.UnitTemplate.UnitType.BATTERY));
+//                if (nextEntry.getKey() == UnitType.COLORABLE_LIGHT) {
+                    // get all remotes for this kind of unit 
+//                    for (UnitRemote<?> u : nextEntry.getValue()) {
 
-            } catch (ExecutionException | TimeoutException ex) {
-                java.util.logging.Logger.getLogger(UnitsPaneController.class.getName()).log(Level.SEVERE, null, ex);
-            }
+//                        if (u.getId().equals("c8b2bfb5-45d9-4a2b-9994-d4062ab19cab")) {
+//                            UnitConfig config = u.getConfig();
+                            // filter diabled units
+                            if (config.getEnablingState().getValue() != EnablingStateType.EnablingState.State.ENABLED) {
+                           //     continue;
+                            }
+                            // filter units without position
+                            if (!config.getPlacementConfig().hasPosition()) {  // todo include lamps without position in "all lamps" button
+                                continue;
+                            }
+
+                            PoseType.Pose pose = config.getPlacementConfig().getPosition();
+
+                            Point3d testpoint = new Point3d(new_x, new_y,1.0);
+                            try {
+                                final Future<Transform> transform = Registries.getLocationRegistry().getUnitTransformation(config, Registries.getLocationRegistry().getRootLocationConfig());
+                                final Point3d vertex = new Point3d(pose.getTranslation().getX(), pose.getTranslation().getY(), 1.0);
+
+                                try {
+                                    transform.get(Constants.TRANSFORMATION_TIMEOUT / 10, TimeUnit.MILLISECONDS).getTransform().transform(vertex);
+                                    transform.get(Constants.TRANSFORMATION_TIMEOUT / 10, TimeUnit.MILLISECONDS).getTransform().transform(testpoint);
+                                } catch (InterruptedException | ExecutionException | TimeoutException ex) {
+                                    ExceptionPrinter.printHistory("Transformation not available for" + config.getDescription(), ex, LOGGER);
+                                }
+                                Point2D coord = new Point2D(vertex.x * Constants.METER_TO_PIXEL, vertex.y * Constants.METER_TO_PIXEL);
+                                Point2D testcoord = new Point2D(testpoint.x * Constants.METER_TO_PIXEL, testpoint.y * Constants.METER_TO_PIXEL);
+                                //!!!!!!!!!!!!!
+                                coord = testcoord;
+                                unitPane.addUnit(config, coord);
+//                                unitPane.addUnit(locationUnitConfig, coord);
+                            } catch (InterruptedException | CouldNotPerformException ex) {
+                                ExceptionPrinter.printHistory(ex, LOGGER);
+                            }
+//                        }
+//                    }
+//                }
+//            }
         }
+    }
 
+    public void fetchUnits() throws CouldNotPerformException, InterruptedException {   
+
+        final List<UnitConfig> unitConfigList = Registries.getUnitRegistry().getUnitConfigs(UnitType.COLORABLE_LIGHT);
+
+        //unitConfigList.addAll(Registries.getUnitRegistry().getUnitConfigs(UnitTemplateType.UnitTemplate.UnitType.BATTERY));
+        unitConfigList.forEach((unitConfig) -> {
+            PoseType.Pose pose = unitConfig.getPlacementConfig().getPosition();
+            // filter diabled units
+            // filter units without position
+            if (!(unitConfig.getEnablingState().getValue() != EnablingStateType.EnablingState.State.ENABLED)) {
+                if (!(!unitConfig.getPlacementConfig().hasPosition())) {
+                    try {
+                        final Future<Transform> transform = Registries.getLocationRegistry().getUnitTransformation(unitConfig, Registries.getLocationRegistry().getRootLocationConfig());
+                        final Point3d vertex = new Point3d(pose.getTranslation().getX(), pose.getTranslation().getY(), 1.0);
+                        try {
+                            transform.get(Constants.TRANSFORMATION_TIMEOUT / 10, TimeUnit.MILLISECONDS).getTransform().transform(vertex);
+                        } catch (Exception ex) {
+                            ExceptionPrinter.printHistory("Transformation not available for" + unitConfig.getDescription(), ex, LOGGER);
+                        }
+                        Point2D coord = new Point2D(vertex.x * Constants.METER_TO_PIXEL, vertex.y * Constants.METER_TO_PIXEL);
+                        unitPane.addUnit(unitConfig, coord);
+                    } catch (Exception ex) {
+                        ExceptionPrinter.printHistory(ex, LOGGER);
+                    }   }
+            }
+        });
     }
 
     public void updateUnits() {
         Platform.runLater((() -> {
             try {
-                fetchUnits();
+                //fetchUnits();
+                fetchUnitsByLocation();
                 unitPane.updateUnitsPane();
             } catch (CouldNotPerformException | InterruptedException e) {
                 ExceptionPrinter.printHistory(e, LOGGER);

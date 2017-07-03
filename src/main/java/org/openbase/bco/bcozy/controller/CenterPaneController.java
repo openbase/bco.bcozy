@@ -20,6 +20,7 @@ package org.openbase.bco.bcozy.controller;
 
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import de.jensd.fx.glyphs.materialicons.MaterialIcon;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.ActionEvent;
 import javafx.stage.Stage;
 import org.openbase.bco.bcozy.view.CenterPane;
@@ -39,15 +40,21 @@ public class CenterPaneController {
     private final CenterPane centerPane;
     private State activeState;
     private boolean isShowing;
+    
     /**
      * Enum to control the display state.
      */
-    public enum State { SETTINGS, TEMPERATURE, MOVEMENT }
+    public enum State { 
+        SETTINGS, TEMPERATURE, MOVEMENT;    
+     /*   @Override
+        public String toString() {
+            return description;  // TODO implement with language support
+        }*/}
     /**
      * Constructor for the CenterPaneController.
      * @param foregroundPane instance of the foregroundPane which has all elements as its children.
      */
-    public CenterPaneController(final ForegroundPane foregroundPane) {
+    public CenterPaneController(final ForegroundPane foregroundPane) {       
         isShowing = false;
         activeState = State.SETTINGS;
         centerPane = foregroundPane.getCenterPane();
@@ -119,5 +126,8 @@ public class CenterPaneController {
             centerPane.getPopUpChildBottom().changeIcon(MaterialIcon.VISIBILITY);
             centerPane.getPopUpChildTop().changeIcon(MaterialIcon.SETTINGS);
         }
+        
+      centerPane.appStateProperty.set(activeState);
     }
+
 }

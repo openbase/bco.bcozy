@@ -18,9 +18,14 @@
  */
 package org.openbase.bco.bcozy.view;
 
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyDoubleProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.StringProperty;
 import javafx.geometry.BoundingBox;
 import javafx.scene.layout.BorderPane;
+import org.openbase.bco.bcozy.controller.CenterPaneController;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.iface.DefaultInitializable;
@@ -36,7 +41,8 @@ public class ForegroundPane extends BorderPane implements DefaultInitializable {
     private final CenterPane centerPane;
     private final MenuHeader menuHeader;
     private final InfoFooter infoFooter;
-
+    private final ObjectProperty<CenterPaneController.State> appState;
+    
     /**
      * Constructor for the ForegroundPane.
      *
@@ -57,6 +63,9 @@ public class ForegroundPane extends BorderPane implements DefaultInitializable {
         this.setCenter(this.centerPane);
         this.setTop(this.menuHeader);
         this.setPickOnBounds(false);
+        
+        appState = new SimpleObjectProperty<>(CenterPaneController.State.SETTINGS);
+        this.appState.bind(centerPane.appStateProperty);
     }
     
     @Override
