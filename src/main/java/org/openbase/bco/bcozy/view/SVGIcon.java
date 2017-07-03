@@ -20,6 +20,7 @@ package org.openbase.bco.bcozy.view;
 
 import de.jensd.fx.glyphs.GlyphIcons;
 import de.jensd.fx.glyphs.GlyphsDude;
+import javafx.animation.Animation;
 import javafx.animation.Animation.Status;
 import javafx.animation.FadeTransition;
 import javafx.beans.value.ObservableValue;
@@ -321,7 +322,7 @@ public class SVGIcon extends StackPane {
     /**
      * Allows to set a new color to the backgroundIcon icon and setAnimation its change (by a FadeTransition).
      *
-     * @param color the color for the backgroundIcon icon to be set
+     * @param color the color for the backgroundIcon icon to be setfeature-rights-and-access-management
      * @param cycleCount the number of times the animation should be played (use Animation.INDEFINITE for endless)
      */
     public void setBackgroundIconColorAnimated(final Color color, final int cycleCount) {
