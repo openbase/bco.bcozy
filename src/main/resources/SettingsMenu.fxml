@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.jfoenix.controls.JFXTextField?>
+<?import com.jfoenix.controls.JFXTreeTableView?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.TreeTableColumn?>
-<?import javafx.scene.control.TreeTableView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane fx:id="settingsPaneParent" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.111"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.openbase.bco.bcozy.controller.SettingsController">
+<AnchorPane fx:id="settingsPaneParent" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.openbase.bco.bcozy.controller.SettingsController">
     <children>
         <TabPane layoutX="3.0" layoutY="4.0" prefHeight="394.0" prefWidth="594.0" tabClosingPolicy="UNAVAILABLE">
             <tabs>
@@ -18,14 +17,10 @@
                 <Tab text="Untitled Tab 2">
                     <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                            <children>
-                                <TreeTableView layoutX="14.0" layoutY="91.0" prefHeight="235.0" prefWidth="569.0">
-                                    <columns>
-                                        <TreeTableColumn prefWidth="284.0" text="Unit"/>
-                                        <TreeTableColumn minWidth="0.0" prefWidth="284.0" text="Nutzungsrechte"/>
-                                    </columns>
-                                </TreeTableView>
-                            </children>
+                     <children>
+                        <JFXTreeTableView fx:id="unitsTable" layoutY="29.0" prefHeight="331.0" prefWidth="594.0" />
+                        <JFXTextField fx:id="filterInput" layoutX="433.0" layoutY="2.0" prefHeight="13.0" prefWidth="161.0" />
+                     </children>
                         </AnchorPane>
                     </content>
                 </Tab>

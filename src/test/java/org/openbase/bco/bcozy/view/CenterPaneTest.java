@@ -9,6 +9,7 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openbase.bco.bcozy.controller.CenterPaneController;
 
@@ -21,7 +22,8 @@ public class CenterPaneTest extends Application {
 
     FloatingPopUp popUp;
 
-    @Test
+
+    @Ignore
     public void test() {
         CenterPaneTest.launch();
     }
