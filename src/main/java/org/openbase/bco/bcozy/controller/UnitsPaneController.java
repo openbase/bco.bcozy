@@ -53,6 +53,9 @@ import rst.domotic.unit.UnitConfigType;
 import rst.domotic.unit.UnitConfigType.UnitConfig;
 import rst.domotic.unit.UnitTemplateType;
 import rst.domotic.unit.UnitTemplateType.UnitTemplate.UnitType;
+import static rst.domotic.unit.location.LocationConfigType.LocationConfig.LocationType.REGION;
+import static rst.domotic.unit.location.LocationConfigType.LocationConfig.LocationType.TILE;
+import static rst.domotic.unit.location.LocationConfigType.LocationConfig.LocationType.ZONE;
 import rst.geometry.AxisAlignedBoundingBox3DFloatType;
 import rst.geometry.PoseType;
 import rst.geometry.TranslationType;
@@ -117,6 +120,10 @@ public class UnitsPaneController {
 
         // get locations
         for (final UnitConfig config : locationUnitConfigList) {
+            
+            if(!config.getLocationConfig().getType().equals(TILE)) {
+                continue;
+            }
 
             //TODO get bounding box and extract position
             AxisAlignedBoundingBox3DFloatType.AxisAlignedBoundingBox3DFloat bb
@@ -124,8 +131,10 @@ public class UnitsPaneController {
             double d = bb.getDepth();
             Translation lfb = bb.getLeftFrontBottom();
             double w = bb.getWidth();
-            double new_x = lfb.getY() + (d / 2);
-            double new_y = lfb.getX() + (w / 2);
+            double new_x;
+            double new_y; //TODO !!!
+            if(d != 0) new_x = lfb.getY() + (d / 2); else new_x = 0;
+            if(w != 0) new_y = lfb.getX() + (w / 2); else new_y= 0;
 //
 //            // get all units in this location sorted by type
 //            for (final Map.Entry<UnitTemplateType.UnitTemplate.UnitType, List<UnitRemote>> nextEntry
@@ -146,7 +155,7 @@ public class UnitsPaneController {
 //                            UnitConfig config = u.getConfig();
                             // filter diabled units
                             if (config.getEnablingState().getValue() != EnablingStateType.EnablingState.State.ENABLED) {
-                           //     continue;
+                                continue;
                             }
                             // filter units without position
                             if (!config.getPlacementConfig().hasPosition()) {  // todo include lamps without position in "all lamps" button
@@ -169,11 +178,11 @@ public class UnitsPaneController {
                                 Point2D coord = new Point2D(vertex.x * Constants.METER_TO_PIXEL, vertex.y * Constants.METER_TO_PIXEL);
                                 Point2D testcoord = new Point2D(testpoint.x * Constants.METER_TO_PIXEL, testpoint.y * Constants.METER_TO_PIXEL);
                                 //!!!!!!!!!!!!!
-                                coord = testcoord;
+                                //coord = testcoord;
                                 unitPane.addUnit(config, coord);
 //                                unitPane.addUnit(locationUnitConfig, coord);
                             } catch (InterruptedException | CouldNotPerformException ex) {
-                                ExceptionPrinter.printHistory(ex, LOGGER);
+                                ExceptionPrinter.printHistory("Could not load unit panes.", ex, LOGGER);
                             }
 //                        }
 //                    }

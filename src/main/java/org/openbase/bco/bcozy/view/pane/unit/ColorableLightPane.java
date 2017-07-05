@@ -70,10 +70,8 @@ public class ColorableLightPane extends AbstractUnitPane<ColorableLightRemote, C
     protected void initBodyContent(Pane bodyPane) throws CouldNotPerformException {
         colorChooser = new ColorChooser();
         colorChooser.initContent();
-        colorChooser.selectedColorProperty().addListener((observable) -> {
-            System.out.println("apply update "+colorChooser.getSelectedColor());
+        colorChooser.selectedColorProperty().addListener((observable, old, new_value) -> {
             if (isHover()) {
-                System.out.println("..."+colorChooser.getSelectedColor());
                 recurrenceEventFilterHSV.trigger(colorChooser.getSelectedColor());
             }
         });
@@ -100,13 +98,12 @@ public class ColorableLightPane extends AbstractUnitPane<ColorableLightRemote, C
             color = Color.TRANSPARENT;
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.DEBUG);
         }
-        
+
 //
 //        if (colorChooser != null) {
 //            System.out.println("set color");
 //            colorChooser.setSelectedColor(color);
 //        }
-
         switch (state) {
             case OFF:
                 getIcon().setBackgroundIconColor(Color.TRANSPARENT);

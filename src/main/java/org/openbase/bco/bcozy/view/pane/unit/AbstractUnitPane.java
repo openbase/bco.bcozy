@@ -46,7 +46,7 @@ import rst.domotic.unit.UnitConfigType.UnitConfig;
  */
 public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends GeneratedMessage> extends ExpandableWidgedPane implements Initializable<UR>, Shutdownable {
 
-    private Class<UR> unitRemoteClass;
+    private final Class<UR> unitRemoteClass;
     private UR unitRemote;
 
     private final Observer<UnitConfig> unitConfigObserver;
@@ -57,6 +57,8 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
 
     /**
      * Constructor for the UnitPane.
+     * @param unitRemoteClass
+     * @param activateable
      */
     public AbstractUnitPane(final Class<UR> unitRemoteClass, final boolean activateable) {
         super(false, activateable);

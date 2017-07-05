@@ -82,7 +82,7 @@ public class WidgetPane extends VBox implements DynamicPane {
     }
 
     public void setDisplayMode(final DisplayMode displayMode) {
-        headPane.getChildren().clear();
+       // headPane.getChildren().clear();
         switch (displayMode) {
             case ICON_ONLY:
                 headPane.setCenter(null);

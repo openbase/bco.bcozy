@@ -118,10 +118,6 @@ public class LocationPaneController {
                 for (final Vec3DDoubleType.Vec3DDouble rstVertex : shape) {
                     // Convert vertex into java type
                     final Point3d vertex = new Point3d(rstVertex.getX(), rstVertex.getY(), rstVertex.getZ());
-                    if(locationUnitConfig.getId().equals("81b9efa4-2dc9-432e-b47c-1d73021ff0f3"))
-                    {
-                        System.out.print("x");
-                    }
                     // Transform
                     transform.get(Constants.TRANSFORMATION_TIMEOUT, TimeUnit.MILLISECONDS).getTransform().transform(vertex);
                     // Add vertex to list of vertices
