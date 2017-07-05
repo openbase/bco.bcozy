@@ -18,6 +18,7 @@
  */
 package org.openbase.bco.bcozy.controller;
 
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -33,10 +34,17 @@ import org.openbase.bco.bcozy.view.mainmenupanes.AvailableUsersPane;
 import org.openbase.bco.bcozy.view.mainmenupanes.ConnectionPane;
 import org.openbase.bco.bcozy.view.mainmenupanes.LoginPane;
 import org.openbase.bco.bcozy.view.mainmenupanes.SettingsPane;
+import org.openbase.bco.authentication.lib.SessionManager;
 
+
+import java.io.StreamCorruptedException;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 
+import org.openbase.bco.dal.remote.unit.Units;
+import org.openbase.jul.exception.CouldNotPerformException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,6 +65,7 @@ public class MainMenuController {
 
     /**
      * Constructor for the MainMenuController.
+     *
      * @param foregroundPane The foregroundPane allows to access all necessary gui elements
      */
     public MainMenuController(final ForegroundPane foregroundPane) {
@@ -97,18 +106,43 @@ public class MainMenuController {
     }
 
     private void loginUser() {
-        //TODO: Initiate Login with UserRegistry
-        if (loginPane.getNameTxt().getText().equals("Admin")
-                && loginPane.getPasswordField().getText().equals("")) {
-            loginPane.resetUserOrPasswordWrong();
-            loginPane.getLoggedInUserLbl().setText(loginPane.getNameTxt().getText());
-            loginPane.getNameTxt().setText("");
-            loginPane.getPasswordField().setText("");
-            loginPane.setState(LoginPane.State.LOGOUT);
-        } else {
-            loginPane.indicateUserOrPasswordWrong();
-        }
+        new Thread(this::loginUserAsync).start();
     }
+
+
+    private void loginUserAsync() {
+        SessionManager sessionManager = Units.getSessionManager();
+
+        try {
+            System.out.println("ACTIVE THREADS BEFORE " + Thread.activeCount());
+
+            sessionManager.login(loginPane.getNameTxt().getText(), loginPane.getPasswordField().getText());
+            System.out.println("ACTIVE THREADS AFTER" + Thread.activeCount());
+
+        } catch (CouldNotPerformException | StreamCorruptedException e) {
+            //throw new RuntimeException(e);
+            e.printStackTrace();
+        } catch (java.lang.OutOfMemoryError error) {
+            LOGGER.error(error.getMessage());
+        }
+        System.out.println("ACTIVE THREADS END " + Thread.activeCount());
+        System.out.flush();
+
+
+        Platform.runLater(() -> {
+            if (sessionManager.isLoggedIn()) {
+                loginPane.resetUserOrPasswordWrong();
+                loginPane.getLoggedInUserLbl().setText(loginPane.getNameTxt().getText());
+                loginPane.getNameTxt().setText("");
+                loginPane.getPasswordField().setText("");
+                loginPane.setState(LoginPane.State.LOGOUT);
+            } else {
+                loginPane.indicateUserOrPasswordWrong();
+
+            }
+        });
+    }
+
 
     private void resetLogin() {
         if (loginPane.getInputWrongLbl().isVisible()) {
