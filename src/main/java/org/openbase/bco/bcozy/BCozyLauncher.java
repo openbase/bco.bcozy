@@ -27,6 +27,10 @@ import org.openbase.jps.preset.JPDebugMode;
 import org.openbase.jul.exception.FatalImplementationErrorException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
+import org.openbase.jul.extension.rsb.com.jp.JPRSBHost;
+import org.openbase.jul.extension.rsb.com.jp.JPRSBPort;
+import org.openbase.jul.extension.rsb.com.jp.JPRSBThreadPooling;
+import org.openbase.jul.extension.rsb.com.jp.JPRSBTransport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,6 +56,10 @@ public class BCozyLauncher {
         JPService.setApplicationName(APP_NAME);
         JPService.registerProperty(JPDebugMode.class);
         JPService.registerProperty(JPLanguage.class);
+        JPService.registerProperty(JPRSBThreadPooling.class);
+        JPService.registerProperty(JPRSBHost.class);
+        JPService.registerProperty(JPRSBPort.class);
+        JPService.registerProperty(JPRSBTransport.class);
 
         try {
             JPService.parseAndExitOnError(args);
