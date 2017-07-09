@@ -48,7 +48,6 @@ import org.openbase.jul.exception.printer.LogLevel;
 import org.openbase.jul.schedule.GlobalCachedExecutorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.navigation.ExecutionParametersType;
 
 /**
  *
@@ -71,43 +70,22 @@ public class BCozy extends Application {
      * Application logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(BCozy.class);
-    
+
     public static Stage primaryStage;
-    
+
     private InfoPane infoPane;
     private ContextMenuController contextMenuController;
     private LocationPaneController locationPaneController;
     private ForegroundPane foregroundPane;
     private Future initTask;
 
-    /**
-     * Main Method starting JavaFX Environment.
-     *
-     * @param args Arguments from commandline.
-     */
-    public static void main(final String... args) {
-        
-        LOGGER.info("Start " + APP_NAME + "...");
-        
-        registerListeners();
-        /* Setup JPService */
-        JPService.setApplicationName(APP_NAME);
-        JPService.registerProperty(JPDebugMode.class);
-        JPService.registerProperty(JPLanguage.class);
-        
-        try {
-            JPService.parseAndExitOnError(args);
-            launch(args);
-        } catch (IllegalStateException ex) {
-            ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
-            LOGGER.info(APP_NAME + " finished unexpected.");
-        }
-        LOGGER.info(APP_NAME + " finished.");
-    }
+
 
     @Override
     public void start(final Stage primaryStage) throws InitializationException, InterruptedException, InstantiationException {
-        try {BCozy.primaryStage = primaryStage;
+        BCozy.primaryStage = primaryStage;
+        registerResponsiveHandler();
+
         final double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
         final double screenHeight = Screen.getPrimary().getVisualBounds().getHeight();
         primaryStage.setTitle("BCozy");
@@ -121,7 +99,6 @@ public class BCozy extends Application {
         infoPane = new InfoPane(screenHeight, screenWidth);
         infoPane.setMinHeight(root.getHeight());
         infoPane.setMinWidth(root.getWidth());
-        infoPane.setCloseButtonEventHandler(event -> stop());
         root.getChildren().addAll(backgroundPane, foregroundPane, infoPane);
         
         primaryStage.setMinWidth(foregroundPane.getMainMenu().getMinWidth() + foregroundPane.getContextMenu().getMinWidth() + 300);
@@ -139,10 +116,6 @@ public class BCozy extends Application {
         primaryStage.show();
         
         initRemotesAndLocation();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-
-        }
     }
     
     private void initRemotesAndLocation() {
@@ -177,7 +150,8 @@ public class BCozy extends Application {
             }
         });
     }
-    
+
+    @Override
     public void stop() {
         if (initTask != null && !initTask.isDone()) {
             initTask.cancel(true);
@@ -221,8 +195,8 @@ public class BCozy extends Application {
             }
         }
     }
-    
-    private static void registerListeners() {
+
+    private static void registerResponsiveHandler() {
         LOGGER.info("Executing Registration of Listeners");
         ResponsiveHandler.setOnDeviceTypeChanged((over, oldDeviceType, newDeviceType) -> {
             switch (newDeviceType) {
