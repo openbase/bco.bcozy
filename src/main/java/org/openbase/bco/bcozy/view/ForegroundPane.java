@@ -18,9 +18,11 @@
  */
 package org.openbase.bco.bcozy.view;
 
+import de.jensd.fx.glyphs.materialicons.MaterialIcon;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.geometry.BoundingBox;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.iface.DefaultInitializable;
@@ -46,9 +48,10 @@ public class ForegroundPane extends BorderPane implements DefaultInitializable {
     public ForegroundPane(final double height, final double width) throws InterruptedException {
         this.mainMenu = new MainMenu(height - 150, 300);
         this.contextMenu = new ContextMenu(height - 150, 300);
+        this.contextMenu.getFullscreen().setOnAction(event -> setMaximizeAction());
         this.menuHeader = new MenuHeader(30, width);
         this.infoFooter = new InfoFooter(20, width);
-        this.centerPane = new CenterPane();
+        this.centerPane = new CenterPane(height - 150);
 
         //this.setTop(this.menuHeader);
         this.setLeft(this.mainMenu);
@@ -123,5 +126,17 @@ public class ForegroundPane extends BorderPane implements DefaultInitializable {
      */
     public ReadOnlyDoubleProperty getMainMenuWidthProperty() {
         return this.mainMenu.widthProperty();
+    }
+
+
+    private void setMaximizeAction() {
+        final Stage stage = (Stage) contextMenu.getScene().getWindow();
+        if (stage.isFullScreen()) {
+            contextMenu.getFullscreen().changeIcon(MaterialIcon.FULLSCREEN);
+            stage.setFullScreen(false);
+        } else {
+            contextMenu.getFullscreen().changeIcon(MaterialIcon.FULLSCREEN_EXIT);
+            stage.setFullScreen(true);
+        }
     }
 }

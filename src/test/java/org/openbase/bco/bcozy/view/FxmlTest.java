@@ -26,7 +26,7 @@ public class FxmlTest extends Application {
     /**
      * Application logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(SettingsMenu.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FxmlTest.class);
 
 
     @Test

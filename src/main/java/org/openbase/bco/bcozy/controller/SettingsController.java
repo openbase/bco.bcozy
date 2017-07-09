@@ -4,53 +4,32 @@ import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.controls.JFXTreeTableColumn;
 import com.jfoenix.controls.JFXTreeTableView;
 import com.jfoenix.controls.RecursiveTreeItem;
-import com.jfoenix.controls.cells.editors.TextFieldEditorBuilder;
-import com.jfoenix.controls.cells.editors.base.GenericEditableTreeTableCell;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
+import javafx.scene.layout.AnchorPane;
 import javafx.util.Callback;
 import org.openbase.bco.bcozy.BCozy;
 import org.openbase.bco.bcozy.model.LanguageSelection;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.mainmenupanes.SettingsPane;
-import org.openbase.bco.dal.lib.layer.unit.Unit;
-import org.openbase.bco.dal.remote.unit.ColorableLightRemote;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
-import org.openbase.jul.exception.NotAvailableException;
-import org.openbase.jul.pattern.Observer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.domotic.action.ActionDescriptionType;
-import rst.domotic.action.ActionFutureType;
-import rst.domotic.action.SnapshotType;
 import rst.domotic.unit.UnitConfigType;
-import rst.domotic.unit.UnitTemplateType;
-import rst.rsb.ScopeType;
 
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.ResourceBundle;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 /**
  * @author vdasilva
@@ -70,8 +49,10 @@ public class SettingsController {
     @FXML
     private JFXTextField filterInput;
 
+    @FXML
+    private AnchorPane settingsPaneParent;
 
-    private SettingsPane settings;
+    private SettingsPane settingsPane;
 
 
     /**
@@ -83,11 +64,10 @@ public class SettingsController {
 
     @FXML
     public void initialize() {
-        fillTreeTableView();
-    }
 
-    public void addSettingsTab() {
-        settingsTab.setContent(settings);
+        fillTreeTableView();
+
+        this.setSettingsPane(new SettingsPane());
     }
 
     public void fillTreeTableView() {
@@ -149,6 +129,10 @@ public class SettingsController {
         return column;
     }
 
+    public SettingsPane getSettingsPane() {
+        return settingsPane;
+    }
+
     private class RecursiveUnitConfig extends RecursiveTreeObject<RecursiveUnitConfig> {
         final private UnitConfigType.UnitConfig unit;
 
@@ -187,16 +171,16 @@ public class SettingsController {
         final ResourceBundle languageBundle = ResourceBundle
                 .getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
 
-        settings.getThemeChoice().getSelectionModel().selectedIndexProperty()
+        settingsPane.getThemeChoice().getSelectionModel().selectedIndexProperty()
                 .addListener(new ChangeListener<Number>() {
 
                     @Override
                     public void changed(final ObservableValue<? extends Number> observableValue, final Number number,
                                         final Number number2) {
-                        if (settings.getAvailableThemes().get(number2.intValue())
+                        if (settingsPane.getAvailableThemes().get(number2.intValue())
                                 .equals(languageBundle.getString(Constants.LIGHT_THEME_CSS_NAME))) {
                             BCozy.changeTheme(Constants.LIGHT_THEME_CSS);
-                        } else if (settings.getAvailableThemes().get(number2.intValue())
+                        } else if (settingsPane.getAvailableThemes().get(number2.intValue())
                                 .equals(languageBundle.getString(Constants.DARK_THEME_CSS_NAME))) {
                             BCozy.changeTheme(Constants.DARK_THEME_CSS);
                         }
@@ -205,15 +189,15 @@ public class SettingsController {
     }
 
     private void chooseLanguage() {
-        settings.getLanguageChoice().getSelectionModel().selectedIndexProperty()
+        settingsPane.getLanguageChoice().getSelectionModel().selectedIndexProperty()
                 .addListener(new ChangeListener<Number>() {
 
                     @Override
                     public void changed(final ObservableValue<? extends Number> observableValue, final Number number,
                                         final Number number2) {
-                        if (settings.getAvailableLanguages().get(number2.intValue()).equals("English")) {
+                        if (settingsPane.getAvailableLanguages().get(number2.intValue()).equals("English")) {
                             LanguageSelection.getInstance().setSelectedLocale(new Locale("en", "US"));
-                        } else if (settings.getAvailableLanguages().get(number2.intValue()).equals("Deutsch")) {
+                        } else if (settingsPane.getAvailableLanguages().get(number2.intValue()).equals("Deutsch")) {
                             LanguageSelection.getInstance().setSelectedLocale(new Locale("de", "DE"));
                         }
                     }
@@ -221,13 +205,15 @@ public class SettingsController {
     }
 
     public void setSettingsPane(SettingsPane settingsPane) {
-        this.settings = settingsPane;
+        this.settingsPane = settingsPane;
 
-        settings.getThemeChoice().setOnAction(event -> chooseTheme());
-        settings.getLanguageChoice().setOnAction(event -> chooseLanguage());
+        this.settingsPane.getThemeChoice().setOnAction(event -> chooseTheme());
+        this.settingsPane.getLanguageChoice().setOnAction(event -> chooseLanguage());
         //Necessary to ensure that the first change is not missed by the ChangeListener
-        settings.getThemeChoice().getSelectionModel().select(0);
-        settings.getLanguageChoice().getSelectionModel().select(0);
+        this.settingsPane.getThemeChoice().getSelectionModel().select(0);
+        this.settingsPane.getLanguageChoice().getSelectionModel().select(0);
+
+        settingsTab.setContent(this.settingsPane);
     }
 }
 
