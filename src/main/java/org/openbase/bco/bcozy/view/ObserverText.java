@@ -65,7 +65,9 @@ public class ObserverText extends Text implements Observer {
         try {
             super.setText(languageBundle.getString(identifier));
         } catch (MissingResourceException ex) {
-            ExceptionPrinter.printHistory("Could not resolve Identifier ["+identifier+"]!", ex, LOGGER, LogLevel.WARN);
+            if (!identifier.equals(Constants.DUMMY_LABLE)) {
+                ExceptionPrinter.printHistory("Could not resolve Identifier [" + identifier + "]!", ex, LOGGER, LogLevel.WARN);
+            }
             super.setText(identifier);
         }
     }

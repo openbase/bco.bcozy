@@ -53,7 +53,7 @@ public class WidgetPane extends VBox implements DynamicPane {
     /**
      * Text for tooltip dependent on selected language.
      */
-    private final ObserverText infoText = new ObserverText("DUMMY");
+    private final ObserverText infoText = new ObserverText(Constants.DUMMY_LABLE);
 
     /**
      * ToggleSwitch Button on right side of the header Pane. Is visible via activation at
@@ -127,20 +127,15 @@ public class WidgetPane extends VBox implements DynamicPane {
             final EventHandler<MouseEvent> mouseEventHandler = new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(final MouseEvent event) {
-                    System.out.println("mouse event...");
                     if (!event.isStillSincePress()) {
-                        System.out.println("skipped...");
                         return;
                     }
-                    System.out.println("counter: " + event.getClickCount());
                     try {
                         switch (event.getButton()) {
                             case PRIMARY:
-                                System.out.println("isPrimaryButtonDown");
                                 togglePrimaryActivation();
                                 break;
                             case SECONDARY:
-                                System.out.println("isSecondaryButtonDown");
                                 toggleSecondaryActivation();
                                 break;
                         }
@@ -159,8 +154,6 @@ public class WidgetPane extends VBox implements DynamicPane {
                 primaryActivationProperty.set(false);
             });
             headPane.setOnScrollStarted((event) -> {
-                System.out.println("deltaX:"+ event.getDeltaX());
-                System.out.println("deltaY:"+ event.getDeltaY());
                 if(event.getDeltaY() > 0 ) {
                     primaryActivationProperty.set(true);
                 } else if (event.getDeltaY() < 0 ) {
@@ -228,12 +221,10 @@ public class WidgetPane extends VBox implements DynamicPane {
     }
 
     public void togglePrimaryActivation() {
-        System.out.println("toggle toggleActivation");
         primaryActivationProperty.set(!primaryActivationProperty.getValue());
     }
 
     public void toggleSecondaryActivation() {
-        System.out.println("toggle toggleSecondaryActivation");
         secondaryActivationProperty.set(!secondaryActivationProperty.getValue());
     }
 
