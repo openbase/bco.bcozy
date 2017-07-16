@@ -99,8 +99,8 @@ public class UnitsPaneController {
                 public void update(Observable<UnitRegistryData> source, UnitRegistryData data) throws Exception {
                     Platform.runLater(() -> {
                         try {
-                            // fetchUnits();
-                            fetchUnitsByLocation();
+                             fetchUnits();
+                            //fetchUnitsByLocation();
                             unitPane.updateUnitsPane();
                         } catch (CouldNotPerformException | InterruptedException e) {
                             ExceptionPrinter.printHistory(e, LOGGER);
@@ -133,8 +133,8 @@ public class UnitsPaneController {
             double w = bb.getWidth();
             double new_x;
             double new_y; //TODO !!!
-            if(d != 0) new_x = lfb.getY() + (d / 2); else new_x = 0;
-            if(w != 0) new_y = lfb.getX() + (w / 2); else new_y= 0;
+            if(d != 0) new_x = (d / 2); else new_x = 0;
+            if(w != 0) new_y = (w / 2); else new_y= 0;
 //
 //            // get all units in this location sorted by type
 //            for (final Map.Entry<UnitTemplateType.UnitTemplate.UnitType, List<UnitRemote>> nextEntry
@@ -178,7 +178,7 @@ public class UnitsPaneController {
                                 Point2D coord = new Point2D(vertex.x * Constants.METER_TO_PIXEL, vertex.y * Constants.METER_TO_PIXEL);
                                 Point2D testcoord = new Point2D(testpoint.x * Constants.METER_TO_PIXEL, testpoint.y * Constants.METER_TO_PIXEL);
                                 //!!!!!!!!!!!!!
-                                //coord = testcoord;
+                                coord = testcoord;
                                 unitPane.addUnit(config, coord);
 //                                unitPane.addUnit(locationUnitConfig, coord);
                             } catch (InterruptedException | CouldNotPerformException ex) {
@@ -201,7 +201,7 @@ public class UnitsPaneController {
             // filter diabled units
             // filter units without position
             if (!(unitConfig.getEnablingState().getValue() != EnablingStateType.EnablingState.State.ENABLED)) {
-                if (!(!unitConfig.getPlacementConfig().hasPosition())) {
+                if (unitConfig.getPlacementConfig().hasPosition()) {
                     try {
                         final Future<Transform> transform = Registries.getLocationRegistry().getUnitTransformation(unitConfig, Registries.getLocationRegistry().getRootLocationConfig());
                         final Point3d vertex = new Point3d(pose.getTranslation().getX(), pose.getTranslation().getY(), 1.0);
