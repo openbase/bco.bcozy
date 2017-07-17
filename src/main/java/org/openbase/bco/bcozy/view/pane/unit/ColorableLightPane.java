@@ -98,7 +98,7 @@ public class ColorableLightPane extends AbstractUnitPane<ColorableLightRemote, C
             color = Color.TRANSPARENT;
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.DEBUG);
         }
-
+      
 //
 //        if (colorChooser != null) {
 //            System.out.println("set color");
@@ -116,6 +116,7 @@ public class ColorableLightPane extends AbstractUnitPane<ColorableLightRemote, C
                 primaryActivationProperty().setValue(Boolean.TRUE);
                 break;
             default:
+                getIcon().setBackgroundIconColor(Color.TRANSPARENT);
                 setInfoText("unknown");
                 break;
         }
