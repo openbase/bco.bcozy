@@ -244,7 +244,7 @@ public final class Constants {
     /**
      * The name of a dummy room.
      */
-    public static final String DUMMY_LABLE = "DUMMY";
+    public static final String DUMMY_LABEL = "DUMMY";
 
     /**
      * The percentage of the full screen that a zoomed room will fill according to its width.
