@@ -99,8 +99,9 @@ public class UnitsPaneController {
                 public void update(Observable<UnitRegistryData> source, UnitRegistryData data) throws Exception {
                     Platform.runLater(() -> {
                         try {
-                             fetchUnits();
+                            //fetchUnits();
                             //fetchUnitsByLocation();
+                            fetchUnitRemotes();
                             unitPane.updateUnitsPane();
                         } catch (CouldNotPerformException | InterruptedException e) {
                             ExceptionPrinter.printHistory(e, LOGGER);
@@ -120,8 +121,8 @@ public class UnitsPaneController {
 
         // get locations
         for (final UnitConfig config : locationUnitConfigList) {
-            
-            if(!config.getLocationConfig().getType().equals(TILE)) {
+
+            if (!config.getLocationConfig().getType().equals(TILE)) {
                 continue;
             }
 
@@ -133,8 +134,16 @@ public class UnitsPaneController {
             double w = bb.getWidth();
             double new_x;
             double new_y; //TODO !!!
-            if(d != 0) new_x = (d / 2); else new_x = 0;
-            if(w != 0) new_y = (w / 2); else new_y= 0;
+            if (d != 0) {
+                new_x = (d / 2);
+            } else {
+                new_x = 0;
+            }
+            if (w != 0) {
+                new_y = (w / 2);
+            } else {
+                new_y = 0;
+            }
 //
 //            // get all units in this location sorted by type
 //            for (final Map.Entry<UnitTemplateType.UnitTemplate.UnitType, List<UnitRemote>> nextEntry
@@ -148,42 +157,42 @@ public class UnitsPaneController {
 //                //   UnitConfig test = Registries.getLocationRegistry().getUnitConfigsByLocation("").get(0);
 //                //   Units.getUnits //unitConfigList.addAll(Registries.getUnitRegistry().getUnitConfigs(UnitTemplateType.UnitTemplate.UnitType.BATTERY));
 //                if (nextEntry.getKey() == UnitType.COLORABLE_LIGHT) {
-                    // get all remotes for this kind of unit 
+            // get all remotes for this kind of unit 
 //                    for (UnitRemote<?> u : nextEntry.getValue()) {
 
 //                        if (u.getId().equals("c8b2bfb5-45d9-4a2b-9994-d4062ab19cab")) {
 //                            UnitConfig config = u.getConfig();
-                            // filter diabled units
-                            if (config.getEnablingState().getValue() != EnablingStateType.EnablingState.State.ENABLED) {
-                                continue;
-                            }
-                            // filter units without position
-                            if (!config.getPlacementConfig().hasPosition()) {  // todo include lamps without position in "all lamps" button
-                                continue;
-                            }
+            // filter diabled units
+            if (config.getEnablingState().getValue() != EnablingStateType.EnablingState.State.ENABLED) {
+                continue;
+            }
+            // filter units without position
+            if (!config.getPlacementConfig().hasPosition()) {  // todo include lamps without position in "all lamps" button
+                continue;
+            }
 
-                            PoseType.Pose pose = config.getPlacementConfig().getPosition();
+            PoseType.Pose pose = config.getPlacementConfig().getPosition();
 
-                            Point3d testpoint = new Point3d(new_x, new_y,1.0);
-                            try {
-                                final Future<Transform> transform = Registries.getLocationRegistry().getUnitTransformation(config, Registries.getLocationRegistry().getRootLocationConfig());
-                                final Point3d vertex = new Point3d(pose.getTranslation().getX(), pose.getTranslation().getY(), 1.0);
+            Point3d testpoint = new Point3d(new_x, new_y, 1.0);
+            try {
+                final Future<Transform> transform = Registries.getLocationRegistry().getUnitTransformation(config, Registries.getLocationRegistry().getRootLocationConfig());
+                final Point3d vertex = new Point3d(pose.getTranslation().getX(), pose.getTranslation().getY(), 1.0);
 
-                                try {
-                                    transform.get(Constants.TRANSFORMATION_TIMEOUT / 10, TimeUnit.MILLISECONDS).getTransform().transform(vertex);
-                                    transform.get(Constants.TRANSFORMATION_TIMEOUT / 10, TimeUnit.MILLISECONDS).getTransform().transform(testpoint);
-                                } catch (InterruptedException | ExecutionException | TimeoutException ex) {
-                                    ExceptionPrinter.printHistory("Transformation not available for" + config.getDescription(), ex, LOGGER);
-                                }
-                                Point2D coord = new Point2D(vertex.x * Constants.METER_TO_PIXEL, vertex.y * Constants.METER_TO_PIXEL);
-                                Point2D testcoord = new Point2D(testpoint.x * Constants.METER_TO_PIXEL, testpoint.y * Constants.METER_TO_PIXEL);
-                                //!!!!!!!!!!!!!
-                                coord = testcoord;
-                                unitPane.addUnit(config, coord);
+                try {
+                    transform.get(Constants.TRANSFORMATION_TIMEOUT / 10, TimeUnit.MILLISECONDS).getTransform().transform(vertex);
+                    transform.get(Constants.TRANSFORMATION_TIMEOUT / 10, TimeUnit.MILLISECONDS).getTransform().transform(testpoint);
+                } catch (InterruptedException | ExecutionException | TimeoutException ex) {
+                    ExceptionPrinter.printHistory("Transformation not available for" + config.getDescription(), ex, LOGGER);
+                }
+                Point2D coord = new Point2D(vertex.x * Constants.METER_TO_PIXEL, vertex.y * Constants.METER_TO_PIXEL);
+                Point2D testcoord = new Point2D(testpoint.x * Constants.METER_TO_PIXEL, testpoint.y * Constants.METER_TO_PIXEL);
+                //!!!!!!!!!!!!!
+                coord = testcoord;
+                unitPane.addUnit(config, coord);
 //                                unitPane.addUnit(locationUnitConfig, coord);
-                            } catch (InterruptedException | CouldNotPerformException ex) {
-                                ExceptionPrinter.printHistory("Could not load unit panes.", ex, LOGGER);
-                            }
+            } catch (InterruptedException | CouldNotPerformException ex) {
+                ExceptionPrinter.printHistory("Could not load unit panes.", ex, LOGGER);
+            }
 //                        }
 //                    }
 //                }
@@ -191,7 +200,7 @@ public class UnitsPaneController {
         }
     }
 
-    public void fetchUnits() throws CouldNotPerformException, InterruptedException {   
+    public void fetchUnits() throws CouldNotPerformException, InterruptedException {
 
         final List<UnitConfig> unitConfigList = Registries.getUnitRegistry().getUnitConfigs(UnitType.COLORABLE_LIGHT);
 
@@ -214,16 +223,54 @@ public class UnitsPaneController {
                         unitPane.addUnit(unitConfig, coord);
                     } catch (Exception ex) {
                         ExceptionPrinter.printHistory(ex, LOGGER);
-                    }   }
+                    }
+                }
             }
         });
+    }
+
+    public void fetchUnitRemotes() throws CouldNotPerformException, InterruptedException {
+
+        final List<UnitConfig> locationUnitConfigList = Registries.getLocationRegistry().getLocationConfigs();
+        
+        for (final UnitConfig config : locationUnitConfigList) {
+            for (final Map.Entry<UnitTemplateType.UnitTemplate.UnitType, List<UnitRemote>> nextEntry : Units.getUnit(config.getId(), false, Units.LOCATION).getUnitMap().entrySet()) {
+               if (nextEntry.getValue().isEmpty()) {
+                   continue;
+               }
+               for (UnitRemote<?> u : nextEntry.getValue()) {
+                   
+                    PoseType.Pose pose = u.getConfig().getPlacementConfig().getPosition();
+                 // filter diabled units
+                 // filter units without position
+                     if (!(u.getConfig().getEnablingState().getValue() != EnablingStateType.EnablingState.State.ENABLED)) {
+                       if (u.getConfig().getPlacementConfig().hasPosition()) {
+                         try {
+                             final Future<Transform> transform = Registries.getLocationRegistry().getUnitTransformation(u.getConfig(), Registries.getLocationRegistry().getRootLocationConfig());
+                             final Point3d vertex = new Point3d(pose.getTranslation().getX(), pose.getTranslation().getY(), 1.0);
+                             try {
+                                 transform.get(Constants.TRANSFORMATION_TIMEOUT / 10, TimeUnit.MILLISECONDS).getTransform().transform(vertex);
+                             } catch (Exception ex) {
+                                 ExceptionPrinter.printHistory("Transformation not available for" + u.getConfig().getDescription(), ex, LOGGER);
+                             }
+                             Point2D coord = new Point2D(vertex.x * Constants.METER_TO_PIXEL, vertex.y * Constants.METER_TO_PIXEL);
+                             unitPane.addUnit(u, coord);
+                         } catch (Exception ex) {
+                             ExceptionPrinter.printHistory(ex, LOGGER);
+                         }
+                     }
+                 }
+               }
+            }
+        }
     }
 
     public void updateUnits() {
         Platform.runLater((() -> {
             try {
                 //fetchUnits();
-                fetchUnitsByLocation();
+                //fetchUnitsByLocation();
+                fetchUnitRemotes();
                 unitPane.updateUnitsPane();
             } catch (CouldNotPerformException | InterruptedException e) {
                 ExceptionPrinter.printHistory(e, LOGGER);

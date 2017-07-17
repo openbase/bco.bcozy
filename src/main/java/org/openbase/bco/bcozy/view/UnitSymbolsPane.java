@@ -19,13 +19,17 @@
  */
 package org.openbase.bco.bcozy.view;
 
+import com.google.protobuf.GeneratedMessage;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javafx.geometry.Point2D;
 import javafx.scene.layout.Pane;
 import org.openbase.bco.bcozy.view.location.UnitButton;
+import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
+import org.openbase.jul.exception.NotAvailableException;
 import rst.domotic.unit.UnitConfigType.UnitConfig;
 
 /**
@@ -68,6 +72,19 @@ public class UnitSymbolsPane extends Pane {
         roomUnitsMap.get(locationId).put(unitConfig.getId(), newButton);
     }
     
+      public void addUnit(UnitRemote<? extends GeneratedMessage> u, Point2D position) {
+        UnitButton newButton;
+        try {
+            newButton = new UnitButton(u);
+       
+            newButton.setTranslateX(position.getY());  //Attention: swap correct? according to location pane 
+            newButton.setTranslateY(position.getX());
+            unitsMap.put(u.getConfig().getId(), newButton);
+         } catch (NotAvailableException ex) {
+            java.util.logging.Logger.getLogger(UnitSymbolsPane.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
 
     public void clearUnits() {
         unitsMap.forEach((unitId, button) 
@@ -82,5 +99,7 @@ public class UnitSymbolsPane extends Pane {
             -> {this.getChildren().add(button);}
         );
     }
+
+  
 
 }
