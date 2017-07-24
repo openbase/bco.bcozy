@@ -1,17 +1,17 @@
 /**
  * ==================================================================
- *
+ * <p>
  * This file is part of org.openbase.bco.bcozy.
- *
+ * <p>
  * org.openbase.bco.bcozy is free software: you can redistribute it and modify
  * it under the terms of the GNU General Public License (Version 3)
  * as published by the Free Software Foundation.
- *
+ * <p>
  * org.openbase.bco.bcozy is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
@@ -19,8 +19,10 @@
 package org.openbase.bco.bcozy;
 
 import com.guigarage.responsive.ResponsiveHandler;
+
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+
 import javafx.application.Application;
 import javafx.concurrent.Task;
 import javafx.scene.Scene;
@@ -31,15 +33,12 @@ import org.openbase.bco.bcozy.controller.CenterPaneController;
 import org.openbase.bco.bcozy.controller.ContextMenuController;
 import org.openbase.bco.bcozy.controller.LocationPaneController;
 import org.openbase.bco.bcozy.controller.MainMenuController;
-import org.openbase.bco.bcozy.jp.JPLanguage;
 import org.openbase.bco.bcozy.view.BackgroundPane;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ForegroundPane;
 import org.openbase.bco.bcozy.view.ImageViewProvider;
 import org.openbase.bco.bcozy.view.InfoPane;
 import org.openbase.bco.registry.remote.Registries;
-import org.openbase.jps.core.JPService;
-import org.openbase.jps.preset.JPDebugMode;
 import org.openbase.jul.exception.FatalImplementationErrorException;
 import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.exception.InstantiationException;
@@ -79,45 +78,45 @@ public class BCozy extends Application {
     private ForegroundPane foregroundPane;
     private Future initTask;
 
-
-
     @Override
-    public void start(final Stage primaryStage) throws InitializationException, InterruptedException, InstantiationException {
+    public void start(final Stage primaryStage) throws InitializationException, InterruptedException,
+            InstantiationException {
         BCozy.primaryStage = primaryStage;
         registerResponsiveHandler();
 
         final double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
         final double screenHeight = Screen.getPrimary().getVisualBounds().getHeight();
         primaryStage.setTitle("BCozy");
-        
+
         final StackPane root = new StackPane();
         foregroundPane = new ForegroundPane(screenHeight, screenWidth);
         foregroundPane.setMinHeight(root.getHeight());
         foregroundPane.setMinWidth(root.getWidth());
         final BackgroundPane backgroundPane = new BackgroundPane(foregroundPane);
-        
+
         infoPane = new InfoPane(screenHeight, screenWidth);
         infoPane.setMinHeight(root.getHeight());
         infoPane.setMinWidth(root.getWidth());
         root.getChildren().addAll(backgroundPane, foregroundPane, infoPane);
-        
-        primaryStage.setMinWidth(foregroundPane.getMainMenu().getMinWidth() + foregroundPane.getContextMenu().getMinWidth() + 300);
+
+        primaryStage.setMinWidth(foregroundPane.getMainMenu().getMinWidth() + foregroundPane.getContextMenu()
+                .getMinWidth() + 300);
         primaryStage.setHeight(screenHeight);
         primaryStage.setScene(new Scene(root, screenWidth, screenHeight));
         primaryStage.getScene().getStylesheets().addAll(Constants.DEFAULT_CSS, Constants.LIGHT_THEME_CSS);
-        
+
         new MainMenuController(foregroundPane);
         new CenterPaneController(foregroundPane);
-        
+
         contextMenuController = new ContextMenuController(foregroundPane, backgroundPane.getLocationPane());
         locationPaneController = new LocationPaneController(backgroundPane.getLocationPane());
-        
+
         ResponsiveHandler.addResponsiveToWindow(primaryStage);
         primaryStage.show();
-        
+
         initRemotesAndLocation();
     }
-    
+
     private void initRemotesAndLocation() {
         initTask = GlobalCachedExecutorService.submit(new Task() {
             @Override
@@ -125,12 +124,12 @@ public class BCozy extends Application {
                 try {
                     infoPane.setTextLabelIdentifier("waitForConnection");
                     Registries.waitForData();
-                    
+
                     infoPane.setTextLabelIdentifier("fillContextMenu");
                     foregroundPane.init();
-                    
+
                     contextMenuController.initTitledPaneMap();
-                    
+
                     infoPane.setTextLabelIdentifier("connectLocationRemote");
                     locationPaneController.connectLocationRemote();
                     return null;
@@ -142,7 +141,7 @@ public class BCozy extends Application {
                     throw exx;
                 }
             }
-            
+
             @Override
             protected void succeeded() {
                 super.succeeded();
@@ -217,19 +216,19 @@ public class BCozy extends Application {
             }
         });
     }
-    
+
     private static void adjustToLargeDevice() {
         LOGGER.info("Detected Large Device");
     }
-    
+
     private static void adjustToMediumDevice() {
         LOGGER.info("Detected Medium Device");
     }
-    
+
     private static void adjustToSmallDevice() {
         LOGGER.info("Detected Small Device");
     }
-    
+
     private static void adjustToExtremeSmallDevice() {
         LOGGER.info("Detected Extreme Small Device");
     }

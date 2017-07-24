@@ -36,7 +36,6 @@ import org.openbase.bco.bcozy.view.mainmenupanes.LoginPane;
 import org.openbase.bco.bcozy.view.mainmenupanes.SettingsPane;
 import org.openbase.bco.authentication.lib.SessionManager;
 
-
 import java.io.StreamCorruptedException;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -45,6 +44,7 @@ import java.util.concurrent.Future;
 
 import org.openbase.bco.dal.remote.unit.Units;
 import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.NotAvailableException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,7 +88,6 @@ public class MainMenuController {
         availableUsersPane.getStatusIcon().setOnMouseClicked(event -> showHideMainMenu(foregroundPane));
         connectionPane.getStatusIcon().setOnMouseClicked(event -> showHideMainMenu(foregroundPane));
 
-
         foregroundPane.getMainMenu().getMainMenuFloatingButton().setOnAction(event -> showHideMainMenu(foregroundPane));
 
     }
@@ -104,33 +103,28 @@ public class MainMenuController {
     }
 
     private void loginUser() {
-        System.out.println("ACTIVE THREADS BEFORE " + Thread.activeCount());
-
         new Thread(this::loginUserAsync).start();
     }
 
-
     private void loginUserAsync() {
-        SessionManager sessionManager = Units.getSessionManager();
+        SessionManager sessionManager;
+        try {
+            sessionManager = SessionManager.getInstance();
+        } catch (NotAvailableException ex) {
+            LOGGER.warn("Cannot login because session manager is not available", ex);
+            return;
+        }
 
         try {
-
             sessionManager.login(loginPane.getNameTxt().getText(), loginPane.getPasswordField().getText());
-            System.out.println("ACTIVE THREADS AFTER" + Thread.activeCount());
-
         } catch (CouldNotPerformException | StreamCorruptedException e) {
-            //throw new RuntimeException(e);
-            e.printStackTrace();
+            // ignore, thrown if wrong username
         } catch (java.lang.OutOfMemoryError error) {
             LOGGER.error(error.getMessage());
         }
-        System.out.println("ACTIVE THREADS END " + Thread.activeCount());
-        System.out.flush();
-
 
         Platform.runLater(() -> {
             if (sessionManager.isLoggedIn()) {
-                System.err.println("BIN DRIN!");
                 loginPane.resetUserOrPasswordWrong();
                 loginPane.getLoggedInUserLbl().setText(loginPane.getNameTxt().getText());
                 loginPane.getNameTxt().setText("");
@@ -142,7 +136,6 @@ public class MainMenuController {
             }
         });
     }
-
 
     private void resetLogin() {
         if (loginPane.getInputWrongLbl().isVisible()) {
