@@ -27,12 +27,12 @@ import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import org.openbase.bco.authentication.lib.jp.JPCredentialsDirectory;
 import org.openbase.bco.authentication.lib.jp.JPInitializeCredentials;
 import org.openbase.bco.bcozy.controller.CenterPaneController;
 import org.openbase.bco.bcozy.controller.ContextMenuController;
 import org.openbase.bco.bcozy.controller.LocationPaneController;
 import org.openbase.bco.bcozy.controller.MainMenuController;
-import org.openbase.bco.bcozy.jp.JPBcozyCredentialsDirectory;
 import org.openbase.bco.bcozy.jp.JPLanguage;
 import org.openbase.bco.bcozy.view.BackgroundPane;
 import org.openbase.bco.bcozy.view.Constants;
@@ -96,7 +96,7 @@ public class BCozy extends Application {
         JPService.registerProperty(JPDebugMode.class);
         JPService.registerProperty(JPLanguage.class);
         JPService.registerProperty(JPInitializeCredentials.class);
-        JPService.registerProperty(JPBcozyCredentialsDirectory.class);
+        JPService.registerProperty(JPCredentialsDirectory.class);
         
         try {
             JPService.parseAndExitOnError(args);
