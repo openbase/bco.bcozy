@@ -21,6 +21,7 @@ package org.openbase.bco.bcozy.view;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import de.jensd.fx.glyphs.materialicons.MaterialIcon;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.layout.AnchorPane;
@@ -38,6 +39,8 @@ import java.net.URL;
 
 /**
  * Created by hoestreich on 11/26/15.
+ *
+ * @author vdasilva
  */
 public class CenterPane extends StackPane {
 
@@ -47,9 +50,9 @@ public class CenterPane extends StackPane {
     private static final Logger LOGGER = LoggerFactory.getLogger(CenterPane.class);
 
 
-    SettingsPane settingsPane;
-
-    Pane settingsMenu;
+    private SettingsPane settingsPane;
+    private Pane settingsMenu;
+    private Pane permissionPaneParent;
 
     /**
      * Constructor for the center pane.
@@ -123,6 +126,7 @@ public class CenterPane extends StackPane {
             throw new UncheckedIOException(ex);
         }
     }
+
 
     public SettingsPane getSettingsPane() {
         return settingsPane;

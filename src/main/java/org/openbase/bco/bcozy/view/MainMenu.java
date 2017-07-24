@@ -18,6 +18,7 @@
  */
 package org.openbase.bco.bcozy.view;
 
+import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import de.jensd.fx.glyphs.materialicons.MaterialIcon;
 
 import java.util.logging.Level;
@@ -26,6 +27,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.TitledPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import org.openbase.bco.bcozy.view.mainmenupanes.*;
@@ -58,8 +60,8 @@ public class MainMenu extends StackPane implements VoidInitializable {
     private final ImageView logoView;
     private final ImageView logoViewSmall;
     private final LogoPane logoPane;
-    private final UserActionPane userActionPane;
-    private final RegistrationPane registrationPane;
+    private TitledPane loginContainer;
+
 
     /**
      * Constructor for the MainMenu.
@@ -83,9 +85,13 @@ public class MainMenu extends StackPane implements VoidInitializable {
         this.verticalLayoutSmall = new VBox(Constants.INSETS * 2);
         this.verticalLayoutSmall.setAlignment(Pos.TOP_CENTER);
         this.loginPane = new LoginPane();
-        this.registrationPane = new RegistrationPane();
         this.logoPane = new LogoPane();
-        this.userActionPane = new UserActionPane(loginPane, registrationPane);
+
+        loginContainer = new ObserverTitledPane("login");
+        loginContainer.getStyleClass().addAll("login-titled-pane");
+        loginContainer.setGraphic(new SVGIcon(MaterialDesignIcon.LOGIN, Constants.EXTRA_SMALL_ICON, true));
+        loginContainer.setContent(loginPane);
+
 
         this.logoView = ImageViewProvider.createImageView("/icons/bcozy.png", Constants.MAXLOGOWIDTH, Double.MAX_VALUE);
         this.logoViewSmall = ImageViewProvider.createImageView("/icons/bc.png", Constants.MIDDLE_ICON);
@@ -101,7 +107,7 @@ public class MainMenu extends StackPane implements VoidInitializable {
         this.mainMenuFloatingButton.translateYProperty().set(-(Constants.FLOATING_BUTTON_OFFSET));
 
         // Adding components to their parents
-        this.verticalLayout.getChildren().addAll(logoPane, userActionPane, availableUsersPane);
+        this.verticalLayout.getChildren().addAll(logoPane, loginContainer, availableUsersPane);
         this.getChildren().addAll(verticalLayout, mainMenuFloatingButton);
 
         // Styling components with CSS
@@ -194,7 +200,8 @@ public class MainMenu extends StackPane implements VoidInitializable {
         StackPane.setAlignment(mainMenuFloatingButton, Pos.TOP_CENTER);
         mainMenuFloatingButton.translateYProperty().set(-(Constants.FLOATING_BUTTON_OFFSET));
         verticalLayoutSmall.getChildren().clear();
-        verticalLayoutSmall.getChildren().addAll(logoPane.getStatusIcon(), userActionPane.getStatusIcon(), availableUsersPane.getStatusIcon());
+        verticalLayoutSmall.getChildren().addAll(logoPane.getStatusIcon(), loginPane.getStatusIcon(), availableUsersPane
+                .getStatusIcon());
         getChildren().clear();
         getChildren().addAll(verticalLayoutSmall, mainMenuFloatingButton);
     }

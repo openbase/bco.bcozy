@@ -6,24 +6,35 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane fx:id="settingsPaneParent" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.openbase.bco.bcozy.controller.SettingsController">
+<?import javafx.scene.layout.VBox?>
+<AnchorPane fx:id="settingsPaneParent" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.openbase.bco.bcozy.controller.SettingsController">
     <children>
-        <TabPane layoutX="3.0" layoutY="4.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0"
+        <TabPane fx:id="tabPane" layoutX="3.0" layoutY="4.0" tabClosingPolicy="UNAVAILABLE"
+                 AnchorPane.bottomAnchor="0.0"
                  AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="1.0">
             <tabs>
-                <Tab fx:id="settingsTab" text="Settings">
+                <Tab fx:id="settingsTab">
                     <content>
                     </content>
                 </Tab>
-                <Tab text="Untitled Tab 2">
+                <Tab fx:id="permissionTab">
                     <content>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                     <children>
-                        <JFXTreeTableView fx:id="unitsTable" AnchorPane.bottomAnchor="300.0"
-                                          AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                        <JFXTextField fx:id="filterInput" layoutX="433.0" layoutY="2.0" prefHeight="13.0" prefWidth="161.0" />
-                     </children>
-                        </AnchorPane>
+                        <VBox fx:id="permissionPaneParent" minHeight="0.0" minWidth="0.0" prefHeight="180.0"
+                              prefWidth="200.0">
+                            <children>
+                                <JFXTextField fx:id="filterInput" layoutX="433.0" layoutY="2.0" prefHeight="13.0"
+                                              prefWidth="161.0"/>
+                                <JFXTreeTableView fx:id="unitsTable" AnchorPane.bottomAnchor="300.0"
+                                                  AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                                                  AnchorPane.topAnchor="0.0"/>
+
+                            </children>
+                        </VBox>
+                    </content>
+                </Tab>
+                <Tab fx:id="registrationTab">
+                    <content>
                     </content>
                 </Tab>
             </tabs>

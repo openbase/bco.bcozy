@@ -77,9 +77,7 @@ public class MainMenuController {
         settingsPane = foregroundPane.getCenterPane().getSettingsPane();
         availableUsersPane = foregroundPane.getMainMenu().getAvailableUsersPanePane();
         connectionPane = foregroundPane.getMainMenu().getConnectionPane();
-        loginPane.getStartLoginBtn().setOnAction(event -> startLogin());
         loginPane.getLoginBtn().setOnAction(event -> loginUser());
-//        loginPane.getBackBtn().setOnAction(event -> resetLogin());
         loginPane.getLogoutBtn().setOnAction(event -> resetLogin());
         loginPane.getPasswordField().setOnAction(event -> loginUser());
         loginPane.getNameTxt().setOnAction(event -> loginUser());
@@ -106,6 +104,8 @@ public class MainMenuController {
     }
 
     private void loginUser() {
+        System.out.println("ACTIVE THREADS BEFORE " + Thread.activeCount());
+
         new Thread(this::loginUserAsync).start();
     }
 
@@ -114,7 +114,6 @@ public class MainMenuController {
         SessionManager sessionManager = Units.getSessionManager();
 
         try {
-            System.out.println("ACTIVE THREADS BEFORE " + Thread.activeCount());
 
             sessionManager.login(loginPane.getNameTxt().getText(), loginPane.getPasswordField().getText());
             System.out.println("ACTIVE THREADS AFTER" + Thread.activeCount());
@@ -131,6 +130,7 @@ public class MainMenuController {
 
         Platform.runLater(() -> {
             if (sessionManager.isLoggedIn()) {
+                System.err.println("BIN DRIN!");
                 loginPane.resetUserOrPasswordWrong();
                 loginPane.getLoggedInUserLbl().setText(loginPane.getNameTxt().getText());
                 loginPane.getNameTxt().setText("");
@@ -151,7 +151,7 @@ public class MainMenuController {
         loginPane.getNameTxt().setText("");
         loginPane.getPasswordField().setText("");
         loginPane.getLoggedInUserLbl().setText("");
-        loginPane.setState(LoginPane.State.LOGIN);
+        loginPane.setState(LoginPane.State.LOGINACTIVE);
     }
 
     private void showHideMainMenu(final ForegroundPane foregroundPane) {
