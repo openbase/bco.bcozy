@@ -18,8 +18,6 @@
  */
 package org.openbase.bco.bcozy.view;
 
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
-import javafx.geometry.Point2D;
 import javafx.scene.layout.StackPane;
 import org.openbase.bco.bcozy.view.location.LocationPane;
 import org.openbase.jul.exception.CouldNotPerformException;
@@ -34,14 +32,6 @@ public class BackgroundPane extends StackPane {
     private final UnitSymbolsPane unitSymbolsPane;
     private double prevMouseCordX; //NOPMD
     private double prevMouseCordY; //NOPMD
-
-    public UnitSymbolsPane getUnitsP() {
-        return unitSymbolsPane;
-    }
-
-    public LocationPane getLocP() {
-        return locationPane;
-    }
 
     /**
      * The constructor for a BackgroundPane.
@@ -59,6 +49,8 @@ public class BackgroundPane extends StackPane {
             unitSymbolsPane = new UnitSymbolsPane();
             unitSymbolsPane.setPickOnBounds(false);
             this.getChildren().add(unitSymbolsPane);
+            
+            unitSymbolsPane.selectedLocationId.bind(locationPane.selectedLocationId);
             
             this.getStyleClass().add("background-pane");
 

@@ -32,6 +32,7 @@ import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import rst.domotic.unit.UnitConfigType.UnitConfig;
 import rst.domotic.unit.UnitTemplateType;
+import static rst.domotic.unit.UnitTemplateType.UnitTemplate.UnitType.LOCATION;
 
 /**
  *
@@ -47,7 +48,7 @@ public class UnitButton extends Pane {
      */
     // LocationRemote unit = Units.getUnit("locaction unit id", true, Units.LOCATION);
     //   unit.getUnits(UnitTemplateType.UnitTemplate.UnitType.UNKNOWN, true, unitRemoteClass);
-    public UnitButton(UnitConfig config)  {
+    /*public UnitButton(UnitConfig config)  {
            
         try {                        
             AbstractUnitPane content;
@@ -58,7 +59,7 @@ public class UnitButton extends Pane {
             Logger.getLogger(UnitButton.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-    }
+    }*/
 
     public UnitButton(UnitRemote<? extends GeneratedMessage> u) {
         try {                        

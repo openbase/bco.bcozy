@@ -164,6 +164,7 @@ public class WidgetPane extends VBox implements DynamicPane {
                     } catch (RuntimeException ex) {
                         ExceptionPrinter.printHistory("Could not handle mouse event!", ex, LOGGER);
                     }
+                    event.consume();
                 }
             };
             toggleSwitch.selectedProperty().bindBidirectional(primaryActivationProperty);

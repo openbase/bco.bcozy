@@ -79,6 +79,7 @@ public class LocationPane extends AbstractUnitPane<LocationRemote, LocationData>
             }
         });
         bodyPane.getChildren().add(colorChooser);
+        
     }
 
     @Override
