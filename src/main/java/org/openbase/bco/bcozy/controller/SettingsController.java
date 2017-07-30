@@ -82,6 +82,8 @@ public class SettingsController {
 
     private Pane permissionPane;
 
+    private RegistrationPane registrationPane;
+
     private SettingsPane settingsPane;
     private PermissionPaneController permissionPaneController;
     private JFXTreeTableColumn<RecursiveUnitConfig, String> typeColumn;
@@ -107,6 +109,7 @@ public class SettingsController {
         fillTreeTableView();
         this.setSettingsPane(new SettingsPane());
 
+
         permissionPane = loadPermissionPane();
         permissionPane.setVisible(false);
 
@@ -114,6 +117,10 @@ public class SettingsController {
 
         this.tabPane.widthProperty().addListener(this::onPaneWidthChange);
         onPaneWidthChange(null, null, null);
+        this.tabPane.getStyleClass().addAll("detail-menu");
+
+
+        this.setRegistrationPane();
 
         try {
             Registries.getUnitRegistry().addDataObserver((observable, unitRegistryData) -> {
@@ -126,6 +133,7 @@ public class SettingsController {
         } catch (CouldNotPerformException | InterruptedException e) {
             e.printStackTrace();
         }
+
     }
 
     private <T> void onPaneWidthChange(ObservableValue<? extends T> observable, T oldValue, T newValue) {
@@ -296,7 +304,8 @@ public class SettingsController {
     }
 
     private void setRegistrationPane() {
-        registrationTab.setContent(new RegistrationPane());
+        registrationPane = new RegistrationPane();
+        registrationTab.setContent(registrationPane);
     }
 
     public class RecursiveUnitConfig extends RecursiveTreeObject<RecursiveUnitConfig> {

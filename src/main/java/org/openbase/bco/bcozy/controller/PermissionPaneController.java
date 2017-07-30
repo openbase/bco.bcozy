@@ -12,6 +12,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.util.StringConverter;
+import org.openbase.bco.bcozy.util.Groups;
 import org.openbase.bco.bcozy.view.ObserverLabel;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
@@ -57,7 +58,7 @@ public class PermissionPaneController {
 
     private UnitConfigType.UnitConfig unitConfig;
 
-    private ObservableList<UnitConfigType.UnitConfig> groups = FXCollections.observableArrayList();
+    private ObservableList<UnitConfigType.UnitConfig> groups = Groups.getGroups();
 
     @FXML
     public void initialize() {
@@ -73,26 +74,7 @@ public class PermissionPaneController {
         accessRights.setGraphic(new ObserverLabel("accessRight"));
 
 
-//        usergroupColumn.setCellValueFactory(param ->
-//                new SimpleStringProperty(param.getValue().getGroupId())
-//        );
-
-        newGroupChoiceBox.setConverter(new StringConverter<UnitConfigType.UnitConfig>() {
-            @Override
-            public String toString(UnitConfigType.UnitConfig object) {
-                return object.getLabel();
-            }
-
-            @Override
-            public UnitConfigType.UnitConfig fromString(String string) {
-                for (UnitConfigType.UnitConfig group : groups) {
-                    if ((group.getLabel().equals(string))) {
-                        return group;
-                    }
-                }
-                return null;
-            }
-        });
+        newGroupChoiceBox.setConverter(Groups.stringConverter(groups));
         newGroupChoiceBox.setItems(groups);
         newGroupChoiceBox.getStyleClass().addAll("bordered-choice-box");
         newGroupChoiceBox.setPrefWidth(-1.0);
@@ -116,32 +98,6 @@ public class PermissionPaneController {
 
                 )
         );
-
-
-        try {
-            setGroups(Registries.getUserRegistry().getAuthorizationGroupConfigs());
-        } catch (CouldNotPerformException | InterruptedException e) {
-            // not synchronized yet...
-            // e.printStackTrace();
-            System.err.println("ICH BIN EIN SOUT, " + e.getMessage());
-        }
-
-        try {
-            Registries.getUserRegistry().addDataObserver((observable, userRegistryData) -> {
-                setGroups(Registries.getUserRegistry().getAuthorizationGroupConfigs());
-            });
-        } catch (InterruptedException | CouldNotPerformException e) {
-            e.printStackTrace();
-            System.err.println("ICH BIN EIN ANDERES SOUT, " + e.getMessage());
-        }
-
-
-    }
-
-    private void setGroups(List<UnitConfigType.UnitConfig> groups) {
-        System.err.println("PermissionPaneController.initialize.initUser: " + groups.size());
-        this.groups.clear();
-        this.groups.addAll(groups);
     }
 
     public void updateTableContent() {
@@ -170,10 +126,10 @@ public class PermissionPaneController {
 
         saveRightsButton.setLayoutX(width - 100.0);
 
-        newGroupChoiceBox.setPrefWidth(width/5);
-        readRights.setPrefWidth(width/5);
-        writeRights.setPrefWidth(width/5);
-        accessRights.setPrefWidth(width/5);
+        newGroupChoiceBox.setPrefWidth(width / 5);
+        readRights.setPrefWidth(width / 5);
+        writeRights.setPrefWidth(width / 5);
+        accessRights.setPrefWidth(width / 5);
 
         usergroupColumn.setPrefWidth(width / 2);
         permissionsColumn.setPrefWidth(width / 2);
