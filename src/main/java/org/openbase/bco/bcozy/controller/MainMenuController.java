@@ -111,27 +111,26 @@ public class MainMenuController {
 
         try {
             sessionManager.login(loginPane.getNameTxt().getText(), loginPane.getPasswordField().getText());
-        } catch (CouldNotPerformException | StreamCorruptedException e) {
-            // ignore, thrown if wrong username
-        } catch (java.lang.OutOfMemoryError error) {
-            LOGGER.error(error.getMessage());
-        }
 
-        Platform.runLater(() -> {
-            if (sessionManager.isLoggedIn()) {
+            Platform.runLater(() -> {
                 loginPane.resetUserOrPasswordWrong();
                 loginPane.getLoggedInUserLbl().setText(loginPane.getNameTxt().getText());
                 loginPane.getNameTxt().setText("");
                 loginPane.getPasswordField().setText("");
                 loginPane.setState(LoginPane.State.LOGOUT);
-            } else {
+            });
+        } catch (CouldNotPerformException | StreamCorruptedException e) {
+            Platform.runLater(() -> {
                 loginPane.indicateUserOrPasswordWrong();
-
-            }
-        });
+            });
+        } catch (java.lang.OutOfMemoryError error) {
+            LOGGER.error(error.getMessage());
+        }
     }
 
     private void resetLogin() {
+        SessionManager.getInstance().logout();
+
         if (loginPane.getInputWrongLbl().isVisible()) {
             loginPane.resetUserOrPasswordWrong();
         }
