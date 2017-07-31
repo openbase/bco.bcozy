@@ -29,7 +29,7 @@ public class FxmlTest extends Application {
     private static final Logger LOGGER = LoggerFactory.getLogger(FxmlTest.class);
 
 
-    @Test
+    //@Test
     public void test() {
         CenterPaneTest.launch();
     }
