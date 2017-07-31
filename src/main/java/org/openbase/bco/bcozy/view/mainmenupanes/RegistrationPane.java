@@ -11,10 +11,12 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 import org.controlsfx.control.CheckComboBox;
+import org.openbase.bco.authentication.lib.SessionManager;
 import org.openbase.bco.bcozy.util.Groups;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ObserverButton;
 import org.openbase.bco.bcozy.view.ObserverLabel;
+import org.openbase.jul.exception.CouldNotPerformException;
 import rst.domotic.unit.UnitConfigType;
 
 import java.util.List;
@@ -147,6 +149,37 @@ public class RegistrationPane extends VBox {
         boolean userNameAvailable(String username);
 
         boolean passwordsValid(String text, String text1);
+    }
+
+    class sessionManagerFacadeImpl implements SessionManagerFacade {
+
+        @Override
+        public boolean isAdmin() {
+            return SessionManager.getInstance().isAdmin();
+        }
+
+        @Override
+        public boolean registerUser(String username, String plainPassword, boolean asAdmin, List<UnitConfigType
+                        .UnitConfig> groups) {
+            try {
+                SessionManager.getInstance().registerUser(username, plainPassword, isAdmin());
+            } catch (CouldNotPerformException e) {
+                e.printStackTrace();
+            }
+            return false;
+        }
+
+        @Override
+        public boolean userNameAvailable(String username) {
+            //TODO
+            return true;
+        }
+
+        @Override
+        public boolean passwordsValid(String text, String text1) {
+            //TODO
+            return true;
+        }
     }
 
     class SessionManagerFacadeFake implements SessionManagerFacade {
