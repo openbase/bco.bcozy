@@ -79,11 +79,11 @@ public class BCozyLauncher {
 
     private static void showError(Thread t, Throwable ex) {
         if (Platform.isFxApplicationThread()) {
-            ExceptionPrinter.printHistory(new FatalImplementationErrorException("Uncauchted exception has been " +
-                    "occurt!", "FxApplicationThread", ex), LOGGER);
+            ExceptionPrinter.printHistory(new FatalImplementationErrorException("Uncaught exception has " +
+                    "occured!", "FxApplicationThread", ex), LOGGER);
         } else {
-            ExceptionPrinter.printHistory(new FatalImplementationErrorException("Uncauchted exception has been " +
-                    "occurt!", t.getName(), ex), LOGGER);
+            ExceptionPrinter.printHistory(new FatalImplementationErrorException("Uncaught exception has " +
+                    "occured!", t.getName(), ex), LOGGER);
         }
     }
 

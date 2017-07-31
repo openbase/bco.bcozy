@@ -26,7 +26,7 @@ public final class Groups {
 
         try {
             Registries.getUserRegistry().addDataObserver((observable, userRegistryData) ->
-                    setGroups(Registries.getUserRegistry().getAuthorizationGroupConfigs(), groups)
+                    setGroups(userRegistryData.getAuthorizationGroupUnitConfigList(), groups)
             );
         } catch (InterruptedException | CouldNotPerformException e) {
             e.printStackTrace();
