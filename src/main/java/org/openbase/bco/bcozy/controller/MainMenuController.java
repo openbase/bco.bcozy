@@ -107,13 +107,7 @@ public class MainMenuController {
     }
 
     private void loginUserAsync() {
-        SessionManager sessionManager;
-        try {
-            sessionManager = SessionManager.getInstance();
-        } catch (NotAvailableException ex) {
-            LOGGER.warn("Cannot login because session manager is not available", ex);
-            return;
-        }
+        SessionManager sessionManager = SessionManager.getInstance();
 
         try {
             sessionManager.login(loginPane.getNameTxt().getText(), loginPane.getPasswordField().getText());
