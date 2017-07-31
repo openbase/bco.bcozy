@@ -119,7 +119,7 @@ public class MainMenuController {
                 loginPane.getPasswordField().setText("");
                 loginPane.setState(LoginPane.State.LOGOUT);
             });
-        } catch (CouldNotPerformException | StreamCorruptedException e) {
+        } catch (CouldNotPerformException e) {
             Platform.runLater(() -> {
                 loginPane.indicateUserOrPasswordWrong();
             });
