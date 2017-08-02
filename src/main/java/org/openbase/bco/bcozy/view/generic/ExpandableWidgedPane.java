@@ -24,7 +24,6 @@ import javafx.animation.Timeline;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
-import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -115,7 +114,7 @@ public class ExpandableWidgedPane extends WidgetPane {
      * @throws org.openbase.jul.exception.CouldNotPerformException can be thrown if something went wrong.
      */
     protected void initBodyContent(final Pane bodyPane) throws CouldNotPerformException {
-        bodyPane.getChildren().add(new Label("Test"));
+        // please overwrite for custom content.
     }
 
     private void animateBodyPane(final BorderPane headPane, final Pane bodyPane) {

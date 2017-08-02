@@ -112,6 +112,14 @@ public class ContextMenuController {
                 if (nextEntry.getValue().isEmpty()) {
                     continue;
                 }
+                
+                // filter shadowned units
+                switch(nextEntry.getKey()) {
+                    case BUTTON:
+                    case DEVICE:
+                    case UNKNOWN:
+                        continue;
+                }
                 titledPaneContainer.createAndAddNewTitledPane(nextEntry.getKey(), nextEntry.getValue());
             }
 

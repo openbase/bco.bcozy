@@ -19,7 +19,6 @@
  */
 package org.openbase.bco.bcozy.view.location;
 
-import java.util.ArrayList;
 import javafx.animation.ParallelTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
@@ -32,7 +31,6 @@ import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ForegroundPane;
-import org.openbase.bco.bcozy.view.SVGIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,7 +70,7 @@ public final class LocationPane extends Pane {
     private final Map<String, RegionPolygon> regionMap;
     private final Map<String, ConnectionPolygon> connectionMap;
 
-    private final SimpleStringProperty selectedLocationId;
+    public final SimpleStringProperty selectedLocationId;
 
     private LocationPolygon lastFirstClickTarget;
     private LocationPolygon lastSelectedTile;
@@ -100,7 +98,7 @@ public final class LocationPane extends Pane {
 //            selectedLocation = new ZonePolygon(0.0, 0.0, 0.0, 0.0);
 //            selectedLocation.init(Registries.getLocationRegistry().getRootLocationConfig());
 //            selectedLocation.activate();
-        selectedLocationId = new SimpleStringProperty(Constants.DUMMY_ROOM_NAME);
+        selectedLocationId = new SimpleStringProperty(Constants.DUMMY_LABEL);
 
         rootRoom = null;
 //        lastSelectedTile = selectedLocation;
@@ -554,6 +552,7 @@ public final class LocationPane extends Pane {
      */
     public void removeSelectedLocationIdListener(final ChangeListener<? super String> changeListener) {
         selectedLocationId.removeListener(changeListener);
+        selectedLocationId.set("home");
     }
 
     /**

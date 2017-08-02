@@ -203,10 +203,10 @@ public class ColorChooser extends HBox implements DynamicPane {
     }
 
     public void setSelectedColor(final Color color) {
-//        if (!isHover()) {
-//            hueProperty.set(color.getHue());
-//            angle = color.getHue();
-//        }
+        if (!isHover()) {
+            hueProperty.set(color.getHue());
+            angle = color.getHue();
+        }
     }
 
     private Image colorSpectrumImage(final int width, final int height, final Stop... stops) {

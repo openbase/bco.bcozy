@@ -16,30 +16,29 @@
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
-package org.openbase.bco.bcozy.view.pane.unit.app;
+package org.openbase.bco.bcozy.view.pane.unit;
 
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import java.util.concurrent.Future;
 import javafx.scene.paint.Color;
-import org.openbase.bco.bcozy.view.pane.unit.AbstractUnitPane;
-import org.openbase.bco.dal.remote.unit.app.AppRemote;
+import org.openbase.bco.dal.remote.unit.PowerSwitchRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
-import rst.domotic.state.ActivationStateType.ActivationState.State;
-import rst.domotic.unit.app.AppDataType.AppData;
+import rst.domotic.state.PowerStateType.PowerState;
+import rst.domotic.unit.dal.PowerSwitchDataType.PowerSwitchData;
 
 /**
  * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>
  */
-public class AppPane extends AbstractUnitPane<AppRemote, AppData> {
+public class PowerSwitchPane extends AbstractUnitPane<PowerSwitchRemote, PowerSwitchData> {
 
     /**
-     * Constructor for the AppPane.
+     * Constructor for the PowerSwitchPane.
      *
      */
-    public AppPane() {
-        super(AppRemote.class, true);
+    public PowerSwitchPane() {
+        super(PowerSwitchRemote.class, true);
         getIcon().setForegroundIcon(MaterialDesignIcon.POWER);
     }
 
@@ -47,20 +46,20 @@ public class AppPane extends AbstractUnitPane<AppRemote, AppData> {
     public void updateDynamicContent() {
         super.updateDynamicContent();
 
-        State state = State.UNKNOWN;
+        PowerState.State state = PowerState.State.UNKNOWN;
 
         try {
-            state = getUnitRemote().getData().getActivationState().getValue();
+            state = getUnitRemote().getData().getPowerState().getValue();
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.DEBUG);
         }
 
         switch (state) {
-            case ACTIVE:
+            case ON:
                 getIcon().setForegroundIconColor(Color.GREEN);
                 primaryActivationProperty().setValue(Boolean.TRUE);
                 break;
-            case DEACTIVE:
+            case OFF:
                 getIcon().setForegroundIconColor(Color.BLACK);
                 primaryActivationProperty().setValue(Boolean.FALSE);
             default:
@@ -70,6 +69,6 @@ public class AppPane extends AbstractUnitPane<AppRemote, AppData> {
 
     @Override
     protected Future applyPrimaryActivationUpdate(final boolean activation) throws CouldNotPerformException {
-        return (activation) ? getUnitRemote().setActivationState(State.ACTIVE) : getUnitRemote().setActivationState(State.DEACTIVE);
+        return (activation) ? getUnitRemote().setPowerState(PowerState.State.ON) : getUnitRemote().setPowerState(PowerState.State.OFF);
     }
 }

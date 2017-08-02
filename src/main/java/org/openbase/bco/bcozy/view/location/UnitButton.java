@@ -18,6 +18,7 @@
  */
 package org.openbase.bco.bcozy.view.location;
 
+import com.google.protobuf.GeneratedMessage;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,9 +28,11 @@ import org.openbase.bco.bcozy.view.SVGIcon;
 import org.openbase.bco.bcozy.view.generic.WidgetPane.DisplayMode;
 import org.openbase.bco.bcozy.view.pane.unit.AbstractUnitPane;
 import org.openbase.bco.bcozy.view.pane.unit.UnitPaneFactoryImpl;
+import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import rst.domotic.unit.UnitConfigType.UnitConfig;
 import rst.domotic.unit.UnitTemplateType;
+import static rst.domotic.unit.UnitTemplateType.UnitTemplate.UnitType.LOCATION;
 
 /**
  *
@@ -45,11 +48,10 @@ public class UnitButton extends Pane {
      */
     // LocationRemote unit = Units.getUnit("locaction unit id", true, Units.LOCATION);
     //   unit.getUnits(UnitTemplateType.UnitTemplate.UnitType.UNKNOWN, true, unitRemoteClass);
-    public UnitButton(UnitConfig config)  {
+    /*public UnitButton(UnitConfig config)  {
            
         try {                        
             AbstractUnitPane content;
-            System.out.println(Platform.isFxApplicationThread());
             content = UnitPaneFactoryImpl.getInstance().newInitializedInstance(config);
             content.setDisplayMode(DisplayMode.ICON_ONLY);
             this.getChildren().add(content);
@@ -57,22 +59,20 @@ public class UnitButton extends Pane {
             Logger.getLogger(UnitButton.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-    }
-    
-    public void setUnitPane(AbstractUnitPane content) {
-        this.getChildren().clear();
-        this.getChildren().add(content);
-    }
+    }*/
 
-    private SVGIcon getSymbolForType(UnitTemplateType.UnitTemplate.UnitType type) {
-        try {
-            //TODO
-            return UnitPaneFactoryImpl.getInstance().newInstance(UnitPaneFactoryImpl.loadUnitPaneClass(type)).getIcon();
-        } catch (CouldNotPerformException ex) {
+    public UnitButton(UnitRemote<? extends GeneratedMessage> u) {
+        try {                        
+            AbstractUnitPane content;
+            content = UnitPaneFactoryImpl.getInstance().newInitializedInstance(u.getConfig());
+            content.setDisplayMode(DisplayMode.ICON_ONLY);
+            this.getChildren().add(content);
+        } catch (CouldNotPerformException | InterruptedException ex) {
             Logger.getLogger(UnitButton.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return new SVGIcon(FontAwesomeIcon.ELLIPSIS_H, DEFAULT_ICON_SIZE, true);
     }
+    
+
 
    /* 
 

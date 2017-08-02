@@ -1,4 +1,4 @@
-package org.openbase.bco.bcozy.view.pane.unit.location;
+package org.openbase.bco.bcozy.view.pane.unit;
 
 /**
  * ==================================================================
@@ -18,7 +18,7 @@ package org.openbase.bco.bcozy.view.pane.unit.location;
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
-import org.openbase.bco.bcozy.view.pane.unit.*;
+import com.jfoenix.controls.JFXSlider;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.scene.paint.Color;
 import org.openbase.bco.bcozy.view.Constants;
@@ -26,33 +26,26 @@ import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
 import org.openbase.jul.schedule.RecurrenceEventFilter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import rst.domotic.unit.dal.DimmableLightDataType.DimmableLightData;
 import java.util.concurrent.Future;
 import javafx.scene.layout.Pane;
-import org.openbase.bco.bcozy.view.generic.ColorChooser;
-import org.openbase.bco.bcozy.view.pane.unit.AbstractUnitPane;
-import org.openbase.bco.dal.remote.unit.location.LocationRemote;
-import org.openbase.jul.visual.javafx.transform.JFXColorToHSBColorTransformer;
+import org.openbase.bco.dal.remote.unit.DimmableLightRemote;
+import rst.domotic.state.BrightnessStateType.BrightnessState;
 import rst.domotic.state.PowerStateType.PowerState;
-import rst.domotic.unit.location.LocationDataType.LocationData;
 
 /**
  * Created by agatting on 03.12.15.
  */
-public class LocationPane extends AbstractUnitPane<LocationRemote, LocationData> {
+public class DimmableLightPane extends AbstractUnitPane<DimmableLightRemote, DimmableLightData> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(LocationPane.class);
+    private JFXSlider brightnessSlider;
 
-    private ColorChooser colorChooser;
-
-    private final RecurrenceEventFilter<Color> recurrenceEventFilterHSV = new RecurrenceEventFilter<Color>(Constants.RECURRENCE_EVENT_FILTER_MILLI_TIMEOUT) {
-
+    private final RecurrenceEventFilter<Double> recurrenceEventFilterHSV = new RecurrenceEventFilter<Double>(Constants.RECURRENCE_EVENT_FILTER_MILLI_TIMEOUT) {
 
         @Override
         public void relay() {
             try {
-                getUnitRemote().setColor(JFXColorToHSBColorTransformer.transform(getLastValue()));
+                getUnitRemote().setBrightnessState(BrightnessState.newBuilder().setBrightness(brightnessSlider.getValue()).build());
             } catch (CouldNotPerformException ex) {
                 ExceptionPrinter.printHistory("Could not send color update!", ex, LOGGER);
             }
@@ -60,27 +53,23 @@ public class LocationPane extends AbstractUnitPane<LocationRemote, LocationData>
     };
 
     /**
-     * Constructor for the Colorable Light Pane.
+     * Constructor for the Dimmable Light Pane.
      *
      */
-    public LocationPane() {
-        super(LocationRemote.class, true);
+    public DimmableLightPane() {
+        super(DimmableLightRemote.class, true);
         this.setIcon(MaterialDesignIcon.LIGHTBULB_OUTLINE, MaterialDesignIcon.LIGHTBULB);
     }
 
     @Override
     protected void initBodyContent(Pane bodyPane) throws CouldNotPerformException {
-        colorChooser = new ColorChooser();
-        colorChooser.initContent();
-        colorChooser.selectedColorProperty().addListener((observable) -> {
-            System.out.println("apply update "+colorChooser.getSelectedColor());
+        brightnessSlider = new JFXSlider();
+        brightnessSlider.valueProperty().addListener((observable) -> {
             if (isHover()) {
-                System.out.println("..."+colorChooser.getSelectedColor());
-                recurrenceEventFilterHSV.trigger(colorChooser.getSelectedColor());
+                recurrenceEventFilterHSV.trigger(brightnessSlider.getValue());
             }
         });
-        bodyPane.getChildren().add(colorChooser);
-        
+        bodyPane.getChildren().add(brightnessSlider);
     }
 
     @Override
@@ -96,28 +85,25 @@ public class LocationPane extends AbstractUnitPane<LocationRemote, LocationData>
         }
 
         // detect color
-        Color color;
+        double brightness;
         try {
-            color = JFXColorToHSBColorTransformer.transform(getData().getColorState().getColor().getHsbColor());
+            brightness = getData().getBrightnessState().getBrightness();
         } catch (CouldNotPerformException e) {
-            color = Color.TRANSPARENT;
+            brightness = 100d;
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.DEBUG);
         }
-        
-//
-//        if (colorChooser != null) {
-//            System.out.println("set color");
-//            colorChooser.setSelectedColor(color);
-//        }
 
+        if (brightnessSlider != null && !isHover()) {
+            brightnessSlider.setValue(brightness);
+        }
         switch (state) {
             case OFF:
-                getIcon().setBackgroundIconColor(Color.TRANSPARENT);
+                getIcon().setBackgroundIconColor(Constants.LIGHTBULB_OFF_COLOR);
                 setInfoText("lightOff");
                 primaryActivationProperty().setValue(Boolean.FALSE);
                 break;
             case ON:
-                getIcon().setBackgroundIconColor(color);
+                getIcon().setBackgroundIconColor(Constants.LIGHTBULB_OFF_COLOR.interpolate(Color.CORNSILK, brightness/100d));
                 setInfoText("lightOn");
                 primaryActivationProperty().setValue(Boolean.TRUE);
                 break;
@@ -129,7 +115,6 @@ public class LocationPane extends AbstractUnitPane<LocationRemote, LocationData>
 
     @Override
     protected Future applyPrimaryActivationUpdate(final boolean activation) throws CouldNotPerformException {
-        
         return (activation) ? getUnitRemote().setPowerState(PowerState.State.ON) : getUnitRemote().setPowerState(PowerState.State.OFF);
     }
 }
