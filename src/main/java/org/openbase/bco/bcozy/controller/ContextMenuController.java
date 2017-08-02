@@ -58,6 +58,7 @@ public class ContextMenuController {
         this.foregroundPane = foregroundPane;
         this.titledPaneMap = new HashMap<>();
 
+
         backgroundPane.addSelectedLocationIdListener(new ChangeListener<String>() {
             @Override
             public void changed(final ObservableValue<? extends String> observable, final String oldValue, final String location) {

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
+            prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.openbase.bco.bcozy.view.FxmlController">
+   <center>
+      <Button mnemonicParsing="false" onAction="#handleSubmitButtonAction" text="Button" BorderPane.alignment="CENTER" />
+   </center>
+   <top>
+      <Text fx:id="actiontarget" strokeType="OUTSIDE" strokeWidth="0.0" text="Test" BorderPane.alignment="CENTER" />
+   </top>
+
+
+</BorderPane>

@@ -9,9 +9,15 @@ branches:
       #- /^(?i:release)-.*$/
 
 notifications:
-  slack: openbase-org:vGz7LO4CvGoGMneYkEm3ON7E
-  on_failure: change
-  on_success: change	
+    email:
+        on_success: never
+        on_failure: change
+    slack:
+        on_failure: change
+        on_success: change
+        rooms:
+            - openbase-org:vGz7LO4CvGoGMneYkEm3ON7E#build
+            - openbase-org:vGz7LO4CvGoGMneYkEm3ON7E#bco-bcozy
 
 jdk:
   - oraclejdk8

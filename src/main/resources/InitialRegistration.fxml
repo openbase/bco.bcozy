@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXPasswordField?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+
+
+<?import org.openbase.bco.bcozy.view.ObserverLabel?>
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.111"
+            xmlns:fx="http://javafx.com/fxml/1">
+    <VBox layoutX="50.0" layoutY="60.0" prefHeight="303.0" prefWidth="506.0">
+        <Text fx:id="welcomeText" strokeType="OUTSIDE" strokeWidth="0.0" text="Text"/>
+        <HBox prefHeight="52.0" prefWidth="506.0">
+            <ObserverLabel text="username"/>
+            <JFXTextField fx:id="userNameInput"/>
+        </HBox>
+
+        <HBox fx:id="passwordInput" prefHeight="44.0" prefWidth="506.0">
+            <ObserverLabel text="password"/>
+            <JFXPasswordField  fx:id="passwordField"/>
+        </HBox>
+        <HBox prefHeight="41.0" prefWidth="506.0">
+            <ObserverLabel text="repeatPassword"/>
+            <JFXPasswordField fx:id="repeatPasswordField"/>
+        </HBox>
+        <HBox prefHeight="52.0" prefWidth="506.0">
+            <Label text="SessionKey"/><!--TODO: ObserverLabel-->
+            <JFXTextField fx:id="SessionKeyInput"/>
+        </HBox>
+        <JFXButton fx:id="registrationButton" text="Register"/>
+    </VBox>
+</AnchorPane>

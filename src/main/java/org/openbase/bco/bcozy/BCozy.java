@@ -1,17 +1,17 @@
 /**
  * ==================================================================
- *
+ * <p>
  * This file is part of org.openbase.bco.bcozy.
- *
+ * <p>
  * org.openbase.bco.bcozy is free software: you can redistribute it and modify
  * it under the terms of the GNU General Public License (Version 3)
  * as published by the Free Software Foundation.
- *
+ * <p>
  * org.openbase.bco.bcozy is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
@@ -19,11 +19,19 @@
 package org.openbase.bco.bcozy;
 
 import com.guigarage.responsive.ResponsiveHandler;
+
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.net.URL;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.concurrent.Task;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -48,14 +56,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
  * @author hoestreich
  * @author timo
  * @author agatting
  * @author julian
  * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>
- *
- * Main Class of the BCozy Program.
+ *         <p>
+ *         Main Class of the BCozy Program.
  */
 public class BCozy extends Application {
 
@@ -78,7 +85,7 @@ public class BCozy extends Application {
     private UnitsPaneController unitsPaneController;
     private Future initTask;
 
-   
+    private Scene mainScene;
 
     @Override
     public void start(final Stage primaryStage) throws InitializationException, InterruptedException, InstantiationException {
@@ -100,9 +107,11 @@ public class BCozy extends Application {
         infoPane.setMinWidth(root.getWidth());
         root.getChildren().addAll(backgroundPane, foregroundPane, infoPane);
 
-        primaryStage.setMinWidth(foregroundPane.getMainMenu().getMinWidth() + foregroundPane.getContextMenu().getMinWidth() + 300);
+        primaryStage.setMinWidth(foregroundPane.getMainMenu().getMinWidth() + foregroundPane.getContextMenu()
+                .getMinWidth() + 300);
         primaryStage.setHeight(screenHeight);
-        primaryStage.setScene(new Scene(root, screenWidth, screenHeight));
+        mainScene = new Scene(root, screenWidth, screenHeight);
+        primaryStage.setScene(mainScene);
         primaryStage.getScene().getStylesheets().addAll(Constants.DEFAULT_CSS, Constants.LIGHT_THEME_CSS);
 
         new MainMenuController(foregroundPane);
@@ -111,11 +120,15 @@ public class BCozy extends Application {
         contextMenuController = new ContextMenuController(foregroundPane, backgroundPane.getLocationPane());
         locationPaneController = new LocationPaneController(backgroundPane.getLocationPane());
         unitsPaneController = new UnitsPaneController(backgroundPane.getUnitsPane(), backgroundPane.getLocationPane());
-       
+
         ResponsiveHandler.addResponsiveToWindow(primaryStage);
         primaryStage.show();
 
         initRemotesAndLocation();
+    }
+
+    private void onInitializedRemotesAndLocation() {
+        Platform.runLater(this::loadInitialRegistrationWindow);
     }
 
     private void initRemotesAndLocation() {
@@ -134,6 +147,9 @@ public class BCozy extends Application {
                     infoPane.setTextLabelIdentifier("connectLocationRemote");
                     locationPaneController.connectLocationRemote();
                     unitsPaneController.connectUnitRemote();
+
+                    onInitializedRemotesAndLocation();
+
                     return null;
                 } catch (Exception ex) {
                     infoPane.setTextLabelIdentifier("errorDuringStartup");
@@ -233,5 +249,34 @@ public class BCozy extends Application {
 
     private static void adjustToExtremeSmallDevice() {
         LOGGER.info("Detected Extreme Small Device");
+    }
+
+    private void loadInitialRegistrationWindow() {
+
+        if (true) { //TODO: First Start?
+            try {
+                URL url = getClass().getClassLoader().getResource("InitialRegistration.fxml");
+                if (url == null) {
+                    throw new RuntimeException("InitialRegistration.fxml not found");
+                }
+
+
+                FXMLLoader loader = new FXMLLoader(url);
+
+                loader.setController(new InitialRegistrationController(result -> primaryStage.setScene(mainScene)));
+
+                AnchorPane anchorPane = loader.load();
+                anchorPane.getStyleClass().addAll("detail-menu");
+
+
+                primaryStage.setScene(new Scene(anchorPane));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                ExceptionPrinter.printHistory("Content could not be loaded", ex, LOGGER);
+                throw new UncheckedIOException(ex);
+            }
+
+
+        }
     }
 }

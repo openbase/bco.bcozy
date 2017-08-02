@@ -18,6 +18,7 @@
  */
 package org.openbase.bco.bcozy.view;
 
+import javafx.beans.property.StringProperty;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import org.openbase.bco.bcozy.model.LanguageSelection;
@@ -43,6 +44,12 @@ public class ObserverLabel extends Label implements Observer {
     private String identifier;
     private ResourceBundle languageBundle = ResourceBundle
             .getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
+
+    public ObserverLabel() {
+        super();
+        LanguageSelection.getInstance().addObserver(this);
+        this.textProperty().addListener((observable, oldValue, newValue) -> this.setIdentifier(newValue));
+    }
 
     /**
      * Constructor to create a label which is capable of observing language changes in the application.
@@ -81,6 +88,9 @@ public class ObserverLabel extends Label implements Observer {
      * @param identifier identifier
      */
     public void setIdentifier(final String identifier) {
+        if (identifier == null || identifier.isEmpty()) {
+            return;
+        }
         this.identifier = identifier;
         languageBundle = ResourceBundle.getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
         try {
