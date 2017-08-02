@@ -55,7 +55,7 @@ public class UnitSymbolsPane extends Pane {
         super();
         locationUnitsMap = new HashMap<>();
         unitsPerLocationMap = new HashMap<>();
-        selectedLocationId = new SimpleStringProperty(Constants.DUMMY_ROOM_NAME);
+        selectedLocationId = new SimpleStringProperty(Constants.DUMMY_LABEL);
         
         selectedLocationId.addListener(new ChangeListener<String>() {
             @Override

@@ -65,7 +65,7 @@ public class UnitButton extends Pane {
         try {                        
             AbstractUnitPane content;
             content = UnitPaneFactoryImpl.getInstance().newInitializedInstance(u.getConfig());
-            //content.setDisplayMode(DisplayMode.ICON_ONLY);
+            content.setDisplayMode(DisplayMode.ICON_ONLY);
             this.getChildren().add(content);
         } catch (CouldNotPerformException | InterruptedException ex) {
             Logger.getLogger(UnitButton.class.getName()).log(Level.SEVERE, null, ex);

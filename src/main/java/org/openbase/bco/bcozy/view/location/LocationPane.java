@@ -98,7 +98,7 @@ public final class LocationPane extends Pane {
 //            selectedLocation = new ZonePolygon(0.0, 0.0, 0.0, 0.0);
 //            selectedLocation.init(Registries.getLocationRegistry().getRootLocationConfig());
 //            selectedLocation.activate();
-        selectedLocationId = new SimpleStringProperty(Constants.DUMMY_ROOM_NAME);
+        selectedLocationId = new SimpleStringProperty(Constants.DUMMY_LABEL);
 
         rootRoom = null;
 //        lastSelectedTile = selectedLocation;

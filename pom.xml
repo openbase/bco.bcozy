@@ -133,7 +133,7 @@
                 <configuration>
                     <programs>
                         <program>
-                            <mainClass>org.openbase.bco.bcozy.BCozy</mainClass>
+                            <mainClass>org.openbase.bco.bcozy.BCozyLauncher</mainClass>
                             <id>bcozy</id>
                             <platforms>
                                 <platform>unix</platform>
@@ -200,7 +200,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>8.1.4</version>
                 <configuration>
-                    <mainClass>org.openbase.bco.bcozy.BCozy</mainClass>
+                    <mainClass>org.openbase.bco.bcozy.BCozyLauncher</mainClass>
                     <needMenu>true</needMenu>
                 </configuration>
             </plugin>
@@ -211,7 +211,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>org.openbase.bco.bcozy.BCozy</mainClass>
+                            <mainClass>org.openbase.bco.bcozy.BCozyLauncher</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
