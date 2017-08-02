@@ -265,6 +265,7 @@ public class UnitsPaneController {
                     Registries.getLocationRegistry().getRootLocationConfig());
                 transform.get(Constants.TRANSFORMATION_TIMEOUT / 10, TimeUnit.MILLISECONDS).getTransform().transform(vertex);
                 Point2D coord = new Point2D(vertex.x * Constants.METER_TO_PIXEL, vertex.y * Constants.METER_TO_PIXEL);
+                // Abstract Pane not working with a config object, only with a remote one!
                 UnitRemote<?> u = Units.getUnit(locationConfig.getId(), false);
                 unitPane.addRoomUnit(u, coord);
             } catch (InterruptedException | CouldNotPerformException | ExecutionException | TimeoutException ex) {

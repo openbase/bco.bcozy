@@ -85,32 +85,32 @@ public class UnitSymbolsPane extends Pane {
         unitsPerLocationMap.get(locationId).put(unitConfig.getId(), newButton);
     }*/
     
-      public void addRoomUnit(UnitRemote<? extends GeneratedMessage> u, Point2D position) {
+      public void addRoomUnit(UnitRemote<? extends GeneratedMessage> unitRemoteObject, Point2D position) {
         UnitButton newButton;
         try {
-            newButton = new UnitButton(u);
+            newButton = new UnitButton(unitRemoteObject);
        
-            newButton.setTranslateX(position.getY());  //Attention: swap correct? according to location pane 
+            newButton.setTranslateX(position.getY());  //swap according to swap in location pane 
             newButton.setTranslateY(position.getX());
-            locationUnitsMap.put(u.getConfig().getId(), newButton);
+            locationUnitsMap.put(unitRemoteObject.getConfig().getId(), newButton);
          } catch (NotAvailableException ex) {
             java.util.logging.Logger.getLogger(UnitSymbolsPane.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
       
-       public void addUnit(UnitRemote<? extends GeneratedMessage> u, Point2D position, String locationId) {
+       public void addUnit(UnitRemote<? extends GeneratedMessage> unitRemoteObject, Point2D position, String locationId) {
         UnitButton newButton;
         try {
-            newButton = new UnitButton(u);
+            newButton = new UnitButton(unitRemoteObject);
        
-            newButton.setTranslateX(position.getY());  //Attention: swap correct? according to location pane 
+            newButton.setTranslateX(position.getY());  
             newButton.setTranslateY(position.getX());
             
             if(unitsPerLocationMap.containsKey(locationId)) {
-                unitsPerLocationMap.get(locationId).put(u.getConfig().getId(), newButton);
+                unitsPerLocationMap.get(locationId).put(unitRemoteObject.getConfig().getId(), newButton);
             } else {
                 Map<String, UnitButton> units = new HashMap<>();
-                units.put(u.getConfig().getId(), newButton);
+                units.put(unitRemoteObject.getConfig().getId(), newButton);
                 unitsPerLocationMap.put(locationId, units);
             }            
          } catch (NotAvailableException ex) {
