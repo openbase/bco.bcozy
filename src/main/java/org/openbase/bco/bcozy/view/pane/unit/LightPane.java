@@ -20,61 +20,31 @@ package org.openbase.bco.bcozy.view.pane.unit;
  */
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.scene.paint.Color;
-import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
-import org.openbase.jul.schedule.RecurrenceEventFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.domotic.unit.dal.ColorableLightDataType.ColorableLightData;
+import rst.domotic.unit.dal.LightDataType.LightData;
 import java.util.concurrent.Future;
-import javafx.scene.layout.Pane;
-import org.openbase.bco.bcozy.view.generic.ColorChooser;
-import org.openbase.bco.dal.remote.unit.ColorableLightRemote;
-import org.openbase.jul.visual.javafx.transform.JFXColorToHSBColorTransformer;
+import org.openbase.bco.bcozy.view.Constants;
+import org.openbase.bco.dal.remote.unit.LightRemote;
 import rst.domotic.state.PowerStateType.PowerState;
 
 /**
  * Created by agatting on 03.12.15.
  */
-public class ColorableLightPane extends AbstractUnitPane<ColorableLightRemote, ColorableLightData> {
+public class LightPane extends AbstractUnitPane<LightRemote, LightData> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ColorableLightPane.class);
-
-    private ColorChooser colorChooser;
-
-    private final RecurrenceEventFilter<Color> recurrenceEventFilterHSV = new RecurrenceEventFilter<Color>(Constants.RECURRENCE_EVENT_FILTER_MILLI_TIMEOUT) {
-
-        @Override
-        public void relay() {
-            try {
-                getUnitRemote().setColor(JFXColorToHSBColorTransformer.transform(getLastValue()));
-            } catch (CouldNotPerformException ex) {
-                ExceptionPrinter.printHistory("Could not send color update!", ex, LOGGER);
-            }
-        }
-    };
+    private static final Logger LOGGER = LoggerFactory.getLogger(LightPane.class);
 
     /**
-     * Constructor for the Colorable Light Pane.
+     * Constructor for the Light Pane.
      *
      */
-    public ColorableLightPane() {
-        super(ColorableLightRemote.class, true);
+    public LightPane() {
+        super(LightRemote.class, true);
         this.setIcon(MaterialDesignIcon.LIGHTBULB_OUTLINE, MaterialDesignIcon.LIGHTBULB);
-    }
-
-    @Override
-    protected void initBodyContent(Pane bodyPane) throws CouldNotPerformException {
-        colorChooser = new ColorChooser();
-        colorChooser.initContent();
-        colorChooser.selectedColorProperty().addListener((observable, old, new_value) -> {
-            if (isHover()) {
-                recurrenceEventFilterHSV.trigger(colorChooser.getSelectedColor());
-            }
-        });
-        bodyPane.getChildren().add(colorChooser);
     }
 
     @Override
@@ -88,19 +58,6 @@ public class ColorableLightPane extends AbstractUnitPane<ColorableLightRemote, C
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.DEBUG);
         }
-
-        // detect color
-        Color color;
-        try {
-            color = JFXColorToHSBColorTransformer.transform(getData().getColorState().getColor().getHsbColor());
-        } catch (CouldNotPerformException e) {
-            color = Constants.LIGHTBULB_OFF_COLOR;
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.DEBUG);
-        }
-
-        if (colorChooser != null && expansionProperty().get()) {
-            colorChooser.setSelectedColor(color);
-        }
         
         switch (state) {
             case OFF:
@@ -109,7 +66,7 @@ public class ColorableLightPane extends AbstractUnitPane<ColorableLightRemote, C
                 primaryActivationProperty().setValue(Boolean.FALSE);
                 break;
             case ON:
-                getIcon().setBackgroundIconColor(color);
+                getIcon().setBackgroundIconColor(Color.CORNSILK);
                 setInfoText("lightOn");
                 primaryActivationProperty().setValue(Boolean.TRUE);
                 break;

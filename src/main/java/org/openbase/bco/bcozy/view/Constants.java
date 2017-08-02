@@ -249,7 +249,7 @@ public final class Constants {
     /**
      * The name of a dummy room.
      */
-    public static final String DUMMY_ROOM_NAME = "DUMMY";
+    public static final String DUMMY_LABEL = "DUMMY";
 
     /**
      * The percentage of the full screen that a zoomed room will fill according to its width.
@@ -354,7 +354,7 @@ public final class Constants {
     /**
      * Yellow color like a lightbulb.
      */
-    public static final Color LIGHTBULB_COLOR = new Color(1.0, 1.0, 0.3, 1.0);
+    public static final Color LIGHTBULB_OFF_COLOR = Color.GRAY.darker();
 
     /**
      * Timeout value in milliseconds for fetching transformations.
