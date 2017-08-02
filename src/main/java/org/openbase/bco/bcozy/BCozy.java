@@ -247,7 +247,7 @@ public class BCozy extends Application {
 
     private void loadInitialRegistrationWindow() {
 
-        if (true) { //TODO: First Start?
+        if (false) { //TODO: First Start?
             try {
                 URL url = getClass().getClassLoader().getResource("InitialRegistration.fxml");
                 if (url == null) {
