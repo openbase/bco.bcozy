@@ -1,7 +1,7 @@
 package org.openbase.bco.bcozy.view.mainmenupanes;
 
 import com.jfoenix.controls.JFXCheckBox;
-import com.sun.xml.internal.bind.v2.TODO;
+//import com.sun.xml.internal.bind.v2.TODO;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
