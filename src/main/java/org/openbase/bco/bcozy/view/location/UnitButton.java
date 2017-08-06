@@ -16,26 +16,84 @@
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
-
 package org.openbase.bco.bcozy.view.location;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.control.Button;
+import com.google.protobuf.GeneratedMessage;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.application.Platform;
+import javafx.scene.layout.Pane;
 import org.openbase.bco.bcozy.view.SVGIcon;
+import org.openbase.bco.bcozy.view.generic.WidgetPane.DisplayMode;
+import org.openbase.bco.bcozy.view.pane.unit.AbstractUnitPane;
+import org.openbase.bco.bcozy.view.pane.unit.UnitPaneFactoryImpl;
+import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
+import org.openbase.jul.exception.CouldNotPerformException;
+import rst.domotic.unit.UnitConfigType.UnitConfig;
+import rst.domotic.unit.UnitTemplateType;
+import static rst.domotic.unit.UnitTemplateType.UnitTemplate.UnitType.LOCATION;
 
 /**
  *
  */
-public class UnitButton extends Button {
+public class UnitButton extends Pane {
+
+    private final double DEFAULT_ICON_SIZE = 8.0;
 
     /**
-     * Creates a button with an empty string for its label.
-     * @param svgIcon The Icon displayed in the button
-     * @param onActionHandler The ActionHandler that gets active when the button is clicked
+     * Creates a button with suitable unit symbol
+     *
+     * @param config config of the remote unit
      */
-    public UnitButton(final SVGIcon svgIcon, final EventHandler<ActionEvent> onActionHandler) {
-        this.setGraphic(svgIcon);
-        this.setOnAction(onActionHandler);
+    // LocationRemote unit = Units.getUnit("locaction unit id", true, Units.LOCATION);
+    //   unit.getUnits(UnitTemplateType.UnitTemplate.UnitType.UNKNOWN, true, unitRemoteClass);
+    /*public UnitButton(UnitConfig config)  {
+           
+        try {                        
+            AbstractUnitPane content;
+            content = UnitPaneFactoryImpl.getInstance().newInitializedInstance(config);
+            content.setDisplayMode(DisplayMode.ICON_ONLY);
+            this.getChildren().add(content);
+        } catch (CouldNotPerformException | InterruptedException ex) {
+            Logger.getLogger(UnitButton.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }*/
+
+    public UnitButton(UnitRemote<? extends GeneratedMessage> u) {
+        try {                        
+            AbstractUnitPane content;
+            content = UnitPaneFactoryImpl.getInstance().newInitializedInstance(u.getConfig());
+            content.setDisplayMode(DisplayMode.ICON_ONLY);
+            this.getChildren().add(content);
+        } catch (CouldNotPerformException | InterruptedException ex) {
+            Logger.getLogger(UnitButton.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
+    
+
+
+   /* 
+
+    final ContextMenu cm = new ContextMenu();
+            MenuItem cmItem1 = new MenuItem("Toggle power state");
+            try {
+                UnitPaneFactoryImpl.getInstance().newInstance(UnitPaneFactoryImpl.loadUnitPaneClass(config.getType()));
+                CustomMenuItem cmItem2 = new CustomMenuItem();
+                cm.getItems().add(cmItem2);
+            } catch (CouldNotPerformException ex) {
+                Logger.getLogger(UnitButton.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            cmItem1.setOnAction((ActionEvent e) -> {
+                //
+            });
+            cm.getItems().add(cmItem1);
+            this.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent e) -> {
+                if (e.getButton() == MouseButton.SECONDARY) {
+                    cm.show(this.getParent(), e.getScreenX(), e.getScreenY());
+                }
+            });
+ 
+    */
 }

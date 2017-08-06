@@ -13,7 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
+ * along with org.openbase.bco.bcozy. If not, see
+ * <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
 package org.openbase.bco.bcozy.view.location;
@@ -23,7 +24,6 @@ import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.input.MouseEvent;
@@ -31,7 +31,6 @@ import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ForegroundPane;
-import org.openbase.bco.bcozy.view.SVGIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,6 +54,7 @@ public final class LocationPane extends Pane {
      * Singleton instance.
      */
     private static LocationPane instance;
+    private static boolean initialized;
 
     /**
      * Application logger.
@@ -63,12 +63,14 @@ public final class LocationPane extends Pane {
 
     private LocationPolygon selectedLocation;
     private ZonePolygon rootRoom;
+
+    //private final StackPane backgroundPane;
     private final ForegroundPane foregroundPane;
     private final Map<String, TilePolygon> tileMap;
     private final Map<String, RegionPolygon> regionMap;
     private final Map<String, ConnectionPolygon> connectionMap;
 
-    private final SimpleStringProperty selectedLocationId;
+    public final SimpleStringProperty selectedLocationId;
 
     private LocationPolygon lastFirstClickTarget;
     private LocationPolygon lastSelectedTile;
@@ -82,12 +84,15 @@ public final class LocationPane extends Pane {
     private LocationPane(final ForegroundPane foregroundPane) throws org.openbase.jul.exception.InstantiationException, InterruptedException {
         super();
 
-//        try {
+//        try {				
         this.foregroundPane = foregroundPane;
 
         tileMap = new HashMap<>();
         regionMap = new HashMap<>();
         connectionMap = new HashMap<>();
+        /* tileMap = background.getTileMap();
+	   regionMap = background.getRegionMap();
+	   connectionMap = background.getConnectionMap();*/
 
 //            Registries.getLocationRegistry().waitForData();
 //            selectedLocation = new ZonePolygon(0.0, 0.0, 0.0, 0.0);
@@ -139,10 +144,12 @@ public final class LocationPane extends Pane {
     }
 
     /**
-     * Singleton Pattern. This method call can not be used to instantiate the singleton.
+     * Singleton Pattern. This method call can not be used to instantiate the
+     * singleton.
      *
      * @return the singleton instance of the location pane
-     * @throws InstantiationException thrown if no getInstance(ForegroundPane foregroundPane) is called before
+     * @throws InstantiationException thrown if no getInstance(ForegroundPane
+     * foregroundPane) is called before
      */
     public static LocationPane getInstance() throws InstantiationException {
         synchronized (LocationPane.class) {
@@ -153,6 +160,17 @@ public final class LocationPane extends Pane {
         return LocationPane.instance;
     }
 
+    public void setInitialized(boolean init) {
+        initialized = init;
+    }
+
+    public boolean isInitialized() {
+        return initialized;
+    }
+
+    public ForegroundPane getForeground() {
+        return this.foregroundPane;
+    }
     /**
      * Singleton Pattern.
      *
@@ -170,7 +188,8 @@ public final class LocationPane extends Pane {
     }
 
     /**
-     * Adds a room to the location Pane and use the controls to add a mouse event handler.
+     * Adds a room to the location Pane and use the controls to add a mouse
+     * event handler.
      *
      * If a room with the same id already exists, it will be overwritten.
      *
@@ -215,7 +234,17 @@ public final class LocationPane extends Pane {
                 default:
                     throw new EnumNotSupportedException(locationUnitConfig.getLocationConfig().getType(), this);
             }
-
+            /*for (final Map.Entry<UnitTemplateType.UnitTemplate.UnitType, List<UnitRemote>> nextEntry : Units.getUnit(locationUnitConfig.getId(), false, Units.LOCATION).getUnitMap().entrySet()) {
+                if (nextEntry.getValue().isEmpty()) {
+                    continue;
+                }
+               // AbstractUnitPane blubs = UnitPaneFactoryImpl.getInstance().newInstance(nextEntry.getKey());
+				
+				//this.addUnit(blubs.getIcon(), null, new Point2D(5,5));
+				//for(UnitRemote u: nextEntry.getValue()) {
+			//		u.getConfig().
+		//		}
+            }*/
         } catch (CouldNotPerformException ex) {
             throw new CouldNotPerformException("Could not add location!", ex);
         }
@@ -227,7 +256,8 @@ public final class LocationPane extends Pane {
      * If a connection with the same id already exists, it will be overwritten.
      *
      * @param connectionUnitConfig the unit config of this connection.
-     * @param vertices A list of vertices which defines the shape of the connection
+     * @param vertices A list of vertices which defines the shape of the
+     * connection
      * @throws org.openbase.jul.exception.CouldNotPerformException
      * @throws java.lang.InterruptedException
      */
@@ -279,16 +309,25 @@ public final class LocationPane extends Pane {
      * Will add a UnitIcon to the locationPane.
      *
      * @param svgIcon The icon
-     * @param onActionHandler The Handler that gets activated when the button is pressed
+     * @param onActionHandler The Handler that gets activated when the button is
+     * pressed
      * @param position The position where the button is to be placed
-     */
+   
     public void addUnit(final SVGIcon svgIcon, final EventHandler<ActionEvent> onActionHandler,
             final Point2D position) {
         final UnitButton unitButton = new UnitButton(svgIcon, onActionHandler);
         unitButton.setTranslateX(position.getX());
         unitButton.setTranslateY(position.getY());
         this.getChildren().add(unitButton);
-    }
+    }  
+
+    public void addUnit(final SVGIcon svgIcon,
+            final Point2D position) {
+        final UnitButton unitButton = new UnitButton(svgIcon, null);
+        unitButton.setTranslateX(position.getX());
+        unitButton.setTranslateY(position.getY());
+        //unitSymbols.add(unitButton);
+    }*/
 
     /**
      * Erases all locations from the locationPane.
@@ -324,8 +363,9 @@ public final class LocationPane extends Pane {
     }
 
     /**
-     * Will clear everything on the location Pane and then add everything that is saved in the maps.
-     * Also adds a cutting shape for every Polygon to the root.
+     * Will clear everything on the location Pane and then add everything that
+     * is saved in the maps. Also adds a cutting shape for every Polygon to the
+     * root.
      */
     public void updateLocationPane() {
         this.getChildren().clear();
@@ -344,6 +384,10 @@ public final class LocationPane extends Pane {
             if (rootRoom != null) rootRoom.addCuttingShape(connectionPolygon);
             this.getChildren().add(connectionPolygon);
         });
+
+       // unitSymbols.forEach((icon) -> {
+        //    this.getChildren().add(icon);
+        //});
 
         if (rootRoom != null) {
             this.getChildren().add(rootRoom);
@@ -481,7 +525,8 @@ public final class LocationPane extends Pane {
     }
 
     /**
-     * ZoomFits to the root if available. Otherwise to the first location in the tileMap.
+     * ZoomFits to the root if available. Otherwise to the first location in the
+     * tileMap.
      */
     public void zoomFit() {
         if (rootRoom != null) { //NOPMD
@@ -507,6 +552,7 @@ public final class LocationPane extends Pane {
      */
     public void removeSelectedLocationIdListener(final ChangeListener<? super String> changeListener) {
         selectedLocationId.removeListener(changeListener);
+        selectedLocationId.set("home");
     }
 
     /**

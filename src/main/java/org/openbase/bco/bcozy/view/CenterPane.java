@@ -21,12 +21,15 @@ package org.openbase.bco.bcozy.view;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import de.jensd.fx.glyphs.materialicons.MaterialIcon;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import org.openbase.bco.bcozy.controller.CenterPaneController;
 import org.openbase.bco.bcozy.controller.SettingsController;
 import org.openbase.bco.bcozy.view.mainmenupanes.SettingsPane;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
@@ -54,11 +57,16 @@ public class CenterPane extends StackPane {
     private Pane settingsMenu;
     private Pane permissionPaneParent;
 
+    public ObjectProperty<CenterPaneController.State> appStateProperty;
+
     /**
      * Constructor for the center pane.
      */
     public CenterPane(double height) {
 
+        appStateProperty = new SimpleObjectProperty<>(CenterPaneController.State.SETTINGS);
+
+        // Initializing components
         this.settingsMenu = loadSettingsMenu(height);
 
         FloatingPopUp viewModes = new FloatingPopUp(Pos.BOTTOM_RIGHT);

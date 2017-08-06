@@ -74,6 +74,8 @@ public class ContextMenuController {
             }
         });
     }
+    
+    //idea: addselected unit id listener
 
     /**
      * Takes a locationId and creates new TitledPanes for all UnitTypes.

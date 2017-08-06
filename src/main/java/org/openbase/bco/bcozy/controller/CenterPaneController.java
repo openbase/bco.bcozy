@@ -20,6 +20,7 @@ package org.openbase.bco.bcozy.controller;
 
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import de.jensd.fx.glyphs.materialicons.MaterialIcon;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.ActionEvent;
 import javafx.stage.Stage;
 import org.openbase.bco.bcozy.view.CenterPane;
@@ -64,5 +65,4 @@ public class CenterPaneController {
         activeState = State.SETTINGS;
 
     }
-
 }

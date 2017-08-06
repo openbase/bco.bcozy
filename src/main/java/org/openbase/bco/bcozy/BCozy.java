@@ -78,13 +78,13 @@ public class BCozy extends Application {
     private ContextMenuController contextMenuController;
     private LocationPaneController locationPaneController;
     private ForegroundPane foregroundPane;
+    private UnitsPaneController unitsPaneController;
     private Future initTask;
 
     private Scene mainScene;
 
     @Override
-    public void start(final Stage primaryStage) throws InitializationException, InterruptedException,
-            InstantiationException {
+    public void start(final Stage primaryStage) throws InitializationException, InterruptedException, InstantiationException {
         BCozy.primaryStage = primaryStage;
         registerResponsiveHandler();
 
@@ -115,6 +115,7 @@ public class BCozy extends Application {
 
         contextMenuController = new ContextMenuController(foregroundPane, backgroundPane.getLocationPane());
         locationPaneController = new LocationPaneController(backgroundPane.getLocationPane());
+        unitsPaneController = new UnitsPaneController(backgroundPane.getUnitsPane(), backgroundPane.getLocationPane());
 
         ResponsiveHandler.addResponsiveToWindow(primaryStage);
         primaryStage.show();
@@ -141,6 +142,7 @@ public class BCozy extends Application {
 
                     infoPane.setTextLabelIdentifier("connectLocationRemote");
                     locationPaneController.connectLocationRemote();
+                    unitsPaneController.connectUnitRemote();
 
                     onInitializedRemotesAndLocation();
 
