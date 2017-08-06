@@ -12,24 +12,17 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 import org.controlsfx.control.CheckComboBox;
-import org.openbase.bco.authentication.lib.SessionManager;
+import org.openbase.bco.bcozy.model.SessionManagerFacade;
+import org.openbase.bco.bcozy.model.SessionManagerFacadeImpl;
 import org.openbase.bco.bcozy.util.Groups;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ObserverButton;
 import org.openbase.bco.bcozy.view.ObserverLabel;
-import org.openbase.bco.registry.remote.Registries;
-import org.openbase.jul.exception.CouldNotPerformException;
-import org.openbase.jul.exception.NotAvailableException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rst.domotic.unit.UnitConfigType;
-import rst.domotic.unit.UnitTemplateType;
-import rst.domotic.unit.authorizationgroup.AuthorizationGroupConfigType;
-import rst.domotic.unit.user.UserConfigType;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 /**
  * User registration.
@@ -142,112 +135,6 @@ public class RegistrationPane extends VBox {
         repeatPasswordField.setText("");
         isAdmin.setSelected(false);
         usergroupField.getCheckModel().clearChecks();
-    }
-
-    private interface SessionManagerFacade {
-
-        /**
-         * Checks, if the current user is an admin.
-         *
-         * @return true, if the current user is an admin, false otherwise
-         */
-        boolean isAdmin();
-
-        boolean registerUser(String username, String plainPassword, boolean asAdmin,
-                             List<UnitConfigType.UnitConfig> groups);
-
-        boolean userNameAvailable(String username);
-
-        boolean passwordsValid(String text, String text1);
-    }
-
-    class SessionManagerFacadeImpl implements SessionManagerFacade {
-
-        @Override
-        public boolean isAdmin() {
-            //TODO: return SessionManager.getInstance().isAdmin();
-            return true;
-        }
-
-        @Override
-        public boolean registerUser(String username, String plainPassword, boolean asAdmin, List<UnitConfigType
-                .UnitConfig> groups) {
-            try {
-                return tryRegisterUser(username, plainPassword, asAdmin, groups);
-            } catch (CouldNotPerformException | ExecutionException | InterruptedException | TimeoutException e) {
-                e.printStackTrace();
-            }
-            return false;
-        }
-
-        private boolean tryRegisterUser(String username, String plainPassword, boolean asAdmin,
-                                        List<UnitConfigType.UnitConfig> groups)
-                throws CouldNotPerformException, ExecutionException, InterruptedException, TimeoutException {
-
-            UnitConfigType.UnitConfig unitConfig = tryCreateUser(username);
-
-            SessionManager.getInstance().registerUser(unitConfig.getId(), plainPassword, isAdmin());
-
-            for (UnitConfigType.UnitConfig group : groups) {
-                tryAddToGroup(group, unitConfig.getId());
-            }
-
-            return true;
-        }
-
-        private UnitConfigType.UnitConfig tryCreateUser(String username) throws CouldNotPerformException,
-                InterruptedException, ExecutionException, TimeoutException {
-
-            UnitConfigType.UnitConfig.Builder builder = UnitConfigType.UnitConfig.newBuilder();
-            UserConfigType.UserConfig.Builder userConfigBuilder = UserConfigType.UserConfig.newBuilder();
-            //builder.getUserConfigBuilder();
-
-            userConfigBuilder = userConfigBuilder
-                    .setUserName(username)
-                    .setFirstName(username/*TODO: real Firstname*/)
-                    .setLastName("username"/*TODO: real Lastname*/);
-
-            UnitConfigType.UnitConfig unitConfig = builder
-                    .setUserConfig(userConfigBuilder.build())
-                    .setType(UnitTemplateType.UnitTemplate.UnitType.USER)//TODO: right way?
-                    .build();
-
-            Future<UnitConfigType.UnitConfig> user = Registries.getUserRegistry().registerUserConfig(unitConfig);
-            //return unitConfig;
-            return user.get(1, TimeUnit.SECONDS);
-        }
-
-        private void tryAddToGroup(UnitConfigType.UnitConfig group, String userId) throws CouldNotPerformException,
-                InterruptedException {
-
-            UnitConfigType.UnitConfig.Builder unitConfig = Registries.getUserRegistry()
-                    .getAuthorizationGroupConfigById(group.getId()).toBuilder();
-            AuthorizationGroupConfigType.AuthorizationGroupConfig.Builder authorizationGroupConfig = unitConfig
-                    .getAuthorizationGroupConfigBuilder();
-            authorizationGroupConfig.addMemberId(userId);
-            Registries.getUserRegistry().updateAuthorizationGroupConfig(unitConfig.build());
-        }
-
-
-        @Override
-        public boolean userNameAvailable(String username) {
-            try {
-                Registries.getUserRegistry().getUserConfigByUserName(username);
-                return false;
-            } catch (CouldNotPerformException | InterruptedException e) {
-                //e.printStackTrace();
-                // ignored, cause unused username is not an error
-            }
-            return true;
-        }
-
-        @Override
-        public boolean passwordsValid(String password, String repeatedPassword) {
-            // TODO other checks for pw validity? e.g. length..
-
-            return password.equals(repeatedPassword);
-
-        }
     }
 
     class SessionManagerFacadeFake implements SessionManagerFacade {
