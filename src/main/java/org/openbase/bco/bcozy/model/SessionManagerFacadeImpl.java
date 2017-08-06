@@ -1,7 +1,6 @@
 package org.openbase.bco.bcozy.model;
 
 import org.openbase.bco.authentication.lib.SessionManager;
-import org.openbase.bco.bcozy.view.mainmenupanes.RegistrationPane;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.slf4j.Logger;

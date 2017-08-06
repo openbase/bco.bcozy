@@ -1,4 +1,4 @@
-package org.openbase.bco.bcozy.view.mainmenupanes;
+package org.openbase.bco.bcozy.controller;
 
 import com.jfoenix.controls.JFXCheckBox;
 //import com.sun.xml.internal.bind.v2.TODO;
@@ -29,18 +29,17 @@ import java.util.List;
  *
  * @author vdasilva
  */
-public class RegistrationPane extends VBox {
+public class RegistrationController {
     private SessionManagerFacade sessionManager = new SessionManagerFacadeImpl();
 
+    private final VBox root = new VBox(Constants.INSETS);
     private final PasswordField passwordField;
     private final PasswordField repeatPasswordField;
     private final TextField username;
     private final CheckComboBox<UnitConfigType.UnitConfig> usergroupField;
     private final JFXCheckBox isAdmin;
 
-    public RegistrationPane() {
-        super(Constants.INSETS);
-
+    public RegistrationController() {
         ObserverButton registrationBtn = new ObserverButton("register");
         registrationBtn.getStyleClass().clear();
         registrationBtn.getStyleClass().add("transparent-button");
@@ -66,7 +65,7 @@ public class RegistrationPane extends VBox {
 
         usergroupField = new CheckComboBox<>(groups);
         usergroupField.setConverter(Groups.stringConverter(groups));
-        usergroupField.prefWidthProperty().bind(this.widthProperty());
+        usergroupField.prefWidthProperty().bind(root.widthProperty());
 
         ObserverLabel pwLbl = new ObserverLabel("password");
         pwLbl.getStyleClass().clear();
@@ -88,8 +87,8 @@ public class RegistrationPane extends VBox {
 
 
         //VBox registrationLayout = new VBox(Constants.INSETS);
-        this.getStyleClass().addAll("padding-large");
-        this.getChildren().addAll(usernameLbl, username, usergroupLbl, usergroupField, pwLbl,
+        root.getStyleClass().addAll("padding-large");
+        root.getChildren().addAll(usernameLbl, username, usergroupLbl, usergroupField, pwLbl,
                 passwordField, repeatPwLbl, repeatPasswordField, bottomLine);
 
         //this.getChildren().addAll(registrationLayout);
@@ -135,6 +134,10 @@ public class RegistrationPane extends VBox {
         repeatPasswordField.setText("");
         isAdmin.setSelected(false);
         usergroupField.getCheckModel().clearChecks();
+    }
+
+    public VBox getRoot() {
+        return root;
     }
 
     class SessionManagerFacadeFake implements SessionManagerFacade {

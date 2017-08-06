@@ -25,7 +25,6 @@ import org.openbase.bco.bcozy.BCozy;
 import org.openbase.bco.bcozy.model.LanguageSelection;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ObserverLabel;
-import org.openbase.bco.bcozy.view.mainmenupanes.RegistrationPane;
 import org.openbase.bco.bcozy.view.mainmenupanes.SettingsPane;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
@@ -78,7 +77,7 @@ public class SettingsController {
 
     private Pane permissionPane;
 
-    private RegistrationPane registrationPane;
+    private RegistrationController registrationController;
 
     private SettingsPane settingsPane;
     private PermissionPaneController permissionPaneController;
@@ -300,8 +299,8 @@ public class SettingsController {
     }
 
     private void setRegistrationPane() {
-        registrationPane = new RegistrationPane();
-        registrationTab.setContent(registrationPane);
+        registrationController = new RegistrationController();
+        registrationTab.setContent(registrationController.getRoot());
     }
 
     public class RecursiveUnitConfig extends RecursiveTreeObject<RecursiveUnitConfig> {

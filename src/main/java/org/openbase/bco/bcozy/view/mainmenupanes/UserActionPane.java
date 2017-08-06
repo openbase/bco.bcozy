@@ -6,10 +6,10 @@ import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.css.PseudoClass;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.*;
+import org.openbase.bco.bcozy.controller.RegistrationController;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.SVGIcon;
 
@@ -21,18 +21,18 @@ import org.openbase.bco.bcozy.view.SVGIcon;
 public class UserActionPane extends PaneElement {
 
     private final LoginPane loginPane;
-    private final RegistrationPane registrationPane;
+    //private final RegistrationController registrationController;
     private final PseudoClass tabpaneContentHidden;
     private final TabPane userActionPane;
 
     private State state;
 
 
-    public UserActionPane(LoginPane lp, RegistrationPane rp) {
+    public UserActionPane(LoginPane lp, RegistrationController rp) {
         super(true);
         loginPane = lp;
         loginPane.setState(LoginPane.State.LOGINACTIVE);
-        registrationPane = rp;
+        //registrationController = rp;
         BorderPane root = new BorderPane();
         userActionPane = new TabPane();
         TabPaneSelectionModelImpl selectionModel = new TabPaneSelectionModelImpl(userActionPane);
@@ -59,10 +59,10 @@ public class UserActionPane extends PaneElement {
         Tab loginTab = createTab(this.loginPane, MaterialDesignIcon.LOGIN);
         loginTab.getContent().maxHeight(100);
 
-        Tab registerTab = createTab(this.registrationPane, MaterialDesignIcon.ACCOUNT_PLUS);
+        //Tab registerTab = createTab(this.registrationController, MaterialDesignIcon.ACCOUNT_PLUS);
 
 
-        userActionPane.getTabs().addAll(loginTab, registerTab);
+        userActionPane.getTabs().addAll(loginTab/*, registerTab*/);
         userActionPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
 
 
