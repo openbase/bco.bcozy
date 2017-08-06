@@ -1,23 +1,18 @@
 package org.openbase.bco.bcozy.controller;
 
 import com.jfoenix.controls.JFXCheckBox;
-//import com.sun.xml.internal.bind.v2.TODO;
-import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.geometry.Pos;
+import javafx.fxml.FXML;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 import org.controlsfx.control.CheckComboBox;
 import org.openbase.bco.bcozy.model.SessionManagerFacade;
-import org.openbase.bco.bcozy.model.SessionManagerFacadeImpl;
 import org.openbase.bco.bcozy.util.Groups;
 import org.openbase.bco.bcozy.view.Constants;
-import org.openbase.bco.bcozy.view.ObserverButton;
-import org.openbase.bco.bcozy.view.ObserverLabel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.domotic.unit.UnitConfigType;
@@ -30,71 +25,33 @@ import java.util.List;
  * @author vdasilva
  */
 public class RegistrationController {
-    private SessionManagerFacade sessionManager = new SessionManagerFacadeImpl();
 
-    private final VBox root = new VBox(Constants.INSETS);
-    private final PasswordField passwordField;
-    private final PasswordField repeatPasswordField;
-    private final TextField username;
-    private final CheckComboBox<UnitConfigType.UnitConfig> usergroupField;
-    private final JFXCheckBox isAdmin;
+    private SessionManagerFacade sessionManager = new SessionManagerFacadeFake();//new SessionManagerFacadeImpl();
 
-    public RegistrationController() {
-        ObserverButton registrationBtn = new ObserverButton("register");
-        registrationBtn.getStyleClass().clear();
-        registrationBtn.getStyleClass().add("transparent-button");
-        registrationBtn.setOnAction(e -> register());
+    @FXML
+    private Pane root;
+    @FXML
+    private PasswordField passwordField;
+    @FXML
+    private PasswordField repeatPasswordField;
+    @FXML
+    private TextField username;
+    @FXML
+    private CheckComboBox<UnitConfigType.UnitConfig> usergroupField;
+    @FXML
+    private JFXCheckBox isAdmin;
 
-        passwordField = new PasswordField();
-        repeatPasswordField = new PasswordField();
 
-        username = new TextField();
-        ObserverLabel usernameLbl = new ObserverLabel("username");
-        usernameLbl.getStyleClass().clear();
-        usernameLbl.getStyleClass().add("small-label");
-        usernameLbl.setAlignment(Pos.BOTTOM_LEFT);
-
-        ObserverLabel usergroupLbl = new ObserverLabel("usergroups");
-        usergroupLbl.getStyleClass().clear();
-        usergroupLbl.getStyleClass().add("small-label");
-        usergroupLbl.setAlignment(Pos.BOTTOM_LEFT);
-
-        ObservableList<String> options = FXCollections.observableArrayList("Group1", "Group2", "Group3", "Group4");
-
+    public void initialize() {
         ObservableList<UnitConfigType.UnitConfig> groups = Groups.getGroups();
+        groups.addListener((ListChangeListener.Change<? extends UnitConfigType.UnitConfig> c)
+                -> usergroupField.getItems().setAll(groups));
 
-        usergroupField = new CheckComboBox<>(groups);
         usergroupField.setConverter(Groups.stringConverter(groups));
         usergroupField.prefWidthProperty().bind(root.widthProperty());
-
-        ObserverLabel pwLbl = new ObserverLabel("password");
-        pwLbl.getStyleClass().clear();
-        pwLbl.getStyleClass().add("small-label");
-        pwLbl.setAlignment(Pos.BOTTOM_LEFT);
-
-        ObserverLabel repeatPwLbl = new ObserverLabel("repeatPassword");
-        repeatPwLbl.getStyleClass().clear();
-        repeatPwLbl.getStyleClass().add("small-label");
-        repeatPwLbl.setAlignment(Pos.BOTTOM_LEFT);
-
-        ObserverLabel isAdminLabel = new ObserverLabel("admin");
-        isAdmin = new JFXCheckBox();
-
-        final HBox isAdminCheckbox = new HBox(isAdmin, isAdminLabel);
-        final BorderPane bottomLine = new BorderPane();
-        bottomLine.setLeft(isAdminCheckbox);
-        bottomLine.setRight(registrationBtn);
-
-
-        //VBox registrationLayout = new VBox(Constants.INSETS);
-        root.getStyleClass().addAll("padding-large");
-        root.getChildren().addAll(usernameLbl, username, usergroupLbl, usergroupField, pwLbl,
-                passwordField, repeatPwLbl, repeatPasswordField, bottomLine);
-
-        //this.getChildren().addAll(registrationLayout);
-
     }
 
+    @FXML
     private void register() {
         resetHints();
 
@@ -136,7 +93,7 @@ public class RegistrationController {
         usergroupField.getCheckModel().clearChecks();
     }
 
-    public VBox getRoot() {
+    public Pane getRoot() {
         return root;
     }
 

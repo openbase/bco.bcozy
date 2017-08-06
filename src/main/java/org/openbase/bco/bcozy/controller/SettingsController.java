@@ -270,6 +270,8 @@ public class SettingsController {
 
         this.settingsPane.getThemeChoice().setOnAction(event -> chooseTheme());
         this.settingsPane.getLanguageChoice().setOnAction(event -> chooseLanguage());
+
+
         //Necessary to ensure that the first change is not missed by the ChangeListener
         this.settingsPane.getThemeChoice().getSelectionModel().select(0);
         this.settingsPane.getLanguageChoice().getSelectionModel().select(0);
@@ -279,10 +281,8 @@ public class SettingsController {
 
     private AnchorPane loadPermissionPane() {
         try {
-            URL url = getClass().getClassLoader().getResource("PermissionPane.fxml");
-            if (url == null) {
-                throw new RuntimeException("PermissionPane.fxml not found");
-            }
+            URL url = Objects.requireNonNull(getClass().getClassLoader().getResource("PermissionPane.fxml"),
+                    "PermissionPane.fxml not found");
 
             FXMLLoader loader = new FXMLLoader(url);
             AnchorPane anchorPane = loader.load();
@@ -299,8 +299,23 @@ public class SettingsController {
     }
 
     private void setRegistrationPane() {
-        registrationController = new RegistrationController();
-        registrationTab.setContent(registrationController.getRoot());
+        try {
+            URL url = Objects.requireNonNull(getClass().getClassLoader().getResource("Registration.fxml"),
+                    "Registration.fxml not found");
+
+            FXMLLoader loader = new FXMLLoader(url);
+            loader.setControllerFactory(clazz -> new RegistrationController());
+            loader.load();
+
+            this.registrationController = loader.getController();
+
+            registrationTab.setContent(registrationController.getRoot());
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            ExceptionPrinter.printHistory("Content could not be loaded", ex, LOGGER);
+            throw new UncheckedIOException(ex);
+        }
     }
 
     public class RecursiveUnitConfig extends RecursiveTreeObject<RecursiveUnitConfig> {

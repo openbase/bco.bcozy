@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import org.openbase.bco.bcozy.view.ObserverButton?>
+
+<?import com.jfoenix.controls.JFXCheckBox?>
+<?import org.openbase.bco.bcozy.view.ObserverLabel?>
+<?import org.controlsfx.control.CheckComboBox?>
+<?import org.openbase.bco.bcozy.view.Constants?>
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:id="root"
+      styleClass="padding-large"
+      fx:controller="org.openbase.bco.bcozy.controller.RegistrationController">
+    <spacing>
+        <Constants fx:constant="INSETS"/>
+    </spacing>
+
+    <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">username</ObserverLabel>
+    <TextField fx:id="username"/>
+
+    <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">usergroups</ObserverLabel>
+    <CheckComboBox fx:id="usergroupField"/>
+
+    <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">password</ObserverLabel>
+    <PasswordField fx:id="passwordField"/>
+
+    <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">repeatPassword</ObserverLabel>
+    <PasswordField fx:id="repeatPasswordField"/>
+
+
+    <BorderPane>
+        <left>
+            <HBox>
+                <JFXCheckBox fx:id="isAdmin"/>
+                <ObserverLabel>admin</ObserverLabel>
+            </HBox>
+        </left>
+        <right>
+            <ObserverButton styleClass="transparent-button" onAction="#register">
+                register
+            </ObserverButton>
+        </right>
+    </BorderPane>
+
+</VBox>

@@ -16,16 +16,16 @@
     <VBox layoutX="50.0" layoutY="60.0" prefHeight="303.0" prefWidth="506.0">
         <Text fx:id="welcomeText" strokeType="OUTSIDE" strokeWidth="0.0" text="Text"/>
         <HBox prefHeight="52.0" prefWidth="506.0">
-            <ObserverLabel text="username"/>
+            <ObserverLabel identifier="username"/>
             <JFXTextField fx:id="userNameInput"/>
         </HBox>
 
         <HBox fx:id="passwordInput" prefHeight="44.0" prefWidth="506.0">
-            <ObserverLabel text="password"/>
+            <ObserverLabel identifier="password"/>
             <JFXPasswordField  fx:id="passwordField"/>
         </HBox>
         <HBox prefHeight="41.0" prefWidth="506.0">
-            <ObserverLabel text="repeatPassword"/>
+            <ObserverLabel identifier="repeatPassword"/>
             <JFXPasswordField fx:id="repeatPasswordField"/>
         </HBox>
         <HBox prefHeight="52.0" prefWidth="506.0">
