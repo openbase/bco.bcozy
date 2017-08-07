@@ -91,7 +91,7 @@ public class SessionManagerFacadeImpl implements SessionManagerFacade {
     @Override
     public boolean userNameAvailable(String username) {
         try {
-            Registries.getUserRegistry().getUserConfigByUserName(username);
+            Registries.getUserRegistry().getUserIdByUserName(username);
             return false;
         } catch (CouldNotPerformException | InterruptedException e) {
             LOGGER.info("Username %s already in use", username);
