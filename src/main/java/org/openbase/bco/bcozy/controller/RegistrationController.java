@@ -11,6 +11,7 @@ import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 import org.controlsfx.control.CheckComboBox;
 import org.openbase.bco.bcozy.model.SessionManagerFacade;
+import org.openbase.bco.bcozy.model.SessionManagerFacadeImpl;
 import org.openbase.bco.bcozy.util.Groups;
 import org.openbase.bco.bcozy.view.Constants;
 import org.slf4j.Logger;
@@ -26,7 +27,7 @@ import java.util.List;
  */
 public class RegistrationController {
 
-    private SessionManagerFacade sessionManager = new SessionManagerFacadeFake();//new SessionManagerFacadeImpl();
+    private SessionManagerFacade sessionManager = new SessionManagerFacadeImpl(); //new SessionManagerFacadeFake();
 
     @FXML
     private Pane root;
@@ -73,7 +74,9 @@ public class RegistrationController {
         List<UnitConfigType.UnitConfig> groups = usergroupField.getCheckModel().getCheckedItems();
 
         boolean registered = sessionManager.registerUser(
-                username.getText(), passwordField.getText(), isAdmin.isSelected(), groups);
+                new SessionManagerFacade.NewUser(username.getText(),
+                        "F" + username.getText(), "L" + username.getText()), //TODO: Fields
+                passwordField.getText(), isAdmin.isSelected(), groups);
         if (registered) {
             resetFields();
         }
@@ -99,29 +102,19 @@ public class RegistrationController {
 
     class SessionManagerFacadeFake implements SessionManagerFacade {
 
-        /**
-         * Fake.
-         *
-         * @return
-         */
         @Override
         public boolean isAdmin() {
             return true;
         }
 
-        /**
-         * @param username
-         * @param plainPassword
-         * @param asAdmin
-         * @return
-         */
         @Override
-        public boolean registerUser(String username, String plainPassword, boolean asAdmin,
+        public boolean registerUser(NewUser user, String plainPassword, boolean asAdmin,
                                     List<UnitConfigType.UnitConfig> groups) {
 
             StringConverter<UnitConfigType.UnitConfig> converter = Groups.stringConverter(groups);
 
-            System.out.print("username = [" + username + "], plainPassword = [" + plainPassword + "], asAdmin = ["
+            System.out.print("username = [" + user.getUsername() + "], plainPassword = [" + plainPassword + "], " +
+                    "asAdmin = ["
                     + asAdmin + "], groups = [");
             groups.forEach(g -> System.out.print(converter.toString(g)));
             System.out.println("]");
@@ -130,11 +123,6 @@ public class RegistrationController {
             return true;
         }
 
-        /**
-         * Fake.
-         *
-         * @return
-         */
         @Override
         public boolean userNameAvailable(String username) {
             return !username.isEmpty();

@@ -16,7 +16,7 @@ public interface SessionManagerFacade {
      */
     boolean isAdmin();
 
-    boolean registerUser(String username, String plainPassword, boolean asAdmin,
+    boolean registerUser(NewUser user, String plainPassword, boolean asAdmin,
                          List<UnitConfigType.UnitConfig> groups);
 
     /**
@@ -35,4 +35,28 @@ public interface SessionManagerFacade {
      * @return returns true, if {@code password} is a valid password and matches repeatedPassword
      */
     boolean passwordsValid(String password, String repeatedPassword);
+
+    class NewUser {
+        private final String username;
+        private final String firstName;
+        private final String lastName;
+
+        public NewUser(String username, String firstName, String lastName) {
+            this.username = username;
+            this.firstName = firstName;
+            this.lastName = lastName;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public String getFirstName() {
+            return firstName;
+        }
+
+        public String getLastName() {
+            return lastName;
+        }
+    }
 }

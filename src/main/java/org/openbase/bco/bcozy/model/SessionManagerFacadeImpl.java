@@ -29,23 +29,28 @@ public class SessionManagerFacadeImpl implements SessionManagerFacade {
     }
 
     @Override
-    public boolean registerUser(String username, String plainPassword, boolean asAdmin, List<UnitConfigType
+    public boolean registerUser(NewUser user, String plainPassword, boolean asAdmin, List<UnitConfigType
             .UnitConfig> groups) {
         try {
-            return tryRegisterUser(username, plainPassword, asAdmin, groups);
+            return tryRegisterUser(user, plainPassword, asAdmin, groups);
         } catch (CouldNotPerformException | ExecutionException | InterruptedException | TimeoutException e) {
             e.printStackTrace();
         }
         return false;
     }
 
-    private boolean tryRegisterUser(String username, String plainPassword, boolean asAdmin,
+    private boolean tryRegisterUser(NewUser user, String plainPassword, boolean asAdmin,
                                     List<UnitConfigType.UnitConfig> groups)
             throws CouldNotPerformException, ExecutionException, InterruptedException, TimeoutException {
 
-        UnitConfigType.UnitConfig unitConfig = tryCreateUser(username);
+        UnitConfigType.UnitConfig unitConfig = tryCreateUser(user);
 
-        SessionManager.getInstance().registerUser(unitConfig.getId(), plainPassword, asAdmin);
+        SessionManager.getInstance().registerUser(
+                unitConfig.getUserConfig().getUserName()/*unitConfig.getId()*/,
+                //TODO: userName? Id? Don't know...login works with userName
+
+                plainPassword,
+                asAdmin);
 
         for (UnitConfigType.UnitConfig group : groups) {
             tryAddToGroup(group, unitConfig.getId());
@@ -54,26 +59,25 @@ public class SessionManagerFacadeImpl implements SessionManagerFacade {
         return true;
     }
 
-    private UnitConfigType.UnitConfig tryCreateUser(String username) throws CouldNotPerformException,
+    private UnitConfigType.UnitConfig tryCreateUser(NewUser user) throws CouldNotPerformException,
             InterruptedException, ExecutionException, TimeoutException {
 
         UnitConfigType.UnitConfig.Builder builder = UnitConfigType.UnitConfig.newBuilder();
         UserConfigType.UserConfig.Builder userConfigBuilder = UserConfigType.UserConfig.newBuilder();
-        //builder.getUserConfigBuilder();
 
         userConfigBuilder = userConfigBuilder
-                .setUserName(username)
-                .setFirstName(username/*TODO: real Firstname*/)
-                .setLastName("username"/*TODO: real Lastname*/);
+                .setUserName(user.getUsername())
+                .setFirstName(user.getFirstName())
+                .setLastName(user.getLastName());
 
         UnitConfigType.UnitConfig unitConfig = builder
                 .setUserConfig(userConfigBuilder.build())
                 .setType(UnitTemplateType.UnitTemplate.UnitType.USER)//TODO: right way?
                 .build();
 
-        Future<UnitConfigType.UnitConfig> user = Registries.getUserRegistry().registerUserConfig(unitConfig);
-        //return unitConfig;
-        return user.get(1, TimeUnit.SECONDS);
+        Future<UnitConfigType.UnitConfig> registeredUser = Registries.getUserRegistry().registerUserConfig(unitConfig);
+
+        return registeredUser.get(1, TimeUnit.SECONDS);
     }
 
     private void tryAddToGroup(UnitConfigType.UnitConfig group, String userId) throws CouldNotPerformException,
