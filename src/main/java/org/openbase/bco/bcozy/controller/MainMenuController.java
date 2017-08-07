@@ -43,6 +43,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
 import org.openbase.bco.dal.remote.unit.Units;
+import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.NotAvailableException;
 import org.slf4j.Logger;
@@ -110,7 +111,11 @@ public class MainMenuController {
         SessionManager sessionManager = SessionManager.getInstance();
 
         try {
-            sessionManager.login(loginPane.getNameTxt().getText(), loginPane.getPasswordField().getText());
+            sessionManager.login(Registries.getUserRegistry().getUserIdByUserName(loginPane.getNameTxt().getText()),
+                    loginPane
+                            .getPasswordField()
+                            .getText
+                                    ());
 
             Platform.runLater(() -> {
                 loginPane.resetUserOrPasswordWrong();
@@ -125,6 +130,8 @@ public class MainMenuController {
             });
         } catch (java.lang.OutOfMemoryError error) {
             LOGGER.error(error.getMessage());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 

@@ -28,7 +28,6 @@
             <CheckBox fx:id="writeRights" mnemonicParsing="false"/>
             <CheckBox fx:id="accessRights" mnemonicParsing="false"/>
         </HBox>
-        <Button fx:id="saveRightsButton" layoutY="302.0" mnemonicParsing="false" onAction="#save"
-                text="Button"/>
+        <Button fx:id="saveRightsButton" layoutY="302.0" mnemonicParsing="false" onAction="#save"/>
     </children>
 </AnchorPane>

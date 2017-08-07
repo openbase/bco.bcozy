@@ -21,7 +21,9 @@ import rst.domotic.authentication.PermissionConfigType;
 import rst.domotic.authentication.PermissionType;
 import rst.domotic.unit.UnitConfigType;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 
 /**
@@ -73,6 +75,9 @@ public class PermissionPaneController {
         writeRights.setGraphic(new ObserverLabel("writeRight"));
         accessRights.setGraphic(new ObserverLabel("accessRight"));
 
+
+        saveRightsButton.setGraphic(new ObserverLabel("save"));
+        saveRightsButton.getStyleClass().addAll("transparent-button");
 
         newGroupChoiceBox.setConverter(Groups.stringConverter(groups));
         newGroupChoiceBox.setItems(groups);
@@ -164,21 +169,35 @@ public class PermissionPaneController {
                 .build();
 
 
+        List<PermissionConfigType.PermissionConfig.MapFieldEntry> entryListCopy = new ArrayList<>(this.unitConfig
+                .getPermissionConfig().getGroupPermissionList());
+
+        entryListCopy.removeIf(entry -> mapFieldEntry.getGroupId().equals(entry.getGroupId()));
+
         PermissionConfigType.PermissionConfig permissionConfig = this.unitConfig.getPermissionConfig()
                 .toBuilder()
-                .addGroupPermission
-                        (mapFieldEntry)
+                .clearGroupPermission()
+                .addAllGroupPermission(entryListCopy)
+                .addGroupPermission(mapFieldEntry)
                 .build();
 
-        UnitConfigType.UnitConfig unitConfig = this.unitConfig.toBuilder().clearPermissionConfig().mergePermissionConfig
-                (permissionConfig)
+
+//        PermissionConfigType.PermissionConfig permissionConfig = this.unitConfig.getPermissionConfig()
+//                    .toBuilder()
+//                    .addGroupPermission
+//                            (mapFieldEntry)
+//                    .build();
+
+        UnitConfigType.UnitConfig unitConfig = this.unitConfig.toBuilder().clearPermissionConfig()
+                .mergePermissionConfig
+                        (permissionConfig)
                 .build();
 
 
         try {
-            Registries.getUnitRegistry().updateUnitConfig(unitConfig);
+            unitConfig = Registries.getUnitRegistry().updateUnitConfig(unitConfig).get();
             this.setUnitConfig(unitConfig);
-        } catch (CouldNotPerformException e) {
+        } catch (CouldNotPerformException | ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
