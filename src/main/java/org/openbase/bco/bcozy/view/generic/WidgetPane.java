@@ -24,6 +24,8 @@ import de.jensd.fx.glyphs.GlyphIcons;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -33,9 +35,12 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ObserverText;
 import org.openbase.bco.bcozy.view.SVGIcon;
@@ -75,6 +80,8 @@ public class WidgetPane extends VBox implements DynamicPane {
     private final SVGIcon mainIcon;
 
     private final Label widgetLabel;
+    
+    //private final Label unitCount;
 
     public enum DisplayMode {
         ICON_ONLY,
@@ -87,11 +94,19 @@ public class WidgetPane extends VBox implements DynamicPane {
             case ICON_ONLY:
                 headPane.setCenter(null);
                 headPane.setRight(null);
+             //   unitCount.setTextAlignment(TextAlignment.CENTER);
+             //   unitCount.setFont(new Font(12));
+             //   headPane.setBottom(unitCount);
                 break;
             default:
                 break;
         }
     }
+    
+   /* public StringProperty getCountLabelProperty() {
+        
+        return this.unitCount.textProperty();
+    }*/
 
     /**
      * Head content pane to visualize the main functionally.
@@ -119,6 +134,7 @@ public class WidgetPane extends VBox implements DynamicPane {
         this.secondaryActivationProperty = new SimpleBooleanProperty();
         this.mainIcon = new SVGIcon(MaterialDesignIcon.VECTOR_CIRCLE, Constants.SMALL_ICON, false);
         this.widgetLabel = new Label("?");
+       // this.unitCount = new Label();
     }
 
     @Override

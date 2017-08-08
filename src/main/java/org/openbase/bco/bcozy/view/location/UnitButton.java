@@ -19,20 +19,21 @@
 package org.openbase.bco.bcozy.view.location;
 
 import com.google.protobuf.GeneratedMessage;
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.application.Platform;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.geometry.Orientation;
+import javafx.scene.control.Label;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
-import org.openbase.bco.bcozy.view.SVGIcon;
+import javafx.scene.layout.StackPane;
 import org.openbase.bco.bcozy.view.generic.WidgetPane.DisplayMode;
 import org.openbase.bco.bcozy.view.pane.unit.AbstractUnitPane;
 import org.openbase.bco.bcozy.view.pane.unit.UnitPaneFactoryImpl;
 import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
-import rst.domotic.unit.UnitConfigType.UnitConfig;
-import rst.domotic.unit.UnitTemplateType;
-import static rst.domotic.unit.UnitTemplateType.UnitTemplate.UnitType.LOCATION;
 
 /**
  *
@@ -40,6 +41,7 @@ import static rst.domotic.unit.UnitTemplateType.UnitTemplate.UnitType.LOCATION;
 public class UnitButton extends Pane {
 
     private final double DEFAULT_ICON_SIZE = 8.0;
+    UnitRemote<? extends GeneratedMessage> unitRemote;
 
     /**
      * Creates a button with suitable unit symbol
@@ -62,18 +64,23 @@ public class UnitButton extends Pane {
     }*/
 
     public UnitButton(UnitRemote<? extends GeneratedMessage> u) {
-        try {                        
+        try {                                 
             AbstractUnitPane content;
             content = UnitPaneFactoryImpl.getInstance().newInitializedInstance(u.getConfig());
-            content.setDisplayMode(DisplayMode.ICON_ONLY);
+            content.setDisplayMode(DisplayMode.ICON_ONLY); 
+            unitRemote = content.getUnitRemote();
             this.getChildren().add(content);
         } catch (CouldNotPerformException | InterruptedException ex) {
             Logger.getLogger(UnitButton.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
+    public UnitRemote<? extends GeneratedMessage> getUnitRemote() {
+        return this.unitRemote;
+    }
+    
 
-
+    
    /* 
 
     final ContextMenu cm = new ContextMenu();

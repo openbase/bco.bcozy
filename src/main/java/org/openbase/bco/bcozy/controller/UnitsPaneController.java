@@ -25,6 +25,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.logging.Level;
 import javafx.application.Platform;
 import javafx.geometry.Point2D;
 import javax.vecmath.Point3d;
@@ -36,6 +37,7 @@ import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
 import org.openbase.bco.dal.remote.unit.Units;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
 import org.openbase.jul.pattern.Observable;
@@ -46,6 +48,7 @@ import rct.Transform;
 import rst.domotic.registry.LocationRegistryDataType.LocationRegistryData;
 import rst.domotic.registry.UnitRegistryDataType.UnitRegistryData;
 import rst.domotic.state.EnablingStateType;
+import rst.domotic.state.PowerStateType;
 import rst.domotic.unit.UnitConfigType.UnitConfig;
 import rst.domotic.unit.UnitTemplateType;
 import rst.domotic.unit.UnitTemplateType.UnitTemplate.UnitType;
@@ -80,6 +83,15 @@ public class UnitsPaneController {
         unitPane.translateXProperty().bind(locationPane.translateXProperty());
         unitPane.translateYProperty().bind(locationPane.translateYProperty());
 
+        try { //living
+            Units.getUnit("81b9efa4-2dc9-432e-b47c-1d73021ff0f3", true,Units.LOCATION).setPowerState(PowerStateType.PowerState.State.ON);
+        } catch (NotAvailableException ex) {
+            java.util.logging.Logger.getLogger(UnitsPaneController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InterruptedException ex) {
+            java.util.logging.Logger.getLogger(UnitsPaneController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            java.util.logging.Logger.getLogger(UnitsPaneController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
