@@ -19,6 +19,7 @@
 package org.openbase.bco.bcozy;
 
 import com.guigarage.responsive.ResponsiveHandler;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import javafx.application.Application;
@@ -37,6 +38,7 @@ import org.openbase.bco.bcozy.view.ForegroundPane;
 import org.openbase.bco.bcozy.view.ImageViewProvider;
 import org.openbase.bco.bcozy.view.InfoPane;
 import org.openbase.bco.registry.remote.Registries;
+import org.openbase.jps.core.JPService;
 import org.openbase.jul.exception.FatalImplementationErrorException;
 import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.exception.InstantiationException;
@@ -75,8 +77,6 @@ public class BCozy extends Application {
     private LocationPaneController locationPaneController;
     private ForegroundPane foregroundPane;
     private Future initTask;
-
-   
 
     @Override
     public void start(final Stage primaryStage) throws InitializationException, InterruptedException, InstantiationException {
@@ -150,18 +150,29 @@ public class BCozy extends Application {
 
     @Override
     public void stop() {
+        boolean errorOccured = false;
+
         if (initTask != null && !initTask.isDone()) {
             initTask.cancel(true);
             try {
                 initTask.get();
-            } catch (InterruptedException | ExecutionException e) {
-                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+            } catch (InterruptedException | ExecutionException ex) {
+                ExceptionPrinter.printHistory("Initialization phase canceled because of application shutdown.", ex, LOGGER, LogLevel.INFO);
+                errorOccured = true;
+            } catch (CancellationException ex) {
+                ExceptionPrinter.printHistory("Initialization phase failed but application shutdown was initialized anyway.", ex, LOGGER, LogLevel.WARN);
             }
         }
         try {
             super.stop();
-        } catch (Exception e) { //NOPMD
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+        } catch (Exception ex) { //NOPMD
+            ExceptionPrinter.printHistory("Could not stop " + JPService.getApplicationName() + "!", ex, LOGGER);
+            errorOccured = true;
+        }
+
+        // Call system exit to trigger all shutdown deamons.
+        if (errorOccured) {
+            System.exit(255);
         }
         System.exit(0);
     }

@@ -57,11 +57,11 @@ public class ScenePane extends AbstractUnitPane<SceneRemote, SceneData> {
         switch (state) {
             case ACTIVE:
                 getIcon().setForegroundIconColor(Color.GREEN);
-                primaryActivationProperty().setValue(Boolean.TRUE);
+                setPrimaryActivationWithoutNotification(Boolean.TRUE);
                 break;
             case DEACTIVE:
                 getIcon().setForegroundIconColor(Color.BLACK);
-                primaryActivationProperty().setValue(Boolean.FALSE);
+                setPrimaryActivationWithoutNotification(Boolean.FALSE);
             default:
                 break;
         }
