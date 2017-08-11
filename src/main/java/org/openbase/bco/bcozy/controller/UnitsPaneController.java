@@ -329,7 +329,9 @@ public class UnitsPaneController {
         double w = boundingBox.getWidth();
         double new_x;
         double new_y;
-        if (d != 0) {
+        new_x = (boundingBox.getLeftFrontBottom().getX() + w) / 2;
+        new_y = (boundingBox.getLeftFrontBottom().getY() + d) / 2;
+     /*   if (d != 0) {
             new_y = (d / 2);
         } else {
             new_y = 0;
@@ -338,7 +340,7 @@ public class UnitsPaneController {
             new_x = (w / 2);
         } else {
             new_x = 0;
-        }
+        }*/
         return new Point3d(new_x, new_y, 1.0);
     }
 

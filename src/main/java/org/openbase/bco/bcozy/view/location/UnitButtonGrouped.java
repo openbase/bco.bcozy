@@ -28,11 +28,14 @@ import java.util.logging.Logger;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleListProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableListBase;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
@@ -46,59 +49,77 @@ import org.openbase.bco.bcozy.view.pane.unit.AbstractUnitPane;
 import org.openbase.bco.bcozy.view.pane.unit.UnitPaneFactoryImpl;
 import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.NotAvailableException;
 
 /**
  *
  */
 public class UnitButtonGrouped extends Pane {
 
-   // private ObservableList<AbstractUnitPane> unitButtons;
+    // private ObservableList<AbstractUnitPane> unitButtons;
     private SimpleListProperty<AbstractUnitPane> unitButtons;
     private final FlowPane groupingPane;
-    private final StackPane dummyPane;
+    private final StackPane stackPane;
     private final Label unitCount;
     boolean expanded;
 
     public UnitButtonGrouped() {
         expanded = false;
         groupingPane = new FlowPane(Orientation.HORIZONTAL);
-        dummyPane = new StackPane();
+        stackPane = new StackPane();
         unitCount = new Label("0");
         unitCount.setTextAlignment(TextAlignment.LEFT);
         unitCount.setFont(new Font(12));
         unitButtons = new SimpleListProperty(FXCollections.<AbstractUnitPane>observableArrayList());
         unitCount.textProperty().bind(unitButtons.sizeProperty().asString());
-        
-        dummyPane.getChildren().add(groupingPane);
-        dummyPane.getChildren().add(unitCount);
 
-        
+        stackPane.getChildren().add(groupingPane);
+        stackPane.getChildren().add(unitCount);
+        stackPane.setAlignment(unitCount, Pos.BOTTOM_LEFT);
+
         final EventHandler<MouseEvent> mouseEventHandler = (MouseEvent event) -> {
             event.consume();
-            if(expanded) {
-                shrink();
-                expanded = false;
-            } else {
+            if (!expanded) {
                 expand();
                 expanded = true;
-            }
+            } 
         };
-        groupingPane.setOnMouseClicked(mouseEventHandler);
-        unitCount.setOnMouseClicked(mouseEventHandler);
         
-        this.getChildren().add(dummyPane);
+        final EventHandler<MouseEvent> mouseExitedHandler = (MouseEvent event) -> {
+            event.consume();
+            if (expanded) {
+                shrink();
+                expanded = false;
+                System.out.println("out focus");
+            } 
+        };
+/*
+        this.focusedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                if (newValue) {
+                    System.out.println("on focus");
+                } else {
+                    System.out.println("out focus");
+                }
+            }
+        });*/
+
+        groupingPane.setOnMouseClicked(mouseEventHandler);
+        groupingPane.setOnMouseExited(mouseExitedHandler);
+        unitCount.setOnMouseClicked(mouseEventHandler);
+
+        this.getChildren().add(stackPane);
     }
 
-    
-    
     public void addUnit(UnitRemote<? extends GeneratedMessage> unit) {
 
         try {
             AbstractUnitPane content;
             content = UnitPaneFactoryImpl.getInstance().newInitializedInstance(unit.getConfig());
-            content.setDisplayMode(DisplayMode.ICON_ONLY);            
+            content.setDisplayMode(DisplayMode.ICON_ONLY);
             SVGIcon icon = content.getIcon();
-            if(unitButtons.isEmpty()) {
+            if (unitButtons.isEmpty()) {
                 groupingPane.getChildren().add(icon);
             }
             unitButtons.add(content);
@@ -108,17 +129,28 @@ public class UnitButtonGrouped extends Pane {
     }
 
     public void expand() {
-        unitButtons.forEach((button) 
+        stackPane.getChildren().remove(unitCount);
+        unitButtons.forEach((button)
             -> {
             groupingPane.getChildren().add(button);
         });
-        this.getChildren().clear();
-        this.getChildren().add(groupingPane);
+       // this.stackPane.getChildren().remove(unitCount);
+      //  this.getChildren().add(stackPane);
+    }
+
+    public void shrink() {
+        this.groupingPane.getChildren().clear();
+        stackPane.getChildren().add(unitCount);
     }
     
-    public void shrink() {
-        this.getChildren().clear();
-        this.getChildren().add(dummyPane);
+    //TODO refactor
+      public UnitRemote<? extends GeneratedMessage> getUnitRemote() {
+        try {
+            return this.unitButtons.get(0).getUnitRemote();
+        } catch (NotAvailableException ex) {
+            Logger.getLogger(UnitButtonGrouped.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 
     /*  count.setValue(count.getValue() + 1);

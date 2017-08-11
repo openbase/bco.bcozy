@@ -118,6 +118,7 @@ public class UnitSymbolsPane extends Pane {
                         Point2D coord = new Point2D(position.getX(), position.getY());
                         if (groupedButtons.containsKey(coord)) {
                             groupedButtons.get(coord).addUnit(unitRemoteObject);
+                            
 
                         } else {
                             UnitButtonGrouped newGroupedButton = new UnitButtonGrouped();
@@ -172,16 +173,24 @@ public class UnitSymbolsPane extends Pane {
         }
         );
 
-       /* if (unitsPerLocationMap.get(selectedLocationId.getValue()) != null) {
+        if (unitsPerLocationMap.get(selectedLocationId.getValue()) != null) {
             unitsPerLocationMap.get(selectedLocationId.getValue()).forEach((unitId, button)
                 -> {
                 this.getChildren().add(button);
             }
             );
-        }*/
+        }
         groupedButtons.forEach((point, button)
             -> {
-            this.getChildren().add(button);
+            try {
+                if(button.getUnitRemote().getConfig().getPlacementConfig().getLocationId().equals(selectedLocationId.getValue())) {
+                    this.getChildren().add(button);
+                }
+            } catch (NotAvailableException ex) {
+                java.util.logging.Logger.getLogger(UnitSymbolsPane.class.getName()).log(Level.SEVERE, null, ex);
+            }
+          
+                //    this.getChildren().add(button);
         }
         );
     }
