@@ -82,7 +82,7 @@ public class SessionManagerFacadeImpl implements SessionManagerFacade {
 
     private void tryAddToGroup(UnitConfigType.UnitConfig group, String userId) throws CouldNotPerformException,
             InterruptedException {
-
+        
         UnitConfigType.UnitConfig.Builder unitConfig = Registries.getUserRegistry()
                 .getAuthorizationGroupConfigById(group.getId()).toBuilder();
         AuthorizationGroupConfigType.AuthorizationGroupConfig.Builder authorizationGroupConfig = unitConfig
