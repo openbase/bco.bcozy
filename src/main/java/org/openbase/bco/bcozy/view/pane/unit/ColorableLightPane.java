@@ -46,7 +46,6 @@ public class ColorableLightPane extends AbstractUnitPane<ColorableLightRemote, C
 
     private final RecurrenceEventFilter<Color> recurrenceEventFilterHSV = new RecurrenceEventFilter<Color>(Constants.RECURRENCE_EVENT_FILTER_MILLI_TIMEOUT) {
 
-
         @Override
         public void relay() {
             try {
@@ -72,7 +71,11 @@ public class ColorableLightPane extends AbstractUnitPane<ColorableLightRemote, C
         colorChooser.initContent();
         colorChooser.selectedColorProperty().addListener((observable, old, new_value) -> {
             if (isHover()) {
-                recurrenceEventFilterHSV.trigger(colorChooser.getSelectedColor());
+                try {
+                    recurrenceEventFilterHSV.trigger(colorChooser.getSelectedColor());
+                } catch (CouldNotPerformException ex) {
+                    ExceptionPrinter.printHistory("Could not trigger color change!", ex, LOGGER);
+                }
             }
         });
         bodyPane.getChildren().add(colorChooser);
@@ -107,12 +110,12 @@ public class ColorableLightPane extends AbstractUnitPane<ColorableLightRemote, C
             case OFF:
                 getIcon().setBackgroundIconColor(Constants.LIGHTBULB_OFF_COLOR);
                 setInfoText("lightOff");
-                primaryActivationProperty().setValue(Boolean.FALSE);
+                setPrimaryActivationWithoutNotification(Boolean.FALSE);
                 break;
             case ON:
                 getIcon().setBackgroundIconColor(color);
                 setInfoText("lightOn");
-                primaryActivationProperty().setValue(Boolean.TRUE);
+                setPrimaryActivationWithoutNotification(Boolean.TRUE);
                 break;
             default:
                 getIcon().setBackgroundIconColor(Color.TRANSPARENT);

@@ -1,17 +1,17 @@
 /**
  * ==================================================================
- * <p>
+ *
  * This file is part of org.openbase.bco.bcozy.
- * <p>
+ *
  * org.openbase.bco.bcozy is free software: you can redistribute it and modify
  * it under the terms of the GNU General Public License (Version 3)
  * as published by the Free Software Foundation.
- * <p>
+ *
  * org.openbase.bco.bcozy is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * <p>
+ *
  * You should have received a copy of the GNU General Public License
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
@@ -23,6 +23,7 @@ import com.guigarage.responsive.ResponsiveHandler;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.URL;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -52,13 +53,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ *
  * @author hoestreich
  * @author timo
  * @author agatting
  * @author julian
  * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>
- *         <p>
- *         Main Class of the BCozy Program.
+ *
+ * Main Class of the BCozy Program.
  */
 public class BCozy extends Application {
 
@@ -103,8 +105,7 @@ public class BCozy extends Application {
         infoPane.setMinWidth(root.getWidth());
         root.getChildren().addAll(backgroundPane, foregroundPane, infoPane);
 
-        primaryStage.setMinWidth(foregroundPane.getMainMenu().getMinWidth() + foregroundPane.getContextMenu()
-                .getMinWidth() + 300);
+        primaryStage.setMinWidth(foregroundPane.getMainMenu().getMinWidth() + foregroundPane.getContextMenu().getMinWidth() + 300);
         primaryStage.setHeight(screenHeight);
         mainScene = new Scene(root, screenWidth, screenHeight);
         primaryStage.setScene(mainScene);
@@ -166,18 +167,29 @@ public class BCozy extends Application {
 
     @Override
     public void stop() {
+        boolean errorOccured = false;
+
         if (initTask != null && !initTask.isDone()) {
             initTask.cancel(true);
             try {
                 initTask.get();
-            } catch (InterruptedException | ExecutionException e) {
-                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+            } catch (InterruptedException | ExecutionException ex) {
+                ExceptionPrinter.printHistory("Initialization phase canceled because of application shutdown.", ex, LOGGER, LogLevel.INFO);
+                errorOccured = true;
+            } catch (CancellationException ex) {
+                ExceptionPrinter.printHistory("Initialization phase failed but application shutdown was initialized anyway.", ex, LOGGER, LogLevel.WARN);
             }
         }
         try {
             super.stop();
-        } catch (Exception e) { //NOPMD
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+        } catch (Exception ex) { //NOPMD
+            ExceptionPrinter.printHistory("Could not stop " + JPService.getApplicationName() + "!", ex, LOGGER);
+            errorOccured = true;
+        }
+
+        // Call system exit to trigger all shutdown deamons.
+        if (errorOccured) {
+            System.exit(255);
         }
         System.exit(0);
     }
