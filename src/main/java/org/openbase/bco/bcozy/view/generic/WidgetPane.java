@@ -131,6 +131,7 @@ public class WidgetPane extends VBox implements DynamicPane {
 
     @Override
     public void initContent() {
+        toggleSwitch.getStyleClass().clear();
         toggleSwitch.setMouseTransparent(true);
 
         Tooltip.install(iconPane, tooltip);
