@@ -27,6 +27,7 @@ import org.openbase.bco.bcozy.view.pane.unit.AbstractUnitPane;
 import org.openbase.bco.bcozy.view.pane.unit.UnitPaneFactoryImpl;
 import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.NotAvailableException;
 
 /**
  *
@@ -72,7 +73,14 @@ public class UnitButton extends Pane {
         return this.unitRemote;
     }
     
-
+    public String getLocationId() {
+        try {
+            return this.unitRemote.getConfig().getPlacementConfig().getLocationId();
+        } catch (NotAvailableException ex) {
+            Logger.getLogger(UnitButton.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
     
    /* 
 

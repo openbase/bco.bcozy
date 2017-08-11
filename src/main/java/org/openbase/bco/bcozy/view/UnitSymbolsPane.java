@@ -49,6 +49,7 @@ public class UnitSymbolsPane extends Pane {
     private final Map<String, UnitButton> locationUnitsMap;
     private final Map<String, Map<String, UnitButton>> unitsPerLocationMap;
     private final Map<Point2D, UnitButtonGrouped> groupedButtons;
+    private boolean putIntoGroup;
 
     public final SimpleStringProperty selectedLocationId;
 
@@ -107,6 +108,7 @@ public class UnitSymbolsPane extends Pane {
             newButton.setTranslateX(position.getY());
             newButton.setTranslateY(position.getX());
 
+            putIntoGroup = false;
             // Raum-Unit schon vorhanden
             if (unitsPerLocationMap.containsKey(locationId)) {
                 unitsPerLocationMap.forEach((id, entry) -> entry.forEach((unitId, button)
@@ -119,7 +121,7 @@ public class UnitSymbolsPane extends Pane {
                         if (groupedButtons.containsKey(coord)) {
                             groupedButtons.get(coord).addUnit(unitRemoteObject);
                             
-
+                            unitsPerLocationMap.get(locationId).remove(button.getLocationId());
                         } else {
                             UnitButtonGrouped newGroupedButton = new UnitButtonGrouped();
                             newGroupedButton.setTranslateX(position.getY());
@@ -128,11 +130,13 @@ public class UnitSymbolsPane extends Pane {
                             newGroupedButton.addUnit(unitRemoteObject);
                             newGroupedButton.addUnit(button.getUnitRemote());
                         }
+                        putIntoGroup = true;
                     }
                 }
                 ));
-                unitsPerLocationMap.get(locationId).put(unitRemoteObject.getConfig().getId(), newButton);
-
+                if(!putIntoGroup) {
+                    unitsPerLocationMap.get(locationId).put(unitRemoteObject.getConfig().getId(), newButton);
+                }
                 // Raum-Unit muss noch angelegt werden
             } else {
                 Map<String, UnitButton> units = new HashMap<>();

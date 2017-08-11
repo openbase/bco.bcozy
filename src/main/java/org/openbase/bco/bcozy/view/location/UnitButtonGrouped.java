@@ -19,30 +19,30 @@
 package org.openbase.bco.bcozy.view.location;
 
 import com.google.protobuf.GeneratedMessage;
+import de.jensd.fx.glyphs.GlyphIcons;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleListProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.collections.ObservableListBase;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
+import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.SVGIcon;
 import org.openbase.bco.bcozy.view.generic.WidgetPane.DisplayMode;
 import org.openbase.bco.bcozy.view.pane.unit.AbstractUnitPane;
@@ -58,25 +58,38 @@ public class UnitButtonGrouped extends Pane {
 
     // private ObservableList<AbstractUnitPane> unitButtons;
     private SimpleListProperty<AbstractUnitPane> unitButtons;
-    private final FlowPane groupingPane;
+    private final GridPane groupingPane;
     private final StackPane stackPane;
     private final Label unitCount;
+    private final GridPane iconPane;
     boolean expanded;
 
     public UnitButtonGrouped() {
+        
         expanded = false;
-        groupingPane = new FlowPane(Orientation.HORIZONTAL);
+        groupingPane = new GridPane();
+        iconPane = new GridPane();
         stackPane = new StackPane();
         unitCount = new Label("0");
         unitCount.setTextAlignment(TextAlignment.LEFT);
         unitCount.setFont(new Font(12));
         unitButtons = new SimpleListProperty(FXCollections.<AbstractUnitPane>observableArrayList());
         unitCount.textProperty().bind(unitButtons.sizeProperty().asString());
-
+        
+        iconPane.getChildren().add(unitCount);
+       
+        stackPane.getChildren().add(iconPane);
         stackPane.getChildren().add(groupingPane);
-        stackPane.getChildren().add(unitCount);
-        stackPane.setAlignment(unitCount, Pos.BOTTOM_LEFT);
-
+        this.getChildren().add(stackPane);
+        
+        Rectangle clipRectangle1 = new Rectangle(100,100);
+        this.setClip(clipRectangle1);
+        groupingPane.layoutBoundsProperty().addListener((observable, oldValue, newValue) -> {
+                clipRectangle1.setWidth(newValue.getWidth());
+                clipRectangle1.setHeight(newValue.getHeight());
+            });
+        this.setBackground(new Background(new BackgroundFill(Color.GREY, CornerRadii.EMPTY, Insets.EMPTY)));
+        
         final EventHandler<MouseEvent> mouseEventHandler = (MouseEvent event) -> {
             event.consume();
             if (!expanded) {
@@ -93,23 +106,9 @@ public class UnitButtonGrouped extends Pane {
                 System.out.println("out focus");
             } 
         };
-/*
-        this.focusedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                if (newValue) {
-                    System.out.println("on focus");
-                } else {
-                    System.out.println("out focus");
-                }
-            }
-        });*/
-
-        groupingPane.setOnMouseClicked(mouseEventHandler);
-        groupingPane.setOnMouseExited(mouseExitedHandler);
-        unitCount.setOnMouseClicked(mouseEventHandler);
-
-        this.getChildren().add(stackPane);
+        stackPane.setOnMouseClicked(mouseEventHandler);
+        stackPane.setOnMouseExited(mouseExitedHandler);
+        
     }
 
     public void addUnit(UnitRemote<? extends GeneratedMessage> unit) {
@@ -118,9 +117,10 @@ public class UnitButtonGrouped extends Pane {
             AbstractUnitPane content;
             content = UnitPaneFactoryImpl.getInstance().newInitializedInstance(unit.getConfig());
             content.setDisplayMode(DisplayMode.ICON_ONLY);
-            SVGIcon icon = content.getIcon();
             if (unitButtons.isEmpty()) {
-                groupingPane.getChildren().add(icon);
+                SVGIcon icon = content.getIcon();
+                //SVGIcon icon =new SVGIcon(MaterialDesignIcon.VECTOR_CIRCLE, Constants.SMALL_ICON, false);            
+                iconPane.getChildren().add(icon);
             }
             unitButtons.add(content);
         } catch (CouldNotPerformException | InterruptedException ex) {
@@ -129,7 +129,7 @@ public class UnitButtonGrouped extends Pane {
     }
 
     public void expand() {
-        stackPane.getChildren().remove(unitCount);
+        stackPane.getChildren().remove(iconPane);
         unitButtons.forEach((button)
             -> {
             groupingPane.getChildren().add(button);
@@ -140,7 +140,7 @@ public class UnitButtonGrouped extends Pane {
 
     public void shrink() {
         this.groupingPane.getChildren().clear();
-        stackPane.getChildren().add(unitCount);
+        stackPane.getChildren().add(iconPane);
     }
     
     //TODO refactor
