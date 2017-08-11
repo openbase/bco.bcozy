@@ -39,13 +39,13 @@ import rst.domotic.state.PowerStateType.PowerState;
  * Created by agatting on 03.12.15.
  */
 public class ColorableLightPane extends AbstractUnitPane<ColorableLightRemote, ColorableLightData> {
-
+    
     private static final Logger LOGGER = LoggerFactory.getLogger(ColorableLightPane.class);
-
+    
     private ColorChooser colorChooser;
-
+    
     private final RecurrenceEventFilter<Color> recurrenceEventFilterHSV = new RecurrenceEventFilter<Color>(Constants.RECURRENCE_EVENT_FILTER_MILLI_TIMEOUT) {
-
+        
         @Override
         public void relay() {
             try {
@@ -64,19 +64,23 @@ public class ColorableLightPane extends AbstractUnitPane<ColorableLightRemote, C
         super(ColorableLightRemote.class, true);
         this.setIcon(MaterialDesignIcon.LIGHTBULB_OUTLINE, MaterialDesignIcon.LIGHTBULB);
     }
-
+    
     @Override
     protected void initBodyContent(Pane bodyPane) throws CouldNotPerformException {
         colorChooser = new ColorChooser();
         colorChooser.initContent();
         colorChooser.selectedColorProperty().addListener((observable, old, new_value) -> {
             if (isHover()) {
-                recurrenceEventFilterHSV.trigger(colorChooser.getSelectedColor());
+                try {
+                    recurrenceEventFilterHSV.trigger(colorChooser.getSelectedColor());
+                } catch (CouldNotPerformException ex) {
+                    ExceptionPrinter.printHistory("Could not trigger color change!", ex, LOGGER);
+                }
             }
         });
         bodyPane.getChildren().add(colorChooser);
     }
-
+    
     @Override
     public void updateDynamicContent() {
         super.updateDynamicContent();
@@ -97,7 +101,7 @@ public class ColorableLightPane extends AbstractUnitPane<ColorableLightRemote, C
             color = Constants.LIGHTBULB_OFF_COLOR;
             ExceptionPrinter.printHistory(e, LOGGER, LogLevel.DEBUG);
         }
-
+        
         if (colorChooser != null && expansionProperty().get()) {
             colorChooser.setSelectedColor(color);
         }
@@ -118,7 +122,7 @@ public class ColorableLightPane extends AbstractUnitPane<ColorableLightRemote, C
                 break;
         }
     }
-
+    
     @Override
     protected Future applyPrimaryActivationUpdate(final boolean activation) throws CouldNotPerformException {
         return (activation) ? getUnitRemote().setPowerState(PowerState.State.ON) : getUnitRemote().setPowerState(PowerState.State.OFF);
