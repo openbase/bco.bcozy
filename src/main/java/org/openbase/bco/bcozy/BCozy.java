@@ -43,6 +43,7 @@ import org.openbase.bco.bcozy.view.ForegroundPane;
 import org.openbase.bco.bcozy.view.ImageViewProvider;
 import org.openbase.bco.bcozy.view.InfoPane;
 import org.openbase.bco.registry.remote.Registries;
+import org.openbase.jps.core.JPService;
 import org.openbase.jul.exception.FatalImplementationErrorException;
 import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.exception.InstantiationException;
