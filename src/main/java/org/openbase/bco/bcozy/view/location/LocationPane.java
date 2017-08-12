@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.EnumNotSupportedException;
 import org.openbase.jul.exception.NotAvailableException;
@@ -267,7 +268,13 @@ public final class LocationPane extends Pane {
                 if (tileMap.containsKey(locationId)) {
                     tileMap.get(locationId).addCuttingShape(connectionPolygon);
                 } else {
-                    LOGGER.error("Location ID \"" + locationId + "\" can not be found in the location Map. No Cutting will be applied");
+                    String unitLabel = locationId;
+                    try {
+                        unitLabel = Registries.getUnitRegistry(false).getUnitConfigById(locationId).getLabel();
+                    } catch (CouldNotPerformException | InterruptedException ex) {
+                        // id is used instead.
+                    }
+                    LOGGER.warn("Location " + unitLabel + " can not be found in the location Map. No Cutting will be applied.");
                 }
             });
         } catch (CouldNotPerformException ex) {
@@ -331,17 +338,23 @@ public final class LocationPane extends Pane {
         this.getChildren().clear();
 
         tileMap.forEach((locationId, locationPolygon) -> {
-            if (rootRoom != null) rootRoom.addCuttingShape(locationPolygon);
+            if (rootRoom != null) {
+                rootRoom.addCuttingShape(locationPolygon);
+            }
             this.getChildren().add(locationPolygon);
         });
 
         regionMap.forEach((locationId, locationPolygon) -> {
-            if (rootRoom != null) rootRoom.addCuttingShape(locationPolygon);
+            if (rootRoom != null) {
+                rootRoom.addCuttingShape(locationPolygon);
+            }
             this.getChildren().add(locationPolygon);
         });
 
         connectionMap.forEach((connectionId, connectionPolygon) -> {
-            if (rootRoom != null) rootRoom.addCuttingShape(connectionPolygon);
+            if (rootRoom != null) {
+                rootRoom.addCuttingShape(connectionPolygon);
+            }
             this.getChildren().add(connectionPolygon);
         });
 
