@@ -181,13 +181,6 @@ public class PermissionPaneController {
                 .addGroupPermission(mapFieldEntry)
                 .build();
 
-
-//        PermissionConfigType.PermissionConfig permissionConfig = this.unitConfig.getPermissionConfig()
-//                    .toBuilder()
-//                    .addGroupPermission
-//                            (mapFieldEntry)
-//                    .build();
-
         UnitConfigType.UnitConfig unitConfig = this.unitConfig.toBuilder().clearPermissionConfig()
                 .mergePermissionConfig
                         (permissionConfig)

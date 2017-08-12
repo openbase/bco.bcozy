@@ -123,10 +123,6 @@ public class BCozy extends Application {
         initRemotesAndLocation();
     }
 
-    private void onInitializedRemotesAndLocation() {
-        Platform.runLater(this::loadInitialRegistrationWindow);
-    }
-
     private void initRemotesAndLocation() {
         initTask = GlobalCachedExecutorService.submit(new Task() {
             @Override
@@ -143,8 +139,6 @@ public class BCozy extends Application {
                     infoPane.setTextLabelIdentifier("connectLocationRemote");
                     locationPaneController.connectLocationRemote();
                     unitsPaneController.connectUnitRemote();
-
-                    onInitializedRemotesAndLocation();
 
                     return null;
                 } catch (Exception ex) {
@@ -247,32 +241,4 @@ public class BCozy extends Application {
         LOGGER.info("Detected Extreme Small Device");
     }
 
-    private void loadInitialRegistrationWindow() {
-
-        if (false) { //TODO: First Start?
-            try {
-                URL url = getClass().getClassLoader().getResource("InitialRegistration.fxml");
-                if (url == null) {
-                    throw new RuntimeException("InitialRegistration.fxml not found");
-                }
-
-
-                FXMLLoader loader = new FXMLLoader(url);
-
-                loader.setController(new InitialRegistrationController(result -> primaryStage.setScene(mainScene)));
-
-                AnchorPane anchorPane = loader.load();
-                anchorPane.getStyleClass().addAll("detail-menu");
-
-
-                primaryStage.setScene(new Scene(anchorPane));
-            } catch (IOException ex) {
-                ex.printStackTrace();
-                ExceptionPrinter.printHistory("Content could not be loaded", ex, LOGGER);
-                throw new UncheckedIOException(ex);
-            }
-
-
-        }
-    }
 }

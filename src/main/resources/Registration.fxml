@@ -24,6 +24,18 @@
     <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">username</ObserverLabel>
     <TextField fx:id="username"/>
 
+    <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">firstName</ObserverLabel>
+    <TextField fx:id="firstname"/>
+
+    <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">lastName</ObserverLabel>
+    <TextField fx:id="lastname"/>
+
+    <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">email</ObserverLabel>
+    <TextField fx:id="email"/>
+
+    <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">phone</ObserverLabel>
+    <TextField fx:id="phone"/>
+
     <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">usergroups</ObserverLabel>
     <CheckComboBox fx:id="usergroupField"/>
 
