@@ -19,6 +19,8 @@
     -button-hover-color: rgba(228.0, 228.0, 228.0, 1.0); /*radial-gradient(center 50% 50%, radius 50%, rgba(180,180,180, 0.8), transparent)*/;
 
     -fx-background-color: -bg-color;
+    -choicebox-bg: lightgray;
+    -tab-bg-color: lightgray;
 
     /*default font */
     /*-fx-font-family: 'Helvetica Neue';*/

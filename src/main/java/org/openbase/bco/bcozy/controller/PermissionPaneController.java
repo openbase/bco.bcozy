@@ -4,6 +4,7 @@ import com.sun.javafx.font.freetype.HBGlyphLayout;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -76,13 +77,20 @@ public class PermissionPaneController {
         accessRights.setGraphic(new ObserverLabel("accessRight"));
 
 
-        saveRightsButton.setGraphic(new ObserverLabel("save"));
+//        saveRightsButton.setGraphic(new ObserverLabel("save"));
+        saveRightsButton.getStyleClass().clear();
         saveRightsButton.getStyleClass().addAll("transparent-button");
+        saveRightsButton.setText(saveRightsButton.getText().toUpperCase());
 
         newGroupChoiceBox.setConverter(Groups.stringConverter(groups));
         newGroupChoiceBox.setItems(groups);
-        newGroupChoiceBox.getStyleClass().addAll("bordered-choice-box");
+//        newGroupChoiceBox.getStyleClass().addAll("bordered-choice-box");
         newGroupChoiceBox.setPrefWidth(-1.0);
+        preselectGroupChoiceBoxValue();
+
+        groups.addListener((ListChangeListener.Change<? extends UnitConfigType.UnitConfig> c)
+                -> preselectGroupChoiceBoxValue()
+        );
 
         usergroupColumn.setCellValueFactory(param -> {
                     for (UnitConfigType.UnitConfig group : groups) {
@@ -103,6 +111,12 @@ public class PermissionPaneController {
 
                 )
         );
+    }
+
+    private void preselectGroupChoiceBoxValue() {
+        if (!groups.isEmpty() && newGroupChoiceBox.getValue() == null) {
+            newGroupChoiceBox.setValue(groups.get(0));
+        }
     }
 
     public void updateTableContent() {

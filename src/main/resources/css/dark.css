@@ -9,7 +9,7 @@
     -bg-accent-color: lightgray;
     -controls-color: rgba(255.0, 255.0, 255.0, 0.9);
     -highlight-color: rgba(94.0, 203.0, 234.0, 1.0);
-    -border-color: ightgray;
+    -border-color: lightgray;
     -shadow-color: rgba(255.0, 255.0, 255.0, 0.3);
     -on-indicator: derive(limegreen, 40.0%);
     -off-indicator: lightgray;
@@ -24,6 +24,8 @@
     -button-hover-color: darkgray /*radial-gradient(center 50% 50%, radius 50%, rgba(180,180,180, 0.8), transparent)*/;
 
     -fx-background-color: -bg-color;
+    -choicebox-bg: slategray;
+    -tab-bg-color: slategray;
 
     /*default font */
     /*-fx-font-family: 'Helvetica Neue';*/

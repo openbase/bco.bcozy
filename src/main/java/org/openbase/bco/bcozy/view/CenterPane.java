@@ -74,12 +74,9 @@ public class CenterPane extends StackPane {
         viewModes.addElement(MaterialDesignIcon.THERMOMETER_LINES, (Runnable) null);//TODO: Add EventHandler when needed
         viewModes.addElement(MaterialIcon.VISIBILITY, (Runnable) null);//TODO: Add EventHandler when needed
 
-/*        FloatingPopUp settingsModes = new FloatingPopUp(Pos.TOP_RIGHT);
-        settingsModes.addParentElement(MaterialIcon.MORE_VERT, this::hideSettings);
-        settingsModes.addElement(MaterialIcon.FULLSCREEN, (Runnable) null);
-        settingsModes.addElement(FontAwesomeIcon.COGS, this::showSettings);*/
 
-        FloatingButton settingsBtn = new FloatingButton(new SVGIcon(FontAwesomeIcon.COGS, Constants.MIDDLE_ICON, true));
+        FloatingButton settingsBtn = new FloatingButton(new SVGIcon(MaterialDesignIcon.DOTS_VERTICAL , Constants.MIDDLE_ICON,
+                true));
 
         this.setAlignment(settingsBtn, Pos.TOP_RIGHT);
 

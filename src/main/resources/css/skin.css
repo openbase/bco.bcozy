@@ -285,6 +285,9 @@
     -fx-background-color: -bg-color;
 }
 
+.combobox-colored {
+    -fx-background-color: -bg-accent-color;
+}
 /*******************************************************************************
  *                                                                             *
  * CheckBox                                                                    *
@@ -534,6 +537,10 @@
 
 .connection-indicator {
     -fx-padding: 0 0 8px 0;
+}
+
+.padding-xtra-large {
+    -fx-padding: 20 20 20 20;
 }
 
 .padding-large {
@@ -839,6 +846,9 @@
     -fx-background-radius: 2.0;
     -fx-border-width: 0 0 1 0;
     -fx-border-insets: 0 10 0 10;
+    -fx-effect: dropshadow(gaussian, -bg-accent-color, 2, 0, 0, 1);
+    -fx-background-color: -choicebox-bg;
+
 }
 
 .combo-box-base > .label,
@@ -875,16 +885,19 @@
 }
 
 .choice-box {
-    -fx-background-color: -bg-color;
+    /*-fx-background-color: -bg-color;*/
+    -fx-background-color: -choicebox-bg;
     /*-fx-border-color: transparent transparent -border-color transparent;*/
 }
 
 .choice-box > .open-button {
-    -fx-background-color: -bg-color;
+    /*-fx-background-color: -bg-color;*/
+    -fx-background-color: -choicebox-bg;
 }
 
 .choice-box .context-menu {
-    -fx-background-color: -bg-color;
+    /*-fx-background-color: -bg-color;*/
+    -fx-background-color: -choicebox-bg;
 }
 
 .choice-box.bordered-choice-box {
@@ -1042,6 +1055,23 @@
 
 .tab-content-area {
 
+}
+
+.tab-pane .tab {
+    -fx-background-color: -tab-bg-color;
+    -fx-border-width: 0;
+}
+
+
+
+.tab-pane .tab:selected {
+    -fx-background-color: -bg-color;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-border-style: solid;
+    -fx-border-width: 2px 2px 0 2px;
+    -fx-border-insets: 0;
+    -fx-border-color: -border-color;
 }
 
 
