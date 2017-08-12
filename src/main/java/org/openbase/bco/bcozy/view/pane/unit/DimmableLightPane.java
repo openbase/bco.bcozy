@@ -66,7 +66,11 @@ public class DimmableLightPane extends AbstractUnitPane<DimmableLightRemote, Dim
         brightnessSlider = new JFXSlider();
         brightnessSlider.valueProperty().addListener((observable) -> {
             if (isHover()) {
-                recurrenceEventFilterHSV.trigger(brightnessSlider.getValue());
+                try {
+                    recurrenceEventFilterHSV.trigger(brightnessSlider.getValue());
+                } catch (CouldNotPerformException ex) {
+                    ExceptionPrinter.printHistory("Could not trigger brightness change!", ex, LOGGER);
+                }
             }
         });
         bodyPane.getChildren().add(brightnessSlider);
@@ -100,12 +104,12 @@ public class DimmableLightPane extends AbstractUnitPane<DimmableLightRemote, Dim
             case OFF:
                 getIcon().setBackgroundIconColor(Constants.LIGHTBULB_OFF_COLOR);
                 setInfoText("lightOff");
-                primaryActivationProperty().setValue(Boolean.FALSE);
+                setPrimaryActivationWithoutNotification(Boolean.FALSE);
                 break;
             case ON:
-                getIcon().setBackgroundIconColor(Constants.LIGHTBULB_OFF_COLOR.interpolate(Color.CORNSILK, brightness/100d));
+                getIcon().setBackgroundIconColor(Constants.LIGHTBULB_OFF_COLOR.interpolate(Color.CORNSILK, brightness / 100d));
                 setInfoText("lightOn");
-                primaryActivationProperty().setValue(Boolean.TRUE);
+                setPrimaryActivationWithoutNotification(Boolean.TRUE);
                 break;
             default:
                 setInfoText("unknown");

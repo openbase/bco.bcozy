@@ -57,11 +57,11 @@ public class PowerSwitchPane extends AbstractUnitPane<PowerSwitchRemote, PowerSw
         switch (state) {
             case ON:
                 getIcon().setForegroundIconColor(Color.GREEN);
-                primaryActivationProperty().setValue(Boolean.TRUE);
+                setPrimaryActivationWithoutNotification(Boolean.TRUE);
                 break;
             case OFF:
                 getIcon().setForegroundIconColor(Color.BLACK);
-                primaryActivationProperty().setValue(Boolean.FALSE);
+                setPrimaryActivationWithoutNotification(Boolean.FALSE);
             default:
                 break;
         }
