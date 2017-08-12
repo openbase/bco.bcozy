@@ -36,15 +36,23 @@ public interface SessionManagerFacade {
      */
     boolean passwordsValid(String password, String repeatedPassword);
 
+    boolean phoneIsValid(String phoneNumber);
+
+    boolean mailIsValid(String mailAdress);
+
     class NewUser {
         private final String username;
         private final String firstName;
         private final String lastName;
+        private final String mail;
+        private final String phone;
 
-        public NewUser(String username, String firstName, String lastName) {
+        public NewUser(String username, String firstName, String lastName, String mail, String phone) {
             this.username = username;
             this.firstName = firstName;
             this.lastName = lastName;
+            this.mail = mail;
+            this.phone = phone;
         }
 
         public String getUsername() {
@@ -57,6 +65,14 @@ public interface SessionManagerFacade {
 
         public String getLastName() {
             return lastName;
+        }
+
+        public String getMail() {
+            return mail;
+        }
+
+        public String getPhone() {
+            return phone;
         }
     }
 }

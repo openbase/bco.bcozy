@@ -1,15 +1,18 @@
 package org.openbase.bco.bcozy.controller;
 
 import com.jfoenix.controls.JFXCheckBox;
+import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 import org.controlsfx.control.CheckComboBox;
+import org.openbase.bco.authentication.lib.SessionManager;
 import org.openbase.bco.bcozy.model.SessionManagerFacade;
 import org.openbase.bco.bcozy.model.SessionManagerFacadeImpl;
 import org.openbase.bco.bcozy.util.Groups;
@@ -38,18 +41,35 @@ public class RegistrationController {
     @FXML
     private TextField username;
     @FXML
+    private TextField firstname;
+    @FXML
+    private TextField lastname;
+    @FXML
+    private TextField mail;
+    @FXML
+    private TextField phone;
+    @FXML
     private CheckComboBox<UnitConfigType.UnitConfig> usergroupField;
     @FXML
     private JFXCheckBox isAdmin;
-
+    @FXML
+    private Button registerBtn;
 
     public void initialize() {
         ObservableList<UnitConfigType.UnitConfig> groups = Groups.getGroups();
         groups.addListener((ListChangeListener.Change<? extends UnitConfigType.UnitConfig> c)
-                -> usergroupField.getItems().setAll(groups));
+                -> setGroups(groups)
+        );
 
+        registerBtn.getStyleClass().clear();
+        registerBtn.getStyleClass().add("transparent-button");
+        registerBtn.setText(registerBtn.getText().toUpperCase());
         usergroupField.setConverter(Groups.stringConverter(groups));
         usergroupField.prefWidthProperty().bind(root.widthProperty());
+    }
+
+    private void setGroups(ObservableList<UnitConfigType.UnitConfig> groups) {
+        Platform.runLater(() -> usergroupField.getItems().setAll(groups));
     }
 
     @FXML
@@ -71,11 +91,23 @@ public class RegistrationController {
             return;
         }
 
+        if (!sessionManager.phoneIsValid(phone.getText())) {
+            phone.getStyleClass().add("text-field-wrong");
+
+            return;
+        }
+
+        if (!sessionManager.mailIsValid(mail.getText())) {
+            mail.getStyleClass().add("text-field-wrong");
+
+            return;
+        }
+
         List<UnitConfigType.UnitConfig> groups = usergroupField.getCheckModel().getCheckedItems();
 
         boolean registered = sessionManager.registerUser(
                 new SessionManagerFacade.NewUser(username.getText(),
-                        "F" + username.getText(), "L" + username.getText()), //TODO: Fields
+                        firstname.getText(), lastname.getText(), mail.getText(), phone.getText()), //TODO: Fields
                 passwordField.getText(), isAdmin.isSelected(), groups);
         if (registered) {
             resetFields();
@@ -90,6 +122,10 @@ public class RegistrationController {
 
     private void resetFields() {
         username.setText("");
+        firstname.setText("");
+        lastname.setText("");
+        mail.setText("");
+        phone.setText("");
         passwordField.setText("");
         repeatPasswordField.setText("");
         isAdmin.setSelected(false);
@@ -131,6 +167,16 @@ public class RegistrationController {
         @Override
         public boolean passwordsValid(String text, String text1) {
             return !text.isEmpty() && text.equals(text1);
+        }
+
+        @Override
+        public boolean phoneIsValid(String phoneNumber) {
+            return true;
+        }
+
+        @Override
+        public boolean mailIsValid(String mailAdress) {
+            return true;
         }
     }
 }

@@ -47,7 +47,6 @@ public class SessionManagerFacadeImpl implements SessionManagerFacade {
 
         SessionManager.getInstance().registerUser(
                 unitConfig.getUserConfig().getUserName()/*unitConfig.getId()*/,
-                //TODO: userName? Id? Don't know...login works with userName
 
                 plainPassword,
                 asAdmin);
@@ -109,5 +108,17 @@ public class SessionManagerFacadeImpl implements SessionManagerFacade {
 
         return password.equals(repeatedPassword);
 
+    }
+
+    @Override
+    public boolean phoneIsValid(String phoneNumber) {
+        //TODO check validity
+        return true;
+    }
+
+    @Override
+    public boolean mailIsValid(String mailAdress) {
+        //Todo check validity
+        return true;
     }
 }
