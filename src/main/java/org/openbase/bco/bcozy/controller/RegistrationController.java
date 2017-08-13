@@ -105,7 +105,7 @@ public class RegistrationController {
         }
 
         try {
-            sessionManager.verifyMailaddress(mail.getText());
+            sessionManager.verifyMailAddress(mail.getText());
         } catch (VerificationFailedException ex) {
             mail.getStyleClass().add("text-field-wrong");
             return;
@@ -186,7 +186,7 @@ public class RegistrationController {
         }
 
         @Override
-        public void verifyMailaddress(final String mailAdress) throws VerificationFailedException {
+        public void verifyMailAddress(final String mailAddress) throws VerificationFailedException {
         }
     }
 }

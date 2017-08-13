@@ -158,7 +158,7 @@ public class SessionManagerFacadeImpl implements SessionManagerFacade {
     }
 
     @Override
-    public void verifyMailaddress(String mailAdress) throws VerificationFailedException {
+    public void verifyMailAddress(String mailAddress) throws VerificationFailedException {
         //Todo check validity
         // throw new VerificationFailedException("not valid because of ...");
     }

@@ -39,7 +39,7 @@ public interface SessionManagerFacade {
 
     void verifyPhoneNumber(final String phoneNumber) throws VerificationFailedException;
 
-    void verifyMailaddress(final String mailAddress) throws VerificationFailedException;
+    void verifyMailAddress(final String mailAddress) throws VerificationFailedException;
 
     // TODO: @vanessa Why is this type needed? Because the UserConfig contains all these informations already.
     class NewUser {
