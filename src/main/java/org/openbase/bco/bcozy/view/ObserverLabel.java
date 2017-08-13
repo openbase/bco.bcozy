@@ -31,6 +31,7 @@ import java.util.MissingResourceException;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.ResourceBundle;
+import java.util.function.Function;
 
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
@@ -51,6 +52,13 @@ public class ObserverLabel extends Label implements Observer {
     private SimpleStringProperty identifier = new SimpleStringProperty();
     private ResourceBundle languageBundle = ResourceBundle
             .getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
+
+
+    /**
+     * Is applied to new text when text is changed.
+     */
+    private Function<String, String> applyOnNewText = Function.identity();
+
 
     public ObserverLabel() {
         super();
@@ -87,16 +95,18 @@ public class ObserverLabel extends Label implements Observer {
             return;
         }
 
+        String text;
         try {
             languageBundle = ResourceBundle.getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
-            super.setText(languageBundle.getString(this.getIdentifier()));
+
+            text = languageBundle.getString(this.getIdentifier());
         } catch (MissingResourceException ex) {
             ExceptionPrinter.printHistory("Could not resolve Identifier[" + getIdentifier() + "]", ex, LOGGER,
                     LogLevel.WARN);
-            super.setText(getIdentifier());
+            text = getIdentifier();
         }
+        super.setText(applyOnNewText.apply(text));
     }
-
 
     /**
      * Sets the new identifier for this ObserverLabel.
@@ -107,12 +117,16 @@ public class ObserverLabel extends Label implements Observer {
         this.identifier.set(identifier);
     }
 
-
     public String getIdentifier() {
         return identifier.get();
     }
 
     public SimpleStringProperty identifierProperty() {
         return identifier;
+    }
+
+    public void setApplyOnNewText(Function<String, String> applyOnNewText) {
+        this.applyOnNewText = applyOnNewText != null ? applyOnNewText : Function.identity();
+        this.update(null,null);
     }
 }
