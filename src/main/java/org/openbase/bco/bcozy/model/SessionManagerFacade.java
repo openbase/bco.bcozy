@@ -3,6 +3,8 @@ package org.openbase.bco.bcozy.model;
 import rst.domotic.unit.UnitConfigType;
 
 import java.util.List;
+import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.VerificationFailedException;
 
 /**
  * @author vdasilva
@@ -16,31 +18,32 @@ public interface SessionManagerFacade {
      */
     boolean isAdmin();
 
-    boolean registerUser(NewUser user, String plainPassword, boolean asAdmin,
-                         List<UnitConfigType.UnitConfig> groups);
+    void registerUser(final NewUser user, final String plainPassword, boolean asAdmin, List<UnitConfigType.UnitConfig> groups) throws CouldNotPerformException;
 
     /**
      * Checks, if the username is available.
      *
      * @param username the username to check
-     * @return false, if the username is already in use, true otherwise
+     * @throws VerificationFailedException is thrown if the username is already in use.
      */
-    boolean userNameAvailable(String username);
+    void verifyUserName(final String username) throws VerificationFailedException, InterruptedException;
 
     /**
      * Validates the given password and compares it with the repeated password.
      *
-     * @param password         the password to validate
+     * @param password the password to validate
      * @param repeatedPassword the repeated password
-     * @return returns true, if {@code password} is a valid password and matches repeatedPassword
+     * @throws VerificationFailedException is thrown if the {@code password} is not valid or does not matches repeatedPassword.
      */
-    boolean passwordsValid(String password, String repeatedPassword);
+    void verifyPasswords(final String password, final String repeatedPassword) throws VerificationFailedException;
 
-    boolean phoneIsValid(String phoneNumber);
+    void verifyPhoneNumber(final String phoneNumber) throws VerificationFailedException;
 
-    boolean mailIsValid(String mailAdress);
+    void verifyMailaddress(final String mailAddress) throws VerificationFailedException;
 
+    // TODO: @vanessa Why is this type needed? Because the UserConfig contains all these informations already.
     class NewUser {
+
         private final String username;
         private final String firstName;
         private final String lastName;

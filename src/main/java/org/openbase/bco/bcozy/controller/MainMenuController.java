@@ -19,16 +19,6 @@
 package org.openbase.bco.bcozy.controller;
 
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
-import javafx.scene.text.Text;
-import org.openbase.bco.bcozy.BCozy;
-import org.openbase.bco.bcozy.model.LanguageSelection;
-import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ForegroundPane;
 import org.openbase.bco.bcozy.view.mainmenupanes.AvailableUsersPane;
 import org.openbase.bco.bcozy.view.mainmenupanes.ConnectionPane;
@@ -36,18 +26,13 @@ import org.openbase.bco.bcozy.view.mainmenupanes.LoginPane;
 import org.openbase.bco.bcozy.view.mainmenupanes.SettingsPane;
 import org.openbase.bco.authentication.lib.SessionManager;
 
-import java.io.StreamCorruptedException;
-import java.util.Locale;
-import java.util.ResourceBundle;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
-
-import org.openbase.bco.dal.remote.unit.Units;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
-import org.openbase.jul.exception.NotAvailableException;
+import org.openbase.jul.exception.InvalidStateException;
+import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rst.domotic.unit.UnitConfigType;
 
 /**
  * Created by hoestreich on 11/24/15.
@@ -104,18 +89,36 @@ public class MainMenuController {
     }
 
     private void loginUser() {
-        new Thread(this::loginUserAsync).start();
+        new Thread(() -> {
+            try {
+                this.loginUserAsync();
+            } catch (InterruptedException ex) { 
+                ExceptionPrinter.printHistory("Could not login!", ex, LOGGER);
+            }
+        }).start();
     }
 
-    private void loginUserAsync() {
+    private void loginUserAsync() throws InterruptedException {
         SessionManager sessionManager = SessionManager.getInstance();
 
         try {
-            sessionManager.login(Registries.getUserRegistry().getUserIdByUserName(loginPane.getNameTxt().getText()),
-                    loginPane
-                            .getPasswordField()
-                            .getText
-                                    ());
+
+            // sessionManager.login(Registries.getUserRegistry().getUserIdByUserName(loginPane.getNameTxt().getText()),
+            // ##### reimplemented because "getUserIdByUserName" not included in current master api.
+            final String username = loginPane.getNameTxt().getText();
+            String userUnitId = null;
+            for (final UnitConfigType.UnitConfig userUnitConfig : Registries.getUserRegistry().getUserConfigs()) {
+                if (userUnitConfig.getUserConfig().getUserName().equals(username)) {
+                    userUnitId = userUnitConfig.getId();
+                }
+            }
+
+            if (userUnitId == null) {
+                throw new InvalidStateException("username does not exists!");
+            }
+            // #####
+
+            sessionManager.login(userUnitId, loginPane.getPasswordField().getText());
 
             Platform.runLater(() -> {
                 loginPane.resetUserOrPasswordWrong();
@@ -130,8 +133,6 @@ public class MainMenuController {
             });
         } catch (java.lang.OutOfMemoryError error) {
             LOGGER.error(error.getMessage());
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
     }
 
