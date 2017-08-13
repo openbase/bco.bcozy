@@ -17,6 +17,7 @@ import org.openbase.bco.bcozy.model.SessionManagerFacade;
 import org.openbase.bco.bcozy.model.SessionManagerFacadeImpl;
 import org.openbase.bco.bcozy.util.Groups;
 import org.openbase.bco.bcozy.view.Constants;
+import org.openbase.bco.bcozy.view.ObserverButton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.domotic.unit.UnitConfigType;
@@ -53,7 +54,7 @@ public class RegistrationController {
     @FXML
     private JFXCheckBox isAdmin;
     @FXML
-    private Button registerBtn;
+    private ObserverButton registerBtn;
 
     public void initialize() {
         ObservableList<UnitConfigType.UnitConfig> groups = Groups.getGroups();
@@ -63,7 +64,7 @@ public class RegistrationController {
 
         registerBtn.getStyleClass().clear();
         registerBtn.getStyleClass().add("transparent-button");
-        registerBtn.setText(registerBtn.getText().toUpperCase());
+        registerBtn.setApplyOnNewText(String::toUpperCase);
         usergroupField.setConverter(Groups.stringConverter(groups));
         usergroupField.prefWidthProperty().bind(root.widthProperty());
     }

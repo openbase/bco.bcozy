@@ -14,6 +14,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.util.StringConverter;
 import org.openbase.bco.bcozy.util.Groups;
+import org.openbase.bco.bcozy.view.ObserverButton;
 import org.openbase.bco.bcozy.view.ObserverLabel;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
@@ -54,7 +55,7 @@ public class PermissionPaneController {
     public CheckBox accessRights;
 
     @FXML
-    public Button saveRightsButton;
+    public ObserverButton saveRightsButton;
 
     @FXML
     public HBox hbox;
@@ -77,14 +78,13 @@ public class PermissionPaneController {
         accessRights.setGraphic(new ObserverLabel("accessRight"));
 
 
-//        saveRightsButton.setGraphic(new ObserverLabel("save"));
         saveRightsButton.getStyleClass().clear();
         saveRightsButton.getStyleClass().addAll("transparent-button");
-        saveRightsButton.setText(saveRightsButton.getText().toUpperCase());
+        saveRightsButton.setApplyOnNewText(String::toUpperCase);
+
 
         newGroupChoiceBox.setConverter(Groups.stringConverter(groups));
         newGroupChoiceBox.setItems(groups);
-//        newGroupChoiceBox.getStyleClass().addAll("bordered-choice-box");
         newGroupChoiceBox.setPrefWidth(-1.0);
         preselectGroupChoiceBoxValue();
 
