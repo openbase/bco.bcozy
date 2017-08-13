@@ -14,7 +14,6 @@ import org.controlsfx.control.CheckComboBox;
 import org.openbase.bco.bcozy.model.SessionManagerFacade;
 import org.openbase.bco.bcozy.model.SessionManagerFacadeImpl;
 import org.openbase.bco.bcozy.util.Groups;
-import rst.domotic.unit.UnitConfigType;
 
 import java.util.List;
 import org.openbase.jul.exception.CouldNotPerformException;
@@ -22,6 +21,7 @@ import org.openbase.jul.exception.VerificationFailedException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rst.domotic.unit.UnitConfigType.UnitConfig;
 
 /**
  * User registration.
@@ -51,15 +51,15 @@ public class RegistrationController {
     @FXML
     private TextField phone;
     @FXML
-    private CheckComboBox<UnitConfigType.UnitConfig> usergroupField;
+    private CheckComboBox<UnitConfig> usergroupField;
     @FXML
     private JFXCheckBox isAdmin;
     @FXML
     private Button registerBtn;
 
     public void initialize() {
-        ObservableList<UnitConfigType.UnitConfig> groups = Groups.getGroups();
-        groups.addListener((ListChangeListener.Change<? extends UnitConfigType.UnitConfig> c)
+        ObservableList<UnitConfig> groups = Groups.getGroups();
+        groups.addListener((ListChangeListener.Change<? extends UnitConfig> c)
                 -> setGroups(groups)
         );
 
@@ -70,7 +70,7 @@ public class RegistrationController {
         usergroupField.prefWidthProperty().bind(root.widthProperty());
     }
 
-    private void setGroups(ObservableList<UnitConfigType.UnitConfig> groups) {
+    private void setGroups(ObservableList<UnitConfig> groups) {
         Platform.runLater(() -> usergroupField.getItems().setAll(groups));
     }
 
@@ -111,7 +111,7 @@ public class RegistrationController {
             return;
         }
 
-        List<UnitConfigType.UnitConfig> groups = usergroupField.getCheckModel().getCheckedItems();
+        List<UnitConfig> groups = usergroupField.getCheckModel().getCheckedItems();
 
         try {
             sessionManager.registerUser(new SessionManagerFacade.NewUser(
@@ -124,9 +124,9 @@ public class RegistrationController {
                     passwordField.getText(),
                     isAdmin.isSelected(),
                     groups);
+            resetFields();
         } catch (CouldNotPerformException ex) {
             ExceptionPrinter.printHistory(ex, logger);
-            resetFields();
         }
     }
 
@@ -160,8 +160,8 @@ public class RegistrationController {
         }
 
         @Override
-        public void registerUser(final NewUser user, final String plainPassword, final boolean asAdmin, final List<UnitConfigType.UnitConfig> groups) throws CouldNotPerformException {
-            StringConverter<UnitConfigType.UnitConfig> converter = Groups.stringConverter(groups);
+        public void registerUser(final NewUser user, final String plainPassword, final boolean asAdmin, final List<UnitConfig> groups) throws CouldNotPerformException {
+            StringConverter<UnitConfig> converter = Groups.stringConverter(groups);
             System.out.print("username = [" + user.getUsername() + "], plainPassword = [" + plainPassword + "], " + "asAdmin = [" + asAdmin + "], groups = [");
             groups.forEach(g -> System.out.print(converter.toString(g)));
             System.out.println("]");

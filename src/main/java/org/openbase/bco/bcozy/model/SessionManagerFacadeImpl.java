@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.domotic.unit.UnitConfigType;
 import rst.domotic.unit.UnitTemplateType;
-import rst.domotic.unit.authorizationgroup.AuthorizationGroupConfigType;
 import rst.domotic.unit.user.UserConfigType;
 
 import java.util.List;
@@ -18,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import org.openbase.jul.exception.VerificationFailedException;
 import rst.domotic.unit.UnitConfigType.UnitConfig;
+import rst.domotic.unit.authorizationgroup.AuthorizationGroupConfigType.AuthorizationGroupConfig;
 
 /**
  * @author vdasilva
@@ -73,8 +73,7 @@ public class SessionManagerFacadeImpl implements SessionManagerFacade {
         }
     }
 
-    private UnitConfigType.UnitConfig tryCreateUser(NewUser user) throws CouldNotPerformException,
-            InterruptedException, ExecutionException, TimeoutException {
+    private UnitConfigType.UnitConfig tryCreateUser(NewUser user) throws CouldNotPerformException, InterruptedException, ExecutionException, TimeoutException {
 
         UnitConfigType.UnitConfig.Builder builder = UnitConfigType.UnitConfig.newBuilder();
         UserConfigType.UserConfig.Builder userConfigBuilder = UserConfigType.UserConfig.newBuilder();
@@ -94,24 +93,17 @@ public class SessionManagerFacadeImpl implements SessionManagerFacade {
         return registeredUser.get(5, TimeUnit.SECONDS);
     }
 
-    private void tryAddToGroup(UnitConfigType.UnitConfig group, String userId) throws CouldNotPerformException,
-            InterruptedException {
-
-        UnitConfigType.UnitConfig.Builder unitConfig = Registries.getUserRegistry()
-                .getAuthorizationGroupConfigById(group.getId()).toBuilder();
-        AuthorizationGroupConfigType.AuthorizationGroupConfig.Builder authorizationGroupConfig = unitConfig
-                .getAuthorizationGroupConfigBuilder();
+    private void tryAddToGroup(UnitConfigType.UnitConfig group, String userId) throws CouldNotPerformException, InterruptedException {
+        UnitConfig.Builder unitConfig = Registries.getUserRegistry().getAuthorizationGroupConfigById(group.getId()).toBuilder();
+        AuthorizationGroupConfig.Builder authorizationGroupConfig = unitConfig.getAuthorizationGroupConfigBuilder();
         authorizationGroupConfig.addMemberId(userId);
         Registries.getUserRegistry().updateAuthorizationGroupConfig(unitConfig.build());
     }
 
-    private void tryRemoveFromGroup(UnitConfigType.UnitConfig group, String userId) throws CouldNotPerformException,
-            InterruptedException {
+    private void tryRemoveFromGroup(UnitConfigType.UnitConfig group, String userId) throws CouldNotPerformException, InterruptedException {
 
-        UnitConfigType.UnitConfig.Builder unitConfig = Registries.getUserRegistry()
-                .getAuthorizationGroupConfigById(group.getId()).toBuilder();
-        AuthorizationGroupConfigType.AuthorizationGroupConfig.Builder authorizationGroupConfig = unitConfig
-                .getAuthorizationGroupConfigBuilder();
+        UnitConfig.Builder unitConfig = Registries.getUserRegistry().getAuthorizationGroupConfigById(group.getId()).toBuilder();
+        AuthorizationGroupConfig.Builder authorizationGroupConfig = unitConfig.getAuthorizationGroupConfigBuilder();
 
         ProtocolStringList members = authorizationGroupConfig.getMemberIdList();
 
