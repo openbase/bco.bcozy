@@ -125,8 +125,8 @@ public class SettingsController {
                         Platform.runLater(() -> fillTable(unitConfigList));
                     }
             );
-        } catch (CouldNotPerformException | InterruptedException e) {
-            e.printStackTrace();
+        } catch (CouldNotPerformException | InterruptedException ex) {
+            ex.printStackTrace();
         }
 
     }

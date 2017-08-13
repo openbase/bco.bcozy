@@ -204,10 +204,10 @@ public class PermissionPaneController {
         try {
             unitConfig = Registries.getUnitRegistry().updateUnitConfig(unitConfig).get();
             this.setUnitConfig(unitConfig);
-        } catch (CouldNotPerformException | ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        } catch (CouldNotPerformException | ExecutionException ex) {
+            ex.printStackTrace();
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
         }
     }
 }

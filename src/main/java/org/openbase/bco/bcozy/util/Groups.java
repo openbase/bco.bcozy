@@ -19,17 +19,17 @@ public final class Groups {
 
         try {
             setGroups(Registries.getUserRegistry().getAuthorizationGroupConfigs(), groups);
-        } catch (CouldNotPerformException | InterruptedException e) {
+        } catch (CouldNotPerformException | InterruptedException ex) {
             // not synchronized yet...
-            // e.printStackTrace();
+            // ex.printStackTrace();
         }
 
         try {
             Registries.getUserRegistry().addDataObserver((observable, userRegistryData) ->
                     setGroups(userRegistryData.getAuthorizationGroupUnitConfigList(), groups)
             );
-        } catch (InterruptedException | CouldNotPerformException e) {
-            e.printStackTrace();
+        } catch (InterruptedException | CouldNotPerformException ex) {
+            ex.printStackTrace();
         }
 
         return groups;

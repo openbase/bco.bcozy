@@ -30,6 +30,7 @@ import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InvalidStateException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.openbase.jul.schedule.GlobalCachedExecutorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.domotic.unit.UnitConfigType;
@@ -89,13 +90,13 @@ public class MainMenuController {
     }
 
     private void loginUser() {
-        new Thread(() -> {
+        GlobalCachedExecutorService.submit(() -> {
             try {
-                this.loginUserAsync();
-            } catch (InterruptedException ex) { 
+                loginUserAsync();
+            } catch (InterruptedException ex) {
                 ExceptionPrinter.printHistory("Could not login!", ex, LOGGER);
             }
-        }).start();
+        });
     }
 
     private void loginUserAsync() throws InterruptedException {
@@ -127,7 +128,7 @@ public class MainMenuController {
                 loginPane.getPasswordField().setText("");
                 loginPane.setState(LoginPane.State.LOGOUT);
             });
-        } catch (CouldNotPerformException e) {
+        } catch (CouldNotPerformException ex) {
             Platform.runLater(() -> {
                 loginPane.indicateUserOrPasswordWrong();
             });

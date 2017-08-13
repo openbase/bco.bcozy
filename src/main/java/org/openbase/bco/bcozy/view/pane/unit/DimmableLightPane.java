@@ -84,17 +84,17 @@ public class DimmableLightPane extends AbstractUnitPane<DimmableLightRemote, Dim
         PowerState.State state = PowerState.State.UNKNOWN;
         try {
             state = getUnitRemote().getData().getPowerState().getValue();
-        } catch (CouldNotPerformException e) {
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.DEBUG);
+        } catch (CouldNotPerformException ex) {
+            ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.DEBUG);
         }
 
         // detect color
         double brightness;
         try {
             brightness = getData().getBrightnessState().getBrightness();
-        } catch (CouldNotPerformException e) {
+        } catch (CouldNotPerformException ex) {
             brightness = 100d;
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.DEBUG);
+            ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.DEBUG);
         }
 
         if (brightnessSlider != null && !isHover()) {

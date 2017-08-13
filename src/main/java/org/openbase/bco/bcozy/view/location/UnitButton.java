@@ -85,13 +85,13 @@ public class UnitButton extends Pane {
             } catch (CouldNotPerformException ex) {
                 Logger.getLogger(UnitButton.class.getName()).log(Level.SEVERE, null, ex);
             }
-            cmItem1.setOnAction((ActionEvent e) -> {
+            cmItem1.setOnAction((ActionEvent ex) -> {
                 //
             });
             cm.getItems().add(cmItem1);
-            this.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent e) -> {
+            this.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent ex) -> {
                 if (e.getButton() == MouseButton.SECONDARY) {
-                    cm.show(this.getParent(), e.getScreenX(), e.getScreenY());
+                    cm.show(this.getParent(), ex.getScreenX(), ex.getScreenY());
                 }
             });
  

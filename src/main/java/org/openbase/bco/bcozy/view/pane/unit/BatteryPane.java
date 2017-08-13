@@ -66,8 +66,8 @@ public class BatteryPane extends AbstractUnitPane<BatteryRemote, BatteryData> {
             } else {
                 getIcon().setBackgroundIcon(MaterialDesignIcon.BATTERY_ALERT);
             }
-        } catch (CouldNotPerformException e) {
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.DEBUG);
+        } catch (CouldNotPerformException ex) {
+            ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.DEBUG);
         }
         
         try {
@@ -89,8 +89,8 @@ public class BatteryPane extends AbstractUnitPane<BatteryRemote, BatteryData> {
                 default:
                     break;
             }
-        } catch (CouldNotPerformException e) {
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+        } catch (CouldNotPerformException ex) {
+            ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
             getIcon().setBackgroundIconColor(Color.BLACK);
         }
     }
