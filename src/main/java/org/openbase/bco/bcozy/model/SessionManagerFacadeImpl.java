@@ -1,5 +1,6 @@
 package org.openbase.bco.bcozy.model;
 
+import com.google.protobuf.ProtocolStringList;
 import org.openbase.bco.authentication.lib.SessionManager;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
@@ -43,17 +44,37 @@ public class SessionManagerFacadeImpl implements SessionManagerFacade {
 
         UnitConfigType.UnitConfig unitConfig = tryCreateUser(user);
 
-        SessionManager.getInstance().registerUser(
-                unitConfig.getUserConfig().getUserName()/*unitConfig.getId()*/,
-                plainPassword,
-                asAdmin);
+        try {
+            SessionManager.getInstance().registerUser(
+                    unitConfig.getUserConfig().getUserName()/*unitConfig.getId()*/,
+                    plainPassword,
+                    asAdmin);
+        } catch (CouldNotPerformException ex) {
+            // If adding to the credential storage failed, remove the user from the registry to prevent inconsistencies.
+            Registries.getUserRegistry().removeUserConfig(unitConfig);
+            throw ex;
+        }
 
-        for (UnitConfigType.UnitConfig group : groups) {
-            tryAddToGroup(group, unitConfig.getId());
+        try {
+            for (UnitConfigType.UnitConfig group : groups) {
+                tryAddToGroup(group, unitConfig.getId());
+            }
+        } catch (CouldNotPerformException | InterruptedException ex) {
+            // If adding to a group failed, remove the user from all groups...
+            for (UnitConfigType.UnitConfig group : groups) {
+                tryRemoveFromGroup(group, unitConfig.getId());
+            }
+            // ... from the credential storage...
+            SessionManager.getInstance().removeUser(unitConfig.getUserConfig().getUserName()/*unitConfig.getId()*/);
+
+            // ... and from the registry.
+            Registries.getUserRegistry().removeUserConfig(unitConfig);
+            throw ex;
         }
     }
 
-    private UnitConfigType.UnitConfig tryCreateUser(NewUser user) throws CouldNotPerformException, InterruptedException, ExecutionException, TimeoutException {
+    private UnitConfigType.UnitConfig tryCreateUser(NewUser user) throws CouldNotPerformException,
+            InterruptedException, ExecutionException, TimeoutException {
 
         UnitConfigType.UnitConfig.Builder builder = UnitConfigType.UnitConfig.newBuilder();
         UserConfigType.UserConfig.Builder userConfigBuilder = UserConfigType.UserConfig.newBuilder();
@@ -73,10 +94,35 @@ public class SessionManagerFacadeImpl implements SessionManagerFacade {
         return registeredUser.get(5, TimeUnit.SECONDS);
     }
 
-    private void tryAddToGroup(UnitConfigType.UnitConfig group, String userId) throws CouldNotPerformException, InterruptedException {
-        UnitConfigType.UnitConfig.Builder unitConfig = Registries.getUserRegistry().getAuthorizationGroupConfigById(group.getId()).toBuilder();
-        AuthorizationGroupConfigType.AuthorizationGroupConfig.Builder authorizationGroupConfig = unitConfig.getAuthorizationGroupConfigBuilder();
+    private void tryAddToGroup(UnitConfigType.UnitConfig group, String userId) throws CouldNotPerformException,
+            InterruptedException {
+
+        UnitConfigType.UnitConfig.Builder unitConfig = Registries.getUserRegistry()
+                .getAuthorizationGroupConfigById(group.getId()).toBuilder();
+        AuthorizationGroupConfigType.AuthorizationGroupConfig.Builder authorizationGroupConfig = unitConfig
+                .getAuthorizationGroupConfigBuilder();
         authorizationGroupConfig.addMemberId(userId);
+        Registries.getUserRegistry().updateAuthorizationGroupConfig(unitConfig.build());
+    }
+
+    private void tryRemoveFromGroup(UnitConfigType.UnitConfig group, String userId) throws CouldNotPerformException,
+            InterruptedException {
+
+        UnitConfigType.UnitConfig.Builder unitConfig = Registries.getUserRegistry()
+                .getAuthorizationGroupConfigById(group.getId()).toBuilder();
+        AuthorizationGroupConfigType.AuthorizationGroupConfig.Builder authorizationGroupConfig = unitConfig
+                .getAuthorizationGroupConfigBuilder();
+
+        ProtocolStringList members = authorizationGroupConfig.getMemberIdList();
+
+        authorizationGroupConfig.clearMemberId();
+
+        for (String member : members) {
+            if (!member.equals(userId)) {
+                authorizationGroupConfig.addMemberId(member);
+            }
+        }
+
         Registries.getUserRegistry().updateAuthorizationGroupConfig(unitConfig.build());
     }
 
