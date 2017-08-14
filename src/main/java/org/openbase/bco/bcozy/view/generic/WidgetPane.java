@@ -22,10 +22,14 @@ import com.jfoenix.controls.JFXToggleButton;
 import org.openbase.jul.visual.javafx.iface.DynamicPane;
 import de.jensd.fx.glyphs.GlyphIcons;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
+import java.util.concurrent.Future;
+import java.util.logging.Level;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -44,6 +48,8 @@ import javafx.scene.text.TextAlignment;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ObserverText;
 import org.openbase.bco.bcozy.view.SVGIcon;
+import org.openbase.bco.bcozy.view.pane.unit.AbstractUnitPane;
+import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -116,6 +122,8 @@ public class WidgetPane extends VBox implements DynamicPane {
     protected final BooleanProperty primaryActivationProperty;
     protected final BooleanProperty secondaryActivationProperty;
 
+    private final ChangeListener<Boolean> primaryActivationObserver;
+
     /**
      * defines if this widget can be activated e.g. by mouse click.
      */
@@ -134,11 +142,29 @@ public class WidgetPane extends VBox implements DynamicPane {
         this.secondaryActivationProperty = new SimpleBooleanProperty();
         this.mainIcon = new SVGIcon(MaterialDesignIcon.VECTOR_CIRCLE, Constants.SMALL_ICON, false);
         this.widgetLabel = new Label("?");
-       // this.unitCount = new Label();
+
+        this.primaryActivationObserver = new ChangeListener<Boolean>() {
+            private Future currentTask;
+
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean lastActivation, Boolean newActivation) {
+                try {
+                    // cancel all already running tasks.
+                    if (currentTask != null) {
+                        currentTask.cancel(true);
+                    }
+                    currentTask = applyPrimaryActivationUpdate(newActivation);
+                } catch (CouldNotPerformException ex) {
+                    java.util.logging.Logger.getLogger(AbstractUnitPane.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        };
+        primaryActivationProperty().addListener(primaryActivationObserver);
     }
 
     @Override
     public void initContent() {
+        toggleSwitch.getStyleClass().clear();
         toggleSwitch.setMouseTransparent(true);
 
         Tooltip.install(iconPane, tooltip);
@@ -182,18 +208,16 @@ public class WidgetPane extends VBox implements DynamicPane {
             toggleSwitch.setOnMouseClicked(mouseEventHandler);
             headPane.setOnMouseClicked(mouseEventHandler);
             headPane.setOnSwipeDown((event) -> {
-                primaryActivationProperty.set(true);
+                secondaryActivationProperty.set(true);
             });
             headPane.setOnSwipeUp((event) -> {
-                primaryActivationProperty.set(false);
+                secondaryActivationProperty.set(false);
             });
             headPane.setOnScrollStarted((event) -> {
-
-            if(event.getDeltaY() > 0 ) {
-
-                    primaryActivationProperty.set(true);
+                if (event.getDeltaY() > 0) {
+                    secondaryActivationProperty.set(true);
                 } else if (event.getDeltaY() < 0) {
-                    primaryActivationProperty.set(false);
+                    secondaryActivationProperty.set(false);
 
                 }
             });
@@ -216,9 +240,6 @@ public class WidgetPane extends VBox implements DynamicPane {
         headPane.setAlignment(widgetLabel, Pos.CENTER_LEFT);
 
         if (activateable) {
-
-//            // workaround to center the toggle switch, default value -1 aligns the switch not in the pane center which looks bad.
-//            toggleSwitch.maxHeightProperty().set(1);
             headPane.setRight(toggleSwitch);
             headPane.setAlignment(toggleSwitch, Pos.CENTER);
         }
@@ -255,6 +276,12 @@ public class WidgetPane extends VBox implements DynamicPane {
         return secondaryActivationProperty;
     }
 
+    public synchronized void setPrimaryActivationWithoutNotification(final Boolean activation) {
+        primaryActivationProperty.removeListener(primaryActivationObserver);
+        primaryActivationProperty.setValue(activation);
+        primaryActivationProperty.addListener(primaryActivationObserver);
+    }
+
     public void togglePrimaryActivation() {
         primaryActivationProperty.set(!primaryActivationProperty.getValue());
     }
@@ -265,5 +292,16 @@ public class WidgetPane extends VBox implements DynamicPane {
 
     public void setInfoText(final String identifier) {
         infoText.setIdentifier(identifier);
+    }
+
+    /**
+     * Overwrite this method to get informed about main function updates.
+     *
+     * @param activation a boolean value which refers to the current function activation.
+     * @return should return a future object of the triggered tasks or null if no task was triggered.
+     * @throws CouldNotPerformException can be thrown if the update fails.
+     */
+    protected Future applyPrimaryActivationUpdate(final boolean activation) throws CouldNotPerformException {
+        return null;
     }
 }

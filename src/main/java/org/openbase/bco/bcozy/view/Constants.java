@@ -72,6 +72,11 @@ public final class Constants {
     public static final double MIDDLE_ICON = 48.0;
 
     /**
+     * The size of an LogoPane Icon.
+     */
+    public static final double LOGO_ICON = 40.0;
+
+    /**
      * The size for a small size icon.
      */
     public static final double SMALL_ICON = 32.0;
@@ -259,12 +264,27 @@ public final class Constants {
     /**
      * The offset to push the floating button on the border.
      */
-    public static final double FLOATING_BUTTON_OFFSET = 85.0;
+    public static final double FLOATING_BUTTON_OFFSET = 55.0;
+
+    /**
+     * Offset to position the fullscreen button on outer right corner.
+     */
+    public static final double FLOATING_BUTTON_FULLSCREEN_OFFSET_X = 85.0;
+
+    /**
+     * Offset to position fullscreen button above context menu.
+     */
+    public static final double FLOATING_BUTTON_FULLSCREEN_OFFSET_Y = -46.0;
 
     /**
      * The size for the small main menu.
      */
     public static final double SMALL_MAIN_MENU_WIDTH = 60.0;
+
+    /**
+     * The pref width for the small main menu.
+     */
+    public static final double SMALL_MAIN_MENU_WIDTH_PREF = 98.0;
 
     /**
      * Divide constant for HSB color init.
@@ -431,6 +451,7 @@ public final class Constants {
      * Event filter time.
      */
     public static final long FILTER_TIME = 100L;
+
 
     /**
      * Private Constructor.

@@ -66,7 +66,11 @@ public class DimmableLightPane extends AbstractUnitPane<DimmableLightRemote, Dim
         brightnessSlider = new JFXSlider();
         brightnessSlider.valueProperty().addListener((observable) -> {
             if (isHover()) {
-                recurrenceEventFilterHSV.trigger(brightnessSlider.getValue());
+                try {
+                    recurrenceEventFilterHSV.trigger(brightnessSlider.getValue());
+                } catch (CouldNotPerformException ex) {
+                    ExceptionPrinter.printHistory("Could not trigger brightness change!", ex, LOGGER);
+                }
             }
         });
         bodyPane.getChildren().add(brightnessSlider);
@@ -80,17 +84,17 @@ public class DimmableLightPane extends AbstractUnitPane<DimmableLightRemote, Dim
         PowerState.State state = PowerState.State.UNKNOWN;
         try {
             state = getUnitRemote().getData().getPowerState().getValue();
-        } catch (CouldNotPerformException e) {
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.DEBUG);
+        } catch (CouldNotPerformException ex) {
+            ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.DEBUG);
         }
 
         // detect color
         double brightness;
         try {
             brightness = getData().getBrightnessState().getBrightness();
-        } catch (CouldNotPerformException e) {
+        } catch (CouldNotPerformException ex) {
             brightness = 100d;
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.DEBUG);
+            ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.DEBUG);
         }
 
         if (brightnessSlider != null && !isHover()) {
@@ -100,12 +104,12 @@ public class DimmableLightPane extends AbstractUnitPane<DimmableLightRemote, Dim
             case OFF:
                 getIcon().setBackgroundIconColor(Constants.LIGHTBULB_OFF_COLOR);
                 setInfoText("lightOff");
-                primaryActivationProperty().setValue(Boolean.FALSE);
+                setPrimaryActivationWithoutNotification(Boolean.FALSE);
                 break;
             case ON:
-                getIcon().setBackgroundIconColor(Constants.LIGHTBULB_OFF_COLOR.interpolate(Color.CORNSILK, brightness/100d));
+                getIcon().setBackgroundIconColor(Constants.LIGHTBULB_OFF_COLOR.interpolate(Color.CORNSILK, brightness / 100d));
                 setInfoText("lightOn");
-                primaryActivationProperty().setValue(Boolean.TRUE);
+                setPrimaryActivationWithoutNotification(Boolean.TRUE);
                 break;
             default:
                 setInfoText("unknown");

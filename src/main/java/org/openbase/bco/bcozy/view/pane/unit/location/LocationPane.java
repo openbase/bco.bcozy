@@ -48,7 +48,6 @@ public class LocationPane extends AbstractUnitPane<LocationRemote, LocationData>
 
     private final RecurrenceEventFilter<Color> recurrenceEventFilterHSV = new RecurrenceEventFilter<Color>(Constants.RECURRENCE_EVENT_FILTER_MILLI_TIMEOUT) {
 
-
         @Override
         public void relay() {
             try {
@@ -73,14 +72,14 @@ public class LocationPane extends AbstractUnitPane<LocationRemote, LocationData>
         colorChooser = new ColorChooser();
         colorChooser.initContent();
         colorChooser.selectedColorProperty().addListener((observable) -> {
-            System.out.println("apply update "+colorChooser.getSelectedColor());
-            if (isHover()) {
-                System.out.println("..."+colorChooser.getSelectedColor());
+            try {
                 recurrenceEventFilterHSV.trigger(colorChooser.getSelectedColor());
+            } catch (CouldNotPerformException ex) {
+                ExceptionPrinter.printHistory("Could not trigger color change!", ex, LOGGER);
             }
         });
         bodyPane.getChildren().add(colorChooser);
-        
+
     }
 
     @Override
@@ -91,35 +90,34 @@ public class LocationPane extends AbstractUnitPane<LocationRemote, LocationData>
         PowerState.State state = PowerState.State.UNKNOWN;
         try {
             state = getUnitRemote().getData().getPowerState().getValue();
-        } catch (CouldNotPerformException e) {
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.DEBUG);
+        } catch (CouldNotPerformException ex) {
+            ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.DEBUG);
         }
 
         // detect color
         Color color;
         try {
             color = JFXColorToHSBColorTransformer.transform(getData().getColorState().getColor().getHsbColor());
-        } catch (CouldNotPerformException e) {
+        } catch (CouldNotPerformException ex) {
             color = Color.TRANSPARENT;
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.DEBUG);
+            ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.DEBUG);
         }
-        
+
 //
 //        if (colorChooser != null) {
 //            System.out.println("set color");
 //            colorChooser.setSelectedColor(color);
 //        }
-
         switch (state) {
             case OFF:
                 getIcon().setBackgroundIconColor(Color.TRANSPARENT);
                 setInfoText("lightOff");
-                primaryActivationProperty().setValue(Boolean.FALSE);
+                setPrimaryActivationWithoutNotification(Boolean.FALSE);
                 break;
             case ON:
                 getIcon().setBackgroundIconColor(color);
                 setInfoText("lightOn");
-                primaryActivationProperty().setValue(Boolean.TRUE);
+                setPrimaryActivationWithoutNotification(Boolean.TRUE);
                 break;
             default:
                 setInfoText("unknown");
@@ -129,7 +127,7 @@ public class LocationPane extends AbstractUnitPane<LocationRemote, LocationData>
 
     @Override
     protected Future applyPrimaryActivationUpdate(final boolean activation) throws CouldNotPerformException {
-        
+
         return (activation) ? getUnitRemote().setPowerState(PowerState.State.ON) : getUnitRemote().setPowerState(PowerState.State.OFF);
     }
 }

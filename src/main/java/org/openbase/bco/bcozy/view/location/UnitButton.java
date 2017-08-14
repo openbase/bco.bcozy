@@ -37,25 +37,25 @@ public class UnitButton extends Pane {
     private final double DEFAULT_ICON_SIZE = 8.0;
     UnitRemote<? extends GeneratedMessage> unitRemote;
 
-    /**
-     * Creates a button with suitable unit symbol
-     *
-     * @param config config of the remote unit
-     */
-    // LocationRemote unit = Units.getUnit("locaction unit id", true, Units.LOCATION);
-    //   unit.getUnits(UnitTemplateType.UnitTemplate.UnitType.UNKNOWN, true, unitRemoteClass);
-    /*public UnitButton(UnitConfig config)  {
-           
-        try {                        
-            AbstractUnitPane content;
-            content = UnitPaneFactoryImpl.getInstance().newInitializedInstance(config);
-            content.setDisplayMode(DisplayMode.ICON_ONLY);
-            this.getChildren().add(content);
-        } catch (CouldNotPerformException | InterruptedException ex) {
-            Logger.getLogger(UnitButton.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-    }*/
+//    /**
+//     * Creates a button with suitable unit symbol
+//     *
+//     * @param config config of the remote unit
+//     */
+//     LocationRemote unit = Units.getUnit("locaction unit id", true, Units.LOCATION);
+//       unit.getUnits(UnitTemplateType.UnitTemplate.UnitType.UNKNOWN, true, unitRemoteClass);
+//    public UnitButton(UnitConfig config)  {
+//           
+//        try {                        
+//            AbstractUnitPane content;
+//            content = UnitPaneFactoryImpl.getInstance().newInitializedInstance(config);
+//            content.setDisplayMode(DisplayMode.ICON_ONLY);
+//            this.getChildren().add(content);
+//        } catch (CouldNotPerformException | InterruptedException ex) {
+//            Logger.getLogger(UnitButton.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        
+//    }
 
     public UnitButton(UnitRemote<? extends GeneratedMessage> u) {
         try {                                 
@@ -93,13 +93,13 @@ public class UnitButton extends Pane {
             } catch (CouldNotPerformException ex) {
                 Logger.getLogger(UnitButton.class.getName()).log(Level.SEVERE, null, ex);
             }
-            cmItem1.setOnAction((ActionEvent e) -> {
+            cmItem1.setOnAction((ActionEvent ex) -> {
                 //
             });
             cm.getItems().add(cmItem1);
-            this.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent e) -> {
+            this.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent ex) -> {
                 if (e.getButton() == MouseButton.SECONDARY) {
-                    cm.show(this.getParent(), e.getScreenX(), e.getScreenY());
+                    cm.show(this.getParent(), ex.getScreenX(), ex.getScreenY());
                 }
             });
  

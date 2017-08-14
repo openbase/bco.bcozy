@@ -55,20 +55,20 @@ public class LightPane extends AbstractUnitPane<LightRemote, LightData> {
         PowerState.State state = PowerState.State.UNKNOWN;
         try {
             state = getUnitRemote().getData().getPowerState().getValue();
-        } catch (CouldNotPerformException e) {
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.DEBUG);
+        } catch (CouldNotPerformException ex) {
+            ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.DEBUG);
         }
-        
+
         switch (state) {
             case OFF:
                 getIcon().setBackgroundIconColor(Constants.LIGHTBULB_OFF_COLOR);
                 setInfoText("lightOff");
-                primaryActivationProperty().setValue(Boolean.FALSE);
+                setPrimaryActivationWithoutNotification(Boolean.FALSE);
                 break;
             case ON:
                 getIcon().setBackgroundIconColor(Color.CORNSILK);
                 setInfoText("lightOn");
-                primaryActivationProperty().setValue(Boolean.TRUE);
+                setPrimaryActivationWithoutNotification(Boolean.TRUE);
                 break;
             default:
                 setInfoText("unknown");

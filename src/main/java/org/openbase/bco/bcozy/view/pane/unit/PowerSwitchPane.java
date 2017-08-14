@@ -50,18 +50,18 @@ public class PowerSwitchPane extends AbstractUnitPane<PowerSwitchRemote, PowerSw
 
         try {
             state = getUnitRemote().getData().getPowerState().getValue();
-        } catch (CouldNotPerformException e) {
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.DEBUG);
+        } catch (CouldNotPerformException ex) {
+            ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.DEBUG);
         }
 
         switch (state) {
             case ON:
                 getIcon().setForegroundIconColor(Color.GREEN);
-                primaryActivationProperty().setValue(Boolean.TRUE);
+                setPrimaryActivationWithoutNotification(Boolean.TRUE);
                 break;
             case OFF:
                 getIcon().setForegroundIconColor(Color.BLACK);
-                primaryActivationProperty().setValue(Boolean.FALSE);
+                setPrimaryActivationWithoutNotification(Boolean.FALSE);
             default:
                 break;
         }

@@ -19,6 +19,7 @@
 package org.openbase.bco.bcozy.view;
 
 import javafx.beans.property.ObjectProperty;
+import de.jensd.fx.glyphs.materialicons.MaterialIcon;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -26,6 +27,7 @@ import javafx.beans.property.StringProperty;
 import javafx.geometry.BoundingBox;
 import javafx.scene.layout.BorderPane;
 import org.openbase.bco.bcozy.controller.CenterPaneController;
+import javafx.stage.Stage;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.iface.DefaultInitializable;
@@ -42,7 +44,7 @@ public class ForegroundPane extends BorderPane implements DefaultInitializable {
     private final MenuHeader menuHeader;
     private final InfoFooter infoFooter;
     private final ObjectProperty<CenterPaneController.State> appState;
-    
+
     /**
      * Constructor for the ForegroundPane.
      *
@@ -52,9 +54,10 @@ public class ForegroundPane extends BorderPane implements DefaultInitializable {
     public ForegroundPane(final double height, final double width) throws InterruptedException {
         this.mainMenu = new MainMenu(height - 150, 300);
         this.contextMenu = new ContextMenu(height - 150, 300);
+        this.contextMenu.getFullscreen().setOnAction(event -> setMaximizeAction());
         this.menuHeader = new MenuHeader(30, width);
         this.infoFooter = new InfoFooter(20, width);
-        this.centerPane = new CenterPane();
+        this.centerPane = new CenterPane(height - 150);
 
         //this.setTop(this.menuHeader);
         this.setLeft(this.mainMenu);
@@ -63,7 +66,7 @@ public class ForegroundPane extends BorderPane implements DefaultInitializable {
         this.setCenter(this.centerPane);
         this.setTop(this.menuHeader);
         this.setPickOnBounds(false);
-        
+
         appState = new SimpleObjectProperty<>(CenterPaneController.State.SETTINGS);
         this.appState.bind(centerPane.appStateProperty);
     }
@@ -132,5 +135,17 @@ public class ForegroundPane extends BorderPane implements DefaultInitializable {
      */
     public ReadOnlyDoubleProperty getMainMenuWidthProperty() {
         return this.mainMenu.widthProperty();
+    }
+
+
+    private void setMaximizeAction() {
+        final Stage stage = (Stage) contextMenu.getScene().getWindow();
+        if (stage.isFullScreen()) {
+            contextMenu.getFullscreen().changeIcon(MaterialIcon.FULLSCREEN);
+            stage.setFullScreen(false);
+        } else {
+            contextMenu.getFullscreen().changeIcon(MaterialIcon.FULLSCREEN_EXIT);
+            stage.setFullScreen(true);
+        }
     }
 }

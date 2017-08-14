@@ -18,21 +18,22 @@
  */
 package org.openbase.bco.bcozy.controller;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import org.openbase.bco.bcozy.BCozy;
-import org.openbase.bco.bcozy.model.LanguageSelection;
-import org.openbase.bco.bcozy.view.Constants;
+import javafx.application.Platform;
 import org.openbase.bco.bcozy.view.ForegroundPane;
 import org.openbase.bco.bcozy.view.mainmenupanes.AvailableUsersPane;
 import org.openbase.bco.bcozy.view.mainmenupanes.ConnectionPane;
 import org.openbase.bco.bcozy.view.mainmenupanes.LoginPane;
 import org.openbase.bco.bcozy.view.mainmenupanes.SettingsPane;
+import org.openbase.bco.authentication.lib.SessionManager;
 
-import java.util.Locale;
-import java.util.ResourceBundle;
+import org.openbase.bco.registry.remote.Registries;
+import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.InvalidStateException;
+import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.openbase.jul.schedule.GlobalCachedExecutorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rst.domotic.unit.UnitConfigType;
 
 /**
  * Created by hoestreich on 11/24/15.
@@ -40,24 +41,30 @@ import org.slf4j.LoggerFactory;
 public class MainMenuController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MainMenuController.class);
-    
-    private final LoginPane loginPane;
-    private final SettingsPane settingsPane;
-    private final AvailableUsersPane availableUsersPane;
-    private final ConnectionPane connectionPane;
+
+    private LoginPane loginPane;
+    private SettingsPane settingsPane;
+    private AvailableUsersPane availableUsersPane;
+    private ConnectionPane connectionPane;
+
+    public MainMenuController() {
+    }
 
     /**
      * Constructor for the MainMenuController.
+     *
      * @param foregroundPane The foregroundPane allows to access all necessary gui elements
      */
     public MainMenuController(final ForegroundPane foregroundPane) {
+        init(foregroundPane);
+    }
+
+    public void init(final ForegroundPane foregroundPane) {
         loginPane = foregroundPane.getMainMenu().getLoginPane();
-        settingsPane = foregroundPane.getMainMenu().getSettingsPane();
+        settingsPane = foregroundPane.getCenterPane().getSettingsPane();
         availableUsersPane = foregroundPane.getMainMenu().getAvailableUsersPanePane();
         connectionPane = foregroundPane.getMainMenu().getConnectionPane();
-        loginPane.getStartLoginBtn().setOnAction(event -> startLogin());
         loginPane.getLoginBtn().setOnAction(event -> loginUser());
-        loginPane.getBackBtn().setOnAction(event -> resetLogin());
         loginPane.getLogoutBtn().setOnAction(event -> resetLogin());
         loginPane.getPasswordField().setOnAction(event -> loginUser());
         loginPane.getNameTxt().setOnAction(event -> loginUser());
@@ -67,15 +74,10 @@ public class MainMenuController {
         settingsPane.getStatusIcon().setOnMouseClicked(event -> showHideMainMenu(foregroundPane));
         availableUsersPane.getStatusIcon().setOnMouseClicked(event -> showHideMainMenu(foregroundPane));
         connectionPane.getStatusIcon().setOnMouseClicked(event -> showHideMainMenu(foregroundPane));
-        settingsPane.getThemeChoice().setOnAction(event -> chooseTheme());
-        settingsPane.getLanguageChoice().setOnAction(event -> chooseLanguage());
-        //Necessary to ensure that the first change is not missed by the ChangeListener
-        settingsPane.getThemeChoice().getSelectionModel().select(0);
-        settingsPane.getLanguageChoice().getSelectionModel().select(0);
 
         foregroundPane.getMainMenu().getMainMenuFloatingButton().setOnAction(event -> showHideMainMenu(foregroundPane));
-    }
 
+    }
 
     private void startLogin() {
         loginPane.setState(LoginPane.State.LOGINACTIVE);
@@ -88,27 +90,63 @@ public class MainMenuController {
     }
 
     private void loginUser() {
-        //TODO: Initiate Login with UserRegistry
-        if (loginPane.getNameTxt().getText().equals("Admin")
-                && loginPane.getPasswordField().getText().equals("")) {
-            loginPane.resetUserOrPasswordWrong();
-            loginPane.getLoggedInUserLbl().setText(loginPane.getNameTxt().getText());
-            loginPane.getNameTxt().setText("");
-            loginPane.getPasswordField().setText("");
-            loginPane.setState(LoginPane.State.LOGOUT);
-        } else {
-            loginPane.indicateUserOrPasswordWrong();
+        GlobalCachedExecutorService.submit(() -> {
+            try {
+                loginUserAsync();
+            } catch (InterruptedException ex) {
+                ExceptionPrinter.printHistory("Could not login!", ex, LOGGER);
+            }
+        });
+    }
+
+    private void loginUserAsync() throws InterruptedException {
+        SessionManager sessionManager = SessionManager.getInstance();
+
+        try {
+
+            // sessionManager.login(Registries.getUserRegistry().getUserIdByUserName(loginPane.getNameTxt().getText()),
+            // ##### reimplemented because "getUserIdByUserName" not included in current master api.
+            final String username = loginPane.getNameTxt().getText();
+            String userUnitId = null;
+            for (final UnitConfigType.UnitConfig userUnitConfig : Registries.getUserRegistry().getUserConfigs()) {
+                if (userUnitConfig.getUserConfig().getUserName().equals(username)) {
+                    userUnitId = userUnitConfig.getId();
+                }
+            }
+
+            if (userUnitId == null) {
+                throw new InvalidStateException("username does not exists!");
+            }
+            // #####
+
+            sessionManager.login(userUnitId, loginPane.getPasswordField().getText());
+
+            Platform.runLater(() -> {
+                loginPane.resetUserOrPasswordWrong();
+                loginPane.getLoggedInUserLbl().setText(loginPane.getNameTxt().getText());
+                loginPane.getNameTxt().setText("");
+                loginPane.getPasswordField().setText("");
+                loginPane.setState(LoginPane.State.LOGOUT);
+            });
+        } catch (CouldNotPerformException ex) {
+            Platform.runLater(() -> {
+                loginPane.indicateUserOrPasswordWrong();
+            });
+        } catch (java.lang.OutOfMemoryError error) {
+            LOGGER.error(error.getMessage());
         }
     }
 
     private void resetLogin() {
+        SessionManager.getInstance().logout();
+
         if (loginPane.getInputWrongLbl().isVisible()) {
             loginPane.resetUserOrPasswordWrong();
         }
         loginPane.getNameTxt().setText("");
         loginPane.getPasswordField().setText("");
         loginPane.getLoggedInUserLbl().setText("");
-        loginPane.setState(LoginPane.State.LOGIN);
+        loginPane.setState(LoginPane.State.LOGINACTIVE);
     }
 
     private void showHideMainMenu(final ForegroundPane foregroundPane) {
@@ -121,40 +159,4 @@ public class MainMenuController {
 
     }
 
-    private void chooseTheme() {
-        final ResourceBundle languageBundle = ResourceBundle
-                .getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
-
-        settingsPane.getThemeChoice().getSelectionModel().selectedIndexProperty()
-                .addListener(new ChangeListener<Number>() {
-
-            @Override
-            public void changed(final ObservableValue<? extends Number> observableValue, final Number number,
-                                final Number number2) {
-                if (settingsPane.getAvailableThemes().get(number2.intValue())
-                        .equals(languageBundle.getString(Constants.LIGHT_THEME_CSS_NAME))) {
-                    BCozy.changeTheme(Constants.LIGHT_THEME_CSS);
-                } else if (settingsPane.getAvailableThemes().get(number2.intValue())
-                        .equals(languageBundle.getString(Constants.DARK_THEME_CSS_NAME))) {
-                    BCozy.changeTheme(Constants.DARK_THEME_CSS);
-                }
-            }
-        });
-    }
-
-    private void chooseLanguage() {
-        settingsPane.getLanguageChoice().getSelectionModel().selectedIndexProperty()
-                .addListener(new ChangeListener<Number>() {
-
-                    @Override
-                    public void changed(final ObservableValue<? extends Number> observableValue, final Number number,
-                                        final Number number2) {
-                        if (settingsPane.getAvailableLanguages().get(number2.intValue()).equals("English")) {
-                            LanguageSelection.getInstance().setSelectedLocale(new Locale("en", "US"));
-                        } else if (settingsPane.getAvailableLanguages().get(number2.intValue()).equals("Deutsch")) {
-                            LanguageSelection.getInstance().setSelectedLocale(new Locale("de", "DE"));
-                        }
-                    }
-                });
-    }
 }

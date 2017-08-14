@@ -19,25 +19,31 @@
 package org.openbase.bco.bcozy;
 
 import com.guigarage.responsive.ResponsiveHandler;
+
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.net.URL;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.concurrent.Task;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import org.openbase.bco.bcozy.controller.CenterPaneController;
-import org.openbase.bco.bcozy.controller.ContextMenuController;
-import org.openbase.bco.bcozy.controller.LocationPaneController;
-import org.openbase.bco.bcozy.controller.MainMenuController;
-import org.openbase.bco.bcozy.controller.UnitsPaneController;
+import org.openbase.bco.bcozy.controller.*;
 import org.openbase.bco.bcozy.view.BackgroundPane;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ForegroundPane;
 import org.openbase.bco.bcozy.view.ImageViewProvider;
 import org.openbase.bco.bcozy.view.InfoPane;
 import org.openbase.bco.registry.remote.Registries;
+import org.openbase.jps.core.JPService;
 import org.openbase.jul.exception.FatalImplementationErrorException;
 import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.exception.InstantiationException;
@@ -78,7 +84,7 @@ public class BCozy extends Application {
     private UnitsPaneController unitsPaneController;
     private Future initTask;
 
-   
+    private Scene mainScene;
 
     @Override
     public void start(final Stage primaryStage) throws InitializationException, InterruptedException, InstantiationException {
@@ -102,7 +108,8 @@ public class BCozy extends Application {
 
         primaryStage.setMinWidth(foregroundPane.getMainMenu().getMinWidth() + foregroundPane.getContextMenu().getMinWidth() + 300);
         primaryStage.setHeight(screenHeight);
-        primaryStage.setScene(new Scene(root, screenWidth, screenHeight));
+        mainScene = new Scene(root, screenWidth, screenHeight);
+        primaryStage.setScene(mainScene);
         primaryStage.getScene().getStylesheets().addAll(Constants.DEFAULT_CSS, Constants.LIGHT_THEME_CSS);
 
         new MainMenuController(foregroundPane);
@@ -111,7 +118,7 @@ public class BCozy extends Application {
         contextMenuController = new ContextMenuController(foregroundPane, backgroundPane.getLocationPane());
         locationPaneController = new LocationPaneController(backgroundPane.getLocationPane());
         unitsPaneController = new UnitsPaneController(backgroundPane.getUnitsPane(), backgroundPane.getLocationPane());
-       
+
         ResponsiveHandler.addResponsiveToWindow(primaryStage);
         primaryStage.show();
 
@@ -134,6 +141,7 @@ public class BCozy extends Application {
                     infoPane.setTextLabelIdentifier("connectLocationRemote");
                     locationPaneController.connectLocationRemote();
                     unitsPaneController.connectUnitRemote();
+
                     return null;
                 } catch (Exception ex) {
                     infoPane.setTextLabelIdentifier("errorDuringStartup");
@@ -154,18 +162,29 @@ public class BCozy extends Application {
 
     @Override
     public void stop() {
+        boolean errorOccured = false;
+
         if (initTask != null && !initTask.isDone()) {
             initTask.cancel(true);
             try {
                 initTask.get();
-            } catch (InterruptedException | ExecutionException e) {
-                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+            } catch (InterruptedException | ExecutionException ex) {
+                ExceptionPrinter.printHistory("Initialization phase canceled because of application shutdown.", ex, LOGGER, LogLevel.INFO);
+                errorOccured = true;
+            } catch (CancellationException ex) {
+                ExceptionPrinter.printHistory("Initialization phase failed but application shutdown was initialized anyway.", ex, LOGGER, LogLevel.WARN);
             }
         }
         try {
             super.stop();
-        } catch (Exception e) { //NOPMD
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+        } catch (Exception ex) { //NOPMD
+            ExceptionPrinter.printHistory("Could not stop " + JPService.getApplicationName() + "!", ex, LOGGER);
+            errorOccured = true;
+        }
+
+        // Call system exit to trigger all shutdown deamons.
+        if (errorOccured) {
+            System.exit(255);
         }
         System.exit(0);
     }
@@ -234,4 +253,5 @@ public class BCozy extends Application {
     private static void adjustToExtremeSmallDevice() {
         LOGGER.info("Detected Extreme Small Device");
     }
+
 }

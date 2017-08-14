@@ -19,11 +19,7 @@
 package org.openbase.bco.bcozy.view.pane.unit;
 
 import com.google.protobuf.GeneratedMessage;
-import java.util.concurrent.Future;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.application.Platform;
-import javafx.beans.value.ObservableValue;
 import org.openbase.bco.bcozy.view.generic.ExpandableWidgedPane;
 import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
 import org.openbase.bco.dal.remote.unit.Units;
@@ -52,8 +48,6 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
     private final Observer<UnitConfig> unitConfigObserver;
     private final Observer<D> unitDataObserver;
     private final Observer<ConnectionState> unitConnectionObserver;
-
-    private Future currentTask;
 
     /**
      * Constructor for the UnitPane.
@@ -100,18 +94,6 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
                 });
             }
         };
-
-        primaryActivationProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean lastActivation, Boolean newActivation) -> {
-            try {
-                // cancel all already running tasks.
-                if (currentTask != null) {
-                    currentTask.cancel(true);
-                }
-                currentTask = applyPrimaryActivationUpdate(newActivation);
-            } catch (CouldNotPerformException ex) {
-                Logger.getLogger(AbstractUnitPane.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        });
     }
 
     /**
@@ -271,16 +253,5 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
     @Override
     public String toString() {
         return getClass().getSimpleName() + "[" + (unitRemote != null ? unitRemote : "?") + "]";
-    }
-
-    /**
-     * Overwrite this method to get informed about main function updates.
-     *
-     * @param activation a boolean value which refers to the current function activation.
-     * @return should return a future object of the triggered tasks or null if no task was triggered.
-     * @throws CouldNotPerformException can be thrown if the update fails.
-     */
-    protected Future applyPrimaryActivationUpdate(final boolean activation) throws CouldNotPerformException {
-        return null;
     }
 }
