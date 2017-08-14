@@ -18,12 +18,10 @@
  */
 package org.openbase.bco.bcozy.view;
 
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import de.jensd.fx.glyphs.materialicons.MaterialIcon;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.layout.AnchorPane;
@@ -32,13 +30,14 @@ import javafx.scene.layout.StackPane;
 import org.openbase.bco.bcozy.controller.CenterPaneController;
 import org.openbase.bco.bcozy.controller.SettingsController;
 import org.openbase.bco.bcozy.view.mainmenupanes.SettingsPane;
-import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.net.URL;
+import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.NotAvailableException;
+import org.openbase.jul.exception.printer.ExceptionPrinter;
 
 /**
  * Created by hoestreich on 11/26/15.
@@ -52,31 +51,27 @@ public class CenterPane extends StackPane {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(CenterPane.class);
 
-
     private SettingsPane settingsPane;
-    private Pane settingsMenu;
-    private Pane permissionPaneParent;
+    private final Pane settingsMenu;
 
-    public ObjectProperty<CenterPaneController.State> appStateProperty;
+    public final ObjectProperty<CenterPaneController.State> appStateProperty;
 
     /**
      * Constructor for the center pane.
      */
-    public CenterPane(double height) {
+    public CenterPane(final double height) {
 
         appStateProperty = new SimpleObjectProperty<>(CenterPaneController.State.SETTINGS);
 
         // Initializing components
         this.settingsMenu = loadSettingsMenu(height);
 
-        FloatingPopUp viewModes = new FloatingPopUp(Pos.BOTTOM_RIGHT);
-        viewModes.addParentElement(MaterialIcon.SETTINGS, (Runnable) null); //TODO: Add EventHandler when needed
+        final FloatingPopUp viewModes = new FloatingPopUp(Pos.BOTTOM_RIGHT);
+        viewModes.addParentElement(MaterialIcon.WEEKEND, (Runnable) null); //TODO: Add EventHandler when needed
         viewModes.addElement(MaterialDesignIcon.THERMOMETER_LINES, (Runnable) null);//TODO: Add EventHandler when needed
         viewModes.addElement(MaterialIcon.VISIBILITY, (Runnable) null);//TODO: Add EventHandler when needed
 
-
-        FloatingButton settingsBtn = new FloatingButton(new SVGIcon(MaterialDesignIcon.DOTS_VERTICAL , Constants.MIDDLE_ICON,
-                true));
+        final FloatingButton settingsBtn = new FloatingButton(new SVGIcon(MaterialDesignIcon.SETTINGS, Constants.MIDDLE_ICON, true));
 
         this.setAlignment(settingsBtn, Pos.TOP_RIGHT);
 
@@ -85,36 +80,32 @@ public class CenterPane extends StackPane {
         // Styling components with CSS
         this.getStyleClass().addAll("padding-small");
 
-
         this.setPickOnBounds(false);
         this.getChildren().addAll(viewModes, settingsBtn);
 
         this.setMinHeight(height);
         this.setPrefHeight(height);
-
     }
-
 
     private void toggleSettings() {
         if (this.getChildren().contains(settingsMenu)) {
             this.getChildren().remove(settingsMenu);
         } else {
             this.getChildren().add(0, settingsMenu);
-
         }
     }
 
-    private Pane loadSettingsMenu(double height) {
+    private Pane loadSettingsMenu(final double height) {
         try {
-            URL url = getClass().getClassLoader().getResource("SettingsMenu.fxml");
+            final URL url = getClass().getClassLoader().getResource("SettingsMenu.fxml");
             if (url == null) {
-                throw new RuntimeException("SettingsMenu.fxml not found");
+                throw new NotAvailableException("SettingsMenu.fxml");
             }
 
             FXMLLoader loader = new FXMLLoader(url);
             AnchorPane anchorPane = loader.load();
 
-            SettingsController settingsController = (SettingsController) loader.getController();
+            final SettingsController settingsController = (SettingsController) loader.getController();
             settingsPane = settingsController.getSettingsPane();
 
             this.setMinHeight(height);
@@ -125,16 +116,13 @@ public class CenterPane extends StackPane {
             anchorPane.setPrefHeight(height);
 
             return anchorPane;
-        } catch (IOException ex) {
-            ex.printStackTrace();
+        } catch (final CouldNotPerformException | IOException ex) {
             ExceptionPrinter.printHistory("Content could not be loaded", ex, LOGGER);
-            throw new UncheckedIOException(ex);
+            return new Pane(new ObserverLabel("unavailable"));
         }
     }
-
 
     public SettingsPane getSettingsPane() {
         return settingsPane;
     }
-
 }

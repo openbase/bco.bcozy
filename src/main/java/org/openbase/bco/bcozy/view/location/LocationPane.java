@@ -264,7 +264,7 @@ public final class LocationPane extends Pane {
      */
     public void addConnection(final UnitConfig connectionUnitConfig, final List<Point2D> vertices) throws CouldNotPerformException, InterruptedException {
 
-        try {
+         try {
             // Fill the list of vertices into an array of points
             double[] points = new double[vertices.size() * 2];
             for (int i = 0; i < vertices.size(); i++) {
