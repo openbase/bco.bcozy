@@ -46,7 +46,8 @@ public class SessionManagerFacadeImpl implements SessionManagerFacade {
 
         try {
             SessionManager.getInstance().registerUser(
-                    unitConfig.getUserConfig().getUserName()/*unitConfig.getId()*/,
+//                    unitConfig.getUserConfig().getUserName()/*unitConfig.getId()*/,
+                    unitConfig.getId(),
                     plainPassword,
                     asAdmin);
         } catch (CouldNotPerformException ex) {
@@ -65,7 +66,7 @@ public class SessionManagerFacadeImpl implements SessionManagerFacade {
                 tryRemoveFromGroup(group, unitConfig.getId());
             }
             // ... from the credential storage...
-            SessionManager.getInstance().removeUser(unitConfig.getUserConfig().getUserName()/*unitConfig.getId()*/);
+            SessionManager.getInstance().removeUser(unitConfig.getId()/*unitConfig.getId()*/);
 
             // ... and from the registry.
             Registries.getUserRegistry().removeUserConfig(unitConfig);
