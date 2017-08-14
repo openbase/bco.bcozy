@@ -58,9 +58,7 @@ public class SessionManagerFacadeImpl implements SessionManagerFacade {
         return true;
     }
 
-    private UnitConfigType.UnitConfig tryCreateUser(NewUser user) throws CouldNotPerformException,
-            InterruptedException, ExecutionException, TimeoutException {
-
+    private UnitConfigType.UnitConfig buildUser(NewUser user) {
         UnitConfigType.UnitConfig.Builder builder = UnitConfigType.UnitConfig.newBuilder();
         UserConfigType.UserConfig.Builder userConfigBuilder = UserConfigType.UserConfig.newBuilder();
 
@@ -73,6 +71,14 @@ public class SessionManagerFacadeImpl implements SessionManagerFacade {
                 .setUserConfig(userConfigBuilder.build())
                 .setType(UnitTemplateType.UnitTemplate.UnitType.USER)//TODO: right way?
                 .build();
+
+        return unitConfig;
+    }
+
+    private UnitConfigType.UnitConfig tryCreateUser(NewUser user) throws CouldNotPerformException,
+            InterruptedException, ExecutionException, TimeoutException {
+
+        UnitConfigType.UnitConfig unitConfig = buildUser(user);
 
         Future<UnitConfigType.UnitConfig> registeredUser = Registries.getUserRegistry().registerUserConfig(unitConfig);
 

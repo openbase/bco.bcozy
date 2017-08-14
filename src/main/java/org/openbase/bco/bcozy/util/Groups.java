@@ -1,5 +1,6 @@
 package org.openbase.bco.bcozy.util;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.util.StringConverter;
@@ -38,8 +39,12 @@ public final class Groups {
 
     private static void setGroups(List<UnitConfigType.UnitConfig> newGroups,
                                   ObservableList<UnitConfigType.UnitConfig> groups) {
-        groups.clear();
-        groups.addAll(newGroups);
+
+        Platform.runLater(() -> {
+            groups.clear();
+            groups.addAll(newGroups);
+        });
+
     }
 
     public static StringConverter<UnitConfigType.UnitConfig> stringConverter(

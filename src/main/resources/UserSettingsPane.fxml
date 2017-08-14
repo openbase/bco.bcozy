@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import org.controlsfx.control.textfield.CustomTextField?>
+<?import org.openbase.bco.bcozy.view.ObserverButton?>
+<?import org.openbase.bco.bcozy.view.ObserverLabel?>
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.openbase.bco.bcozy.controller.UserSettingsController" fx:id="root"
+      styleClass="padding-xtra-large"
+      spacing="10">
+    <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">username</ObserverLabel>
+    <CustomTextField fx:id="changeUsername" prefWidth="${root.width}"/>
+    <HBox spacing="30.0">
+        <VBox>
+            <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">firstName</ObserverLabel>
+            <CustomTextField fx:id="changeFirstname" prefWidth="${root.width}"/>
+        </VBox>
+        <VBox>
+            <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">lastName</ObserverLabel>
+            <CustomTextField fx:id="changeLastname" prefWidth="${root.width}"/>
+        </VBox>
+    </HBox>
+    <HBox spacing="30.0">
+        <VBox>
+            <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">mail</ObserverLabel>
+            <CustomTextField fx:id="changeMail" prefWidth="${root.width}"/>
+        </VBox>
+        <VBox>
+            <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">phone</ObserverLabel>
+            <CustomTextField fx:id="changePhone" prefWidth="${root.width}"/>
+        </VBox>
+    </HBox>
+    <HBox spacing="30.0">
+        <VBox spacing="10.0">
+            <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">language</ObserverLabel>
+            <ChoiceBox fx:id="languageChoice" prefWidth="${root.width}"/>
+        </VBox>
+        <VBox spacing="10.0">
+            <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">theme</ObserverLabel>
+            <ChoiceBox fx:id="themeChoice" prefWidth="${root.width}"/>
+        </VBox>
+    </HBox>
+</VBox>

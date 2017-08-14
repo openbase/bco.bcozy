@@ -18,12 +18,10 @@
  */
 package org.openbase.bco.bcozy.view;
 
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import de.jensd.fx.glyphs.materialicons.MaterialIcon;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.layout.AnchorPane;
@@ -31,7 +29,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import org.openbase.bco.bcozy.controller.CenterPaneController;
 import org.openbase.bco.bcozy.controller.SettingsController;
-import org.openbase.bco.bcozy.view.mainmenupanes.SettingsPane;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,9 +50,7 @@ public class CenterPane extends StackPane {
     private static final Logger LOGGER = LoggerFactory.getLogger(CenterPane.class);
 
 
-    private SettingsPane settingsPane;
     private Pane settingsMenu;
-    private Pane permissionPaneParent;
 
     public ObjectProperty<CenterPaneController.State> appStateProperty;
 
@@ -115,7 +110,6 @@ public class CenterPane extends StackPane {
             AnchorPane anchorPane = loader.load();
 
             SettingsController settingsController = (SettingsController) loader.getController();
-            settingsPane = settingsController.getSettingsPane();
 
             this.setMinHeight(height);
             this.setPrefHeight(height);
@@ -132,9 +126,5 @@ public class CenterPane extends StackPane {
         }
     }
 
-
-    public SettingsPane getSettingsPane() {
-        return settingsPane;
-    }
 
 }

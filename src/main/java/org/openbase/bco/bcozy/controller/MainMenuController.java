@@ -19,33 +19,14 @@
 package org.openbase.bco.bcozy.controller;
 
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
-import javafx.scene.text.Text;
-import org.openbase.bco.bcozy.BCozy;
-import org.openbase.bco.bcozy.model.LanguageSelection;
-import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ForegroundPane;
 import org.openbase.bco.bcozy.view.mainmenupanes.AvailableUsersPane;
 import org.openbase.bco.bcozy.view.mainmenupanes.ConnectionPane;
 import org.openbase.bco.bcozy.view.mainmenupanes.LoginPane;
-import org.openbase.bco.bcozy.view.mainmenupanes.SettingsPane;
 import org.openbase.bco.authentication.lib.SessionManager;
 
-import java.io.StreamCorruptedException;
-import java.util.Locale;
-import java.util.ResourceBundle;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
-
-import org.openbase.bco.dal.remote.unit.Units;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
-import org.openbase.jul.exception.NotAvailableException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +38,6 @@ public class MainMenuController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MainMenuController.class);
 
     private LoginPane loginPane;
-    private SettingsPane settingsPane;
     private AvailableUsersPane availableUsersPane;
     private ConnectionPane connectionPane;
 
@@ -75,7 +55,6 @@ public class MainMenuController {
 
     public void init(final ForegroundPane foregroundPane) {
         loginPane = foregroundPane.getMainMenu().getLoginPane();
-        settingsPane = foregroundPane.getCenterPane().getSettingsPane();
         availableUsersPane = foregroundPane.getMainMenu().getAvailableUsersPanePane();
         connectionPane = foregroundPane.getMainMenu().getConnectionPane();
         loginPane.getLoginBtn().setOnAction(event -> loginUser());
@@ -85,7 +64,6 @@ public class MainMenuController {
         loginPane.getNameTxt().setOnKeyTyped(event -> resetWrongInput());
         loginPane.getPasswordField().setOnKeyTyped(event -> resetWrongInput());
         loginPane.getStatusIcon().setOnMouseClicked(event -> showHideMainMenu(foregroundPane));
-        settingsPane.getStatusIcon().setOnMouseClicked(event -> showHideMainMenu(foregroundPane));
         availableUsersPane.getStatusIcon().setOnMouseClicked(event -> showHideMainMenu(foregroundPane));
         connectionPane.getStatusIcon().setOnMouseClicked(event -> showHideMainMenu(foregroundPane));
 
