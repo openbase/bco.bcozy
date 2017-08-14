@@ -22,10 +22,7 @@ import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -34,14 +31,14 @@ import org.openbase.bco.bcozy.view.ObserverButton;
 import org.openbase.bco.bcozy.view.ObserverLabel;
 import org.openbase.bco.bcozy.view.SVGIcon;
 
+
 /**
- * Created by hoestreich on 11/24/15.
+ * @author hoestreich
+ * @author vdasilva
  */
 public class LoginPane extends PaneElement {
 
-    private final Button startLoginBtn;
     private final ObserverButton loginBtn;
-    private final Button backBtn;
     private final ObserverButton logoutBtn;
     private final TextField nameTxt;
     private final PasswordField passwordField;
@@ -51,19 +48,19 @@ public class LoginPane extends PaneElement {
     private final VBox logoutLayout;
     private final ObserverLabel nameLbl;
     private final ObserverLabel pwLbl;
-    private final BorderPane statusIcon;
+    private final VBox statusIcon;
+
     /**
      * Enum to control the display state.
      */
-    public enum State { LOGINACTIVE, LOGIN, LOGOUT }
+    public enum State {
+        LOGINACTIVE, LOGOUT
+    }
 
     /**
      * Constructor for the LoginPane.
      */
     public LoginPane() {
-
-        // Case: Before login
-        startLoginBtn = new Button("", new SVGIcon(MaterialDesignIcon.LOGIN, Constants.SMALL_ICON, true));
 
         // Case: Login active
         nameLbl = new ObserverLabel("username");
@@ -74,15 +71,13 @@ public class LoginPane extends PaneElement {
         inputWrongLbl = new ObserverLabel("inputWrong");
         inputWrongLbl.setAlignment(Pos.TOP_LEFT);
         loginBtn = new ObserverButton("login");
+
         final HBox rightAlignLoginButton = new HBox(loginBtn);
         rightAlignLoginButton.setAlignment(Pos.CENTER_RIGHT);
-
-        backBtn = new Button("", new SVGIcon(FontAwesomeIcon.ARROW_LEFT, Constants.EXTRA_SMALL_ICON, true));
 
         loginLayout = new VBox(Constants.INSETS);
         final BorderPane loginFirstLineLayout = new BorderPane();
         loginFirstLineLayout.setLeft(nameLbl);
-        loginFirstLineLayout.setRight(backBtn);
         loginLayout.getStyleClass().clear();
         loginLayout.setAlignment(Pos.BOTTOM_LEFT);
         loginLayout.getChildren().addAll(loginFirstLineLayout, nameTxt, pwLbl, passwordField,
@@ -114,36 +109,27 @@ public class LoginPane extends PaneElement {
         logoutBtn.getStyleClass().add("transparent-button");
         //CHECKSTYLE.ON: MultipleStringLiterals
 
-        this.getChildren().addAll(startLoginBtn);
-        this.statusIcon = new BorderPane(new SVGIcon(MaterialDesignIcon.LOGIN, Constants.MIDDLE_ICON, true));
-    }
+        this.setPrefHeight(100);
+        this.setMaxHeight(100);
 
-    /**
-     * Getter for the startLogin button which starts the user login.
-     * @return instance of the button
-     */
-    public Button getStartLoginBtn() {
-        return startLoginBtn;
+        this.statusIcon = new VBox(new SVGIcon(MaterialDesignIcon.LOGIN, Constants.MIDDLE_ICON, true));
+        setState(State.LOGINACTIVE);
+
     }
 
     /**
      * Getter for the login button which initiates the user login.
+     *
      * @return instance of the button
      */
     public ObserverButton getLoginBtn() {
         return loginBtn;
     }
 
-    /**
-     * Getter for the back button to abort a login.
-     * @return instance of the button
-     */
-    public Button getBackBtn() {
-        return backBtn;
-    }
 
     /**
      * Getter for the name textfield.
+     *
      * @return instance of the textfield
      */
     public TextField getNameTxt() {
@@ -152,6 +138,7 @@ public class LoginPane extends PaneElement {
 
     /**
      * Getter for the passwordfield.
+     *
      * @return instance of the passwordfield
      */
     public PasswordField getPasswordField() {
@@ -160,6 +147,7 @@ public class LoginPane extends PaneElement {
 
     /**
      * Getter for the logoutBtn.
+     *
      * @return instance of the logoutBtn
      */
     public ObserverButton getLogoutBtn() {
@@ -168,6 +156,7 @@ public class LoginPane extends PaneElement {
 
     /**
      * Getter for the inputWrongLabel.
+     *
      * @return instance of the inputWrongLbl
      */
     public ObserverLabel getInputWrongLbl() {
@@ -176,6 +165,7 @@ public class LoginPane extends PaneElement {
 
     /**
      * Getter for the loggedInUserLbl.
+     *
      * @return instance of the loggedInUserLbl
      */
     public Label getLoggedInUserLbl() {
@@ -184,6 +174,7 @@ public class LoginPane extends PaneElement {
 
     /**
      * Getter for the pwLbl.
+     *
      * @return instance of the pwLbl
      */
     public ObserverLabel getPwLbl() {
@@ -192,6 +183,7 @@ public class LoginPane extends PaneElement {
 
     /**
      * Getter for the nameLbl.
+     *
      * @return instance of the nameLbl
      */
     public ObserverLabel getNameLbl() {
@@ -230,6 +222,7 @@ public class LoginPane extends PaneElement {
 
     /**
      * GUI Method to switch the displayed panes.
+     *
      * @param state A state from the defined Enum
      */
     public void setState(final State state) {
@@ -239,28 +232,16 @@ public class LoginPane extends PaneElement {
                 this.getChildren().clear();
                 this.getChildren().addAll(loginLayout);
                 this.statusIcon.getChildren().clear();
-                this.statusIcon.setCenter(new SVGIcon(MaterialDesignIcon.LOGIN, Constants.MIDDLE_ICON, true));
-                break;
-
-            case LOGIN:
-                this.getChildren().clear();
-                this.getChildren().addAll(startLoginBtn);
-                this.statusIcon.getChildren();
-                this.statusIcon.setCenter(new SVGIcon(MaterialDesignIcon.LOGIN, Constants.MIDDLE_ICON, true));
+                this.statusIcon.getChildren().addAll(new SVGIcon(MaterialDesignIcon.LOGIN, Constants.MIDDLE_ICON,
+                        true));
                 break;
 
             case LOGOUT:
                 this.getChildren().clear();
                 this.getChildren().addAll(logoutLayout);
-                this.statusIcon.getChildren();
-                this.statusIcon.setCenter(new SVGIcon(MaterialDesignIcon.LOGOUT, Constants.MIDDLE_ICON, true));
-                break;
-
-            default:
-                this.getChildren().clear();
-                this.getChildren().addAll(startLoginBtn);
-                this.statusIcon.getChildren();
-                this.statusIcon.setCenter(new SVGIcon(MaterialDesignIcon.LOGIN, Constants.SMALL_ICON, true));
+                this.statusIcon.getChildren().clear();
+                this.statusIcon.getChildren().addAll(new SVGIcon(MaterialDesignIcon.LOGOUT, Constants.MIDDLE_ICON,
+                        true));
                 break;
 
         }

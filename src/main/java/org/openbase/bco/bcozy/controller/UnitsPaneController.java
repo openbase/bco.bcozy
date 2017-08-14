@@ -110,8 +110,8 @@ public class UnitsPaneController {
                             fetchLocationUnitRemotes();
                             //fetchUnitRemotes();                            
                             unitPane.updateUnitsPane();
-                        } catch (CouldNotPerformException | InterruptedException e) {
-                            ExceptionPrinter.printHistory(e, LOGGER);
+                        } catch (CouldNotPerformException | InterruptedException ex) {
+                            ExceptionPrinter.printHistory(ex, LOGGER);
                         }
                     });
                 }
@@ -127,16 +127,16 @@ public class UnitsPaneController {
                             //fetchUnitRemotes();
 
                             unitPane.updateUnitsPane();
-                        } catch (CouldNotPerformException | InterruptedException e) {
-                            ExceptionPrinter.printHistory(e, LOGGER);
+                        } catch (CouldNotPerformException | InterruptedException ex) {
+                            ExceptionPrinter.printHistory(ex, LOGGER);
                         }
                     });
                 }
 
             });
             updateUnits();
-        } catch (Exception e) { //NOPMD
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+        } catch (Exception ex) { //NOPMD
+            ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
         }
     }
 
@@ -394,8 +394,8 @@ public class UnitsPaneController {
                 //fetchUnitRemotes();
                 fetchLocationUnitRemotes();
                 unitPane.updateUnitsPane();
-            } catch (CouldNotPerformException | InterruptedException e) {
-                ExceptionPrinter.printHistory(e, LOGGER);
+            } catch (CouldNotPerformException | InterruptedException ex) {
+                ExceptionPrinter.printHistory(ex, LOGGER);
             }
         }));
     }
@@ -435,8 +435,8 @@ public class UnitsPaneController {
                                 Point2D coord = new Point2D(vertex.x, vertex.y);
 
 //                                locationPane.addUnit(new SVGIcon(FontAwesomeIcon.LIGHTBULB_ALT, 10.0, true), new Point2D(vertex.y * Constants.METER_TO_PIXEL, vertex.x * Constants.METER_TO_PIXEL));
-                            } catch (CouldNotPerformException | TimeoutException e) {
-                                ExceptionPrinter.printHistory("Error while transforming \"" + u.getConfig().getLabel() + "\", ID: " + u.getConfig().getId(), e, LOGGER, LogLevel.ERROR);
+                            } catch (CouldNotPerformException | TimeoutException ex) {
+                                ExceptionPrinter.printHistory("Error while transforming \"" + u.getConfig().getLabel() + "\", ID: " + u.getConfig().getId(), ex, LOGGER, LogLevel.ERROR);
                             }
                         } 
                         try {
@@ -453,7 +453,7 @@ public class UnitsPaneController {
 
                             //final Point2d test = new Point2d(bb.getLeftFrontBottom().getX(), bb.getWidth()+ bb.getLeftFrontBottom());
                             //locationPane.addUnit(new SVGIcon(FontAweonsomeIcon.ARROW_LEFT, 10.0, true),bb.);
-                        } catch (CouldNotPerformException e) {
+                        } catch (CouldNotPerformException ex) {
                             //just leave out unit
                         }
                     }

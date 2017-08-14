@@ -71,8 +71,8 @@ public class PowerConsumptionSensorPane extends AbstractUnitPane<PowerConsumptio
 //            currentPowerConsumption = powerConsumptionSensorRemote.getPowerConsumptionState().getCurrent();
 //            sumPowerConsumption = powerConsumptionSensorRemote.getPowerConsumptionState().getConsumption();
 //            voltagePowerConsumption = powerConsumptionSensorRemote.getPowerConsumptionState().getVoltage();
-//        } catch (CouldNotPerformException e) {
-//            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+//        } catch (CouldNotPerformException ex) {
+//            ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
 //        }
 //        setPowerConsumptionIconAndText(currentPowerConsumption, sumPowerConsumption,
 //                voltagePowerConsumption);

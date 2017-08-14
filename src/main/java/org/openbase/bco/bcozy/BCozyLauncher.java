@@ -20,7 +20,11 @@
 package org.openbase.bco.bcozy;
 
 import javafx.application.Platform;
+
 import static org.openbase.bco.bcozy.BCozy.APP_NAME;
+
+import org.openbase.bco.authentication.lib.jp.JPCredentialsDirectory;
+import org.openbase.bco.authentication.lib.jp.JPInitializeCredentials;
 import org.openbase.bco.bcozy.jp.JPLanguage;
 import org.openbase.jps.core.JPService;
 import org.openbase.jps.preset.JPDebugMode;
@@ -38,12 +42,12 @@ import org.slf4j.LoggerFactory;
  * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>
  */
 public class BCozyLauncher {
-    
+
     /**
      * Application launcher logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(BCozyLauncher.class);
-    
+
     /**
      * Main Method starting JavaFX Environment.
      *
@@ -56,11 +60,12 @@ public class BCozyLauncher {
         JPService.setApplicationName(APP_NAME);
         JPService.registerProperty(JPDebugMode.class);
         JPService.registerProperty(JPLanguage.class);
+        JPService.registerProperty(JPInitializeCredentials.class);
+        JPService.registerProperty(JPCredentialsDirectory.class);
         JPService.registerProperty(JPRSBThreadPooling.class);
         JPService.registerProperty(JPRSBHost.class);
         JPService.registerProperty(JPRSBPort.class);
         JPService.registerProperty(JPRSBTransport.class);
-
         try {
             JPService.parseAndExitOnError(args);
             Thread.setDefaultUncaughtExceptionHandler(BCozyLauncher::showError);
@@ -71,13 +76,15 @@ public class BCozyLauncher {
         }
         LOGGER.info(APP_NAME + " finished.");
     }
-    
-     private static void showError(Thread t, Throwable ex) {
+
+    private static void showError(Thread t, Throwable ex) {
         if (Platform.isFxApplicationThread()) {
-            ExceptionPrinter.printHistory(new FatalImplementationErrorException("Uncauchted exception has been occurt!", "FxApplicationThread", ex), LOGGER);
+            ExceptionPrinter.printHistory(new FatalImplementationErrorException("Uncaught exception has " +
+                    "occured!", "FxApplicationThread", ex), LOGGER);
         } else {
-            ExceptionPrinter.printHistory(new FatalImplementationErrorException("Uncauchted exception has been occurt!", t.getName(), ex), LOGGER);
+            ExceptionPrinter.printHistory(new FatalImplementationErrorException("Uncaught exception has " +
+                    "occured!", t.getName(), ex), LOGGER);
         }
     }
-    
+
 }

@@ -79,16 +79,16 @@ public class LocationPaneController {
                             fetchLocations();
                             fetchConnections();
                             locationPane.updateLocationPane();
-                        } catch (CouldNotPerformException | InterruptedException e) {
-                            ExceptionPrinter.printHistory(e, LOGGER);
+                        } catch (CouldNotPerformException | InterruptedException ex) {
+                            ExceptionPrinter.printHistory(ex, LOGGER);
                         }
                     });
                 }
             });
             updateAndZoomFit();
             locationPane.setInitialized(true);
-        } catch (Exception e) { //NOPMD
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+        } catch (Exception ex) { //NOPMD
+            ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
         }
     }
 
@@ -166,8 +166,8 @@ public class LocationPaneController {
                 }
 
                 locationPane.addConnection(connectionUnitConfig, vertices);
-            } catch (InterruptedException | ExecutionException | TimeoutException e) {
-                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+            } catch (InterruptedException | ExecutionException | TimeoutException ex) {
+                ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
                 LOGGER.error("Error while fetching transformation for connection \"" + connectionUnitConfig.getLabel()
                         + "\", connectionID: " + connectionUnitConfig.getId());
             }
@@ -185,8 +185,8 @@ public class LocationPaneController {
                 fetchConnections();
                 locationPane.updateLocationPane();
                 locationPane.zoomFit();
-            } catch (CouldNotPerformException | InterruptedException e) {
-                ExceptionPrinter.printHistory(e, LOGGER);
+            } catch (CouldNotPerformException | InterruptedException ex) {
+                ExceptionPrinter.printHistory(ex, LOGGER);
             }
         });
     }

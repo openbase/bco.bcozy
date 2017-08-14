@@ -25,6 +25,7 @@ import javafx.scene.Node;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ObserverLabel;
 import org.openbase.bco.bcozy.view.SVGIcon;
@@ -52,48 +53,41 @@ public class SettingsPane extends PaneElement {
     public SettingsPane() {
         final ResourceBundle languageBundle = ResourceBundle
                 .getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
+        final VBox verticalLayout = new VBox();
+
 
         statusIcon = new SVGIcon(MaterialIcon.TUNE, Constants.SMALL_ICON, true);
 
-        final TitledPane settingsPane = new TitledPane();
-        settingsPane.getStyleClass().add("settings-pane");
-        //final HBox settingsHeader = new HBox();
+        this.getStyleClass().add("settings-pane");
+
+
         settingsIcon = new SVGIcon(MaterialIcon.TUNE, Constants.EXTRA_SMALL_ICON, true);
         settingsLbl = new ObserverLabel("settings", settingsIcon);
-        //settingsHeader.getChildren().addAll(settingsIcon, settingsLbl);
 
-        //final VBox verticalLayout = new VBox();
-        final BorderPane verticalLayout = new BorderPane();
 
         //TODO: Implement Property implementation
-        //JPService.getProperty(JPLanguage.class).getValue();
 
         availableLanguages = FXCollections.observableArrayList("English", "Deutsch");
         languageChoice = new ChoiceBox<>(availableLanguages);
-        //CHECKSTYLE.OFF: MagicNumber
-        languageChoice.setPrefWidth(250);
+        languageChoice.prefWidthProperty().bind(this.widthProperty());
 
         availableThemes = FXCollections.observableArrayList(
                 languageBundle.getString(Constants.LIGHT_THEME_CSS_NAME),
                 languageBundle.getString(Constants.DARK_THEME_CSS_NAME));
         themeChoice = new ChoiceBox<>(availableThemes);
-        themeChoice.setPrefWidth(250);
-        //CHECKSTYLE.ON: MagicNumber
+        themeChoice.prefWidthProperty().bind(this.widthProperty());
 
-        //verticalLayout.setFillWidth(true);
-        //verticalLayout.getChildren().addAll(languageChoice, themeChoice);
-        verticalLayout.setTop(languageChoice);
-        verticalLayout.setBottom(themeChoice);
+        verticalLayout.getChildren().addAll(languageChoice, themeChoice);
+        verticalLayout.setSpacing(10.0);
 
-        settingsPane.setGraphic(settingsLbl);
-        settingsPane.setContent(verticalLayout);
-
-        this.getChildren().addAll(settingsPane);
+        this.getChildren().addAll(verticalLayout);
+        this.setFillWidth(true);
 
     }
 
     /**
      * Getter for the themeChoice ChoiceBox.
+     *
      * @return instance of the themeChoice
      */
     public ChoiceBox<String> getThemeChoice() {
@@ -102,6 +96,7 @@ public class SettingsPane extends PaneElement {
 
     /**
      * Getter for the languageChoice ChoiceBox.
+     *
      * @return instance of the languageChoice
      */
     public ChoiceBox<String> getLanguageChoice() {
@@ -110,13 +105,16 @@ public class SettingsPane extends PaneElement {
 
     /**
      * Getter for the availableThemes List.
+     *
      * @return instance of the availableThemes
      */
     public ObservableList<String> getAvailableThemes() {
         return availableThemes;
     }
+
     /**
      * Getter for the availableLanguages List.
+     *
      * @return instance of the availableLanguages
      */
     public ObservableList<String> getAvailableLanguages() {
@@ -125,6 +123,7 @@ public class SettingsPane extends PaneElement {
 
     /**
      * Getter for the settingsLbl.
+     *
      * @return instance of the settingsLbl
      */
     public ObserverLabel getSettingsLbl() {
