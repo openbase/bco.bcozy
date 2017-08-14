@@ -1,17 +1,17 @@
 /**
  * ==================================================================
- * <p>
+ *
  * This file is part of org.openbase.bco.bcozy.
- * <p>
+ *
  * org.openbase.bco.bcozy is free software: you can redistribute it and modify
  * it under the terms of the GNU General Public License (Version 3)
  * as published by the Free Software Foundation.
- * <p>
+ *
  * org.openbase.bco.bcozy is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * <p>
+ *
  * You should have received a copy of the GNU General Public License
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
@@ -27,8 +27,12 @@ import org.openbase.bco.authentication.lib.SessionManager;
 
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.InvalidStateException;
+import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.openbase.jul.schedule.GlobalCachedExecutorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rst.domotic.unit.UnitConfigType;
 
 /**
  * Created by hoestreich on 11/24/15.
@@ -82,18 +86,36 @@ public class MainMenuController {
     }
 
     private void loginUser() {
-        new Thread(this::loginUserAsync).start();
+        GlobalCachedExecutorService.submit(() -> {
+            try {
+                loginUserAsync();
+            } catch (InterruptedException ex) {
+                ExceptionPrinter.printHistory("Could not login!", ex, LOGGER);
+            }
+        });
     }
 
-    private void loginUserAsync() {
+    private void loginUserAsync() throws InterruptedException {
         SessionManager sessionManager = SessionManager.getInstance();
 
         try {
-            sessionManager.login(Registries.getUserRegistry().getUserIdByUserName(loginPane.getNameTxt().getText()),
-                    loginPane
-                            .getPasswordField()
-                            .getText
-                                    ());
+
+            // sessionManager.login(Registries.getUserRegistry().getUserIdByUserName(loginPane.getNameTxt().getText()),
+            // ##### reimplemented because "getUserIdByUserName" not included in current master api.
+            final String username = loginPane.getNameTxt().getText();
+            String userUnitId = null;
+            for (final UnitConfigType.UnitConfig userUnitConfig : Registries.getUserRegistry().getUserConfigs()) {
+                if (userUnitConfig.getUserConfig().getUserName().equals(username)) {
+                    userUnitId = userUnitConfig.getId();
+                }
+            }
+
+            if (userUnitId == null) {
+                throw new InvalidStateException("username does not exists!");
+            }
+            // #####
+
+            sessionManager.login(userUnitId, loginPane.getPasswordField().getText());
 
             Platform.runLater(() -> {
                 loginPane.resetUserOrPasswordWrong();
@@ -102,14 +124,12 @@ public class MainMenuController {
                 loginPane.getPasswordField().setText("");
                 loginPane.setState(LoginPane.State.LOGOUT);
             });
-        } catch (CouldNotPerformException e) {
+        } catch (CouldNotPerformException ex) {
             Platform.runLater(() -> {
                 loginPane.indicateUserOrPasswordWrong();
             });
         } catch (java.lang.OutOfMemoryError error) {
             LOGGER.error(error.getMessage());
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
     }
 

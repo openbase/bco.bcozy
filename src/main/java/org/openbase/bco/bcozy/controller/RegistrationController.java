@@ -9,20 +9,21 @@ import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 import org.controlsfx.control.CheckComboBox;
-import org.openbase.bco.authentication.lib.SessionManager;
 import org.openbase.bco.bcozy.model.SessionManagerFacade;
 import org.openbase.bco.bcozy.model.SessionManagerFacadeImpl;
 import org.openbase.bco.bcozy.util.Groups;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ObserverButton;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import rst.domotic.unit.UnitConfigType;
 
 import java.util.List;
+import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.VerificationFailedException;
+import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import rst.domotic.unit.UnitConfigType.UnitConfig;
 
 /**
  * User registration.
@@ -30,6 +31,8 @@ import java.util.List;
  * @author vdasilva
  */
 public class RegistrationController {
+
+    private static final Logger logger = LoggerFactory.getLogger(RegistrationController.class);
 
     private SessionManagerFacade sessionManager = new SessionManagerFacadeImpl(); //new SessionManagerFacadeFake();
 
@@ -50,15 +53,15 @@ public class RegistrationController {
     @FXML
     private TextField phone;
     @FXML
-    private CheckComboBox<UnitConfigType.UnitConfig> usergroupField;
+    private CheckComboBox<UnitConfig> usergroupField;
     @FXML
     private JFXCheckBox isAdmin;
     @FXML
     private ObserverButton registerBtn;
 
     public void initialize() {
-        ObservableList<UnitConfigType.UnitConfig> groups = Groups.getGroups();
-        groups.addListener((ListChangeListener.Change<? extends UnitConfigType.UnitConfig> c)
+        ObservableList<UnitConfig> groups = Groups.getGroups();
+        groups.addListener((ListChangeListener.Change<? extends UnitConfig> c)
                 -> setGroups(groups)
         );
 
@@ -69,49 +72,63 @@ public class RegistrationController {
         usergroupField.prefWidthProperty().bind(root.widthProperty());
     }
 
-    private void setGroups(ObservableList<UnitConfigType.UnitConfig> groups) {
+    private void setGroups(ObservableList<UnitConfig> groups) {
         Platform.runLater(() -> usergroupField.getItems().setAll(groups));
     }
 
     @FXML
-    private void register() {
+    private void register() throws InterruptedException {
         resetHints();
 
         if (!sessionManager.isAdmin()) {
             return;
         }
 
-        if (!sessionManager.userNameAvailable(username.getText())) {
+        try {
+            sessionManager.verifyUserName(username.getText());
+        } catch (VerificationFailedException ex) {
             username.getStyleClass().add("text-field-wrong");
             return;
         }
 
-        if (!sessionManager.passwordsValid(passwordField.getText(), repeatPasswordField.getText())) {
+        try {
+            sessionManager.verifyPasswords(passwordField.getText(), repeatPasswordField.getText());
+        } catch (VerificationFailedException ex) {
             passwordField.getStyleClass().add("password-field-wrong");
             repeatPasswordField.getStyleClass().add("password-field-wrong");
             return;
         }
 
-        if (!sessionManager.phoneIsValid(phone.getText())) {
+        try {
+            sessionManager.verifyPhoneNumber(phone.getText());
+        } catch (VerificationFailedException ex) {
             phone.getStyleClass().add("text-field-wrong");
-
             return;
         }
 
-        if (!sessionManager.mailIsValid(mail.getText())) {
+        try {
+            sessionManager.verifyMailAddress(mail.getText());
+        } catch (VerificationFailedException ex) {
             mail.getStyleClass().add("text-field-wrong");
-
             return;
         }
 
-        List<UnitConfigType.UnitConfig> groups = usergroupField.getCheckModel().getCheckedItems();
+        List<UnitConfig> groups = usergroupField.getCheckModel().getCheckedItems();
 
-        boolean registered = sessionManager.registerUser(
-                new SessionManagerFacade.NewUser(username.getText(),
-                        firstname.getText(), lastname.getText(), mail.getText(), phone.getText()), //TODO: Fields
-                passwordField.getText(), isAdmin.isSelected(), groups);
-        if (registered) {
+        try {
+            sessionManager.registerUser(new SessionManagerFacade.NewUser(
+                    username.getText(),
+                    firstname.getText(),
+                    lastname.getText(),
+                    mail.getText(),
+                    phone.getText()),
+                    //TODO: Fields
+                    passwordField.getText(),
+                    isAdmin.isSelected(),
+                    groups);
             resetFields();
+        } catch (CouldNotPerformException ex) {
+            ExceptionPrinter.printHistory(ex, logger);
         }
     }
 
@@ -145,39 +162,33 @@ public class RegistrationController {
         }
 
         @Override
-        public boolean registerUser(NewUser user, String plainPassword, boolean asAdmin,
-                                    List<UnitConfigType.UnitConfig> groups) {
-
-            StringConverter<UnitConfigType.UnitConfig> converter = Groups.stringConverter(groups);
-
-            System.out.print("username = [" + user.getUsername() + "], plainPassword = [" + plainPassword + "], " +
-                    "asAdmin = ["
-                    + asAdmin + "], groups = [");
+        public void registerUser(final NewUser user, final String plainPassword, final boolean asAdmin, final List<UnitConfig> groups) throws CouldNotPerformException {
+            StringConverter<UnitConfig> converter = Groups.stringConverter(groups);
+            System.out.print("username = [" + user.getUsername() + "], plainPassword = [" + plainPassword + "], " + "asAdmin = [" + asAdmin + "], groups = [");
             groups.forEach(g -> System.out.print(converter.toString(g)));
             System.out.println("]");
-
-
-            return true;
         }
 
         @Override
-        public boolean userNameAvailable(String username) {
-            return !username.isEmpty();
+        public void verifyUserName(final String username) throws VerificationFailedException {
+            if (username.isEmpty()) {
+                throw new VerificationFailedException("user name is empty!");
+            }
         }
 
         @Override
-        public boolean passwordsValid(String text, String text1) {
-            return !text.isEmpty() && text.equals(text1);
+        public void verifyPasswords(final String text, final String text1) throws VerificationFailedException {
+            if (text.isEmpty() && text.equals(text1)) {
+                throw new VerificationFailedException("repeated password does not match!");
+            }
         }
 
         @Override
-        public boolean phoneIsValid(String phoneNumber) {
-            return true;
+        public void verifyPhoneNumber(final String phoneNumber) throws VerificationFailedException {
         }
 
         @Override
-        public boolean mailIsValid(String mailAdress) {
-            return true;
+        public void verifyMailAddress(final String mailAddress) throws VerificationFailedException {
         }
     }
 }

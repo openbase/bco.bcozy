@@ -83,8 +83,8 @@ public class DimmableLightPane extends AbstractUnitPane<DimmableLightRemote, Dim
 //        try {
 //            powerState = dimmableLightRemote.getPowerState().getValue();
 //            brightness = dimmableLightRemote.getBrightnessState().getBrightness() / Constants.ONE_HUNDRED;
-//        } catch (CouldNotPerformException e) {
-//            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+//        } catch (CouldNotPerformException ex) {
+//            ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
 //        }
 //        setEffectColorAndSlider(powerState, brightness);
 //    }

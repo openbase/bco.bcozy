@@ -90,17 +90,17 @@ public class LocationPane extends AbstractUnitPane<LocationRemote, LocationData>
         PowerState.State state = PowerState.State.UNKNOWN;
         try {
             state = getUnitRemote().getData().getPowerState().getValue();
-        } catch (CouldNotPerformException e) {
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.DEBUG);
+        } catch (CouldNotPerformException ex) {
+            ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.DEBUG);
         }
 
         // detect color
         Color color;
         try {
             color = JFXColorToHSBColorTransformer.transform(getData().getColorState().getColor().getHsbColor());
-        } catch (CouldNotPerformException e) {
+        } catch (CouldNotPerformException ex) {
             color = Color.TRANSPARENT;
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.DEBUG);
+            ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.DEBUG);
         }
 
 //

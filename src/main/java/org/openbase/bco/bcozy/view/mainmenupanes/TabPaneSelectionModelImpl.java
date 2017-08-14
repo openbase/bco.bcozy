@@ -110,8 +110,8 @@ class TabPaneSelectionModelImpl extends SingleSelectionModel<Tab> {
             Method m = newTab.getClass().getDeclaredMethod("setSelected", boolean.class);
             m.setAccessible(true);
             m.invoke(newTab, selected);
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException("Exception while access TabäsetSelected with Reflection, should never happen", e);
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ex) {
+            throw new RuntimeException("Exception while access TabäsetSelected with Reflection, should never happen", ex);
         }
     }
 

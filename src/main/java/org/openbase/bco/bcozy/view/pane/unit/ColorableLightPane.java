@@ -89,17 +89,17 @@ public class ColorableLightPane extends AbstractUnitPane<ColorableLightRemote, C
         PowerState.State state = PowerState.State.UNKNOWN;
         try {
             state = getUnitRemote().getData().getPowerState().getValue();
-        } catch (CouldNotPerformException e) {
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.DEBUG);
+        } catch (CouldNotPerformException ex) {
+            ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.DEBUG);
         }
 
         // detect color
         Color color;
         try {
             color = JFXColorToHSBColorTransformer.transform(getData().getColorState().getColor().getHsbColor());
-        } catch (CouldNotPerformException e) {
+        } catch (CouldNotPerformException ex) {
             color = Constants.LIGHTBULB_OFF_COLOR;
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.DEBUG);
+            ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.DEBUG);
         }
 
         if (colorChooser != null && expansionProperty().get()) {

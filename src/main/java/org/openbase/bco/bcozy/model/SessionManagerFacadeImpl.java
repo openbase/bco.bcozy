@@ -1,5 +1,6 @@
 package org.openbase.bco.bcozy.model;
 
+import com.google.protobuf.ProtocolStringList;
 import org.openbase.bco.authentication.lib.SessionManager;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
@@ -7,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.domotic.unit.UnitConfigType;
 import rst.domotic.unit.UnitTemplateType;
-import rst.domotic.unit.authorizationgroup.AuthorizationGroupConfigType;
 import rst.domotic.unit.user.UserConfigType;
 
 import java.util.List;
@@ -15,6 +15,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import org.openbase.jul.exception.VerificationFailedException;
+import rst.domotic.unit.UnitConfigType.UnitConfig;
+import rst.domotic.unit.authorizationgroup.AuthorizationGroupConfigType.AuthorizationGroupConfig;
 
 /**
  * @author vdasilva
@@ -29,36 +32,49 @@ public class SessionManagerFacadeImpl implements SessionManagerFacade {
     }
 
     @Override
-    public boolean registerUser(NewUser user, String plainPassword, boolean asAdmin, List<UnitConfigType
-            .UnitConfig> groups) {
+    public void registerUser(final NewUser user, final String plainPassword, boolean asAdmin, List<UnitConfigType.UnitConfig> groups) throws CouldNotPerformException {
         try {
-            return tryRegisterUser(user, plainPassword, asAdmin, groups);
-        } catch (CouldNotPerformException | ExecutionException | InterruptedException | TimeoutException e) {
-            e.printStackTrace();
+            tryRegisterUser(user, plainPassword, asAdmin, groups);
+        } catch (CouldNotPerformException | ExecutionException | InterruptedException | TimeoutException ex) {
+            throw new CouldNotPerformException("Could not register user!", ex);
         }
-        return false;
     }
 
-    private boolean tryRegisterUser(NewUser user, String plainPassword, boolean asAdmin,
-                                    List<UnitConfigType.UnitConfig> groups)
-            throws CouldNotPerformException, ExecutionException, InterruptedException, TimeoutException {
+    private void tryRegisterUser(NewUser user, String plainPassword, boolean asAdmin, List<UnitConfigType.UnitConfig> groups) throws CouldNotPerformException, ExecutionException, InterruptedException, TimeoutException {
 
         UnitConfigType.UnitConfig unitConfig = tryCreateUser(user);
 
-        SessionManager.getInstance().registerUser(
-                unitConfig.getUserConfig().getUserName()/*unitConfig.getId()*/,
-
-                plainPassword,
-                asAdmin);
-
-        for (UnitConfigType.UnitConfig group : groups) {
-            tryAddToGroup(group, unitConfig.getId());
+        try {
+            SessionManager.getInstance().registerUser(
+                    unitConfig.getUserConfig().getUserName()/*unitConfig.getId()*/,
+                    plainPassword,
+                    asAdmin);
+        } catch (CouldNotPerformException ex) {
+            // If adding to the credential storage failed, remove the user from the registry to prevent inconsistencies.
+            Registries.getUserRegistry().removeUserConfig(unitConfig);
+            throw ex;
         }
 
-        return true;
+        try {
+            for (UnitConfigType.UnitConfig group : groups) {
+                tryAddToGroup(group, unitConfig.getId());
+            }
+        } catch (CouldNotPerformException | InterruptedException ex) {
+            // If adding to a group failed, remove the user from all groups...
+            for (UnitConfigType.UnitConfig group : groups) {
+                tryRemoveFromGroup(group, unitConfig.getId());
+            }
+            // ... from the credential storage...
+            SessionManager.getInstance().removeUser(unitConfig.getUserConfig().getUserName()/*unitConfig.getId()*/);
+
+            // ... and from the registry.
+            Registries.getUserRegistry().removeUserConfig(unitConfig);
+            throw ex;
+        }
     }
 
-    private UnitConfigType.UnitConfig buildUser(NewUser user) {
+    private UnitConfigType.UnitConfig tryCreateUser(NewUser user) throws CouldNotPerformException, InterruptedException, ExecutionException, TimeoutException {
+
         UnitConfigType.UnitConfig.Builder builder = UnitConfigType.UnitConfig.newBuilder();
         UserConfigType.UserConfig.Builder userConfigBuilder = UserConfigType.UserConfig.newBuilder();
 
@@ -72,59 +88,70 @@ public class SessionManagerFacadeImpl implements SessionManagerFacade {
                 .setType(UnitTemplateType.UnitTemplate.UnitType.USER)//TODO: right way?
                 .build();
 
-        return unitConfig;
-    }
-
-    private UnitConfigType.UnitConfig tryCreateUser(NewUser user) throws CouldNotPerformException,
-            InterruptedException, ExecutionException, TimeoutException {
-
-        UnitConfigType.UnitConfig unitConfig = buildUser(user);
-
         Future<UnitConfigType.UnitConfig> registeredUser = Registries.getUserRegistry().registerUserConfig(unitConfig);
 
-        return registeredUser.get(1, TimeUnit.SECONDS);
+        return registeredUser.get(5, TimeUnit.SECONDS);
     }
 
-    private void tryAddToGroup(UnitConfigType.UnitConfig group, String userId) throws CouldNotPerformException,
-            InterruptedException {
-        
-        UnitConfigType.UnitConfig.Builder unitConfig = Registries.getUserRegistry()
-                .getAuthorizationGroupConfigById(group.getId()).toBuilder();
-        AuthorizationGroupConfigType.AuthorizationGroupConfig.Builder authorizationGroupConfig = unitConfig
-                .getAuthorizationGroupConfigBuilder();
+    private void tryAddToGroup(UnitConfigType.UnitConfig group, String userId) throws CouldNotPerformException, InterruptedException {
+        UnitConfig.Builder unitConfig = Registries.getUserRegistry().getAuthorizationGroupConfigById(group.getId()).toBuilder();
+        AuthorizationGroupConfig.Builder authorizationGroupConfig = unitConfig.getAuthorizationGroupConfigBuilder();
         authorizationGroupConfig.addMemberId(userId);
         Registries.getUserRegistry().updateAuthorizationGroupConfig(unitConfig.build());
     }
 
+    private void tryRemoveFromGroup(UnitConfigType.UnitConfig group, String userId) throws CouldNotPerformException, InterruptedException {
 
-    @Override
-    public boolean userNameAvailable(String username) {
-        try {
-            Registries.getUserRegistry().getUserIdByUserName(username);
-            return false;
-        } catch (CouldNotPerformException | InterruptedException e) {
-            LOGGER.info("Username %s already in use", username);
+        UnitConfig.Builder unitConfig = Registries.getUserRegistry().getAuthorizationGroupConfigById(group.getId()).toBuilder();
+        AuthorizationGroupConfig.Builder authorizationGroupConfig = unitConfig.getAuthorizationGroupConfigBuilder();
+
+        ProtocolStringList members = authorizationGroupConfig.getMemberIdList();
+
+        authorizationGroupConfig.clearMemberId();
+
+        for (String member : members) {
+            if (!member.equals(userId)) {
+                authorizationGroupConfig.addMemberId(member);
+            }
         }
-        return true;
+
+        Registries.getUserRegistry().updateAuthorizationGroupConfig(unitConfig.build());
     }
 
     @Override
-    public boolean passwordsValid(String password, String repeatedPassword) {
+    public void verifyUserName(String username) throws VerificationFailedException, InterruptedException {
+        try {
+            // Registries.getUserRegistry().getUserIdByUserName(username);
+
+            // ##### reimplemented because not included in current master api.
+            for (final UnitConfig userUnitConfig : Registries.getUserRegistry().getUserConfigs()) {
+                if (userUnitConfig.getUserConfig().getUserName().equals(username)) {
+                    throw new VerificationFailedException("Username[" + username + "] already in use!");
+                }
+            }
+        } catch (CouldNotPerformException ex) {
+            LOGGER.warn("Could not verify user name!", ex);
+            throw new VerificationFailedException("Could not verify user name!", ex);
+        }
+    }
+
+    @Override
+    public void verifyPasswords(String password, String repeatedPassword) throws VerificationFailedException {
         // TODO other checks for pw validity? e.g. length..
-
-        return password.equals(repeatedPassword);
-
+        if (!password.equals(repeatedPassword)) {
+            throw new VerificationFailedException("repeated password does not match!");
+        }
     }
 
     @Override
-    public boolean phoneIsValid(String phoneNumber) {
+    public void verifyPhoneNumber(String phoneNumber) throws VerificationFailedException {
         //TODO check validity
-        return true;
+        // throw new VerificationFailedException("not valid because of ...");
     }
 
     @Override
-    public boolean mailIsValid(String mailAdress) {
+    public void verifyMailAddress(String mailAddress) throws VerificationFailedException {
         //Todo check validity
-        return true;
+        // throw new VerificationFailedException("not valid because of ...");
     }
 }
