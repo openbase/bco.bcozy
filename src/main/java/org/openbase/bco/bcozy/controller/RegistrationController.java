@@ -77,9 +77,6 @@ public class RegistrationController {
         Platform.runLater(() -> usergroupField.getItems().setAll(groups));
         System.out.println("Groups size: " + groups.size());
 
-        3b86866b-c5a9-40a0-beda-d850a5dd2e3d
-
-
         for (UnitConfig group : groups) {
             System.out.println("Group: " + group.getLabel() + "ID: " + group.getId());
 
