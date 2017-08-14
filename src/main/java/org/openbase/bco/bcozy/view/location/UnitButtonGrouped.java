@@ -75,7 +75,6 @@ public class UnitButtonGrouped extends Pane {
         stackPane.getChildren().add(iconPane);
         stackPane.getChildren().add(groupingPane);
         this.getChildren().add(stackPane); 
-
         
         clipRectangle1 = new Rectangle(Constants.SMALL_ICON,Constants.SMALL_ICON);
         this.setClip(clipRectangle1); 
@@ -97,11 +96,9 @@ public class UnitButtonGrouped extends Pane {
         };
         stackPane.setOnMouseClicked(mouseEventHandler);
         stackPane.setOnMouseExited(mouseExitedHandler);
-        
     }
 
     public void addUnit(UnitRemote<? extends GeneratedMessage> unit) {
-
         try {
             AbstractUnitPane content;
             content = UnitPaneFactoryImpl.getInstance().newInitializedInstance(unit.getConfig());
@@ -115,7 +112,6 @@ public class UnitButtonGrouped extends Pane {
             content.setVisible(false);
             content.setBackground(new Background(new BackgroundFill(new Color(0.25, 0.25, 0.25, 1.0), CornerRadii.EMPTY, Insets.EMPTY)));
             this.groupingPane.getChildren().add(content);
-            
         } catch (CouldNotPerformException | InterruptedException ex) {
             Logger.getLogger(UnitButtonGrouped.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -130,14 +126,15 @@ public class UnitButtonGrouped extends Pane {
     }
 
     public void shrink() {
-        this.groupingPane.getChildren().forEach((node)
-        -> {node.setVisible(false);});
+        this.groupingPane.getChildren().forEach((node) -> {
+            node.setVisible(false);
+        });
         iconPane.setVisible(true);
         clipRectangle1.setWidth(Constants.SMALL_ICON);
         clipRectangle1.setHeight(Constants.SMALL_ICON);
     }
     
     public String getLocationId() {
-        return this.locationId;
+        return locationId;
     }
 }
