@@ -19,33 +19,23 @@
 package org.openbase.bco.bcozy.view.location;
 
 import com.google.protobuf.GeneratedMessage;
-import de.jensd.fx.glyphs.GlyphIcons;
-import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.SimpleListProperty;
-import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
-import javafx.geometry.Pos;
-import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-import org.apache.bcel.classfile.Constant;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.SVGIcon;
 import org.openbase.bco.bcozy.view.generic.WidgetPane.DisplayMode;
@@ -53,8 +43,6 @@ import org.openbase.bco.bcozy.view.pane.unit.AbstractUnitPane;
 import org.openbase.bco.bcozy.view.pane.unit.UnitPaneFactoryImpl;
 import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
-import org.openbase.jul.exception.NotAvailableException;
-import rst.domotic.unit.UnitTemplateType;
 
 /**
  *

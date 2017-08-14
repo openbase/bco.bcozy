@@ -73,24 +73,7 @@ public class UnitSymbolsPane extends Pane {
         });
     }
 
-    /*public void addUnit(final UnitConfig unitConfig, final Point2D position) {  //TODO hand over Position or ready coordinates? where to calculate?
-               
-        UnitButton newButton = new UnitButton(unitConfig);
-        newButton.setTranslateX(position.getY());  //Attention: swap correct? according to location pane 
-        newButton.setTranslateY(position.getX());
-        locationUnitsMap.put(unitConfig.getId(), newButton);
-    }
-    
-    public void addRoomControlUnit(final UnitConfig unitConfig, final Point2D position, final String locationId) {
-        UnitButton newButton = new UnitButton(unitConfig);
-        newButton.setTranslateX(position.getY());  //Attention: swap correct? according to location pane 
-        newButton.setTranslateY(position.getX());
-        
-        if(!unitsPerLocationMap.containsKey(locationId)) {
-            unitsPerLocationMap.put(locationId, new HashMap<>());
-        }
-        unitsPerLocationMap.get(locationId).put(unitConfig.getId(), newButton);
-    }*/
+   
     public void addRoomUnit(UnitRemote<? extends GeneratedMessage> unitRemoteObject, Point2D position) {
         UnitButton newButton;
         try {
@@ -149,32 +132,7 @@ public class UnitSymbolsPane extends Pane {
                 if (!putIntoGroup) {
                     unitsPerLocationMap.get(locationId).put(unitRemoteObject.getConfig().getId(), newButton);
                 } 
-                /*unitsPerLocationMap.forEach((id, entry) -> entry.forEach((unitId, button)
-                    -> {
-
-                    if (button.getTranslateX() == position.getY()
-                        && button.getTranslateY() == position.getX()) {
-
-                        Point2D coord = new Point2D(position.getX(), position.getY());
-                        if (groupedButtons.containsKey(coord)) {
-                            groupedButtons.get(coord).addUnit(unitRemoteObject);
-
-                            unitsPerLocationMap.get(locationId).remove(button.getLocationId());
-                        } else {
-                            UnitButtonGrouped newGroupedButton = new UnitButtonGrouped();
-                            newGroupedButton.setTranslateX(position.getY());
-                            newGroupedButton.setTranslateY(position.getX());
-                            groupedButtons.put(new Point2D(position.getX(), position.getY()), newGroupedButton);
-                            newGroupedButton.addUnit(unitRemoteObject);
-                            newGroupedButton.addUnit(button.getUnitRemote());
-                        }
-                        putIntoGroup = true;
-                    }
-                }
-                ));
-                if (!putIntoGroup) {
-                    unitsPerLocationMap.get(locationId).put(unitRemoteObject.getConfig().getId(), newButton);
-                }*/
+             
                 // Raum-Unit muss noch angelegt werden
             } else {
                 Map<String, UnitButton> units = new HashMap<>();
