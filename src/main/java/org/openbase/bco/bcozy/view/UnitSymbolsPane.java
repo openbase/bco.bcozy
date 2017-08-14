@@ -21,6 +21,7 @@ package org.openbase.bco.bcozy.view;
 
 import com.google.protobuf.GeneratedMessage;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Level;
 import javafx.beans.property.SimpleStringProperty;
@@ -46,8 +47,11 @@ public class UnitSymbolsPane extends Pane {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(UnitSymbolsPane.class);
 
+    // locationId, buttons
     private final Map<String, UnitButton> locationUnitsMap;
+    // locationId, unitId, buttons
     private final Map<String, Map<String, UnitButton>> unitsPerLocationMap;
+    // coordinates, buttons
     private final Map<Point2D, UnitButtonGrouped> groupedButtons;
     private boolean putIntoGroup;
 
@@ -109,9 +113,43 @@ public class UnitSymbolsPane extends Pane {
             newButton.setTranslateY(position.getX());
 
             putIntoGroup = false;
+            String toDelete;
+            
             // Raum-Unit schon vorhanden
             if (unitsPerLocationMap.containsKey(locationId)) {
-                unitsPerLocationMap.forEach((id, entry) -> entry.forEach((unitId, button)
+
+                Point2D coord = new Point2D(position.getX(), position.getY());
+                // Grouped Button schon vorhanden
+                if (groupedButtons.containsKey(coord)) {
+                    groupedButtons.get(coord).addUnit(unitRemoteObject);
+                    putIntoGroup = true;
+                    
+                } else {
+                    Iterator<Map.Entry<String, UnitButton>> iter = unitsPerLocationMap.get(locationId).entrySet().iterator();
+                    while (iter.hasNext()) {
+                        Map.Entry<String, UnitButton> entry = iter.next();
+                        UnitButton button = entry.getValue();
+
+                        if (button.getTranslateX() == position.getY()
+                            && button.getTranslateY() == position.getX()) {
+
+                            UnitButtonGrouped newGroupedButton = new UnitButtonGrouped();
+                            newGroupedButton.setTranslateX(position.getY());
+                            newGroupedButton.setTranslateY(position.getX());
+                            groupedButtons.put(new Point2D(position.getX(), position.getY()), newGroupedButton);
+                            newGroupedButton.addUnit(unitRemoteObject);
+                            newGroupedButton.addUnit(button.getUnitRemote());
+                            iter.remove();
+                            putIntoGroup = true;
+                        }
+
+                    }
+                }
+
+                if (!putIntoGroup) {
+                    unitsPerLocationMap.get(locationId).put(unitRemoteObject.getConfig().getId(), newButton);
+                } 
+                /*unitsPerLocationMap.forEach((id, entry) -> entry.forEach((unitId, button)
                     -> {
 
                     if (button.getTranslateX() == position.getY()
@@ -120,7 +158,7 @@ public class UnitSymbolsPane extends Pane {
                         Point2D coord = new Point2D(position.getX(), position.getY());
                         if (groupedButtons.containsKey(coord)) {
                             groupedButtons.get(coord).addUnit(unitRemoteObject);
-                            
+
                             unitsPerLocationMap.get(locationId).remove(button.getLocationId());
                         } else {
                             UnitButtonGrouped newGroupedButton = new UnitButtonGrouped();
@@ -134,9 +172,9 @@ public class UnitSymbolsPane extends Pane {
                     }
                 }
                 ));
-                if(!putIntoGroup) {
+                if (!putIntoGroup) {
                     unitsPerLocationMap.get(locationId).put(unitRemoteObject.getConfig().getId(), newButton);
-                }
+                }*/
                 // Raum-Unit muss noch angelegt werden
             } else {
                 Map<String, UnitButton> units = new HashMap<>();
@@ -152,18 +190,17 @@ public class UnitSymbolsPane extends Pane {
         locationUnitsMap.forEach((unitId, button)
             -> {
             this.getChildren().remove(button);
-        }
+        });
+        unitsPerLocationMap.forEach((locationId, entry)
+            -> entry.forEach((unitId, button)
+                -> {
+                this.getChildren().remove(button);
+            })
         );
-        unitsPerLocationMap.forEach((locationId, entry) -> entry.forEach((unitId, button)
-            -> {
-            this.getChildren().remove(button);
-        }
-        ));
         groupedButtons.forEach((point, button)
             -> {
             this.getChildren().remove(button);
-        }
-        );
+        });
     }
 
     public void updateUnitsPane() {
@@ -174,8 +211,7 @@ public class UnitSymbolsPane extends Pane {
             if (!unitId.equals(selectedLocationId.getValue())) {
                 this.getChildren().add(button);
             }
-        }
-        );
+        });
 
         if (unitsPerLocationMap.get(selectedLocationId.getValue()) != null) {
             unitsPerLocationMap.get(selectedLocationId.getValue()).forEach((unitId, button)
@@ -186,17 +222,13 @@ public class UnitSymbolsPane extends Pane {
         }
         groupedButtons.forEach((point, button)
             -> {
-            try {
-                if(button.getUnitRemote().getConfig().getPlacementConfig().getLocationId().equals(selectedLocationId.getValue())) {
-                    this.getChildren().add(button);
-                }
-            } catch (NotAvailableException ex) {
-                java.util.logging.Logger.getLogger(UnitSymbolsPane.class.getName()).log(Level.SEVERE, null, ex);
+            if (button.getLocationId() == null) {
+                return;
             }
-          
-                //    this.getChildren().add(button);
-        }
-        );
+            if (button.getLocationId().equals(selectedLocationId.getValue())) {
+                this.getChildren().add(button);
+            }
+        });
     }
 
 }
