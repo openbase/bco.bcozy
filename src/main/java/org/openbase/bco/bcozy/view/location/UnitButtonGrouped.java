@@ -58,7 +58,7 @@ public class UnitButtonGrouped extends Pane {
 
     // private ObservableList<AbstractUnitPane> unitButtons;
     private SimpleListProperty<AbstractUnitPane> unitButtons;
-    private final GridPane groupingPane;
+    private final HBox groupingPane;
     private final StackPane stackPane;
     private final Label unitCount;
     private final GridPane iconPane;
@@ -67,7 +67,7 @@ public class UnitButtonGrouped extends Pane {
     public UnitButtonGrouped() {
         
         expanded = false;
-        groupingPane = new GridPane();
+        groupingPane = new HBox();
         iconPane = new GridPane();
         stackPane = new StackPane();
         unitCount = new Label("0");
