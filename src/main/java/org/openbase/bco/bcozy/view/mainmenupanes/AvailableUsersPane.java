@@ -104,9 +104,11 @@ public class AvailableUsersPane extends PaneElement {
 
         hoverProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
-                getChildren().add(hiddenSidesPane);
+                getChildren().clear();
+                getChildren().addAll(searchField, hiddenSidesPane);
             } else {
-                getChildren().remove(hiddenSidesPane);
+                getChildren().clear();
+                getChildren().addAll(hiddenSidesPane);
             }
         });
     }
