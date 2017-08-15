@@ -20,19 +20,13 @@ package org.openbase.bco.bcozy;
 
 import com.guigarage.responsive.ResponsiveHandler;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.net.URL;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.concurrent.Task;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -47,8 +41,13 @@ import org.openbase.jps.core.JPService;
 import org.openbase.jul.exception.FatalImplementationErrorException;
 import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.exception.InstantiationException;
+import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
+import org.openbase.jul.pattern.Observable;
+import org.openbase.jul.pattern.Observer;
+import org.openbase.jul.pattern.Remote;
+import org.openbase.jul.pattern.Remote.ConnectionState;
 import org.openbase.jul.schedule.GlobalCachedExecutorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,6 +85,37 @@ public class BCozy extends Application {
 
     private Scene mainScene;
 
+    public static boolean baseColorIsWhite = true;
+
+    private static Observer<ConnectionState> connectionObserver;
+
+    public BCozy() {
+
+        connectionObserver = new Observer<Remote.ConnectionState>() {
+            @Override
+            public void update(Observable<Remote.ConnectionState> source, Remote.ConnectionState data) throws Exception {
+                switch (data) {
+                    case CONNECTED:
+                        // recover default
+                        infoPane.confirmation("connected");
+                        break;
+                    case CONNECTING:
+                        // green
+                        infoPane.info("connecting");
+                        break;
+                    case DISCONNECTED:
+                        infoPane.error("disconnected");
+                        // red
+                        break;
+                    case UNKNOWN:
+                    default:
+                        // blue
+                        break;
+                }
+            }
+        };
+    }
+
     @Override
     public void start(final Stage primaryStage) throws InitializationException, InterruptedException, InstantiationException {
         BCozy.primaryStage = primaryStage;
@@ -121,6 +151,14 @@ public class BCozy extends Application {
 
         ResponsiveHandler.addResponsiveToWindow(primaryStage);
         primaryStage.show();
+
+        try {
+            Registries.getUnitRegistry().addConnectionStateObserver(connectionObserver);
+        } catch (NotAvailableException ex) {
+            ExceptionPrinter.printHistory("Could not register bco connection observer!", ex, LOGGER);
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+        }
 
         initRemotesAndLocation();
     }
@@ -175,6 +213,15 @@ public class BCozy extends Application {
                 ExceptionPrinter.printHistory("Initialization phase failed but application shutdown was initialized anyway.", ex, LOGGER, LogLevel.WARN);
             }
         }
+
+        try {
+            Registries.getUnitRegistry().removeConnectionStateObserver(connectionObserver);
+        } catch (NotAvailableException ex) {
+            ExceptionPrinter.printHistory("Could not remove bco connection observer!", ex, LOGGER);
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+        }
+
         try {
             super.stop();
         } catch (Exception ex) { //NOPMD
@@ -199,15 +246,15 @@ public class BCozy extends Application {
             switch (themeName) {
                 case Constants.DARK_THEME_CSS:
                     primaryStage.getScene().getStylesheets().clear();
-                    primaryStage.getScene().getStylesheets()
-                            .addAll(Constants.DEFAULT_CSS, Constants.DARK_THEME_CSS);
+                    primaryStage.getScene().getStylesheets().addAll(Constants.DEFAULT_CSS, Constants.DARK_THEME_CSS);
                     ImageViewProvider.colorizeIconsToWhite();
+                    baseColorIsWhite = true;
                     break;
                 case Constants.LIGHT_THEME_CSS:
                     primaryStage.getScene().getStylesheets().clear();
-                    primaryStage.getScene().getStylesheets()
-                            .addAll(Constants.DEFAULT_CSS, Constants.LIGHT_THEME_CSS);
+                    primaryStage.getScene().getStylesheets().addAll(Constants.DEFAULT_CSS, Constants.LIGHT_THEME_CSS);
                     ImageViewProvider.colorizeIconsToBlack();
+                    baseColorIsWhite = false;
                     break;
                 default:
                     primaryStage.getScene().getStylesheets().clear();

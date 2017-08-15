@@ -23,6 +23,7 @@ import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import org.openbase.bco.bcozy.BCozy;
 
 /**
  * Created by tmichalski on 14.01.16.
@@ -58,10 +59,45 @@ public class InfoPane extends BorderPane {
      * Sets the new identifier for the TextLabel.
      *
      * @param identifier identifier
+     * @deprecated please use info instead.
      */
+    @Deprecated
     public void setTextLabelIdentifier(final String identifier) {
+        info(identifier);
+    }
+
+    public void info(final String identifier) {
         assert identifier != null;
         Platform.runLater(() -> {
+            if (BCozy.baseColorIsWhite) {
+                textLabel.setStyle("-fx-text-fill: white; -fx-font-size: 16;");
+            } else {
+                textLabel.setStyle("-fx-text-fill: black; -fx-font-size: 16;");
+            }
+            textLabel.setIdentifier(identifier);
+        });
+    }
+
+    public void confirmation(final String identifier) {
+        assert identifier != null;
+        Platform.runLater(() -> {
+            textLabel.setStyle("-fx-text-fill: green; -fx-font-size: 16;");
+            textLabel.setIdentifier(identifier);
+        });
+    }
+
+    public void warn(final String identifier) {
+        assert identifier != null;
+        Platform.runLater(() -> {
+            textLabel.setStyle("-fx-text-fill: orange; -fx-font-size: 16;");
+            textLabel.setIdentifier(identifier);
+        });
+    }
+
+    public void error(final String identifier) {
+        assert identifier != null;
+        Platform.runLater(() -> {
+            textLabel.setStyle("-fx-text-fill: red; -fx-font-size: 16;");
             textLabel.setIdentifier(identifier);
         });
     }
