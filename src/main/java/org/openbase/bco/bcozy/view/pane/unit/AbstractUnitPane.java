@@ -258,6 +258,10 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
         return getClass().getSimpleName() + "[" + (unitRemote != null ? unitRemote : "?") + "]";
     }
     
+    /**
+     * Returns a new Icon object according to the type of icon used in this class.
+     * @return 
+     */
     public SVGIcon getIconSymbol() {
         return new SVGIcon(MaterialDesignIcon.VECTOR_CIRCLE, Constants.SMALL_ICON, false);
     }

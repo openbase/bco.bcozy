@@ -37,7 +37,6 @@ import org.openbase.bco.dal.remote.unit.Units;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
-import org.openbase.jul.exception.printer.LogLevel;
 import org.openbase.jul.pattern.Observable;
 import org.openbase.jul.pattern.Observer;
 import org.slf4j.Logger;
@@ -54,6 +53,7 @@ import rst.geometry.AxisAlignedBoundingBox3DFloatType;
 import rst.geometry.PoseType;
 
 /**
+ * Controller for the top layer of the room plan that includes buttons for the light units.
  *
  * @author lili
  */
@@ -65,12 +65,18 @@ public class UnitsPaneController {
     private static final Logger LOGGER = LoggerFactory.getLogger(UnitsPaneController.class);
 
     private final LocationPane locationPane;
-    private final UnitSymbolsPane unitPane;
+    private final UnitSymbolsPane unitSymbolsPane;
     private final Map<String, TitledUnitPaneContainer> titledPaneMap;
 
-    public UnitsPaneController(UnitSymbolsPane unitPane, LocationPane locationPane) {
+    /**
+     * Constructor for the construction of a UnitSymbolsPane.
+     *
+     * @param unitPane
+     * @param locationPane
+     */
+    public UnitsPaneController(final UnitSymbolsPane unitPane, final LocationPane locationPane) {
         this.locationPane = locationPane;
-        this.unitPane = unitPane;
+        this.unitSymbolsPane = unitPane;
         this.titledPaneMap = new HashMap<>();
 
         unitPane.scaleXProperty().bind(locationPane.scaleXProperty());
@@ -80,20 +86,24 @@ public class UnitsPaneController {
     }
 
     /**
-     * Establishes the connection with the RemoteRegistry.
+     * Establish the connection with the RemoteRegistry and fetch unit remotes.
+     * @throws org.openbase.jul.exception.CouldNotPerformException
+     * @throws java.lang.InterruptedException
      */
-    public void connectUnitRemote() {
+    public void connectUnitRemote() throws CouldNotPerformException, InterruptedException {
         try {
             Registries.waitForData();
             Registries.getUnitRegistry().addDataObserver(new Observer<UnitRegistryData>() {
                 @Override
-                public void update(Observable<UnitRegistryData> source, UnitRegistryData data) throws Exception {
+                public void update(Observable<UnitRegistryData> source, UnitRegistryData data) throws InterruptedException {
                     Platform.runLater(() -> {
                         try {
-                            fetchLocationUnitRemotes();                    
-                            unitPane.updateUnitsPane();
-                        } catch (CouldNotPerformException | InterruptedException ex) {
+                            fetchLocationUnitRemotes();
+                            unitSymbolsPane.updateUnitsPane();
+                        } catch (CouldNotPerformException ex) {
                             ExceptionPrinter.printHistory(ex, LOGGER);
+                        } catch (InterruptedException ex) {
+                            Thread.currentThread().interrupt();
                         }
                     });
                 }
@@ -104,21 +114,29 @@ public class UnitsPaneController {
                     Platform.runLater(() -> {
                         try {
                             fetchLocationUnitRemotes();
-                            unitPane.updateUnitsPane();
-                        } catch (CouldNotPerformException | InterruptedException ex) {
+                            unitSymbolsPane.updateUnitsPane();
+                        } catch (CouldNotPerformException ex) {
                             ExceptionPrinter.printHistory(ex, LOGGER);
+                        } catch (InterruptedException ex) {
+                            Thread.currentThread().interrupt();
                         }
                     });
                 }
 
             });
             updateUnits();
-        } catch (Exception ex) { //NOPMD
-            ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
+        } catch (CouldNotPerformException ex) { //NOPMD
+            throw new CouldNotPerformException("Could not fetch units from remote registry", ex);
         }
     }
 
-  
+    /**
+     * Fetches all location units, saves them in the UnitSymbolsPane and then
+     * fetches all units for every location and saves them also in the UnitSymbolsPane.
+     *
+     * @throws CouldNotPerformException
+     * @throws InterruptedException
+     */
     public void fetchLocationUnitRemotes() throws CouldNotPerformException, InterruptedException {
 
         final List<UnitConfig> locationUnitConfigList = Registries.getLocationRegistry().getLocationConfigs();
@@ -143,8 +161,9 @@ public class UnitsPaneController {
                 Point2D coord = new Point2D(vertex.x * Constants.METER_TO_PIXEL, vertex.y * Constants.METER_TO_PIXEL);
                 // Abstract Pane not working with a config object, only with a remote one!
                 UnitRemote<?> u = Units.getUnit(locationConfig.getId(), false);
-                unitPane.addRoomUnit(u, coord);
-            } catch (InterruptedException | CouldNotPerformException | ExecutionException | TimeoutException ex) {
+                unitSymbolsPane.addRoomUnit(u, coord);
+            } catch (CouldNotPerformException | ExecutionException | TimeoutException ex) {
+                // No exception throwing, because loop must continue it's work
                 ExceptionPrinter.printHistory(ex, LOGGER);
             }
 
@@ -172,8 +191,9 @@ public class UnitsPaneController {
                             transform.get(Constants.TRANSFORMATION_TIMEOUT / 10, TimeUnit.MILLISECONDS).
                                 getTransform().transform(unitVertex);
                             Point2D coord = new Point2D(unitVertex.x * Constants.METER_TO_PIXEL, unitVertex.y * Constants.METER_TO_PIXEL);
-                            unitPane.addUnit(u, coord, locationConfig.getId());
-                        } catch (InterruptedException | CouldNotPerformException | ExecutionException | TimeoutException ex) {
+                            unitSymbolsPane.addUnit(u, coord, locationConfig.getId());
+                        } catch (CouldNotPerformException | ExecutionException | TimeoutException ex) {
+                            // No exception throwing, because loop must continue it's work
                             ExceptionPrinter.printHistory(ex, LOGGER);
 
                         }
@@ -183,7 +203,7 @@ public class UnitsPaneController {
         }
     }
 
-    private Point3d calculateCoordinates(UnitConfig locationConfig) {
+    private Point3d calculateCoordinates(final UnitConfig locationConfig) {
         AxisAlignedBoundingBox3DFloatType.AxisAlignedBoundingBox3DFloat boundingBox
             = locationConfig.getPlacementConfig().getShape().getBoundingBox();
 
@@ -197,17 +217,20 @@ public class UnitsPaneController {
         return new Point3d(new_x, new_y, 1.0);
     }
 
- 
-
+    /**
+     * Fetches all unit remotes from registry and updates the unit pane,
+     * so all unit buttons represent the correct configuration.
+     */
     public void updateUnits() {
         Platform.runLater((() -> {
             try {
                 fetchLocationUnitRemotes();
-                unitPane.updateUnitsPane();
-            } catch (CouldNotPerformException | InterruptedException ex) {
+                unitSymbolsPane.updateUnitsPane();
+            } catch (CouldNotPerformException ex) {
                 ExceptionPrinter.printHistory(ex, LOGGER);
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
             }
         }));
     }
 }
-

@@ -33,10 +33,11 @@ import javafx.scene.layout.Pane;
 import org.openbase.bco.bcozy.view.location.UnitButton;
 import org.openbase.bco.bcozy.view.location.UnitButtonGrouped;
 import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
+import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.NotAvailableException;
-import org.openbase.jul.exception.printer.ExceptionPrinter;
 
 /**
+ * Pane for the top layer of the room plan that includes buttons for the light units.
  *
  * @author lili
  */
@@ -46,24 +47,24 @@ public class UnitSymbolsPane extends Pane {
      * Application logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(UnitSymbolsPane.class);
-
-    // locationId, buttons
+    // locationId, room-level buttons
     private final Map<String, UnitButton> locationUnitsMap;
-    // locationId, unitId, buttons
+    // locationId, unitId, unit-level buttons
     private final Map<String, Map<String, UnitButton>> unitsPerLocationMap;
-    // coordinates, buttons
+    // coordinates, grouped unit-level buttons
     private final Map<Point2D, UnitButtonGrouped> groupedButtons;
     private boolean putIntoGroup;
-
     public final SimpleStringProperty selectedLocationId;
 
+    /**
+     * Constructor for the UnitSymbolsPane.
+     */
     public UnitSymbolsPane() {
         super();
         locationUnitsMap = new HashMap<>();
         unitsPerLocationMap = new HashMap<>();
         groupedButtons = new HashMap<>();
         selectedLocationId = new SimpleStringProperty(Constants.DUMMY_LABEL);
-
         selectedLocationId.addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -73,8 +74,15 @@ public class UnitSymbolsPane extends Pane {
         });
     }
 
-   
-    public void addRoomUnit(UnitRemote<? extends GeneratedMessage> unitRemoteObject, Point2D position) {
+    /**
+     * Adds a new button for the control of a location.
+     *
+     * @param unitRemoteObject Unit to be controlled by the button.
+     * @param position Position of the button on the map, should be the center of the location unit pane.
+     * @throws CouldNotPerformException
+     * @throws InterruptedException
+     */
+    public void addRoomUnit(final UnitRemote<? extends GeneratedMessage> unitRemoteObject, final Point2D position) throws CouldNotPerformException, InterruptedException {
         UnitButton newButton;
         try {
             newButton = new UnitButton(unitRemoteObject);
@@ -83,11 +91,20 @@ public class UnitSymbolsPane extends Pane {
             newButton.setTranslateY(position.getX());
             locationUnitsMap.put(unitRemoteObject.getConfig().getId(), newButton);
         } catch (NotAvailableException ex) {
-            ExceptionPrinter.printHistory("Could not create unit button for unit " + this, ex, LOGGER);
+            throw new CouldNotPerformException("Could not create unit button for unit " + this, ex);
         }
     }
 
-    public void addUnit(UnitRemote<? extends GeneratedMessage> unitRemoteObject, Point2D position, String locationId) {
+    /**
+     * Adds a new button for the control of a unit or adds a unit to an existing grouped button.
+     *
+     * @param unitRemoteObject Unit to be controlled by the button.
+     * @param position Position of the button on the map, should be the center of the location unit pane.
+     * @param locationId Id of the location the unit belongs to.
+     * @throws CouldNotPerformException
+     * @throws InterruptedException
+     */
+    public void addUnit(final UnitRemote<? extends GeneratedMessage> unitRemoteObject, final Point2D position, final String locationId) throws CouldNotPerformException, InterruptedException {
         UnitButton newButton;
         try {
             newButton = new UnitButton(unitRemoteObject);
@@ -97,16 +114,17 @@ public class UnitSymbolsPane extends Pane {
 
             putIntoGroup = false;
             String toDelete;
-            
-            // Raum-Unit schon vorhanden
+
+            // room unit for this location already exists in the map 
             if (unitsPerLocationMap.containsKey(locationId)) {
 
                 Point2D coord = new Point2D(position.getX(), position.getY());
-                // Grouped Button schon vorhanden
+                // grouped button already exists
                 if (groupedButtons.containsKey(coord)) {
                     groupedButtons.get(coord).addUnit(unitRemoteObject);
                     putIntoGroup = true;
-                    
+
+                    // grouped button needs to be initalized
                 } else {
                     Iterator<Map.Entry<String, UnitButton>> iter = unitsPerLocationMap.get(locationId).entrySet().iterator();
                     while (iter.hasNext()) {
@@ -122,28 +140,30 @@ public class UnitSymbolsPane extends Pane {
                             groupedButtons.put(new Point2D(position.getX(), position.getY()), newGroupedButton);
                             newGroupedButton.addUnit(unitRemoteObject);
                             newGroupedButton.addUnit(button.getUnitRemote());
+                            // remove from normal buttons list to prevent double buttons
                             iter.remove();
                             putIntoGroup = true;
                         }
-
                     }
                 }
-
                 if (!putIntoGroup) {
                     unitsPerLocationMap.get(locationId).put(unitRemoteObject.getConfig().getId(), newButton);
-                } 
-             
-                // Raum-Unit muss noch angelegt werden
+                }
+
+                // entry in the map for this location needs to be initalized
             } else {
                 Map<String, UnitButton> units = new HashMap<>();
                 units.put(unitRemoteObject.getConfig().getId(), newButton);
                 unitsPerLocationMap.put(locationId, units);
             }
         } catch (NotAvailableException ex) {
-            ExceptionPrinter.printHistory("Could not create unit button for unit " + this, ex, LOGGER);
+            throw new CouldNotPerformException("Could not create unit button for unit " + this, ex);
         }
     }
 
+    /**
+     * Clears the UnitSymbolsPane to prepare the update.
+     */
     public void clearUnits() {
         locationUnitsMap.forEach((unitId, button)
             -> {
@@ -161,6 +181,10 @@ public class UnitSymbolsPane extends Pane {
         });
     }
 
+    /**
+     * Draws all location buttons except for the selected location, draws all unit buttons
+     * and grouped buttons for the selected location.
+     */
     public void updateUnitsPane() {
         this.getChildren().clear();
 

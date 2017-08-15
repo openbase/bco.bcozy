@@ -41,12 +41,14 @@ import org.openbase.bco.bcozy.view.pane.unit.AbstractUnitPane;
 import org.openbase.bco.bcozy.view.pane.unit.UnitPaneFactoryImpl;
 import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
-import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * Button that groups several UnitButtons that have the same position.
+ * It displays the correct symbol and a small number that indicates how many buttons have been grouped.
+ * If it is clicked, it displays AbstractUnitPanes in a clipped form for every unit of this button. So every
+ * button can be controlled from within the location plan.
  */
 public class UnitButtonGrouped extends Pane {
     
@@ -57,16 +59,17 @@ public class UnitButtonGrouped extends Pane {
     private final Text unitCount;
     private final GridPane iconPane;
     private String locationId;
-    boolean expanded;
-
-    Rectangle clipRectangle1;
-    Rectangle clipRectangle2;
+    private boolean expanded;
+    private Rectangle clipRectangle1;    
     
+    /**
+     * Constructor for the grouped button.
+     */
     public UnitButtonGrouped() {
         locationId = new String();
         expanded = false;
         groupingPane = new FlowPane();
-        groupingPane.setPrefWrapLength(70);
+        groupingPane.setPrefWrapLength(2 * (Constants.SMALL_ICON+(2 * Constants.INSETS)));
         iconPane = new GridPane();
         stackPane = new StackPane();
         unitCount = new Text("0");
@@ -78,12 +81,16 @@ public class UnitButtonGrouped extends Pane {
         stackPane.getChildren().add(iconPane);
         stackPane.getChildren().add(groupingPane);
         this.getChildren().add(stackPane); 
-
         
         clipRectangle1 = new Rectangle(Constants.SMALL_ICON,Constants.SMALL_ICON);
         this.setClip(clipRectangle1); 
         
-        final EventHandler<MouseEvent> mouseEventHandler = (MouseEvent event) -> {
+        groupingPane.layoutBoundsProperty().addListener((ov, oldValue,newValue) -> {
+            clipRectangle1.setWidth(newValue.getWidth());
+            clipRectangle1.setHeight(newValue.getHeight());
+        });
+        
+        final EventHandler<MouseEvent> mouseEventHandler = ( event) -> {
             event.consume();
             if (!expanded) {
                 expand();
@@ -91,7 +98,7 @@ public class UnitButtonGrouped extends Pane {
             } 
         };
         
-        final EventHandler<MouseEvent> mouseExitedHandler = (MouseEvent event) -> {
+        final EventHandler<MouseEvent> mouseExitedHandler = ( event) -> {
             event.consume();
             if (expanded) {
                 shrink();
@@ -103,7 +110,14 @@ public class UnitButtonGrouped extends Pane {
         
     }
 
-    public void addUnit(UnitRemote<? extends GeneratedMessage> unit) {
+    /**
+     * Adds a UnitRemote to the list of this button's units. If it is the first unit after construction,
+     * the correct icon is added to this button.
+     * @param unit UnitRemote that is supposed to be controlled by this grouped button.
+     * @throws InterruptedException
+     * @throws CouldNotPerformException 
+     */
+    public void addUnit(final UnitRemote<? extends GeneratedMessage> unit) throws InterruptedException, CouldNotPerformException {
 
         try {
             AbstractUnitPane content;
@@ -118,13 +132,12 @@ public class UnitButtonGrouped extends Pane {
             content.setVisible(false);
             content.setBackground(new Background(new BackgroundFill(new Color(0.25, 0.25, 0.25, 1.0), CornerRadii.EMPTY, Insets.EMPTY)));
             this.groupingPane.getChildren().add(content);
-            
-        } catch (CouldNotPerformException | InterruptedException ex) {
-            ExceptionPrinter.printHistory("Could not create grouped unit button for config " + this, ex, LOGGER);
+        } catch (CouldNotPerformException ex) {
+             throw new CouldNotPerformException("Could not create grouped unit button for config " + this, ex);
         }
     }
 
-    public void expand() {
+    private void expand() {
         iconPane.setVisible(false);
         this.groupingPane.getChildren().forEach((node)
         -> {node.setVisible(true);});
@@ -132,7 +145,7 @@ public class UnitButtonGrouped extends Pane {
         clipRectangle1.setHeight(groupingPane.getHeight());
     }
 
-    public void shrink() {
+    private void shrink() {
         this.groupingPane.getChildren().forEach((node)
         -> {node.setVisible(false);});
         iconPane.setVisible(true);
@@ -140,6 +153,10 @@ public class UnitButtonGrouped extends Pane {
         clipRectangle1.setHeight(Constants.SMALL_ICON);
     }
     
+     /**
+     * Convenience method to get the location the underlying unit belongs to.
+     * @return LocationId of the unit's location
+     */
     public String getLocationId() {
         return this.locationId;
     }
