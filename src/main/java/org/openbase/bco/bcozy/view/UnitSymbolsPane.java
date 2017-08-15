@@ -23,7 +23,6 @@ import com.google.protobuf.GeneratedMessage;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.logging.Level;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -35,6 +34,7 @@ import org.openbase.bco.bcozy.view.location.UnitButton;
 import org.openbase.bco.bcozy.view.location.UnitButtonGrouped;
 import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
 import org.openbase.jul.exception.NotAvailableException;
+import org.openbase.jul.exception.printer.ExceptionPrinter;
 
 /**
  *
@@ -83,7 +83,7 @@ public class UnitSymbolsPane extends Pane {
             newButton.setTranslateY(position.getX());
             locationUnitsMap.put(unitRemoteObject.getConfig().getId(), newButton);
         } catch (NotAvailableException ex) {
-            java.util.logging.Logger.getLogger(UnitSymbolsPane.class.getName()).log(Level.SEVERE, null, ex);
+            ExceptionPrinter.printHistory("Could not create unit button for unit " + this, ex, LOGGER);
         }
     }
 
@@ -140,7 +140,7 @@ public class UnitSymbolsPane extends Pane {
                 unitsPerLocationMap.put(locationId, units);
             }
         } catch (NotAvailableException ex) {
-            java.util.logging.Logger.getLogger(UnitSymbolsPane.class.getName()).log(Level.SEVERE, null, ex);
+            ExceptionPrinter.printHistory("Could not create unit button for unit " + this, ex, LOGGER);
         }
     }
 

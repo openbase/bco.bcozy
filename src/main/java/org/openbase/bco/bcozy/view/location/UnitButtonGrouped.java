@@ -19,8 +19,6 @@
 package org.openbase.bco.bcozy.view.location;
 
 import com.google.protobuf.GeneratedMessage;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.beans.binding.Bindings;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -43,11 +41,16 @@ import org.openbase.bco.bcozy.view.pane.unit.AbstractUnitPane;
 import org.openbase.bco.bcozy.view.pane.unit.UnitPaneFactoryImpl;
 import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  */
 public class UnitButtonGrouped extends Pane {
+    
+    protected final Logger LOGGER = LoggerFactory.getLogger(UnitButtonGrouped.class);
 
     private final FlowPane groupingPane;
     private final StackPane stackPane;
@@ -117,7 +120,7 @@ public class UnitButtonGrouped extends Pane {
             this.groupingPane.getChildren().add(content);
             
         } catch (CouldNotPerformException | InterruptedException ex) {
-            Logger.getLogger(UnitButtonGrouped.class.getName()).log(Level.SEVERE, null, ex);
+            ExceptionPrinter.printHistory("Could not create grouped unit button for config " + this, ex, LOGGER);
         }
     }
 

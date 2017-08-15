@@ -23,7 +23,6 @@ import org.openbase.jul.visual.javafx.iface.DynamicPane;
 import de.jensd.fx.glyphs.GlyphIcons;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import java.util.concurrent.Future;
-import java.util.logging.Level;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -155,7 +154,7 @@ public class WidgetPane extends VBox implements DynamicPane {
                     }
                     currentTask = applyPrimaryActivationUpdate(newActivation);
                 } catch (CouldNotPerformException ex) {
-                    java.util.logging.Logger.getLogger(AbstractUnitPane.class.getName()).log(Level.SEVERE, null, ex);
+                    ExceptionPrinter.printHistory("Could not apply activation update " + this, ex, LOGGER);
                 }
             }
         };
