@@ -18,87 +18,121 @@
  */
 package org.openbase.bco.bcozy.view;
 
-import com.jfoenix.controls.JFXSpinner;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
+import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.VBox;
 import org.openbase.bco.bcozy.BCozy;
+import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.InvalidStateException;
+import org.openbase.jul.exception.NotAvailableException;
+import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Created by tmichalski on 14.01.16.
+ * Created by hoestreich on 11/10/15.
  */
 public class InfoPane extends BorderPane {
 
-    private final VBox centerPane;
+    private static final Logger LOGGER = LoggerFactory.getLogger(InfoPane.class);
+
+    private static InfoPane instance;
+
     private final ObserverLabel textLabel;
-    private final JFXSpinner progressSpinner;
 
     /**
-     * Constructor for the ForegroundPane.
+     * Constructor for the InfoFooter.
      *
-     * @param height Height of the application window
-     * @param width Width of the application window
+     * @param height Height
+     * @param width Width
      */
     public InfoPane(final double height, final double width) {
-        this.setPrefSize(width, height);
-        this.getStyleClass().add("info-pane");
+        this.textLabel = new ObserverLabel();
+        this.textLabel.getStyleClass().add("floating-label");
+        //this.mouseOverText.getStyleClass().add("small-label");
+        this.textLabel.setAlignment(Pos.CENTER);
+        this.setCenter(textLabel);
+        this.setPrefHeight(height);
+        this.setPrefWidth(width);
+        InfoPane.instance = this;
+        //this.getStyleClass().add("info-footer");
+    }
 
-        this.textLabel = new ObserverLabel("initRemotes");
-
-        this.progressSpinner = new JFXSpinner();
-
-        this.centerPane = new VBox(Constants.INSETS);
-        this.centerPane.setAlignment(Pos.CENTER);
-        this.centerPane.getChildren().addAll(progressSpinner, textLabel);
-
-        this.setCenter(this.centerPane);
+    public static InfoPane getInstance() throws NotAvailableException {
+        if (instance == null) {
+            throw new NotAvailableException("InfoPane", new InvalidStateException("InfoPane not initialized!"));
+        }
+        return instance;
     }
 
     /**
-     * Sets the new identifier for the TextLabel.
+     * Getter for the actual mouseOverLabel.
      *
-     * @param identifier identifier
-     * @deprecated please use info instead.
+     * @return the actual text which is set as a string
+     * @deprecated please use method info() instead.
      */
     @Deprecated
-    public void setTextLabelIdentifier(final String identifier) {
-        info(identifier);
+    public Label getMouseOverText() {
+        return textLabel;
     }
 
-    public void info(final String identifier) {
+    public static void info(final String identifier) {
         assert identifier != null;
-        Platform.runLater(() -> {
-            if (BCozy.baseColorIsWhite) {
-                textLabel.setStyle("-fx-text-fill: white; -fx-font-size: 16;");
-            } else {
-                textLabel.setStyle("-fx-text-fill: black; -fx-font-size: 16;");
-            }
-            textLabel.setIdentifier(identifier);
-        });
+        try {
+            final ObserverLabel textLabel = getInstance().textLabel;
+            Platform.runLater(() -> {
+                if (BCozy.baseColorIsWhite) {
+                    textLabel.setStyle("-fx-text-fill: white; -fx-font-size: 16;");
+                } else {
+                    textLabel.setStyle("-fx-text-fill: black; -fx-font-size: 16;");
+                }
+                textLabel.setIdentifier(identifier);
+            });
+        } catch (CouldNotPerformException ex) {
+            ExceptionPrinter.printHistory("Could not print user feedback!", ex, LOGGER);
+        }
     }
 
-    public void confirmation(final String identifier) {
+    public static void confirmation(final String identifier) {
         assert identifier != null;
-        Platform.runLater(() -> {
-            textLabel.setStyle("-fx-text-fill: green; -fx-font-size: 16;");
-            textLabel.setIdentifier(identifier);
-        });
+        try {
+            final ObserverLabel textLabel = getInstance().textLabel;
+            Platform.runLater(() -> {
+                textLabel.setStyle("-fx-text-fill: green; -fx-font-size: 16;");
+                textLabel.setIdentifier(identifier);
+            });
+        } catch (CouldNotPerformException ex) {
+            ExceptionPrinter.printHistory("Could not print user feedback!", ex, LOGGER);
+        }
     }
 
-    public void warn(final String identifier) {
+    public static void warn(final String identifier) {
         assert identifier != null;
-        Platform.runLater(() -> {
-            textLabel.setStyle("-fx-text-fill: orange; -fx-font-size: 16;");
-            textLabel.setIdentifier(identifier);
-        });
+        try {
+
+            final ObserverLabel textLabel = getInstance().textLabel;
+            Platform.runLater(() -> {
+                textLabel.setStyle("-fx-text-fill: orange; -fx-font-size: 16;");
+                textLabel.setIdentifier(identifier);
+            });
+
+        } catch (CouldNotPerformException ex) {
+            ExceptionPrinter.printHistory("Could not print user feedback!", ex, LOGGER);
+        }
     }
 
-    public void error(final String identifier) {
+    public static void error(final String identifier) {
         assert identifier != null;
-        Platform.runLater(() -> {
-            textLabel.setStyle("-fx-text-fill: red; -fx-font-size: 16;");
-            textLabel.setIdentifier(identifier);
-        });
+        try {
+            final ObserverLabel textLabel = getInstance().textLabel;
+
+            Platform.runLater(() -> {
+                textLabel.setStyle("-fx-text-fill: red; -fx-font-size: 16;");
+                textLabel.setIdentifier(identifier);
+            });
+        } catch (CouldNotPerformException ex) {
+            ExceptionPrinter.printHistory("Could not print user feedback!", ex, LOGGER);
+        }
     }
 }

@@ -36,6 +36,7 @@ import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ForegroundPane;
 import org.openbase.bco.bcozy.view.ImageViewProvider;
 import org.openbase.bco.bcozy.view.InfoPane;
+import org.openbase.bco.bcozy.view.LoadingPane;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jps.core.JPService;
 import org.openbase.jul.exception.FatalImplementationErrorException;
@@ -76,7 +77,7 @@ public class BCozy extends Application {
 
     public static Stage primaryStage;
 
-    private InfoPane infoPane;
+    private LoadingPane loadingPane;
     private ContextMenuController contextMenuController;
     private LocationPaneController locationPaneController;
     private ForegroundPane foregroundPane;
@@ -97,14 +98,14 @@ public class BCozy extends Application {
                 switch (data) {
                     case CONNECTED:
                         // recover default
-                        infoPane.confirmation("connected");
+                        InfoPane.confirmation("connected");
                         break;
                     case CONNECTING:
                         // green
-                        infoPane.info("connecting");
+                        InfoPane.warn("connecting");
                         break;
                     case DISCONNECTED:
-                        infoPane.error("disconnected");
+                        InfoPane.error("disconnected");
                         // red
                         break;
                     case UNKNOWN:
@@ -131,10 +132,10 @@ public class BCozy extends Application {
         foregroundPane.setMinWidth(root.getWidth());
         final BackgroundPane backgroundPane = new BackgroundPane(foregroundPane);
 
-        infoPane = new InfoPane(screenHeight, screenWidth);
-        infoPane.setMinHeight(root.getHeight());
-        infoPane.setMinWidth(root.getWidth());
-        root.getChildren().addAll(backgroundPane, foregroundPane, infoPane);
+        loadingPane = new LoadingPane(screenHeight, screenWidth);
+        loadingPane.setMinHeight(root.getHeight());
+        loadingPane.setMinWidth(root.getWidth());
+        root.getChildren().addAll(backgroundPane, foregroundPane, loadingPane);
 
         primaryStage.setMinWidth(foregroundPane.getMainMenu().getMinWidth() + foregroundPane.getContextMenu().getMinWidth() + 300);
         primaryStage.setHeight(screenHeight);
@@ -152,6 +153,7 @@ public class BCozy extends Application {
         ResponsiveHandler.addResponsiveToWindow(primaryStage);
         primaryStage.show();
 
+        InfoPane.confirmation("Welcome");
         try {
             Registries.getUnitRegistry().addConnectionStateObserver(connectionObserver);
         } catch (NotAvailableException ex) {
@@ -159,7 +161,7 @@ public class BCozy extends Application {
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
         }
-
+        
         initRemotesAndLocation();
     }
 
@@ -168,21 +170,21 @@ public class BCozy extends Application {
             @Override
             protected Object call() throws java.lang.Exception {
                 try {
-                    infoPane.setTextLabelIdentifier("waitForConnection");
+                    loadingPane.setTextLabelIdentifier("waitForConnection");
                     Registries.waitForData();
 
-                    infoPane.setTextLabelIdentifier("fillContextMenu");
+                    loadingPane.setTextLabelIdentifier("fillContextMenu");
                     foregroundPane.init();
 
                     contextMenuController.initTitledPaneMap();
 
-                    infoPane.setTextLabelIdentifier("connectLocationRemote");
+                    loadingPane.setTextLabelIdentifier("connectLocationRemote");
                     locationPaneController.connectLocationRemote();
                     unitsPaneController.connectUnitRemote();
 
                     return null;
                 } catch (Exception ex) {
-                    infoPane.setTextLabelIdentifier("errorDuringStartup");
+                    loadingPane.setTextLabelIdentifier("errorDuringStartup");
                     Thread.sleep(3000);
                     Exception exx = new FatalImplementationErrorException("Could not init panes", this, ex);
                     ExceptionPrinter.printHistoryAndExit(exx, LOGGER);
@@ -193,7 +195,7 @@ public class BCozy extends Application {
             @Override
             protected void succeeded() {
                 super.succeeded();
-                infoPane.setVisible(false);
+                loadingPane.setVisible(false);
             }
         });
     }
