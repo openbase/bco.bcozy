@@ -107,7 +107,6 @@ public class UnitButtonGrouped extends Pane {
         };
         stackPane.setOnMouseClicked(mouseEventHandler);
         stackPane.setOnMouseExited(mouseExitedHandler);
-        
     }
 
     /**
@@ -158,6 +157,6 @@ public class UnitButtonGrouped extends Pane {
      * @return LocationId of the unit's location
      */
     public String getLocationId() {
-        return this.locationId;
+        return locationId;
     }
 }
