@@ -19,7 +19,10 @@
 package org.openbase.bco.bcozy.view.pane.unit;
 
 import com.google.protobuf.GeneratedMessage;
+import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.application.Platform;
+import org.openbase.bco.bcozy.view.Constants;
+import org.openbase.bco.bcozy.view.SVGIcon;
 import org.openbase.bco.bcozy.view.generic.ExpandableWidgedPane;
 import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
 import org.openbase.bco.dal.remote.unit.Units;
@@ -253,5 +256,13 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
     @Override
     public String toString() {
         return getClass().getSimpleName() + "[" + (unitRemote != null ? unitRemote : "?") + "]";
+    }
+    
+    /**
+     * Returns a new Icon object according to the type of icon used in this class.
+     * @return 
+     */
+    public SVGIcon getIconSymbol() {
+        return new SVGIcon(MaterialDesignIcon.VECTOR_CIRCLE, Constants.SMALL_ICON, false);
     }
 }
