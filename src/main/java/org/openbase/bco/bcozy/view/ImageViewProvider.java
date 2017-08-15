@@ -31,16 +31,15 @@ import java.util.List;
 public final class ImageViewProvider {
 
     private static List<ImageView> imageViews = new ArrayList<>();
-    //CHECKSTYLE.OFF: MagicNumber
+
     private static ColorAdjust actColor = new ColorAdjust(360.0, 100, -100.0, 0.0);
-    //CHECKSTYLE.ON: MagicNumber
 
     private ImageViewProvider() {
-
     }
 
     /**
      * Method to create an Image view with quadratic measures.
+     *
      * @param imagePath the path to the image applied to the image view
      * @param size the width and height (same value used for both)
      * @return a new ImageView Instance initialized with the provided parameters
@@ -51,6 +50,7 @@ public final class ImageViewProvider {
 
     /**
      * Method to create an Image view with quadratic measures.
+     *
      * @param imagePath the path to the image applied to the image view
      * @param width the width for the image
      * @param height the height for the image
@@ -60,34 +60,29 @@ public final class ImageViewProvider {
         return init(imagePath, width, height);
     }
 
-
     /**
      * Colorizes all icons created by this provider to white.
      */
     public static void colorizeIconsToWhite() {
-        //CHECKSTYLE.OFF: MagicNumber
         colorizeIcons(360.0, 100, 100.0, 0.0);
-        //CHECKSTYLE.ON: MagicNumber
     }
 
     /**
      * Colorizes all icons created by this provider to black.
      */
     public static void colorizeIconsToBlack() {
-        //CHECKSTYLE.OFF: MagicNumber
         colorizeIcons(360.0, 100, -100.0, 0.0);
-        //CHECKSTYLE.ON: MagicNumber
     }
 
     /**
      * Colorizes all icons created by this provider to a choosen color (defined by the parameters).
+     *
      * @param hue the hue of the color to be set
      * @param saturation the saturation of the color to be set
      * @param brightness the brightness of the color to be set
      * @param contrast the contrast of the color to be set
      */
-    public static void colorizeIcons(final double hue, final double saturation, final double brightness,
-                                     final double contrast) {
+    public static void colorizeIcons(final double hue, final double saturation, final double brightness, final double contrast) {
 
         actColor = new ColorAdjust(hue, saturation, brightness, contrast);
 
@@ -96,7 +91,6 @@ public final class ImageViewProvider {
             imageView.setSmooth(true);
         }
     }
-
 
     private static ImageView init(final String imagePath, final double width, final double height) {
         final Image icon = new Image(ImageViewProvider.class.getResourceAsStream(imagePath));
@@ -108,6 +102,5 @@ public final class ImageViewProvider {
         imageView.setSmooth(true);
         imageViews.add(imageView);
         return imageView;
-
     }
 }

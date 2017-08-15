@@ -42,8 +42,8 @@ public class ForegroundPane extends BorderPane implements DefaultInitializable {
     private final ContextMenu contextMenu;
     private final CenterPane centerPane;
     private final MenuHeader menuHeader;
-    private final InfoFooter infoFooter;
-    public final ObjectProperty<CenterPaneController.State> appState;
+    private final InfoPane infoFooter;
+    private final ObjectProperty<CenterPaneController.State> appState;
 
     /**
      * Constructor for the ForegroundPane.
@@ -56,7 +56,7 @@ public class ForegroundPane extends BorderPane implements DefaultInitializable {
         this.contextMenu = new ContextMenu(height - 150, 300);
         this.contextMenu.getFullscreen().setOnAction(event -> setMaximizeAction());
         this.menuHeader = new MenuHeader(30, width);
-        this.infoFooter = new InfoFooter(20, width);
+        this.infoFooter = new InfoPane(20, width);
         this.centerPane = new CenterPane(height - 150);
 
         //this.setTop(this.menuHeader);
@@ -110,9 +110,9 @@ public class ForegroundPane extends BorderPane implements DefaultInitializable {
     /**
      * Getter for the info footer (bottom).
      *
-     * @return InfoFooter (HBox)
+     * @return InfoPane (HBox)
      */
-    public InfoFooter getInfoFooter() {
+    public InfoPane getInfoFooter() {
         return infoFooter;
     }
 

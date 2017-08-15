@@ -43,6 +43,7 @@ import org.openbase.jul.pattern.Observer;
 import org.openbase.jul.processing.StringProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rst.domotic.state.UserActivityStateType.UserActivityState;
 import rst.domotic.unit.UnitConfigType.UnitConfig;
 import rst.domotic.unit.user.UserDataType;
 
@@ -127,25 +128,44 @@ public class UserPane extends BorderPane implements Shutdownable {
 
             updateUserPresenceState();
             userNameLabel.setText(user.getName());
-//        if (remote.get) {
-//            guestLabel.setVisible(true);
-//        } else {
-//            guestLabel.setVisible(false);
-
-//        }
+            updateUserState();
             updateBounds();
-
-            userStateLabel.setText(StringProcessor.transformUpperCaseToCamelCase(user.getUserActivityState().getCurrentActivity().name()));
         } catch (CouldNotPerformException ex) {
             ExceptionPrinter.printHistory("Could not update dynamic components!", ex, LOGGER);
+        }
+    }
+
+    private void updateUserState() {
+        String userState = null;
+        try {
+            if (user.getUserActivityState().getCurrentActivity() != UserActivityState.Activity.UNKNOWN) {
+                userState = StringProcessor.transformUpperCaseToCamelCase(user.getUserActivityState().getCurrentActivity().name());
+            }
+
+            // generate user state fallback
+            if (userState == null) {
+                userState = user.getUserPresenceState().getValue().name();
+            }
+
+        } catch (final NotAvailableException ex) {
+            ExceptionPrinter.printHistory("Could not update user presence state!", ex, LOGGER);
+            try {
+                if (user.getConfig().getUserConfig().getOccupant()) {
+                    userState = "occupant";
+                } else {
+                    userState = "guest";
+                }
+            } catch (NotAvailableException ex1) {
+                userState = "";
+            }
+            userStateLabel.setText(userState);
         }
     }
 
     /**
      * Visualize the presence state of the user.
      */
-    public void updateUserPresenceState() {
-
+    private void updateUserPresenceState() {
         try {
             switch (user.getUserPresenceState().getValue()) {
                 case AT_HOME:
@@ -155,21 +175,28 @@ public class UserPane extends BorderPane implements Shutdownable {
                     atHomeIcon = new SVGIcon(MaterialIcon.HOME, Constants.EXTRA_SMALL_ICON, true);
                     userIconPane.add(atHomeIcon, 4, 4, 1, 1);
                     userIcon.setForegroundIconColor(Color.DODGERBLUE);
+                    setManaged(true);
+                    setVisible(true);
                     return;
                 case AWAY:
                 case SHORT_AWAY:
                 case SOON_AT_HOME:
                     atHomeIcon = new SVGIcon(MaterialIcon.DIRECTIONS_WALK, Constants.EXTRA_SMALL_ICON, true);
                     userIcon.setForegroundIconColor(Color.LIGHTGRAY);
+
+                    // do not display user pane if user is a guest and not present.
+                    if (!user.getConfig().getUserConfig().getOccupant()) {
+                        setManaged(false);
+                        setVisible(false);
+                    }
                     return;
                 case UNKNOWN:
                     break;
                 default:
                     ExceptionPrinter.printHistory(new EnumNotSupportedException(user.getUserPresenceState().getValue(), this), LOGGER);
-                    return;
             }
         } catch (final NotAvailableException ex) {
-            // Unknown
+            ExceptionPrinter.printHistory("Could not update user presence state!", ex, LOGGER);
         }
         atHomeIcon = new SVGIcon(MaterialIcon.SEARCH, Constants.EXTRA_SMALL_ICON, true);
         userIcon.setForegroundIconColor(Color.DARKGREY);
