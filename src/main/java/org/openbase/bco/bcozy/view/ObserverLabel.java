@@ -20,7 +20,6 @@ package org.openbase.bco.bcozy.view;
 
 import javafx.beans.DefaultProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -50,8 +49,7 @@ public class ObserverLabel extends Label implements Observer {
 
     @FXML
     private SimpleStringProperty identifier = new SimpleStringProperty();
-    private ResourceBundle languageBundle = ResourceBundle
-            .getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
+    private ResourceBundle languageBundle = ResourceBundle.getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
 
 
     /**
@@ -101,8 +99,7 @@ public class ObserverLabel extends Label implements Observer {
 
             text = languageBundle.getString(this.getIdentifier());
         } catch (MissingResourceException ex) {
-            ExceptionPrinter.printHistory("Could not resolve Identifier[" + getIdentifier() + "]", ex, LOGGER,
-                    LogLevel.WARN);
+            ExceptionPrinter.printHistory("Could not resolve Identifier[" + getIdentifier() + "]", ex, LOGGER, LogLevel.WARN);
             text = getIdentifier();
         }
         super.setText(applyOnNewText.apply(text));

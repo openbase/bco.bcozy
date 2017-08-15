@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.openbase.bco.bcozy.view.InfoPane;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.EnumNotSupportedException;
@@ -172,6 +173,7 @@ public final class LocationPane extends Pane {
     public ForegroundPane getForeground() {
         return this.foregroundPane;
     }
+
     /**
      * Singleton Pattern.
      *
@@ -319,23 +321,22 @@ public final class LocationPane extends Pane {
      * @param onActionHandler The Handler that gets activated when the button is
      * pressed
      * @param position The position where the button is to be placed
-   
-    public void addUnit(final SVGIcon svgIcon, final EventHandler<ActionEvent> onActionHandler,
-            final Point2D position) {
-        final UnitButton unitButton = new UnitButton(svgIcon, onActionHandler);
-        unitButton.setTranslateX(position.getX());
-        unitButton.setTranslateY(position.getY());
-        this.getChildren().add(unitButton);
-    }  
-
-    public void addUnit(final SVGIcon svgIcon,
-            final Point2D position) {
-        final UnitButton unitButton = new UnitButton(svgIcon, null);
-        unitButton.setTranslateX(position.getX());
-        unitButton.setTranslateY(position.getY());
-        //unitSymbols.add(unitButton);
-    }*/
-
+     *
+     * public void addUnit(final SVGIcon svgIcon, final EventHandler<ActionEvent> onActionHandler,
+     * final Point2D position) {
+     * final UnitButton unitButton = new UnitButton(svgIcon, onActionHandler);
+     * unitButton.setTranslateX(position.getX());
+     * unitButton.setTranslateY(position.getY());
+     * this.getChildren().add(unitButton);
+     * } *
+     * public void addUnit(final SVGIcon svgIcon,
+     * final Point2D position) {
+     * final UnitButton unitButton = new UnitButton(svgIcon, null);
+     * unitButton.setTranslateX(position.getX());
+     * unitButton.setTranslateY(position.getY());
+     * //unitSymbols.add(unitButton);
+     * }
+     */
     /**
      * Erases all locations from the locationPane.
      */
@@ -398,10 +399,9 @@ public final class LocationPane extends Pane {
             this.getChildren().add(connectionPolygon);
         });
 
-       // unitSymbols.forEach((icon) -> {
+        // unitSymbols.forEach((icon) -> {
         //    this.getChildren().add(icon);
         //});
-
         if (rootRoom != null) {
             this.getChildren().add(rootRoom);
         }
@@ -433,15 +433,15 @@ public final class LocationPane extends Pane {
             event.consume();
             tile.mouseEntered();
             try {
-                foregroundPane.getInfoFooter().getMouseOverText().setText(tile.getLabel());
-            } catch (NotAvailableException ex) {
+                InfoPane.info(tile.getLabel());
+            } catch (final NotAvailableException ex) {
                 LOGGER.warn("Could not resolve location label!", ex);
             }
         });
         tile.setOnMouseExited(event -> {
             event.consume();
             tile.mouseLeft();
-            foregroundPane.getInfoFooter().getMouseOverText().setText("");
+            InfoPane.info("");
         });
     }
 
@@ -476,7 +476,7 @@ public final class LocationPane extends Pane {
             try {
                 event.consume();
                 region.mouseEntered();
-                foregroundPane.getInfoFooter().getMouseOverText().setText(region.getLabel());
+                InfoPane.info(region.getLabel());
             } catch (CouldNotPerformException ex) {
                 ExceptionPrinter.printHistory("Could not handle mouse event!", ex, LOGGER);
             }
@@ -484,7 +484,7 @@ public final class LocationPane extends Pane {
         region.setOnMouseExited(event -> {
             event.consume();
             region.mouseLeft();
-            foregroundPane.getInfoFooter().getMouseOverText().setText("");
+            InfoPane.info("");
         });
     }
 

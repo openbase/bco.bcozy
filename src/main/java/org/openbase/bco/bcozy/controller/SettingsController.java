@@ -47,6 +47,7 @@ import static java.util.Objects.nonNull;
  * @author vdasilva
  */
 public class SettingsController {
+
     /**
      * Application Logger
      */
@@ -70,7 +71,6 @@ public class SettingsController {
     @FXML
     private JFXTextField filterInput;
 
-
     @FXML
     private VBox permissionPaneParent;
 
@@ -82,9 +82,7 @@ public class SettingsController {
     private PermissionPaneController permissionPaneController;
     private JFXTreeTableColumn<RecursiveUnitConfig, String> typeColumn;
 
-
     final ObservableList<RecursiveUnitConfig> list = FXCollections.observableArrayList();
-
 
     /**
      * Default Controller necessary for loading fxml files.
@@ -99,13 +97,10 @@ public class SettingsController {
         permissionTab.setGraphic(new ObserverLabel("permissions"));
         registrationTab.setGraphic(new ObserverLabel("registration"));
 
-
         fillTreeTableView();
-
 
         Pane userSettingsPane = loadUserSettingsPane();
         settingsTab.setContent(userSettingsPane);
-
 
         permissionPane = loadPermissionPane();
         permissionPane.setVisible(false);
@@ -116,21 +111,17 @@ public class SettingsController {
         onPaneWidthChange(null, null, null);
         this.tabPane.getStyleClass().addAll("detail-menu");
 
-
         this.setRegistrationPane();
 
         try {
             Registries.getUnitRegistry().addDataObserver((observable, unitRegistryData) -> {
-
-                        List<UnitConfigType.UnitConfig> unitConfigList = Registries.getUnitRegistry()
-                                .getUnitConfigs();
-                        Platform.runLater(() -> fillTable(unitConfigList));
-                    }
+                List<UnitConfigType.UnitConfig> unitConfigList = Registries.getUnitRegistry().getUnitConfigs();
+                Platform.runLater(() -> fillTable(unitConfigList));
+            }
             );
         } catch (CouldNotPerformException | InterruptedException ex) {
             ex.printStackTrace();
         }
-
     }
 
     URL getFxmlURL(String filename) throws NullPointerException {
@@ -161,9 +152,7 @@ public class SettingsController {
             throw new UncheckedIOException(ex);
         }
 
-
     }
-
 
     private <T> void onPaneWidthChange(ObservableValue<? extends T> observable, T oldValue, T newValue) {
         double width = this.tabPane.getWidth();
@@ -172,7 +161,6 @@ public class SettingsController {
         settingsTab.getTabPane().setTabMinWidth(width / (childrenCount + 1));
         //+1 cause otherwise tabs would overlap with Floating Button 
     }
-
 
     public void fillTreeTableView() {
         unitsTable.setShowRoot(false);
@@ -198,20 +186,16 @@ public class SettingsController {
 
         unitsTable.getSelectionModel()
                 .selectedItemProperty()
-                .addListener(this::onSelectionChange)
-        ;
-
+                .addListener(this::onSelectionChange);
 
         filterInput.textProperty().addListener((o, oldVal, newVal) -> {
             unitsTable.setPredicate(
                     user -> user.getValue().getUnit().getLabel().toLowerCase().contains(newVal.toLowerCase())
-                            || user.getValue().getUnit().getDescription().toLowerCase().contains(newVal.toLowerCase())
-                            || user.getValue().getUnit().getType().name().toLowerCase().contains(newVal.toLowerCase()));
+                    || user.getValue().getUnit().getDescription().toLowerCase().contains(newVal.toLowerCase())
+                    || user.getValue().getUnit().getType().name().toLowerCase().contains(newVal.toLowerCase()));
         });
 
-
     }
-
 
     private void onSelectionChange(javafx.beans.Observable observable, TreeItem oldValue, TreeItem newValue) {
         if (nonNull(newValue) && newValue.getValue() instanceof RecursiveUnitConfig) {
@@ -225,7 +209,6 @@ public class SettingsController {
     private void setPermissionPaneVisible(boolean visible) {
         permissionPane.setVisible(visible);
 
-
     }
 
     private void fillTable(List<UnitConfigType.UnitConfig> unitConfigList) {
@@ -234,7 +217,6 @@ public class SettingsController {
 
         //TODO: nicht ganze Tabelle ersetzten, sondern nur geänderte Units
         // RecursiveUnitConfig.unit-Property nutzen?
-
         list.clear();
 
         for (UnitConfigType.UnitConfig unitConfig : unitConfigList) {
@@ -245,10 +227,8 @@ public class SettingsController {
 
         if (!list.isEmpty()) {
 
-
             unitsTable.group(this.typeColumn);
         }
-
 
     }
 
@@ -270,8 +250,7 @@ public class SettingsController {
                 .addListener(new ChangeListener<Number>() {
 
                     @Override
-                    public void changed(final ObservableValue<? extends Number> observableValue, final Number number,
-                                        final Number number2) {
+                    public void changed(final ObservableValue<? extends Number> observableValue, final Number number, final Number number2) {
                         if (userSettingsController.getAvailableThemes().get(number2.intValue())
                                 .equals(languageBundle.getString(Constants.LIGHT_THEME_CSS_NAME))) {
                             BCozy.changeTheme(Constants.LIGHT_THEME_CSS);
@@ -288,18 +267,15 @@ public class SettingsController {
                 .addListener(new ChangeListener<Number>() {
 
                     @Override
-                    public void changed(final ObservableValue<? extends Number> observableValue, final Number number,
-                                        final Number number2) {
+                    public void changed(final ObservableValue<? extends Number> observableValue, final Number number, final Number number2) {
                         if (userSettingsController.getAvailableLanguages().get(number2.intValue()).equals("English")) {
                             LanguageSelection.getInstance().setSelectedLocale(new Locale("en", "US"));
-                        } else if (userSettingsController.getAvailableLanguages().get(number2.intValue()).equals
-                                ("Deutsch")) {
+                        } else if (userSettingsController.getAvailableLanguages().get(number2.intValue()).equals("Deutsch")) {
                             LanguageSelection.getInstance().setSelectedLocale(new Locale("de", "DE"));
                         }
                     }
                 });
     }
-
 
     private AnchorPane loadPermissionPane() {
         try {
@@ -362,8 +338,7 @@ public class SettingsController {
 
     }
 
-    private class MethodRefCellValueFactory<S, T> implements Callback<TreeTableColumn.CellDataFeatures<S, T>,
-            ObservableValue<T>> {
+    private class MethodRefCellValueFactory<S, T> implements Callback<TreeTableColumn.CellDataFeatures<S, T>, ObservableValue<T>> {
 
         Function<S, T> supplier;
 
@@ -383,8 +358,3 @@ public class SettingsController {
         }
     }
 }
-
-
-
-
-

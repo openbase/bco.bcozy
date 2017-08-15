@@ -19,75 +19,65 @@
 package org.openbase.bco.bcozy.view.location;
 
 import com.google.protobuf.GeneratedMessage;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.scene.layout.Pane;
 import org.openbase.bco.bcozy.view.generic.WidgetPane.DisplayMode;
 import org.openbase.bco.bcozy.view.pane.unit.AbstractUnitPane;
 import org.openbase.bco.bcozy.view.pane.unit.UnitPaneFactoryImpl;
 import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.NotAvailableException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- *
+ * Button that contains an AbstractUnitPane in a clipped form so the unit can be controlled from within the location plan.
  */
 public class UnitButton extends Pane {
 
-    private final double DEFAULT_ICON_SIZE = 8.0;
+    /**
+     * Application logger.
+     */
+    protected final Logger LOGGER = LoggerFactory.getLogger(UnitButton.class);
 
-//    /**
-//     * Creates a button with suitable unit symbol
-//     *
-//     * @param config config of the remote unit
-//     */
-//     LocationRemote unit = Units.getUnit("locaction unit id", true, Units.LOCATION);
-//       unit.getUnits(UnitTemplateType.UnitTemplate.UnitType.UNKNOWN, true, unitRemoteClass);
-//    public UnitButton(UnitConfig config)  {
-//           
-//        try {                        
-//            AbstractUnitPane content;
-//            content = UnitPaneFactoryImpl.getInstance().newInitializedInstance(config);
-//            content.setDisplayMode(DisplayMode.ICON_ONLY);
-//            this.getChildren().add(content);
-//        } catch (CouldNotPerformException | InterruptedException ex) {
-//            Logger.getLogger(UnitButton.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//        
-//    }
+    private UnitRemote<? extends GeneratedMessage> unitRemote;
 
-    public UnitButton(UnitRemote<? extends GeneratedMessage> u) {
-        try {                        
+    /**
+     * Constructor for UnitButton. Creates the content with the help of the UnitPaneFactory dynamically,
+     * according to the given unitRemote.
+     * @param unitRemote 
+     * @throws java.lang.InterruptedException
+     * @throws org.openbase.jul.exception.CouldNotPerformException
+     */
+    public UnitButton(final UnitRemote<? extends GeneratedMessage> unitRemote) throws InterruptedException, CouldNotPerformException {
+        try {
             AbstractUnitPane content;
-            content = UnitPaneFactoryImpl.getInstance().newInitializedInstance(u.getConfig());
+            content = UnitPaneFactoryImpl.getInstance().newInitializedInstance(unitRemote.getConfig());
             content.setDisplayMode(DisplayMode.ICON_ONLY);
+            this.unitRemote = content.getUnitRemote();
             this.getChildren().add(content);
-        } catch (CouldNotPerformException | InterruptedException ex) {
-            Logger.getLogger(UnitButton.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (CouldNotPerformException ex) {
+            throw new CouldNotPerformException("Could not create UnitButton for unit", ex);
         }
     }
-    
 
+    /**
+     * Returns the UnitRemote for the unit controlled with this button.
+     * @return Underlying UnitRemote object
+     */
+    public UnitRemote<? extends GeneratedMessage> getUnitRemote() {
+        return this.unitRemote;
+    }
 
-   /* 
-
-    final ContextMenu cm = new ContextMenu();
-            MenuItem cmItem1 = new MenuItem("Toggle power state");
-            try {
-                UnitPaneFactoryImpl.getInstance().newInstance(UnitPaneFactoryImpl.loadUnitPaneClass(config.getType()));
-                CustomMenuItem cmItem2 = new CustomMenuItem();
-                cm.getItems().add(cmItem2);
-            } catch (CouldNotPerformException ex) {
-                Logger.getLogger(UnitButton.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            cmItem1.setOnAction((ActionEvent ex) -> {
-                //
-            });
-            cm.getItems().add(cmItem1);
-            this.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent ex) -> {
-                if (e.getButton() == MouseButton.SECONDARY) {
-                    cm.show(this.getParent(), ex.getScreenX(), ex.getScreenY());
-                }
-            });
- 
-    */
+    /**
+     * Convenience method to get the location the underlying unit belongs to.
+     * @return LocationId of the unit's location
+     * @throws CouldNotPerformException 
+     */
+    public String getLocationId() throws CouldNotPerformException {
+        try {
+            return this.unitRemote.getConfig().getPlacementConfig().getLocationId();
+        } catch (NotAvailableException ex) {
+            throw new CouldNotPerformException("Could not retrieve locationId for unit", ex);
+        }
+    }
 }

@@ -29,13 +29,15 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import org.openbase.bco.bcozy.controller.CenterPaneController;
 import org.openbase.bco.bcozy.controller.SettingsController;
-import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.net.URL;
+import org.openbase.bco.bcozy.controller.UserSettingsController;
+import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.NotAvailableException;
+import org.openbase.jul.exception.printer.ExceptionPrinter;
 
 /**
  * Created by hoestreich on 11/26/15.
@@ -49,29 +51,27 @@ public class CenterPane extends StackPane {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(CenterPane.class);
 
+    private UserSettingsController userSettingsController;
+    private final Pane settingsMenu;
 
-    private Pane settingsMenu;
-
-    public ObjectProperty<CenterPaneController.State> appStateProperty;
+    public final ObjectProperty<CenterPaneController.State> appStateProperty;
 
     /**
      * Constructor for the center pane.
      */
-    public CenterPane(double height) {
+    public CenterPane(final double height) {
 
         appStateProperty = new SimpleObjectProperty<>(CenterPaneController.State.SETTINGS);
 
         // Initializing components
         this.settingsMenu = loadSettingsMenu(height);
 
-        FloatingPopUp viewModes = new FloatingPopUp(Pos.BOTTOM_RIGHT);
-        viewModes.addParentElement(MaterialIcon.SETTINGS, (Runnable) null); //TODO: Add EventHandler when needed
+        final FloatingPopUp viewModes = new FloatingPopUp(Pos.BOTTOM_RIGHT);
+        viewModes.addParentElement(MaterialIcon.WEEKEND, (Runnable) null); //TODO: Add EventHandler when needed
         viewModes.addElement(MaterialDesignIcon.THERMOMETER_LINES, (Runnable) null);//TODO: Add EventHandler when needed
         viewModes.addElement(MaterialIcon.VISIBILITY, (Runnable) null);//TODO: Add EventHandler when needed
 
-
-        FloatingButton settingsBtn = new FloatingButton(new SVGIcon(MaterialDesignIcon.DOTS_VERTICAL , Constants.MIDDLE_ICON,
-                true));
+        final FloatingButton settingsBtn = new FloatingButton(new SVGIcon(MaterialDesignIcon.SETTINGS, Constants.MIDDLE_ICON, true));
 
         this.setAlignment(settingsBtn, Pos.TOP_RIGHT);
 
@@ -80,36 +80,33 @@ public class CenterPane extends StackPane {
         // Styling components with CSS
         this.getStyleClass().addAll("padding-small");
 
-
         this.setPickOnBounds(false);
         this.getChildren().addAll(viewModes, settingsBtn);
 
         this.setMinHeight(height);
         this.setPrefHeight(height);
-
     }
-
 
     private void toggleSettings() {
         if (this.getChildren().contains(settingsMenu)) {
             this.getChildren().remove(settingsMenu);
         } else {
             this.getChildren().add(0, settingsMenu);
-
         }
     }
 
-    private Pane loadSettingsMenu(double height) {
+    private Pane loadSettingsMenu(final double height) {
         try {
-            URL url = getClass().getClassLoader().getResource("SettingsMenu.fxml");
+            final URL url = getClass().getClassLoader().getResource("SettingsMenu.fxml");
             if (url == null) {
-                throw new RuntimeException("SettingsMenu.fxml not found");
+                throw new NotAvailableException("SettingsMenu.fxml");
             }
 
             FXMLLoader loader = new FXMLLoader(url);
             AnchorPane anchorPane = loader.load();
 
-            SettingsController settingsController = (SettingsController) loader.getController();
+            final SettingsController settingsController = (SettingsController) loader.getController();
+            userSettingsController = settingsController.getUserSettingsController();
 
             this.setMinHeight(height);
             this.setPrefHeight(height);
@@ -119,12 +116,13 @@ public class CenterPane extends StackPane {
             anchorPane.setPrefHeight(height);
 
             return anchorPane;
-        } catch (IOException ex) {
-            ex.printStackTrace();
+        } catch (final CouldNotPerformException | IOException ex) {
             ExceptionPrinter.printHistory("Content could not be loaded", ex, LOGGER);
-            throw new UncheckedIOException(ex);
+            return new Pane(new ObserverLabel("unavailable"));
         }
     }
 
-
+    public UserSettingsController getSettingsPane() {
+        return userSettingsController;
+    }
 }
