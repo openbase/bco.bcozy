@@ -18,7 +18,11 @@
  */
 package org.openbase.bco.bcozy.view;
 
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.layout.StackPane;
+import org.openbase.bco.bcozy.controller.CenterPaneController;
 import org.openbase.bco.bcozy.view.location.LocationPane;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InstantiationException;
@@ -30,6 +34,7 @@ public class BackgroundPane extends StackPane {
 
     private final LocationPane locationPane;
     private final UnitSymbolsPane unitSymbolsPane;
+    private final UnitSymbolsPane unitSymbolsBatteryPane;
     private double prevMouseCordX; //NOPMD
     private double prevMouseCordY; //NOPMD
 
@@ -44,14 +49,27 @@ public class BackgroundPane extends StackPane {
         try {
 
             locationPane = LocationPane.getInstance(foregroundPane);
-            this.getChildren().add(locationPane); 
-            
+            this.getChildren().add(locationPane);
+
             unitSymbolsPane = new UnitSymbolsPane();
             unitSymbolsPane.setPickOnBounds(false);
             this.getChildren().add(unitSymbolsPane);
-            
+
             unitSymbolsPane.selectedLocationId.bind(locationPane.selectedLocationId);
-            
+
+         /*   foregroundPane.appState.addListener(new ChangeListener<CenterPaneController.State>() {
+
+                @Override
+                public void changed(ObservableValue<? extends CenterPaneController.State> observable, CenterPaneController.State oldValue, CenterPaneController.State newValue) {
+                   System.out.println(newValue.name());
+                }
+
+            });*/
+         
+            unitSymbolsBatteryPane = new UnitSymbolsPane();
+            unitSymbolsBatteryPane.setPickOnBounds(false);
+            this.getChildren().add(unitSymbolsBatteryPane);
+
             this.getStyleClass().add("background-pane");
 
             this.setOnMousePressed(event -> {
@@ -94,10 +112,19 @@ public class BackgroundPane extends StackPane {
         return unitSymbolsPane;
     }
     
-       /**
+    
+    /**
+     * @return The LocationPane.
+     */
+    public UnitSymbolsPane getUnitsBatteryPane() {
+        return unitSymbolsBatteryPane;
+    }
+
+
+    /**
      * @return The Location Pane.
      */
-    public LocationPane getLocationPane() {  
+    public LocationPane getLocationPane() {
         return locationPane;
     }
 }

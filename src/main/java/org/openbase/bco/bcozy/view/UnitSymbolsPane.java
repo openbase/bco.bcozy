@@ -212,5 +212,25 @@ public class UnitSymbolsPane extends Pane {
             }
         });
     }
+    
+      /**
+     * Draws all location buttons except for the selected location, draws all unit buttons
+     * and grouped buttons for the selected location.
+     */
+    public void updateUnitsPaneWithoutSelectedStuff() {
+        this.getChildren().clear();
+
+        unitsPerLocationMap.forEach((locId, map) ->
+        { map.forEach((unitId, button) -> 
+            { this.getChildren().add(button);});
+        });
+
+        
+        groupedButtons.forEach((point, button)
+            -> {
+            this.getChildren().add(button);
+            
+        });
+    }
 
 }

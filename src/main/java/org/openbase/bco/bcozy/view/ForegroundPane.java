@@ -43,7 +43,7 @@ public class ForegroundPane extends BorderPane implements DefaultInitializable {
     private final CenterPane centerPane;
     private final MenuHeader menuHeader;
     private final InfoFooter infoFooter;
-    private final ObjectProperty<CenterPaneController.State> appState;
+    public final ObjectProperty<CenterPaneController.State> appState;
 
     /**
      * Constructor for the ForegroundPane.

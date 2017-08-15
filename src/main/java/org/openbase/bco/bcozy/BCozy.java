@@ -82,6 +82,7 @@ public class BCozy extends Application {
     private LocationPaneController locationPaneController;
     private ForegroundPane foregroundPane;
     private UnitsPaneController unitsPaneController;
+    private UnitsPaneBatteryController unitsPaneBatteryController;
     private Future initTask;
 
     private Scene mainScene;
@@ -118,6 +119,7 @@ public class BCozy extends Application {
         contextMenuController = new ContextMenuController(foregroundPane, backgroundPane.getLocationPane());
         locationPaneController = new LocationPaneController(backgroundPane.getLocationPane());
         unitsPaneController = new UnitsPaneController(backgroundPane.getUnitsPane(), backgroundPane.getLocationPane());
+        unitsPaneBatteryController = new UnitsPaneBatteryController(backgroundPane.getUnitsBatteryPane(), backgroundPane.getLocationPane());
 
         ResponsiveHandler.addResponsiveToWindow(primaryStage);
         primaryStage.show();
@@ -141,6 +143,7 @@ public class BCozy extends Application {
                     infoPane.setTextLabelIdentifier("connectLocationRemote");
                     locationPaneController.connectLocationRemote();
                     unitsPaneController.connectUnitRemote();
+                    unitsPaneBatteryController.connectUnitRemote();
 
                     return null;
                 } catch (Exception ex) {
