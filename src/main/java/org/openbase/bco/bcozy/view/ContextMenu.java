@@ -38,7 +38,7 @@ public class ContextMenu extends VBox {
     private final Label roomInfo;
     private final ScrollPane verticalScrollPane;
     private TitledUnitPaneContainer titledPaneContainer;
-    private FloatingButton fullscreenBtn;
+    private final FloatingButton fullscreenBtn;
 
 
     /**
@@ -58,9 +58,12 @@ public class ContextMenu extends VBox {
         fullscreenBtn.setAlignment(Pos.TOP_RIGHT);
         fullscreenBtn.translateYProperty().set(Constants.FLOATING_BUTTON_FULLSCREEN_OFFSET_Y);
         fullscreenBtn.translateXProperty().set(Constants.FLOATING_BUTTON_FULLSCREEN_OFFSET_X);
+        fullscreenBtn.setManaged(true);
 
-        roomInfo = new Label("No room selected.");
-        roomInfo.setAlignment(Pos.CENTER);
+        roomInfo = new Label("Select a Room");
+        roomInfo.setAlignment(Pos.TOP_CENTER);
+        roomInfo.getStyleClass().clear();
+        roomInfo.getStyleClass().add("headline");
 
         verticalScrollPane = new ScrollPane();
         verticalScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
