@@ -211,8 +211,9 @@ public class UnitsPaneController {
         double w = boundingBox.getWidth();
         double new_x;
         double new_y;
-        new_x = (boundingBox.getLeftFrontBottom().getX() + w) / 2;
-        new_y = (boundingBox.getLeftFrontBottom().getY() + d) / 2;
+        double halfButtonSize = (Constants.SMALL_ICON + (2 * Constants.INSETS))/2;
+        new_x = (boundingBox.getLeftFrontBottom().getX() + w - halfButtonSize) / 2;
+        new_y = (boundingBox.getLeftFrontBottom().getY() + d - halfButtonSize) / 2;
 
         return new Point3d(new_x, new_y, 1.0);
     }
