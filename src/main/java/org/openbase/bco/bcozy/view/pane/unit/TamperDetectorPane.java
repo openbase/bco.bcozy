@@ -52,8 +52,8 @@ public class TamperDetectorPane extends AbstractUnitPane<TamperDetectorRemote, T
 
         try {
             state = getUnitRemote().getData().getTamperState().getValue();
-        } catch (CouldNotPerformException e) {
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.DEBUG);
+        } catch (CouldNotPerformException ex) {
+            ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.DEBUG);
         }
 
         switch (state) {

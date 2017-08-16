@@ -18,9 +18,13 @@
  */
 package org.openbase.bco.bcozy.view.mainmenupanes;
 
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
+
 import java.util.ArrayList;
 import java.util.MissingResourceException;
+import java.util.function.Predicate;
+
 import javafx.application.Platform;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
@@ -29,6 +33,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.HiddenSidesPane;
+import org.controlsfx.control.textfield.*;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.SVGIcon;
 import org.openbase.bco.registry.remote.Registries;
@@ -41,10 +46,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.domotic.registry.UserRegistryDataType.UserRegistryData;
 import rst.domotic.unit.UnitConfigType.UnitConfig;
+import rst.domotic.unit.user.UserConfigType;
 
 /**
  * Created by hoestreich on 12/15/15.
  *
+ * @author vdasilva
  * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>
  */
 public class AvailableUsersPane extends PaneElement {
@@ -53,12 +60,23 @@ public class AvailableUsersPane extends PaneElement {
 
     private final BorderPane statusIcon;
     private final VBox userPanes;
+    private final CustomTextField searchField;
+
+    /**
+     * Predicate to filter user.
+     */
+    private Predicate<UserConfigType.UserConfig> userPredicate = u -> true;
 
     /**
      * Constructor for the AvailableUsersPane.
      */
     public AvailableUsersPane() {
 //        try {
+        searchField = new CustomTextField();
+        searchField.setRight(new SVGIcon(FontAwesomeIcon.SEARCH, Constants.EXTRA_SMALL_ICON, true));
+
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> search(newValue));
+
         userPanes = new VBox(Constants.INSETS);
         statusIcon = new BorderPane(new SVGIcon(MaterialDesignIcon.ACCOUNT_CIRCLE, Constants.MIDDLE_ICON, true));
 
@@ -75,18 +93,46 @@ public class AvailableUsersPane extends PaneElement {
 
         scrollBar.maxProperty().bind(verticalScrollPane.vmaxProperty());
         scrollBar.minProperty().bind(verticalScrollPane.vminProperty());
-//
-//        AdvancedHorizontalSlider advancedHorizontalSlider = new AdvancedHorizontalSlider(10, 30);
 
+        //AdvancedHorizontalSlider advancedHorizontalSlider = new AdvancedHorizontalSlider(10, 30);
         verticalScrollPane.setContent(userPanes);
         verticalScrollPane.setFitToWidth(true);
-        this.getChildren().addAll(hiddenSidesPane);
+        this.getChildren().addAll(searchField, hiddenSidesPane);
         //        } catch (CouldNotPerformException ex) {
         //            throw new org.openbase.jul.exception.InstantiationException(this, ex);
         //        }
+
+        hoverProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                getChildren().clear();
+                getChildren().addAll(searchField, hiddenSidesPane);
+            } else {
+                getChildren().clear();
+                getChildren().addAll(hiddenSidesPane);
+            }
+        });
+    }
+
+    private void search(String text) {
+        if (text == null || text.isEmpty()) {
+            userPredicate = user -> true;
+        }
+
+        userPredicate = user -> containsIgnoreCase(user.getFirstName(), text)
+                || containsIgnoreCase(user.getLastName(), text)
+                || containsIgnoreCase(user.getUserName(), text);
+
+        Platform.runLater(() -> {
+            updateDynamicComponents();
+        });
+    }
+
+    boolean containsIgnoreCase(String text, String toFind) {
+        return text.toLowerCase().contains(toFind.toLowerCase());
     }
 
     public void init() throws InitializationException, InterruptedException {
+
         try {
             Registries.getUserRegistry().addDataObserver(new Observer<UserRegistryData>() {
                 @Override
@@ -116,9 +162,11 @@ public class AvailableUsersPane extends PaneElement {
             });
 
             for (final UnitConfig userUniConfig : Registries.getUserRegistry().getUserConfigs()) {
-                final UserPane userPane = new UserPane();
-                userPane.init(userUniConfig);
-                userPanes.getChildren().add(userPane);
+                if (userPredicate.test(userUniConfig.getUserConfig())) {
+                    final UserPane userPane = new UserPane();
+                    userPane.init(userUniConfig);
+                    userPanes.getChildren().add(userPane);
+                }
             }
         } catch (CouldNotPerformException | MissingResourceException | InterruptedException ex) {
             ExceptionPrinter.printHistory(new CouldNotPerformException(ex), LOGGER);

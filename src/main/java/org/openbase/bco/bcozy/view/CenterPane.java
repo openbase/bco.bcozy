@@ -20,103 +20,109 @@ package org.openbase.bco.bcozy.view;
 
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import de.jensd.fx.glyphs.materialicons.MaterialIcon;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import org.openbase.bco.bcozy.controller.CenterPaneController;
+import org.openbase.bco.bcozy.controller.SettingsController;
+import org.openbase.bco.bcozy.view.mainmenupanes.SettingsPane;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.net.URL;
+import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.NotAvailableException;
+import org.openbase.jul.exception.printer.ExceptionPrinter;
 
 /**
  * Created by hoestreich on 11/26/15.
+ *
+ * @author vdasilva
  */
 public class CenterPane extends StackPane {
 
-    private final FloatingButton popUpParent;
-    private final FloatingButton popUpChildTop;
-    private final FloatingButton popUpChildBottom;
-    private final FloatingButton fullscreen;
-    private final VBox viewSwitcher;
-    private final VBox viewSwitcherPopUp;
+    /**
+     * Application logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(CenterPane.class);
+
+    private SettingsPane settingsPane;
+    private final Pane settingsMenu;
+
+    public final ObjectProperty<CenterPaneController.State> appStateProperty;
 
     /**
      * Constructor for the center pane.
      */
-    public CenterPane() {
+    public CenterPane(final double height) {
+
+        appStateProperty = new SimpleObjectProperty<>(CenterPaneController.State.SETTINGS);
 
         // Initializing components
-        popUpParent = new FloatingButton(new SVGIcon(MaterialIcon.SETTINGS, Constants.MIDDLE_ICON, true));
-        popUpChildTop = new FloatingButton(new SVGIcon(MaterialDesignIcon.THERMOMETER_LINES, Constants.SMALL_ICON, true));
-        popUpChildBottom = new FloatingButton(new SVGIcon(MaterialIcon.VISIBILITY, Constants.SMALL_ICON, true));
-        fullscreen = new FloatingButton(new SVGIcon(MaterialIcon.FULLSCREEN, Constants.MIDDLE_ICON, true));
-        viewSwitcher = new VBox(Constants.INSETS);
-        viewSwitcher.setMaxSize(Constants.MIDDLE_ICON, Double.MAX_VALUE);
-        viewSwitcher.setAlignment(Pos.BOTTOM_CENTER);
-        viewSwitcherPopUp = new VBox(Constants.INSETS);
-        viewSwitcherPopUp.setAlignment(Pos.CENTER);
+        this.settingsMenu = loadSettingsMenu(height);
 
-        // Setting Alignment in Stackpane
-        StackPane.setAlignment(viewSwitcher, Pos.BOTTOM_RIGHT);
-        StackPane.setAlignment(fullscreen, Pos.TOP_RIGHT);
-        this.setPickOnBounds(false);
-        viewSwitcher.translateYProperty().set(-Constants.INSETS);
-        fullscreen.translateYProperty().set(Constants.INSETS);
+        final FloatingPopUp viewModes = new FloatingPopUp(Pos.BOTTOM_RIGHT);
+        viewModes.addParentElement(MaterialIcon.WEEKEND, (Runnable) null); //TODO: Add EventHandler when needed
+        viewModes.addElement(MaterialDesignIcon.THERMOMETER_LINES, (Runnable) null);//TODO: Add EventHandler when needed
+        viewModes.addElement(MaterialIcon.VISIBILITY, (Runnable) null);//TODO: Add EventHandler when needed
 
-        // Adding components to their parents
-        viewSwitcher.getChildren().addAll(popUpParent);
-        viewSwitcherPopUp.getChildren().addAll(popUpChildTop, popUpChildBottom);
-        this.getChildren().addAll(viewSwitcher, fullscreen);
+        final FloatingButton settingsBtn = new FloatingButton(new SVGIcon(MaterialDesignIcon.SETTINGS, Constants.MIDDLE_ICON, true));
+
+        this.setAlignment(settingsBtn, Pos.TOP_RIGHT);
+
+        settingsBtn.setOnAction(e -> toggleSettings());
 
         // Styling components with CSS
         this.getStyleClass().addAll("padding-small");
+
+        this.setPickOnBounds(false);
+        this.getChildren().addAll(viewModes, settingsBtn);
+
+        this.setMinHeight(height);
+        this.setPrefHeight(height);
     }
 
-    /**
-     * Getter for the fullscreen button.
-     *
-     * @return FloatingButton instance
-     */
-    public FloatingButton getFullscreen() {
-        return fullscreen;
-    }
-
-    /**
-     * Getter for the popUpChildBottom button.
-     *
-     * @return FloatingButton instance
-     */
-    public FloatingButton getPopUpChildBottom() {
-        return popUpChildBottom;
-    }
-
-    /**
-     * Getter for the popUpChildTop button.
-     *
-     * @return FloatingButton instance
-     */
-    public FloatingButton getPopUpChildTop() {
-        return popUpChildTop;
-    }
-
-    /**
-     * Getter for the popUpParent button.
-     *
-     * @return FloatingButton instance
-     */
-    public FloatingButton getPopUpParent() {
-        return popUpParent;
-    }
-
-    /**
-     * Getter for the PopOver pane.
-     *
-     * @param visible value to be set
-     */
-    public void setViewSwitchingButtonsVisible(final boolean visible) {
-        if (visible) {
-            viewSwitcher.getChildren().clear();
-            viewSwitcher.getChildren().addAll(viewSwitcherPopUp, popUpParent);
+    private void toggleSettings() {
+        if (this.getChildren().contains(settingsMenu)) {
+            this.getChildren().remove(settingsMenu);
         } else {
-            viewSwitcher.getChildren().removeAll(viewSwitcherPopUp);
+            this.getChildren().add(0, settingsMenu);
         }
-
     }
 
+    private Pane loadSettingsMenu(final double height) {
+        try {
+            final URL url = getClass().getClassLoader().getResource("SettingsMenu.fxml");
+            if (url == null) {
+                throw new NotAvailableException("SettingsMenu.fxml");
+            }
+
+            FXMLLoader loader = new FXMLLoader(url);
+            AnchorPane anchorPane = loader.load();
+
+            final SettingsController settingsController = (SettingsController) loader.getController();
+            settingsPane = settingsController.getSettingsPane();
+
+            this.setMinHeight(height);
+            this.setPrefHeight(height);
+
+            anchorPane.getStyleClass().addAll("detail-menu");
+            anchorPane.setMinHeight(height);
+            anchorPane.setPrefHeight(height);
+
+            return anchorPane;
+        } catch (final CouldNotPerformException | IOException ex) {
+            ExceptionPrinter.printHistory("Content could not be loaded", ex, LOGGER);
+            return new Pane(new ObserverLabel("unavailable"));
+        }
+    }
+
+    public SettingsPane getSettingsPane() {
+        return settingsPane;
+    }
 }

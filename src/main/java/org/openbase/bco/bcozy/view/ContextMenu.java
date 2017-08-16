@@ -18,6 +18,7 @@
  */
 package org.openbase.bco.bcozy.view;
 
+import de.jensd.fx.glyphs.materialicons.MaterialIcon;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -37,12 +38,14 @@ public class ContextMenu extends VBox {
     private final Label roomInfo;
     private final ScrollPane verticalScrollPane;
     private TitledUnitPaneContainer titledPaneContainer;
+    private final FloatingButton fullscreenBtn;
+
 
     /**
      * Constructor for the ContextMenu.
      *
      * @param height Height
-     * @param width Width
+     * @param width  Width
      */
     public ContextMenu(final double height, final double width) {
 
@@ -51,8 +54,16 @@ public class ContextMenu extends VBox {
         this.setPrefHeight(height);
         this.setPrefWidth(width);
 
-        roomInfo = new Label("No room selected.");
-        roomInfo.setAlignment(Pos.CENTER);
+        fullscreenBtn = new FloatingButton(new SVGIcon(MaterialIcon.FULLSCREEN, Constants.MIDDLE_ICON, true));
+        fullscreenBtn.setAlignment(Pos.TOP_RIGHT);
+        fullscreenBtn.translateYProperty().set(Constants.FLOATING_BUTTON_FULLSCREEN_OFFSET_Y);
+        fullscreenBtn.translateXProperty().set(Constants.FLOATING_BUTTON_FULLSCREEN_OFFSET_X);
+        fullscreenBtn.setManaged(true);
+
+        roomInfo = new Label("Select a Room");
+        roomInfo.setAlignment(Pos.TOP_CENTER);
+        roomInfo.getStyleClass().clear();
+        roomInfo.getStyleClass().add("headline");
 
         verticalScrollPane = new ScrollPane();
         verticalScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
@@ -82,7 +93,7 @@ public class ContextMenu extends VBox {
         //TODO: Find a nicer way to scale the size of the scroll bar thumb
         scrollBar.setVisibleAmount(0.25);
 
-        this.getChildren().addAll(roomInfo, hiddenSidesPane);
+        this.getChildren().addAll(fullscreenBtn, roomInfo, hiddenSidesPane);
         //VBox.setVgrow(contextSortingPane, Priority.ALWAYS);
 
         this.getStyleClass().addAll("detail-menu");
@@ -122,4 +133,9 @@ public class ContextMenu extends VBox {
     public void clearVerticalScrollPane() {
         verticalScrollPane.setContent(null);
     }
+
+    public FloatingButton getFullscreen() {
+        return fullscreenBtn;
+    }
+
 }

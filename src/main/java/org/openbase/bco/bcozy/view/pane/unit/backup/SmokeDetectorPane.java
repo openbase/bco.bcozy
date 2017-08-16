@@ -74,8 +74,8 @@ public class SmokeDetectorPane extends AbstractUnitPane<SmokeDetectorRemote, Smo
 //        try {
 //            alarmState = smokeDetectorRemote.getSmokeAlarmState().getValue();
 //            smokeState = smokeDetectorRemote.getSmokeState().getValue();
-//        } catch (CouldNotPerformException e) {
-//            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+//        } catch (CouldNotPerformException ex) {
+//            ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
 //        }
 //        setSmokeDetectorIconAndText(alarmState, smokeState);
 //    }

@@ -77,8 +77,8 @@ public class TemperatureSensorPane extends AbstractUnitPane<TemperatureSensorRem
                 }
             }
 
-        } catch (CouldNotPerformException e) {
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.DEBUG);
+        } catch (CouldNotPerformException ex) {
+            ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.DEBUG);
         }
 
 //        // update alarm state
@@ -105,16 +105,16 @@ public class TemperatureSensorPane extends AbstractUnitPane<TemperatureSensorRem
 //        State alarmState = State.UNKNOWN;
 //        try {
 //            temperature = temperatureSensorRemote.getTemperatureState().getTemperature();
-//        } catch (CouldNotPerformException e) {
-//            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+//        } catch (CouldNotPerformException ex) {
+//            ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
 //        }
 //
 //        setEffectTemperature(temperature);
 //
 //        try {
 //            alarmState = temperatureSensorRemote.getTemperatureAlarmState().getValue();
-//        } catch (CouldNotPerformException e) {
-//            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+//        } catch (CouldNotPerformException ex) {
+//            ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
 //        }
 //        setAlarmStateIcon(alarmState);
 //    }

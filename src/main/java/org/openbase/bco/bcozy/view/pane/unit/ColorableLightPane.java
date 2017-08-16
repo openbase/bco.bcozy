@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import rst.domotic.unit.dal.ColorableLightDataType.ColorableLightData;
 import java.util.concurrent.Future;
 import javafx.scene.layout.Pane;
+import org.openbase.bco.bcozy.view.SVGIcon;
 import org.openbase.bco.bcozy.view.generic.ColorChooser;
 import org.openbase.bco.dal.remote.unit.ColorableLightRemote;
 import org.openbase.jul.visual.javafx.transform.JFXColorToHSBColorTransformer;
@@ -39,13 +40,13 @@ import rst.domotic.state.PowerStateType.PowerState;
  * Created by agatting on 03.12.15.
  */
 public class ColorableLightPane extends AbstractUnitPane<ColorableLightRemote, ColorableLightData> {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ColorableLightPane.class);
-    
+
     private ColorChooser colorChooser;
-    
+
     private final RecurrenceEventFilter<Color> recurrenceEventFilterHSV = new RecurrenceEventFilter<Color>(Constants.RECURRENCE_EVENT_FILTER_MILLI_TIMEOUT) {
-        
+
         @Override
         public void relay() {
             try {
@@ -64,7 +65,7 @@ public class ColorableLightPane extends AbstractUnitPane<ColorableLightRemote, C
         super(ColorableLightRemote.class, true);
         this.setIcon(MaterialDesignIcon.LIGHTBULB_OUTLINE, MaterialDesignIcon.LIGHTBULB);
     }
-    
+
     @Override
     protected void initBodyContent(Pane bodyPane) throws CouldNotPerformException {
         colorChooser = new ColorChooser();
@@ -80,7 +81,7 @@ public class ColorableLightPane extends AbstractUnitPane<ColorableLightRemote, C
         });
         bodyPane.getChildren().add(colorChooser);
     }
-    
+
     @Override
     public void updateDynamicContent() {
         super.updateDynamicContent();
@@ -89,19 +90,19 @@ public class ColorableLightPane extends AbstractUnitPane<ColorableLightRemote, C
         PowerState.State state = PowerState.State.UNKNOWN;
         try {
             state = getUnitRemote().getData().getPowerState().getValue();
-        } catch (CouldNotPerformException e) {
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.DEBUG);
+        } catch (CouldNotPerformException ex) {
+            ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.DEBUG);
         }
 
         // detect color
         Color color;
         try {
             color = JFXColorToHSBColorTransformer.transform(getData().getColorState().getColor().getHsbColor());
-        } catch (CouldNotPerformException e) {
+        } catch (CouldNotPerformException ex) {
             color = Constants.LIGHTBULB_OFF_COLOR;
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.DEBUG);
+            ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.DEBUG);
         }
-        
+
         if (colorChooser != null && expansionProperty().get()) {
             colorChooser.setSelectedColor(color);
         }
@@ -118,13 +119,19 @@ public class ColorableLightPane extends AbstractUnitPane<ColorableLightRemote, C
                 setPrimaryActivationWithoutNotification(Boolean.TRUE);
                 break;
             default:
+                getIcon().setBackgroundIconColor(Color.TRANSPARENT);
                 setInfoText("unknown");
                 break;
         }
     }
-    
+
     @Override
     protected Future applyPrimaryActivationUpdate(final boolean activation) throws CouldNotPerformException {
         return (activation) ? getUnitRemote().setPowerState(PowerState.State.ON) : getUnitRemote().setPowerState(PowerState.State.OFF);
+    }
+    
+    @Override
+    public SVGIcon getIconSymbol() {
+        return new SVGIcon(MaterialDesignIcon.LIGHTBULB, Constants.SMALL_ICON, false);
     }
 }

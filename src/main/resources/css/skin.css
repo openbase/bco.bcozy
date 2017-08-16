@@ -1,4 +1,530 @@
+/**** Colors for BCozy - Variables are defined in dark.css and light.css according to themes  *********************************/
+
+
+/*.glyph-icon{*/
+/*-fx-fill: -icons-color;*/
+/*}*/
+
+.icons {
+    -fx-fill: -icons-color;
+}
+
+.mnemonic-underline {
+    -fx-stroke: transparent;
+}
+
+.emoji-text {
+    -fx-fill: -fx-text-base-color;
+}
+
+.linear-gradient-left-to-right {
+    -fx-background-color: linear-gradient(to right, rgba(0, 0, 0, 0.8) 80%, rgba(0, 0, 0, 0.5) 90%, rgba(0, 0, 0, 0.0) 100%);
+}
+
+.linear-gradient-right-to-left {
+    -fx-background-color: linear-gradient(to left, rgba(0, 0, 0, 0.8) 80%, rgba(0, 0, 0, 0.5) 90%, rgba(0, 0, 0, 0.0) 100%);
+}
+
+.floating-box {
+    -fx-background-color: -bg-color;
+}
+
+.main-menu {
+    -fx-background-color: -bg-color;
+}
+
+.detail-menu {
+    -fx-background-color: -bg-color;
+}
+
+/*.info-footer {*/
+/*-fx-background-color: -bg-color;*/
+/*}*/
+
+.floating-button {
+    -fx-background-color: -bg-color;
+    -fx-effect: dropshadow(gaussian, -shadow-color, 10.0, 0.0, -4.0, 4.0);
+}
+
+.main-menu-pane {
+    -fx-background-color: -bg-color;
+    -fx-effect: dropshadow(gaussian, -shadow-color, 10.0, 0.0, 0.0, 4.0);
+}
+
+.list-element {
+    -fx-border-color: transparent transparent -devider-color transparent;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * TabPane                                                                     *
+ *                                                                             *
+ ******************************************************************************/
+.tab-pane:top *.tab-header-area {
+    -fx-background-color: -bg-color;
+}
+
+.tab {
+    -fx-background-color: -bg-color;
+    -fx-focus-color: lightgray;
+    -fx-faint-focus-color: lightgray;
+
+}
+
+.tab-content-area {
+    -fx-border-color: f2f2f2;
+    -fx-border-width: 2px;
+}
+
+.tab:selected {
+    -fx-background: -bg-color;
+}
+.tab:selected
+{
+    -fx-background-color: #f2f2f2;
+}
+
+.bg-white {
+    -fx-background-color: -bg-color;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * Label                                                                       *
+ *                                                                             *
+ ******************************************************************************/
+
+.small-label {
+    -fx-text-fill: -small-label-color;
+}
+
+.wrong-input-indicator {
+    -fx-text-fill: -wrong-indicator;
+}
+
+.label {
+    -fx-text-fill: -fx-text-base-color;
+}
+
+.label:show-mnemonics > .mnemonic-underline {
+    -fx-stroke: -fx-text-base-color;
+}
+
+.floating-label {
+    -fx-text-fill: -bg-color;
+}
+
+.headline {
+    -fx-text-fill: -fx-text-base-color;
+    -fx-font-weight: bold;
+    -fx-font-size: 20;
+}
+
+.text {
+    /*-fx-effect:dropshadow(gaussian, rgba(0.0, 0.0, 0.0, 0.2), 0.0, 0.0, 0.0, 1.0);*/
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * Button & ToggleButton                                                       *
+ *                                                                             *
+ ******************************************************************************/
+
+.toggle-button, .button {
+    -fx-background-color: transparent;
+    -fx-text-fill: -fx-text-base-color;
+}
+
+.toggle-button:focused,
+.button:focused,
+.button:default:focused {
+    -fx-background-color: transparent;
+}
+
+.toggle-button:focused:selected {
+    -fx-background-color: transparent;
+}
+
+.toggle-button:armed,
+.toggle-button:selected,
+.button:armed,
+.button:default:armed {
+    -fx-background-color: derive(-highlight-color, -20.0%);
+}
+
+.toggle-switch .thumb {
+    -fx-background-color: -bg-color;
+}
+
+.toggle-switch .thumb-area {
+    -fx-background-color: -off-indicator;
+}
+
+.toggle-switch:selected .thumb-area {
+    -fx-background-color: -on-indicator;
+}
+
+.transparent-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: -flat-button-text-color;
+}
+
+.transparent-button:hover {
+    -fx-effect: dropshadow(gaussian, -flat-button-hover-color, 10.0, 0.0, -2.0, 2.0);
+    /*-fx-background-color: -flat-button-hover-color;*/
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * TextField & TextArea                                                        *
+ *                                                                             *
+ ******************************************************************************/
+
+.text-area, .text-field, .text-input, .password-field {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent transparent -border-color transparent;
+    -fx-prompt-text-fill: derive(-bg-color, 50.0%);
+    -fx-highlight-fill: -highlight-color;
+}
+
+.text-area-wrong, .text-field-wrong, .text-input-wrong, .password-field-wrong {
+    -fx-border-color: transparent transparent -wrong-indicator transparent;
+}
+
+.text-area, .text, .text-field, .text-input, .password-field > * > .text {
+    -fx-text-box-border: transparent;
+}
+
+.text-area {
+    -fx-background-color: transparent, -bg-color, transparent, -bg-color;
+    -fx-text-box-border: transparent;
+}
+
+.text-area .content {
+    -fx-background-color: transparent, -bg-color, transparent, -bg-color;
+    -fx-text-box-border: transparent;
+}
+
+.text-area:focused .content {
+    -fx-background-color: transparent, -bg-color, transparent, -bg-color;
+    -fx-text-box-border: transparent;
+}
+
+.text-area:focused, .text-field:focused {
+    -fx-background-color: derive(-highlight-color, 80.0%);
+    -fx-text-box-border: transparent;
+}
+
+.scroll-bar:vertical > .track-background,
+.scroll-bar:horizontal > .track-background {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar:vertical > .thumb,
+.scroll-bar:horizontal > .thumb {
+    -fx-background-color: derive(-controls-color, 80.0%);
+}
+
+.scroll-bar > .increment-button,
+.scroll-bar > .decrement-button,
+.scroll-bar:hover > .increment-button,
+.scroll-bar:hover > .decrement-button {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar > .increment-button > .increment-arrow,
+.scroll-bar > .decrement-button > .decrement-arrow {
+    -fx-background-color: -controls-color;
+}
+
+.scroll-bar > .track-background {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.plus-minus-slider {
+    -fx-border-color: -fx-box-border;
+}
+
+.plus-minus-slider:horizontal {
+    -fx-background-color: derive(-controls-color, 30.0%);
+}
+
+.plus-minus-slider:vertical {
+    -fx-background-color: derive(-controls-color, 30.0%);
+}
+
+.plus-minus-slider > * > .slider > .track {
+    -fx-background-color: transparent;
+}
+
+.plus-minus-slider > * > .slider > .thumb {
+    -fx-background-color: -fx-outer-border, -fx-inner-border, -fx-body-color;
+}
+
+.plus-minus-slider > * > .slider:focused > .thumb {
+    -fx-background-color: -fx-focus-color, -fx-inner-border, -fx-body-color, -fx-faint-focus-color, -fx-body-color;
+}
+
+.plus-minus-slider > * > .adjust-plus {
+    -fx-background-color: -fx-mark-highlight-color, derive(-controls-color, -45.0%);
+}
+
+.plus-minus-slider > * > .adjust-minus {
+    -fx-background-color: -fx-mark-highlight-color, derive(-controls-color, -45.0%);
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * ComboBox                                                                    *
+ *                                                                             *
+ ******************************************************************************/
+
+.content-area {
+    -fx-background-color: -bg-color;
+}
+
+.combobox-colored {
+    -fx-background-color: -bg-accent-color;
+}
+/*******************************************************************************
+ *                                                                             *
+ * CheckBox                                                                    *
+ *                                                                             *
+ ******************************************************************************/
+
+.check-box {
+    -fx-text-fill: -fx-text-base-color;
+}
+
+.check-box > .box,
+.check-box > .box.unfocused,
+.check-box:disabled > .box,
+.check-box:selected > .box,
+.check-box:indeterminate > .box {
+    -fx-background-color: -fx-text-base-color;
+}
+
+.check-box:focused > .box {
+    -fx-background-color: -highlight-color, derive(rgb(94.0, 203.0, 234.0), 80.0%);
+}
+
+.check-box:focused:armed > .box {
+    -fx-background-color: -highlight-color, derive(-fx-text-base-color, 80.0%);
+}
+
+.check-box:selected > .box > .mark,
+.check-box:indeterminate > .box > .mark {
+    -fx-background-color: -bg-color;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * RadioButton                                                                 *
+ *                                                                             *
+ ******************************************************************************/
+
+.radio-button {
+    -fx-text-fill: -fx-text-base-color;
+}
+
+.radio-button > .radio,
+.radio-button > .radio.unfocused,
+.radio-button:disabled > .radio,
+.radio-button:selected > .radio {
+    -fx-background-color: -fx-text-base-color;
+}
+
+.radio-button:focused > .radio {
+    -fx-background-color: -highlight-color, derive(rgb(94.0, 203.0, 234.0), 80.0%);
+}
+
+.radio-button:focused:armed > .radio {
+    -fx-background-color: -highlight-color, derive(-fx-text-base-color, 80.0%);
+}
+
+.radio-button:selected > .radio > .dot {
+    -fx-background-color: -bg-color;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * ProgressBar                                                                 *
+ *                                                                             *
+ ******************************************************************************/
+
+.progress-bar > .track {
+    -fx-background-color: lightgray;
+}
+
+.progress-bar > .bar {
+    /* barrier tape style*/
+    /*-fx-background-color: linear-gradient(*/
+    /*from 0px .75em to .75em 0px,*/
+    /*repeat,*/
+    /*slategrey 0%,*/
+    /*slategrey 49%,*/
+    /*derive(slategrey, 30%) 50%,*/
+    /*derive(slategrey, 30%) 99%*/
+    /*);*/
+    -fx-background-color: -controls-color;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * ProgressIndicator                                                           *
+ *                                                                             *
+ ******************************************************************************/
+
+.progress-indicator > .determinate-indicator > .indicator {
+    -fx-background-color: rgba(255.0, 255.0, 255.0, 0.5);
+}
+
+.progress-indicator > .determinate-indicator > .progress {
+    -fx-background-color: -highlight-color, derive(-highlight-color, 50.0%);
+}
+
+.progress-indicator > .determinate-indicator > .percentage {
+    -fx-fill: -bg-color;
+}
+
+.progress-indicator > .indeterminate-indicator > .segment {
+    -fx-background-color: rgb(0.0, 183.0, 221.0);
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * TitledPane                                                                  *
+ *                                                                             *
+ ******************************************************************************/
+
+.titled-pane {
+    -fx-border-color: transparent;
+    -fx-effect: dropshadow(gaussian, -shadow-color, 10, 0.0, -2, 2);
+}
+
+.titled-pane > .title {
+    -fx-background-color: -bg-color;
+    -fx-border-color: -border-color;
+    -fx-font-weight: bold;
+}
+
+.titled-pane > .content {
+    -fx-background-color: -bg-color;
+}
+
+.titled-pane > .title > .arrow-button .arrow {
+    -fx-background-color: derive(-fx-text-fill, 70%);
+}
+
+.titled-pane:focused > .title > .arrow-button .arrow {
+    -fx-effect: none;
+    -fx-background-color: derive(-fx-text-fill, 70%);
+}
+
+.settings-pane {
+    -fx-border-color: transparent;
+    -fx-effect: null;
+}
+
+.settings-pane > .title {
+    -fx-background-color: transparent;
+}
+
+.settings-pane > .content {
+    -fx-background-color: transparent;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * WidgetPane                                                                  *
+ *                                                                             *
+ ******************************************************************************/
+
+.widget-pane {
+    -fx-border-color: transparent transparent -border-color transparent;
+}
+
+.body-pane {
+    -fx-text-fill: -fx-text-base-color;
+    -fx-background-color: transparent;
+}
+
+.head-pane {
+    -fx-text-fill: -fx-text-base-color;
+    -fx-background-color: transparent;
+}
+
+.head-pane:hover {
+    -fx-background-color: -button-hover-color;
+}
+
+.background-pane {
+    -fx-background-color: rgb(64.0, 64.0, 64.0);
+}
+
+.info-pane {
+    -fx-background-color: linear-gradient(from 50% 0% to 50% 100%,
+    rgba(255.0, 255.0, 255.0, 0.3),
+    rgba(255.0, 255.0, 255.0, 0.4),
+    rgba(255.0, 255.0, 255.0, 0.7),
+    rgba(255.0, 255.0, 255.0, 0.9),
+    rgba(255.0, 255.0, 255.0, 0.7),
+    rgba(255.0, 255.0, 255.0, 0.4),
+    rgba(255.0, 255.0, 255.0, 0.3));
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * DimmerPane                                                                  *
+ *                                                                             *
+ ******************************************************************************/
+.slider .thumb {
+    -fx-background-color: -controls-color;
+}
+
+.temperature-slider-pane-top .temperature-slider-pane-bottom {
+    -fx-background-color: -controls-color !important;
+    -fx-text-fill: -bg-color;
+}
+
+.advanced-horizontal-slider-thumb {
+    -fx-fill: slategray;
+}
+
+.advanced-horizontal-slider-highlight {
+    -fx-fill: dodgerblue;
+}
+
+.advanced-horizontal-slider-background {
+    -fx-fill: lightgray;
+}
+
+.advanced-horizontal-slider-label-top {
+    -fx-fill: palegreen;
+    -fx-text-fill: black;
+}
+
+.advanced-horizontal-slider-label-bottom {
+    -fx-fill: limegreen;
+    -fx-text-fill: white;
+}
+
+
+
+
 /**** General Theme Settings (Sizes, Paddings, Insets, etc.) for BCozy *********************************/
+
+.fullwidth {
+    -fx-pref-width: 250px;
+}
 
 .text {
     -fx-font-smoothing-type: lcd;
@@ -10,34 +536,50 @@
     -fx-padding: 20 20 20 20;
 }
 
+.floating-box-plain {
+    -fx-border-radius: 0.0;
+    -fx-background-radius: 0px;
+}
+
+.connection-indicator {
+    -fx-padding: 0 0 8px 0;
+}
+
+.padding-xtra-large {
+    -fx-padding: 20 20 20 20;
+}
+
 .padding-large {
     -fx-padding: 10.0 10.0 10.0 10.0;
 }
+
 .padding-small {
     -fx-padding: 5.0 5.0 5.0 5.0;
 }
+
 .padding-bottom {
     -fx-padding: 0.0 0.0 15.0 0.0;
 }
 
 .insets {
-    -fx-background-insets:  10.0, 10.0, 10.0, 10.0;
+    -fx-background-insets: 10.0, 10.0, 10.0, 10.0;
 }
+
 .insets-small {
-    -fx-background-insets:  5.0, 5.0, 5.0, 5.0;
+    -fx-background-insets: 5.0, 5.0, 5.0, 5.0;
 }
 
 .main-menu {
     -fx-border-radius: 0.0;
     -fx-background-radius: 0;
     -fx-background-insets: 10.0 0.0 10.0 10.0;
-    -fx-padding: 60.0 10.0 10.0 20.0;
+    -fx-padding: 30.0 10.0 10.0 20.0;
 }
 
 .detail-menu {
     -fx-border-radius: 0.0;
     -fx-background-radius: 0;
-    -fx-background-insets:  10.0, 10.0, 10.0, 0.0;
+    -fx-background-insets: 10.0, 10.0, 10.0, 0.0;
     -fx-padding: 20.0 10.0 10.0 10.0;
     -fx-alignment: TOP-CENTER;
 }
@@ -49,7 +591,7 @@
 }
 
 .main-menu-pane {
-    -fx-padding:  10.0, 10.0, 10.0, 10.0;
+    -fx-padding: 10.0, 10.0, 10.0, 10.0;
 }
 
 .hidden-sides-pane {
@@ -57,7 +599,7 @@
 }
 
 .list-element {
-    -fx-padding:  0.0, 0.0, 2.0, 0.0;
+    -fx-padding: 0.0, 0.0, 2.0, 0.0;
     -fx-border-width: 0 0 1 0;
     -fx-border-insets: 0 0 1 0;
 
@@ -83,8 +625,8 @@
 }
 
 .bold-label {
-     -fx-font-weight: bold;
- }
+    -fx-font-weight: bold;
+}
 
 .wrong-input-indicator {
     -fx-translate-y: -5.0;
@@ -101,8 +643,8 @@
  *                                                                             *
  ******************************************************************************/
 
-.toggle-button, .button{
-    -fx-background-insets:  0.0;
+.toggle-button, .button {
+    -fx-background-insets: 0.0;
     -fx-border-width: 0.0;
     -fx-alignment: CENTER;
     -fx-content-display: LEFT;
@@ -114,60 +656,66 @@
 .toggle-button:focused,
 .button:focused,
 .button:default:focused {
-    -fx-background-insets:  0.0;
+    -fx-background-insets: 0.0;
 }
 
 .toggle-button:focused:selected {
-    -fx-background-insets:  0.0;
+    -fx-background-insets: 0.0;
 }
 
 .toggle-button:armed,
 .toggle-button:selected,
 .button:armed,
 .button:default:armed {
-    -fx-background-insets:  0.0;
+    -fx-background-insets: 0.0;
 }
+
 .toggle-switch .thumb {
     -fx-background-radius: 0.0em;
-    -fx-background-insets:  2.0;
+    -fx-background-insets: 2.0;
 }
-.toggle-switch .thumb-area{
+
+.toggle-switch .thumb-area {
     -fx-background-radius: 0.0;
 }
-.toggle-switch:selected .thumb-area{
+
+.toggle-switch:selected .thumb-area {
     -fx-background-radius: 0.0;
 }
 
 .transparent-button {
-    -fx-padding         : 5 0 0 0;
+    -fx-padding: 5 0 0 0;
 }
 
 .large-button {
     -fx-min-width: 80;
 }
+
 .large-button:large-unit {
-    -fx-content-display : top;
+    -fx-content-display: top;
     -fx-graphic-text-gap: 5;
-    -fx-font-size       : 14;
-    -fx-padding         : 0.7em 0.9em 0.7em 0.9em;
-}
-.large-button:medium-unit {
-    -fx-graphic-text-gap: 5;
-    -fx-font-size       : 12;
-    -fx-padding         : 0.7em 0.5em 0.7em 0.5em;
-}
-.large-button:small-unit {
-    -fx-graphic-text-gap: 5;
-    -fx-font-size       : 10;
-    -fx-padding         : 0.5em 0.4em 0.5em 0.4em;
-}
-.large-button:extreme-small-unit {
-    -visibility        : visible;
-    -fx-font-size       : 8;
-    /*-fx-content-display: graphic-only;*/
-    -fx-padding        : 0.3em;
+    -fx-font-size: 14;
+    -fx-padding: 0.7em 0.9em 0.7em 0.9em;
 }
 
+.large-button:medium-unit {
+    -fx-graphic-text-gap: 5;
+    -fx-font-size: 12;
+    -fx-padding: 0.7em 0.5em 0.7em 0.5em;
+}
+
+.large-button:small-unit {
+    -fx-graphic-text-gap: 5;
+    -fx-font-size: 10;
+    -fx-padding: 0.5em 0.4em 0.5em 0.4em;
+}
+
+.large-button:extreme-small-unit {
+    -visibility: visible;
+    -fx-font-size: 8;
+    /*-fx-content-display: graphic-only;*/
+    -fx-padding: 0.3em;
+}
 
 /*******************************************************************************
  *                                                                             *
@@ -189,7 +737,6 @@
     -fx-border-width: -1;
 }
 
-
 .text-area:focused, .text-field:focused {
     -fx-background-insets: 0.0, 0.2em;
     -fx-background-radius: 2.0;
@@ -198,29 +745,30 @@
 .scroll-bar:vertical > .track-background,
 .scroll-bar:horizontal > .track-background {
     -fx-background-insets: 0.0;
-    -fx-padding:3px;
+    -fx-padding: 3px;
 }
 
 .scroll-bar:vertical > .thumb,
 .scroll-bar:horizontal > .thumb {
     -fx-background-insets: 0.0;
     -fx-background-radius: 0.0;
-    -fx-padding:3px;
+    -fx-padding: 3px;
 }
 
 .scroll-bar > .increment-button,
 .scroll-bar > .decrement-button,
 .scroll-bar:hover > .increment-button,
 .scroll-bar:hover > .decrement-button {
-    -fx-padding:3px;
+    -fx-padding: 3px;
 }
 
 .scroll-bar > .increment-button > .increment-arrow,
 .scroll-bar > .decrement-button > .decrement-arrow {
-    -fx-padding:3px;
+    -fx-padding: 3px;
 }
-.scroll-bar > .track-background{
-    -fx-padding:0;
+
+.scroll-bar > .track-background {
+    -fx-padding: 0;
 }
 
 .plus-minus-slider {
@@ -243,7 +791,6 @@
 .plus-minus-slider > * > .slider {
     -fx-show-tick-marks: false;
 }
-
 
 .plus-minus-slider > * > .slider > .thumb {
     -fx-background-insets: 2.0, 3.0, 4.0;
@@ -268,7 +815,6 @@
     -fx-scale-shape: false;
 }
 
-
 /*******************************************************************************
  *                                                                             *
  * ComboBox                                                                    *
@@ -291,10 +837,9 @@
 }
 
 .content-background {
-    -fx-background-radius:0.0 0.0 11.0 11.0;
+    -fx-background-radius: 0.0 0.0 11.0 11.0;
     -fx-padding: 0 10 10 10;
 }
-
 
 /*******************************************************************************
  *                                                                             *
@@ -303,15 +848,18 @@
  ******************************************************************************/
 .combo-box-base,
 .choice-box {
-    -fx-background-insets:  0.0;
+    -fx-background-insets: 0.0;
     -fx-background-radius: 2.0;
     -fx-border-width: 0 0 1 0;
     -fx-border-insets: 0 10 0 10;
+    -fx-effect: dropshadow(gaussian, -bg-accent-color, 2, 0, 0, 1);
+    -fx-background-color: -choicebox-bg;
+
 }
 
 .combo-box-base > .label,
 .choice-box > .label {
-    -fx-padding:0.7em 1.7em 0.7em 0.7em;
+    -fx-padding: 0.7em 1.7em 0.7em 0.7em;
 }
 
 .combo-box-base > .arrow-button,
@@ -336,6 +884,48 @@
     /*-fx-shape: "m 269.9,233.66286 c 0.15,-0.12 1.97,1.7 2.54,3.1 2.3,-7.33 4.09,-9.1 6.79,-12.1 1.5,-0.25 2.4,-0.27 4.36,0.11 -7.1,5.8 -8.8,16.7 -9.9,17.8 l -0.75,0.02 c 0,0 -2.36,-5.24 -5.6,-7.38 -0.27,-0.17 0.02,-1.5 -0.2,-1.6 z";*/
     -fx-padding: 0.68em 0.68em 0.0em 0.0em;
 }
+
+.combo-box-base > .arrow-button > .arrow,
+.choice-box > .open-button > .arrow {
+    -fx-background-color: -controls-color;
+}
+
+.choice-box {
+    /*-fx-background-color: -bg-color;*/
+    -fx-background-color: -choicebox-bg;
+    /*-fx-border-color: transparent transparent -border-color transparent;*/
+}
+
+.choice-box > .open-button {
+    /*-fx-background-color: -bg-color;*/
+    -fx-background-color: -choicebox-bg;
+}
+
+.choice-box .context-menu {
+    /*-fx-background-color: -bg-color;*/
+    -fx-background-color: -choicebox-bg;
+}
+
+.choice-box.bordered-choice-box {
+    -fx-border-width: 1 1 1 1;
+    -fx-border-color: -border-color;
+    -fx-background-color: -bg-color;
+}
+
+.radio-menu-item:checked > .left-container > .radio,
+.check-menu-item:checked > .left-container > .check {
+    -fx-background-color: -controls-color;
+}
+
+.radio-menu-item > .left-container > .radio,
+.check-menu-item > .left-container > .check {
+    -fx-background-color: transparent;
+}
+
+.menu-item:focused {
+    -fx-background-color: -highlight-color;
+}
+
 
 /*******************************************************************************
  *                                                                             *
@@ -426,9 +1016,70 @@
 }
 
 .progress-indicator > .indeterminate-indicator > .segment {
-   -fx-scale-x: 0.05em;
-   -fx-scale-y: 0.05em;
+    -fx-scale-x: 0.05em;
+    -fx-scale-y: 0.05em;
 }
+
+/*******************************************************************************
+ *                                                                             *
+ * TabPane                                                                  *
+ *                                                                             *
+ ******************************************************************************/
+
+.tab-pane {
+    /*-fx-tab-min-width: 95px;*/
+    /*-fx-tab-max-width: 95px;*/
+    -fx-max-height: -1;
+
+}
+
+.tab-pane:top *.tab-header-area {
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.416667em 0.166667em 0.0em 10px;
+    -fx-border-width: 2px;
+}
+
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-opacity: 0;
+}
+
+.tab-pane:tabcontenthidden {
+    -fx-max-height: 40px;
+}
+
+.tab-button {
+    -fx-border-width: 0;
+    -fx-background-radius: 0;
+    -fx-background-color: transparent;
+    -fx-content-display: graphic-only;
+    -fx-padding: 15px 10px 0 0;
+}
+
+.tab-button:hover {
+    -fx-background-color: white;
+}
+
+.tab-content-area {
+
+}
+
+.tab-pane .tab {
+    -fx-background-color: -tab-bg-color;
+    -fx-border-width: 0;
+}
+
+
+
+.tab-pane .tab:selected {
+    -fx-background-color: -bg-color;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-border-style: solid;
+    -fx-border-width: 2px 2px 0 2px;
+    -fx-border-insets: 0;
+    -fx-border-color: -border-color;
+}
+
 
 /*******************************************************************************
  *                                                                             *
@@ -446,7 +1097,7 @@
     -fx-border-width: 0 0 5 5;
 }
 
-.titled-pane > .title{
+.titled-pane > .title {
     -fx-border-radius: 0.0;
     -fx-background-radius: 0px;
     -fx-border-width: 0 0 1 0;
@@ -456,6 +1107,16 @@
     -fx-padding: 0 0 0 10;
     -fx-border-width: 0 0 0 0;
     -fx-border-insets: 0 0 0 0;
+}
+
+.titled-pane.login-titled-pane {
+    -fx-border-width: 0;
+    -fx-effect: null;
+
+}
+
+.titled-pane.login-titled-pane > .content {
+    -fx-padding: 0;
 }
 
 /*******************************************************************************
@@ -504,12 +1165,12 @@
 
 .color-rect-container {
     /*-fx-padding: 0.0 10.0 0.0 10.0;*/
-    -fx-background-insets:  10.0 10.0 10.0 10.0;
+    -fx-background-insets: 10.0 10.0 10.0 10.0;
 }
 
 .color-circle-container {
     /*-fx-padding: 0.0 10.0 0.0 10.0;*/
-    -fx-background-insets:  10.0 10.0 10.0 10.0;
+    -fx-background-insets: 10.0 10.0 10.0 10.0;
 }
 
 /*******************************************************************************
@@ -529,7 +1190,7 @@
 }
 
 .slider .track {
-    -fx-background-color:null;  /* Hide the track */
+    -fx-background-color: null; /* Hide the track */
     -fx-background-insets: 1 0 -1 0, 0, 1;
     /*-fx-background-radius: 2.5, 2.5, 1.5;*/
     -fx-background-radius: 0;
@@ -537,7 +1198,7 @@
 }
 
 .dimmer-body {
-    -fx-background-insets:  10.0 10.0 10.0 10.0;
+    -fx-background-insets: 10.0 10.0 10.0 10.0;
 }
 
 /*******************************************************************************
@@ -547,7 +1208,7 @@
  ******************************************************************************/
 
 .roller-shutter-button {
-    -fx-background-insets:  10.0 10.0 10.0 10.0;
+    -fx-background-insets: 10.0 10.0 10.0 10.0;
     -fx-padding: 10.0 10.0 10.0 10.0;
     -fx-background-radius: 1em;
     -fx-min-width: 10.0;
@@ -575,10 +1236,9 @@
 }
 
 .temperature-slider .track {
-    -fx-background-color:
-            -fx-shadow-highlight-color,
-            derive(-fx-color,-22%),
-            linear-gradient(to bottom, derive(-fx-color,-15.5%), derive(-fx-color,34%) 30%, derive(-fx-color,68%));
+    -fx-background-color: -fx-shadow-highlight-color,
+    derive(-fx-color, -22%),
+    linear-gradient(to bottom, derive(-fx-color, -15.5%), derive(-fx-color, 34%) 30%, derive(-fx-color, 68%));
     -fx-background-insets: 1 0 -1 0, 0, 1;
     /*-fx-background-radius: 2.5, 2.5, 1.5;*/
     -fx-background-radius: 0;
@@ -586,10 +1246,9 @@
 }
 
 .temperature-slider:vertical .track {
-    -fx-background-color:
-            -fx-shadow-highlight-color,
-            derive(-fx-color,-22%),
-            linear-gradient(to right, derive(-fx-color,-15.5%), derive(-fx-color,34%) 30%, derive(-fx-color,68%));
+    -fx-background-color: -fx-shadow-highlight-color,
+    derive(-fx-color, -22%),
+    linear-gradient(to right, derive(-fx-color, -15.5%), derive(-fx-color, 34%) 30%, derive(-fx-color, 68%));
     -fx-background-insets: 0 -1 0 1, 0, 1;
 }
 
@@ -602,7 +1261,6 @@
     -fx-background-insets: 0 10 0 10;
     -fx-padding: 0 10 0 10;
 }
-
 
 .advanced-horizontal-slider-label-top {
     -fx-fill: palegreen;

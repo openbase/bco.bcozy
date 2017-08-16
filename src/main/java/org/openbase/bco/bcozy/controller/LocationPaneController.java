@@ -13,7 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
+ * along with org.openbase.bco.bcozy. If not, see
+ * <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
 package org.openbase.bco.bcozy.controller;
@@ -78,15 +79,16 @@ public class LocationPaneController {
                             fetchLocations();
                             fetchConnections();
                             locationPane.updateLocationPane();
-                        } catch (CouldNotPerformException | InterruptedException e) {
-                            ExceptionPrinter.printHistory(e, LOGGER);
+                        } catch (CouldNotPerformException | InterruptedException ex) {
+                            ExceptionPrinter.printHistory(ex, LOGGER);
                         }
                     });
                 }
             });
             updateAndZoomFit();
-        } catch (Exception e) { //NOPMD
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+            locationPane.setInitialized(true);
+        } catch (Exception ex) { //NOPMD
+            ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
         }
     }
 
@@ -94,6 +96,7 @@ public class LocationPaneController {
         final List<UnitConfig> locationUnitConfigList = Registries.getLocationRegistry().getLocationConfigs();
 
         locationPane.clearLocations();
+        
 
         for (final UnitConfig locationUnitConfig : locationUnitConfigList) {
             try {
@@ -101,9 +104,9 @@ public class LocationPaneController {
                 if (locationUnitConfig.getPlacementConfig().getShape().getFloorCount() == 0) {
                     continue;
                 }
-
                 final List<Point2D> vertices = new LinkedList<>();
 
+                //  final List<Point2D> vertices = new LinkedList<>();
                 // Get the transformation for the current room
 //                final Future<Transform> transform = Units.getUnitTransformation(locationUnitConfig, Registries.getUnitRegistry().getUnitConfigById(locationUnitConfig.getPlacementConfig().getLocationId()));
                 final Future<Transform> transform = Registries.getLocationRegistry().getUnitTransformation(locationUnitConfig, Registries.getLocationRegistry().getRootLocationConfig());
@@ -120,12 +123,14 @@ public class LocationPaneController {
                     // Add vertex to list of vertices
                     vertices.add(new Point2D(vertex.x, vertex.y));
                 }
-
+                
                 // locationPane.addLocation(locationUnitConfig.getId(), locationUnitConfig.getLocationConfig().getChildIdList(), vertices, locationUnitConfig.getLocationConfig().getType().toString());
                 locationPane.addLocation(locationUnitConfig, vertices);
+   
             } catch (InterruptedException | ExecutionException | TimeoutException ex) {
                 ExceptionPrinter.printHistory("Error while fetching transformation for location \"" + locationUnitConfig.getLabel() + "\", locationID: " + locationUnitConfig.getId(), ex, LOGGER, LogLevel.ERROR);
             }
+          
         }
     }
 
@@ -161,8 +166,8 @@ public class LocationPaneController {
                 }
 
                 locationPane.addConnection(connectionUnitConfig, vertices);
-            } catch (InterruptedException | ExecutionException | TimeoutException e) {
-                ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+            } catch (InterruptedException | ExecutionException | TimeoutException ex) {
+                ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
                 LOGGER.error("Error while fetching transformation for connection \"" + connectionUnitConfig.getLabel()
                         + "\", connectionID: " + connectionUnitConfig.getId());
             }
@@ -170,8 +175,8 @@ public class LocationPaneController {
     }
 
     /**
-     * Method to trigger a complete update of the locationPane.
-     * Will furthermore apply a zoomFit after everything is finished.
+     * Method to trigger a complete update of the locationPane. Will furthermore
+     * apply a zoomFit after everything is finished.
      */
     public void updateAndZoomFit() {
         Platform.runLater(() -> {
@@ -180,8 +185,8 @@ public class LocationPaneController {
                 fetchConnections();
                 locationPane.updateLocationPane();
                 locationPane.zoomFit();
-            } catch (CouldNotPerformException | InterruptedException e) {
-                ExceptionPrinter.printHistory(e, LOGGER);
+            } catch (CouldNotPerformException | InterruptedException ex) {
+                ExceptionPrinter.printHistory(ex, LOGGER);
             }
         });
     }

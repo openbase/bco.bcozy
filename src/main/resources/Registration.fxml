@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import org.openbase.bco.bcozy.view.ObserverButton?>
+
+<?import com.jfoenix.controls.JFXCheckBox?>
+<?import org.openbase.bco.bcozy.view.ObserverLabel?>
+<?import org.controlsfx.control.CheckComboBox?>
+<?import org.openbase.bco.bcozy.view.Constants?>
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:id="root"
+      styleClass="padding-xtra-large"
+      fx:controller="org.openbase.bco.bcozy.controller.RegistrationController">
+    <spacing>
+        <Constants fx:constant="INSETS"/>
+    </spacing>
+
+    <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">username</ObserverLabel>
+    <TextField fx:id="username"/>
+
+    <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">firstName</ObserverLabel>
+    <TextField fx:id="firstname"/>
+
+    <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">lastName</ObserverLabel>
+    <TextField fx:id="lastname"/>
+
+    <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">email</ObserverLabel>
+    <TextField fx:id="mail"/>
+
+    <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">phone</ObserverLabel>
+    <TextField fx:id="phone"/>
+
+    <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">usergroups</ObserverLabel>
+    <CheckComboBox fx:id="usergroupField"/>
+
+    <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">password</ObserverLabel>
+    <PasswordField fx:id="passwordField"/>
+
+    <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">repeatPassword</ObserverLabel>
+    <PasswordField fx:id="repeatPasswordField"/>
+
+
+    <BorderPane>
+        <left>
+            <HBox>
+                <JFXCheckBox fx:id="isAdmin"/>
+                <ObserverLabel>admin</ObserverLabel>
+            </HBox>
+        </left>
+        <right>
+            <ObserverButton fx:id="registerBtn" onAction="#register">
+                register
+            </ObserverButton>
+        </right>
+    </BorderPane>
+
+</VBox>

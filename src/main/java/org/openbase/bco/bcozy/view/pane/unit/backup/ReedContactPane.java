@@ -59,8 +59,8 @@ public class ReedContactPane extends AbstractUnitPane<ReedContactRemote, ReedCon
 //
 //        try {
 //            reedSwitchState = reedContactRemote.getContactState().getValue();
-//        } catch (CouldNotPerformException e) {
-//            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.ERROR);
+//        } catch (CouldNotPerformException ex) {
+//            ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
 //        }
 //        setReedSwitchIconAndTooltip(reedSwitchState);
 //    }

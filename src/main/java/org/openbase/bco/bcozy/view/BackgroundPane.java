@@ -29,6 +29,7 @@ import org.openbase.jul.exception.InstantiationException;
 public class BackgroundPane extends StackPane {
 
     private final LocationPane locationPane;
+    private final UnitSymbolsPane unitSymbolsPane;
     private double prevMouseCordX; //NOPMD
     private double prevMouseCordY; //NOPMD
 
@@ -36,12 +37,21 @@ public class BackgroundPane extends StackPane {
      * The constructor for a BackgroundPane.
      *
      * @param foregroundPane The foregroundPane
+     * @throws org.openbase.jul.exception.InstantiationException
+     * @throws java.lang.InterruptedException
      */
     public BackgroundPane(final ForegroundPane foregroundPane) throws InstantiationException, InterruptedException {
         try {
-            locationPane = LocationPane.getInstance(foregroundPane);
 
-            this.getChildren().add(locationPane);
+            locationPane = LocationPane.getInstance(foregroundPane);
+            this.getChildren().add(locationPane); 
+            
+            unitSymbolsPane = new UnitSymbolsPane();
+            unitSymbolsPane.setPickOnBounds(false);
+            this.getChildren().add(unitSymbolsPane);
+            
+            unitSymbolsPane.selectedLocationId.bind(locationPane.selectedLocationId);
+            
             this.getStyleClass().add("background-pane");
 
             this.setOnMousePressed(event -> {
@@ -80,7 +90,14 @@ public class BackgroundPane extends StackPane {
     /**
      * @return The LocationPane.
      */
-    public LocationPane getLocationPane() {
+    public UnitSymbolsPane getUnitsPane() {
+        return unitSymbolsPane;
+    }
+    
+       /**
+     * @return The Location Pane.
+     */
+    public LocationPane getLocationPane() {  
         return locationPane;
     }
 }

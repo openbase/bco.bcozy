@@ -10,7 +10,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
             </goals>
             <properties>
-                <exec.args>-ea -classpath %classpath ${packageClassName} -v</exec.args>
+                <exec.args>-ea -classpath %classpath org.openbase.bco.bcozy.BCozyLauncher -v</exec.args>
                 <exec.executable>java</exec.executable>
             </properties>
         </action>

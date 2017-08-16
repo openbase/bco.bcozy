@@ -51,8 +51,8 @@ public class AgentPane extends AbstractUnitPane<AgentRemote, AgentData> {
 
         try {
             state = getUnitRemote().getData().getActivationState().getValue();
-        } catch (CouldNotPerformException e) {
-            ExceptionPrinter.printHistory(e, LOGGER, LogLevel.DEBUG);
+        } catch (CouldNotPerformException ex) {
+            ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.DEBUG);
         }
 
         switch (state) {

@@ -18,6 +18,9 @@
  */
 package org.openbase.bco.bcozy.view;
 
+import javafx.beans.DefaultProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import org.openbase.bco.bcozy.model.LanguageSelection;
@@ -27,6 +30,7 @@ import java.util.MissingResourceException;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.ResourceBundle;
+
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
 import org.slf4j.Logger;
@@ -35,24 +39,31 @@ import org.slf4j.LoggerFactory;
 /**
  * @author hoestreich
  * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>
+ * @author vdasilva
  */
+@DefaultProperty("identifier")
 public class ObserverLabel extends Label implements Observer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ObserverLabel.class);
 
-    private String identifier;
-    private ResourceBundle languageBundle = ResourceBundle
-            .getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
+    @FXML
+    private SimpleStringProperty identifier = new SimpleStringProperty();
+    private ResourceBundle languageBundle = ResourceBundle.getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
+
+    public ObserverLabel() {
+        super();
+        identifier.addListener((observable, oldValue, newValue) -> update(null, null));
+        LanguageSelection.getInstance().addObserver(this);
+    }
 
     /**
      * Constructor to create a label which is capable of observing language changes in the application.
      *
      * @param identifier The language string which combined with the actual language selection determines the
-     * actual label
+     *                   actual label
      */
     public ObserverLabel(final String identifier) {
-        super();
-        LanguageSelection.getInstance().addObserver(this);
+        this();
         setIdentifier(identifier);
     }
 
@@ -60,34 +71,45 @@ public class ObserverLabel extends Label implements Observer {
      * Constructor to create a label which is capable of observing language changes in the application.
      *
      * @param identifier The language string which combined with the actual language selection determines the
-     * actual label
-     * @param graphic the graphic which should be displayed next to the label
+     *                   actual label
+     * @param graphic    the graphic which should be displayed next to the label
      */
     public ObserverLabel(final String identifier, final Node graphic) {
-        super();
+        this(identifier);
         super.setGraphic(graphic);
-        LanguageSelection.getInstance().addObserver(this);
-        setIdentifier(identifier);
     }
 
     @Override
     public void update(final Observable observable, final Object arg) {
-        setIdentifier(identifier);
+        if (getIdentifier() == null || getIdentifier().isEmpty()) {
+            return;
+        }
+
+        try {
+            languageBundle = ResourceBundle.getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
+            super.setText(languageBundle.getString(this.getIdentifier()));
+        } catch (MissingResourceException ex) {
+            ExceptionPrinter.printHistory("Could not resolve Identifier[" + getIdentifier() + "]", ex, LOGGER, LogLevel.WARN);
+            super.setText(getIdentifier());
+        }
     }
+
 
     /**
      * Sets the new identifier for this ObserverLabel.
      *
      * @param identifier identifier
      */
-    public void setIdentifier(final String identifier) {
-        this.identifier = identifier;
-        languageBundle = ResourceBundle.getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
-        try {
-            super.setText(languageBundle.getString(this.identifier));
-        } catch (MissingResourceException ex) {
-            ExceptionPrinter.printHistory("Could not resolve Identifier["+identifier+"]", ex, LOGGER, LogLevel.WARN);
-            super.setText(this.identifier);
-        }
+    public void setIdentifier(String identifier) {
+        this.identifier.set(identifier);
+    }
+
+
+    public String getIdentifier() {
+        return identifier.get();
+    }
+
+    public SimpleStringProperty identifierProperty() {
+        return identifier;
     }
 }

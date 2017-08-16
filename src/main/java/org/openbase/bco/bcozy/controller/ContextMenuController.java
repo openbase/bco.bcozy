@@ -58,6 +58,7 @@ public class ContextMenuController {
         this.foregroundPane = foregroundPane;
         this.titledPaneMap = new HashMap<>();
 
+
         backgroundPane.addSelectedLocationIdListener(new ChangeListener<String>() {
             @Override
             public void changed(final ObservableValue<? extends String> observable, final String oldValue, final String location) {
@@ -73,6 +74,8 @@ public class ContextMenuController {
             }
         });
     }
+    
+    //idea: addselected unit id listener
 
     /**
      * Takes a locationId and creates new TitledPanes for all UnitTypes.

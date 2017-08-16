@@ -20,6 +20,7 @@ package org.openbase.bco.bcozy.controller;
 
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import de.jensd.fx.glyphs.materialicons.MaterialIcon;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.ActionEvent;
 import javafx.stage.Stage;
 import org.openbase.bco.bcozy.view.CenterPane;
@@ -39,10 +40,14 @@ public class CenterPaneController {
     private final CenterPane centerPane;
     private State activeState;
     private boolean isShowing;
+
     /**
      * Enum to control the display state.
      */
-    public enum State { SETTINGS, TEMPERATURE, MOVEMENT }
+    public enum State {
+        SETTINGS, TEMPERATURE, MOVEMENT
+    }
+
     /**
      * Constructor for the CenterPaneController.
      * @param foregroundPane instance of the foregroundPane which has all elements as its children.
@@ -51,73 +56,13 @@ public class CenterPaneController {
         isShowing = false;
         activeState = State.SETTINGS;
         centerPane = foregroundPane.getCenterPane();
-        centerPane.getFullscreen().setOnAction(event -> setMaximizeAction());
-        centerPane.getPopUpParent().setOnAction(event -> setShowHidePopOver());
-        centerPane.getPopUpChildBottom().setOnAction(event -> setChooseView(event));
-        centerPane.getPopUpChildTop().setOnAction(event -> setChooseView(event));
-
-        ((Stage) centerPane.getScene().getWindow()).fullScreenProperty().
-                addListener((observable, oldValue, newValue) -> {
-            if (!newValue) {
-                centerPane.getFullscreen().changeIcon(MaterialIcon.FULLSCREEN);
-            }
-        });
     }
 
-    private void setMaximizeAction() {
-        final Stage stage = (Stage) centerPane.getScene().getWindow();
-        if (stage.isFullScreen()) {
-            centerPane.getFullscreen().changeIcon(MaterialIcon.FULLSCREEN);
-            stage.setFullScreen(false);
-        } else {
-            centerPane.getFullscreen().changeIcon(MaterialIcon.FULLSCREEN_EXIT);
-            stage.setFullScreen(true);
-        }
-    }
+    public CenterPaneController(CenterPane centerPane) {
+        this.centerPane = centerPane;
 
-    private void setShowHidePopOver() {
-        if (isShowing) {
-            isShowing = false;
-            centerPane.setViewSwitchingButtonsVisible(false);
-        } else {
-            isShowing = true;
-            centerPane.setViewSwitchingButtonsVisible(true);
-        }
-    }
+        isShowing = false;
+        activeState = State.SETTINGS;
 
-    private void setChooseView(final ActionEvent event) {
-        if (event.getSource().equals(centerPane.getPopUpChildTop())) {
-            if (activeState.equals(State.SETTINGS)) {
-                activeState = State.MOVEMENT;
-            } else if (activeState.equals(State.MOVEMENT)) {
-                activeState = State.TEMPERATURE;
-            } else if (activeState.equals(State.TEMPERATURE)) {
-                activeState = State.SETTINGS;
-            }
-        } else {
-            if (activeState.equals(State.SETTINGS)) {
-                activeState = State.TEMPERATURE;
-            } else if (activeState.equals(State.MOVEMENT)) {
-                activeState = State.SETTINGS;
-            } else if (activeState.equals(State.TEMPERATURE)) {
-                activeState = State.MOVEMENT;
-            }
-
-        }
-
-        if (activeState.equals(State.SETTINGS)) {
-            centerPane.getPopUpParent().changeIcon(MaterialIcon.SETTINGS);
-            centerPane.getPopUpChildBottom().changeIcon(MaterialDesignIcon.THERMOMETER_LINES);
-            centerPane.getPopUpChildTop().changeIcon(MaterialIcon.VISIBILITY);
-
-        } else if (activeState.equals(State.MOVEMENT)) {
-            centerPane.getPopUpParent().changeIcon(MaterialIcon.VISIBILITY);
-            centerPane.getPopUpChildBottom().changeIcon(MaterialIcon.SETTINGS);
-            centerPane.getPopUpChildTop().changeIcon(MaterialDesignIcon.THERMOMETER_LINES);
-        } else if (activeState.equals(State.TEMPERATURE)) {
-            centerPane.getPopUpParent().changeIcon(MaterialDesignIcon.THERMOMETER_LINES);
-            centerPane.getPopUpChildBottom().changeIcon(MaterialIcon.VISIBILITY);
-            centerPane.getPopUpChildTop().changeIcon(MaterialIcon.SETTINGS);
-        }
     }
 }

@@ -45,7 +45,7 @@ public abstract class LocationPolygon extends AbstractUnitPolygon<LocationData, 
         super(points);
         this.selected = false;
         this.cuttingShape = this;
-        this.setLocationStyle();
+        this.setLocationStyle();							
     }
 
     /**

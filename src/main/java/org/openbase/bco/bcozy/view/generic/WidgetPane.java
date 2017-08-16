@@ -23,9 +23,10 @@ import org.openbase.jul.visual.javafx.iface.DynamicPane;
 import de.jensd.fx.glyphs.GlyphIcons;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import java.util.concurrent.Future;
-import java.util.logging.Level;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -37,8 +38,12 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ObserverText;
 import org.openbase.bco.bcozy.view.SVGIcon;
@@ -80,6 +85,33 @@ public class WidgetPane extends VBox implements DynamicPane {
     private final SVGIcon mainIcon;
 
     private final Label widgetLabel;
+    
+    //private final Label unitCount;
+
+    public enum DisplayMode {
+        ICON_ONLY,
+
+    }
+
+    public void setDisplayMode(final DisplayMode displayMode) {
+       // headPane.getChildren().clear();
+        switch (displayMode) {
+            case ICON_ONLY:
+                headPane.setCenter(null);
+                headPane.setRight(null);
+             //   unitCount.setTextAlignment(TextAlignment.CENTER);
+             //   unitCount.setFont(new Font(12));
+             //   headPane.setBottom(unitCount);
+                break;
+            default:
+                break;
+        }
+    }
+    
+   /* public StringProperty getCountLabelProperty() {
+        
+        return this.unitCount.textProperty();
+    }*/
 
     /**
      * Head content pane to visualize the main functionally.
@@ -122,7 +154,7 @@ public class WidgetPane extends VBox implements DynamicPane {
                     }
                     currentTask = applyPrimaryActivationUpdate(newActivation);
                 } catch (CouldNotPerformException ex) {
-                    java.util.logging.Logger.getLogger(AbstractUnitPane.class.getName()).log(Level.SEVERE, null, ex);
+                    ExceptionPrinter.printHistory("Could not apply activation update " + this, ex, LOGGER);
                 }
             }
         };
@@ -168,6 +200,7 @@ public class WidgetPane extends VBox implements DynamicPane {
                     } catch (RuntimeException ex) {
                         ExceptionPrinter.printHistory("Could not handle mouse event!", ex, LOGGER);
                     }
+                    event.consume();
                 }
             };
             toggleSwitch.selectedProperty().bindBidirectional(primaryActivationProperty);
