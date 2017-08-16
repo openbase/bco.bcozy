@@ -236,8 +236,7 @@ public class SettingsController {
                 .addListener(new ChangeListener<Number>() {
 
                     @Override
-                    public void changed(final ObservableValue<? extends Number> observableValue, final Number number,
-                                        final Number number2) {
+                    public void changed(final ObservableValue<? extends Number> observableValue, final Number number, final Number number2) {
                         if (settingsPane.getAvailableThemes().get(number2.intValue())
                                 .equals(languageBundle.getString(Constants.LIGHT_THEME_CSS_NAME))) {
                             BCozy.changeTheme(Constants.LIGHT_THEME_CSS);
@@ -254,8 +253,7 @@ public class SettingsController {
                 .addListener(new ChangeListener<Number>() {
 
                     @Override
-                    public void changed(final ObservableValue<? extends Number> observableValue, final Number number,
-                                        final Number number2) {
+                    public void changed(final ObservableValue<? extends Number> observableValue, final Number number, final Number number2) {
                         if (settingsPane.getAvailableLanguages().get(number2.intValue()).equals("English")) {
                             LanguageSelection.getInstance().setSelectedLocale(new Locale("en", "US"));
                         } else if (settingsPane.getAvailableLanguages().get(number2.intValue()).equals("Deutsch")) {
