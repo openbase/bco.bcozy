@@ -20,19 +20,13 @@ package org.openbase.bco.bcozy;
 
 import com.guigarage.responsive.ResponsiveHandler;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.net.URL;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.concurrent.Task;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -42,13 +36,19 @@ import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ForegroundPane;
 import org.openbase.bco.bcozy.view.ImageViewProvider;
 import org.openbase.bco.bcozy.view.InfoPane;
+import org.openbase.bco.bcozy.view.LoadingPane;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jps.core.JPService;
 import org.openbase.jul.exception.FatalImplementationErrorException;
 import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.exception.InstantiationException;
+import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
+import org.openbase.jul.pattern.Observable;
+import org.openbase.jul.pattern.Observer;
+import org.openbase.jul.pattern.Remote;
+import org.openbase.jul.pattern.Remote.ConnectionState;
 import org.openbase.jul.schedule.GlobalCachedExecutorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,7 +77,7 @@ public class BCozy extends Application {
 
     public static Stage primaryStage;
 
-    private InfoPane infoPane;
+    private LoadingPane loadingPane;
     private ContextMenuController contextMenuController;
     private LocationPaneController locationPaneController;
     private ForegroundPane foregroundPane;
@@ -85,6 +85,37 @@ public class BCozy extends Application {
     private Future initTask;
 
     private Scene mainScene;
+
+    public static boolean baseColorIsWhite = true;
+
+    private static Observer<ConnectionState> connectionObserver;
+
+    public BCozy() {
+
+        connectionObserver = new Observer<Remote.ConnectionState>() {
+            @Override
+            public void update(Observable<Remote.ConnectionState> source, Remote.ConnectionState data) throws Exception {
+                switch (data) {
+                    case CONNECTED:
+                        // recover default
+                        InfoPane.confirmation("connected");
+                        break;
+                    case CONNECTING:
+                        // green
+                        InfoPane.warn("connecting");
+                        break;
+                    case DISCONNECTED:
+                        InfoPane.error("disconnected");
+                        // red
+                        break;
+                    case UNKNOWN:
+                    default:
+                        // blue
+                        break;
+                }
+            }
+        };
+    }
 
     @Override
     public void start(final Stage primaryStage) throws InitializationException, InterruptedException, InstantiationException {
@@ -101,10 +132,10 @@ public class BCozy extends Application {
         foregroundPane.setMinWidth(root.getWidth());
         final BackgroundPane backgroundPane = new BackgroundPane(foregroundPane);
 
-        infoPane = new InfoPane(screenHeight, screenWidth);
-        infoPane.setMinHeight(root.getHeight());
-        infoPane.setMinWidth(root.getWidth());
-        root.getChildren().addAll(backgroundPane, foregroundPane, infoPane);
+        loadingPane = new LoadingPane(screenHeight, screenWidth);
+        loadingPane.setMinHeight(root.getHeight());
+        loadingPane.setMinWidth(root.getWidth());
+        root.getChildren().addAll(backgroundPane, foregroundPane, loadingPane);
 
         primaryStage.setMinWidth(foregroundPane.getMainMenu().getMinWidth() + foregroundPane.getContextMenu().getMinWidth() + 300);
         primaryStage.setHeight(screenHeight);
@@ -122,6 +153,15 @@ public class BCozy extends Application {
         ResponsiveHandler.addResponsiveToWindow(primaryStage);
         primaryStage.show();
 
+        InfoPane.confirmation("Welcome");
+        try {
+            Registries.getUnitRegistry().addConnectionStateObserver(connectionObserver);
+        } catch (NotAvailableException ex) {
+            ExceptionPrinter.printHistory("Could not register bco connection observer!", ex, LOGGER);
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+        }
+        
         initRemotesAndLocation();
     }
 
@@ -130,21 +170,21 @@ public class BCozy extends Application {
             @Override
             protected Object call() throws java.lang.Exception {
                 try {
-                    infoPane.setTextLabelIdentifier("waitForConnection");
+                    loadingPane.setTextLabelIdentifier("waitForConnection");
                     Registries.waitForData();
 
-                    infoPane.setTextLabelIdentifier("fillContextMenu");
+                    loadingPane.setTextLabelIdentifier("fillContextMenu");
                     foregroundPane.init();
 
                     contextMenuController.initTitledPaneMap();
 
-                    infoPane.setTextLabelIdentifier("connectLocationRemote");
+                    loadingPane.setTextLabelIdentifier("connectLocationRemote");
                     locationPaneController.connectLocationRemote();
                     unitsPaneController.connectUnitRemote();
 
                     return null;
                 } catch (Exception ex) {
-                    infoPane.setTextLabelIdentifier("errorDuringStartup");
+                    loadingPane.setTextLabelIdentifier("errorDuringStartup");
                     Thread.sleep(3000);
                     Exception exx = new FatalImplementationErrorException("Could not init panes", this, ex);
                     ExceptionPrinter.printHistoryAndExit(exx, LOGGER);
@@ -155,7 +195,7 @@ public class BCozy extends Application {
             @Override
             protected void succeeded() {
                 super.succeeded();
-                infoPane.setVisible(false);
+                loadingPane.setVisible(false);
             }
         });
     }
@@ -175,6 +215,15 @@ public class BCozy extends Application {
                 ExceptionPrinter.printHistory("Initialization phase failed but application shutdown was initialized anyway.", ex, LOGGER, LogLevel.WARN);
             }
         }
+
+        try {
+            Registries.getUnitRegistry().removeConnectionStateObserver(connectionObserver);
+        } catch (NotAvailableException ex) {
+            ExceptionPrinter.printHistory("Could not remove bco connection observer!", ex, LOGGER);
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+        }
+
         try {
             super.stop();
         } catch (Exception ex) { //NOPMD
@@ -199,15 +248,15 @@ public class BCozy extends Application {
             switch (themeName) {
                 case Constants.DARK_THEME_CSS:
                     primaryStage.getScene().getStylesheets().clear();
-                    primaryStage.getScene().getStylesheets()
-                            .addAll(Constants.DEFAULT_CSS, Constants.DARK_THEME_CSS);
+                    primaryStage.getScene().getStylesheets().addAll(Constants.DEFAULT_CSS, Constants.DARK_THEME_CSS);
                     ImageViewProvider.colorizeIconsToWhite();
+                    baseColorIsWhite = true;
                     break;
                 case Constants.LIGHT_THEME_CSS:
                     primaryStage.getScene().getStylesheets().clear();
-                    primaryStage.getScene().getStylesheets()
-                            .addAll(Constants.DEFAULT_CSS, Constants.LIGHT_THEME_CSS);
+                    primaryStage.getScene().getStylesheets().addAll(Constants.DEFAULT_CSS, Constants.LIGHT_THEME_CSS);
                     ImageViewProvider.colorizeIconsToBlack();
+                    baseColorIsWhite = false;
                     break;
                 default:
                     primaryStage.getScene().getStylesheets().clear();

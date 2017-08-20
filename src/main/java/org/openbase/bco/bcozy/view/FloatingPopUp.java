@@ -22,12 +22,11 @@ public class FloatingPopUp extends VBox {
 
     private boolean visible = false;
 
-    Map<GlyphIcons, EventHandler<ActionEvent>> eventHandler = new HashMap<>();
+    private final Map<GlyphIcons, EventHandler<ActionEvent>> eventHandler = new HashMap<>();
 
-    GlyphIcons parent;
+    private GlyphIcons parent;
 
-
-    public FloatingPopUp(Pos position) {
+    public FloatingPopUp(final Pos position) {
         super(Constants.INSETS);
 
         this.setMaxSize(Constants.MIDDLE_ICON, Double.MAX_VALUE);
@@ -44,16 +43,16 @@ public class FloatingPopUp extends VBox {
         this(position);
 
         addParentElement(parent, (Runnable) null);
-        addElement(topChild, (Runnable)null);
-        addElement(bottomChild, (Runnable)null);
+        addElement(topChild, (Runnable) null);
+        addElement(bottomChild, (Runnable) null);
 
     }
 
-    public void addParentElement(GlyphIcons icon, Runnable handler) {
+    public void addParentElement(final GlyphIcons icon, final Runnable handler) {
         this.addParentElement(icon, (event) -> handler.run());
     }
 
-    public void addParentElement(GlyphIcons icon, EventHandler<ActionEvent> value) {
+    public void addParentElement(final GlyphIcons icon, final EventHandler<ActionEvent> value) {
         parent = icon;
         eventHandler.put(icon, value);
 
@@ -63,18 +62,17 @@ public class FloatingPopUp extends VBox {
         setViewSwitchingButtonsVisible(visible);
     }
 
-    public void addElement(GlyphIcons icon, Runnable handler) {
+    public void addElement(final GlyphIcons icon, final Runnable handler) {
         this.addElement(icon, (event) -> handler.run());
     }
 
-
-    public void addElement(GlyphIcons icon, EventHandler<ActionEvent> value) {
+    public void addElement(final GlyphIcons icon, final EventHandler<ActionEvent> value) {
         eventHandler.put(icon, value);
 
         addChildren();
     }
 
-    public void clickOnChild(GlyphIcons clicked) {
+    public void clickOnChild(final GlyphIcons clicked) {
         parent = clicked;
 
         showParent();
@@ -93,8 +91,9 @@ public class FloatingPopUp extends VBox {
                 viewSwitcherPopUp.getChildren().addAll(element);
                 element.setOnAction(event -> {
                     clickOnChild(icon);
-                    if (Objects.nonNull(handler))
+                    if (Objects.nonNull(handler)) {
                         handler.handle(event);
+                    }
                 });
             }
         }
@@ -105,13 +104,12 @@ public class FloatingPopUp extends VBox {
         popUpParent.setOnAction(event -> this.switchingButtonsVisible());
     }
 
-
     public void switchingButtonsVisible() {
         visible = !visible;
         setViewSwitchingButtonsVisible(visible);
     }
 
-    private void setViewSwitchingButtonsVisible(boolean visible) {
+    private void setViewSwitchingButtonsVisible(final boolean visible) {
         if (visible) {
             this.getChildren().clear();
 //            this.getChildren().addAll(viewSwitcherPopUp, popUpParent);

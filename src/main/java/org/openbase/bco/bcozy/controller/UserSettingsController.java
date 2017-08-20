@@ -163,11 +163,7 @@ public class UserSettingsController {
     }
 
     private void showInfoFooterMessage(String identifier, Color fontColor, Color bgColor) {
-        foregroundPane.getInfoFooter()
-                .withIdentifier(identifier)
-                .color(fontColor)
-                .backgroundColor(bgColor)
-                .showFor(Duration.seconds(5));
+        InfoPane.confirmation(identifier).hideAfter(Duration.seconds(5));
     }
 
     private void onLogin() throws InterruptedException {

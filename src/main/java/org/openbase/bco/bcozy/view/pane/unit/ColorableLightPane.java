@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import rst.domotic.unit.dal.ColorableLightDataType.ColorableLightData;
 import java.util.concurrent.Future;
 import javafx.scene.layout.Pane;
+import org.openbase.bco.bcozy.view.SVGIcon;
 import org.openbase.bco.bcozy.view.generic.ColorChooser;
 import org.openbase.bco.dal.remote.unit.ColorableLightRemote;
 import org.openbase.jul.visual.javafx.transform.JFXColorToHSBColorTransformer;
@@ -127,5 +128,10 @@ public class ColorableLightPane extends AbstractUnitPane<ColorableLightRemote, C
     @Override
     protected Future applyPrimaryActivationUpdate(final boolean activation) throws CouldNotPerformException {
         return (activation) ? getUnitRemote().setPowerState(PowerState.State.ON) : getUnitRemote().setPowerState(PowerState.State.OFF);
+    }
+    
+    @Override
+    public SVGIcon getIconSymbol() {
+        return new SVGIcon(MaterialDesignIcon.LIGHTBULB, Constants.SMALL_ICON, false);
     }
 }

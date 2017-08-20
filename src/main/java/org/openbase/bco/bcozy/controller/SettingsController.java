@@ -48,6 +48,7 @@ import static java.util.Objects.nonNull;
  * @author vdasilva
  */
 public class SettingsController {
+
     /**
      * Application Logger
      */
@@ -120,11 +121,9 @@ public class SettingsController {
 
         try {
             Registries.getUnitRegistry().addDataObserver((observable, unitRegistryData) -> {
-
-                        List<UnitConfigType.UnitConfig> unitConfigList = Registries.getUnitRegistry()
-                                .getUnitConfigs();
-                        Platform.runLater(() -> fillTable(unitConfigList));
-                    }
+                List<UnitConfigType.UnitConfig> unitConfigList = Registries.getUnitRegistry().getUnitConfigs();
+                Platform.runLater(() -> fillTable(unitConfigList));
+            }
             );
         } catch (CouldNotPerformException | InterruptedException ex) {
             ex.printStackTrace();
@@ -199,15 +198,13 @@ public class SettingsController {
 
         unitsTable.getSelectionModel()
                 .selectedItemProperty()
-                .addListener(this::onSelectionChange)
-        ;
-
+                .addListener(this::onSelectionChange);
 
         filterInput.textProperty().addListener((o, oldVal, newVal) -> {
             unitsTable.setPredicate(
                     user -> user.getValue().getUnit().getLabel().toLowerCase().contains(newVal.toLowerCase())
-                            || user.getValue().getUnit().getDescription().toLowerCase().contains(newVal.toLowerCase())
-                            || user.getValue().getUnit().getType().name().toLowerCase().contains(newVal.toLowerCase()));
+                    || user.getValue().getUnit().getDescription().toLowerCase().contains(newVal.toLowerCase())
+                    || user.getValue().getUnit().getType().name().toLowerCase().contains(newVal.toLowerCase()));
         });
 
 
@@ -271,8 +268,7 @@ public class SettingsController {
                 .addListener(new ChangeListener<Number>() {
 
                     @Override
-                    public void changed(final ObservableValue<? extends Number> observableValue, final Number number,
-                                        final Number number2) {
+                    public void changed(final ObservableValue<? extends Number> observableValue, final Number number, final Number number2) {
                         if (userSettingsController.getAvailableThemes().get(number2.intValue())
                                 .equals(languageBundle.getString(Constants.LIGHT_THEME_CSS_NAME))) {
                             BCozy.changeTheme(Constants.LIGHT_THEME_CSS);
@@ -289,12 +285,10 @@ public class SettingsController {
                 .addListener(new ChangeListener<Number>() {
 
                     @Override
-                    public void changed(final ObservableValue<? extends Number> observableValue, final Number number,
-                                        final Number number2) {
+                    public void changed(final ObservableValue<? extends Number> observableValue, final Number number, final Number number2) {
                         if (userSettingsController.getAvailableLanguages().get(number2.intValue()).equals("English")) {
                             LanguageSelection.getInstance().setSelectedLocale(new Locale("en", "US"));
-                        } else if (userSettingsController.getAvailableLanguages().get(number2.intValue()).equals
-                                ("Deutsch")) {
+                        } else if (userSettingsController.getAvailableLanguages().get(number2.intValue()).equals("Deutsch")) {
                             LanguageSelection.getInstance().setSelectedLocale(new Locale("de", "DE"));
                         }
                     }
@@ -363,8 +357,7 @@ public class SettingsController {
 
     }
 
-    private class MethodRefCellValueFactory<S, T> implements Callback<TreeTableColumn.CellDataFeatures<S, T>,
-            ObservableValue<T>> {
+    private class MethodRefCellValueFactory<S, T> implements Callback<TreeTableColumn.CellDataFeatures<S, T>, ObservableValue<T>> {
 
         Function<S, T> supplier;
 

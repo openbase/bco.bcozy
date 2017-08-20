@@ -26,9 +26,6 @@ import java.util.MissingResourceException;
 import java.util.function.Predicate;
 
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollBar;
@@ -39,11 +36,9 @@ import org.controlsfx.control.HiddenSidesPane;
 import org.controlsfx.control.textfield.*;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.SVGIcon;
-import org.openbase.bco.dal.remote.unit.Units;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InitializationException;
-import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.pattern.Observable;
 import org.openbase.jul.pattern.Observer;
@@ -67,7 +62,6 @@ public class AvailableUsersPane extends PaneElement {
     private final VBox userPanes;
     private final CustomTextField searchField;
 
-
     /**
      * Predicate to filter user.
      */
@@ -82,7 +76,6 @@ public class AvailableUsersPane extends PaneElement {
         searchField.setRight(new SVGIcon(FontAwesomeIcon.SEARCH, Constants.EXTRA_SMALL_ICON, true));
 
         searchField.textProperty().addListener((observable, oldValue, newValue) -> search(newValue));
-
 
         userPanes = new VBox(Constants.INSETS);
         statusIcon = new BorderPane(new SVGIcon(MaterialDesignIcon.ACCOUNT_CIRCLE, Constants.MIDDLE_ICON, true));
@@ -102,13 +95,22 @@ public class AvailableUsersPane extends PaneElement {
         scrollBar.minProperty().bind(verticalScrollPane.vminProperty());
 
         //AdvancedHorizontalSlider advancedHorizontalSlider = new AdvancedHorizontalSlider(10, 30);
-
         verticalScrollPane.setContent(userPanes);
         verticalScrollPane.setFitToWidth(true);
         this.getChildren().addAll(searchField, hiddenSidesPane);
         //        } catch (CouldNotPerformException ex) {
         //            throw new org.openbase.jul.exception.InstantiationException(this, ex);
         //        }
+
+        hoverProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                getChildren().clear();
+                getChildren().addAll(searchField, hiddenSidesPane);
+            } else {
+                getChildren().clear();
+                getChildren().addAll(hiddenSidesPane);
+            }
+        });
     }
 
     private void search(String text) {
@@ -116,9 +118,9 @@ public class AvailableUsersPane extends PaneElement {
             userPredicate = user -> true;
         }
 
-        userPredicate = user -> containsIgnoreCase(user.getFirstName(), text) ||
-                containsIgnoreCase(user.getLastName(), text) ||
-                containsIgnoreCase(user.getUserName(), text);
+        userPredicate = user -> containsIgnoreCase(user.getFirstName(), text)
+                || containsIgnoreCase(user.getLastName(), text)
+                || containsIgnoreCase(user.getUserName(), text);
 
         Platform.runLater(() -> {
             updateDynamicComponents();
