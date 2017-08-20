@@ -53,6 +53,12 @@
                 <ObserverLabel>admin</ObserverLabel>
             </HBox>
         </left>
+        <center>
+            <HBox>
+                <JFXCheckBox fx:id="isOccupant" />
+                <ObserverLabel>occupant</ObserverLabel>
+            </HBox>
+        </center>
         <right>
             <ObserverButton fx:id="registerBtn" onAction="#register">
                 register

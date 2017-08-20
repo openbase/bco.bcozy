@@ -18,12 +18,14 @@ import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ObserverButton;
 
 import java.util.List;
+
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.VerificationFailedException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.domotic.unit.UnitConfigType.UnitConfig;
+import rst.domotic.unit.user.UserConfigType;
 
 /**
  * User registration.
@@ -56,6 +58,8 @@ public class RegistrationController {
     private CheckComboBox<UnitConfig> usergroupField;
     @FXML
     private JFXCheckBox isAdmin;
+    @FXML
+    private JFXCheckBox isOccupant;
     @FXML
     private ObserverButton registerBtn;
 
@@ -122,14 +126,20 @@ public class RegistrationController {
 
         List<UnitConfig> groups = usergroupField.getCheckModel().getCheckedItems();
 
+        UserConfigType.UserConfig.Builder userConfigBuilder = UserConfigType.UserConfig.newBuilder();
+
+        UserConfigType.UserConfig user = userConfigBuilder
+                .setUserName(username.getText())
+                .setFirstName(firstname.getText())
+                .setLastName(lastname.getText())
+                .setEmail(mail.getText())
+                .setMobilePhoneNumber(phone.getText())
+                .setOccupant(isOccupant.isSelected())
+                .build();
+
+
         try {
-            sessionManager.registerUser(new SessionManagerFacade.NewUser(
-                    username.getText(),
-                    firstname.getText(),
-                    lastname.getText(),
-                    mail.getText(),
-                    phone.getText()),
-                    //TODO: Fields
+            sessionManager.registerUser(user,
                     passwordField.getText(),
                     isAdmin.isSelected(),
                     groups);
@@ -169,9 +179,10 @@ public class RegistrationController {
         }
 
         @Override
-        public void registerUser(final NewUser user, final String plainPassword, final boolean asAdmin, final List<UnitConfig> groups) throws CouldNotPerformException {
+        public void registerUser(final UserConfigType.UserConfig user, final String plainPassword, final boolean asAdmin, final List<UnitConfig> groups) throws CouldNotPerformException {
             StringConverter<UnitConfig> converter = Groups.stringConverter(groups);
-            System.out.print("username = [" + user.getUsername() + "], plainPassword = [" + plainPassword + "], " + "asAdmin = [" + asAdmin + "], groups = [");
+            System.out.print("username = [" + user.getUserName() + "], plainPassword = [" + plainPassword + "], " +
+                    "" + "asAdmin = [" + asAdmin + "], groups = [");
             groups.forEach(g -> System.out.print(converter.toString(g)));
             System.out.println("]");
         }
