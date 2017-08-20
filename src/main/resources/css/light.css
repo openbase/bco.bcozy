@@ -22,6 +22,9 @@
     -choicebox-bg: lightgray;
     -tab-bg-color: lightgray;
 
+    -success-color: limegreen;
+    -error-color: crimson;
+
     /*default font */
     /*-fx-font-family: 'Helvetica Neue';*/
     -fx-font-family: "Roboto";

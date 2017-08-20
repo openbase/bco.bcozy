@@ -37,9 +37,10 @@
     -fx-background-color: -bg-color;
 }
 
-/*.info-footer {*/
+.info-footer {
 /*-fx-background-color: -bg-color;*/
-/*}*/
+    -fx-text-fill: -fx-text-base-color;
+}
 
 .floating-button {
     -fx-background-color: -bg-color;
@@ -629,6 +630,14 @@
 
 .label:disabled {
     -fx-opacity: -fx-disabled-opacity;
+}
+
+.label.success-label {
+    -fx-text-fill: -success-color;
+}
+
+.label.error-label {
+    -fx-text-fill: -error-color;
 }
 
 /*******************************************************************************

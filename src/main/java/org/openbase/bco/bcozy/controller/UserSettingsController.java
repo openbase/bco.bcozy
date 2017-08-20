@@ -18,34 +18,37 @@
  */
 package org.openbase.bco.bcozy.controller;
 
+import com.jfoenix.controls.JFXCheckBox;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
-import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
-import de.jensd.fx.glyphs.materialicons.MaterialIcon;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.TitledPane;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+import javafx.util.Duration;
 import org.controlsfx.control.textfield.CustomTextField;
 import org.openbase.bco.authentication.lib.SessionManager;
-import org.openbase.bco.bcozy.BCozy;
-import org.openbase.bco.bcozy.view.Constants;
-import org.openbase.bco.bcozy.view.ObserverLabel;
-import org.openbase.bco.bcozy.view.SVGIcon;
+import org.openbase.bco.bcozy.view.*;
 import org.openbase.bco.registry.remote.Registries;
+import org.openbase.bco.registry.user.lib.UserRegistry;
 import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rst.domotic.unit.UnitConfigType;
+import rst.domotic.unit.user.UserConfigType;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
- * Created by hoestreich on 12/16/15.
+ * @author vdasilva
  */
 public class UserSettingsController {
 
@@ -70,15 +73,37 @@ public class UserSettingsController {
     private ChoiceBox<String> themeChoice;
     @FXML
     private ChoiceBox<String> languageChoice;
+    @FXML
+    private ObserverLabel successLabel;
+    @FXML
+    private ObserverLabel errorLabel;
+    @FXML
+    private JFXCheckBox isOccupantField;
+    @FXML
+    private TitledPane changePasswordPane;
+    @FXML
+    private PasswordField oldPassword;
+    @FXML
+    private PasswordField newPassword;
+    @FXML
+    private PasswordField repeatedPassword;
+    @FXML
+    private ObserverButton savePassword;
 
     private ObservableList<String> availableThemes;
     private ObservableList<String> availableLanguages;
+    private final ForegroundPane foregroundPane;
+
+    public UserSettingsController(ForegroundPane foregroundPane) {
+        this.foregroundPane = foregroundPane;
+    }
 
 
-    /**
-     * Constructor for the SettingsPane.
-     */
     public void initialize() {
+
+        changeLastname.toFront();
+        changePhone.toFront();
+        themeChoice.toFront();
 
         SessionManager.getInstance().getLoginObervable().addObserver((o, b) -> {
             LOGGER.warn("isLoggedIn is " + b);
@@ -104,10 +129,48 @@ public class UserSettingsController {
                 languageBundle.getString(Constants.DARK_THEME_CSS_NAME));
         themeChoice.setItems(availableThemes);
 
+        savePassword.setApplyOnNewText(String::toUpperCase);
+
 
     }
 
-    private void onLogin() {
+    private void updateOccupant(Boolean isOccupant) {
+        try {
+            UserConfigType.UserConfig userConfig = Registries.getUserRegistry()
+                    .getUserConfigById(SessionManager.getInstance().getUserId()).getUserConfig().toBuilder()
+                    .setOccupant(isOccupant).build();
+
+            UnitConfigType.UnitConfig unitConfig = Registries.getUserRegistry()
+                    .getUserConfigById(SessionManager.getInstance().getUserId()).toBuilder()
+                    .setUserConfig(userConfig).build();
+
+            Future<UnitConfigType.UnitConfig> saved = Registries.getUserRegistry().updateUserConfig(unitConfig);
+
+            boolean savedValue = saved.get(5, TimeUnit.SECONDS).getUserConfig().getOccupant();
+
+            if (savedValue == isOccupant) {
+                showInfoFooterMessage("saveSuccess", Color.WHITE, Color.GREEN);
+                return;
+            }
+
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+        } catch (CouldNotPerformException | ExecutionException | TimeoutException ex) {
+            ex.printStackTrace();
+        }
+
+        //TODO: Failure
+    }
+
+    private void showInfoFooterMessage(String identifier, Color fontColor, Color bgColor) {
+        foregroundPane.getInfoFooter()
+                .withIdentifier(identifier)
+                .color(fontColor)
+                .backgroundColor(bgColor)
+                .showFor(Duration.seconds(5));
+    }
+
+    private void onLogin() throws InterruptedException {
         LOGGER.warn("UserID is " + SessionManager.getInstance().getUserId());
 
         initUserName();
@@ -115,65 +178,90 @@ public class UserSettingsController {
         initLastName();
         initMail();
         initPhone();
+        initOccupant();
 
     }
 
-    private void initPhone() {
+    private void initOccupant() throws InterruptedException {
+        try {
+            isOccupantField.setSelected(Registries.getUserRegistry().getUserConfigById(SessionManager.getInstance()
+                    .getUserId()).getUserConfig().getOccupant());
+
+            isOccupantField.selectedProperty().addListener((observable, oldValue, newValue) -> {
+                updateOccupant(newValue);
+
+            });
+        } catch (CouldNotPerformException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void initPhone() throws InterruptedException {
         try {
             changePhone.setText(Registries.getUserRegistry().getUserConfigById(SessionManager.getInstance().getUserId
                     ()).getUserConfig().getMobilePhoneNumber());
-        } catch (CouldNotPerformException | InterruptedException e) {
+        } catch (CouldNotPerformException e) {
             e.printStackTrace();
         }
     }
 
-    private void initMail() {
+    private void initMail() throws InterruptedException {
         try {
             changeMail.setText(Registries.getUserRegistry().getUserConfigById(SessionManager.getInstance().getUserId
                     ()).getUserConfig().getEmail());
-        } catch (CouldNotPerformException | InterruptedException e) {
+        } catch (CouldNotPerformException e) {
             e.printStackTrace();
         }
     }
 
-    private void initUserName() {
+    private void initUserName() throws InterruptedException {
         try {
             changeUsername.setText(Registries.getUserRegistry().getUserConfigById(SessionManager.getInstance().getUserId
                     ()).getUserConfig().getUserName());
-        } catch (CouldNotPerformException | InterruptedException e) {
+        } catch (CouldNotPerformException e) {
             e.printStackTrace();
         }
     }
 
-    private void initFirstName() {
+    private void initFirstName() throws InterruptedException {
         try {
-            changeFirstname.setText(Registries.getUserRegistry().getUserConfigById(SessionManager.getInstance().getUserId
-                    ()).getUserConfig().getFirstName());
-        } catch (CouldNotPerformException | InterruptedException e) {
+            changeFirstname.setText(Registries.getUserRegistry().getUserConfigById(SessionManager.getInstance()
+                    .getUserId
+                            ()).getUserConfig().getFirstName());
+        } catch (CouldNotPerformException e) {
             e.printStackTrace();
         }
     }
 
-    private void initLastName() {
+    private void initLastName() throws InterruptedException {
         try {
             changeLastname.setText(Registries.getUserRegistry().getUserConfigById(SessionManager.getInstance().getUserId
                     ()).getUserConfig().getLastName());
-        } catch (CouldNotPerformException | InterruptedException e) {
+        } catch (CouldNotPerformException e) {
             e.printStackTrace();
         }
     }
 
     private void initEditableFields(CustomTextField... fields) {
         for (CustomTextField field : fields) {
+            field.focusedProperty().addListener((e) -> resetMessages());
+
             Button editButton = new Button("");
             editButton.setGraphic(new SVGIcon(FontAwesomeIcon.PENCIL, Constants.EXTRA_SMALL_ICON, true));
 
             editButton.setOnAction((a) -> {
+                resetMessages();
 
                 if (field.isEditable()) {
-                    field.setEditable(false);
-                    editButton.setGraphic(new SVGIcon(FontAwesomeIcon.PENCIL, Constants.EXTRA_SMALL_ICON, true));
-
+                    try {
+                        saveUserSettings();
+                        field.setEditable(false);
+                        editButton.setGraphic(new SVGIcon(FontAwesomeIcon.PENCIL, Constants.EXTRA_SMALL_ICON, true));
+                    } catch (InterruptedException ex) {
+                        ExceptionPrinter.printHistory("Could not save user settings!", ex, LOGGER);
+                        Thread.currentThread().interrupt();
+                    }
 
                 } else {
 
@@ -187,6 +275,95 @@ public class UserSettingsController {
             field.setEditable(false);
             field.setRight(editButton);
         }
+    }
+
+
+    private void saveUserSettings() throws InterruptedException {
+
+        try {
+
+            UnitConfigType.UnitConfig.Builder newUserConfig = Registries.getUserRegistry().getUserConfigById
+                    (SessionManager.getInstance().getUserId()).toBuilder();
+
+//        UserConfigType.UserConfig.newBuilder().setOccupant()
+
+            newUserConfig.getUserConfigBuilder()
+                    .setUserName(changeUsername.getText())
+                    .setFirstName(changeFirstname.getText())
+                    .setLastName(changeLastname.getText())
+                    .setEmail(changeMail.getText())
+                    .setMobilePhoneNumber(changePhone.getText())
+                    .setOccupant(isOccupantField.isSelected());
+
+            Registries.getUserRegistry().updateUserConfig(newUserConfig.build());
+            showSuccessMessage();
+        } catch (CouldNotPerformException ex) {
+            showErrorMessage();
+            ex.printStackTrace();
+        }
+
+
+    }
+
+    @FXML
+    private void saveNewPassword() throws InterruptedException {
+
+        if (!verifyOldPassword()) {
+            //TODO Fehlermeldung?
+            //return;
+        }
+
+        if (!verifyNewPassword()) {
+
+            this.showInfoFooterMessage("passwordsNotEqual", Color.WHITE, Color.GREEN);
+            clearPasswordFields();
+
+            return;
+        }
+
+        try {
+            SessionManager.getInstance().changeCredentials(SessionManager.getInstance().getUserId(), oldPassword.getText(), newPassword.getText());
+            this.showInfoFooterMessage("saveSuccess", Color.WHITE, Color.GREEN);
+        } catch (CouldNotPerformException e) {
+            e.printStackTrace();
+        }
+
+        clearPasswordFields();
+
+    }
+
+    private void clearPasswordFields() {
+        oldPassword.clear();
+        newPassword.clear();
+        repeatedPassword.clear();
+    }
+
+    private boolean verifyNewPassword() {
+        return newPassword.getText().equals(repeatedPassword.getText());
+    }
+
+    private boolean verifyOldPassword() throws InterruptedException {
+        try {
+            return Registries.getUserRegistry().getUserConfigById(SessionManager.getInstance().getUserId()).getUserConfig()
+                    .getPassword().toStringUtf8().equals(oldPassword.getText());
+        } catch (CouldNotPerformException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    private void showSuccessMessage() {
+        successLabel.setVisible(true);
+    }
+
+    private void showErrorMessage() {
+        errorLabel.setVisible(true);
+    }
+
+    private void resetMessages() {
+        successLabel.setVisible(false);
+        errorLabel.setVisible(false);
     }
 
     /**

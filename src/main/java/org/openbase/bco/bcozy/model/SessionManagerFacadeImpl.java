@@ -32,7 +32,8 @@ public class SessionManagerFacadeImpl implements SessionManagerFacade {
     }
 
     @Override
-    public void registerUser(final NewUser user, final String plainPassword, boolean asAdmin, List<UnitConfigType.UnitConfig> groups) throws CouldNotPerformException {
+    public void registerUser(final UserConfigType.UserConfig user, final String plainPassword, boolean asAdmin, List<UnitConfigType
+            .UnitConfig> groups) throws CouldNotPerformException {
         try {
             tryRegisterUser(user, plainPassword, asAdmin, groups);
         } catch (CouldNotPerformException | ExecutionException | InterruptedException | TimeoutException ex) {
@@ -40,7 +41,7 @@ public class SessionManagerFacadeImpl implements SessionManagerFacade {
         }
     }
 
-    private void tryRegisterUser(NewUser user, String plainPassword, boolean asAdmin, List<UnitConfigType.UnitConfig> groups) throws CouldNotPerformException, ExecutionException, InterruptedException, TimeoutException {
+    private void tryRegisterUser(UserConfigType.UserConfig user, String plainPassword, boolean asAdmin, List<UnitConfigType.UnitConfig> groups) throws CouldNotPerformException, ExecutionException, InterruptedException, TimeoutException {
 
         UnitConfigType.UnitConfig unitConfig = tryCreateUser(user);
 
@@ -74,18 +75,12 @@ public class SessionManagerFacadeImpl implements SessionManagerFacade {
         }
     }
 
-    private UnitConfigType.UnitConfig tryCreateUser(NewUser user) throws CouldNotPerformException, InterruptedException, ExecutionException, TimeoutException {
+    private UnitConfigType.UnitConfig tryCreateUser(UserConfigType.UserConfig user) throws CouldNotPerformException, InterruptedException, ExecutionException, TimeoutException {
 
         UnitConfigType.UnitConfig.Builder builder = UnitConfigType.UnitConfig.newBuilder();
-        UserConfigType.UserConfig.Builder userConfigBuilder = UserConfigType.UserConfig.newBuilder();
-
-        userConfigBuilder = userConfigBuilder
-                .setUserName(user.getUsername())
-                .setFirstName(user.getFirstName())
-                .setLastName(user.getLastName());
 
         UnitConfigType.UnitConfig unitConfig = builder
-                .setUserConfig(userConfigBuilder.build())
+                .setUserConfig(user)
                 .setType(UnitTemplateType.UnitTemplate.UnitType.USER)//TODO: right way?
                 .build();
 

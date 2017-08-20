@@ -53,11 +53,13 @@ public class CenterPane extends StackPane {
     private Pane settingsMenu;
 
     public ObjectProperty<CenterPaneController.State> appStateProperty;
+    private final ForegroundPane foregroundPane;
 
     /**
      * Constructor for the center pane.
      */
-    public CenterPane(double height) {
+    public CenterPane(double height, ForegroundPane foregroundPane) {
+        this.foregroundPane = foregroundPane;
 
         appStateProperty = new SimpleObjectProperty<>(CenterPaneController.State.SETTINGS);
 
@@ -107,9 +109,11 @@ public class CenterPane extends StackPane {
             }
 
             FXMLLoader loader = new FXMLLoader(url);
+            loader.setControllerFactory((clazz) -> new SettingsController(foregroundPane));
+
             AnchorPane anchorPane = loader.load();
 
-            SettingsController settingsController = (SettingsController) loader.getController();
+            SettingsController settingsController = loader.getController();
 
             this.setMinHeight(height);
             this.setPrefHeight(height);

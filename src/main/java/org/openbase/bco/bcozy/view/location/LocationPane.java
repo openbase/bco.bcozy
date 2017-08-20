@@ -433,7 +433,7 @@ public final class LocationPane extends Pane {
             event.consume();
             tile.mouseEntered();
             try {
-                foregroundPane.getInfoFooter().getMouseOverText().setText(tile.getLabel());
+                foregroundPane.getInfoFooter().withText(tile.getLabel()).show();
             } catch (NotAvailableException ex) {
                 LOGGER.warn("Could not resolve location label!", ex);
             }
@@ -441,7 +441,7 @@ public final class LocationPane extends Pane {
         tile.setOnMouseExited(event -> {
             event.consume();
             tile.mouseLeft();
-            foregroundPane.getInfoFooter().getMouseOverText().setText("");
+            foregroundPane.getInfoFooter().hide();
         });
     }
 
@@ -476,7 +476,7 @@ public final class LocationPane extends Pane {
             try {
                 event.consume();
                 region.mouseEntered();
-                foregroundPane.getInfoFooter().getMouseOverText().setText(region.getLabel());
+                foregroundPane.getInfoFooter().withText(region.getLabel()).show();
             } catch (CouldNotPerformException ex) {
                 ExceptionPrinter.printHistory("Could not handle mouse event!", ex, LOGGER);
             }
@@ -484,7 +484,7 @@ public final class LocationPane extends Pane {
         region.setOnMouseExited(event -> {
             event.consume();
             region.mouseLeft();
-            foregroundPane.getInfoFooter().getMouseOverText().setText("");
+            foregroundPane.getInfoFooter().hide();
         });
     }
 

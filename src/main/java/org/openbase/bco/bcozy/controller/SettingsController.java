@@ -24,6 +24,7 @@ import javafx.util.Callback;
 import org.openbase.bco.bcozy.BCozy;
 import org.openbase.bco.bcozy.model.LanguageSelection;
 import org.openbase.bco.bcozy.view.Constants;
+import org.openbase.bco.bcozy.view.ForegroundPane;
 import org.openbase.bco.bcozy.view.ObserverLabel;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
@@ -84,13 +85,11 @@ public class SettingsController {
 
 
     final ObservableList<RecursiveUnitConfig> list = FXCollections.observableArrayList();
+    private final ForegroundPane foregroudPane;
 
 
-    /**
-     * Default Controller necessary for loading fxml files.
-     */
-    public SettingsController() {
-
+    public SettingsController(ForegroundPane foregroudPane) {
+        this.foregroudPane = foregroudPane;
     }
 
     @FXML
@@ -143,6 +142,8 @@ public class SettingsController {
             URL url = getFxmlURL("UserSettingsPane.fxml");
 
             FXMLLoader loader = new FXMLLoader(url);
+            loader.setControllerFactory((clazz)->new UserSettingsController(foregroudPane));
+
             Pane root = loader.load();
 
             this.userSettingsController = loader.getController();

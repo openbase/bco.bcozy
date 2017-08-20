@@ -9,6 +9,8 @@
 <?import org.controlsfx.control.textfield.CustomTextField?>
 <?import org.openbase.bco.bcozy.view.ObserverButton?>
 <?import org.openbase.bco.bcozy.view.ObserverLabel?>
+<?import com.jfoenix.controls.JFXCheckBox?>
+<?import com.jfoenix.controls.JFXPasswordField?>
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="org.openbase.bco.bcozy.controller.UserSettingsController" fx:id="root"
@@ -36,6 +38,7 @@
             <CustomTextField fx:id="changePhone" prefWidth="${root.width}"/>
         </VBox>
     </HBox>
+
     <HBox spacing="30.0">
         <VBox spacing="10.0">
             <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">language</ObserverLabel>
@@ -46,4 +49,41 @@
             <ChoiceBox fx:id="themeChoice" prefWidth="${root.width}"/>
         </VBox>
     </HBox>
+
+    <HBox>
+        <JFXCheckBox fx:id="isOccupantField"/>
+        <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">occupant</ObserverLabel>
+    </HBox>
+
+
+    <ObserverLabel alignment="CENTER" fx:id="successLabel" styleClass="success-label" visible="false">saveSuccess
+    </ObserverLabel>
+
+    <ObserverLabel fx:id="errorLabel" styleClass="error-label" visible="false">saveError</ObserverLabel>
+
+    <TitledPane fx:id="changePasswordPane">
+        <graphic>
+            <ObserverLabel>changePassword</ObserverLabel>
+        </graphic>
+
+        <VBox>
+            <ObserverLabel>oldPassword</ObserverLabel>
+            <PasswordField fx:id="oldPassword"/>
+
+            <ObserverLabel>newPassword</ObserverLabel>
+            <PasswordField fx:id="newPassword"/>
+
+            <ObserverLabel>repeatPassword</ObserverLabel>
+            <PasswordField fx:id="repeatedPassword"/>
+
+            <BorderPane>
+                <right>
+                    <ObserverButton fx:id="savePassword" styleClass="transparent-button" alignment="BOTTOM_RIGHT"
+                                    onAction="#saveNewPassword">save
+                    </ObserverButton>
+                </right>
+            </BorderPane>
+        </VBox>
+    </TitledPane>
 </VBox>
+

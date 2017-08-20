@@ -21,9 +21,7 @@ package org.openbase.bco.bcozy.view;
 import javafx.beans.property.ObjectProperty;
 import de.jensd.fx.glyphs.materialicons.MaterialIcon;
 import javafx.beans.property.ReadOnlyDoubleProperty;
-import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.StringProperty;
 import javafx.geometry.BoundingBox;
 import javafx.scene.layout.BorderPane;
 import org.openbase.bco.bcozy.controller.CenterPaneController;
@@ -57,7 +55,7 @@ public class ForegroundPane extends BorderPane implements DefaultInitializable {
         this.contextMenu.getFullscreen().setOnAction(event -> setMaximizeAction());
         this.menuHeader = new MenuHeader(30, width);
         this.infoFooter = new InfoFooter(20, width);
-        this.centerPane = new CenterPane(height - 150);
+        this.centerPane = new CenterPane(height - 150, this);
 
         //this.setTop(this.menuHeader);
         this.setLeft(this.mainMenu);

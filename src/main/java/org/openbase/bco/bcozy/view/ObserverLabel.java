@@ -129,4 +129,5 @@ public class ObserverLabel extends Label implements Observer {
         this.applyOnNewText = applyOnNewText != null ? applyOnNewText : Function.identity();
         this.update(null,null);
     }
+
 }
