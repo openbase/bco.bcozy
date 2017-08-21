@@ -20,21 +20,27 @@ package org.openbase.bco.bcozy.view.pane.unit;
 
 import com.google.protobuf.GeneratedMessage;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
+import java.util.Map;
 import javafx.application.Platform;
+import org.openbase.bco.authentication.lib.AuthorizationHelper;
+import org.openbase.bco.authentication.lib.SessionManager;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.SVGIcon;
 import org.openbase.bco.bcozy.view.generic.ExpandableWidgedPane;
 import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
 import org.openbase.bco.dal.remote.unit.Units;
+import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.openbase.jul.extension.protobuf.IdentifiableMessage;
 import org.openbase.jul.iface.Initializable;
 import org.openbase.jul.iface.Shutdownable;
 import org.openbase.jul.pattern.Observable;
 import org.openbase.jul.pattern.Observer;
 import org.openbase.jul.pattern.Remote.ConnectionState;
+import rst.domotic.authentication.PermissionConfigType.PermissionConfig;
 import rst.domotic.unit.UnitConfigType.UnitConfig;
 
 /**
@@ -51,6 +57,7 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
     private final Observer<UnitConfig> unitConfigObserver;
     private final Observer<D> unitDataObserver;
     private final Observer<ConnectionState> unitConnectionObserver;
+    private final Observer<Boolean> loginObserver;
 
     /**
      * Constructor for the UnitPane.
@@ -91,6 +98,18 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
                 Platform.runLater(() -> {
                     try {
                         applyConnectionStateUpdate(connectionState);
+                    } catch (CouldNotPerformException ex) {
+                        ExceptionPrinter.printHistory("Could not apply data update on " + this, ex, LOGGER);
+                    }
+                });
+            }
+        };
+        this.loginObserver = new Observer<Boolean>() {
+            @Override
+            public void update(Observable<Boolean> source, Boolean loggedIn) throws Exception {
+                Platform.runLater(() -> {
+                    try {
+                        applyLoginUpdate(loggedIn);
                     } catch (CouldNotPerformException ex) {
                         ExceptionPrinter.printHistory("Could not apply data update on " + this, ex, LOGGER);
                     }
@@ -146,6 +165,7 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
         unitRemote.addConfigObserver(unitConfigObserver);
         unitRemote.addDataObserver(unitDataObserver);
         unitRemote.addConnectionStateObserver(unitConnectionObserver);
+        SessionManager.getInstance().getLoginObervable().addObserver(loginObserver);
 
         if (!unitRemote.isConnected()) {
             setDisable(false);
@@ -166,7 +186,13 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
         try {
             applyDataUpdate(unitRemote.getData());
         } catch (CouldNotPerformException ex) {
-            // skip update, config observer will handle the update later on. 
+            // skip update, config observer will handle the update later on.
+        }
+
+        try {
+            applyLoginUpdate(SessionManager.getInstance().isLoggedIn());
+        } catch (CouldNotPerformException ex) {
+            // skip update, config observer will handle the update later on.
         }
     }
 
@@ -246,6 +272,30 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
                 setDisable(true);
                 break;
         }
+    }
+
+    /**
+     * Checks the permissions for the unit when the login state changes.
+     * Sets the disableProperty accordingly to the user's/client's write permissions.
+     *
+     * @param loggedIn
+     * @throws CouldNotPerformException
+     */
+    protected void applyLoginUpdate(final Boolean loggedIn) throws CouldNotPerformException {
+        PermissionConfig permissionConfig = AbstractUnitPane.this.unitRemote.getConfig().getPermissionConfig();
+        String userAtClientId = null;
+        Map<String, IdentifiableMessage<String, UnitConfig, UnitConfig.Builder>> groups = null;
+
+        if (loggedIn) {
+            userAtClientId = SessionManager.getInstance().getUserAtClientId();
+            try {
+                groups = Registries.getUnitRegistry().getAuthorizationGroupUnitConfigRemoteRegistry().getEntryMap();
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        disableProperty().set(!AuthorizationHelper.canWrite(permissionConfig, userAtClientId, groups));
     }
 
     /**
