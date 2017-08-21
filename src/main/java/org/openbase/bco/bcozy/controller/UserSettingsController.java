@@ -302,7 +302,6 @@ public class UserSettingsController {
         }
 
         if (!verifyNewPassword()) {
-
             InfoPane.warn("passwordsNotEqual").hideAfter(Duration.seconds(5));
             clearPasswordFields();
 
