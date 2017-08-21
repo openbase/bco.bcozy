@@ -6,6 +6,7 @@
 
     -bg-color: rgba(0.0, 0.0, 0.0, 0.9);
     -bg-color-transparent: rgba(0.0, 0.0, 0.0, 0.2);
+    -placeholder-color: rgba(255, 255, 255, 0.7);
     -bg-accent-color: lightgray;
     -controls-color: rgba(255.0, 255.0, 255.0, 0.9);
     -highlight-color: rgba(94.0, 203.0, 234.0, 1.0);

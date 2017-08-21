@@ -276,6 +276,11 @@
     -fx-background-color: -fx-mark-highlight-color, derive(-controls-color, -45.0%);
 }
 
+.custom-text-field {
+    -fx-prompt-text-fill: -placeholder-color;
+    -fx-padding: 10px !important;
+
+}
 /*******************************************************************************
  *                                                                             *
  * ComboBox                                                                    *

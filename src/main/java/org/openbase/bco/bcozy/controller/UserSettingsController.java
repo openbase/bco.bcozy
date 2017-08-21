@@ -127,6 +127,7 @@ public class UserSettingsController {
         themeChoice.setItems(availableThemes);
 
         savePassword.setApplyOnNewText(String::toUpperCase);
+        changePasswordPane.setExpanded(false);
 
 
     }
@@ -157,7 +158,7 @@ public class UserSettingsController {
             ex.printStackTrace();
         }
 
-        //TODO: Failure
+        showErrorMessage();
     }
 
     private void onLogin() throws InterruptedException {
@@ -295,11 +296,6 @@ public class UserSettingsController {
 
     @FXML
     private void saveNewPassword() throws InterruptedException {
-
-        if (!verifyOldPassword()) {
-            //TODO Fehlermeldung?
-            //return;
-        }
 
         if (!verifyNewPassword()) {
             InfoPane.warn("passwordsNotEqual").hideAfter(Duration.seconds(5));

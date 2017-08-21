@@ -5,6 +5,7 @@ import com.jfoenix.controls.JFXTreeTableColumn;
 import com.jfoenix.controls.JFXTreeTableView;
 import com.jfoenix.controls.RecursiveTreeItem;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -13,6 +14,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TreeItem;
@@ -21,11 +23,10 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
+import org.controlsfx.control.textfield.CustomTextField;
 import org.openbase.bco.bcozy.BCozy;
 import org.openbase.bco.bcozy.model.LanguageSelection;
-import org.openbase.bco.bcozy.view.Constants;
-import org.openbase.bco.bcozy.view.ForegroundPane;
-import org.openbase.bco.bcozy.view.ObserverLabel;
+import org.openbase.bco.bcozy.view.*;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
@@ -70,7 +71,8 @@ public class SettingsController {
     private JFXTreeTableView<RecursiveUnitConfig> unitsTable;
 
     @FXML
-    private JFXTextField filterInput;
+    private CustomTextField filterInput;
+//    private JFXTextField filterInput;
 
 
     @FXML
@@ -121,9 +123,9 @@ public class SettingsController {
 
         try {
             Registries.getUnitRegistry().addDataObserver((observable, unitRegistryData) -> {
-                List<UnitConfigType.UnitConfig> unitConfigList = Registries.getUnitRegistry().getUnitConfigs();
-                Platform.runLater(() -> fillTable(unitConfigList));
-            }
+                        List<UnitConfigType.UnitConfig> unitConfigList = Registries.getUnitRegistry().getUnitConfigs();
+                        Platform.runLater(() -> fillTable(unitConfigList));
+                    }
             );
         } catch (CouldNotPerformException | InterruptedException ex) {
             ex.printStackTrace();
@@ -141,7 +143,7 @@ public class SettingsController {
             URL url = getFxmlURL("UserSettingsPane.fxml");
 
             FXMLLoader loader = new FXMLLoader(url);
-            loader.setControllerFactory((clazz)->new UserSettingsController(foregroudPane));
+            loader.setControllerFactory((clazz) -> new UserSettingsController(foregroudPane));
 
             Pane root = loader.load();
 
@@ -200,11 +202,14 @@ public class SettingsController {
                 .selectedItemProperty()
                 .addListener(this::onSelectionChange);
 
+        filterInput.setRight(new SVGIcon(FontAwesomeIcon.SEARCH, Constants.EXTRA_SMALL_ICON, true));
+
+        filterInput.promptTextProperty().setValue(new ObserverLabel("searchPlaceholder").getText());
         filterInput.textProperty().addListener((o, oldVal, newVal) -> {
             unitsTable.setPredicate(
                     user -> user.getValue().getUnit().getLabel().toLowerCase().contains(newVal.toLowerCase())
-                    || user.getValue().getUnit().getDescription().toLowerCase().contains(newVal.toLowerCase())
-                    || user.getValue().getUnit().getType().name().toLowerCase().contains(newVal.toLowerCase()));
+                            || user.getValue().getUnit().getDescription().toLowerCase().contains(newVal.toLowerCase())
+                            || user.getValue().getUnit().getType().name().toLowerCase().contains(newVal.toLowerCase()));
         });
 
 
