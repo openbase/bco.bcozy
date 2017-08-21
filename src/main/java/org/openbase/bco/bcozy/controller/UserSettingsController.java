@@ -34,6 +34,7 @@ import org.openbase.bco.bcozy.view.*;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.bco.registry.user.lib.UserRegistry;
 import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.RejectedException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,10 +74,6 @@ public class UserSettingsController {
     private ChoiceBox<String> themeChoice;
     @FXML
     private ChoiceBox<String> languageChoice;
-    @FXML
-    private ObserverLabel successLabel;
-    @FXML
-    private ObserverLabel errorLabel;
     @FXML
     private JFXCheckBox isOccupantField;
     @FXML
@@ -149,9 +146,7 @@ public class UserSettingsController {
             boolean savedValue = saved.get(5, TimeUnit.SECONDS).getUserConfig().getOccupant();
 
             if (savedValue == isOccupant) {
-                InfoPane.info("saveSuccess")
-                        .backgroundColor(Color.GREEN)
-                        .hideAfter(Duration.seconds(5));
+                showSuccessMessage();
 
                 return;
             }
@@ -240,13 +235,11 @@ public class UserSettingsController {
 
     private void initEditableFields(CustomTextField... fields) {
         for (CustomTextField field : fields) {
-            field.focusedProperty().addListener((e) -> resetMessages());
 
             Button editButton = new Button("");
             editButton.setGraphic(new SVGIcon(FontAwesomeIcon.PENCIL, Constants.EXTRA_SMALL_ICON, true));
 
             editButton.setOnAction((a) -> {
-                resetMessages();
 
                 if (field.isEditable()) {
                     try {
@@ -318,11 +311,14 @@ public class UserSettingsController {
 
         try {
             SessionManager.getInstance().changeCredentials(SessionManager.getInstance().getUserId(), oldPassword.getText(), newPassword.getText());
-            InfoPane.info("saveSuccess")
-                    .backgroundColor(Color.GREEN)
-                    .hideAfter(Duration.seconds(5));
-        } catch (CouldNotPerformException e) {
-            e.printStackTrace();
+            showSuccessMessage();
+
+        } catch (RejectedException rex) {
+            rex.printStackTrace();
+            InfoPane.info("oldPasswordWrong").backgroundColor(Color.RED).hideAfter(Duration.seconds(5));
+
+        } catch (CouldNotPerformException ex) {
+            ex.printStackTrace();
         }
 
         clearPasswordFields();
@@ -351,17 +347,15 @@ public class UserSettingsController {
     }
 
     private void showSuccessMessage() {
-        successLabel.setVisible(true);
+        InfoPane.info("saveSuccess")
+                .backgroundColor(Color.GREEN)
+                .hideAfter(Duration.seconds(5));
     }
 
     private void showErrorMessage() {
-        errorLabel.setVisible(true);
-    }
-
-    private void resetMessages() {
-        successLabel.setVisible(false);
-        errorLabel.setVisible(false);
-    }
+        InfoPane.info("saveError")
+                .backgroundColor(Color.RED)
+                .hideAfter(Duration.seconds(5));    }
 
     /**
      * Getter for the themeChoice ChoiceBox.

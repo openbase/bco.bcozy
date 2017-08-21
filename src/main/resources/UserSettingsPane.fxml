@@ -55,12 +55,6 @@
         <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">occupant</ObserverLabel>
     </HBox>
 
-
-    <ObserverLabel alignment="CENTER" fx:id="successLabel" styleClass="success-label" visible="false">saveSuccess
-    </ObserverLabel>
-
-    <ObserverLabel fx:id="errorLabel" styleClass="error-label" visible="false">saveError</ObserverLabel>
-
     <TitledPane fx:id="changePasswordPane">
         <graphic>
             <ObserverLabel>changePassword</ObserverLabel>
