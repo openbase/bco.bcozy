@@ -39,6 +39,7 @@ import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.sound.sampled.Line;
 import java.util.Objects;
 
 /**
@@ -51,6 +52,8 @@ public class InfoPane extends BorderPane {
     private static InfoPane instance;
 
     private final ObserverLabel textLabel;
+
+    private Timeline timeline;
 
     /**
      * Constructor for the InfoFooter.
@@ -88,7 +91,7 @@ public class InfoPane extends BorderPane {
         return textLabel;
     }
 
-    public static InfoPaneTimer info(final String identifier) {
+    public static InfoPaneConfigurer info(final String identifier) {
         final String style;
         if (BCozy.baseColorIsWhite) {
             style = ("-fx-text-fill: white;");
@@ -99,36 +102,36 @@ public class InfoPane extends BorderPane {
         return show(identifier, style);
     }
 
-    public static InfoPaneTimer confirmation(final String identifier) {
+    public static InfoPaneConfigurer confirmation(final String identifier) {
         return show(identifier, "-fx-text-fill: green;");
     }
 
-    public static InfoPaneTimer warn(final String identifier) {
+    public static InfoPaneConfigurer warn(final String identifier) {
         return show(identifier, "-fx-text-fill: orange;");
     }
 
-    public static InfoPaneTimer error(final String identifier) {
+    public static InfoPaneConfigurer error(final String identifier) {
         return show(identifier, "-fx-text-fill: red;");
     }
 
-    public static InfoPaneTimer show(final String identifier, String style) {
+    public static InfoPaneConfigurer show(final String identifier, String style) {
         Objects.requireNonNull(identifier);
         Objects.requireNonNull(style);
+
         try {
-            final ObserverLabel textLabel = getInstance().textLabel;
+            final InfoPane infoPane = getInstance();
+            infoPane.resetTimeline();
+
             Platform.runLater(() -> {
-                textLabel.setStyle(style + "-fx-font-size: 16;");
-                textLabel.setIdentifier(identifier);
+                infoPane.setBackground(null);
+                infoPane.textLabel.setStyle(style + "-fx-font-size: 16;");
+                infoPane.textLabel.setIdentifier(identifier);
             });
-            return new InfoPaneTimer();
+            return new InfoPaneConfigurer();
         } catch (CouldNotPerformException ex) {
             ExceptionPrinter.printHistory("Could not print user feedback!", ex, LOGGER);
         }
-        return new InfoPaneTimer() {
-            public void hideAfter(Duration duration) {
-                //Shouldn't hide after CouldNotPerformException
-            }
-        };
+        return null;
     }
 
     /**
@@ -136,20 +139,28 @@ public class InfoPane extends BorderPane {
      */
     public static void hide() {
         try {
-            show("","");
+            show("", "");
             getInstance().setBackground(null);
+            getInstance().resetTimeline();
         } catch (CouldNotPerformException ex) {
             ExceptionPrinter.printHistory("Could not print user feedback!", ex, LOGGER);
         }
     }
 
+    private void resetTimeline() throws NotAvailableException {
+        if (this.timeline != null) {
+            this.timeline.stop();
+        }
+        this.timeline = null;
+    }
+
     /**
      * Used to hide InfoPane after certain time with Builder-like style.
      */
-    public static class InfoPaneTimer {
+    public static class InfoPaneConfigurer {
 
         //Prevent instantiation from other classes
-        private InfoPaneTimer() {
+        private InfoPaneConfigurer() {
         }
 
         /**
@@ -157,11 +168,29 @@ public class InfoPane extends BorderPane {
          *
          * @param duration the duration
          */
-        public void hideAfter(Duration duration) {
+        public InfoPaneConfigurer hideAfter(Duration duration) {
             PlatformImpl.runLater(() -> {
+                try {
+                    InfoPane.getInstance().resetTimeline();
+                } catch (NotAvailableException ex) {
+                    ExceptionPrinter.printHistory("Could not print user feedback!", ex, LOGGER);
+                }
                 Timeline timeline = new Timeline(new KeyFrame(duration, e -> InfoPane.hide()));
                 timeline.play();
             });
+            return this;
+        }
+
+        public InfoPaneConfigurer backgroundColor(Color color) {
+            PlatformImpl.runLater(() -> {
+                try {
+                    InfoPane.getInstance().setBackground(new Background(new BackgroundFill(color, CornerRadii.EMPTY, Insets.EMPTY)));
+                } catch (NotAvailableException ex) {
+                    ExceptionPrinter.printHistory("Could not print user feedback!", ex, LOGGER);
+                }
+            });
+
+            return this;
         }
     }
 

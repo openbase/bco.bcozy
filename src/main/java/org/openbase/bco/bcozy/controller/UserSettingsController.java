@@ -149,7 +149,10 @@ public class UserSettingsController {
             boolean savedValue = saved.get(5, TimeUnit.SECONDS).getUserConfig().getOccupant();
 
             if (savedValue == isOccupant) {
-                showInfoFooterMessage("saveSuccess", Color.WHITE, Color.GREEN);
+                InfoPane.info("saveSuccess")
+                        .backgroundColor(Color.GREEN)
+                        .hideAfter(Duration.seconds(5));
+
                 return;
             }
 
@@ -160,10 +163,6 @@ public class UserSettingsController {
         }
 
         //TODO: Failure
-    }
-
-    private void showInfoFooterMessage(String identifier, Color fontColor, Color bgColor) {
-        InfoPane.confirmation(identifier).hideAfter(Duration.seconds(5));
     }
 
     private void onLogin() throws InterruptedException {
@@ -311,7 +310,7 @@ public class UserSettingsController {
 
         if (!verifyNewPassword()) {
 
-            this.showInfoFooterMessage("passwordsNotEqual", Color.WHITE, Color.GREEN);
+            InfoPane.warn("passwordsNotEqual").hideAfter(Duration.seconds(5));
             clearPasswordFields();
 
             return;
@@ -319,7 +318,9 @@ public class UserSettingsController {
 
         try {
             SessionManager.getInstance().changeCredentials(SessionManager.getInstance().getUserId(), oldPassword.getText(), newPassword.getText());
-            this.showInfoFooterMessage("saveSuccess", Color.WHITE, Color.GREEN);
+            InfoPane.info("saveSuccess")
+                    .backgroundColor(Color.GREEN)
+                    .hideAfter(Duration.seconds(5));
         } catch (CouldNotPerformException e) {
             e.printStackTrace();
         }
