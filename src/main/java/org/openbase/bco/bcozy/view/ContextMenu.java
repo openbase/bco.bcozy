@@ -18,12 +18,14 @@
  */
 package org.openbase.bco.bcozy.view;
 
+import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import de.jensd.fx.glyphs.materialicons.MaterialIcon;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.HiddenSidesPane;
 import org.openbase.bco.bcozy.view.pane.unit.TitledUnitPaneContainer;
@@ -31,6 +33,7 @@ import org.openbase.bco.bcozy.view.pane.unit.TitledUnitPaneContainer;
 /**
  * @author hoestreich
  * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>
+ * @author vdasilva
  */
 public class ContextMenu extends VBox {
 
@@ -39,6 +42,7 @@ public class ContextMenu extends VBox {
     private final ScrollPane verticalScrollPane;
     private TitledUnitPaneContainer titledPaneContainer;
     private FloatingButton fullscreenBtn;
+    private final FloatingButton settingsBtn;
 
 
     /**
@@ -54,10 +58,16 @@ public class ContextMenu extends VBox {
         this.setPrefHeight(height);
         this.setPrefWidth(width);
 
+
         fullscreenBtn = new FloatingButton(new SVGIcon(MaterialIcon.FULLSCREEN, Constants.MIDDLE_ICON, true));
-        fullscreenBtn.setAlignment(Pos.TOP_RIGHT);
-        fullscreenBtn.translateYProperty().set(Constants.FLOATING_BUTTON_FULLSCREEN_OFFSET_Y);
-        fullscreenBtn.translateXProperty().set(Constants.FLOATING_BUTTON_FULLSCREEN_OFFSET_X);
+
+        settingsBtn = new FloatingButton(new SVGIcon(MaterialDesignIcon.SETTINGS, Constants.MIDDLE_ICON, true));
+
+        HBox floatingButtons = new HBox(20.0, settingsBtn, fullscreenBtn);
+        floatingButtons.setAlignment(Pos.TOP_LEFT);
+        floatingButtons.translateYProperty().set(Constants.FLOATING_BUTTON_OFFSET_Y);
+        floatingButtons.translateXProperty().set(Constants.FLOATING_BUTTON_OFFSET_X);
+
 
         roomInfo = new Label("No room selected.");
         roomInfo.setAlignment(Pos.CENTER);
@@ -90,7 +100,7 @@ public class ContextMenu extends VBox {
         //TODO: Find a nicer way to scale the size of the scroll bar thumb
         scrollBar.setVisibleAmount(0.25);
 
-        this.getChildren().addAll(fullscreenBtn, roomInfo, hiddenSidesPane);
+        this.getChildren().addAll(floatingButtons, roomInfo, hiddenSidesPane);
         //VBox.setVgrow(contextSortingPane, Priority.ALWAYS);
 
         this.getStyleClass().addAll("detail-menu");
@@ -135,4 +145,7 @@ public class ContextMenu extends VBox {
         return fullscreenBtn;
     }
 
+    public FloatingButton getSettingsBtn() {
+        return settingsBtn;
+    }
 }

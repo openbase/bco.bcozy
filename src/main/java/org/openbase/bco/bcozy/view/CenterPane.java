@@ -74,29 +74,16 @@ public class CenterPane extends StackPane {
         viewModes.addElement(MaterialDesignIcon.THERMOMETER_LINES, (Runnable) null);//TODO: Add EventHandler when needed
         viewModes.addElement(MaterialIcon.VISIBILITY, (Runnable) null);//TODO: Add EventHandler when needed
 
-        final FloatingButton settingsBtn = new FloatingButton(new SVGIcon(MaterialDesignIcon.SETTINGS, Constants.MIDDLE_ICON, true));
-
-        this.setAlignment(settingsBtn, Pos.TOP_RIGHT);
-
-        settingsBtn.setOnAction(e -> toggleSettings());
-
         // Styling components with CSS
         this.getStyleClass().addAll("padding-small");
 
         this.setPickOnBounds(false);
-        this.getChildren().addAll(viewModes, settingsBtn);
+        this.getChildren().addAll(viewModes);
 
         this.setMinHeight(height);
         this.setPrefHeight(height);
     }
 
-    private void toggleSettings() {
-        if (this.getChildren().contains(settingsMenu)) {
-            this.getChildren().remove(settingsMenu);
-        } else {
-            this.getChildren().add(0, settingsMenu);
-        }
-    }
 
     private Pane loadSettingsMenu(final double height) {
         try {
@@ -129,5 +116,9 @@ public class CenterPane extends StackPane {
 
     public UserSettingsController getSettingsPane() {
         return userSettingsController;
+    }
+
+    public Pane getSettingsMenu() {
+        return settingsMenu;
     }
 }

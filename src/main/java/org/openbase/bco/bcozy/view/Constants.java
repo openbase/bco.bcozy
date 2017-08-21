@@ -267,14 +267,19 @@ public final class Constants {
     public static final double FLOATING_BUTTON_OFFSET = 55.0;
 
     /**
-     * Offset to position the fullscreen button on outer right corner.
+     * Offset to position floatingbutton on outer right corner.
      */
-    public static final double FLOATING_BUTTON_FULLSCREEN_OFFSET_X = 85.0;
+    public static final double FLOATING_BUTTON_OFFSET_X = 85.0;
 
     /**
-     * Offset to position fullscreen button above context menu.
+     * Offset to position the settings button next to fullscreen button.
      */
-    public static final double FLOATING_BUTTON_FULLSCREEN_OFFSET_Y = -46.0;
+    public static final double FLOATING_BUTTON_SETTINGS_OFFSET_X = 125.0;
+
+    /**
+     * Offset to position buttons above context menu.
+     */
+    public static final double FLOATING_BUTTON_OFFSET_Y = -46.0;
 
     /**
      * The size for the small main menu.

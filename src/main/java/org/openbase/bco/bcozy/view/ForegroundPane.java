@@ -53,6 +53,7 @@ public class ForegroundPane extends BorderPane implements DefaultInitializable {
         this.mainMenu = new MainMenu(height - 150, 300);
         this.contextMenu = new ContextMenu(height - 150, 300);
         this.contextMenu.getFullscreen().setOnAction(event -> setMaximizeAction());
+        this.contextMenu.getSettingsBtn().setOnAction(event -> toggleSettings());
         this.menuHeader = new MenuHeader(30, width);
         this.infoFooter = new InfoPane(20, width);
         this.centerPane = new CenterPane(height - 150, this);
@@ -144,6 +145,15 @@ public class ForegroundPane extends BorderPane implements DefaultInitializable {
         } else {
             contextMenu.getFullscreen().changeIcon(MaterialIcon.FULLSCREEN_EXIT);
             stage.setFullScreen(true);
+        }
+    }
+
+    private void toggleSettings() {
+        if (centerPane.getChildren().contains(centerPane.getSettingsMenu())) {
+            centerPane.getChildren().remove(centerPane.getSettingsMenu());
+        } else {
+            centerPane.getChildren().add(0, centerPane.getSettingsMenu());
+            centerPane.getSettingsMenu().toFront();
         }
     }
 }
