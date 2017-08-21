@@ -70,9 +70,10 @@ public class PermissionPaneController {
         permissionsTable.widthProperty().addListener(this::onWidthChange);
 
         usergroupColumn.setGraphic(new ObserverLabel("usergroups"));
-
-
         permissionsColumn.setGraphic(new ObserverLabel("permissions"));
+        usergroupColumn.widthProperty().addListener(this::onColumnWidthChange);
+//        permissionsColumn.widthProperty().addListener(this::onColumnWidthChange);
+        
         readRights.setGraphic(new ObserverLabel("readRight"));
         writeRights.setGraphic(new ObserverLabel("writeRight"));
         accessRights.setGraphic(new ObserverLabel("accessRight"));
@@ -152,6 +153,19 @@ public class PermissionPaneController {
 
         usergroupColumn.setPrefWidth(width / 2);
         permissionsColumn.setPrefWidth(width / 2);
+    }
+    
+    /**
+     * Dynamically adjust column widths to fill whole space once the width of one column was changed.
+     *
+     * @param observable ignored
+     * @param oldValue   ignored
+     * @param newValue   ignored
+     */
+    private void onColumnWidthChange(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+        double width = permissionsTable.getWidth();
+        System.err.println("observable");
+        permissionsColumn.setPrefWidth(width - newValue.doubleValue());
     }
 
     public void setUnitConfig(UnitConfigType.UnitConfig unitConfig) {
