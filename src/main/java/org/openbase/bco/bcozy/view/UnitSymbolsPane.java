@@ -87,8 +87,8 @@ public class UnitSymbolsPane extends Pane {
         try {
             newButton = new UnitButton(unitRemoteObject);
 
-            newButton.setTranslateX(position.getY());  //swap according to swap in location pane 
-            newButton.setTranslateY(position.getX());
+            newButton.setTranslateX(position.getY() - 20);  //swap according to swap in location pane 
+            newButton.setTranslateY(position.getX() - 20);
             locationUnitsMap.put(unitRemoteObject.getConfig().getId(), newButton);
         } catch (NotAvailableException ex) {
             throw new CouldNotPerformException("Could not create unit button for unit " + this, ex);
@@ -131,13 +131,11 @@ public class UnitSymbolsPane extends Pane {
                         Map.Entry<String, UnitButton> entry = iter.next();
                         UnitButton button = entry.getValue();
 
-                        if (button.getTranslateX() == position.getY()
-                            && button.getTranslateY() == position.getX()) {
-
+                        if (button.getTranslateX() == position.getY() && button.getTranslateY() == position.getX()) {
                             UnitButtonGrouped newGroupedButton = new UnitButtonGrouped();
-                            newGroupedButton.setTranslateX(position.getY());
-                            newGroupedButton.setTranslateY(position.getX());
-                            groupedButtons.put(new Point2D(position.getX(), position.getY()), newGroupedButton);
+                            newGroupedButton.setTranslateX(position.getY() - 20);
+                            newGroupedButton.setTranslateY(position.getX() - 20);
+                            groupedButtons.put(new Point2D(position.getX() - 20, position.getY() - 20), newGroupedButton);
                             newGroupedButton.addUnit(unitRemoteObject);
                             newGroupedButton.addUnit(button.getUnitRemote());
                             // remove from normal buttons list to prevent double buttons
@@ -166,17 +164,17 @@ public class UnitSymbolsPane extends Pane {
      */
     public void clearUnits() {
         locationUnitsMap.forEach((unitId, button)
-            -> {
+                -> {
             this.getChildren().remove(button);
         });
         unitsPerLocationMap.forEach((locationId, entry)
-            -> entry.forEach((unitId, button)
-                -> {
-                this.getChildren().remove(button);
-            })
+                -> entry.forEach((unitId, button)
+                        -> {
+                    this.getChildren().remove(button);
+                })
         );
         groupedButtons.forEach((point, button)
-            -> {
+                -> {
             this.getChildren().remove(button);
         });
     }
@@ -189,7 +187,7 @@ public class UnitSymbolsPane extends Pane {
         this.getChildren().clear();
 
         locationUnitsMap.forEach((unitId, button)
-            -> {
+                -> {
             if (!unitId.equals(selectedLocationId.getValue())) {
                 this.getChildren().add(button);
             }
@@ -197,13 +195,13 @@ public class UnitSymbolsPane extends Pane {
 
         if (unitsPerLocationMap.get(selectedLocationId.getValue()) != null) {
             unitsPerLocationMap.get(selectedLocationId.getValue()).forEach((unitId, button)
-                -> {
+                    -> {
                 this.getChildren().add(button);
             }
             );
         }
         groupedButtons.forEach((point, button)
-            -> {
+                -> {
             if (button.getLocationId() == null) {
                 return;
             }

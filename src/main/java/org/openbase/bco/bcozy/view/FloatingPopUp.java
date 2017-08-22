@@ -37,29 +37,9 @@ public class FloatingPopUp extends VBox {
         StackPane.setAlignment(this, position);
         this.translateYProperty().set(-Constants.INSETS);
     }
-
+    
     public FloatingPopUp(final Pos position, final GlyphIcons... icons) {
         this(position);
-
-        /*
-         addParentElement(parent, (Runnable) null);
--        addElement(topChild, (Runnable) null);
--        addElement(bottomChild, (Runnable) null);
-        */
-        
-        boolean primSelected = false;
-        for (final GlyphIcons icon : icons) {
-            if (!primSelected) {
-                primSelected = true;
-                addParentElement(icon, () -> {
-                    // to nothing
-                });
-                continue;
-            }
-            addElement(icon, () -> {
-                // to nothing
-            });
-        }
     }
 
     public final void addParentElement(final GlyphIcons icon, final Runnable handler) {

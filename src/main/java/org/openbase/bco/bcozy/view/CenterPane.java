@@ -35,6 +35,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
@@ -62,30 +64,27 @@ public class CenterPane extends StackPane {
     public CenterPane(final double height) {
 
         appStateProperty = new SimpleObjectProperty<>(CenterPaneController.State.SETTINGS);
-
+        
+        appStateProperty.addListener(new ChangeListener<CenterPaneController.State> () {
+            @Override
+            public void changed(ObservableValue<? extends CenterPaneController.State> observable, CenterPaneController.State oldValue, CenterPaneController.State newValue) {
+                System.out.println(newValue);
+            }
+        });
         // Initializing components
         this.settingsMenu = loadSettingsMenu(height);
 
+        // Initializing view mode switch
         final FloatingPopUp viewModes = new FloatingPopUp(Pos.BOTTOM_RIGHT);
-        viewModes.addParentElement(MaterialIcon.WEEKEND, new Runnable() {
-            @Override
-            public void run() {
-              //  appStateProperty.set(CenterPaneController.State.);
-            }
-        }); //TODO:
-        viewModes.addElement(MaterialDesignIcon.THERMOMETER_LINES,  new Runnable() {
-            @Override
-            public void run() {
-               // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
+        viewModes.addParentElement(MaterialIcon.WEEKEND, () -> {
+            appStateProperty.set(CenterPaneController.State.MOVEMENT);
         }); 
-        viewModes.addElement(MaterialIcon.VISIBILITY, new Runnable() {
-            @Override
-            public void run() {
-                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
+        viewModes.addElement(MaterialDesignIcon.THERMOMETER_LINES, () -> {
+            appStateProperty.set(CenterPaneController.State.TEMPERATURE);
         }); 
-
+        viewModes.addElement(MaterialIcon.VISIBILITY, () -> {
+            appStateProperty.set(CenterPaneController.State.SETTINGS);
+        }); 
         final FloatingButton settingsBtn = new FloatingButton(new SVGIcon(MaterialDesignIcon.SETTINGS, Constants.MIDDLE_ICON, true));
 
         this.setAlignment(settingsBtn, Pos.TOP_RIGHT);
@@ -101,6 +100,7 @@ public class CenterPane extends StackPane {
         this.setMinHeight(height);
         this.setPrefHeight(height);
     }
+    
 
     private void toggleSettings() {
         if (this.getChildren().contains(settingsMenu)) {

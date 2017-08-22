@@ -114,6 +114,12 @@
     -fx-text-fill: -bg-color;
 }
 
+.headline {
+    -fx-text-fill: -fx-text-base-color;
+    -fx-font-weight: bold;
+    -fx-font-size: 20;
+}
+
 .text {
     /*-fx-effect:dropshadow(gaussian, rgba(0.0, 0.0, 0.0, 0.2), 0.0, 0.0, 0.0, 1.0);*/
 }
