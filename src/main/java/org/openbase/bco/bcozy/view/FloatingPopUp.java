@@ -38,16 +38,6 @@ public class FloatingPopUp extends VBox {
         this.translateYProperty().set(-Constants.INSETS);
     }
 
-    @Deprecated
-    public FloatingPopUp(GlyphIcons parent, GlyphIcons topChild, GlyphIcons bottomChild, Pos position) {
-        this(position);
-
-        addParentElement(parent, (Runnable) null);
-        addElement(topChild, (Runnable) null);
-        addElement(bottomChild, (Runnable) null);
-
-    }
-
     public void addParentElement(final GlyphIcons icon, final Runnable handler) {
         this.addParentElement(icon, (event) -> handler.run());
     }
