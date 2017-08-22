@@ -138,9 +138,9 @@ public class UnitsPaneController {
      * @throws InterruptedException
      */
     public void fetchLocationUnitRemotes() throws CouldNotPerformException, InterruptedException {
-        
-        double halfButtonSize = (Constants.SMALL_ICON + (2 * Constants.INSETS))/2;
-        
+
+        final double halfButtonSize = (Constants.SMALL_ICON + (2 * Constants.INSETS))/2;
+
         final List<UnitConfig> locationUnitConfigList = Registries.getLocationRegistry().getLocationConfigs();
 
         for (final UnitConfig locationConfig : locationUnitConfigList) {
