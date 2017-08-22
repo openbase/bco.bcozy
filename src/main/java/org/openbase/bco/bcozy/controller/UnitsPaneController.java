@@ -138,6 +138,8 @@ public class UnitsPaneController {
      * @throws InterruptedException
      */
     public void fetchLocationUnitRemotes() throws CouldNotPerformException, InterruptedException {
+        
+        double halfButtonSize = (Constants.SMALL_ICON + (2 * Constants.INSETS))/2;
 
         final List<UnitConfig> locationUnitConfigList = Registries.getLocationRegistry().getLocationConfigs();
 
@@ -190,8 +192,8 @@ public class UnitsPaneController {
                             final Point3d unitVertex = new Point3d(pose.getTranslation().getX(), pose.getTranslation().getY(), 1.0);
                             transform.get(Constants.TRANSFORMATION_TIMEOUT / 10, TimeUnit.MILLISECONDS).
                                 getTransform().transform(unitVertex);
-                            Point2D coord = new Point2D(unitVertex.x * Constants.METER_TO_PIXEL, unitVertex.y * Constants.METER_TO_PIXEL);
-                            unitSymbolsPane.addUnit(u, coord, locationConfig.getId());
+                            Point2D coord = new Point2D(unitVertex.x * Constants.METER_TO_PIXEL, unitVertex.y * Constants.METER_TO_PIXEL);                           
+                            unitSymbolsPane.addUnit(u, coord.add(halfButtonSize, halfButtonSize), locationConfig.getId());
                         } catch (CouldNotPerformException | ExecutionException | TimeoutException ex) {
                             // No exception throwing, because loop must continue it's work
                             ExceptionPrinter.printHistory(ex, LOGGER);
@@ -211,9 +213,9 @@ public class UnitsPaneController {
         double w = boundingBox.getWidth();
         double new_x;
         double new_y;
-        double halfButtonSize = (Constants.SMALL_ICON + (2 * Constants.INSETS))/2;
-        new_x = (boundingBox.getLeftFrontBottom().getX() + w - halfButtonSize) / 2;
-        new_y = (boundingBox.getLeftFrontBottom().getY() + d - halfButtonSize) / 2;
+        
+        new_x = (boundingBox.getLeftFrontBottom().getX() + w) / 2;
+        new_y = (boundingBox.getLeftFrontBottom().getY() + d) / 2;
 
         return new Point3d(new_x, new_y, 1.0);
     }
