@@ -65,12 +65,6 @@ public class CenterPane extends StackPane {
 
         appStateProperty = new SimpleObjectProperty<>(CenterPaneController.State.SETTINGS);
         
-        appStateProperty.addListener(new ChangeListener<CenterPaneController.State> () {
-            @Override
-            public void changed(ObservableValue<? extends CenterPaneController.State> observable, CenterPaneController.State oldValue, CenterPaneController.State newValue) {
-                System.out.println(newValue);
-            }
-        });
         // Initializing components
         this.settingsMenu = loadSettingsMenu(height);
 
