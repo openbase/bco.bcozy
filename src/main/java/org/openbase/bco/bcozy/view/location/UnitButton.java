@@ -37,14 +37,8 @@ import org.slf4j.LoggerFactory;
 public class UnitButton extends Pane {
 
     private static final String STANDARD_BUTTON_STYLE = "-fx-background-color: transparent; -fx-fill: transparent;  -fx-text-fill: transparent";
-    private static final String HOVERED_BUTTON_STYLE = /*"-fx-focus-color: transparent;\n" +
-"    -fx-faint-focus-color: transparent;\n" +
-"    -fx-inner-border: transparent;\n" +
-"    -fx-body-color: transparent;\n" +
-" \n" +
-"    -fx-background-color: -fx-faint-focus-color, -fx-focus-color, -fx-inner-border, -fx-body-color; \n" +
-"    -fx-background-insets: -2, -0.3, 1, 2;"
-        +*/ "-fx-fill: green; -fx-text-fill: green; -fx-background-color: transparent";
+    private static final String HOVERED_BUTTON_STYLE = "-fx-background-color: transparent; -fx-fill: transparent;  -fx-text-fill: transparent";
+
     /**
      * Application logger.
      */
@@ -67,20 +61,8 @@ public class UnitButton extends Pane {
             content.setDisplayMode(DisplayMode.ICON_ONLY);
             this.unitRemote = content.getUnitRemote();
 
-            //   System.out.println(this.getStyleClass());
-            //   System.out.println(content.getStyleClass());
-            /*  this.getStyleClass().clear();
-            
-            
-            this.getStyleClass().add("units");*/
-            this.getStyleClass().clear();
-            content.getStyleClass().clear();
-            this.getStyleClass().addAll(".units:focused");
-            this.getStyleClass().addAll(".units:hover");
-            this.getStyleClass().addAll(".units");
-           
             this.getChildren().add(content);
-            /*         this.styleProperty().bind(
+            this.styleProperty().bind(
                 Bindings
                     .when(hoverProperty())
                     .then(
@@ -89,7 +71,7 @@ public class UnitButton extends Pane {
                     .otherwise(
                         new SimpleStringProperty(STANDARD_BUTTON_STYLE)
                     )
-            );*/
+            );
         } catch (CouldNotPerformException ex) {
             throw new CouldNotPerformException("Could not create UnitButton for unit", ex);
         }
