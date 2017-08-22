@@ -37,15 +37,9 @@ public class FloatingPopUp extends VBox {
         StackPane.setAlignment(this, position);
         this.translateYProperty().set(-Constants.INSETS);
     }
-
-    @Deprecated
-    public FloatingPopUp(GlyphIcons parent, GlyphIcons topChild, GlyphIcons bottomChild, Pos position) {
+    
+    public FloatingPopUp(final Pos position, final GlyphIcons... icons) {
         this(position);
-
-        addParentElement(parent, (Runnable) null);
-        addElement(topChild, (Runnable) null);
-        addElement(bottomChild, (Runnable) null);
-
     }
 
     public void addParentElement(final GlyphIcons icon, final Runnable handler) {
