@@ -62,9 +62,6 @@ public class UnitButtonGrouped extends Pane {
     private String locationId;
     private boolean expanded;
     private Rectangle clipRectangle1;
-    private static final String STANDARD_BUTTON_STYLE = "-fx-background-color: transparent; -fx-fill: transparent;  -fx-text-fill: transparent";
-    private static final String HOVERED_BUTTON_STYLE = "-fx-background-color: transparent; -fx-fill: transparent;  -fx-text-fill: transparent";
-
     /**
      * Constructor for the grouped button.
      */
@@ -111,16 +108,8 @@ public class UnitButtonGrouped extends Pane {
         stackPane.setOnMouseClicked(mouseEventHandler);
         stackPane.setOnMouseExited(mouseExitedHandler);
 
-        this.styleProperty().bind(
-            Bindings
-                .when(hoverProperty())
-                .then(
-                    new SimpleStringProperty(HOVERED_BUTTON_STYLE)
-                )
-                .otherwise(
-                    new SimpleStringProperty(STANDARD_BUTTON_STYLE)
-                )
-        );
+        this.getStyleClass().clear();
+        this.getStyleClass().addAll("units-button");
     }
 
     /**
@@ -144,7 +133,7 @@ public class UnitButtonGrouped extends Pane {
                 this.locationId = unit.getConfig().getPlacementConfig().getLocationId();
             }
             content.setVisible(false);
-            content.setBackground(new Background(new BackgroundFill(new Color(0.25, 0.25, 0.25, 1.0), CornerRadii.EMPTY, Insets.EMPTY)));
+            content.getStyleClass().add("units-button");
             this.groupingPane.getChildren().add(content);
         } catch (CouldNotPerformException ex) {
             throw new CouldNotPerformException("Could not create grouped unit button for config " + this, ex);
@@ -158,7 +147,7 @@ public class UnitButtonGrouped extends Pane {
             node.setVisible(true);
         });
         clipRectangle1.setWidth(groupingPane.getWidth());
-        clipRectangle1.setHeight(groupingPane.getHeight());
+        clipRectangle1.setHeight(groupingPane.getHeight() + 10);
     }
 
     private void shrink() {
@@ -168,7 +157,7 @@ public class UnitButtonGrouped extends Pane {
         });
         iconPane.setVisible(true);
         clipRectangle1.setWidth(Constants.SMALL_ICON);
-        clipRectangle1.setHeight(Constants.SMALL_ICON);
+        clipRectangle1.setHeight(Constants.SMALL_ICON + 10);
     }
 
     /**

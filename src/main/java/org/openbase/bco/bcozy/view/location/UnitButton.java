@@ -35,10 +35,6 @@ import org.slf4j.LoggerFactory;
  * Button that contains an AbstractUnitPane in a clipped form so the unit can be controlled from within the location plan.
  */
 public class UnitButton extends Pane {
-
-    private static final String STANDARD_BUTTON_STYLE = "-fx-background-color: transparent; -fx-fill: transparent;  -fx-text-fill: transparent";
-    private static final String HOVERED_BUTTON_STYLE = "-fx-background-color: transparent; -fx-fill: transparent;  -fx-text-fill: transparent";
-
     /**
      * Application logger.
      */
@@ -62,19 +58,11 @@ public class UnitButton extends Pane {
             this.unitRemote = content.getUnitRemote();
 
             this.getChildren().add(content);
-            this.styleProperty().bind(
-                Bindings
-                    .when(hoverProperty())
-                    .then(
-                        new SimpleStringProperty(HOVERED_BUTTON_STYLE)
-                    )
-                    .otherwise(
-                        new SimpleStringProperty(STANDARD_BUTTON_STYLE)
-                    )
-            );
         } catch (CouldNotPerformException ex) {
             throw new CouldNotPerformException("Could not create UnitButton for unit", ex);
         }
+        this.getStyleClass().clear();
+        this.getStyleClass().addAll("units-button");
     }
 
     /**

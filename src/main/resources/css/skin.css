@@ -135,34 +135,12 @@
     -fx-text-fill: -fx-text-base-color;
 }
 
-.units{
-    -fx-background-color: green;
-    -fx-focus-color: blue;
-       -fx-accent: blue
+.units-button{
+    -fx-background-color: transparent;
 }
 
-.units:focused {
-    -fx-focus-color: red;
-    -fx-faint-focus-color: green;
-    -fx-inner-border: blue;
-    -fx-body-color: orange;
-    -fx-fill: green; -fx-text-fill: green;
- 
-    -fx-background-color: -fx-faint-focus-color, -fx-focus-color, -fx-inner-border, -fx-body-color; 
-    -fx-background-insets: -2, -0.3, 1, 2;
-    -fx-background-radius: 7, 6, 4, 3;
-}
-
-.units:hover {
-    -fx-focus-color: red;
-    -fx-faint-focus-color: green;
-    -fx-inner-border: blue;
-    -fx-body-color: orange;
-    -fx-fill: green; -fx-text-fill: green;
- 
-    -fx-background-color: -fx-faint-focus-color, -fx-focus-color, -fx-inner-border, -fx-body-color; 
-    -fx-background-insets: -2, -0.3, 1, 2;
-    -fx-background-radius: 7, 6, 4, 3;
+.units-button:hover {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 4, 0, 0, 0);
 }
 
 .toggle-button:focused,
