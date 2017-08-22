@@ -67,9 +67,24 @@ public class CenterPane extends StackPane {
         this.settingsMenu = loadSettingsMenu(height);
 
         final FloatingPopUp viewModes = new FloatingPopUp(Pos.BOTTOM_RIGHT);
-        viewModes.addParentElement(MaterialIcon.WEEKEND, (Runnable) null); //TODO: Add EventHandler when needed
-        viewModes.addElement(MaterialDesignIcon.THERMOMETER_LINES, (Runnable) null);//TODO: Add EventHandler when needed
-        viewModes.addElement(MaterialIcon.VISIBILITY, (Runnable) null);//TODO: Add EventHandler when needed
+        viewModes.addParentElement(MaterialIcon.WEEKEND, new Runnable() {
+            @Override
+            public void run() {
+              //  appStateProperty.set(CenterPaneController.State.);
+            }
+        }); //TODO:
+        viewModes.addElement(MaterialDesignIcon.THERMOMETER_LINES,  new Runnable() {
+            @Override
+            public void run() {
+               // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+        }); 
+        viewModes.addElement(MaterialIcon.VISIBILITY, new Runnable() {
+            @Override
+            public void run() {
+                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+        }); 
 
         final FloatingButton settingsBtn = new FloatingButton(new SVGIcon(MaterialDesignIcon.SETTINGS, Constants.MIDDLE_ICON, true));
 
