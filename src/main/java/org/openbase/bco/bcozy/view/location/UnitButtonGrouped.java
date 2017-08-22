@@ -20,6 +20,7 @@ package org.openbase.bco.bcozy.view.location;
 
 import com.google.protobuf.GeneratedMessage;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.input.MouseEvent;
@@ -107,6 +108,9 @@ public class UnitButtonGrouped extends Pane {
         };
         stackPane.setOnMouseClicked(mouseEventHandler);
         stackPane.setOnMouseExited(mouseExitedHandler);
+
+        this.getStyleClass().clear();
+        this.getStyleClass().addAll("units-button");
     }
 
     /**
@@ -130,7 +134,7 @@ public class UnitButtonGrouped extends Pane {
                 this.locationId = unit.getConfig().getPlacementConfig().getLocationId();
             }
             content.setVisible(false);
-            content.setBackground(new Background(new BackgroundFill(new Color(0.25, 0.25, 0.25, 1.0), CornerRadii.EMPTY, Insets.EMPTY)));
+            content.getStyleClass().add("units-button");
             this.groupingPane.getChildren().add(content);
         } catch (CouldNotPerformException ex) {
             throw new CouldNotPerformException("Could not create grouped unit button for config " + this, ex);
@@ -144,7 +148,7 @@ public class UnitButtonGrouped extends Pane {
             node.setVisible(true);
         });
         clipRectangle1.setWidth(groupingPane.getWidth());
-        clipRectangle1.setHeight(groupingPane.getHeight());
+        clipRectangle1.setHeight(groupingPane.getHeight() + 10);
     }
 
     private void shrink() {
@@ -154,7 +158,7 @@ public class UnitButtonGrouped extends Pane {
         });
         iconPane.setVisible(true);
         clipRectangle1.setWidth(Constants.SMALL_ICON);
-        clipRectangle1.setHeight(Constants.SMALL_ICON);
+        clipRectangle1.setHeight(Constants.SMALL_ICON + 10);
     }
 
     /**
