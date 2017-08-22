@@ -42,7 +42,8 @@ public class CenterPaneTest extends Application {
         new CenterPaneController(centerPane);
         */
 
-        popUp = new FloatingPopUp(MaterialIcon.SETTINGS, MaterialDesignIcon.THERMOMETER_LINES, MaterialIcon.VISIBILITY, Pos.TOP_CENTER);
+        popUp = new FloatingPopUp(Pos.TOP_CENTER, MaterialIcon.SETTINGS, MaterialDesignIcon.THERMOMETER_LINES, MaterialIcon.VISIBILITY);
+        //popUp = new FloatingPopUp(MaterialIcon.SETTINGS, MaterialDesignIcon.THERMOMETER_LINES, MaterialIcon.VISIBILITY, Pos.TOP_CENTER);
         popUp.addElement(MaterialIcon.ACCESS_ALARM, event -> System.out.println("ACCESS_ALARM"));
         pane.setLeft(popUp);
 
