@@ -140,7 +140,7 @@ public class UnitsPaneController {
     public void fetchLocationUnitRemotes() throws CouldNotPerformException, InterruptedException {
         
         double halfButtonSize = (Constants.SMALL_ICON + (2 * Constants.INSETS))/2;
-
+        
         final List<UnitConfig> locationUnitConfigList = Registries.getLocationRegistry().getLocationConfigs();
 
         for (final UnitConfig locationConfig : locationUnitConfigList) {
@@ -163,7 +163,7 @@ public class UnitsPaneController {
                 Point2D coord = new Point2D(vertex.x * Constants.METER_TO_PIXEL, vertex.y * Constants.METER_TO_PIXEL);
                 // Abstract Pane not working with a config object, only with a remote one!
                 UnitRemote<?> u = Units.getUnit(locationConfig.getId(), false);
-                unitSymbolsPane.addRoomUnit(u, coord);
+                unitSymbolsPane.addRoomUnit(u, coord.add(-halfButtonSize, -halfButtonSize));
             } catch (CouldNotPerformException | ExecutionException | TimeoutException ex) {
                 // No exception throwing, because loop must continue it's work
                 ExceptionPrinter.printHistory(ex, LOGGER);
@@ -192,8 +192,9 @@ public class UnitsPaneController {
                             final Point3d unitVertex = new Point3d(pose.getTranslation().getX(), pose.getTranslation().getY(), 1.0);
                             transform.get(Constants.TRANSFORMATION_TIMEOUT / 10, TimeUnit.MILLISECONDS).
                                 getTransform().transform(unitVertex);
-                            Point2D coord = new Point2D(unitVertex.x * Constants.METER_TO_PIXEL, unitVertex.y * Constants.METER_TO_PIXEL);                           
-                            unitSymbolsPane.addUnit(u, coord.add(halfButtonSize, halfButtonSize), locationConfig.getId());
+                            Point2D coord = new Point2D(unitVertex.x * Constants.METER_TO_PIXEL, unitVertex.y * Constants.METER_TO_PIXEL);
+                            unitSymbolsPane.addUnit(u, coord.add(-halfButtonSize, -halfButtonSize), locationConfig.getId());
+
                         } catch (CouldNotPerformException | ExecutionException | TimeoutException ex) {
                             // No exception throwing, because loop must continue it's work
                             ExceptionPrinter.printHistory(ex, LOGGER);
