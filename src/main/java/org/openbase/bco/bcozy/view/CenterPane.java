@@ -74,6 +74,7 @@ public class CenterPane extends StackPane {
         // Initializing components
         this.settingsMenu = loadSettingsMenu(height);
 
+        // Initializing view mode switch
         final FloatingPopUp viewModes = new FloatingPopUp(Pos.BOTTOM_RIGHT);
         viewModes.addParentElement(MaterialIcon.WEEKEND, () -> {
             appStateProperty.set(CenterPaneController.State.MOVEMENT);
