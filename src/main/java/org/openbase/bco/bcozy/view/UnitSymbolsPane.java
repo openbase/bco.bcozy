@@ -87,8 +87,8 @@ public class UnitSymbolsPane extends Pane {
         try {
             newButton = new UnitButton(unitRemoteObject);
 
-            newButton.setTranslateX(position.getY() - 20);  //swap according to swap in location pane 
-            newButton.setTranslateY(position.getX() - 20);
+            newButton.setTranslateX(position.getY());  //swap according to swap in location pane 
+            newButton.setTranslateY(position.getX());
             locationUnitsMap.put(unitRemoteObject.getConfig().getId(), newButton);
         } catch (NotAvailableException ex) {
             throw new CouldNotPerformException("Could not create unit button for unit " + this, ex);
