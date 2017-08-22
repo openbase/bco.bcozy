@@ -135,6 +135,14 @@
     -fx-text-fill: -fx-text-base-color;
 }
 
+.units-button{
+    -fx-background-color: transparent;
+}
+
+.units-button:hover {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 4, 0, 0, 0);
+}
+
 .toggle-button:focused,
 .button:focused,
 .button:default:focused {
