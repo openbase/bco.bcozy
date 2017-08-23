@@ -134,6 +134,7 @@ public class UnitButtonGrouped extends Pane {
             }
             content.setVisible(false);
             content.getStyleClass().add("units-button");
+            content.setStyle("-fx-background-color: rgb(64.0, 64.0, 64.0)");
             this.groupingPane.getChildren().add(content);
         } catch (CouldNotPerformException ex) {
             throw new CouldNotPerformException("Could not create grouped unit button for config " + this, ex);
