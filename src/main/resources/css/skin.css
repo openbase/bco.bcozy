@@ -375,7 +375,7 @@
 .progress-bar > .bar {
     /* barrier tape style*/
     /*-fx-background-color: linear-gradient(*/
-    /*from 0px .75em to .75em 0px,*/
+    /*from 0 .75em to .75em 0,*/
     /*repeat,*/
     /*slategrey 0%,*/
     /*slategrey 49%,*/
@@ -473,6 +473,10 @@
 .head-pane:hover {
     -fx-background-color: -button-hover-color;
 }
+.head-pane-2 {
+    -fx-text-fill: -fx-text-base-color;
+    -fx-background-color: transparent;
+}
 
 .background-pane {
     -fx-background-color: rgb(64.0, 64.0, 64.0);
@@ -540,13 +544,13 @@
 
 .floating-box {
     -fx-border-radius: 0.0;
-    -fx-background-radius: 0px;
+    -fx-background-radius: 0;
     -fx-padding: 20 20 20 20;
 }
 
 .floating-box-plain {
     -fx-border-radius: 0.0;
-    -fx-background-radius: 0px;
+    -fx-background-radius: 0;
 }
 
 .connection-indicator {
@@ -656,8 +660,8 @@
     -fx-border-width: 0.0;
     -fx-alignment: CENTER;
     -fx-content-display: LEFT;
-    -fx-border-radius: 0px;
-    -fx-background-radius: 0px;
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
     -fx-effect: none !important;
 }
 
@@ -1101,13 +1105,13 @@
 
 .titled-pane {
     -fx-border-radius: 0.0;
-    -fx-background-radius: 0px;
+    -fx-background-radius: 0;
     -fx-border-width: 0 0 5 5;
 }
 
 .titled-pane > .title {
     -fx-border-radius: 0.0;
-    -fx-background-radius: 0px;
+    -fx-background-radius: 0;
     -fx-border-width: 0 0 1 0;
 }
 
@@ -1135,7 +1139,7 @@
 
 .widget-pane {
     -fx-border-radius: 0.0;
-    -fx-background-radius: 0px;
+    -fx-background-radius: 0;
     -fx-padding: 0;
     -fx-border-width: 0 0 1 0;
     -fx-border-insets: 0 2 0 2;
@@ -1143,14 +1147,21 @@
 
 .body-pane {
     -fx-border-radius: 0.0;
-    -fx-background-radius: 0px;
+    -fx-background-radius: 0;
     -fx-padding: 5.0 10.0 5.0 10.0;
     -fx-border-width: 0 0 0 0;
 }
 
 .head-pane {
     -fx-border-radius: 0.0;
-    -fx-background-radius: 0px;
+    -fx-background-radius: 0;
+    -fx-padding: 5.0 10.0 5.0 10.0;
+    -fx-border-width: 0 0 0 0;
+}
+
+.head-pane-2 {
+    -fx-border-radius: 0.0;
+    -fx-background-radius: 0;
     -fx-padding: 5.0 10.0 5.0 10.0;
     -fx-border-width: 0 0 0 0;
 }
