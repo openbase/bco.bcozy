@@ -71,6 +71,10 @@ public class ForegroundPane extends BorderPane implements DefaultInitializable {
         this.appState.bind(centerPane.appStateProperty);
     }
     
+    public ObjectProperty<CenterPaneController.State> getAppState() {
+        return this.appState;
+    }
+    
     @Override
     public void init() throws InitializationException, InterruptedException {
         try {

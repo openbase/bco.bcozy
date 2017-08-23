@@ -41,6 +41,7 @@ import org.openbase.jul.exception.NotAvailableException;
  *
  * @author lili
  */
+
 public class UnitSymbolsPane extends Pane {
 
     /**
@@ -174,9 +175,9 @@ public class UnitSymbolsPane extends Pane {
                 })
         );
         groupedButtons.forEach((point, button)
-                -> {
-            this.getChildren().remove(button);
+                -> { this.getChildren().remove(button);
         });
+        groupedButtons.clear();
     }
 
     /**

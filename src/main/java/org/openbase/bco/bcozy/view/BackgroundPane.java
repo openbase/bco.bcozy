@@ -57,18 +57,32 @@ public class BackgroundPane extends StackPane {
 
             unitSymbolsPane.selectedLocationId.bind(locationPane.selectedLocationId);
 
-         /*   foregroundPane.appState.addListener(new ChangeListener<CenterPaneController.State>() {
+            unitSymbolsBatteryPane = new UnitSymbolsPane();
+            unitSymbolsBatteryPane.setPickOnBounds(false);
+            unitSymbolsBatteryPane.setVisible(true);
+            this.getChildren().add(unitSymbolsBatteryPane);
+            
+            
+            foregroundPane.getAppState().addListener(new ChangeListener<CenterPaneController.State>() {
 
                 @Override
                 public void changed(ObservableValue<? extends CenterPaneController.State> observable, CenterPaneController.State oldValue, CenterPaneController.State newValue) {
-                   System.out.println(newValue.name());
+                    switch(newValue) {
+                        case SETTINGS:
+                            unitSymbolsBatteryPane.setVisible(false);
+                            break;
+                        case TEMPERATURE:
+                            unitSymbolsBatteryPane.setVisible(true);
+                            break;
+                        case MOVEMENT:
+                            unitSymbolsBatteryPane.setVisible(false);
+                            break;
+                    }
+                   
                 }
 
-            });*/
+            });
          
-            unitSymbolsBatteryPane = new UnitSymbolsPane();
-            unitSymbolsBatteryPane.setPickOnBounds(false);
-            this.getChildren().add(unitSymbolsBatteryPane);
 
             this.getStyleClass().add("background-pane");
 
