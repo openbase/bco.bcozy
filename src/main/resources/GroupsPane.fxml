@@ -26,7 +26,7 @@
     <VBox spacing="10.0" prefWidth="${root.width}">
 
         <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">addGroup</ObserverLabel>
-        <CustomTextField fx:id="label"/>
+        <CustomTextField fx:id="label" onAction="#addGroup"/>
 
         <BorderPane>
             <right>
