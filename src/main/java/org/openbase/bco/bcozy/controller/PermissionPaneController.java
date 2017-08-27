@@ -164,7 +164,6 @@ public class PermissionPaneController {
      */
     private void onColumnWidthChange(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
         double width = permissionsTable.getWidth();
-        System.err.println("observable");
         permissionsColumn.setPrefWidth(width - newValue.doubleValue());
     }
 
