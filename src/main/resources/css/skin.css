@@ -624,6 +624,10 @@
     -fx-font-size: 12.0;
 }
 
+.xtra-small-label {
+    -fx-font-size: 8.0;
+}
+
 .bold-label {
     -fx-font-weight: bold;
 }
@@ -641,9 +645,14 @@
     -fx-text-fill: -success-color;
 }
 
-.label.error-label {
+.error-label {
     -fx-text-fill: -error-color;
 }
+
+.xtra-small-label.error-label {
+    -fx-text-fill: -error-color;
+}
+
 
 /*******************************************************************************
  *                                                                             *

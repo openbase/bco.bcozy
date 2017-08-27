@@ -20,31 +20,60 @@
     <spacing>
         <Constants fx:constant="INSETS"/>
     </spacing>
-
-    <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">username</ObserverLabel>
-    <TextField fx:id="username"/>
-
-    <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">firstName</ObserverLabel>
-    <TextField fx:id="firstname"/>
-
-    <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">lastName</ObserverLabel>
-    <TextField fx:id="lastname"/>
-
-    <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">email</ObserverLabel>
-    <TextField fx:id="mail"/>
-
-    <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">phone</ObserverLabel>
-    <TextField fx:id="phone"/>
-
-    <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">usergroups</ObserverLabel>
-    <CheckComboBox fx:id="usergroupField"/>
-
-    <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">password</ObserverLabel>
-    <PasswordField fx:id="passwordField"/>
-
-    <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">repeatPassword</ObserverLabel>
-    <PasswordField fx:id="repeatPasswordField"/>
-
+    <HBox spacing="30.0">
+        <VBox prefWidth="${root.width}">
+            <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">username</ObserverLabel>
+            <TextField fx:id="username"/>
+            <ObserverLabel fx:id="usernameEmptyLabel" visible="false" styleClass="xtra-small-label error-label" alignment="BOTTOM_LEFT">
+                mandatory
+            </ObserverLabel>
+        </VBox>
+        <VBox prefWidth="${root.width}">
+            <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">firstName</ObserverLabel>
+            <TextField fx:id="firstname"/>
+            <ObserverLabel fx:id="firstnameEmptyLabel" visible="false" styleClass="xtra-small-label error-label"
+                           alignment="BOTTOM_LEFT">
+                mandatory
+            </ObserverLabel>
+        </VBox>
+    </HBox>
+    <HBox spacing="30.0">
+        <VBox prefWidth="${root.width}">
+            <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">lastName</ObserverLabel>
+            <TextField fx:id="lastname"/>
+            <ObserverLabel fx:id="lastnameEmptyLabel" visible="false" styleClass="xtra-small-label error-label"
+                           alignment="BOTTOM_LEFT">
+                mandatory
+            </ObserverLabel>
+        </VBox>
+        <VBox prefWidth="${root.width}">
+            <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">email</ObserverLabel>
+            <TextField fx:id="mail"/>
+            <ObserverLabel fx:id="mailEmptyLabel" visible="false" styleClass="xtra-small-label error-label" alignment="BOTTOM_LEFT">
+                mandatory
+            </ObserverLabel>
+        </VBox>
+    </HBox>
+    <HBox spacing="30.0">
+        <VBox prefWidth="${root.width}">
+            <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">phone</ObserverLabel>
+            <TextField fx:id="phone"/>
+        </VBox>
+        <VBox prefWidth="${root.width}">
+            <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">usergroups</ObserverLabel>
+            <CheckComboBox fx:id="usergroupField"/>
+        </VBox>
+    </HBox>
+    <HBox spacing="30.0">
+        <VBox prefWidth="${root.width}">
+            <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">password</ObserverLabel>
+            <PasswordField fx:id="passwordField"/>
+        </VBox>
+        <VBox prefWidth="${root.width}">
+            <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">repeatPassword</ObserverLabel>
+            <PasswordField fx:id="repeatPasswordField"/>
+        </VBox>
+    </HBox>
 
     <BorderPane>
         <left>
@@ -55,7 +84,7 @@
         </left>
         <center>
             <HBox>
-                <JFXCheckBox fx:id="isOccupant" />
+                <JFXCheckBox fx:id="isOccupant"/>
                 <ObserverLabel>occupant</ObserverLabel>
             </HBox>
         </center>

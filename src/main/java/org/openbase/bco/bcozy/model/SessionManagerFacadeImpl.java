@@ -2,6 +2,7 @@ package org.openbase.bco.bcozy.model;
 
 import com.google.protobuf.ProtocolStringList;
 import org.openbase.bco.authentication.lib.SessionManager;
+import org.openbase.bco.bcozy.view.InfoPane;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.slf4j.Logger;
@@ -119,6 +120,10 @@ public class SessionManagerFacadeImpl implements SessionManagerFacade {
         try {
             // Registries.getUserRegistry().getUserIdByUserName(username);
 
+            if (username.equals("")){
+                throw new VerificationFailedException("Username must not be empty!");
+            }
+
             // ##### reimplemented because not included in current master api.
             for (final UnitConfig userUnitConfig : Registries.getUserRegistry().getUserConfigs()) {
                 if (userUnitConfig.getUserConfig().getUserName().equals(username)) {
@@ -149,5 +154,8 @@ public class SessionManagerFacadeImpl implements SessionManagerFacade {
     public void verifyMailAddress(String mailAddress) throws VerificationFailedException {
         //Todo check validity
         // throw new VerificationFailedException("not valid because of ...");
+        if (mailAddress.equals("")) {
+            throw new VerificationFailedException("E-Mail Adress must not be empty!");
+        }
     }
 }

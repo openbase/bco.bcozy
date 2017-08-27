@@ -9,16 +9,20 @@ import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.util.Duration;
 import javafx.util.StringConverter;
 import org.controlsfx.control.CheckComboBox;
 import org.openbase.bco.bcozy.model.SessionManagerFacade;
 import org.openbase.bco.bcozy.model.SessionManagerFacadeImpl;
 import org.openbase.bco.bcozy.util.Groups;
 import org.openbase.bco.bcozy.view.Constants;
+import org.openbase.bco.bcozy.view.InfoPane;
 import org.openbase.bco.bcozy.view.ObserverButton;
 
 import java.util.List;
 
+import org.openbase.bco.bcozy.view.ObserverLabel;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.VerificationFailedException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
@@ -62,6 +66,15 @@ public class RegistrationController {
     private JFXCheckBox isOccupant;
     @FXML
     private ObserverButton registerBtn;
+    @FXML
+    private ObserverLabel usernameEmptyLabel;
+    @FXML
+    private ObserverLabel firstnameEmptyLabel;
+    @FXML
+    private ObserverLabel lastnameEmptyLabel;
+    @FXML
+    private ObserverLabel mailEmptyLabel;
+
 
     public void initialize() {
         ObservableList<UnitConfig> groups = Groups.getGroups();
@@ -75,6 +88,11 @@ public class RegistrationController {
         registerBtn.setApplyOnNewText(String::toUpperCase);
         usergroupField.setConverter(Groups.stringConverter(groups));
         usergroupField.prefWidthProperty().bind(root.widthProperty());
+
+        usernameEmptyLabel.getStyleClass().remove("label");
+        firstnameEmptyLabel.getStyleClass().remove("label");
+        lastnameEmptyLabel.getStyleClass().remove("label");
+        mailEmptyLabel.getStyleClass().remove("label");
     }
 
     private void setGroups(ObservableList<UnitConfig> groups) {
@@ -99,8 +117,22 @@ public class RegistrationController {
             sessionManager.verifyUserName(username.getText());
         } catch (VerificationFailedException ex) {
             username.getStyleClass().add("text-field-wrong");
+            usernameEmptyLabel.setVisible(true);
             return;
         }
+
+        if (firstname.getText().equals("")) {
+            firstname.getStyleClass().add("text-field-wrong");
+            firstnameEmptyLabel.setVisible(true);
+            return;
+        }
+
+        if (lastname.getText().equals("")) {
+            lastname.getStyleClass().add("text-field-wrong");
+            lastnameEmptyLabel.setVisible(true);
+            return;
+        }
+
 
         try {
             sessionManager.verifyPasswords(passwordField.getText(), repeatPasswordField.getText());
@@ -121,6 +153,7 @@ public class RegistrationController {
             sessionManager.verifyMailAddress(mail.getText());
         } catch (VerificationFailedException ex) {
             mail.getStyleClass().add("text-field-wrong");
+            mailEmptyLabel.setVisible(true);
             return;
         }
 
@@ -144,15 +177,23 @@ public class RegistrationController {
                     isAdmin.isSelected(),
                     groups);
             resetFields();
+            showSuccessMessage();
         } catch (CouldNotPerformException ex) {
             ExceptionPrinter.printHistory(ex, logger);
+            showErrorMessage();
         }
     }
 
     private void resetHints() {
         username.getStyleClass().removeAll("text-field-wrong");
+        firstname.getStyleClass().removeAll("text-field-wrong");
+        lastname.getStyleClass().removeAll("text-field-wrong");
         passwordField.getStyleClass().removeAll("password-field-wrong");
         repeatPasswordField.getStyleClass().removeAll("password-field-wrong");
+        usernameEmptyLabel.setVisible(false);
+        firstnameEmptyLabel.setVisible(false);
+        lastnameEmptyLabel.setVisible(false);
+        mailEmptyLabel.setVisible(false);
     }
 
     private void resetFields() {
@@ -166,6 +207,19 @@ public class RegistrationController {
         isAdmin.setSelected(false);
         usergroupField.getCheckModel().clearChecks();
     }
+
+    private void showSuccessMessage() {
+        InfoPane.info("saveSuccess")
+                .backgroundColor(Color.GREEN)
+                .hideAfter(Duration.seconds(5));
+    }
+
+    private void showErrorMessage() {
+        InfoPane.info("saveError")
+                .backgroundColor(Color.RED)
+                .hideAfter(Duration.seconds(5));
+    }
+
 
     public Pane getRoot() {
         return root;

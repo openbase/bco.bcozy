@@ -98,10 +98,6 @@ public class UserSettingsController {
 
     public void initialize() {
 
-        changeLastname.toFront();
-        changePhone.toFront();
-        themeChoice.toFront();
-
         SessionManager.getInstance().getLoginObervable().addObserver((o, b) -> {
             LOGGER.warn("isLoggedIn is " + b);
             if (b) {
