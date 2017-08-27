@@ -8,6 +8,8 @@
 
 <?import javafx.scene.layout.VBox?>
 <?import org.controlsfx.control.textfield.CustomTextField?>
+<?import javafx.scene.control.Accordion?>
+<?import org.openbase.bco.bcozy.view.ObserverLabel?>
 <AnchorPane fx:id="settingsPaneParent" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="org.openbase.bco.bcozy.controller.SettingsController">
     <children>
@@ -34,9 +36,13 @@
                         </VBox>
                     </content>
                 </Tab>
-                <Tab fx:id="registrationTab">
-                    <content>
-                    </content>
+                <Tab>
+                    <graphic>
+                        <ObserverLabel>administration</ObserverLabel>
+                    </graphic>
+                    <Accordion fx:id="adminAccordion">
+
+                    </Accordion>
                 </Tab>
             </tabs>
         </TabPane>

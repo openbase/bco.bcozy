@@ -1,6 +1,5 @@
 package org.openbase.bco.bcozy.controller;
 
-import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.controls.JFXTreeTableColumn;
 import com.jfoenix.controls.JFXTreeTableView;
 import com.jfoenix.controls.RecursiveTreeItem;
@@ -14,11 +13,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -26,7 +21,10 @@ import javafx.util.Callback;
 import org.controlsfx.control.textfield.CustomTextField;
 import org.openbase.bco.bcozy.BCozy;
 import org.openbase.bco.bcozy.model.LanguageSelection;
-import org.openbase.bco.bcozy.view.*;
+import org.openbase.bco.bcozy.view.Constants;
+import org.openbase.bco.bcozy.view.ForegroundPane;
+import org.openbase.bco.bcozy.view.ObserverLabel;
+import org.openbase.bco.bcozy.view.SVGIcon;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
@@ -54,6 +52,7 @@ public class SettingsController {
      * Application Logger
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(MainMenuController.class);
+    public Accordion adminAccordion;
 
     @FXML
     private TabPane tabPane;
@@ -63,9 +62,6 @@ public class SettingsController {
 
     @FXML
     private Tab permissionTab;
-
-    @FXML
-    private Tab registrationTab;
 
     @FXML
     private JFXTreeTableView<RecursiveUnitConfig> unitsTable;
@@ -79,8 +75,6 @@ public class SettingsController {
     private VBox permissionPaneParent;
 
     private Pane permissionPane;
-
-    private RegistrationController registrationController;
 
     private UserSettingsController userSettingsController;
     private PermissionPaneController permissionPaneController;
@@ -99,7 +93,6 @@ public class SettingsController {
     public void initialize() {
         settingsTab.setGraphic(new ObserverLabel("settings"));
         permissionTab.setGraphic(new ObserverLabel("permissions"));
-        registrationTab.setGraphic(new ObserverLabel("registration"));
 
 
         fillTreeTableView();
@@ -119,7 +112,13 @@ public class SettingsController {
         this.tabPane.getStyleClass().addAll("detail-menu");
 
 
-        this.setRegistrationPane();
+        TitledPane registrationPane = new TitledPane("registration", this.loadRegistrationPane());
+        LanguageSelection.addObserverFor("registration", registrationPane::setText);
+        this.adminAccordion.getPanes().add(registrationPane);
+
+        TitledPane groupsPane = new TitledPane("usergroups", this.loadGroupsPane());
+        LanguageSelection.addObserverFor("usergroups", groupsPane::setText);
+        this.adminAccordion.getPanes().add(groupsPane);
 
         try {
             Registries.getUnitRegistry().addDataObserver((observable, unitRegistryData) -> {
@@ -319,18 +318,31 @@ public class SettingsController {
         }
     }
 
-    private void setRegistrationPane() {
+    private Pane loadGroupsPane() {
+        try {
+            URL url = getFxmlURL("GroupsPane.fxml");
+
+            FXMLLoader loader = new FXMLLoader(url);
+            Pane anchorPane = loader.load();
+
+            return anchorPane;
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            ExceptionPrinter.printHistory("Content could not be loaded", ex, LOGGER);
+            throw new UncheckedIOException(ex);
+        }
+    }
+
+    private Pane loadRegistrationPane() {
         try {
             URL url = Objects.requireNonNull(getClass().getClassLoader().getResource("Registration.fxml"),
                     "Registration.fxml not found");
 
             FXMLLoader loader = new FXMLLoader(url);
             loader.setControllerFactory(clazz -> new RegistrationController());
-            loader.load();
+            Pane root = loader.load();
 
-            this.registrationController = loader.getController();
-
-            registrationTab.setContent(registrationController.getRoot());
+            return root;
 
         } catch (IOException ex) {
             ex.printStackTrace();

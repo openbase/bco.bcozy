@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * Created by hoestreich on 1/2/16.
@@ -103,6 +104,18 @@ public final class LanguageSelection extends Observable {
         getInstance().addObserver((o, arg) -> onLanguageChangeListener.onLanguageChange(Locale.getDefault(),
                 getLocalized(identifier)));
         onLanguageChangeListener.onLanguageChange(Locale.getDefault(), getLocalized(identifier));
+    }
+
+    /**
+     * Adds an Listener to the given identifier.
+     * The Listener is called, each time the language changed and on attach.
+     *
+     * @param identifier      the identifier
+     * @param newTextConsumer the listener for this identifier
+     */
+    public static void addObserverFor(String identifier, Consumer<String> newTextConsumer) {
+        getInstance().addObserver((o, arg) -> newTextConsumer.accept(getLocalized(identifier)));
+        newTextConsumer.accept(getLocalized(identifier));
     }
 
     public interface OnLanguageChangeListener {
