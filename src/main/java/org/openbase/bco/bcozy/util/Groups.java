@@ -29,12 +29,14 @@ public final class Groups {
     public static ObservableList<UnitConfigType.UnitConfig> getGroups() {
         ObservableList<UnitConfigType.UnitConfig> groups = FXCollections.observableArrayList();
 
-        try {
-            setGroups(Registries.getUserRegistry().getAuthorizationGroupConfigs(), groups);
-        } catch (CouldNotPerformException ex) {
-            ExceptionPrinter.printHistory(ex, LOGGER);
-        } catch (InterruptedException ex) {
-            Thread.currentThread().interrupt();
+        if (Registries.isDataAvailable()) {
+            try {
+                setGroups(Registries.getUserRegistry().getAuthorizationGroupConfigs(), groups);
+            } catch (CouldNotPerformException ex) {
+                ExceptionPrinter.printHistory(ex, LOGGER);
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+            }
         }
 
         try {
