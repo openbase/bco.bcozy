@@ -19,8 +19,6 @@
 package org.openbase.bco.bcozy.view.location;
 
 import com.google.protobuf.GeneratedMessage;
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.layout.Pane;
 import org.openbase.bco.bcozy.view.generic.WidgetPane.DisplayMode;
 import org.openbase.bco.bcozy.view.pane.unit.AbstractUnitPane;
@@ -28,7 +26,6 @@ import org.openbase.bco.bcozy.view.pane.unit.UnitPaneFactoryImpl;
 import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.NotAvailableException;
-import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +49,6 @@ public class UnitButton extends Pane {
      * @throws org.openbase.jul.exception.CouldNotPerformException
      */
     public UnitButton(final UnitRemote<? extends GeneratedMessage> unitRemote) throws InterruptedException, CouldNotPerformException {
-        try {
             AbstractUnitPane content;
             content = UnitPaneFactoryImpl.getInstance().newInitializedInstance(unitRemote.getConfig());
             
@@ -62,11 +58,6 @@ public class UnitButton extends Pane {
             this.getChildren().add(content);
             this.getStyleClass().clear();
             this.getStyleClass().addAll("units-button");
-        } catch (CouldNotPerformException ex) {
-            ExceptionPrinter.printHistory("Type not available as pane: " + unitRemote.getConfig().getType().toString(), ex, LOGGER);
-            //throw new CouldNotPerformException("Could not create UnitButton for unit", ex);
-        }
-        
     }
 
     /**

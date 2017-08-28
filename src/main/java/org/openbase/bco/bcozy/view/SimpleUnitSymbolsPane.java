@@ -29,12 +29,12 @@ import javafx.scene.layout.Pane;
 import org.openbase.bco.bcozy.view.location.UnitButton;
 import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
-import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.openbase.jul.exception.printer.LogLevel;
 
 /**
- * Pane for the maintenance layer of the room plan that includes buttons for the following units:
- * batteries, tamper detectors, temperature sensors, smoke detectors.
+ * Pane for the editing and the maintenance layer of the room plan that includes buttons for the units
+ * displayed in this layer.
  *
  * @author lili
  */
@@ -73,19 +73,16 @@ public class SimpleUnitSymbolsPane extends Pane {
             newButton.setTranslateY(position.getX());
             
             unitsMap.put(locationId, newButton);
-
-        } catch (NotAvailableException ex) {
-           //throw new CouldNotPerformException("Could not create unit button for unit " + this, ex);
-            ExceptionPrinter.printHistory("Type not available as pane: " + unitRemoteObject.getConfigClass().getName(), ex, LOGGER);
-        } catch (CouldNotPerformException ex) {
-            ExceptionPrinter.printHistory("Type not available as pane: " + unitRemoteObject.getConfigClass().getName(), ex, LOGGER);
-            System.out.println("Type not available: " + unitRemoteObject.getConfigClass().getName());
+            
+        }  catch (CouldNotPerformException ex) {
+            ExceptionPrinter.printHistory("UnitType[" + unitRemoteObject.getConfig().getType() + "] is not supported yet!", ex, LOGGER, LogLevel.WARN);
+            throw new CouldNotPerformException("Type not available as pane:"  + unitRemoteObject.getConfig().getType(), ex);
         }
     }
 
     
     /**
-     * Clears the UnitSymbolsPane to prepare the update.
+     * Clears the pane to prepare the update.
      */
     public void clearUnits() {
         unitsMap.forEach((unitId, button)
@@ -96,8 +93,7 @@ public class SimpleUnitSymbolsPane extends Pane {
     }
 
     /**
-     * Draws all location buttons except for the selected location, draws all unit buttons
-     * and grouped buttons for the selected location.
+     * Draws all unit buttons for the selected location.
      */
     public void updateUnitsPane() {
         this.getChildren().clear();

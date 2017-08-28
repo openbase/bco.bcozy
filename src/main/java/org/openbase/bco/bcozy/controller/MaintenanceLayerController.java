@@ -160,7 +160,7 @@ public class MaintenanceLayerController {
 
                         UnitConfig config = u.getConfig();
                         if (config.getEnablingState().getValue() != EnablingStateType.EnablingState.State.ENABLED) {
-                            //     continue; TODO
+                            continue; 
                         }
                         if (!config.getPlacementConfig().hasPosition()) {
                             continue;
