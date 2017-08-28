@@ -29,15 +29,15 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import org.openbase.bco.bcozy.controller.CenterPaneController;
 import org.openbase.bco.bcozy.controller.SettingsController;
+import org.openbase.bco.bcozy.controller.UserSettingsController;
+import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.NotAvailableException;
+import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
-import org.openbase.bco.bcozy.controller.UserSettingsController;
-import org.openbase.jul.exception.CouldNotPerformException;
-import org.openbase.jul.exception.NotAvailableException;
-import org.openbase.jul.exception.printer.ExceptionPrinter;
 
 /**
  * Created by hoestreich on 11/26/15.
@@ -65,14 +65,21 @@ public class CenterPane extends StackPane {
         this.foregroundPane = foregroundPane;
 
         appStateProperty = new SimpleObjectProperty<>(CenterPaneController.State.SETTINGS);
-
+        
         // Initializing components
         this.settingsMenu = loadSettingsMenu(height);
 
+        // Initializing view mode switch
         final FloatingPopUp viewModes = new FloatingPopUp(Pos.BOTTOM_RIGHT);
-        viewModes.addParentElement(MaterialIcon.WEEKEND, (Runnable) null); //TODO: Add EventHandler when needed
-        viewModes.addElement(MaterialDesignIcon.THERMOMETER_LINES, (Runnable) null);//TODO: Add EventHandler when needed
-        viewModes.addElement(MaterialIcon.VISIBILITY, (Runnable) null);//TODO: Add EventHandler when needed
+        viewModes.addParentElement(MaterialIcon.WEEKEND, () -> {
+            appStateProperty.set(CenterPaneController.State.MOVEMENT);
+        }); 
+        viewModes.addElement(MaterialDesignIcon.THERMOMETER_LINES, () -> {
+            appStateProperty.set(CenterPaneController.State.TEMPERATURE);
+        }); 
+        viewModes.addElement(MaterialIcon.VISIBILITY, () -> {
+            appStateProperty.set(CenterPaneController.State.SETTINGS);
+        }); 
 
         // Styling components with CSS
         this.getStyleClass().addAll("padding-small");
@@ -83,6 +90,7 @@ public class CenterPane extends StackPane {
         this.setMinHeight(height);
         this.setPrefHeight(height);
     }
+    
 
 
     private Pane loadSettingsMenu(final double height) {

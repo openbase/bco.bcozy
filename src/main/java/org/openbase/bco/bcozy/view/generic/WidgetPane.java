@@ -99,6 +99,9 @@ public class WidgetPane extends VBox implements DynamicPane {
             case ICON_ONLY:
                 headPane.setCenter(null);
                 headPane.setRight(null);
+                //remove bright hover animation
+                headPane.getStyleClass().clear();
+                headPane.getStyleClass().add("head-pane-2");
              //   unitCount.setTextAlignment(TextAlignment.CENTER);
              //   unitCount.setFont(new Font(12));
              //   headPane.setBottom(unitCount);

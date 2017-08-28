@@ -69,8 +69,10 @@ public class ContextMenu extends VBox {
         floatingButtons.translateXProperty().set(Constants.FLOATING_BUTTON_OFFSET_X);
 
 
-        roomInfo = new Label("No room selected.");
-        roomInfo.setAlignment(Pos.CENTER);
+        roomInfo = new Label("Select a Room");
+        roomInfo.setAlignment(Pos.TOP_CENTER);
+        roomInfo.getStyleClass().clear();
+        roomInfo.getStyleClass().add("headline");
 
         verticalScrollPane = new ScrollPane();
         verticalScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);

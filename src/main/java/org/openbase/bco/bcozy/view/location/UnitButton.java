@@ -19,6 +19,8 @@
 package org.openbase.bco.bcozy.view.location;
 
 import com.google.protobuf.GeneratedMessage;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.layout.Pane;
 import org.openbase.bco.bcozy.view.generic.WidgetPane.DisplayMode;
 import org.openbase.bco.bcozy.view.pane.unit.AbstractUnitPane;
@@ -33,7 +35,6 @@ import org.slf4j.LoggerFactory;
  * Button that contains an AbstractUnitPane in a clipped form so the unit can be controlled from within the location plan.
  */
 public class UnitButton extends Pane {
-
     /**
      * Application logger.
      */
@@ -44,7 +45,8 @@ public class UnitButton extends Pane {
     /**
      * Constructor for UnitButton. Creates the content with the help of the UnitPaneFactory dynamically,
      * according to the given unitRemote.
-     * @param unitRemote 
+     *
+     * @param unitRemote
      * @throws java.lang.InterruptedException
      * @throws org.openbase.jul.exception.CouldNotPerformException
      */
@@ -54,14 +56,18 @@ public class UnitButton extends Pane {
             content = UnitPaneFactoryImpl.getInstance().newInitializedInstance(unitRemote.getConfig());
             content.setDisplayMode(DisplayMode.ICON_ONLY);
             this.unitRemote = content.getUnitRemote();
+
             this.getChildren().add(content);
         } catch (CouldNotPerformException ex) {
             throw new CouldNotPerformException("Could not create UnitButton for unit", ex);
         }
+        this.getStyleClass().clear();
+        this.getStyleClass().addAll("units-button");
     }
 
     /**
      * Returns the UnitRemote for the unit controlled with this button.
+     *
      * @return Underlying UnitRemote object
      */
     public UnitRemote<? extends GeneratedMessage> getUnitRemote() {
@@ -70,8 +76,9 @@ public class UnitButton extends Pane {
 
     /**
      * Convenience method to get the location the underlying unit belongs to.
+     *
      * @return LocationId of the unit's location
-     * @throws CouldNotPerformException 
+     * @throws CouldNotPerformException
      */
     public String getLocationId() throws CouldNotPerformException {
         try {

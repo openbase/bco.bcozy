@@ -1,19 +1,13 @@
 package org.openbase.bco.bcozy.view;
 
-import de.jensd.fx.glyphs.GlyphIcons;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import de.jensd.fx.glyphs.materialicons.MaterialIcon;
 import javafx.application.Application;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import org.junit.Ignore;
-import org.junit.Test;
-import org.openbase.bco.bcozy.controller.CenterPaneController;
-
-import static org.junit.Assert.*;
 
 /**
  * @author vdasilva
@@ -42,7 +36,10 @@ public class CenterPaneTest extends Application {
         new CenterPaneController(centerPane);
         */
 
-        popUp = new FloatingPopUp(MaterialIcon.SETTINGS, MaterialDesignIcon.THERMOMETER_LINES, MaterialIcon.VISIBILITY, Pos.TOP_CENTER);
+        popUp = new FloatingPopUp(Pos.TOP_CENTER);
+        popUp.addParentElement(MaterialIcon.SETTINGS, this::setMaximizeAction);
+        popUp.addElement(MaterialDesignIcon.THERMOMETER_LINES, this::setMaximizeAction);
+        popUp.addElement(MaterialIcon.VISIBILITY, this::setMaximizeAction);
         popUp.addElement(MaterialIcon.ACCESS_ALARM, event -> System.out.println("ACCESS_ALARM"));
         pane.setLeft(popUp);
 
