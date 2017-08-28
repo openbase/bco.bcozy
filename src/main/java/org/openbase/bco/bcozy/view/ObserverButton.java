@@ -1,17 +1,17 @@
 /**
  * ==================================================================
- *
+ * <p>
  * This file is part of org.openbase.bco.bcozy.
- *
+ * <p>
  * org.openbase.bco.bcozy is free software: you can redistribute it and modify
  * it under the terms of the GNU General Public License (Version 3)
  * as published by the Free Software Foundation.
- *
+ * <p>
  * org.openbase.bco.bcozy is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
@@ -25,12 +25,9 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import org.openbase.bco.bcozy.model.LanguageSelection;
-import org.openbase.jul.exception.printer.ExceptionPrinter;
-import org.openbase.jul.exception.printer.LogLevel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.function.Function;
 
 /**
@@ -41,12 +38,9 @@ import java.util.function.Function;
 @DefaultProperty("identifier")
 public class ObserverButton extends Button implements Observer {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ObserverButton.class);
-
     @FXML
     private SimpleStringProperty identifier = new SimpleStringProperty();
-    private ResourceBundle languageBundle = ResourceBundle
-            .getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
+
     /**
      * Is applied to new text when text is changed.
      */
@@ -90,16 +84,7 @@ public class ObserverButton extends Button implements Observer {
             return;
         }
 
-        String text;
-        try {
-            languageBundle = ResourceBundle.getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
-
-            text = languageBundle.getString(this.getIdentifier());
-        } catch (MissingResourceException ex) {
-            ExceptionPrinter.printHistory("Could not resolve Identifier[" + getIdentifier() + "]", ex, LOGGER,
-                    LogLevel.WARN);
-            text = getIdentifier();
-        }
+        String text = LanguageSelection.getLocalized(getIdentifier());
         super.setText(applyOnNewText.apply(text));
     }
 
@@ -117,6 +102,6 @@ public class ObserverButton extends Button implements Observer {
 
     public void setApplyOnNewText(Function<String, String> applyOnNewText) {
         this.applyOnNewText = applyOnNewText != null ? applyOnNewText : Function.identity();
-        this.update(null,null);
+        this.update(null, null);
     }
 }
