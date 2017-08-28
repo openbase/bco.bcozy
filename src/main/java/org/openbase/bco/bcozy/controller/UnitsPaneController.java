@@ -138,6 +138,8 @@ public class UnitsPaneController {
      * @throws InterruptedException
      */
     public void fetchLocationUnitRemotes() throws CouldNotPerformException, InterruptedException {
+                
+        unitSymbolsPane.clearUnits();
 
         final double halfButtonSize = (Constants.SMALL_ICON + (2 * Constants.INSETS))/2;
         
