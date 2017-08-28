@@ -18,7 +18,6 @@
  */
 package org.openbase.bco.bcozy.controller;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -29,9 +28,8 @@ import javafx.application.Platform;
 import javafx.geometry.Point2D;
 import javax.vecmath.Point3d;
 import org.openbase.bco.bcozy.view.Constants;
-import org.openbase.bco.bcozy.view.UnitSymbolsPane;
+import org.openbase.bco.bcozy.view.SimpleUnitSymbolsPane;
 import org.openbase.bco.bcozy.view.location.LocationPane;
-import org.openbase.bco.bcozy.view.pane.unit.TitledUnitPaneContainer;
 import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
 import org.openbase.bco.dal.remote.unit.Units;
 import org.openbase.bco.registry.remote.Registries;
@@ -47,9 +45,7 @@ import rst.domotic.registry.UnitRegistryDataType.UnitRegistryData;
 import rst.domotic.state.EnablingStateType;
 import rst.domotic.unit.UnitConfigType.UnitConfig;
 import rst.domotic.unit.UnitTemplateType;
-import rst.domotic.unit.UnitTemplateType.UnitTemplate.UnitType;
 import rst.domotic.unit.location.LocationConfigType;
-import rst.geometry.AxisAlignedBoundingBox3DFloatType;
 import rst.geometry.PoseType;
 
 /**
@@ -57,27 +53,25 @@ import rst.geometry.PoseType;
  *
  * @author lili
  */
-public class UnitsPaneBatteryController {
+public class EditingLayerController {
 
     /**
      * Application logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(UnitsPaneBatteryController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EditingLayerController.class);
 
     private final LocationPane locationPane;
-    private final UnitSymbolsPane unitSymbolsPane;
-    private final Map<String, TitledUnitPaneContainer> titledPaneMap;
+    private final SimpleUnitSymbolsPane unitSymbolsPane;
 
     /**
-     * Constructor for the construction of a UnitSymbolsPane.
+     * Constructor
      *
      * @param unitPane
      * @param locationPane
      */
-    public UnitsPaneBatteryController(final UnitSymbolsPane unitPane, final LocationPane locationPane) {
+    public EditingLayerController(final SimpleUnitSymbolsPane unitPane, final LocationPane locationPane) {
         this.locationPane = locationPane;
         this.unitSymbolsPane = unitPane;
-        this.titledPaneMap = new HashMap<>();
 
         unitPane.scaleXProperty().bind(locationPane.scaleXProperty());
         unitPane.scaleYProperty().bind(locationPane.scaleYProperty());
@@ -87,6 +81,7 @@ public class UnitsPaneBatteryController {
 
     /**
      * Establish the connection with the RemoteRegistry and fetch unit remotes.
+     *
      * @throws org.openbase.jul.exception.CouldNotPerformException
      * @throws java.lang.InterruptedException
      */
@@ -99,7 +94,7 @@ public class UnitsPaneBatteryController {
                     Platform.runLater(() -> {
                         try {
                             fetchLocationUnitRemotes();
-                            unitSymbolsPane.updateUnitsPaneWithoutSelectedStuff();
+                            unitSymbolsPane.updateUnitsPane();
                         } catch (CouldNotPerformException ex) {
                             ExceptionPrinter.printHistory(ex, LOGGER);
                         } catch (InterruptedException ex) {
@@ -114,7 +109,7 @@ public class UnitsPaneBatteryController {
                     Platform.runLater(() -> {
                         try {
                             fetchLocationUnitRemotes();
-                            unitSymbolsPane.updateUnitsPaneWithoutSelectedStuff();
+                            unitSymbolsPane.updateUnitsPane();
                         } catch (CouldNotPerformException ex) {
                             ExceptionPrinter.printHistory(ex, LOGGER);
                         } catch (InterruptedException ex) {
@@ -139,33 +134,18 @@ public class UnitsPaneBatteryController {
      */
     public void fetchLocationUnitRemotes() throws CouldNotPerformException, InterruptedException {
 
+        unitSymbolsPane.clearUnits();
+
+        final double halfButtonSize = (Constants.SMALL_ICON + (2 * Constants.INSETS)) / 2;
+
         final List<UnitConfig> locationUnitConfigList = Registries.getLocationRegistry().getLocationConfigs();
 
         for (final UnitConfig locationConfig : locationUnitConfigList) {
 
-            // Tiles are the clickable polygons 
-            if (locationConfig.getLocationConfig().getType() != LocationConfigType.LocationConfig.LocationType.TILE) {
-                continue;
-            }
-            // Only use locations with a valuable shape
+            // Only use locations with a valuable shape (exclude home location)
             if (locationConfig.getPlacementConfig().getShape().getFloorCount() == 0) {
                 continue;
             }
-
-   /*         Point3d vertex = calculateCoordinates(locationConfig);
-
-            try {
-                final Future<Transform> transform = Registries.getLocationRegistry().getUnitTransformation(locationConfig,
-                    Registries.getLocationRegistry().getRootLocationConfig());
-                transform.get(Constants.TRANSFORMATION_TIMEOUT / 10, TimeUnit.MILLISECONDS).getTransform().transform(vertex);
-                Point2D coord = new Point2D(vertex.x * Constants.METER_TO_PIXEL, vertex.y * Constants.METER_TO_PIXEL);
-                // Abstract Pane not working with a config object, only with a remote one!
-                UnitRemote<?> u = Units.getUnit(locationConfig.getId(), false);
-                unitSymbolsPane.addRoomUnit(u, coord);
-            } catch (CouldNotPerformException | ExecutionException | TimeoutException ex) {
-                // No exception throwing, because loop must continue it's work
-                ExceptionPrinter.printHistory(ex, LOGGER);
-            }*/
 
             for (final Map.Entry<UnitTemplateType.UnitTemplate.UnitType, List<UnitRemote>> nextEntry : Units.getUnit(locationConfig.getId(), false, Units.LOCATION).getUnitMap().entrySet()) {
                 if (nextEntry.getValue().isEmpty()) {
@@ -173,49 +153,36 @@ public class UnitsPaneBatteryController {
                 }
 
                 for (UnitRemote<?> u : nextEntry.getValue()) {
-                    if (nextEntry.getKey() == UnitType.BATTERY) {
 
-                        UnitConfig config = u.getConfig();
-                        if (config.getEnablingState().getValue() != EnablingStateType.EnablingState.State.ENABLED) {
-                       //     continue; TODO
-                        }
-                        if (!config.getPlacementConfig().hasPosition()) {
-                            continue;
-                        }
+                    UnitConfig config = u.getConfig();
+                    if (config.getEnablingState().getValue() != EnablingStateType.EnablingState.State.ENABLED) {
+                       // continue;
+                    }
+                    if (!config.getPlacementConfig().hasPosition()) {
+                        continue;
+                    }
 
-                        PoseType.Pose pose = config.getPlacementConfig().getPosition();
-                        try {
-                            final Future<Transform> transform = Registries.getLocationRegistry().getUnitTransformation(config,
-                                Registries.getLocationRegistry().getRootLocationConfig());
-                            final Point3d unitVertex = new Point3d(pose.getTranslation().getX(), pose.getTranslation().getY(), 1.0);
-                            transform.get(Constants.TRANSFORMATION_TIMEOUT / 10, TimeUnit.MILLISECONDS).
-                                getTransform().transform(unitVertex);
-                            Point2D coord = new Point2D(unitVertex.x * Constants.METER_TO_PIXEL, unitVertex.y * Constants.METER_TO_PIXEL);
-                            unitSymbolsPane.addUnit(u, coord, locationConfig.getId());
-                        } catch (CouldNotPerformException | ExecutionException | TimeoutException ex) {
-                            // No exception throwing, because loop must continue it's work
-                            ExceptionPrinter.printHistory(ex, LOGGER);
+                    PoseType.Pose pose = config.getPlacementConfig().getPosition();
+                    try {
+                        final Future<Transform> transform = Registries.getLocationRegistry().getUnitTransformation(config,
+                            Registries.getLocationRegistry().getRootLocationConfig());
+                        final Point3d unitVertex = new Point3d(pose.getTranslation().getX(), pose.getTranslation().getY(), 1.0);
+                        transform.get(Constants.TRANSFORMATION_TIMEOUT / 10, TimeUnit.MILLISECONDS).
+                            getTransform().transform(unitVertex);
+                        Point2D coord = new Point2D(unitVertex.x * Constants.METER_TO_PIXEL, unitVertex.y * Constants.METER_TO_PIXEL);
+                        unitSymbolsPane.addUnit(u, coord.add(-halfButtonSize, -halfButtonSize), locationConfig.getId());
 
-                        }
+                    } catch (CouldNotPerformException | ExecutionException | TimeoutException ex) {
+                        // No exception throwing, because loop must continue it's work
+                        ExceptionPrinter.printHistory(ex, LOGGER);
+
                     }
                 }
+
             }
         }
     }
 
-    private Point3d calculateCoordinates(final UnitConfig locationConfig) {
-        AxisAlignedBoundingBox3DFloatType.AxisAlignedBoundingBox3DFloat boundingBox
-            = locationConfig.getPlacementConfig().getShape().getBoundingBox();
-
-        double d = boundingBox.getDepth();
-        double w = boundingBox.getWidth();
-        double new_x;
-        double new_y;
-        new_x = (boundingBox.getLeftFrontBottom().getX() + w) / 2;
-        new_y = (boundingBox.getLeftFrontBottom().getY() + d) / 2;
-
-        return new Point3d(new_x, new_y, 1.0);
-    }
 
     /**
      * Fetches all unit remotes from registry and updates the unit pane,
@@ -225,7 +192,7 @@ public class UnitsPaneBatteryController {
         Platform.runLater((() -> {
             try {
                 fetchLocationUnitRemotes();
-                unitSymbolsPane.updateUnitsPaneWithoutSelectedStuff();
+                unitSymbolsPane.updateUnitsPane();
             } catch (CouldNotPerformException ex) {
                 ExceptionPrinter.printHistory(ex, LOGGER);
             } catch (InterruptedException ex) {

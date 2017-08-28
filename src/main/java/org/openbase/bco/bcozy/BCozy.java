@@ -82,7 +82,8 @@ public class BCozy extends Application {
     private LocationPaneController locationPaneController;
     private ForegroundPane foregroundPane;
     private UnitsPaneController unitsPaneController;
-    private UnitsPaneBatteryController unitsPaneBatteryController;
+    private MaintenanceLayerController maintenanceLayerController;
+    private EditingLayerController editingLayerController;
     private Future initTask;
 
     private Scene mainScene;
@@ -150,8 +151,9 @@ public class BCozy extends Application {
         contextMenuController = new ContextMenuController(foregroundPane, backgroundPane.getLocationPane());
         locationPaneController = new LocationPaneController(backgroundPane.getLocationPane());
         unitsPaneController = new UnitsPaneController(backgroundPane.getUnitsPane(), backgroundPane.getLocationPane());
-        unitsPaneBatteryController = new UnitsPaneBatteryController(backgroundPane.getUnitsBatteryPane(), backgroundPane.getLocationPane());
-
+        maintenanceLayerController = new MaintenanceLayerController(backgroundPane.getMaintenancePane(), backgroundPane.getLocationPane());
+        editingLayerController = new EditingLayerController(backgroundPane.getEditingPane(), backgroundPane.getLocationPane());
+        
         ResponsiveHandler.addResponsiveToWindow(primaryStage);
         primaryStage.show();
 
@@ -183,7 +185,8 @@ public class BCozy extends Application {
                     loadingPane.setTextLabelIdentifier("connectLocationRemote");
                     locationPaneController.connectLocationRemote();
                     unitsPaneController.connectUnitRemote();
-                    unitsPaneBatteryController.connectUnitRemote();
+                    maintenanceLayerController.connectUnitRemote();
+                    editingLayerController.connectUnitRemote();
 
                     return null;
                 } catch (Exception ex) {

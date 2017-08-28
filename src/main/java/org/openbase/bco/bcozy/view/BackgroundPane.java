@@ -34,7 +34,8 @@ public class BackgroundPane extends StackPane {
 
     private final LocationPane locationPane;
     private final UnitSymbolsPane unitSymbolsPane;
-    private final UnitSymbolsPane unitSymbolsBatteryPane;
+    private final SimpleUnitSymbolsPane editingLayerPane;
+    private final SimpleUnitSymbolsPane maintenanceLayerPane;
     private double prevMouseCordX; //NOPMD
     private double prevMouseCordY; //NOPMD
 
@@ -57,33 +58,38 @@ public class BackgroundPane extends StackPane {
 
             unitSymbolsPane.selectedLocationId.bind(locationPane.selectedLocationId);
 
-            unitSymbolsBatteryPane = new UnitSymbolsPane();
-            unitSymbolsBatteryPane.setPickOnBounds(false);
-            unitSymbolsBatteryPane.setVisible(true);
-            this.getChildren().add(unitSymbolsBatteryPane);
-            
-            
+            maintenanceLayerPane = new SimpleUnitSymbolsPane();
+            maintenanceLayerPane.setPickOnBounds(false);
+
+            editingLayerPane = new SimpleUnitSymbolsPane();
+            editingLayerPane.setPickOnBounds(false);
+
             foregroundPane.getAppState().addListener(new ChangeListener<CenterPaneController.State>() {
 
                 @Override
                 public void changed(ObservableValue<? extends CenterPaneController.State> observable, CenterPaneController.State oldValue, CenterPaneController.State newValue) {
-                    switch(newValue) {
+                    switch (newValue) {
                         case SETTINGS:
-                            unitSymbolsBatteryPane.setVisible(false);
+                            getChildren().clear();
+                            getChildren().add(locationPane);
+                            getChildren().add(editingLayerPane);
+
                             break;
                         case TEMPERATURE:
-                            unitSymbolsBatteryPane.setVisible(true);
+                            getChildren().clear();
+                            getChildren().add(locationPane);
+                            getChildren().add(maintenanceLayerPane);
                             break;
                         case MOVEMENT:
-                            unitSymbolsBatteryPane.setVisible(false);
+                            getChildren().clear();
+                            getChildren().add(locationPane);
+                            getChildren().add(unitSymbolsPane);
                             break;
                     }
-                   
+
                 }
 
             });
-         
-
             this.getStyleClass().add("background-pane");
 
             this.setOnMousePressed(event -> {
@@ -114,6 +120,7 @@ public class BackgroundPane extends StackPane {
             });
 
             this.setOnMouseClicked(locationPane.getOnEmptyAreaClickHandler());
+
         } catch (CouldNotPerformException ex) {
             throw new InstantiationException(this, ex);
         }
@@ -125,15 +132,20 @@ public class BackgroundPane extends StackPane {
     public UnitSymbolsPane getUnitsPane() {
         return unitSymbolsPane;
     }
-    
-    
+
     /**
      * @return The LocationPane.
      */
-    public UnitSymbolsPane getUnitsBatteryPane() {
-        return unitSymbolsBatteryPane;
+    public SimpleUnitSymbolsPane getMaintenancePane() {
+        return maintenanceLayerPane;
     }
 
+    /**
+     * @return The LocationPane.
+     */
+    public SimpleUnitSymbolsPane getEditingPane() {
+        return editingLayerPane;
+    }
 
     /**
      * @return The Location Pane.

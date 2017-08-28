@@ -28,6 +28,7 @@ import org.openbase.bco.bcozy.view.pane.unit.UnitPaneFactoryImpl;
 import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.NotAvailableException;
+import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,12 +55,15 @@ public class UnitButton extends Pane {
         try {
             AbstractUnitPane content;
             content = UnitPaneFactoryImpl.getInstance().newInitializedInstance(unitRemote.getConfig());
+            
             content.setDisplayMode(DisplayMode.ICON_ONLY);
             this.unitRemote = content.getUnitRemote();
 
             this.getChildren().add(content);
         } catch (CouldNotPerformException ex) {
-            throw new CouldNotPerformException("Could not create UnitButton for unit", ex);
+            ExceptionPrinter.printHistory("Type not available as pane: " + unitRemote.getConfig().getType().toString(), ex, LOGGER);
+            return;
+            //throw new CouldNotPerformException("Could not create UnitButton for unit", ex);
         }
         this.getStyleClass().clear();
         this.getStyleClass().addAll("units-button");
