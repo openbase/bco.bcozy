@@ -73,7 +73,6 @@ public class BackgroundPane extends StackPane {
                             getChildren().clear();
                             getChildren().add(locationPane);
                             getChildren().add(editingLayerPane);
-
                             break;
                         case TEMPERATURE:
                             getChildren().clear();

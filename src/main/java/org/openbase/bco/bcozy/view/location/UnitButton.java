@@ -60,13 +60,13 @@ public class UnitButton extends Pane {
             this.unitRemote = content.getUnitRemote();
 
             this.getChildren().add(content);
+            this.getStyleClass().clear();
+            this.getStyleClass().addAll("units-button");
         } catch (CouldNotPerformException ex) {
             ExceptionPrinter.printHistory("Type not available as pane: " + unitRemote.getConfig().getType().toString(), ex, LOGGER);
-            return;
             //throw new CouldNotPerformException("Could not create UnitButton for unit", ex);
         }
-        this.getStyleClass().clear();
-        this.getStyleClass().addAll("units-button");
+        
     }
 
     /**

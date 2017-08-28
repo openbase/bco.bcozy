@@ -45,6 +45,7 @@ import rst.domotic.registry.UnitRegistryDataType.UnitRegistryData;
 import rst.domotic.state.EnablingStateType;
 import rst.domotic.unit.UnitConfigType.UnitConfig;
 import rst.domotic.unit.UnitTemplateType;
+import rst.domotic.unit.UnitTemplateType.UnitTemplate.UnitType;
 import rst.domotic.unit.location.LocationConfigType;
 import rst.geometry.PoseType;
 
@@ -154,29 +155,29 @@ public class EditingLayerController {
 
                 for (UnitRemote<?> u : nextEntry.getValue()) {
 
-                    UnitConfig config = u.getConfig();
-                    if (config.getEnablingState().getValue() != EnablingStateType.EnablingState.State.ENABLED) {
-                       // continue;
-                    }
-                    if (!config.getPlacementConfig().hasPosition()) {
-                        continue;
-                    }
+                        UnitConfig config = u.getConfig();
+                        if (config.getEnablingState().getValue() != EnablingStateType.EnablingState.State.ENABLED) {
+                            //     continue; TODO
+                        }
+                        if (!config.getPlacementConfig().hasPosition()) {
+                            continue;
+                        }
 
-                    PoseType.Pose pose = config.getPlacementConfig().getPosition();
-                    try {
-                        final Future<Transform> transform = Registries.getLocationRegistry().getUnitTransformation(config,
-                            Registries.getLocationRegistry().getRootLocationConfig());
-                        final Point3d unitVertex = new Point3d(pose.getTranslation().getX(), pose.getTranslation().getY(), 1.0);
-                        transform.get(Constants.TRANSFORMATION_TIMEOUT / 10, TimeUnit.MILLISECONDS).
-                            getTransform().transform(unitVertex);
-                        Point2D coord = new Point2D(unitVertex.x * Constants.METER_TO_PIXEL, unitVertex.y * Constants.METER_TO_PIXEL);
-                        unitSymbolsPane.addUnit(u, coord.add(-halfButtonSize, -halfButtonSize), locationConfig.getId());
-
-                    } catch (CouldNotPerformException | ExecutionException | TimeoutException ex) {
-                        // No exception throwing, because loop must continue it's work
-                        ExceptionPrinter.printHistory(ex, LOGGER);
-
-                    }
+                        PoseType.Pose pose = config.getPlacementConfig().getPosition();
+                        try {
+                            final Future<Transform> transform = Registries.getLocationRegistry().getUnitTransformation(config,
+                                Registries.getLocationRegistry().getRootLocationConfig());
+                            final Point3d unitVertex = new Point3d(pose.getTranslation().getX(), pose.getTranslation().getY(), 1.0);
+                            transform.get(Constants.TRANSFORMATION_TIMEOUT / 10, TimeUnit.MILLISECONDS).
+                                getTransform().transform(unitVertex);
+                            Point2D coord = new Point2D(unitVertex.x * Constants.METER_TO_PIXEL, unitVertex.y * Constants.METER_TO_PIXEL);
+                            unitSymbolsPane.addUnit(u, coord.add(-halfButtonSize, -halfButtonSize), locationConfig.getId());
+                        } catch (CouldNotPerformException | ExecutionException | TimeoutException ex) {
+                            // No exception throwing, because loop must continue it's work
+                            ExceptionPrinter.printHistory(ex, LOGGER);
+                            continue;
+                        }
+                    
                 }
 
             }
