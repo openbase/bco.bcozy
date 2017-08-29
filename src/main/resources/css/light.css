@@ -22,6 +22,11 @@
     -fx-background-color: -bg-color;
     -choicebox-bg: lightgray;
     -tab-bg-color: lightgray;
+    -text-field-focused-bg: lightgray;
+    -table-background: white;
+    -table-text-color: black;
+    -table-background-odd: lightgray;
+    -table-border-color: lightgray;
 
     -success-color: limegreen;
     -error-color: crimson;

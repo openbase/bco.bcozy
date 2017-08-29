@@ -1,6 +1,5 @@
 /**** Colors for BCozy - Variables are defined in dark.css and light.css according to themes  *********************************/
 
-
 /*.glyph-icon{*/
 /*-fx-fill: -icons-color;*/
 /*}*/
@@ -38,7 +37,7 @@
 }
 
 .info-footer {
-/*-fx-background-color: -bg-color;*/
+    /*-fx-background-color: -bg-color;*/
     -fx-text-fill: -fx-text-base-color;
 }
 
@@ -80,8 +79,8 @@
 .tab:selected {
     -fx-background: -bg-color;
 }
-.tab:selected
-{
+
+.tab:selected {
     -fx-background-color: #f2f2f2;
 }
 
@@ -136,12 +135,12 @@
     -fx-text-fill: -fx-text-base-color;
 }
 
-.units-button{
+.units-button {
     -fx-background-color: transparent;
 }
 
 .units-button:hover {
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 4, 0, 0, 0);
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.8), 4, 0, 0, 0);
 }
 
 .toggle-button:focused,
@@ -194,6 +193,10 @@
     -fx-border-color: transparent transparent -border-color transparent;
     -fx-prompt-text-fill: derive(-bg-color, 50.0%);
     -fx-highlight-fill: -highlight-color;
+}
+
+.password-field:focused {
+    -fx-background-color: -choicebox-bg;
 }
 
 .text-area-wrong, .text-field-wrong, .text-input-wrong, .password-field-wrong {
@@ -290,11 +293,21 @@
     -fx-background-color: -fx-mark-highlight-color, derive(-controls-color, -45.0%);
 }
 
-.custom-text-field {
+.custom-text-field,
+.text-field {
     -fx-prompt-text-fill: -placeholder-color;
     -fx-padding: 10px !important;
+    -fx-text-fill: -fx-text-base-color;
 
 }
+
+.custom-text-field:focused,
+.text-field:focused {
+    -fx-background-color: -text-field-focused-bg;
+    -fx-text-fill: -fx-text-base-color;
+
+}
+
 /*******************************************************************************
  *                                                                             *
  * ComboBox                                                                    *
@@ -308,6 +321,7 @@
 .combobox-colored {
     -fx-background-color: -bg-accent-color;
 }
+
 /*******************************************************************************
  *                                                                             *
  * CheckBox                                                                    *
@@ -479,6 +493,7 @@
 .head-pane:hover {
     -fx-background-color: -button-hover-color;
 }
+
 .head-pane-2 {
     -fx-text-fill: -fx-text-base-color;
     -fx-background-color: transparent;
@@ -534,9 +549,6 @@
     -fx-fill: limegreen;
     -fx-text-fill: white;
 }
-
-
-
 
 /**** General Theme Settings (Sizes, Paddings, Insets, etc.) for BCozy *********************************/
 
@@ -670,7 +682,6 @@
 .xtra-small-label.error-label {
     -fx-text-fill: -error-color;
 }
-
 
 /*******************************************************************************
  *                                                                             *
@@ -961,7 +972,6 @@
     -fx-background-color: -highlight-color;
 }
 
-
 /*******************************************************************************
  *                                                                             *
  * CheckBox                                                                    *
@@ -1103,8 +1113,6 @@
     -fx-border-width: 0;
 }
 
-
-
 .tab-pane .tab:selected {
     -fx-background-color: -bg-color;
     -fx-background-insets: 0;
@@ -1115,6 +1123,69 @@
     -fx-border-color: -border-color;
 }
 
+/*******************************************************************************
+ *                                                                             *
+ * Table                                                                  *
+ *                                                                             *
+ ******************************************************************************/
+
+.column-header-background,
+.tree-table-row-cell .tree-table-cell {
+    -fx-text-fill: -table-text-color;
+    -fx-background-color: -table-background;
+    -fx-border-color: -table-border-color;
+}
+
+.column-header-background,
+.tree-table-row-cell,
+.tree-table-cell {
+/*
+    -fx-border-color: -table-border-color;
+*/
+}
+
+.tree-table-row-cell,
+.table-view {
+    -fx-background-color: -table-background;
+}
+
+.tree-cell > .tree-disclosure-node > .arrow,
+.tree-cell:expanded > .tree-disclosure-node > .arrow {
+    -fx-background-color: -table-text-color;
+}
+
+.table-row-cell,
+.table-row-cell:focused {
+    -fx-background-color: -table-background;
+    -fx-background-insets: 0, 0 0 1 0;
+}
+
+.table-row-cell:odd,
+.table-row-cell:odd:focused {
+    -fx-background-color: -table-background-odd;
+    -fx-background-insets: 0, 0 0 1 0;
+
+}
+
+.table-view .table-cell,
+.tree-table-cell {
+    -fx-text-fill: -table-text-color;
+    -fx-border-color: -table-border-color;
+}
+
+.table-view .column-header-background,
+.column-header.table-column {
+    -fx-background-color: transparent;
+}
+
+.table-view > .virtual-flow > .scroll-bar:vertical,
+.table-view > .virtual-flow > .scroll-bar:vertical > .track,
+.table-view > .virtual-flow > .scroll-bar:vertical > .track-background,
+.table-view > .virtual-flow > .scroll-bar:horizontal,
+.table-view > .virtual-flow > .scroll-bar:horizontal > .track,
+.table-view > .virtual-flow > .scroll-bar:horizontal > .track-background {
+    -fx-background-color: transparent;
+}
 
 /*******************************************************************************
  *                                                                             *

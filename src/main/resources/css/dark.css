@@ -27,6 +27,11 @@
     -fx-background-color: -bg-color;
     -choicebox-bg: slategray;
     -tab-bg-color: slategray;
+    -text-field-focused-bg: slategray;
+    -table-background: black;
+    -table-text-color: white;
+    -table-background-odd: slategray;
+    -table-border-color: white;
 
     -success-color: limegreen;
     -error-color: crimson;
