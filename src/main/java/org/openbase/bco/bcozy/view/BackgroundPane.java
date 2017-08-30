@@ -52,18 +52,22 @@ public class BackgroundPane extends StackPane {
             locationPane = LocationPane.getInstance(foregroundPane);
             this.getChildren().add(locationPane);
 
+            // default layer: changing light states on the location map
             unitSymbolsPane = new UnitSymbolsPane();
             unitSymbolsPane.setPickOnBounds(false);
             this.getChildren().add(unitSymbolsPane);
 
             unitSymbolsPane.selectedLocationId.bind(locationPane.selectedLocationId);
 
+            // layer for fast overview over maintenance-relevant units
             maintenanceLayerPane = new SimpleUnitSymbolsPane();
             maintenanceLayerPane.setPickOnBounds(false);
 
+            // layer for editing unit positions, shows all supported units
             editingLayerPane = new SimpleUnitSymbolsPane();
             editingLayerPane.setPickOnBounds(false);
 
+            // layer management
             foregroundPane.getAppState().addListener(new ChangeListener<CenterPaneController.State>() {
 
                 @Override

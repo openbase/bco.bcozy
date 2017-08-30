@@ -20,12 +20,21 @@ package org.openbase.bco.bcozy.view.pane.unit;
 
 import com.google.protobuf.GeneratedMessage;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Platform;
+import javafx.geometry.Point2D;
 import org.openbase.bco.bcozy.view.Constants;
+import org.openbase.bco.bcozy.view.InfoPane;
 import org.openbase.bco.bcozy.view.SVGIcon;
 import org.openbase.bco.bcozy.view.generic.ExpandableWidgedPane;
 import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
 import org.openbase.bco.dal.remote.unit.Units;
+import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.exception.NotAvailableException;
@@ -35,6 +44,7 @@ import org.openbase.jul.iface.Shutdownable;
 import org.openbase.jul.pattern.Observable;
 import org.openbase.jul.pattern.Observer;
 import org.openbase.jul.pattern.Remote.ConnectionState;
+import rct.Transform;
 import rst.domotic.unit.UnitConfigType.UnitConfig;
 
 /**
@@ -99,6 +109,36 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
         };
     }
 
+    @Override
+    public void initContent() {
+        super.initContent();
+        
+        hoverProperty().addListener((observable, oldValue, newValue) -> {
+            try {
+               /* final Future<Transform> transform = Registries.getLocationRegistry().getUnitTransformation(getUnitRemote().getConfig(),
+                    Registries.getLocationRegistry().getRootLocationConfig());
+                transform.get(Constants.TRANSFORMATION_TIMEOUT / 10, TimeUnit.MILLISECONDS).getTransform().transform(vertex);
+                Point2D coord = new Point2D(vertex.x * Constants.METER_TO_PIXEL, vertex.y * Constants.METER_TO_PIXEL);
+                */
+                InfoPane.info(getUnitRemote().getLabel() + 
+                    "x: " + getUnitRemote().getConfig().getPlacementConfig().getPosition().getTranslation().getX() +
+                "y: " + getUnitRemote().getConfig().getPlacementConfig().getPosition().getTranslation().getY());
+            } catch (NotAvailableException ex) {
+                // do nothing if not possible
+           /* } catch (InterruptedException ex) {
+                Logger.getLogger(AbstractUnitPane.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (CouldNotPerformException ex) {
+                Logger.getLogger(AbstractUnitPane.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ExecutionException ex) {
+                Logger.getLogger(AbstractUnitPane.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (TimeoutException ex) {
+                Logger.getLogger(AbstractUnitPane.class.getName()).log(Level.SEVERE, null, ex);*/
+            }
+        });
+    }
+
+    
+    
     /**
      * Method initializes this pane with a unit referred by the given id.
      *

@@ -27,6 +27,8 @@ import java.util.concurrent.TimeoutException;
 import javafx.application.Platform;
 import javafx.geometry.Point2D;
 import javax.vecmath.Point3d;
+import javax.vecmath.Vector2d;
+import javax.vecmath.Vector3d;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.SimpleUnitSymbolsPane;
 import org.openbase.bco.bcozy.view.location.LocationPane;
@@ -160,17 +162,20 @@ public class EditingLayerController {
                     if (!config.getPlacementConfig().hasPosition()) {
                         continue;
                     }
+                    
+                    if(config.getId().equals("3f38da45-1f93-4744-be05-6facf7fcb1df")) {
+                        int x=0;
+                    }
 
                     PoseType.Pose pose = config.getPlacementConfig().getPosition();
                     try {
                         final Future<Transform> transform = Registries.getLocationRegistry().getUnitTransformation(config,
                             Registries.getLocationRegistry().getRootLocationConfig());
-                        final Point3d unitVertex = new Point3d(pose.getTranslation().getX(), pose.getTranslation().getY(), 1.0);
+                        final Point3d unitVertex = new Point3d(0.0, 0.0, 1.0);
                         transform.get(Constants.TRANSFORMATION_TIMEOUT / 10, TimeUnit.MILLISECONDS).
                             getTransform().transform(unitVertex);
                         Point2D coord = new Point2D(unitVertex.x * Constants.METER_TO_PIXEL, unitVertex.y * Constants.METER_TO_PIXEL);
-                        unitSymbolsPane.addUnit(u, coord.add(-halfButtonSize, -halfButtonSize), config.getId());
-
+                        unitSymbolsPane.addUnit(u, coord.add(- 0.5 * halfButtonSize, - halfButtonSize), config.getId());
                     } catch (CouldNotPerformException | ExecutionException | TimeoutException ex) {
                         // No exception throwing, because loop must continue it's work
                     }
