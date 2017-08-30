@@ -109,36 +109,6 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
         };
     }
 
-    @Override
-    public void initContent() {
-        super.initContent();
-        
-        hoverProperty().addListener((observable, oldValue, newValue) -> {
-            try {
-               /* final Future<Transform> transform = Registries.getLocationRegistry().getUnitTransformation(getUnitRemote().getConfig(),
-                    Registries.getLocationRegistry().getRootLocationConfig());
-                transform.get(Constants.TRANSFORMATION_TIMEOUT / 10, TimeUnit.MILLISECONDS).getTransform().transform(vertex);
-                Point2D coord = new Point2D(vertex.x * Constants.METER_TO_PIXEL, vertex.y * Constants.METER_TO_PIXEL);
-                */
-                InfoPane.info(getUnitRemote().getLabel() + 
-                    "x: " + getUnitRemote().getConfig().getPlacementConfig().getPosition().getTranslation().getX() +
-                "y: " + getUnitRemote().getConfig().getPlacementConfig().getPosition().getTranslation().getY());
-            } catch (NotAvailableException ex) {
-                // do nothing if not possible
-           /* } catch (InterruptedException ex) {
-                Logger.getLogger(AbstractUnitPane.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (CouldNotPerformException ex) {
-                Logger.getLogger(AbstractUnitPane.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (ExecutionException ex) {
-                Logger.getLogger(AbstractUnitPane.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (TimeoutException ex) {
-                Logger.getLogger(AbstractUnitPane.class.getName()).log(Level.SEVERE, null, ex);*/
-            }
-        });
-    }
-
-    
-    
     /**
      * Method initializes this pane with a unit referred by the given id.
      *

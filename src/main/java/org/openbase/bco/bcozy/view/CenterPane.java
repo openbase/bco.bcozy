@@ -56,6 +56,7 @@ public class CenterPane extends StackPane {
     private SettingsPane settingsPane;
     private final Pane settingsMenu;
 
+    // switched by floating button, is bound to the layer management of the location pane
     public final ObjectProperty<CenterPaneController.State> appStateProperty;
 
     /**

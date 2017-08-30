@@ -27,8 +27,6 @@ import java.util.concurrent.TimeoutException;
 import javafx.application.Platform;
 import javafx.geometry.Point2D;
 import javax.vecmath.Point3d;
-import javax.vecmath.Vector2d;
-import javax.vecmath.Vector3d;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.SimpleUnitSymbolsPane;
 import org.openbase.bco.bcozy.view.location.LocationPane;
@@ -127,8 +125,7 @@ public class EditingLayerController {
     }
 
     /**
-     * Fetches all location units, saves them in the UnitSymbolsPane and then
-     * fetches all units for every location and saves them also in the UnitSymbolsPane.
+     * Fetches all units for every location and saves them in the UnitSymbolsPane.
      *
      * @throws CouldNotPerformException
      * @throws InterruptedException
@@ -162,10 +159,6 @@ public class EditingLayerController {
                     if (!config.getPlacementConfig().hasPosition()) {
                         continue;
                     }
-                    
-                    if(config.getId().equals("3f38da45-1f93-4744-be05-6facf7fcb1df")) {
-                        int x=0;
-                    }
 
                     PoseType.Pose pose = config.getPlacementConfig().getPosition();
                     try {
@@ -175,7 +168,10 @@ public class EditingLayerController {
                         transform.get(Constants.TRANSFORMATION_TIMEOUT / 10, TimeUnit.MILLISECONDS).
                             getTransform().transform(unitVertex);
                         Point2D coord = new Point2D(unitVertex.x * Constants.METER_TO_PIXEL, unitVertex.y * Constants.METER_TO_PIXEL);
-                        unitSymbolsPane.addUnit(u, coord.add(- 0.5 * halfButtonSize, - halfButtonSize), config.getId());
+                        // correction of position necessary because:
+                        // "pose" is left bottom of unit bounding box (y correction) and the unit button's center 
+                        // should be at the unit position (x correction) Attention: X and Y swapped in UnitButton 
+                        unitSymbolsPane.addUnit(u, coord.add(-0.5 * halfButtonSize, -halfButtonSize), config.getId());
                     } catch (CouldNotPerformException | ExecutionException | TimeoutException ex) {
                         // No exception throwing, because loop must continue it's work
                     }

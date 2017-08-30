@@ -18,7 +18,6 @@
  */
 package org.openbase.bco.bcozy.view;
 
-import javafx.beans.property.ObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.layout.StackPane;

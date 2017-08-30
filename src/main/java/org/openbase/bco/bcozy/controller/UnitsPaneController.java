@@ -18,7 +18,6 @@
  */
 package org.openbase.bco.bcozy.controller;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -67,7 +66,7 @@ public class UnitsPaneController {
     private final UnitSymbolsPane unitSymbolsPane;
 
     /**
-     * Constructor 
+     * Constructor
      *
      * @param unitPane
      * @param locationPane
@@ -84,6 +83,7 @@ public class UnitsPaneController {
 
     /**
      * Establish the connection with the RemoteRegistry and fetch unit remotes.
+     *
      * @throws org.openbase.jul.exception.CouldNotPerformException
      * @throws java.lang.InterruptedException
      */
@@ -135,10 +135,10 @@ public class UnitsPaneController {
      * @throws InterruptedException
      */
     public void fetchLocationUnitRemotes() throws CouldNotPerformException, InterruptedException {
-        
+
         unitSymbolsPane.clearUnits();
 
-        final double halfButtonSize = (Constants.SMALL_ICON + (2 * Constants.INSETS))/2;
+        final double halfButtonSize = (Constants.SMALL_ICON + (2 * Constants.INSETS)) / 2;
 
         final List<UnitConfig> locationUnitConfigList = Registries.getLocationRegistry().getLocationConfigs();
 
@@ -193,7 +193,10 @@ public class UnitsPaneController {
                             transform.get(Constants.TRANSFORMATION_TIMEOUT / 10, TimeUnit.MILLISECONDS).
                                 getTransform().transform(unitVertex);
                             Point2D coord = new Point2D(unitVertex.x * Constants.METER_TO_PIXEL, unitVertex.y * Constants.METER_TO_PIXEL);
-                            unitSymbolsPane.addUnit(u, coord.add(- 0.5 * halfButtonSize, - halfButtonSize), locationConfig.getId());
+                            // correction of position necessary because:
+                            // "pose" is left bottom of unit bounding box (y correction) and the unit button's center 
+                            // should be at the unit position (x correction) Attention: X and Y swapped in UnitButton 
+                            unitSymbolsPane.addUnit(u, coord.add(-0.5 * halfButtonSize, -halfButtonSize), locationConfig.getId());
 
                         } catch (CouldNotPerformException | ExecutionException | TimeoutException ex) {
                             // No exception throwing, because loop must continue it's work
@@ -214,7 +217,7 @@ public class UnitsPaneController {
         double w = boundingBox.getWidth();
         double new_x;
         double new_y;
-        
+
         new_x = (boundingBox.getLeftFrontBottom().getX() + w) / 2;
         new_y = (boundingBox.getLeftFrontBottom().getY() + d) / 2;
 
