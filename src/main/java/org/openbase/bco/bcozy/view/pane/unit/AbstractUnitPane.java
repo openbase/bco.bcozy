@@ -22,7 +22,7 @@ import com.google.protobuf.GeneratedMessage;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import java.util.Map;
 import javafx.application.Platform;
-import org.openbase.bco.authentication.lib.AuthorizationHelper;
+import org.openbase.bco.registry.lib.authorization.AuthorizationHelper;
 import org.openbase.bco.authentication.lib.SessionManager;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.SVGIcon;
@@ -282,20 +282,20 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
      * @throws CouldNotPerformException
      */
     protected void applyLoginUpdate(final Boolean loggedIn) throws CouldNotPerformException {
-        PermissionConfig permissionConfig = AbstractUnitPane.this.unitRemote.getConfig().getPermissionConfig();
-        String userAtClientId = null;
-        Map<String, IdentifiableMessage<String, UnitConfig, UnitConfig.Builder>> groups = null;
+        try {
+            String userAtClientId = null;
+            Map<String, IdentifiableMessage<String, UnitConfig, UnitConfig.Builder>> groups = null;
+            Map<String, IdentifiableMessage<String, UnitConfig, UnitConfig.Builder>> locations = Registries.getUnitRegistry().getLocationUnitConfigRemoteRegistry().getEntryMap();
 
-        if (loggedIn) {
-            userAtClientId = SessionManager.getInstance().getUserAtClientId();
-            try {
+            if (loggedIn) {
+                userAtClientId = SessionManager.getInstance().getUserAtClientId();
                 groups = Registries.getUnitRegistry().getAuthorizationGroupUnitConfigRemoteRegistry().getEntryMap();
-            } catch (InterruptedException ex) {
-                Thread.currentThread().interrupt();
             }
-        }
 
-        disableProperty().set(!AuthorizationHelper.canWrite(permissionConfig, userAtClientId, groups));
+            disableProperty().set(!AuthorizationHelper.canWrite(AbstractUnitPane.this.unitRemote.getConfig(), userAtClientId, groups, locations));
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     /**
