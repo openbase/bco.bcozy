@@ -26,7 +26,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javafx.geometry.Point2D;
 import javafx.scene.layout.Pane;
-import javax.vecmath.Vector2d;
 import org.openbase.bco.bcozy.view.location.UnitButton;
 import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
@@ -35,7 +34,7 @@ import org.openbase.jul.exception.printer.LogLevel;
 
 /**
  * Pane for the editing and the maintenance layer of the room plan that includes buttons for the units
- * displayed in this layer.
+ * displayed in this layer (simplified version of the UnitSymbolsPane without grouping and room selection)
  *
  * @author lili
  */
