@@ -133,9 +133,9 @@ public class UnitSymbolsPane extends Pane {
 
                         if (button.getTranslateX() == position.getY() && button.getTranslateY() == position.getX()) {
                             UnitButtonGrouped newGroupedButton = new UnitButtonGrouped();
-                            newGroupedButton.setTranslateX(position.getY() - 20);
-                            newGroupedButton.setTranslateY(position.getX() - 20);
-                            groupedButtons.put(new Point2D(position.getX() - 20, position.getY() - 20), newGroupedButton);
+                            newGroupedButton.setTranslateX(position.getY());
+                            newGroupedButton.setTranslateY(position.getX());
+                            groupedButtons.put(new Point2D(position.getX(), position.getY()), newGroupedButton);
                             newGroupedButton.addUnit(unitRemoteObject);
                             newGroupedButton.addUnit(button.getUnitRemote());
                             // remove from normal buttons list to prevent double buttons
@@ -162,32 +162,35 @@ public class UnitSymbolsPane extends Pane {
     /**
      * Clears the UnitSymbolsPane to prepare the update.
      */
-    public void clearUnits() {
+public void clearUnits() {
         locationUnitsMap.forEach((unitId, button)
-                -> {
+            -> {
             this.getChildren().remove(button);
         });
+        locationUnitsMap.clear();
         unitsPerLocationMap.forEach((locationId, entry)
-                -> entry.forEach((unitId, button)
-                        -> {
-                    this.getChildren().remove(button);
-                })
-        );
-        groupedButtons.forEach((point, button)
+            -> entry.forEach((unitId, button)
                 -> {
+                this.getChildren().remove(button);
+            })
+        );
+        unitsPerLocationMap.clear();
+        groupedButtons.forEach((point, button)
+            -> {
             this.getChildren().remove(button);
         });
+        groupedButtons.clear();
     }
 
     /**
      * Draws all location buttons except for the selected location, draws all unit buttons
      * and grouped buttons for the selected location.
      */
-    public void updateUnitsPane() {
+        public void updateUnitsPane() {
         this.getChildren().clear();
 
         locationUnitsMap.forEach((unitId, button)
-                -> {
+            -> {
             if (!unitId.equals(selectedLocationId.getValue())) {
                 this.getChildren().add(button);
             }
@@ -195,13 +198,13 @@ public class UnitSymbolsPane extends Pane {
 
         if (unitsPerLocationMap.get(selectedLocationId.getValue()) != null) {
             unitsPerLocationMap.get(selectedLocationId.getValue()).forEach((unitId, button)
-                    -> {
+                -> {
                 this.getChildren().add(button);
             }
             );
         }
         groupedButtons.forEach((point, button)
-                -> {
+            -> {
             if (button.getLocationId() == null) {
                 return;
             }
