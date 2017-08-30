@@ -135,7 +135,7 @@ public class UnitsPaneController {
      * @throws InterruptedException
      */
     public void fetchLocationUnitRemotes() throws CouldNotPerformException, InterruptedException {
-                
+
         unitSymbolsPane.clearUnits();
 
         unitSymbolsPane.clearUnits();
@@ -190,7 +190,7 @@ public class UnitsPaneController {
                         try {
                             final Future<Transform> transform = Registries.getLocationRegistry().getUnitTransformation(config,
                                 Registries.getLocationRegistry().getRootLocationConfig());
-                            //final Point3d unitVertex = new Point3d(pose.getTranslation().getX(), pose.getTranslation().getY(), 1.0);
+                            // transformation already in unit's coordinate space, therefore the zeros
                             final Point3d unitVertex = new Point3d(0.0, 0.0, 1.0);
                             transform.get(Constants.TRANSFORMATION_TIMEOUT / 10, TimeUnit.MILLISECONDS).
                                 getTransform().transform(unitVertex);
