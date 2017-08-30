@@ -135,6 +135,8 @@ public class UnitsPaneController {
      * @throws InterruptedException
      */
     public void fetchLocationUnitRemotes() throws CouldNotPerformException, InterruptedException {
+                
+        unitSymbolsPane.clearUnits();
 
         unitSymbolsPane.clearUnits();
 

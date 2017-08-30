@@ -162,7 +162,7 @@ public class UnitSymbolsPane extends Pane {
     /**
      * Clears the UnitSymbolsPane to prepare the update.
      */
-    public void clearUnits() {
+public void clearUnits() {
         locationUnitsMap.forEach((unitId, button)
             -> {
             this.getChildren().remove(button);
@@ -186,7 +186,7 @@ public class UnitSymbolsPane extends Pane {
      * Draws all location buttons except for the selected location, draws all unit buttons
      * and grouped buttons for the selected location.
      */
-    public void updateUnitsPane() {
+        public void updateUnitsPane() {
         this.getChildren().clear();
 
         locationUnitsMap.forEach((unitId, button)
