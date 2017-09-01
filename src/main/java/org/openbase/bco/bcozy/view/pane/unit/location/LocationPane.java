@@ -59,7 +59,7 @@ public class LocationPane extends AbstractUnitPane<LocationRemote, LocationData>
     };
 
     /**
-     * Constructor for the Colorable Light Pane.
+     * Constructor for the Location Pane.
      *
      */
     public LocationPane() {

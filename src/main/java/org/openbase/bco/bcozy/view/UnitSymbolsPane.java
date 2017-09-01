@@ -158,7 +158,7 @@ public class UnitSymbolsPane extends Pane {
             throw new CouldNotPerformException("Could not create unit button for unit " + this, ex);
         }
     }
-
+    
     /**
      * Clears the UnitSymbolsPane to prepare the update.
      */
@@ -213,5 +213,4 @@ public void clearUnits() {
             }
         });
     }
-
 }
