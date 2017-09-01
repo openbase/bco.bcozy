@@ -509,18 +509,18 @@ public final class LocationPane extends Pane {
                         }
                     });
                 }
+            }
 
-                // allow selection of sub regions.
-                if (newSelectedLocation.getClass().equals(TilePolygon.class)) {
-                    lastSelectedTile = newSelectedLocation;
-                    newSelectedLocation.getChildIds().forEach(childId -> {
-                        try {
-                            regionMap.get(childId).changeStyleOnSelectable(true);
-                        } catch (Exception ex) {
-                            ExceptionPrinter.printHistory(ex, LOGGER);
-                        }
-                    });
-                }
+            // allow selection of sub regions.
+            if (newSelectedLocation.getClass().equals(TilePolygon.class)) {
+                lastSelectedTile = newSelectedLocation;
+                newSelectedLocation.getChildIds().forEach(childId -> {
+                    try {
+                        regionMap.get(childId).changeStyleOnSelectable(true);
+                    } catch (Exception ex) {
+                        ExceptionPrinter.printHistory(ex, LOGGER);
+                    }
+                });
             }
 
             if (selectedLocation != null) {
