@@ -113,7 +113,12 @@ public class InfoPane extends BorderPane {
         return show(identifier, "-fx-text-fill: red;");
     }
 
+
     public static InfoPaneConfigurer show(final String identifier, String style) {
+        return show(identifier, style, "");
+    }
+
+    public static InfoPaneConfigurer show(final String identifier, String style, String infopaneStyle) {
         Objects.requireNonNull(identifier);
         Objects.requireNonNull(style);
 
@@ -123,6 +128,7 @@ public class InfoPane extends BorderPane {
 
             Platform.runLater(() -> {
                 infoPane.clearBackground();
+                infoPane.setStyle(infopaneStyle);
                 infoPane.textLabel.setStyle(style + "-fx-font-size: 16;");
                 infoPane.textLabel.setIdentifier(identifier);
             });

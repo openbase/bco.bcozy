@@ -8,9 +8,11 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.util.Callback;
+import javafx.util.Duration;
 import org.openbase.bco.bcozy.model.LanguageSelection;
 import org.openbase.bco.bcozy.util.AuthorizationGroups;
 import org.openbase.bco.bcozy.view.Constants;
+import org.openbase.bco.bcozy.view.InfoPane;
 import org.openbase.bco.bcozy.view.ObserverButton;
 import org.openbase.bco.bcozy.view.SVGIcon;
 import org.openbase.jul.exception.CouldNotPerformException;
@@ -92,16 +94,7 @@ public class AuthorizationGroupController {
                             setGraphic(null);
                             setText(null);
                         } else {
-                            btn.setOnAction(event -> {
-                                try {
-                                    AuthorizationGroups.removeAuthorizationGroup(getTableView().getItems().get(getIndex()));
-                                } catch (InterruptedException e) {
-                                    Thread.currentThread().interrupt();
-                                } catch (CouldNotPerformException ex) {
-                                    ExceptionPrinter.printHistory(ex, LOGGER);
-                                    //TODO: Erledigen!
-                                }
-                            });
+                            btn.setOnAction(event -> removeGroup(getTableView().getItems().get(getIndex())));
                             setGraphic(btn);
                             setText(null);
                         }
@@ -113,17 +106,30 @@ public class AuthorizationGroupController {
         };
     }
 
+    private void removeGroup(UnitConfigType.UnitConfig group) {
+        try {
+            AuthorizationGroups.removeAuthorizationGroup(group);
+            InfoPane.show("deleteSuccess", "", "-fx-background-color: green;").hideAfter(Duration.seconds(5));
+
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } catch (CouldNotPerformException ex) {
+            ExceptionPrinter.printHistory(ex, LOGGER);
+            InfoPane.show("saveError", "", "-fx-background-color: green;").hideAfter(Duration.seconds(5));
+
+        }
+    }
+
     @FXML
     private void addGroup(ActionEvent actionEvent) {
 
         try {
             AuthorizationGroups.addAuthorizationGroup(label.getText());
             label.clear();
+            InfoPane.show("saveSuccess", "","-fx-background-color: green;").hideAfter(Duration.seconds(5));
 
         } catch (InterruptedException ex) {
-
             Thread.currentThread().interrupt();
-
 
         } catch (CouldNotPerformException ex) {
 
