@@ -2,13 +2,15 @@ package org.openbase.bco.bcozy.model;
 
 import com.google.protobuf.ProtocolStringList;
 import org.openbase.bco.authentication.lib.SessionManager;
-import org.openbase.bco.bcozy.view.InfoPane;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.VerificationFailedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.domotic.unit.UnitConfigType;
+import rst.domotic.unit.UnitConfigType.UnitConfig;
 import rst.domotic.unit.UnitTemplateType;
+import rst.domotic.unit.authorizationgroup.AuthorizationGroupConfigType.AuthorizationGroupConfig;
 import rst.domotic.unit.user.UserConfigType;
 
 import java.util.List;
@@ -16,9 +18,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import org.openbase.jul.exception.VerificationFailedException;
-import rst.domotic.unit.UnitConfigType.UnitConfig;
-import rst.domotic.unit.authorizationgroup.AuthorizationGroupConfigType.AuthorizationGroupConfig;
 
 /**
  * @author vdasilva
@@ -48,7 +47,6 @@ public class SessionManagerFacadeImpl implements SessionManagerFacade {
 
         try {
             SessionManager.getInstance().registerUser(
-//                    unitConfig.getUserConfig().getUserName()/*unitConfig.getId()*/,
                     unitConfig.getId(),
                     plainPassword,
                     asAdmin);
@@ -120,7 +118,7 @@ public class SessionManagerFacadeImpl implements SessionManagerFacade {
         try {
             // Registries.getUserRegistry().getUserIdByUserName(username);
 
-            if (username.equals("")){
+            if (username.isEmpty()){
                 throw new VerificationFailedException("Username must not be empty!");
             }
 
@@ -154,7 +152,7 @@ public class SessionManagerFacadeImpl implements SessionManagerFacade {
     public void verifyMailAddress(String mailAddress) throws VerificationFailedException {
         //Todo check validity
         // throw new VerificationFailedException("not valid because of ...");
-        if (mailAddress.equals("")) {
+        if (mailAddress.isEmpty()) {
             throw new VerificationFailedException("E-Mail Adress must not be empty!");
         }
     }

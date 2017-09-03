@@ -1,6 +1,5 @@
 package org.openbase.bco.bcozy.controller;
 
-import com.sun.javafx.font.freetype.HBGlyphLayout;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -8,17 +7,19 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.control.*;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.layout.HBox;
-import javafx.util.StringConverter;
 import org.openbase.bco.bcozy.util.Groups;
 import org.openbase.bco.bcozy.view.ObserverButton;
 import org.openbase.bco.bcozy.view.ObserverLabel;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
-import org.openbase.jul.exception.NotAvailableException;
+import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rst.domotic.authentication.PermissionConfigType;
 import rst.domotic.authentication.PermissionType;
 import rst.domotic.unit.UnitConfigType;
@@ -32,6 +33,12 @@ import java.util.concurrent.ExecutionException;
  * @author vdasilva
  */
 public class PermissionPaneController {
+
+
+    /**
+     * Application logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(PermissionPaneController.class);
 
     @FXML
     private TableColumn<PermissionConfigType.PermissionConfig.MapFieldEntry, String> usergroupColumn;
@@ -218,9 +225,9 @@ public class PermissionPaneController {
             unitConfig = Registries.getUnitRegistry().updateUnitConfig(unitConfig).get();
             this.setUnitConfig(unitConfig);
         } catch (CouldNotPerformException | ExecutionException ex) {
-            ex.printStackTrace();
+            ExceptionPrinter.printHistory(ex, LOGGER);
         } catch (InterruptedException ex) {
-            ex.printStackTrace();
+            Thread.currentThread().interrupt();
         }
     }
 }

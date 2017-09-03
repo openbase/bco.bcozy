@@ -61,7 +61,7 @@ public class CenterPane extends StackPane {
     /**
      * Constructor for the center pane.
      */
-    public CenterPane(final double height, ForegroundPane foregroundPane) {
+    public CenterPane(final double height, final ForegroundPane foregroundPane) {
         this.foregroundPane = foregroundPane;
 
         appStateProperty = new SimpleObjectProperty<>(CenterPaneController.State.SETTINGS);

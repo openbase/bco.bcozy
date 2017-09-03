@@ -1,17 +1,17 @@
-/**
+/*
  * ==================================================================
- * <p>
+ *
  * This file is part of org.openbase.bco.bcozy.
- * <p>
+ *
  * org.openbase.bco.bcozy is free software: you can redistribute it and modify
  * it under the terms of the GNU General Public License (Version 3)
  * as published by the Free Software Foundation.
- * <p>
+ *
  * org.openbase.bco.bcozy is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * <p>
+ *
  * You should have received a copy of the GNU General Public License
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
@@ -39,7 +39,6 @@ import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.sound.sampled.Line;
 import java.util.Objects;
 
 /**
@@ -123,7 +122,7 @@ public class InfoPane extends BorderPane {
             infoPane.resetTimeline();
 
             Platform.runLater(() -> {
-                infoPane.setBackground(null);
+                infoPane.clearBackground();
                 infoPane.textLabel.setStyle(style + "-fx-font-size: 16;");
                 infoPane.textLabel.setIdentifier(identifier);
             });
@@ -140,11 +139,15 @@ public class InfoPane extends BorderPane {
     public static void hide() {
         try {
             show("", "");
-            getInstance().setBackground(null);
+            getInstance().clearBackground();
             getInstance().resetTimeline();
         } catch (CouldNotPerformException ex) {
             ExceptionPrinter.printHistory("Could not print user feedback!", ex, LOGGER);
         }
+    }
+
+    private void clearBackground() {
+        this.setBackground(null);
     }
 
     private void resetTimeline() throws NotAvailableException {

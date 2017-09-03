@@ -126,8 +126,10 @@ public class SettingsController {
                         Platform.runLater(() -> fillTable(unitConfigList));
                     }
             );
-        } catch (CouldNotPerformException | InterruptedException ex) {
-            ex.printStackTrace();
+        } catch (CouldNotPerformException ex) {
+            ExceptionPrinter.printHistory(ex, LOGGER);
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
         }
 
     }
@@ -312,7 +314,6 @@ public class SettingsController {
 
             return anchorPane;
         } catch (IOException ex) {
-            ex.printStackTrace();
             ExceptionPrinter.printHistory("Content could not be loaded", ex, LOGGER);
             throw new UncheckedIOException(ex);
         }
@@ -327,7 +328,6 @@ public class SettingsController {
 
             return anchorPane;
         } catch (IOException ex) {
-            ex.printStackTrace();
             ExceptionPrinter.printHistory("Content could not be loaded", ex, LOGGER);
             throw new UncheckedIOException(ex);
         }
@@ -345,7 +345,6 @@ public class SettingsController {
             return root;
 
         } catch (IOException ex) {
-            ex.printStackTrace();
             ExceptionPrinter.printHistory("Content could not be loaded", ex, LOGGER);
             throw new UncheckedIOException(ex);
         }

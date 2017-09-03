@@ -1,17 +1,16 @@
-/**
+/*
  * ==================================================================
- * <p>
  * This file is part of org.openbase.bco.bcozy.
- * <p>
+ *
  * org.openbase.bco.bcozy is free software: you can redistribute it and modify
  * it under the terms of the GNU General Public License (Version 3)
  * as published by the Free Software Foundation.
- * <p>
+ *
  * org.openbase.bco.bcozy is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * <p>
+ *
  * You should have received a copy of the GNU General Public License
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
@@ -23,16 +22,17 @@ import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TitledPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.util.Duration;
 import org.controlsfx.control.textfield.CustomTextField;
 import org.openbase.bco.authentication.lib.SessionManager;
 import org.openbase.bco.bcozy.view.*;
 import org.openbase.bco.registry.remote.Registries;
-import org.openbase.bco.registry.user.lib.UserRegistry;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.RejectedException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
@@ -151,7 +151,7 @@ public class UserSettingsController {
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
         } catch (CouldNotPerformException | ExecutionException | TimeoutException ex) {
-            ex.printStackTrace();
+            ExceptionPrinter.printHistory(ex, LOGGER);
         }
 
         showErrorMessage();
@@ -160,74 +160,53 @@ public class UserSettingsController {
     private void onLogin() throws InterruptedException {
         LOGGER.warn("UserID is " + SessionManager.getInstance().getUserId());
 
-        initUserName();
-        initFirstName();
-        initLastName();
-        initMail();
-        initPhone();
-        initOccupant();
-
-    }
-
-    private void initOccupant() throws InterruptedException {
         try {
-            isOccupantField.setSelected(Registries.getUserRegistry().getUserConfigById(SessionManager.getInstance()
-                    .getUserId()).getUserConfig().getOccupant());
+            initUserName();
+            initFirstName();
+            initLastName();
+            initMail();
+            initPhone();
+            initOccupant();
 
-            isOccupantField.selectedProperty().addListener((observable, oldValue, newValue) -> {
-                updateOccupant(newValue);
-
-            });
-        } catch (CouldNotPerformException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    private void initPhone() throws InterruptedException {
-        try {
-            changePhone.setText(Registries.getUserRegistry().getUserConfigById(SessionManager.getInstance().getUserId
-                    ()).getUserConfig().getMobilePhoneNumber());
-        } catch (CouldNotPerformException e) {
-            e.printStackTrace();
+        } catch (CouldNotPerformException ex) {
+            ExceptionPrinter.printHistory(ex, LOGGER);
         }
     }
 
-    private void initMail() throws InterruptedException {
-        try {
-            changeMail.setText(Registries.getUserRegistry().getUserConfigById(SessionManager.getInstance().getUserId
-                    ()).getUserConfig().getEmail());
-        } catch (CouldNotPerformException e) {
-            e.printStackTrace();
-        }
+    private void initOccupant() throws InterruptedException, CouldNotPerformException {
+        isOccupantField.setSelected(Registries.getUserRegistry().getUserConfigById(SessionManager.getInstance()
+                .getUserId()).getUserConfig().getOccupant());
+
+        isOccupantField.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            updateOccupant(newValue);
+
+        });
     }
 
-    private void initUserName() throws InterruptedException {
-        try {
-            changeUsername.setText(Registries.getUserRegistry().getUserConfigById(SessionManager.getInstance().getUserId
-                    ()).getUserConfig().getUserName());
-        } catch (CouldNotPerformException e) {
-            e.printStackTrace();
-        }
+    private void initPhone() throws InterruptedException, CouldNotPerformException {
+        changePhone.setText(Registries.getUserRegistry().getUserConfigById(SessionManager.getInstance().getUserId
+                ()).getUserConfig().getMobilePhoneNumber());
     }
 
-    private void initFirstName() throws InterruptedException {
-        try {
-            changeFirstname.setText(Registries.getUserRegistry().getUserConfigById(SessionManager.getInstance()
-                    .getUserId
-                            ()).getUserConfig().getFirstName());
-        } catch (CouldNotPerformException e) {
-            e.printStackTrace();
-        }
+    private void initMail() throws InterruptedException, CouldNotPerformException {
+        changeMail.setText(Registries.getUserRegistry().getUserConfigById(SessionManager.getInstance().getUserId
+                ()).getUserConfig().getEmail());
     }
 
-    private void initLastName() throws InterruptedException {
-        try {
-            changeLastname.setText(Registries.getUserRegistry().getUserConfigById(SessionManager.getInstance().getUserId
-                    ()).getUserConfig().getLastName());
-        } catch (CouldNotPerformException e) {
-            e.printStackTrace();
-        }
+    private void initUserName() throws InterruptedException, CouldNotPerformException {
+        changeUsername.setText(Registries.getUserRegistry().getUserConfigById(SessionManager.getInstance().getUserId
+                ()).getUserConfig().getUserName());
+    }
+
+    private void initFirstName() throws InterruptedException, CouldNotPerformException {
+        changeFirstname.setText(Registries.getUserRegistry().getUserConfigById(SessionManager.getInstance()
+                .getUserId
+                        ()).getUserConfig().getFirstName());
+    }
+
+    private void initLastName() throws InterruptedException, CouldNotPerformException {
+        changeLastname.setText(Registries.getUserRegistry().getUserConfigById(SessionManager.getInstance().getUserId
+                ()).getUserConfig().getLastName());
     }
 
     private void initEditableFields(CustomTextField... fields) {
@@ -284,7 +263,7 @@ public class UserSettingsController {
             showSuccessMessage();
         } catch (CouldNotPerformException ex) {
             showErrorMessage();
-            ex.printStackTrace();
+            ExceptionPrinter.printHistory(ex, LOGGER);
         }
 
 
@@ -305,11 +284,9 @@ public class UserSettingsController {
             showSuccessMessage();
 
         } catch (RejectedException rex) {
-            rex.printStackTrace();
             InfoPane.info("oldPasswordWrong").backgroundColor(Color.RED).hideAfter(Duration.seconds(5));
-
         } catch (CouldNotPerformException ex) {
-            ex.printStackTrace();
+            ExceptionPrinter.printHistory(ex, LOGGER);
         }
 
         clearPasswordFields();
@@ -335,7 +312,8 @@ public class UserSettingsController {
     private void showErrorMessage() {
         InfoPane.info("saveError")
                 .backgroundColor(Color.RED)
-                .hideAfter(Duration.seconds(5));    }
+                .hideAfter(Duration.seconds(5));
+    }
 
     /**
      * Getter for the themeChoice ChoiceBox.

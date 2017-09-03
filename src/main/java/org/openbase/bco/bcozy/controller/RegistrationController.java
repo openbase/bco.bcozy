@@ -5,23 +5,17 @@ import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
-import javafx.util.StringConverter;
 import org.controlsfx.control.CheckComboBox;
 import org.openbase.bco.bcozy.model.SessionManagerFacade;
 import org.openbase.bco.bcozy.model.SessionManagerFacadeImpl;
 import org.openbase.bco.bcozy.util.Groups;
-import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.InfoPane;
 import org.openbase.bco.bcozy.view.ObserverButton;
-
-import java.util.List;
-
 import org.openbase.bco.bcozy.view.ObserverLabel;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.VerificationFailedException;
@@ -30,6 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.domotic.unit.UnitConfigType.UnitConfig;
 import rst.domotic.unit.user.UserConfigType;
+
+import java.util.List;
 
 /**
  * User registration.
@@ -97,12 +93,6 @@ public class RegistrationController {
 
     private void setGroups(ObservableList<UnitConfig> groups) {
         Platform.runLater(() -> usergroupField.getItems().setAll(groups));
-        System.out.println("Groups size: " + groups.size());
-
-        for (UnitConfig group : groups) {
-            System.out.println("Group: " + group.getLabel() + "ID: " + group.getId());
-
-        }
     }
 
     @FXML
@@ -159,9 +149,7 @@ public class RegistrationController {
 
         List<UnitConfig> groups = usergroupField.getCheckModel().getCheckedItems();
 
-        UserConfigType.UserConfig.Builder userConfigBuilder = UserConfigType.UserConfig.newBuilder();
-
-        UserConfigType.UserConfig user = userConfigBuilder
+        UserConfigType.UserConfig user = UserConfigType.UserConfig.newBuilder()
                 .setUserName(username.getText())
                 .setFirstName(firstname.getText())
                 .setLastName(lastname.getText())
@@ -223,44 +211,5 @@ public class RegistrationController {
 
     public Pane getRoot() {
         return root;
-    }
-
-    class SessionManagerFacadeFake implements SessionManagerFacade {
-
-        @Override
-        public boolean isAdmin() {
-            return true;
-        }
-
-        @Override
-        public void registerUser(final UserConfigType.UserConfig user, final String plainPassword, final boolean asAdmin, final List<UnitConfig> groups) throws CouldNotPerformException {
-            StringConverter<UnitConfig> converter = Groups.stringConverter(groups);
-            System.out.print("username = [" + user.getUserName() + "], plainPassword = [" + plainPassword + "], " +
-                    "" + "asAdmin = [" + asAdmin + "], groups = [");
-            groups.forEach(g -> System.out.print(converter.toString(g)));
-            System.out.println("]");
-        }
-
-        @Override
-        public void verifyUserName(final String username) throws VerificationFailedException {
-            if (username.isEmpty()) {
-                throw new VerificationFailedException("user name is empty!");
-            }
-        }
-
-        @Override
-        public void verifyPasswords(final String text, final String text1) throws VerificationFailedException {
-            if (text.isEmpty() && text.equals(text1)) {
-                throw new VerificationFailedException("repeated password does not match!");
-            }
-        }
-
-        @Override
-        public void verifyPhoneNumber(final String phoneNumber) throws VerificationFailedException {
-        }
-
-        @Override
-        public void verifyMailAddress(final String mailAddress) throws VerificationFailedException {
-        }
     }
 }
