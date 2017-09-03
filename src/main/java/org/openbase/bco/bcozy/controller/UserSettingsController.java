@@ -326,17 +326,6 @@ public class UserSettingsController {
         return newPassword.getText().equals(repeatedPassword.getText());
     }
 
-    private boolean verifyOldPassword() throws InterruptedException {
-        try {
-            return Registries.getUserRegistry().getUserConfigById(SessionManager.getInstance().getUserId()).getUserConfig()
-                    .getPassword().toStringUtf8().equals(oldPassword.getText());
-        } catch (CouldNotPerformException e) {
-            e.printStackTrace();
-        }
-
-        return false;
-    }
-
     private void showSuccessMessage() {
         InfoPane.info("saveSuccess")
                 .backgroundColor(Color.GREEN)
