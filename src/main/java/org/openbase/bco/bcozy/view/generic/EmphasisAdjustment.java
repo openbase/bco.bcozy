@@ -36,6 +36,10 @@ public class EmphasisAdjustment extends GridPane implements DynamicPane {
 
     protected final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
+    private final boolean comfort;
+    private final boolean energy;
+    private final boolean security;
+
     private final DoubleProperty comfortProperty;
     private final DoubleProperty energyProperty;
     private final DoubleProperty securityProperty;
@@ -45,6 +49,14 @@ public class EmphasisAdjustment extends GridPane implements DynamicPane {
     private JFXSlider securitySlider;
 
     public EmphasisAdjustment() {
+        this(true, true, true);
+    }
+
+    public EmphasisAdjustment(boolean comfort, boolean energy, boolean security) {
+        this.comfort = comfort;
+        this.energy = energy;
+        this.security = security;
+
         this.comfortProperty = new SimpleDoubleProperty(0.0);
         this.energyProperty = new SimpleDoubleProperty(0.0);
         this.securityProperty = new SimpleDoubleProperty(0.0);
@@ -52,44 +64,59 @@ public class EmphasisAdjustment extends GridPane implements DynamicPane {
 
     @Override
     public void updateDynamicContent() {
-        comfortProperty.set(comfortSlider.getValue());
-        energyProperty.set(energySlider.getValue());
-        securityProperty.set(securitySlider.getValue());
+        if (comfort) {
+            comfortProperty.set(comfortSlider.getValue());
+        }
+        if (energy) {
+            energyProperty.set(energySlider.getValue());
+        }
+        if (security) {
+            securityProperty.set(securitySlider.getValue());
+        }
     }
 
     @Override
     public void initContent() {
-        comfortSlider = new JFXSlider(0.0, 100.0, 0.0);
-        energySlider = new JFXSlider(0.0, 100.0, 0.0);
-        securitySlider = new JFXSlider(0.0, 100.0, 0.0);
+        int counter = 0;
 
-        ObserverLabel comfortLabel = new ObserverLabel("comfort");
-        ObserverLabel energyLabel = new ObserverLabel("energy");
-        ObserverLabel securityLabel = new ObserverLabel("security");
-
-        comfortSlider.valueProperty().addListener((observable) -> {
-            if (isHover()) {
-                comfortProperty.set(comfortSlider.getValue());
-            }
-        });
-        energySlider.valueProperty().addListener((observable) -> {
-            if (isHover()) {
-                energyProperty.set(energySlider.getValue());
-            }
-        });
-        securitySlider.valueProperty().addListener((observable) -> {
-            if (isHover()) {
-                securityProperty.set(securitySlider.getValue());
-            }
-        });
-
-        setConstraints(comfortLabel, 0, 0);
-        setConstraints(energyLabel, 0, 1);
-        setConstraints(securityLabel, 0, 2);
-        setConstraints(comfortSlider, 1, 0);
-        setConstraints(energySlider, 1, 1);
-        setConstraints(securitySlider, 1, 2);
-        getChildren().addAll(comfortSlider, energySlider, securitySlider, comfortLabel, energyLabel, securityLabel);
+        if (comfort) {
+            comfortSlider = new JFXSlider(0.0, 100.0, 0.0);
+            ObserverLabel comfortLabel = new ObserverLabel("comfort");
+            comfortSlider.valueProperty().addListener((observable) -> {
+                if (isHover()) {
+                    comfortProperty.set(comfortSlider.getValue());
+                }
+            });
+            setConstraints(comfortLabel, 0, 0);
+            setConstraints(comfortSlider, 1, 0);
+            getChildren().addAll(comfortSlider, comfortLabel);
+            counter++;
+        }
+        if (energy) {
+            energySlider = new JFXSlider(0.0, 100.0, 0.0);
+            ObserverLabel energyLabel = new ObserverLabel("energy");
+            energySlider.valueProperty().addListener((observable) -> {
+                if (isHover()) {
+                    energyProperty.set(energySlider.getValue());
+                }
+            });
+            setConstraints(energyLabel, 0, counter);
+            setConstraints(energySlider, 1, counter);
+            getChildren().addAll(energySlider, energyLabel);
+            counter++;
+        }
+        if (security) {
+            securitySlider = new JFXSlider(0.0, 100.0, 0.0);
+            ObserverLabel securityLabel = new ObserverLabel("security");
+            securitySlider.valueProperty().addListener((observable) -> {
+                if (isHover()) {
+                    securityProperty.set(securitySlider.getValue());
+                }
+            });
+            setConstraints(securityLabel, 0, counter);
+            setConstraints(securitySlider, 1, counter);
+            getChildren().addAll(securitySlider, securityLabel);
+        }
     }
 
     public DoubleProperty getComfortProperty() {
@@ -105,14 +132,31 @@ public class EmphasisAdjustment extends GridPane implements DynamicPane {
     }
 
     public EmphasisState getCurrentEmphasisState() {
-        return EmphasisState.newBuilder().setComfort(comfortSlider.getValue()).setEnergy(energySlider.getValue()).setSecurity(securitySlider.getValue()).build();
+        EmphasisState.Builder emphasisStateBuilder = EmphasisState.newBuilder();
+
+        if (comfort) {
+            emphasisStateBuilder.setComfort(comfortSlider.getValue());
+        }
+        if (energy) {
+            emphasisStateBuilder.setEnergy(energySlider.getValue());
+        }
+        if (security) {
+            emphasisStateBuilder.setSecurity(securitySlider.getValue());
+        }
+        return emphasisStateBuilder.build();
     }
 
     public void setSelectedEmphasis(EmphasisState emphasisState) {
         if (!isHover()) {
-            comfortSlider.setValue(emphasisState.getComfort());
-            energySlider.setValue(emphasisState.getEnergy());
-            securitySlider.setValue(emphasisState.getSecurity());
+            if (comfort) {
+                comfortSlider.setValue(emphasisState.getComfort());
+            }
+            if (energy) {
+                energySlider.setValue(emphasisState.getEnergy());
+            }
+            if (security) {
+                securitySlider.setValue(emphasisState.getSecurity());
+            }
         }
     }
 
