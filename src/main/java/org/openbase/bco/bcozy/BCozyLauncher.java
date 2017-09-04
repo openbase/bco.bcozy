@@ -16,7 +16,6 @@
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
-
 package org.openbase.bco.bcozy;
 
 import javafx.application.Platform;
@@ -26,9 +25,11 @@ import static org.openbase.bco.bcozy.BCozy.APP_NAME;
 import org.openbase.bco.authentication.lib.jp.JPCredentialsDirectory;
 import org.openbase.bco.authentication.lib.jp.JPInitializeCredentials;
 import org.openbase.bco.bcozy.jp.JPLanguage;
+import org.openbase.bco.bcozy.view.LoadingPane;
 import org.openbase.jps.core.JPService;
 import org.openbase.jps.preset.JPDebugMode;
 import org.openbase.jul.exception.FatalImplementationErrorException;
+import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
 import org.openbase.jul.extension.rsb.com.jp.JPRSBHost;
@@ -77,14 +78,53 @@ public class BCozyLauncher {
         LOGGER.info(APP_NAME + " finished.");
     }
 
+    private static int errorCounter = 0;
+
     private static void showError(Thread t, Throwable ex) {
+        errorCounter++;
+
         if (Platform.isFxApplicationThread()) {
-            ExceptionPrinter.printHistory(new FatalImplementationErrorException("Uncaught exception has " +
-                    "occured!", "FxApplicationThread", ex), LOGGER);
+            ExceptionPrinter.printHistory(new FatalImplementationErrorException("Uncaught exception has "
+                    + "occured!", "FxApplicationThread", ex), LOGGER);
         } else {
-            ExceptionPrinter.printHistory(new FatalImplementationErrorException("Uncaught exception has " +
-                    "occured!", t.getName(), ex), LOGGER);
+            ExceptionPrinter.printHistory(new FatalImplementationErrorException("Uncaught exception has "
+                    + "occured!", t.getName(), ex), LOGGER);
+        }
+
+        // check if error counter is to high
+        if (errorCounter == 100) {
+
+            if (Platform.isFxApplicationThread()) {
+                printShutdownErrorMessage();
+            } else {
+                Platform.runLater(() -> {
+                    printShutdownErrorMessage();
+                });
+            }
+
+            new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        // wait until user feedback is given.
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ex1) {
+                        // just continue because exit is called anyway.
+                    }
+                    System.exit(100);
+                }
+            }.start();
+            return;
+
         }
     }
 
+    private static void printShutdownErrorMessage() {
+        LOGGER.error("To many fatal errors occured! Exit bcozy...");
+        try {
+            LoadingPane.getInstance().error("To many fatal errors occured!\nApplication is shutting down ");
+        } catch (NotAvailableException ex1) {
+            // could not inform user about shutdown
+        }
+    }
 }

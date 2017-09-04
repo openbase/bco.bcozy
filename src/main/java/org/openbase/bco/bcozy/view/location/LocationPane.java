@@ -19,16 +19,12 @@
  */
 package org.openbase.bco.bcozy.view.location;
 
-import javafx.animation.ParallelTransition;
-import javafx.animation.ScaleTransition;
-import javafx.animation.TranslateTransition;
+import java.util.ArrayList;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.util.Duration;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ForegroundPane;
 import org.slf4j.Logger;
@@ -37,8 +33,20 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javafx.animation.ParallelTransition;
+import javafx.animation.ScaleTransition;
+import javafx.animation.TranslateTransition;
+import javafx.beans.value.ChangeListener;
+import javafx.scene.Node;
+import javafx.scene.effect.Lighting;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.text.Text;
+import javafx.util.Duration;
 import org.openbase.bco.bcozy.view.InfoPane;
 import org.openbase.bco.registry.remote.Registries;
+import org.openbase.jps.core.JPService;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.EnumNotSupportedException;
 import org.openbase.jul.exception.NotAvailableException;
@@ -71,6 +79,7 @@ public final class LocationPane extends Pane {
     private final Map<String, TilePolygon> tileMap;
     private final Map<String, RegionPolygon> regionMap;
     private final Map<String, ConnectionPolygon> connectionMap;
+    private final List<Node> debugNodes;
 
     public final SimpleStringProperty selectedLocationId;
 
@@ -92,6 +101,7 @@ public final class LocationPane extends Pane {
         tileMap = new HashMap<>();
         regionMap = new HashMap<>();
         connectionMap = new HashMap<>();
+        debugNodes = new ArrayList<>();
         /* tileMap = background.getTileMap();
 	   regionMap = background.getRegionMap();
 	   connectionMap = background.getConnectionMap();*/
@@ -237,18 +247,75 @@ public final class LocationPane extends Pane {
                 default:
                     throw new EnumNotSupportedException(locationUnitConfig.getLocationConfig().getType(), this);
             }
-            /*for (final Map.Entry<UnitTemplateType.UnitTemplate.UnitType, List<UnitRemote>> nextEntry : Units.getUnit(locationUnitConfig.getId(), false, Units.LOCATION).getUnitMap().entrySet()) {
-                if (nextEntry.getValue().isEmpty()) {
-                    continue;
+
+            // Paint debug informations
+            if (JPService.debugMode()) {
+
+                // declare vars
+                Text text;
+                Circle coordinate;
+                final StackPane globalBaseStack = new StackPane();
+                final StackPane locationBaseStack = new StackPane();
+                final StackPane[] locationStacks = new StackPane[vertices.size()];
+
+                // Paint Location Coordinates
+                final double COORDINATE_BLOCLK_SIZE = 0.30 * Constants.METER_TO_PIXEL;
+                for (int i = 0; i < vertices.size(); i++) {
+
+                    text = new Text(Integer.toString(i));
+                    text.setStroke(Color.BLACK);
+
+                    coordinate = new Circle(COORDINATE_BLOCLK_SIZE);
+                    coordinate.setFill(Color.WHITE);
+                    coordinate.setEffect(new Lighting());
+
+                    locationStacks[i] = new StackPane();
+                    locationStacks[i].getChildren().addAll(coordinate, text);
+                    locationStacks[i].autosize();
+                    locationStacks[i].setLayoutX(vertices.get(i).getY() * Constants.METER_TO_PIXEL - (locationStacks[i].getWidth() / 2));
+                    locationStacks[i].setLayoutY(vertices.get(i).getX() * Constants.METER_TO_PIXEL - (locationStacks[i].getHeight() / 2));
+                    final int pos = i;
+                    locationStacks[i].hoverProperty().addListener((observable, oldValue, newValue) -> {
+                        InfoPane.info("This is the " + pos + ". coordinate of the " + locationUnitConfig.getLabel());
+                    });
+                    debugNodes.add(locationStacks[i]);
                 }
-               // AbstractUnitPane blubs = UnitPaneFactoryImpl.getInstance().newInstance(nextEntry.getKey());
-				
-				//this.addUnit(blubs.getIcon(), null, new Point2D(5,5));
-				//for(UnitRemote u: nextEntry.getValue()) {
-			//		u.getConfig().
-		//		}
-            }*/
-        } catch (CouldNotPerformException ex) {
+
+                // Paint LocationBase
+                text = new Text("X");
+                text.setStroke(Color.BLACK);
+
+                coordinate = new Circle(COORDINATE_BLOCLK_SIZE);
+                coordinate.setFill(Color.CORNFLOWERBLUE);
+                coordinate.setEffect(new Lighting());
+
+                locationBaseStack.getChildren().addAll(coordinate, text);
+                locationBaseStack.autosize();
+                locationBaseStack.setLayoutX(locationUnitConfig.getPlacementConfig().getPosition().getTranslation().getY() * Constants.METER_TO_PIXEL - (locationBaseStack.getWidth() / 2));
+                locationBaseStack.setLayoutY(locationUnitConfig.getPlacementConfig().getPosition().getTranslation().getX() * Constants.METER_TO_PIXEL - (locationBaseStack.getHeight() / 2));
+                locationBaseStack.hoverProperty().addListener((observable, oldValue, newValue) -> {
+                    InfoPane.info("This is the base of the " + locationUnitConfig.getLabel());
+                });
+                debugNodes.add(locationBaseStack);
+
+                // Paint Gloabl Base
+                text = new Text("O");
+                text.setStroke(Color.BLACK);
+
+                coordinate = new Circle(COORDINATE_BLOCLK_SIZE);
+                coordinate.setFill(Color.DARKRED);
+                coordinate.setEffect(new Lighting());
+
+                globalBaseStack.getChildren().addAll(coordinate, text);
+                globalBaseStack.autosize();
+                globalBaseStack.setLayoutX(0 - (globalBaseStack.getWidth() / 2));
+                globalBaseStack.setLayoutY(0 - (globalBaseStack.getHeight() / 2));
+                globalBaseStack.hoverProperty().addListener((observable, oldValue, newValue) -> {
+                    InfoPane.info("This is the global base.");
+                });
+                debugNodes.add(globalBaseStack);
+            }
+        } catch (Exception ex) {
             throw new CouldNotPerformException("Could not add location!", ex);
         }
     }
@@ -404,6 +471,13 @@ public final class LocationPane extends Pane {
         //});
         if (rootRoom != null) {
             this.getChildren().add(rootRoom);
+        }
+
+        if (JPService.debugMode()) {
+            // debug print
+            for (final Node debugNode : debugNodes) {
+                this.getChildren().add(debugNode);
+            }
         }
     }
 

@@ -20,21 +20,13 @@ package org.openbase.bco.bcozy.view.pane.unit;
 
 import com.google.protobuf.GeneratedMessage;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.application.Platform;
-import javafx.geometry.Point2D;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.InfoPane;
 import org.openbase.bco.bcozy.view.SVGIcon;
 import org.openbase.bco.bcozy.view.generic.ExpandableWidgedPane;
 import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
 import org.openbase.bco.dal.remote.unit.Units;
-import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.exception.NotAvailableException;
@@ -44,7 +36,6 @@ import org.openbase.jul.iface.Shutdownable;
 import org.openbase.jul.pattern.Observable;
 import org.openbase.jul.pattern.Observer;
 import org.openbase.jul.pattern.Remote.ConnectionState;
-import rct.Transform;
 import rst.domotic.unit.UnitConfigType.UnitConfig;
 
 /**
@@ -64,6 +55,7 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
 
     /**
      * Constructor for the UnitPane.
+     *
      * @param unitRemoteClass
      * @param activateable
      */
@@ -180,6 +172,20 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
         }
     }
 
+    @Override
+    public void initContent() {
+        super.initContent();
+
+        hoverProperty().addListener((observable, oldValue, newValue) -> {
+            try {
+                InfoPane.info(getUnitRemote().getLabel());
+            } catch (NotAvailableException ex) {
+                // do nothing if not possible
+
+            }
+        });
+    }
+
     private void clearRemoteObservers() {
         if (this.unitRemote != null) {
             this.unitRemote.removeConfigObserver(unitConfigObserver);
@@ -202,7 +208,8 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
     }
 
     /**
-     * Method returns the data object of the linked unit. 
+     * Method returns the data object of the linked unit.
+     *
      * @return the data object.
      * @throws NotAvailableException is thrown if the data is currently not available.
      */
@@ -267,10 +274,11 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
     public String toString() {
         return getClass().getSimpleName() + "[" + (unitRemote != null ? unitRemote : "?") + "]";
     }
-    
+
     /**
      * Returns a new Icon object according to the type of icon used in this class.
-     * @return 
+     *
+     * @return
      */
     public SVGIcon getIconSymbol() {
         return new SVGIcon(MaterialDesignIcon.VECTOR_CIRCLE, Constants.SMALL_ICON, false);
