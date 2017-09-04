@@ -9,10 +9,11 @@ import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.util.Callback;
 import org.openbase.bco.bcozy.model.LanguageSelection;
-import org.openbase.bco.bcozy.util.Groups;
+import org.openbase.bco.bcozy.util.AuthorizationGroups;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ObserverButton;
 import org.openbase.bco.bcozy.view.SVGIcon;
+import org.openbase.jul.exception.CouldNotPerformException;
 import rst.domotic.unit.UnitConfigType;
 
 /**
@@ -36,7 +37,7 @@ public class GroupController {
     @FXML
     private Pane root;
 
-    private ObservableList<UnitConfigType.UnitConfig> groups = Groups.getGroups();
+    private ObservableList<UnitConfigType.UnitConfig> groups = AuthorizationGroups.getAuthorizationGroups();
 
     @FXML
     public void initialize() {
@@ -87,9 +88,12 @@ public class GroupController {
                         } else {
                             btn.setOnAction(event -> {
                                 try {
-                                    Groups.removeGroup(getTableView().getItems().get(getIndex()));
+                                    AuthorizationGroups.removeAuthorizationGroup(getTableView().getItems().get(getIndex()));
                                 } catch (InterruptedException e) {
                                     Thread.currentThread().interrupt();
+                                } catch (CouldNotPerformException e) {
+                                    e.printStackTrace();
+                                    //TODO: Erledigen!
                                 }
                             });
                             setGraphic(btn);
@@ -107,7 +111,7 @@ public class GroupController {
     private void addGroup(ActionEvent actionEvent) {
 
         try {
-            boolean result = Groups.addGroup(label.getText());
+            boolean result = AuthorizationGroups.addAuthorizationGroup(label.getText());
 
             if (result) {
                 label.clear();

@@ -13,7 +13,7 @@ import javafx.util.Duration;
 import org.controlsfx.control.CheckComboBox;
 import org.openbase.bco.bcozy.model.SessionManagerFacade;
 import org.openbase.bco.bcozy.model.SessionManagerFacadeImpl;
-import org.openbase.bco.bcozy.util.Groups;
+import org.openbase.bco.bcozy.util.AuthorizationGroups;
 import org.openbase.bco.bcozy.view.InfoPane;
 import org.openbase.bco.bcozy.view.ObserverButton;
 import org.openbase.bco.bcozy.view.ObserverLabel;
@@ -73,7 +73,7 @@ public class RegistrationController {
 
 
     public void initialize() {
-        ObservableList<UnitConfig> groups = Groups.getGroups();
+        ObservableList<UnitConfig> groups = AuthorizationGroups.getAuthorizationGroups();
         groups.addListener((ListChangeListener.Change<? extends UnitConfig> c)
                 -> setGroups(groups)
         );
@@ -82,7 +82,7 @@ public class RegistrationController {
         registerBtn.getStyleClass().clear();
         registerBtn.getStyleClass().add("transparent-button");
         registerBtn.setApplyOnNewText(String::toUpperCase);
-        usergroupField.setConverter(Groups.stringConverter(groups));
+        usergroupField.setConverter(AuthorizationGroups.stringConverter(groups));
         usergroupField.prefWidthProperty().bind(root.widthProperty());
 
         usernameEmptyLabel.getStyleClass().remove("label");

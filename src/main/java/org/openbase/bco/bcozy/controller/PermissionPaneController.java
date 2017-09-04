@@ -12,7 +12,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.HBox;
-import org.openbase.bco.bcozy.util.Groups;
+import org.openbase.bco.bcozy.util.AuthorizationGroups;
 import org.openbase.bco.bcozy.view.ObserverButton;
 import org.openbase.bco.bcozy.view.ObserverLabel;
 import org.openbase.bco.registry.remote.Registries;
@@ -69,7 +69,7 @@ public class PermissionPaneController {
 
     private UnitConfigType.UnitConfig unitConfig;
 
-    private ObservableList<UnitConfigType.UnitConfig> groups = Groups.getGroups();
+    private ObservableList<UnitConfigType.UnitConfig> groups = AuthorizationGroups.getAuthorizationGroups();
 
     @FXML
     public void initialize() {
@@ -91,7 +91,7 @@ public class PermissionPaneController {
         saveRightsButton.setApplyOnNewText(String::toUpperCase);
 
 
-        newGroupChoiceBox.setConverter(Groups.stringConverter(groups));
+        newGroupChoiceBox.setConverter(AuthorizationGroups.stringConverter(groups));
         newGroupChoiceBox.setItems(groups);
         newGroupChoiceBox.setPrefWidth(-1.0);
         preselectGroupChoiceBoxValue();

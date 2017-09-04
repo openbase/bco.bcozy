@@ -21,17 +21,18 @@ import java.util.concurrent.TimeoutException;
 
 /**
  * @author vdasilva
+ * TODO: Class still needed? add Observer directly to UserRegistry
  */
-public final class Groups {
+public final class AuthorizationGroups {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Groups.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuthorizationGroups.class);
 
-    public static ObservableList<UnitConfigType.UnitConfig> getGroups() {
+    public static ObservableList<UnitConfigType.UnitConfig> getAuthorizationGroups() {
         ObservableList<UnitConfigType.UnitConfig> groups = FXCollections.observableArrayList();
 
         if (Registries.isDataAvailable()) {
             try {
-                setGroups(Registries.getUserRegistry().getAuthorizationGroupConfigs(), groups);
+                setAuthorizationGroups(Registries.getUserRegistry().getAuthorizationGroupConfigs(), groups);
             } catch (CouldNotPerformException ex) {
                 ExceptionPrinter.printHistory(ex, LOGGER);
             } catch (InterruptedException ex) {
@@ -41,7 +42,7 @@ public final class Groups {
 
         try {
             Registries.getUserRegistry().addDataObserver((observable, userRegistryData) ->
-                    setGroups(userRegistryData.getAuthorizationGroupUnitConfigList(), groups)
+                    setAuthorizationGroups(userRegistryData.getAuthorizationGroupUnitConfigList(), groups)
             );
         } catch (CouldNotPerformException ex) {
             ExceptionPrinter.printHistory(ex, LOGGER);
@@ -53,8 +54,8 @@ public final class Groups {
 
     }
 
-    private static void setGroups(List<UnitConfigType.UnitConfig> newGroups,
-                                  ObservableList<UnitConfigType.UnitConfig> groups) {
+    private static void setAuthorizationGroups(List<UnitConfigType.UnitConfig> newGroups,
+                                               ObservableList<UnitConfigType.UnitConfig> groups) {
 
         Platform.runLater(() -> {
             groups.clear();
@@ -84,17 +85,17 @@ public final class Groups {
         };
     }
 
-    public static void removeGroup(UnitConfigType.UnitConfig group) throws InterruptedException {
+    public static void removeAuthorizationGroup(UnitConfigType.UnitConfig group) throws InterruptedException, CouldNotPerformException {
         try {
             Registries.getUserRegistry().removeAuthorizationGroupConfig(group);
         } catch (CouldNotPerformException ex) {
-            ExceptionPrinter.printHistory(ex, LOGGER);
+            throw new CouldNotPerformException("Could not remove authorization group.", ex);
         }
     }
 
-    public static boolean addGroup(String groupName) throws InterruptedException {
+    public static boolean addAuthorizationGroup(String groupName) throws InterruptedException {
         try {
-            tryAddGroup(groupName).get(5, TimeUnit.SECONDS);
+            tryAddAuthorizationGroup(groupName).get(5, TimeUnit.SECONDS);
             return true;
         } catch (CouldNotPerformException | TimeoutException | ExecutionException ex) {
             ExceptionPrinter.printHistory(ex, LOGGER);
@@ -102,7 +103,7 @@ public final class Groups {
         return false;
     }
 
-    public static Future<UnitConfigType.UnitConfig> tryAddGroup(String groupName)
+    public static Future<UnitConfigType.UnitConfig> tryAddAuthorizationGroup(String groupName)
             throws CouldNotPerformException, InterruptedException {
 
         UnitConfigType.UnitConfig newGroup = UnitConfigType.UnitConfig.newBuilder()
