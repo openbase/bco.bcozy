@@ -14,12 +14,18 @@ import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ObserverButton;
 import org.openbase.bco.bcozy.view.SVGIcon;
 import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rst.domotic.unit.UnitConfigType;
 
 /**
  * @author vdasilva
  */
 public class GroupController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(GroupController.class);
+
 
     @FXML
     private ObserverButton saveButton;
@@ -91,8 +97,8 @@ public class GroupController {
                                     AuthorizationGroups.removeAuthorizationGroup(getTableView().getItems().get(getIndex()));
                                 } catch (InterruptedException e) {
                                     Thread.currentThread().interrupt();
-                                } catch (CouldNotPerformException e) {
-                                    e.printStackTrace();
+                                } catch (CouldNotPerformException ex) {
+                                    ExceptionPrinter.printHistory(ex, LOGGER);
                                     //TODO: Erledigen!
                                 }
                             });

@@ -7,8 +7,10 @@ import javafx.util.StringConverter;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.openbase.jul.pattern.Observer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rst.domotic.registry.UserRegistryDataType;
 import rst.domotic.unit.UnitConfigType;
 import rst.domotic.unit.UnitTemplateType;
 import rst.domotic.unit.authorizationgroup.AuthorizationGroupConfigType;
@@ -21,18 +23,21 @@ import java.util.concurrent.TimeoutException;
 
 /**
  * @author vdasilva
- * TODO: Class still needed? add Observer directly to UserRegistry
  */
 public final class AuthorizationGroups {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthorizationGroups.class);
 
-    public static ObservableList<UnitConfigType.UnitConfig> getAuthorizationGroups() {
-        ObservableList<UnitConfigType.UnitConfig> groups = FXCollections.observableArrayList();
+    private static final ObservableList<UnitConfigType.UnitConfig> authorizationGroups =
+            FXCollections.observableArrayList();
 
+    private static final Observer<UserRegistryDataType.UserRegistryData> observer = (observable, userRegistryData) ->
+            setAuthorizationGroups(userRegistryData.getAuthorizationGroupUnitConfigList(), authorizationGroups);
+
+    public static synchronized ObservableList<UnitConfigType.UnitConfig> getAuthorizationGroups() {
         if (Registries.isDataAvailable()) {
             try {
-                setAuthorizationGroups(Registries.getUserRegistry().getAuthorizationGroupConfigs(), groups);
+                setAuthorizationGroups(Registries.getUserRegistry().getAuthorizationGroupConfigs(), authorizationGroups);
             } catch (CouldNotPerformException ex) {
                 ExceptionPrinter.printHistory(ex, LOGGER);
             } catch (InterruptedException ex) {
@@ -41,16 +46,14 @@ public final class AuthorizationGroups {
         }
 
         try {
-            Registries.getUserRegistry().addDataObserver((observable, userRegistryData) ->
-                    setAuthorizationGroups(userRegistryData.getAuthorizationGroupUnitConfigList(), groups)
-            );
+            Registries.getUserRegistry().addDataObserver(observer);
         } catch (CouldNotPerformException ex) {
             ExceptionPrinter.printHistory(ex, LOGGER);
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
         }
 
-        return groups;
+        return authorizationGroups;
 
     }
 
