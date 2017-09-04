@@ -10,7 +10,7 @@
 <?import org.openbase.bco.bcozy.view.ObserverButton?>
 <?import org.openbase.bco.bcozy.view.ObserverLabel?>
 <HBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
-      fx:id="root" fx:controller="org.openbase.bco.bcozy.controller.GroupController">
+      fx:id="root" fx:controller="org.openbase.bco.bcozy.controller.AuthorizationGroupController">
     <spacing>
         <Constants fx:constant="INSETS"/>
     </spacing>

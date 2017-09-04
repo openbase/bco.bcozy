@@ -96,14 +96,14 @@ public final class AuthorizationGroups {
         }
     }
 
-    public static boolean addAuthorizationGroup(String groupName) throws InterruptedException {
+    public static void addAuthorizationGroup(String groupName) throws InterruptedException, CouldNotPerformException {
         try {
+
             tryAddAuthorizationGroup(groupName).get(5, TimeUnit.SECONDS);
-            return true;
+
         } catch (CouldNotPerformException | TimeoutException | ExecutionException ex) {
-            ExceptionPrinter.printHistory(ex, LOGGER);
+            throw new CouldNotPerformException("Could not add authorization group.", ex);
         }
-        return false;
     }
 
     public static Future<UnitConfigType.UnitConfig> tryAddAuthorizationGroup(String groupName)

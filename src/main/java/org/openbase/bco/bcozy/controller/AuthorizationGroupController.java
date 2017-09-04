@@ -22,9 +22,9 @@ import rst.domotic.unit.UnitConfigType;
 /**
  * @author vdasilva
  */
-public class GroupController {
+public class AuthorizationGroupController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GroupController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuthorizationGroupController.class);
 
 
     @FXML
@@ -117,16 +117,19 @@ public class GroupController {
     private void addGroup(ActionEvent actionEvent) {
 
         try {
-            boolean result = AuthorizationGroups.addAuthorizationGroup(label.getText());
+            AuthorizationGroups.addAuthorizationGroup(label.getText());
+            label.clear();
 
-            if (result) {
-                label.clear();
-            } else {
-                //TODO: Error-handling?
-                label.getStyleClass().add("text-field-wrong");
-            }
-        } catch (InterruptedException e) {
+        } catch (InterruptedException ex) {
+
             Thread.currentThread().interrupt();
+
+
+        } catch (CouldNotPerformException ex) {
+
+            label.getStyleClass().add("text-field-wrong");
+            ExceptionPrinter.printHistory(ex, LOGGER);
+            //TODO: Erledigen!
         }
 
     }
