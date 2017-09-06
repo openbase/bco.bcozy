@@ -1,17 +1,17 @@
 /**
  * ==================================================================
- *
+ * <p>
  * This file is part of org.openbase.bco.bcozy.
- *
+ * <p>
  * org.openbase.bco.bcozy is free software: you can redistribute it and modify
  * it under the terms of the GNU General Public License (Version 3)
  * as published by the Free Software Foundation.
- *
+ * <p>
  * org.openbase.bco.bcozy is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
@@ -80,11 +80,27 @@ public final class LanguageSelection extends Observable {
      * @return the localized string
      */
     public static String getLocalized(String identifier) {
+        return getLocalized(identifier, new Object[0]);
+    }
+
+    /**
+     * Returns the localized text for the given identifier and replaces placeholder like {@code {0}} with given
+     * arguments.
+     *
+     * @param identifier the identifier
+     * @param args       the placeholder-arguments
+     * @return the localized string
+     */
+    public static String getLocalized(String identifier, Object... args) {
         Objects.requireNonNull(identifier);
 
         String text;
         try {
             text = ResourceBundle.getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault()).getString(identifier);
+            for (int i = 0; i < args.length; i++) {
+                text = text.replace("{" + i + "}", Objects.toString(args[i]));
+            }
+
         } catch (MissingResourceException ex) {
             ExceptionPrinter.printHistory("Could not resolve Identifier[" + identifier + "]", ex, LOGGER, LogLevel.WARN);
             text = identifier;
