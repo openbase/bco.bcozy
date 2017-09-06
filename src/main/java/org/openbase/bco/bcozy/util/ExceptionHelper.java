@@ -16,7 +16,7 @@ public class ExceptionHelper {
         Throwable cause = ex;
 
         while (cause.getCause() != null) {
-            cause = ex.getCause();
+            cause = cause.getCause();
         }
 
         return cause;
