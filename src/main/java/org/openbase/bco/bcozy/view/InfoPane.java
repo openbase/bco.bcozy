@@ -132,11 +132,10 @@ public class InfoPane extends BorderPane {
                 infoPane.textLabel.setStyle(style + "-fx-font-size: 16;");
                 infoPane.textLabel.setIdentifier(identifier);
             });
-            return new InfoPaneConfigurer();
         } catch (CouldNotPerformException ex) {
             ExceptionPrinter.printHistory("Could not print user feedback!", ex, LOGGER);
         }
-        return null;
+        return new InfoPaneConfigurer();
     }
 
     /**
@@ -181,11 +180,11 @@ public class InfoPane extends BorderPane {
             PlatformImpl.runLater(() -> {
                 try {
                     InfoPane.getInstance().resetTimeline();
+                    InfoPane.getInstance().timeline = new Timeline(new KeyFrame(duration, e -> InfoPane.hide()));
+                    InfoPane.getInstance().timeline.play();
                 } catch (NotAvailableException ex) {
                     ExceptionPrinter.printHistory("Could not print user feedback!", ex, LOGGER);
                 }
-                Timeline timeline = new Timeline(new KeyFrame(duration, e -> InfoPane.hide()));
-                timeline.play();
             });
             return this;
         }
