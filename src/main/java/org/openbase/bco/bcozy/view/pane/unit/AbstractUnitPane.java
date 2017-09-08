@@ -292,7 +292,7 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
                 groups = Registries.getUnitRegistry().getAuthorizationGroupUnitConfigRemoteRegistry().getEntryMap();
             }
 
-            disableProperty().set(!AuthorizationHelper.canWrite(AbstractUnitPane.this.unitRemote.getConfig(), userAtClientId, groups, locations));
+            disableProperty().set(!AuthorizationHelper.canAccess(AbstractUnitPane.this.unitRemote.getConfig(), userAtClientId, groups, locations));
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
         }
