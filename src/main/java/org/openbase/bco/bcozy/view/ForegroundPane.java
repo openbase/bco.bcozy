@@ -66,8 +66,12 @@ public class ForegroundPane extends BorderPane implements DefaultInitializable {
         this.setTop(this.menuHeader);
         this.setPickOnBounds(false);
 
-        appState = new SimpleObjectProperty<>(CenterPaneController.State.SETTINGS);
+        appState = new SimpleObjectProperty<>(CenterPaneController.State.MOVEMENT);
         this.appState.bind(centerPane.appStateProperty);
+    }
+    
+    public ObjectProperty<CenterPaneController.State> getAppState() {
+        return this.appState;
     }
     
     @Override

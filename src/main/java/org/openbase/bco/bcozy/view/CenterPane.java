@@ -55,8 +55,10 @@ public class CenterPane extends StackPane {
 
     private Pane settingsMenu;
 
-    public ObjectProperty<CenterPaneController.State> appStateProperty;
     private final ForegroundPane foregroundPane;
+    
+    // switched by floating button, is bound to the layer management of the location pane
+    public final ObjectProperty<CenterPaneController.State> appStateProperty;
 
     /**
      * Constructor for the center pane.
@@ -64,7 +66,7 @@ public class CenterPane extends StackPane {
     public CenterPane(final double height, final ForegroundPane foregroundPane) {
         this.foregroundPane = foregroundPane;
 
-        appStateProperty = new SimpleObjectProperty<>(CenterPaneController.State.SETTINGS);
+        appStateProperty = new SimpleObjectProperty<>(CenterPaneController.State.MOVEMENT);
         
         // Initializing components
         this.settingsMenu = loadSettingsMenu(height);
@@ -80,6 +82,10 @@ public class CenterPane extends StackPane {
         viewModes.addElement(MaterialIcon.VISIBILITY, () -> {
             appStateProperty.set(CenterPaneController.State.SETTINGS);
         }); 
+      
+        //final FloatingButton settingsBtn = new FloatingButton(new SVGIcon(MaterialDesignIcon.SETTINGS, Constants.MIDDLE_ICON, true));
+        //this.setAlignment(settingsBtn, Pos.TOP_RIGHT);
+        //settingsBtn.setOnAction(e -> toggleSettings());
 
         // Styling components with CSS
         this.getStyleClass().addAll("padding-small");

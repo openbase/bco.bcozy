@@ -19,8 +19,6 @@
 package org.openbase.bco.bcozy.view.location;
 
 import com.google.protobuf.GeneratedMessage;
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.layout.Pane;
 import org.openbase.bco.bcozy.view.generic.WidgetPane.DisplayMode;
 import org.openbase.bco.bcozy.view.pane.unit.AbstractUnitPane;
@@ -51,18 +49,15 @@ public class UnitButton extends Pane {
      * @throws org.openbase.jul.exception.CouldNotPerformException
      */
     public UnitButton(final UnitRemote<? extends GeneratedMessage> unitRemote) throws InterruptedException, CouldNotPerformException {
-        try {
             AbstractUnitPane content;
             content = UnitPaneFactoryImpl.getInstance().newInitializedInstance(unitRemote.getConfig());
+            
             content.setDisplayMode(DisplayMode.ICON_ONLY);
             this.unitRemote = content.getUnitRemote();
 
             this.getChildren().add(content);
-        } catch (CouldNotPerformException ex) {
-            throw new CouldNotPerformException("Could not create UnitButton for unit", ex);
-        }
-        this.getStyleClass().clear();
-        this.getStyleClass().addAll("units-button");
+            this.getStyleClass().clear();
+            this.getStyleClass().addAll("units-button");
     }
 
     /**
