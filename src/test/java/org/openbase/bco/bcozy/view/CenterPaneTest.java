@@ -40,6 +40,7 @@ public class CenterPaneTest extends Application {
         popUp.addParentElement(MaterialIcon.SETTINGS, this::setMaximizeAction);
         popUp.addElement(MaterialDesignIcon.THERMOMETER_LINES, this::setMaximizeAction);
         popUp.addElement(MaterialIcon.VISIBILITY, this::setMaximizeAction);
+
         popUp.addElement(MaterialIcon.ACCESS_ALARM, event -> System.out.println("ACCESS_ALARM"));
         pane.setLeft(popUp);
 

@@ -21,9 +21,7 @@ package org.openbase.bco.bcozy.view;
 import javafx.beans.property.ObjectProperty;
 import de.jensd.fx.glyphs.materialicons.MaterialIcon;
 import javafx.beans.property.ReadOnlyDoubleProperty;
-import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.StringProperty;
 import javafx.geometry.BoundingBox;
 import javafx.scene.layout.BorderPane;
 import org.openbase.bco.bcozy.controller.CenterPaneController;
@@ -55,9 +53,10 @@ public class ForegroundPane extends BorderPane implements DefaultInitializable {
         this.mainMenu = new MainMenu(height - 150, 300);
         this.contextMenu = new ContextMenu(height - 150, 300);
         this.contextMenu.getFullscreen().setOnAction(event -> setMaximizeAction());
+        this.contextMenu.getSettingsBtn().setOnAction(event -> toggleSettings());
         this.menuHeader = new MenuHeader(30, width);
         this.infoFooter = new InfoPane(20, width);
-        this.centerPane = new CenterPane(height - 150);
+        this.centerPane = new CenterPane(height - 150, this);
 
         //this.setTop(this.menuHeader);
         this.setLeft(this.mainMenu);
@@ -67,8 +66,12 @@ public class ForegroundPane extends BorderPane implements DefaultInitializable {
         this.setTop(this.menuHeader);
         this.setPickOnBounds(false);
 
-        appState = new SimpleObjectProperty<>(CenterPaneController.State.SETTINGS);
+        appState = new SimpleObjectProperty<>(CenterPaneController.State.MOVEMENT);
         this.appState.bind(centerPane.appStateProperty);
+    }
+    
+    public ObjectProperty<CenterPaneController.State> getAppState() {
+        return this.appState;
     }
     
     @Override
@@ -146,6 +149,15 @@ public class ForegroundPane extends BorderPane implements DefaultInitializable {
         } else {
             contextMenu.getFullscreen().changeIcon(MaterialIcon.FULLSCREEN_EXIT);
             stage.setFullScreen(true);
+        }
+    }
+
+    private void toggleSettings() {
+        if (centerPane.getChildren().contains(centerPane.getSettingsMenu())) {
+            centerPane.getChildren().remove(centerPane.getSettingsMenu());
+        } else {
+            centerPane.getChildren().add(0, centerPane.getSettingsMenu());
+            centerPane.getSettingsMenu().toFront();
         }
     }
 }

@@ -25,6 +25,7 @@ import javafx.application.Platform;
 import org.openbase.bco.registry.lib.authorization.AuthorizationHelper;
 import org.openbase.bco.authentication.lib.SessionManager;
 import org.openbase.bco.bcozy.view.Constants;
+import org.openbase.bco.bcozy.view.InfoPane;
 import org.openbase.bco.bcozy.view.SVGIcon;
 import org.openbase.bco.bcozy.view.generic.ExpandableWidgedPane;
 import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
@@ -61,6 +62,7 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
 
     /**
      * Constructor for the UnitPane.
+     *
      * @param unitRemoteClass
      * @param activateable
      */
@@ -196,6 +198,20 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
         }
     }
 
+    @Override
+    public void initContent() {
+        super.initContent();
+
+        hoverProperty().addListener((observable, oldValue, newValue) -> {
+            try {
+                InfoPane.info(getUnitRemote().getLabel());
+            } catch (NotAvailableException ex) {
+                // do nothing if not possible
+
+            }
+        });
+    }
+
     private void clearRemoteObservers() {
         if (this.unitRemote != null) {
             this.unitRemote.removeConfigObserver(unitConfigObserver);
@@ -218,7 +234,8 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
     }
 
     /**
-     * Method returns the data object of the linked unit. 
+     * Method returns the data object of the linked unit.
+     *
      * @return the data object.
      * @throws NotAvailableException is thrown if the data is currently not available.
      */
@@ -307,10 +324,11 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
     public String toString() {
         return getClass().getSimpleName() + "[" + (unitRemote != null ? unitRemote : "?") + "]";
     }
-    
+
     /**
      * Returns a new Icon object according to the type of icon used in this class.
-     * @return 
+     *
+     * @return
      */
     public SVGIcon getIconSymbol() {
         return new SVGIcon(MaterialDesignIcon.VECTOR_CIRCLE, Constants.SMALL_ICON, false);

@@ -38,11 +38,11 @@ public class FloatingPopUp extends VBox {
         this.translateYProperty().set(-Constants.INSETS);
     }
 
-    public void addParentElement(final GlyphIcons icon, final Runnable handler) {
+    public final void addParentElement(final GlyphIcons icon, final Runnable handler) {
         this.addParentElement(icon, (event) -> handler.run());
     }
 
-    public void addParentElement(final GlyphIcons icon, final EventHandler<ActionEvent> value) {
+    public final void addParentElement(final GlyphIcons icon, final EventHandler<ActionEvent> value) {
         parent = icon;
         eventHandler.put(icon, value);
 
@@ -52,11 +52,11 @@ public class FloatingPopUp extends VBox {
         setViewSwitchingButtonsVisible(visible);
     }
 
-    public void addElement(final GlyphIcons icon, final Runnable handler) {
+    public final void addElement(final GlyphIcons icon, final Runnable handler) {
         this.addElement(icon, (event) -> handler.run());
     }
 
-    public void addElement(final GlyphIcons icon, final EventHandler<ActionEvent> value) {
+    public final void addElement(final GlyphIcons icon, final EventHandler<ActionEvent> value) {
         eventHandler.put(icon, value);
 
         addChildren();

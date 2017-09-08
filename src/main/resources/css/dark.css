@@ -6,6 +6,7 @@
 
     -bg-color: rgba(0.0, 0.0, 0.0, 0.9);
     -bg-color-transparent: rgba(0.0, 0.0, 0.0, 0.2);
+    -placeholder-color: rgba(255, 255, 255, 0.7);
     -bg-accent-color: lightgray;
     -controls-color: rgba(255.0, 255.0, 255.0, 0.9);
     -highlight-color: rgba(94.0, 203.0, 234.0, 1.0);
@@ -26,6 +27,14 @@
     -fx-background-color: -bg-color;
     -choicebox-bg: slategray;
     -tab-bg-color: slategray;
+    -text-field-focused-bg: slategray;
+    -table-background: black;
+    -table-text-color: white;
+    -table-background-odd: slategray;
+    -table-border-color: white;
+
+    -success-color: limegreen;
+    -error-color: crimson;
 
     /*default font */
     /*-fx-font-family: 'Helvetica Neue';*/

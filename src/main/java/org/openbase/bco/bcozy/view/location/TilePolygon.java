@@ -18,17 +18,14 @@
  */
 package org.openbase.bco.bcozy.view.location;
 
-import com.google.protobuf.GeneratedMessage;
 import javafx.scene.paint.Color;
 import org.openbase.bco.bcozy.view.Constants;
 
-import java.util.List;
 import org.openbase.jul.exception.EnumNotSupportedException;
 import org.openbase.jul.exception.InstantiationException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.domotic.unit.UnitConfigType.UnitConfig;
 import rst.domotic.unit.location.LocationDataType;
 
 /**
@@ -58,7 +55,7 @@ public class TilePolygon extends LocationPolygon {
                 setCustomColor(Color.TRANSPARENT);
                 break;
             case UNKNOWN:
-                setCustomColor(Color.YELLOW);
+                setCustomColor(Color.TRANSPARENT);
                 break;
             default:
                 ExceptionPrinter.printHistory(new EnumNotSupportedException(unitData.getPresenceState().getValue(), this), LOGGER);

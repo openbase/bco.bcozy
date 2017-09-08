@@ -26,29 +26,21 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
-import javafx.scene.text.TextAlignment;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ObserverText;
 import org.openbase.bco.bcozy.view.SVGIcon;
-import org.openbase.bco.bcozy.view.pane.unit.AbstractUnitPane;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.slf4j.Logger;
@@ -77,11 +69,6 @@ public class WidgetPane extends VBox implements DynamicPane {
      * GridPane as Area on the left side of the header Pane (Icon, tooltip, ...).
      */
     private final GridPane iconPane = new GridPane();
-
-    /**
-     * Tooltip for Icon description (current state).
-     */
-    private final Tooltip tooltip = new Tooltip("");
 
     private final SVGIcon mainIcon;
 
@@ -182,8 +169,6 @@ public class WidgetPane extends VBox implements DynamicPane {
     public void initContent() {
         toggleSwitch.getStyleClass().clear();
         toggleSwitch.setMouseTransparent(true);
-
-        Tooltip.install(iconPane, tooltip);
 
         initHeadPane();
 
@@ -306,8 +291,9 @@ public class WidgetPane extends VBox implements DynamicPane {
         secondaryActivationProperty.set(!secondaryActivationProperty.getValue());
     }
 
+    @Deprecated
     public void setInfoText(final String identifier) {
-        infoText.setIdentifier(identifier);
+//        infoText.setIdentifier(identifier);
     }
 
     /**

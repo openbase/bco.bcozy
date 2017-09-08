@@ -1,6 +1,5 @@
 package org.openbase.bco.bcozy.controller;
 
-import com.sun.javafx.font.freetype.HBGlyphLayout;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -8,16 +7,19 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.control.*;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.layout.HBox;
-import javafx.util.StringConverter;
-import org.openbase.bco.bcozy.util.Groups;
+import org.openbase.bco.bcozy.util.AuthorizationGroups;
+import org.openbase.bco.bcozy.view.ObserverButton;
 import org.openbase.bco.bcozy.view.ObserverLabel;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
-import org.openbase.jul.exception.NotAvailableException;
+import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rst.domotic.authentication.PermissionConfigType;
 import rst.domotic.authentication.PermissionType;
 import rst.domotic.unit.UnitConfigType;
@@ -31,6 +33,12 @@ import java.util.concurrent.ExecutionException;
  * @author vdasilva
  */
 public class PermissionPaneController {
+
+
+    /**
+     * Application logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(PermissionPaneController.class);
 
     @FXML
     private TableColumn<PermissionConfigType.PermissionConfig.MapFieldEntry, String> usergroupColumn;
@@ -54,14 +62,14 @@ public class PermissionPaneController {
     public CheckBox accessRights;
 
     @FXML
-    public Button saveRightsButton;
+    public ObserverButton saveRightsButton;
 
     @FXML
     public HBox hbox;
 
     private UnitConfigType.UnitConfig unitConfig;
 
-    private ObservableList<UnitConfigType.UnitConfig> groups = Groups.getGroups();
+    private ObservableList<UnitConfigType.UnitConfig> groups = AuthorizationGroups.getAuthorizationGroups();
 
     @FXML
     public void initialize() {
@@ -69,22 +77,22 @@ public class PermissionPaneController {
         permissionsTable.widthProperty().addListener(this::onWidthChange);
 
         usergroupColumn.setGraphic(new ObserverLabel("usergroups"));
-
-
         permissionsColumn.setGraphic(new ObserverLabel("permissions"));
+        usergroupColumn.widthProperty().addListener(this::onColumnWidthChange);
+//        permissionsColumn.widthProperty().addListener(this::onColumnWidthChange);
+        
         readRights.setGraphic(new ObserverLabel("readRight"));
         writeRights.setGraphic(new ObserverLabel("writeRight"));
         accessRights.setGraphic(new ObserverLabel("accessRight"));
 
 
-//        saveRightsButton.setGraphic(new ObserverLabel("save"));
         saveRightsButton.getStyleClass().clear();
         saveRightsButton.getStyleClass().addAll("transparent-button");
-        saveRightsButton.setText(saveRightsButton.getText().toUpperCase());
+        saveRightsButton.setApplyOnNewText(String::toUpperCase);
 
-        newGroupChoiceBox.setConverter(Groups.stringConverter(groups));
+
+        newGroupChoiceBox.setConverter(AuthorizationGroups.stringConverter(groups));
         newGroupChoiceBox.setItems(groups);
-//        newGroupChoiceBox.getStyleClass().addAll("bordered-choice-box");
         newGroupChoiceBox.setPrefWidth(-1.0);
         preselectGroupChoiceBoxValue();
 
@@ -153,6 +161,18 @@ public class PermissionPaneController {
         usergroupColumn.setPrefWidth(width / 2);
         permissionsColumn.setPrefWidth(width / 2);
     }
+    
+    /**
+     * Dynamically adjust column widths to fill whole space once the width of one column was changed.
+     *
+     * @param observable ignored
+     * @param oldValue   ignored
+     * @param newValue   ignored
+     */
+    private void onColumnWidthChange(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+        double width = permissionsTable.getWidth();
+        permissionsColumn.setPrefWidth(width - newValue.doubleValue());
+    }
 
     public void setUnitConfig(UnitConfigType.UnitConfig unitConfig) {
         this.unitConfig = unitConfig;
@@ -205,9 +225,9 @@ public class PermissionPaneController {
             unitConfig = Registries.getUnitRegistry().updateUnitConfig(unitConfig).get();
             this.setUnitConfig(unitConfig);
         } catch (CouldNotPerformException | ExecutionException ex) {
-            ex.printStackTrace();
+            ExceptionPrinter.printHistory(ex, LOGGER);
         } catch (InterruptedException ex) {
-            ex.printStackTrace();
+            Thread.currentThread().interrupt();
         }
     }
 }

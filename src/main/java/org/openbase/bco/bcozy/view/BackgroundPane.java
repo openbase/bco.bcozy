@@ -18,7 +18,10 @@
  */
 package org.openbase.bco.bcozy.view;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.layout.StackPane;
+import org.openbase.bco.bcozy.controller.CenterPaneController;
 import org.openbase.bco.bcozy.view.location.LocationPane;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InstantiationException;
@@ -30,6 +33,8 @@ public class BackgroundPane extends StackPane {
 
     private final LocationPane locationPane;
     private final UnitSymbolsPane unitSymbolsPane;
+    private final SimpleUnitSymbolsPane editingLayerPane;
+    private final SimpleUnitSymbolsPane maintenanceLayerPane;
     private double prevMouseCordX; //NOPMD
     private double prevMouseCordY; //NOPMD
 
@@ -44,14 +49,49 @@ public class BackgroundPane extends StackPane {
         try {
 
             locationPane = LocationPane.getInstance(foregroundPane);
-            this.getChildren().add(locationPane); 
-            
+            this.getChildren().add(locationPane);
+
+            // default layer: changing light states on the location map
             unitSymbolsPane = new UnitSymbolsPane();
             unitSymbolsPane.setPickOnBounds(false);
             this.getChildren().add(unitSymbolsPane);
-            
+
             unitSymbolsPane.selectedLocationId.bind(locationPane.selectedLocationId);
-            
+
+            // layer for fast overview over maintenance-relevant units
+            maintenanceLayerPane = new SimpleUnitSymbolsPane();
+            maintenanceLayerPane.setPickOnBounds(false);
+
+            // layer for editing unit positions, shows all supported units
+            editingLayerPane = new SimpleUnitSymbolsPane();
+            editingLayerPane.setPickOnBounds(false);
+
+            // layer management
+            foregroundPane.getAppState().addListener(new ChangeListener<CenterPaneController.State>() {
+
+                @Override
+                public void changed(ObservableValue<? extends CenterPaneController.State> observable, CenterPaneController.State oldValue, CenterPaneController.State newValue) {
+                    switch (newValue) {
+                        case SETTINGS:
+                            getChildren().clear();
+                            getChildren().add(locationPane);
+                            getChildren().add(editingLayerPane);
+                            break;
+                        case TEMPERATURE:
+                            getChildren().clear();
+                            getChildren().add(locationPane);
+                            getChildren().add(maintenanceLayerPane);
+                            break;
+                        case MOVEMENT:
+                            getChildren().clear();
+                            getChildren().add(locationPane);
+                            getChildren().add(unitSymbolsPane);
+                            break;
+                    }
+
+                }
+
+            });
             this.getStyleClass().add("background-pane");
 
             this.setOnMousePressed(event -> {
@@ -82,6 +122,7 @@ public class BackgroundPane extends StackPane {
             });
 
             this.setOnMouseClicked(locationPane.getOnEmptyAreaClickHandler());
+
         } catch (CouldNotPerformException ex) {
             throw new InstantiationException(this, ex);
         }
@@ -93,11 +134,25 @@ public class BackgroundPane extends StackPane {
     public UnitSymbolsPane getUnitsPane() {
         return unitSymbolsPane;
     }
-    
-       /**
+
+    /**
+     * @return The LocationPane.
+     */
+    public SimpleUnitSymbolsPane getMaintenancePane() {
+        return maintenanceLayerPane;
+    }
+
+    /**
+     * @return The LocationPane.
+     */
+    public SimpleUnitSymbolsPane getEditingPane() {
+        return editingLayerPane;
+    }
+
+    /**
      * @return The Location Pane.
      */
-    public LocationPane getLocationPane() {  
+    public LocationPane getLocationPane() {
         return locationPane;
     }
 }

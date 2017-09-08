@@ -62,6 +62,7 @@ public class UnitButtonGrouped extends Pane {
     private String locationId;
     private boolean expanded;
     private Rectangle clipRectangle1;
+
     /**
      * Constructor for the grouped button.
      */
@@ -148,7 +149,7 @@ public class UnitButtonGrouped extends Pane {
             node.setVisible(true);
         });
         clipRectangle1.setWidth(groupingPane.getWidth());
-        clipRectangle1.setHeight(groupingPane.getHeight() + 10);
+        clipRectangle1.setHeight(groupingPane.getHeight());
     }
 
     private void shrink() {
@@ -158,7 +159,7 @@ public class UnitButtonGrouped extends Pane {
         });
         iconPane.setVisible(true);
         clipRectangle1.setWidth(Constants.SMALL_ICON);
-        clipRectangle1.setHeight(Constants.SMALL_ICON + 10);
+        clipRectangle1.setHeight(Constants.SMALL_ICON);
     }
 
     /**

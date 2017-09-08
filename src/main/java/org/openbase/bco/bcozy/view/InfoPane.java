@@ -1,4 +1,4 @@
-/**
+/*
  * ==================================================================
  *
  * This file is part of org.openbase.bco.bcozy.
@@ -18,10 +18,19 @@
  */
 package org.openbase.bco.bcozy.view;
 
+import com.sun.javafx.application.PlatformImpl;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.paint.Color;
+import javafx.util.Duration;
 import org.openbase.bco.bcozy.BCozy;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InvalidStateException;
@@ -29,6 +38,8 @@ import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Objects;
 
 /**
  * Created by hoestreich on 11/10/15.
@@ -41,11 +52,13 @@ public class InfoPane extends BorderPane {
 
     private final ObserverLabel textLabel;
 
+    private Timeline timeline;
+
     /**
      * Constructor for the InfoFooter.
      *
      * @param height Height
-     * @param width Width
+     * @param width  Width
      */
     public InfoPane(final double height, final double width) {
         this.textLabel = new ObserverLabel();
@@ -77,62 +90,111 @@ public class InfoPane extends BorderPane {
         return textLabel;
     }
 
-    public static void info(final String identifier) {
-        assert identifier != null;
+    public static InfoPaneConfigurer info(final String identifier) {
+        final String style;
+        if (BCozy.baseColorIsWhite) {
+            style = ("-fx-text-fill: white;");
+        } else {
+            style = ("-fx-text-fill: black;");
+        }
+
+        return show(identifier, style);
+    }
+
+    public static InfoPaneConfigurer confirmation(final String identifier) {
+        return show(identifier, "-fx-text-fill: green;");
+    }
+
+    public static InfoPaneConfigurer warn(final String identifier) {
+        return show(identifier, "-fx-text-fill: orange;");
+    }
+
+    public static InfoPaneConfigurer error(final String identifier) {
+        return show(identifier, "-fx-text-fill: red;");
+    }
+
+    public static InfoPaneConfigurer show(final String identifier, String style) {
+        Objects.requireNonNull(identifier);
+        Objects.requireNonNull(style);
+
         try {
-            final ObserverLabel textLabel = getInstance().textLabel;
+            final InfoPane infoPane = getInstance();
+            infoPane.resetTimeline();
+
             Platform.runLater(() -> {
-                if (BCozy.baseColorIsWhite) {
-                    textLabel.setStyle("-fx-text-fill: white; -fx-font-size: 16;");
-                } else {
-                    textLabel.setStyle("-fx-text-fill: black; -fx-font-size: 16;");
+                infoPane.clearBackground();
+                infoPane.textLabel.setStyle(style + "-fx-font-size: 16;");
+                infoPane.textLabel.setIdentifier(identifier);
+            });
+            return new InfoPaneConfigurer();
+        } catch (CouldNotPerformException ex) {
+            ExceptionPrinter.printHistory("Could not print user feedback!", ex, LOGGER);
+        }
+        return null;
+    }
+
+    /**
+     * Hides the InfoPane.
+     */
+    public static void hide() {
+        try {
+            show("", "");
+            getInstance().clearBackground();
+            getInstance().resetTimeline();
+        } catch (CouldNotPerformException ex) {
+            ExceptionPrinter.printHistory("Could not print user feedback!", ex, LOGGER);
+        }
+    }
+
+    private void clearBackground() {
+        this.setBackground(null);
+    }
+
+    private void resetTimeline() throws NotAvailableException {
+        if (this.timeline != null) {
+            this.timeline.stop();
+        }
+        this.timeline = null;
+    }
+
+    /**
+     * Used to hide InfoPane after certain time with Builder-like style.
+     */
+    public static class InfoPaneConfigurer {
+
+        //Prevent instantiation from other classes
+        private InfoPaneConfigurer() {
+        }
+
+        /**
+         * Hides the InfoPane after the given duration.
+         *
+         * @param duration the duration
+         */
+        public InfoPaneConfigurer hideAfter(Duration duration) {
+            PlatformImpl.runLater(() -> {
+                try {
+                    InfoPane.getInstance().resetTimeline();
+                } catch (NotAvailableException ex) {
+                    ExceptionPrinter.printHistory("Could not print user feedback!", ex, LOGGER);
                 }
-                textLabel.setIdentifier(identifier);
+                Timeline timeline = new Timeline(new KeyFrame(duration, e -> InfoPane.hide()));
+                timeline.play();
             });
-        } catch (CouldNotPerformException ex) {
-            ExceptionPrinter.printHistory("Could not print user feedback!", ex, LOGGER);
+            return this;
+        }
+
+        public InfoPaneConfigurer backgroundColor(Color color) {
+            PlatformImpl.runLater(() -> {
+                try {
+                    InfoPane.getInstance().setBackground(new Background(new BackgroundFill(color, CornerRadii.EMPTY, Insets.EMPTY)));
+                } catch (NotAvailableException ex) {
+                    ExceptionPrinter.printHistory("Could not print user feedback!", ex, LOGGER);
+                }
+            });
+
+            return this;
         }
     }
 
-    public static void confirmation(final String identifier) {
-        assert identifier != null;
-        try {
-            final ObserverLabel textLabel = getInstance().textLabel;
-            Platform.runLater(() -> {
-                textLabel.setStyle("-fx-text-fill: green; -fx-font-size: 16;");
-                textLabel.setIdentifier(identifier);
-            });
-        } catch (CouldNotPerformException ex) {
-            ExceptionPrinter.printHistory("Could not print user feedback!", ex, LOGGER);
-        }
-    }
-
-    public static void warn(final String identifier) {
-        assert identifier != null;
-        try {
-
-            final ObserverLabel textLabel = getInstance().textLabel;
-            Platform.runLater(() -> {
-                textLabel.setStyle("-fx-text-fill: orange; -fx-font-size: 16;");
-                textLabel.setIdentifier(identifier);
-            });
-
-        } catch (CouldNotPerformException ex) {
-            ExceptionPrinter.printHistory("Could not print user feedback!", ex, LOGGER);
-        }
-    }
-
-    public static void error(final String identifier) {
-        assert identifier != null;
-        try {
-            final ObserverLabel textLabel = getInstance().textLabel;
-
-            Platform.runLater(() -> {
-                textLabel.setStyle("-fx-text-fill: red; -fx-font-size: 16;");
-                textLabel.setIdentifier(identifier);
-            });
-        } catch (CouldNotPerformException ex) {
-            ExceptionPrinter.printHistory("Could not print user feedback!", ex, LOGGER);
-        }
-    }
 }

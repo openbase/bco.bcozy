@@ -61,6 +61,7 @@ public class AvailableUsersPane extends PaneElement {
     private final BorderPane statusIcon;
     private final VBox userPanes;
     private final CustomTextField searchField;
+    private final HiddenSidesPane hiddenSidesPane;
 
     /**
      * Predicate to filter user.
@@ -71,7 +72,6 @@ public class AvailableUsersPane extends PaneElement {
      * Constructor for the AvailableUsersPane.
      */
     public AvailableUsersPane() {
-//        try {
         searchField = new CustomTextField();
         searchField.setRight(new SVGIcon(FontAwesomeIcon.SEARCH, Constants.EXTRA_SMALL_ICON, true));
 
@@ -86,7 +86,7 @@ public class AvailableUsersPane extends PaneElement {
 
         final ScrollBar scrollBar = new ScrollBar();
         scrollBar.setOrientation(Orientation.VERTICAL);
-        final HiddenSidesPane hiddenSidesPane = new HiddenSidesPane();
+        this.hiddenSidesPane = new HiddenSidesPane();
         hiddenSidesPane.setContent(verticalScrollPane);
         hiddenSidesPane.setRight(scrollBar);
         //hiddenSidesPane.setTriggerDistance(Constants.TRIGGER_DISTANCE);
@@ -94,23 +94,23 @@ public class AvailableUsersPane extends PaneElement {
         scrollBar.maxProperty().bind(verticalScrollPane.vmaxProperty());
         scrollBar.minProperty().bind(verticalScrollPane.vminProperty());
 
-        //AdvancedHorizontalSlider advancedHorizontalSlider = new AdvancedHorizontalSlider(10, 30);
         verticalScrollPane.setContent(userPanes);
         verticalScrollPane.setFitToWidth(true);
-        this.getChildren().addAll(searchField, hiddenSidesPane);
-        //        } catch (CouldNotPerformException ex) {
-        //            throw new org.openbase.jul.exception.InstantiationException(this, ex);
-        //        }
+        enableSearchField(false);
 
         hoverProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                getChildren().clear();
-                getChildren().addAll(searchField, hiddenSidesPane);
-            } else {
-                getChildren().clear();
-                getChildren().addAll(hiddenSidesPane);
-            }
+            enableSearchField(newValue);
         });
+    }
+
+    private void enableSearchField(final boolean enable) {
+        if (enable) {
+            getChildren().clear();
+            getChildren().addAll(hiddenSidesPane, searchField);
+        } else {
+            getChildren().clear();
+            getChildren().addAll(hiddenSidesPane);
+        }
     }
 
     private void search(String text) {
@@ -161,12 +161,16 @@ public class AvailableUsersPane extends PaneElement {
                 userPanes.getChildren().remove(userPane);
             });
 
-            for (final UnitConfig userUniConfig : Registries.getUserRegistry().getUserConfigs()) {
-                if (userPredicate.test(userUniConfig.getUserConfig())) {
-                    final UserPane userPane = new UserPane();
-                    userPane.init(userUniConfig);
-                    userPanes.getChildren().add(userPane);
+            for (final UnitConfig userUnitConfig : Registries.getUserRegistry().getUserConfigs()) {
+
+                // filter users by predicate
+                if (!userPredicate.test(userUnitConfig.getUserConfig())) {
+                    continue;
                 }
+
+                final UserPane userPane = new UserPane();
+                userPane.init(userUnitConfig);
+                userPanes.getChildren().add(userPane);
             }
         } catch (CouldNotPerformException | MissingResourceException | InterruptedException ex) {
             ExceptionPrinter.printHistory(new CouldNotPerformException(ex), LOGGER);
