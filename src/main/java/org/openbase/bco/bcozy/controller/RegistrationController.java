@@ -74,10 +74,9 @@ public class RegistrationController {
 
     public void initialize() {
         ObservableList<UnitConfig> groups = AuthorizationGroups.getAuthorizationGroups();
-        groups.addListener((ListChangeListener.Change<? extends UnitConfig> c)
-                -> setGroups(groups)
+        groups.addListener((ListChangeListener.Change<? extends UnitConfig> c) 
+                           -> setGroups(groups)
         );
-
 
         registerBtn.getStyleClass().clear();
         registerBtn.getStyleClass().add("transparent-button");
@@ -123,7 +122,6 @@ public class RegistrationController {
             return;
         }
 
-
         try {
             sessionManager.verifyPasswords(passwordField.getText(), repeatPasswordField.getText());
         } catch (VerificationFailedException ex) {
@@ -157,7 +155,6 @@ public class RegistrationController {
                 .setMobilePhoneNumber(phone.getText())
                 .setOccupant(isOccupant.isSelected())
                 .build();
-
 
         try {
             sessionManager.registerUser(user,
