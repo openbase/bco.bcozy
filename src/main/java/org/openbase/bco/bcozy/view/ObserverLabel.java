@@ -1,4 +1,4 @@
-/**
+/*
  * ==================================================================
  *
  * This file is part of org.openbase.bco.bcozy.
@@ -24,17 +24,13 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import org.openbase.bco.bcozy.model.LanguageSelection;
-
-import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.Observable;
-import java.util.Observer;
-import java.util.ResourceBundle;
-
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.*;
+import java.util.function.Function;
 
 /**
  * @author hoestreich
@@ -49,6 +45,13 @@ public class ObserverLabel extends Label implements Observer {
     @FXML
     private SimpleStringProperty identifier = new SimpleStringProperty();
     private ResourceBundle languageBundle = ResourceBundle.getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
+
+
+    /**
+     * Is applied to new text when text is changed.
+     */
+    private Function<String, String> applyOnNewText = Function.identity();
+
 
     public ObserverLabel() {
         super();
@@ -81,19 +84,21 @@ public class ObserverLabel extends Label implements Observer {
 
     @Override
     public void update(final Observable observable, final Object arg) {
-        if (getIdentifier() == null || getIdentifier().isEmpty()) {
+        if (getIdentifier() == null) {
             return;
         }
 
+        String text;
         try {
             languageBundle = ResourceBundle.getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
-            super.setText(languageBundle.getString(this.getIdentifier()));
+
+            text = languageBundle.getString(this.getIdentifier());
         } catch (MissingResourceException ex) {
             ExceptionPrinter.printHistory("Could not resolve Identifier[" + getIdentifier() + "]", ex, LOGGER, LogLevel.WARN);
-            super.setText(getIdentifier());
+            text = getIdentifier();
         }
+        super.setText(applyOnNewText.apply(text));
     }
-
 
     /**
      * Sets the new identifier for this ObserverLabel.
@@ -104,7 +109,6 @@ public class ObserverLabel extends Label implements Observer {
         this.identifier.set(identifier);
     }
 
-
     public String getIdentifier() {
         return identifier.get();
     }
@@ -112,4 +116,10 @@ public class ObserverLabel extends Label implements Observer {
     public SimpleStringProperty identifierProperty() {
         return identifier;
     }
+
+    public void setApplyOnNewText(Function<String, String> applyOnNewText) {
+        this.applyOnNewText = applyOnNewText != null ? applyOnNewText : Function.identity();
+        this.update(null, null);
+    }
+
 }

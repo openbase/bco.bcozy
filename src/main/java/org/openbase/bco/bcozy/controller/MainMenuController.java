@@ -23,7 +23,6 @@ import org.openbase.bco.bcozy.view.ForegroundPane;
 import org.openbase.bco.bcozy.view.mainmenupanes.AvailableUsersPane;
 import org.openbase.bco.bcozy.view.mainmenupanes.ConnectionPane;
 import org.openbase.bco.bcozy.view.mainmenupanes.LoginPane;
-import org.openbase.bco.bcozy.view.mainmenupanes.SettingsPane;
 import org.openbase.bco.authentication.lib.SessionManager;
 
 import org.openbase.bco.registry.remote.Registries;
@@ -43,7 +42,6 @@ public class MainMenuController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MainMenuController.class);
 
     private LoginPane loginPane;
-    private SettingsPane settingsPane;
     private AvailableUsersPane availableUsersPane;
     private ConnectionPane connectionPane;
 
@@ -61,7 +59,6 @@ public class MainMenuController {
 
     public void init(final ForegroundPane foregroundPane) {
         loginPane = foregroundPane.getMainMenu().getLoginPane();
-        settingsPane = foregroundPane.getCenterPane().getSettingsPane();
         availableUsersPane = foregroundPane.getMainMenu().getAvailableUsersPanePane();
         connectionPane = foregroundPane.getMainMenu().getConnectionPane();
         loginPane.getLoginBtn().setOnAction(event -> loginUser());
@@ -71,7 +68,6 @@ public class MainMenuController {
         loginPane.getNameTxt().setOnKeyTyped(event -> resetWrongInput());
         loginPane.getPasswordField().setOnKeyTyped(event -> resetWrongInput());
         loginPane.getStatusIcon().setOnMouseClicked(event -> showHideMainMenu(foregroundPane));
-        settingsPane.getStatusIcon().setOnMouseClicked(event -> showHideMainMenu(foregroundPane));
         availableUsersPane.getStatusIcon().setOnMouseClicked(event -> showHideMainMenu(foregroundPane));
         connectionPane.getStatusIcon().setOnMouseClicked(event -> showHideMainMenu(foregroundPane));
 
