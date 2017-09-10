@@ -7,10 +7,12 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.util.Callback;
 import javafx.util.Duration;
 import org.openbase.bco.bcozy.model.LanguageSelection;
 import org.openbase.bco.bcozy.util.AuthorizationGroups;
+import org.openbase.bco.bcozy.util.ExceptionHelper;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.InfoPane;
 import org.openbase.bco.bcozy.view.ObserverButton;
@@ -109,14 +111,20 @@ public class AuthorizationGroupController {
     private void removeGroup(UnitConfigType.UnitConfig group) {
         try {
             AuthorizationGroups.removeAuthorizationGroup(group);
-            InfoPane.show("deleteSuccess", "", "-fx-background-color: green;").hideAfter(Duration.seconds(5));
+            InfoPane.info("deleteSuccess")
+                    .backgroundColor(Color.GREEN)
+                    .hideAfter(Duration.seconds(5));
 
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         } catch (CouldNotPerformException ex) {
             ExceptionPrinter.printHistory(ex, LOGGER);
-            InfoPane.show("saveError", "", "-fx-background-color: green;").hideAfter(Duration.seconds(5));
 
+            String message = LanguageSelection.getLocalized("deleteErrorWithMessage", ExceptionHelper.getCauseMessage(ex));
+
+            InfoPane.info(message)
+                    .backgroundColor(Color.RED)
+                    .hideAfter(Duration.seconds(5));
         }
     }
 
@@ -126,17 +134,25 @@ public class AuthorizationGroupController {
         try {
             AuthorizationGroups.addAuthorizationGroup(label.getText());
             label.clear();
-            InfoPane.show("saveSuccess", "","-fx-background-color: green;").hideAfter(Duration.seconds(5));
+            InfoPane.info("saveSuccess")
+                    .backgroundColor(Color.GREEN)
+                    .hideAfter(Duration.seconds(5));
 
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
 
         } catch (CouldNotPerformException ex) {
-
             label.getStyleClass().add("text-field-wrong");
+
             ExceptionPrinter.printHistory(ex, LOGGER);
-            //TODO: Erledigen!
+
+            String message = LanguageSelection.getLocalized("saveErrorWithMessage", ExceptionHelper.getCauseMessage(ex));
+
+            InfoPane.info(message)
+                    .backgroundColor(Color.RED)
+                    .hideAfter(Duration.seconds(5));
         }
 
     }
+
 }
