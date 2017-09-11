@@ -102,9 +102,9 @@ public class UserSettingsController {
 
     public void initialize() {
 
-        SessionManager.getInstance().getLoginObervable().addObserver((o, b) -> {
+        SessionManager.getInstance().addLoginObserver((o, b) -> {
             LOGGER.warn("isLoggedIn is " + b);
-            if (b) {
+            if (b != null) {
                 onLogin();
             }
         });
