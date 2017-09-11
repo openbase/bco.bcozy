@@ -158,7 +158,7 @@ public class UnitsPaneController {
             Point3d vertex = calculateCoordinates(locationConfig);
 
             try {
-                final Future<Transform> transform = Registries.getLocationRegistry().getUnitTransformation(locationConfig,
+                final Future<Transform> transform = Registries.getLocationRegistry().getUnitTransformationFuture(locationConfig,
                     Registries.getLocationRegistry().getRootLocationConfig());
                 transform.get(Constants.TRANSFORMATION_TIMEOUT / 10, TimeUnit.MILLISECONDS).getTransform().transform(vertex);
                 Point2D coord = new Point2D(vertex.x * Constants.METER_TO_PIXEL, vertex.y * Constants.METER_TO_PIXEL);
@@ -188,7 +188,7 @@ public class UnitsPaneController {
 
                         PoseType.Pose pose = config.getPlacementConfig().getPosition();
                         try {
-                            final Future<Transform> transform = Registries.getLocationRegistry().getUnitTransformation(config,
+                            final Future<Transform> transform = Registries.getLocationRegistry().getUnitTransformationFuture(config,
                                 Registries.getLocationRegistry().getRootLocationConfig());
                             // transformation already in unit's coordinate space, therefore the zeros
                             final Point3d unitVertex = new Point3d(0.0, 0.0, 1.0);
