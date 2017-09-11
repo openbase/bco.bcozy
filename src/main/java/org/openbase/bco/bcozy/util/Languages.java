@@ -31,15 +31,11 @@ public class Languages {
     private final List<Language> languages;
 
     /**
-     * Initializes Languages, either from available property-files or uses ["en_US","de_DE"].
+     * Initializes Languages from available property-files.
      */
     private Languages() {
         List<Locale> bundles = getLocalesFromBundles();
-        if (!bundles.isEmpty()) {
-            this.languages = bundles.stream().map(this::fromLocale).collect(Collectors.toList());
-        } else {
-            this.languages = Arrays.asList(english, fromLocale(Locale.GERMANY));
-        }
+        this.languages = bundles.stream().map(this::fromLocale).collect(Collectors.toList());
     }
 
     /**
