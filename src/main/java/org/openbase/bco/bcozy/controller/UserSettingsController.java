@@ -17,7 +17,6 @@
  */
 package org.openbase.bco.bcozy.controller;
 
-import com.jfoenix.controls.JFXCheckBox;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -32,6 +31,8 @@ import javafx.util.Duration;
 import javafx.util.StringConverter;
 import org.controlsfx.control.textfield.CustomTextField;
 import org.openbase.bco.authentication.lib.SessionManager;
+import org.openbase.bco.bcozy.model.UserData;
+import org.openbase.bco.bcozy.view.*;
 import org.openbase.bco.bcozy.model.LanguageSelection;
 import org.openbase.bco.bcozy.util.Language;
 import org.openbase.bco.bcozy.util.Languages;
@@ -44,14 +45,9 @@ import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.domotic.unit.UnitConfigType;
-import rst.domotic.unit.user.UserConfigType;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 /**
  * @author vdasilva
@@ -82,8 +78,6 @@ public class UserSettingsController {
     @FXML
     private ChoiceBox<Language> languageChoice;
     @FXML
-    private JFXCheckBox isOccupantField;
-    @FXML
     private TitledPane changePasswordPane;
 
 
@@ -91,6 +85,7 @@ public class UserSettingsController {
     private ObservableList<Language> availableLanguages;
 
 
+    @FXML
     public void initialize() {
 
         SessionManager.getInstance().addLoginObserver((o, b) -> {
@@ -143,61 +138,30 @@ public class UserSettingsController {
 
     }
 
-
-    private void updateOccupant(Boolean isOccupant) {
-        try {
-            UserConfigType.UserConfig userConfig = Registries.getUserRegistry()
-                    .getUserConfigById(SessionManager.getInstance().getUserId()).getUserConfig().toBuilder()
-                    .setOccupant(isOccupant).build();
-
-            UnitConfigType.UnitConfig unitConfig = Registries.getUserRegistry()
-                    .getUserConfigById(SessionManager.getInstance().getUserId()).toBuilder()
-                    .setUserConfig(userConfig).build();
-
-            Future<UnitConfigType.UnitConfig> saved = Registries.getUserRegistry().updateUserConfig(unitConfig);
-
-            boolean savedValue = saved.get(5, TimeUnit.SECONDS).getUserConfig().getOccupant();
-
-            if (savedValue == isOccupant) {
-                showSuccessMessage();
-
-                return;
-            }
-
-        } catch (InterruptedException ex) {
-            Thread.currentThread().interrupt();
-        } catch (CouldNotPerformException | ExecutionException | TimeoutException ex) {
-            ExceptionPrinter.printHistory(ex, LOGGER);
-        }
-
-        showErrorMessage();
-    }
-
     private void onLogin() throws InterruptedException {
         LOGGER.warn("UserID is " + SessionManager.getInstance().getUserId());
 
         try {
-            initUserName();
+            UserData userData = UserData.currentUser();
+
+            changeUsername.textProperty().bindBidirectional(userData.userNameProperty());
+            changeFirstname.textProperty().bindBidirectional(userData.firstnameProperty());
+            changeLastname.textProperty().bindBidirectional(userData.lastNameProperty());
+            changeMail.textProperty().bindBidirectional(userData.mailProperty());
+            changePhone.textProperty().bindBidirectional(userData.phoneProperty());
+
+           /* initUserName();
             initFirstName();
             initLastName();
             initMail();
-            initPhone();
-            initOccupant();
+            initPhone();*/
+
 
         } catch (CouldNotPerformException ex) {
             ExceptionPrinter.printHistory(ex, LOGGER);
         }
     }
 
-    private void initOccupant() throws InterruptedException, CouldNotPerformException {
-        isOccupantField.setSelected(Registries.getUserRegistry().getUserConfigById(SessionManager.getInstance()
-                .getUserId()).getUserConfig().getOccupant());
-
-        isOccupantField.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            updateOccupant(newValue);
-
-        });
-    }
 
     private void initPhone() throws InterruptedException, CouldNotPerformException {
         changePhone.setText(Registries.getUserRegistry().getUserConfigById(SessionManager.getInstance().getUserId
@@ -273,7 +237,8 @@ public class UserSettingsController {
                     .setLastName(changeLastname.getText())
                     .setEmail(changeMail.getText())
                     .setMobilePhoneNumber(changePhone.getText())
-                    .setOccupant(isOccupantField.isSelected());
+            //TODO?: .setOccupant(isOccupantField.isSelected())
+            ;
 
             Registries.getUserRegistry().updateUserConfig(newUserConfig.build());
             showSuccessMessage();

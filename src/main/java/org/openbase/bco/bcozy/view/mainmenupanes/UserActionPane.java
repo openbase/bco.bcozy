@@ -9,7 +9,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.*;
-import org.openbase.bco.bcozy.controller.RegistrationController;
+import org.openbase.bco.bcozy.controller.UserManagementController;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.SVGIcon;
 
@@ -21,14 +21,14 @@ import org.openbase.bco.bcozy.view.SVGIcon;
 public class UserActionPane extends PaneElement {
 
     private final LoginPane loginPane;
-    //private final RegistrationController registrationController;
+    //private final UserManagementController registrationController;
     private final PseudoClass tabpaneContentHidden;
     private final TabPane userActionPane;
 
     private State state;
 
 
-    public UserActionPane(LoginPane lp, RegistrationController rp) {
+    public UserActionPane(LoginPane lp, UserManagementController rp) {
         super(true);
         loginPane = lp;
         loginPane.setState(LoginPane.State.LOGINACTIVE);

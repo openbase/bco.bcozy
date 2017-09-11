@@ -318,7 +318,7 @@ public class SettingsController {
                     "Registration.fxml not found");
 
             FXMLLoader loader = new FXMLLoader(url);
-            loader.setControllerFactory(clazz -> new RegistrationController());
+            loader.setControllerFactory(clazz -> new UserManagementController());
             Pane root = loader.load();
 
             return root;

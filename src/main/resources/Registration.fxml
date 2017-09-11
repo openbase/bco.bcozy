@@ -16,10 +16,13 @@
       xmlns:fx="http://javafx.com/fxml"
       fx:id="root"
       styleClass="padding-xtra-large"
-      fx:controller="org.openbase.bco.bcozy.controller.RegistrationController">
+      fx:controller="org.openbase.bco.bcozy.controller.UserManagementController">
     <spacing>
         <Constants fx:constant="INSETS"/>
     </spacing>
+    <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">chooseUser</ObserverLabel>
+    <ComboBox fx:id="chooseUserBox"/>
+
     <HBox spacing="30.0">
         <VBox prefWidth="${root.width}">
             <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">username</ObserverLabel>
