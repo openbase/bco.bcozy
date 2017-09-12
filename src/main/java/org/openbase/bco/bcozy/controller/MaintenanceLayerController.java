@@ -168,7 +168,7 @@ public class MaintenanceLayerController {
 
                         PoseType.Pose pose = config.getPlacementConfig().getPosition();
                         try {
-                            final Future<Transform> transform = Registries.getLocationRegistry().getUnitTransformation(config,
+                            final Future<Transform> transform = Registries.getLocationRegistry().getUnitTransformationFuture(config,
                                 Registries.getLocationRegistry().getRootLocationConfig());
                             // transformation already in unit's coordinate space, therefore the zeros
                             final Point3d unitVertex = new Point3d(0.0, 0.0, 1.0);

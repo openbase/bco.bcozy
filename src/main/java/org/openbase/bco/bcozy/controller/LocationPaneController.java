@@ -109,7 +109,7 @@ public class LocationPaneController {
                 //  final List<Point2D> vertices = new LinkedList<>();
                 // Get the transformation for the current room
 //                final Future<Transform> transform = Units.getUnitTransformation(locationUnitConfig, Registries.getUnitRegistry().getUnitConfigById(locationUnitConfig.getPlacementConfig().getLocationId()));
-                final Future<Transform> transform = Registries.getLocationRegistry().getUnitTransformation(locationUnitConfig, Registries.getLocationRegistry().getRootLocationConfig());
+                final Future<Transform> transform = Registries.getLocationRegistry().getUnitTransformationFuture(locationUnitConfig, Registries.getLocationRegistry().getRootLocationConfig());
 
                 // Get the shape of the room
                 final List<Vec3DDoubleType.Vec3DDouble> shape = locationUnitConfig.getPlacementConfig().getShape().getFloorList();
@@ -150,7 +150,7 @@ public class LocationPaneController {
                 final List<Point2D> vertices = new LinkedList<>();
 
 //                final Future<Transform> transform = Registries.getLocationRegistry().getUnitTransformation(connectionUnitConfig, Registries.getUnitRegistry().getUnitConfigById(connectionUnitConfig.getPlacementConfig().getLocationId()));
-                final Future<Transform> transform = Registries.getLocationRegistry().getUnitTransformation(connectionUnitConfig, Registries.getLocationRegistry().getRootLocationConfig());
+                final Future<Transform> transform = Registries.getLocationRegistry().getUnitTransformationFuture(connectionUnitConfig, Registries.getLocationRegistry().getRootLocationConfig());
 
                 // Get the shape of the room
                 final List<Vec3DDoubleType.Vec3DDouble> shape = connectionUnitConfig.getPlacementConfig().getShape().getFloorList();
