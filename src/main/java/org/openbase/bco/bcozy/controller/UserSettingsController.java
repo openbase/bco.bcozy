@@ -29,8 +29,12 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
+import javafx.util.StringConverter;
 import org.controlsfx.control.textfield.CustomTextField;
 import org.openbase.bco.authentication.lib.SessionManager;
+import org.openbase.bco.bcozy.model.LanguageSelection;
+import org.openbase.bco.bcozy.util.Language;
+import org.openbase.bco.bcozy.util.Languages;
 import org.openbase.bco.bcozy.view.*;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
@@ -73,7 +77,7 @@ public class UserSettingsController {
     @FXML
     private ChoiceBox<String> themeChoice;
     @FXML
-    private ChoiceBox<String> languageChoice;
+    private ChoiceBox<Language> languageChoice;
     @FXML
     private JFXCheckBox isOccupantField;
     @FXML
@@ -88,7 +92,7 @@ public class UserSettingsController {
     private ObserverButton savePassword;
 
     private ObservableList<String> availableThemes;
-    private ObservableList<String> availableLanguages;
+    private ObservableList<Language> availableLanguages;
     private final ForegroundPane foregroundPane;
 
     public UserSettingsController(ForegroundPane foregroundPane) {
@@ -107,16 +111,10 @@ public class UserSettingsController {
 
         initEditableFields(changeUsername, changeFirstname, changeLastname, changeMail, changePhone);
 
+        initializeLanguages();
 
         final ResourceBundle languageBundle = ResourceBundle
                 .getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
-
-        //TODO: Implement Property implementation
-
-        availableLanguages = FXCollections.observableArrayList("English", "Deutsch");
-        languageChoice.setItems(availableLanguages);
-
-
         availableThemes = FXCollections.observableArrayList(
                 languageBundle.getString(Constants.LIGHT_THEME_CSS_NAME),
                 languageBundle.getString(Constants.DARK_THEME_CSS_NAME));
@@ -127,6 +125,34 @@ public class UserSettingsController {
 
 
     }
+
+    /**
+     * Initializes the ChoiceBox, adds Listeners sets the current Language.
+     */
+    private void initializeLanguages() {
+        availableLanguages = FXCollections.observableList(Languages.getInstance().get());
+        languageChoice.setItems(availableLanguages);
+        languageChoice.setConverter(new StringConverter<Language>() {
+            @Override
+            public String toString(Language object) {
+                return object.getName();
+            }
+
+            @Override
+            public Language fromString(String string) {
+                return Languages.getInstance().get(string);
+            }
+        });
+        languageChoice.getSelectionModel().select(Languages.getInstance().get(Locale.getDefault()));
+        languageChoice.getSelectionModel().selectedItemProperty().addListener((observable, oldLocale, newLocale)
+                -> {
+            if (newLocale != null) {
+                LanguageSelection.getInstance().setSelectedLocale(newLocale.getLocale());
+            }
+        });
+
+    }
+
 
     private void updateOccupant(Boolean isOccupant) {
         try {
@@ -329,7 +355,7 @@ public class UserSettingsController {
      *
      * @return instance of the languageChoice
      */
-    public ChoiceBox<String> getLanguageChoice() {
+    public ChoiceBox<Language> getLanguageChoice() {
         return languageChoice;
     }
 
@@ -347,7 +373,7 @@ public class UserSettingsController {
      *
      * @return instance of the availableLanguages
      */
-    public ObservableList<String> getAvailableLanguages() {
+    public ObservableList<Language> getAvailableLanguages() {
         return availableLanguages;
     }
 

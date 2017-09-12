@@ -24,12 +24,9 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import org.openbase.bco.bcozy.model.LanguageSelection;
-import org.openbase.jul.exception.printer.ExceptionPrinter;
-import org.openbase.jul.exception.printer.LogLevel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.function.Function;
 
 /**
@@ -40,12 +37,8 @@ import java.util.function.Function;
 @DefaultProperty("identifier")
 public class ObserverLabel extends Label implements Observer {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ObserverLabel.class);
-
     @FXML
     private SimpleStringProperty identifier = new SimpleStringProperty();
-    private ResourceBundle languageBundle = ResourceBundle.getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
-
 
     /**
      * Is applied to new text when text is changed.
@@ -88,15 +81,8 @@ public class ObserverLabel extends Label implements Observer {
             return;
         }
 
-        String text;
-        try {
-            languageBundle = ResourceBundle.getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
+        String text = LanguageSelection.getLocalized(getIdentifier());
 
-            text = languageBundle.getString(this.getIdentifier());
-        } catch (MissingResourceException ex) {
-            ExceptionPrinter.printHistory("Could not resolve Identifier[" + getIdentifier() + "]", ex, LOGGER, LogLevel.WARN);
-            text = getIdentifier();
-        }
         super.setText(applyOnNewText.apply(text));
     }
 
