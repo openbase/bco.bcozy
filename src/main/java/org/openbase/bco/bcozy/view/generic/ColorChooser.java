@@ -111,20 +111,15 @@ public class ColorChooser extends HBox implements DynamicPane {
         circle.layoutXProperty().bind(saturationProperty.multiply(COLOR_BOX_SIZE));
         circle.layoutYProperty().bind(Bindings.subtract(1, brightnessProperty).multiply(COLOR_BOX_SIZE));
 
-        final EventHandler<MouseEvent> colorContainerMouseHandler = event -> GlobalCachedExecutorService.submit(new Task() {
-            @Override
-            protected Object call() {
-                event.consume();
-                final double xMouse = event.getX();
-                final double yMouse = event.getY();
-                saturationProperty.set(clamp(xMouse / COLOR_BOX_SIZE));
-                brightnessProperty.set(1 - (clamp(yMouse / COLOR_BOX_SIZE)));
+        final EventHandler<MouseEvent> colorContainerMouseHandler = event -> {
+            final double xMouse = event.getX();
+            final double yMouse = event.getY();
+            saturationProperty.set(clamp(xMouse / COLOR_BOX_SIZE));
+            brightnessProperty.set(1 - (clamp(yMouse / COLOR_BOX_SIZE)));
 
-                updateColor();
-
-                return null;
-            }
-        });
+            updateColor();  
+            event.consume();
+        };
 
         colorRectContainer.setMinSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
         colorRectContainer.setPrefSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
@@ -148,24 +143,21 @@ public class ColorChooser extends HBox implements DynamicPane {
         hueValueSelector.setManaged(false);
         hueValueSelector.setEffect(dropShadow());
 
-        final EventHandler<MouseEvent> colorCircleMouseHandler = event -> GlobalCachedExecutorService.submit(new Task() {
-            @Override
-            protected Object call() {
-                double yMouse = event.getY();
-                double xMouse = event.getX();
+        final EventHandler<MouseEvent> colorCircleMouseHandler = event -> {
+            double yMouse = event.getY();
+            double xMouse = event.getX();
 
-                angle = (Math.toDegrees(Math.atan2(yMouse, xMouse)) + Constants.ROUND_ANGLE + Constants.RIGHT_ANGLE) % Constants.ROUND_ANGLE;
-                hueProperty.set(angle);
+            angle = (Math.toDegrees(Math.atan2(yMouse, xMouse)) + Constants.ROUND_ANGLE + Constants.RIGHT_ANGLE) % Constants.ROUND_ANGLE;
+            hueProperty.set(angle);
 
-                rectSelectorCoordinates();
-                hueValueSelector.setLayoutX(rectX);
-                hueValueSelector.setLayoutY(rectY);
-                hueValueSelector.setRotate(angle);
+            rectSelectorCoordinates();
+            hueValueSelector.setLayoutX(rectX);
+            hueValueSelector.setLayoutY(rectY);
+            hueValueSelector.setRotate(angle);
 
-                updateColor();
-                return null;
-            }
-        });
+            updateColor();
+            event.consume();
+        };
 
         hollowCircle.setOnMousePressed(colorCircleMouseHandler);
         hollowCircle.setOnMouseDragged(colorCircleMouseHandler);
@@ -190,7 +182,7 @@ public class ColorChooser extends HBox implements DynamicPane {
     }
 
     public void updateColor() {
-            selectedColorProperty.setValue(Color.hsb(hueProperty.get(), saturationProperty.get(), brightnessProperty.get()));
+        selectedColorProperty.setValue(Color.hsb(hueProperty.get(), saturationProperty.get(), brightnessProperty.get()));
     }
 
     @Override
@@ -235,7 +227,7 @@ public class ColorChooser extends HBox implements DynamicPane {
                     final double nextOffset = stops[i + 1].getOffset();
                     if (angle >= (offset * Constants.ROUND_ANGLE) && angle < (nextOffset * Constants.ROUND_ANGLE)) {
                         final double fraction = (angle - offset * Constants.ROUND_ANGLE)
-                                / ((nextOffset - offset) * Constants.ROUND_ANGLE);
+                            / ((nextOffset - offset) * Constants.ROUND_ANGLE);
                         color = interpolateColor(stops[i].getColor(), stops[i + 1].getColor(), fraction);
                     }
                 }
@@ -278,7 +270,7 @@ public class ColorChooser extends HBox implements DynamicPane {
         final Circle circle = new Circle(COLOR_BOX_SIZE / Constants.FIFTEEN, Color.web(Constants.WHITE, 0.0));
 
         circle.getStyleClass().add("circle-selector");
-        circle.setMouseTransparent(true);
+          circle.setMouseTransparent(true);
         circle.setStroke(Color.web(Constants.WHITE, 1.0));
         circle.setCache(true);
         circle.setManaged(false);
@@ -307,9 +299,9 @@ public class ColorChooser extends HBox implements DynamicPane {
         colorRectSaturation.setPrefSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
         colorRectSaturation.setMinSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
         colorRectSaturation.setBackground(new Background(new BackgroundFill(new LinearGradient(0.0, 0.0, 1.0, 0.0, true,
-                CycleMethod.NO_CYCLE, new Stop(0.0, Color.rgb(Constants.RGB255, Constants.RGB255,
-                        Constants.RGB255, 1.0)), new Stop(1, Color.rgb(Constants.RGB255, Constants.RGB255,
-                        Constants.RGB255, 0.0))), CornerRadii.EMPTY, Insets.EMPTY)));
+            CycleMethod.NO_CYCLE, new Stop(0.0, Color.rgb(Constants.RGB255, Constants.RGB255,
+                Constants.RGB255, 1.0)), new Stop(1, Color.rgb(Constants.RGB255, Constants.RGB255,
+                Constants.RGB255, 0.0))), CornerRadii.EMPTY, Insets.EMPTY)));
 
         return colorRectSaturation;
     }
@@ -320,8 +312,8 @@ public class ColorChooser extends HBox implements DynamicPane {
         colorRectBrightness.setPrefSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
         colorRectBrightness.setMinSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
         colorRectBrightness.setBackground(new Background(new BackgroundFill(new LinearGradient(0, 0, 0, 1, true,
-                CycleMethod.NO_CYCLE, new Stop(0, Color.rgb(0, 0, 0, 0)), new Stop(1, Color.rgb(0, 0, 0, 1))),
-                CornerRadii.EMPTY, Insets.EMPTY)));
+            CycleMethod.NO_CYCLE, new Stop(0, Color.rgb(0, 0, 0, 0)), new Stop(1, Color.rgb(0, 0, 0, 1))),
+            CornerRadii.EMPTY, Insets.EMPTY)));
 
         return colorRectBrightness;
     }
@@ -332,7 +324,7 @@ public class ColorChooser extends HBox implements DynamicPane {
         final Shape hollowCircle = Path.subtract(circleTall, circleSmall);
         final Stop[] hueFraction = hueStops();
         final ImagePattern imagePattern = new ImagePattern(colorSpectrumImage((int) COLOR_BOX_SIZE,
-                (int) COLOR_BOX_SIZE, hueFraction));
+            (int) COLOR_BOX_SIZE, hueFraction));
         hollowCircle.setLayoutX(circleTall.getRadius());
         hollowCircle.setLayoutY(circleTall.getRadius());
         hollowCircle.setFill(imagePattern);
@@ -342,8 +334,8 @@ public class ColorChooser extends HBox implements DynamicPane {
 
     private void rectSelectorCoordinates() {
         rectX = Math.round(COLOR_BOX_SIZE / 2.0 + (COLOR_BOX_SIZE - hueValueSelector.getHeight()) / 2.0
-                * Math.cos(Math.toRadians((angle + Constants.OBTUSE_ANGLE_270) % Constants.ROUND_ANGLE)));
+            * Math.cos(Math.toRadians((angle + Constants.OBTUSE_ANGLE_270) % Constants.ROUND_ANGLE)));
         rectY = Math.round(COLOR_BOX_SIZE / 2.0 + (COLOR_BOX_SIZE - hueValueSelector.getHeight()) / 2.0
-                * Math.sin(Math.toRadians((angle + Constants.OBTUSE_ANGLE_270) % Constants.ROUND_ANGLE)));
+            * Math.sin(Math.toRadians((angle + Constants.OBTUSE_ANGLE_270) % Constants.ROUND_ANGLE)));
     }
 }
