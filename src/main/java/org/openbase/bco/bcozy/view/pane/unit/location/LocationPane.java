@@ -35,6 +35,7 @@ import org.openbase.bco.bcozy.view.pane.unit.AbstractUnitPane;
 import org.openbase.bco.dal.remote.unit.location.LocationRemote;
 import org.openbase.jul.visual.javafx.transform.JFXColorToHSBColorTransformer;
 import rst.domotic.state.PowerStateType.PowerState;
+import rst.domotic.unit.UnitTemplateType;
 import rst.domotic.unit.location.LocationDataType.LocationData;
 
 /**
@@ -128,6 +129,7 @@ public class LocationPane extends AbstractUnitPane<LocationRemote, LocationData>
     @Override
     protected Future applyPrimaryActivationUpdate(final boolean activation) throws CouldNotPerformException {
 
-        return (activation) ? getUnitRemote().setPowerState(PowerState.State.ON) : getUnitRemote().setPowerState(PowerState.State.OFF);
+        return (activation) ? getUnitRemote().setPowerState(PowerState.State.ON, UnitTemplateType.UnitTemplate.UnitType.COLORABLE_LIGHT)
+            : getUnitRemote().setPowerState(PowerState.State.OFF, UnitTemplateType.UnitTemplate.UnitType.COLORABLE_LIGHT);
     }
 }

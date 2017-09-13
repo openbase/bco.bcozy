@@ -114,6 +114,7 @@ public class ColorChooser extends HBox implements DynamicPane {
         final EventHandler<MouseEvent> colorContainerMouseHandler = event -> GlobalCachedExecutorService.submit(new Task() {
             @Override
             protected Object call() {
+                event.consume();
                 final double xMouse = event.getX();
                 final double yMouse = event.getY();
                 saturationProperty.set(clamp(xMouse / COLOR_BOX_SIZE));
