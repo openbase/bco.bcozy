@@ -25,12 +25,10 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import org.openbase.bco.bcozy.model.LanguageSelection;
-import org.openbase.jul.exception.printer.ExceptionPrinter;
-import org.openbase.jul.exception.printer.LogLevel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.function.Function;
 
 /**
  * Created by hoestreich on 1/2/16.
@@ -40,12 +38,13 @@ import java.util.*;
 @DefaultProperty("identifier")
 public class ObserverButton extends Button implements Observer {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ObserverButton.class);
-
     @FXML
     private SimpleStringProperty identifier = new SimpleStringProperty();
-    private ResourceBundle languageBundle = ResourceBundle
-            .getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
+
+    /**
+     * Is applied to new text when text is changed.
+     */
+    private Function<String, String> applyOnNewText = Function.identity();
 
     /**
      * Constructor to create a button which is capable of observing language changes in the application.
@@ -85,14 +84,8 @@ public class ObserverButton extends Button implements Observer {
             return;
         }
 
-        try {
-            languageBundle = ResourceBundle.getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
-            super.setText(languageBundle.getString(this.getIdentifier()));
-        } catch (MissingResourceException ex) {
-            ExceptionPrinter.printHistory("Could not resolve Identifier[" + getIdentifier() + "]", ex, LOGGER,
-                    LogLevel.WARN);
-            super.setText(getIdentifier());
-        }
+        String text = LanguageSelection.getLocalized(getIdentifier());
+        super.setText(applyOnNewText.apply(text));
     }
 
     public String getIdentifier() {
@@ -105,5 +98,10 @@ public class ObserverButton extends Button implements Observer {
 
     public void setIdentifier(String identifier) {
         this.identifier.set(identifier != null ? identifier.trim() : null);
+    }
+
+    public void setApplyOnNewText(Function<String, String> applyOnNewText) {
+        this.applyOnNewText = applyOnNewText != null ? applyOnNewText : Function.identity();
+        this.update(null, null);
     }
 }

@@ -158,8 +158,8 @@ public class UnitsPaneController {
             Point3d vertex = calculateCoordinates(locationConfig);
 
             try {
-                final Future<Transform> transform = Registries.getLocationRegistry().getUnitTransformation(locationConfig,
-                    Registries.getLocationRegistry().getRootLocationConfig());
+                final Future<Transform> transform = Registries.getLocationRegistry().getUnitTransformationFuture(locationConfig,
+                        Registries.getLocationRegistry().getRootLocationConfig());
                 transform.get(Constants.TRANSFORMATION_TIMEOUT / 10, TimeUnit.MILLISECONDS).getTransform().transform(vertex);
                 Point2D coord = new Point2D(vertex.x * Constants.METER_TO_PIXEL, vertex.y * Constants.METER_TO_PIXEL);
                 // Abstract Pane not working with a config object, only with a remote one!
@@ -175,36 +175,40 @@ public class UnitsPaneController {
                     continue;
                 }
 
-                for (UnitRemote<?> u : nextEntry.getValue()) {
-                    if (nextEntry.getKey() == UnitType.COLORABLE_LIGHT) {
+                for (UnitRemote<?> unitRemote : nextEntry.getValue()) {
+                    if (nextEntry.getKey() != UnitType.COLORABLE_LIGHT &&
+                        nextEntry.getKey() != UnitType.DIMMABLE_LIGHT &&
+                        nextEntry.getKey() != UnitType.LIGHT &&
+                        nextEntry.getKey() != UnitType.POWER_SWITCH) {
+                        continue;
+                    }
 
-                        UnitConfig config = u.getConfig();
-                        if (config.getEnablingState().getValue() != EnablingStateType.EnablingState.State.ENABLED) {
-                            continue;
-                        }
-                        if (!config.getPlacementConfig().hasPosition()) {
-                            continue;
-                        }
+                    UnitConfig config = unitRemote.getConfig();
+                    if (config.getEnablingState().getValue() != EnablingStateType.EnablingState.State.ENABLED) {
+                        continue;
+                    }
+                    if (!config.getPlacementConfig().hasPosition()) {
+                        continue;
+                    }
 
-                        PoseType.Pose pose = config.getPlacementConfig().getPosition();
-                        try {
-                            final Future<Transform> transform = Registries.getLocationRegistry().getUnitTransformation(config,
+                    PoseType.Pose pose = config.getPlacementConfig().getPosition();
+                    try {
+                        final Future<Transform> transform = Registries.getLocationRegistry().getUnitTransformationFuture(config,
                                 Registries.getLocationRegistry().getRootLocationConfig());
-                            // transformation already in unit's coordinate space, therefore the zeros
-                            final Point3d unitVertex = new Point3d(0.0, 0.0, 1.0);
-                            transform.get(Constants.TRANSFORMATION_TIMEOUT / 10, TimeUnit.MILLISECONDS).
+                        // transformation already in unit's coordinate space, therefore the zeros
+                        final Point3d unitVertex = new Point3d(0.0, 0.0, 1.0);
+                        transform.get(Constants.TRANSFORMATION_TIMEOUT / 10, TimeUnit.MILLISECONDS).
                                 getTransform().transform(unitVertex);
-                            Point2D coord = new Point2D(unitVertex.x * Constants.METER_TO_PIXEL, unitVertex.y * Constants.METER_TO_PIXEL);
-                            // correction of position necessary because:
-                            // "pose" is left bottom of unit bounding box (y correction) and the unit button's center 
-                            // should be at the unit position (x correction) Attention: X and Y swapped in UnitButton 
-                            unitSymbolsPane.addUnit(u, coord.add(-0.5 * halfButtonSize, -halfButtonSize), locationConfig.getId());
+                        Point2D coord = new Point2D(unitVertex.x * Constants.METER_TO_PIXEL, unitVertex.y * Constants.METER_TO_PIXEL);
+                        // correction of position necessary because:
+                        // "pose" is left bottom of unit bounding box (y correction) and the unit button's center 
+                        // should be at the unit position (x correction) Attention: X and Y swapped in UnitButton 
+                        unitSymbolsPane.addUnit(unitRemote, coord.add(-0.5 * halfButtonSize, -halfButtonSize), locationConfig.getId());
 
-                        } catch (CouldNotPerformException | ExecutionException | TimeoutException ex) {
-                            // No exception throwing, because loop must continue it's work
-                            ExceptionPrinter.printHistory(ex, LOGGER);
+                    } catch (CouldNotPerformException | ExecutionException | TimeoutException ex) {
+                        // No exception throwing, because loop must continue it's work
+                        ExceptionPrinter.printHistory(ex, LOGGER);
 
-                        }
                     }
                 }
             }
@@ -213,7 +217,7 @@ public class UnitsPaneController {
 
     private Point3d calculateCoordinates(final UnitConfig locationConfig) {
         AxisAlignedBoundingBox3DFloatType.AxisAlignedBoundingBox3DFloat boundingBox
-            = locationConfig.getPlacementConfig().getShape().getBoundingBox();
+                = locationConfig.getPlacementConfig().getShape().getBoundingBox();
 
         double d = boundingBox.getDepth();
         double w = boundingBox.getWidth();

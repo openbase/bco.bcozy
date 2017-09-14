@@ -1,10 +1,10 @@
 package org.openbase.bco.bcozy.controller;
 
-import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.controls.JFXTreeTableColumn;
 import com.jfoenix.controls.JFXTreeTableView;
 import com.jfoenix.controls.RecursiveTreeItem;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -13,19 +13,18 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
+import org.controlsfx.control.textfield.CustomTextField;
 import org.openbase.bco.bcozy.BCozy;
 import org.openbase.bco.bcozy.model.LanguageSelection;
 import org.openbase.bco.bcozy.view.Constants;
+import org.openbase.bco.bcozy.view.ForegroundPane;
 import org.openbase.bco.bcozy.view.ObserverLabel;
-import org.openbase.bco.bcozy.view.mainmenupanes.SettingsPane;
+import org.openbase.bco.bcozy.view.SVGIcon;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
@@ -48,10 +47,12 @@ import static java.util.Objects.nonNull;
  * @author vdasilva
  */
 public class SettingsController {
+
     /**
      * Application Logger
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(MainMenuController.class);
+    public Accordion adminAccordion;
 
     @FXML
     private TabPane tabPane;
@@ -63,13 +64,11 @@ public class SettingsController {
     private Tab permissionTab;
 
     @FXML
-    private Tab registrationTab;
-
-    @FXML
     private JFXTreeTableView<RecursiveUnitConfig> unitsTable;
 
     @FXML
-    private JFXTextField filterInput;
+    private CustomTextField filterInput;
+//    private JFXTextField filterInput;
 
 
     @FXML
@@ -77,32 +76,30 @@ public class SettingsController {
 
     private Pane permissionPane;
 
-    private RegistrationController registrationController;
-
-    private SettingsPane settingsPane;
+    private UserSettingsController userSettingsController;
     private PermissionPaneController permissionPaneController;
     private JFXTreeTableColumn<RecursiveUnitConfig, String> typeColumn;
 
 
     final ObservableList<RecursiveUnitConfig> list = FXCollections.observableArrayList();
+    private final ForegroundPane foregroudPane;
 
 
-    /**
-     * Default Controller necessary for loading fxml files.
-     */
-    public SettingsController() {
-
+    public SettingsController(ForegroundPane foregroudPane) {
+        this.foregroudPane = foregroudPane;
     }
 
     @FXML
     public void initialize() {
         settingsTab.setGraphic(new ObserverLabel("settings"));
         permissionTab.setGraphic(new ObserverLabel("permissions"));
-        registrationTab.setGraphic(new ObserverLabel("registration"));
 
 
         fillTreeTableView();
-        this.setSettingsPane(new SettingsPane());
+
+
+        Pane userSettingsPane = loadUserSettingsPane();
+        settingsTab.setContent(userSettingsPane);
 
 
         permissionPane = loadPermissionPane();
@@ -115,21 +112,59 @@ public class SettingsController {
         this.tabPane.getStyleClass().addAll("detail-menu");
 
 
-        this.setRegistrationPane();
+        TitledPane registrationPane = new TitledPane("registration", this.loadRegistrationPane());
+        LanguageSelection.addObserverFor("registration", registrationPane::setText);
+        this.adminAccordion.getPanes().add(registrationPane);
+
+        TitledPane groupsPane = new TitledPane("usergroups", this.loadGroupsPane());
+        LanguageSelection.addObserverFor("usergroups", groupsPane::setText);
+        this.adminAccordion.getPanes().add(groupsPane);
 
         try {
             Registries.getUnitRegistry().addDataObserver((observable, unitRegistryData) -> {
-
-                        List<UnitConfigType.UnitConfig> unitConfigList = Registries.getUnitRegistry()
-                                .getUnitConfigs();
+                        List<UnitConfigType.UnitConfig> unitConfigList = Registries.getUnitRegistry().getUnitConfigs();
                         Platform.runLater(() -> fillTable(unitConfigList));
                     }
             );
-        } catch (CouldNotPerformException | InterruptedException ex) {
-            ex.printStackTrace();
+        } catch (CouldNotPerformException ex) {
+            ExceptionPrinter.printHistory(ex, LOGGER);
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
         }
 
     }
+
+    URL getFxmlURL(String filename) throws NullPointerException {
+        return Objects.requireNonNull(getClass().getClassLoader().getResource(filename),
+                filename + " not found");
+    }
+
+    private Pane loadUserSettingsPane() {
+        try {
+            URL url = getFxmlURL("UserSettingsPane.fxml");
+
+            FXMLLoader loader = new FXMLLoader(url);
+            loader.setControllerFactory((clazz) -> new UserSettingsController(foregroudPane));
+
+            Pane root = loader.load();
+
+            this.userSettingsController = loader.getController();
+            userSettingsController.initialize();
+
+            this.userSettingsController.getThemeChoice().setOnAction(event -> chooseTheme());
+
+            //Necessary to ensure that the first change is not missed by the ChangeListener
+            this.userSettingsController.getThemeChoice().getSelectionModel().select(0);
+
+            return root;
+        } catch (IOException ex) {
+            ExceptionPrinter.printHistory("Content could not be loaded", ex, LOGGER);
+            throw new UncheckedIOException(ex);
+        }
+
+
+    }
+
 
     private <T> void onPaneWidthChange(ObservableValue<? extends T> observable, T oldValue, T newValue) {
         double width = this.tabPane.getWidth();
@@ -164,10 +199,11 @@ public class SettingsController {
 
         unitsTable.getSelectionModel()
                 .selectedItemProperty()
-                .addListener(this::onSelectionChange)
-        ;
+                .addListener(this::onSelectionChange);
 
+        filterInput.setRight(new SVGIcon(FontAwesomeIcon.SEARCH, Constants.EXTRA_SMALL_ICON, true));
 
+        filterInput.promptTextProperty().setValue(new ObserverLabel("searchPlaceholder").getText());
         filterInput.textProperty().addListener((o, oldVal, newVal) -> {
             unitsTable.setPredicate(
                     user -> user.getValue().getUnit().getLabel().toLowerCase().contains(newVal.toLowerCase())
@@ -224,23 +260,23 @@ public class SettingsController {
         return column;
     }
 
-    public SettingsPane getSettingsPane() {
-        return settingsPane;
+    public UserSettingsController getUserSettingsController() {
+        return userSettingsController;
     }
 
     private void chooseTheme() {
         final ResourceBundle languageBundle = ResourceBundle
                 .getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
 
-        settingsPane.getThemeChoice().getSelectionModel().selectedIndexProperty()
+        userSettingsController.getThemeChoice().getSelectionModel().selectedIndexProperty()
                 .addListener(new ChangeListener<Number>() {
 
                     @Override
                     public void changed(final ObservableValue<? extends Number> observableValue, final Number number, final Number number2) {
-                        if (settingsPane.getAvailableThemes().get(number2.intValue())
+                        if (userSettingsController.getAvailableThemes().get(number2.intValue())
                                 .equals(languageBundle.getString(Constants.LIGHT_THEME_CSS_NAME))) {
                             BCozy.changeTheme(Constants.LIGHT_THEME_CSS);
-                        } else if (settingsPane.getAvailableThemes().get(number2.intValue())
+                        } else if (userSettingsController.getAvailableThemes().get(number2.intValue())
                                 .equals(languageBundle.getString(Constants.DARK_THEME_CSS_NAME))) {
                             BCozy.changeTheme(Constants.DARK_THEME_CSS);
                         }
@@ -248,39 +284,9 @@ public class SettingsController {
                 });
     }
 
-    private void chooseLanguage() {
-        settingsPane.getLanguageChoice().getSelectionModel().selectedIndexProperty()
-                .addListener(new ChangeListener<Number>() {
-
-                    @Override
-                    public void changed(final ObservableValue<? extends Number> observableValue, final Number number, final Number number2) {
-                        if (settingsPane.getAvailableLanguages().get(number2.intValue()).equals("English")) {
-                            LanguageSelection.getInstance().setSelectedLocale(new Locale("en", "US"));
-                        } else if (settingsPane.getAvailableLanguages().get(number2.intValue()).equals("Deutsch")) {
-                            LanguageSelection.getInstance().setSelectedLocale(new Locale("de", "DE"));
-                        }
-                    }
-                });
-    }
-
-    public void setSettingsPane(SettingsPane settingsPane) {
-        this.settingsPane = settingsPane;
-
-        this.settingsPane.getThemeChoice().setOnAction(event -> chooseTheme());
-        this.settingsPane.getLanguageChoice().setOnAction(event -> chooseLanguage());
-
-
-        //Necessary to ensure that the first change is not missed by the ChangeListener
-        this.settingsPane.getThemeChoice().getSelectionModel().select(0);
-        this.settingsPane.getLanguageChoice().getSelectionModel().select(0);
-
-        settingsTab.setContent(this.settingsPane);
-    }
-
     private AnchorPane loadPermissionPane() {
         try {
-            URL url = Objects.requireNonNull(getClass().getClassLoader().getResource("PermissionPane.fxml"),
-                    "PermissionPane.fxml not found");
+            URL url = getFxmlURL("PermissionPane.fxml");
 
             FXMLLoader loader = new FXMLLoader(url);
             AnchorPane anchorPane = loader.load();
@@ -290,27 +296,37 @@ public class SettingsController {
 
             return anchorPane;
         } catch (IOException ex) {
-            ex.printStackTrace();
             ExceptionPrinter.printHistory("Content could not be loaded", ex, LOGGER);
             throw new UncheckedIOException(ex);
         }
     }
 
-    private void setRegistrationPane() {
+    private Pane loadGroupsPane() {
+        try {
+            URL url = getFxmlURL("GroupsPane.fxml");
+
+            FXMLLoader loader = new FXMLLoader(url);
+            Pane anchorPane = loader.load();
+
+            return anchorPane;
+        } catch (IOException ex) {
+            ExceptionPrinter.printHistory("Content could not be loaded", ex, LOGGER);
+            throw new UncheckedIOException(ex);
+        }
+    }
+
+    private Pane loadRegistrationPane() {
         try {
             URL url = Objects.requireNonNull(getClass().getClassLoader().getResource("Registration.fxml"),
                     "Registration.fxml not found");
 
             FXMLLoader loader = new FXMLLoader(url);
             loader.setControllerFactory(clazz -> new RegistrationController());
-            loader.load();
+            Pane root = loader.load();
 
-            this.registrationController = loader.getController();
-
-            registrationTab.setContent(registrationController.getRoot());
+            return root;
 
         } catch (IOException ex) {
-            ex.printStackTrace();
             ExceptionPrinter.printHistory("Content could not be loaded", ex, LOGGER);
             throw new UncheckedIOException(ex);
         }
@@ -339,8 +355,7 @@ public class SettingsController {
 
     }
 
-    private class MethodRefCellValueFactory<S, T> implements Callback<TreeTableColumn.CellDataFeatures<S, T>,
-            ObservableValue<T>> {
+    private class MethodRefCellValueFactory<S, T> implements Callback<TreeTableColumn.CellDataFeatures<S, T>, ObservableValue<T>> {
 
         Function<S, T> supplier;
 

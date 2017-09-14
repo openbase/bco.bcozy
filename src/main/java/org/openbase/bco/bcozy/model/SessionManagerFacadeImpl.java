@@ -4,10 +4,13 @@ import com.google.protobuf.ProtocolStringList;
 import org.openbase.bco.authentication.lib.SessionManager;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.VerificationFailedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.domotic.unit.UnitConfigType;
+import rst.domotic.unit.UnitConfigType.UnitConfig;
 import rst.domotic.unit.UnitTemplateType;
+import rst.domotic.unit.authorizationgroup.AuthorizationGroupConfigType.AuthorizationGroupConfig;
 import rst.domotic.unit.user.UserConfigType;
 
 import java.util.List;
@@ -15,9 +18,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import org.openbase.jul.exception.VerificationFailedException;
-import rst.domotic.unit.UnitConfigType.UnitConfig;
-import rst.domotic.unit.authorizationgroup.AuthorizationGroupConfigType.AuthorizationGroupConfig;
 
 /**
  * @author vdasilva
@@ -32,7 +32,8 @@ public class SessionManagerFacadeImpl implements SessionManagerFacade {
     }
 
     @Override
-    public void registerUser(final NewUser user, final String plainPassword, boolean asAdmin, List<UnitConfigType.UnitConfig> groups) throws CouldNotPerformException {
+    public void registerUser(final UserConfigType.UserConfig user, final String plainPassword, boolean asAdmin, List<UnitConfigType
+            .UnitConfig> groups) throws CouldNotPerformException {
         try {
             tryRegisterUser(user, plainPassword, asAdmin, groups);
         } catch (CouldNotPerformException | ExecutionException | InterruptedException | TimeoutException ex) {
@@ -40,13 +41,13 @@ public class SessionManagerFacadeImpl implements SessionManagerFacade {
         }
     }
 
-    private void tryRegisterUser(NewUser user, String plainPassword, boolean asAdmin, List<UnitConfigType.UnitConfig> groups) throws CouldNotPerformException, ExecutionException, InterruptedException, TimeoutException {
+    private void tryRegisterUser(UserConfigType.UserConfig user, String plainPassword, boolean asAdmin, List<UnitConfigType.UnitConfig> groups) throws CouldNotPerformException, ExecutionException, InterruptedException, TimeoutException {
 
         UnitConfigType.UnitConfig unitConfig = tryCreateUser(user);
 
         try {
             SessionManager.getInstance().registerUser(
-                    unitConfig.getUserConfig().getUserName()/*unitConfig.getId()*/,
+                    unitConfig.getId(),
                     plainPassword,
                     asAdmin);
         } catch (CouldNotPerformException ex) {
@@ -65,7 +66,7 @@ public class SessionManagerFacadeImpl implements SessionManagerFacade {
                 tryRemoveFromGroup(group, unitConfig.getId());
             }
             // ... from the credential storage...
-            SessionManager.getInstance().removeUser(unitConfig.getUserConfig().getUserName()/*unitConfig.getId()*/);
+            SessionManager.getInstance().removeUser(unitConfig.getId()/*unitConfig.getId()*/);
 
             // ... and from the registry.
             Registries.getUserRegistry().removeUserConfig(unitConfig);
@@ -73,18 +74,12 @@ public class SessionManagerFacadeImpl implements SessionManagerFacade {
         }
     }
 
-    private UnitConfigType.UnitConfig tryCreateUser(NewUser user) throws CouldNotPerformException, InterruptedException, ExecutionException, TimeoutException {
+    private UnitConfigType.UnitConfig tryCreateUser(UserConfigType.UserConfig user) throws CouldNotPerformException, InterruptedException, ExecutionException, TimeoutException {
 
         UnitConfigType.UnitConfig.Builder builder = UnitConfigType.UnitConfig.newBuilder();
-        UserConfigType.UserConfig.Builder userConfigBuilder = UserConfigType.UserConfig.newBuilder();
-
-        userConfigBuilder = userConfigBuilder
-                .setUserName(user.getUsername())
-                .setFirstName(user.getFirstName())
-                .setLastName(user.getLastName());
 
         UnitConfigType.UnitConfig unitConfig = builder
-                .setUserConfig(userConfigBuilder.build())
+                .setUserConfig(user)
                 .setType(UnitTemplateType.UnitTemplate.UnitType.USER)//TODO: right way?
                 .build();
 
@@ -123,6 +118,10 @@ public class SessionManagerFacadeImpl implements SessionManagerFacade {
         try {
             // Registries.getUserRegistry().getUserIdByUserName(username);
 
+            if (username.isEmpty()){
+                throw new VerificationFailedException("Username must not be empty!");
+            }
+
             // ##### reimplemented because not included in current master api.
             for (final UnitConfig userUnitConfig : Registries.getUserRegistry().getUserConfigs()) {
                 if (userUnitConfig.getUserConfig().getUserName().equals(username)) {
@@ -153,5 +152,8 @@ public class SessionManagerFacadeImpl implements SessionManagerFacade {
     public void verifyMailAddress(String mailAddress) throws VerificationFailedException {
         //Todo check validity
         // throw new VerificationFailedException("not valid because of ...");
+        if (mailAddress.isEmpty()) {
+            throw new VerificationFailedException("E-Mail Adress must not be empty!");
+        }
     }
 }

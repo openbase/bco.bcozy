@@ -7,6 +7,9 @@
 <?import javafx.scene.layout.AnchorPane?>
 
 <?import javafx.scene.layout.VBox?>
+<?import org.controlsfx.control.textfield.CustomTextField?>
+<?import javafx.scene.control.Accordion?>
+<?import org.openbase.bco.bcozy.view.ObserverLabel?>
 <AnchorPane fx:id="settingsPaneParent" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="org.openbase.bco.bcozy.controller.SettingsController">
     <children>
@@ -23,8 +26,8 @@
                         <VBox fx:id="permissionPaneParent" minHeight="0.0" minWidth="0.0" prefHeight="180.0"
                               prefWidth="200.0">
                             <children>
-                                <JFXTextField fx:id="filterInput" layoutX="433.0" layoutY="2.0" prefHeight="13.0"
-                                              prefWidth="161.0"/>
+                                <CustomTextField fx:id="filterInput" layoutX="433.0" layoutY="2.0" prefHeight="13.0"
+                                                 prefWidth="161.0"></CustomTextField>
                                 <JFXTreeTableView fx:id="unitsTable" AnchorPane.bottomAnchor="300.0"
                                                   AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
                                                   AnchorPane.topAnchor="0.0"/>
@@ -33,9 +36,13 @@
                         </VBox>
                     </content>
                 </Tab>
-                <Tab fx:id="registrationTab">
-                    <content>
-                    </content>
+                <Tab>
+                    <graphic>
+                        <ObserverLabel>administration</ObserverLabel>
+                    </graphic>
+                    <Accordion fx:id="adminAccordion">
+
+                    </Accordion>
                 </Tab>
             </tabs>
         </TabPane>

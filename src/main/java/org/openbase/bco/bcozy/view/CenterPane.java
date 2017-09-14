@@ -29,17 +29,15 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import org.openbase.bco.bcozy.controller.CenterPaneController;
 import org.openbase.bco.bcozy.controller.SettingsController;
-import org.openbase.bco.bcozy.view.mainmenupanes.SettingsPane;
+import org.openbase.bco.bcozy.controller.UserSettingsController;
+import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.NotAvailableException;
+import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import org.openbase.jul.exception.CouldNotPerformException;
-import org.openbase.jul.exception.NotAvailableException;
-import org.openbase.jul.exception.printer.ExceptionPrinter;
 
 /**
  * Created by hoestreich on 11/26/15.
@@ -53,16 +51,20 @@ public class CenterPane extends StackPane {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(CenterPane.class);
 
-    private SettingsPane settingsPane;
-    private final Pane settingsMenu;
+    private UserSettingsController userSettingsController;
 
+    private Pane settingsMenu;
+
+    private final ForegroundPane foregroundPane;
+    
     // switched by floating button, is bound to the layer management of the location pane
     public final ObjectProperty<CenterPaneController.State> appStateProperty;
 
     /**
      * Constructor for the center pane.
      */
-    public CenterPane(final double height) {
+    public CenterPane(final double height, final ForegroundPane foregroundPane) {
+        this.foregroundPane = foregroundPane;
 
         appStateProperty = new SimpleObjectProperty<>(CenterPaneController.State.MOVEMENT);
         
@@ -79,31 +81,23 @@ public class CenterPane extends StackPane {
         }); 
         viewModes.addElement(MaterialIcon.VISIBILITY, () -> {
             appStateProperty.set(CenterPaneController.State.SETTINGS);
-        });
-        final FloatingButton settingsBtn = new FloatingButton(new SVGIcon(MaterialDesignIcon.SETTINGS, Constants.MIDDLE_ICON, true));
-
-        this.setAlignment(settingsBtn, Pos.TOP_RIGHT);
-
-        settingsBtn.setOnAction(e -> toggleSettings());
+        }); 
+      
+        //final FloatingButton settingsBtn = new FloatingButton(new SVGIcon(MaterialDesignIcon.SETTINGS, Constants.MIDDLE_ICON, true));
+        //this.setAlignment(settingsBtn, Pos.TOP_RIGHT);
+        //settingsBtn.setOnAction(e -> toggleSettings());
 
         // Styling components with CSS
         this.getStyleClass().addAll("padding-small");
 
         this.setPickOnBounds(false);
-        this.getChildren().addAll(viewModes, settingsBtn);
+        this.getChildren().addAll(viewModes);
 
         this.setMinHeight(height);
         this.setPrefHeight(height);
     }
     
 
-    private void toggleSettings() {
-        if (this.getChildren().contains(settingsMenu)) {
-            this.getChildren().remove(settingsMenu);
-        } else {
-            this.getChildren().add(0, settingsMenu);
-        }
-    }
 
     private Pane loadSettingsMenu(final double height) {
         try {
@@ -113,10 +107,12 @@ public class CenterPane extends StackPane {
             }
 
             FXMLLoader loader = new FXMLLoader(url);
+            loader.setControllerFactory((clazz) -> new SettingsController(foregroundPane));
+
             AnchorPane anchorPane = loader.load();
 
             final SettingsController settingsController = (SettingsController) loader.getController();
-            settingsPane = settingsController.getSettingsPane();
+            userSettingsController = settingsController.getUserSettingsController();
 
             this.setMinHeight(height);
             this.setPrefHeight(height);
@@ -132,7 +128,11 @@ public class CenterPane extends StackPane {
         }
     }
 
-    public SettingsPane getSettingsPane() {
-        return settingsPane;
+    public UserSettingsController getSettingsPane() {
+        return userSettingsController;
+    }
+
+    public Pane getSettingsMenu() {
+        return settingsMenu;
     }
 }
