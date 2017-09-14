@@ -18,7 +18,6 @@ package org.openbase.bco.bcozy.view.pane.unit.location;
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
-import org.openbase.bco.bcozy.view.pane.unit.*;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.scene.paint.Color;
 import org.openbase.bco.bcozy.view.Constants;
@@ -35,7 +34,7 @@ import org.openbase.bco.bcozy.view.pane.unit.AbstractUnitPane;
 import org.openbase.bco.dal.remote.unit.location.LocationRemote;
 import org.openbase.jul.visual.javafx.transform.JFXColorToHSBColorTransformer;
 import rst.domotic.state.PowerStateType.PowerState;
-import rst.domotic.unit.UnitTemplateType;
+import rst.domotic.unit.UnitTemplateType.UnitTemplate.UnitType;
 import rst.domotic.unit.location.LocationDataType.LocationData;
 
 /**
@@ -129,7 +128,7 @@ public class LocationPane extends AbstractUnitPane<LocationRemote, LocationData>
     @Override
     protected Future applyPrimaryActivationUpdate(final boolean activation) throws CouldNotPerformException {
 
-        return (activation) ? getUnitRemote().setPowerState(PowerState.State.ON, UnitTemplateType.UnitTemplate.UnitType.COLORABLE_LIGHT)
-            : getUnitRemote().setPowerState(PowerState.State.OFF, UnitTemplateType.UnitTemplate.UnitType.COLORABLE_LIGHT);
+        return (activation) ? getUnitRemote().setPowerState(PowerState.State.ON, UnitType.LIGHT)
+            : getUnitRemote().setPowerState(PowerState.State.OFF, UnitType.LIGHT);
     }
 }
