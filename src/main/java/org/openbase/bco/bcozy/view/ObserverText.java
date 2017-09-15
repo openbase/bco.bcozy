@@ -18,28 +18,40 @@
  */
 package org.openbase.bco.bcozy.view;
 
+import javafx.beans.DefaultProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.fxml.FXML;
 import javafx.scene.text.Text;
 import org.openbase.bco.bcozy.model.LanguageSelection;
-
-import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.Observable;
-import java.util.Observer;
-import java.util.ResourceBundle;
-import org.openbase.jul.exception.printer.ExceptionPrinter;
-import org.openbase.jul.exception.printer.LogLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Observable;
+import java.util.Observer;
+import java.util.function.Function;
+
 /**
  * Created by agatting on 13.04.16.
+ * @author vdasilva
  */
+@DefaultProperty("identifier")
 public class ObserverText extends Text implements Observer {
 
     protected final Logger LOGGER = LoggerFactory.getLogger(ObserverText.class);
 
-    private String identifier;
-    private ResourceBundle languageBundle = ResourceBundle.getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
+    @FXML
+    private SimpleStringProperty identifier = new SimpleStringProperty();
+
+    /**
+     * Is applied to new text when text is changed.
+     */
+    private Function<String, String> applyOnNewText = Function.identity();
+
+    public ObserverText() {
+        super();
+        identifier.addListener((observable, oldValue, newValue) -> update(null, null));
+        LanguageSelection.getInstance().addObserver(this);
+    }
 
     /**
      * Constructor to create a text which is capable of observing language changes in the application.
@@ -48,32 +60,44 @@ public class ObserverText extends Text implements Observer {
      * actual text
      */
     public ObserverText(final String identifier) {
-        super();
+        this();
         setIdentifier(identifier);
-        LanguageSelection.getInstance().addObserver(this);
-    }
-
-    /**
-     * Sets the new identifier for this ObserverText.
-     *
-     * @param identifier identifier
-     */
-    public void setIdentifier(final String identifier) {
-        this.identifier = identifier;
-        languageBundle = ResourceBundle.getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
-
-        try {
-            super.setText(languageBundle.getString(identifier));
-        } catch (MissingResourceException ex) {
-            if (!identifier.equals(Constants.DUMMY_LABEL)) {
-                ExceptionPrinter.printHistory("Could not resolve Identifier [" + identifier + "]!", ex, LOGGER, LogLevel.WARN);
-            }
-            super.setText(identifier);
-        }
     }
 
     @Override
     public void update(final Observable observable, final Object arg) {
-        setIdentifier(identifier);
+        update();
+    }
+
+    public void update() {
+        if (getIdentifier() == null) {
+            return;
+        }
+
+        String text = LanguageSelection.getLocalized(getIdentifier());
+
+        super.setText(applyOnNewText.apply(text));
+    }
+
+    /**
+     * Sets the new identifier for this ObserverLabel.
+     *
+     * @param identifier identifier
+     */
+    public void setIdentifier(String identifier) {
+        this.identifier.set(identifier);
+    }
+
+    public String getIdentifier() {
+        return identifier.get();
+    }
+
+    public SimpleStringProperty identifierProperty() {
+        return identifier;
+    }
+
+    public void setApplyOnNewText(Function<String, String> applyOnNewText) {
+        this.applyOnNewText = applyOnNewText != null ? applyOnNewText : Function.identity();
+        this.update();
     }
 }

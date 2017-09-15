@@ -4,6 +4,7 @@
     -small-label-color: slategray;
 
     -bg-color: rgba(255.0, 255.0, 255.0, 0.9);
+    -placeholder-color: rgba(0, 0, 0, 0.7);
     -bg-accent-color: slategray;
     -controls-color: rgba(0.0, 0.0, 0.0, 0.9);
     -highlight-color: rgba(94.0, 203.0, 234.0, 1.0);
@@ -21,12 +22,21 @@
     -fx-background-color: -bg-color;
     -choicebox-bg: lightgray;
     -tab-bg-color: lightgray;
+    -text-field-focused-bg: lightgray;
+    -table-background: white;
+    -table-text-color: black;
+    -table-background-odd: lightgray;
+    -table-border-color: lightgray;
+
+    -success-color: limegreen;
+    -error-color: crimson;
 
     /*default font */
     /*-fx-font-family: 'Helvetica Neue';*/
     -fx-font-family: "Roboto";
     -fx-font-size: 16.0px;
 }
+
 .bordered-choice-box {
     -fx-border-color: -border-color !important;
 }

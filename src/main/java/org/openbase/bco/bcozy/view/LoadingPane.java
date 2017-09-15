@@ -24,12 +24,15 @@ import javafx.geometry.Pos;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import org.openbase.bco.bcozy.BCozy;
+import org.openbase.jul.exception.NotAvailableException;
 
 /**
  * Created by tmichalski on 14.01.16.
  */
 public class LoadingPane extends BorderPane {
 
+    
+    private static LoadingPane instance;
     private final VBox centerPane;
     private final ObserverLabel textLabel;
     private final JFXSpinner progressSpinner;
@@ -53,6 +56,14 @@ public class LoadingPane extends BorderPane {
         this.centerPane.getChildren().addAll(progressSpinner, textLabel);
 
         this.setCenter(this.centerPane);
+        instance = this;
+    }
+
+    public static LoadingPane getInstance() throws NotAvailableException {
+        if(instance == null) {
+            throw new NotAvailableException(LoadingPane.class);
+        }
+        return instance;
     }
 
     /**

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import org.controlsfx.control.textfield.CustomTextField?>
+<?import org.openbase.bco.bcozy.view.Constants?>
+<?import org.openbase.bco.bcozy.view.ObserverButton?>
+<?import org.openbase.bco.bcozy.view.ObserverLabel?>
+<HBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:id="root" fx:controller="org.openbase.bco.bcozy.controller.AuthorizationGroupController">
+    <spacing>
+        <Constants fx:constant="INSETS"/>
+    </spacing>
+
+
+    <TableView fx:id="groupsTable" prefWidth="${root.width}">
+        <columns>
+            <TableColumn fx:id="nameColumn"/>
+            <TableColumn fx:id="removeColumn"/>
+        </columns>
+    </TableView>
+
+    <VBox spacing="10.0" prefWidth="${root.width}">
+
+        <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">addGroup</ObserverLabel>
+        <CustomTextField fx:id="label" onAction="#addGroup"/>
+
+        <BorderPane>
+            <right>
+                <ObserverButton fx:id="saveButton" styleClass="transparent-button" onAction="#addGroup">save</ObserverButton>
+            </right>
+        </BorderPane>
+    </VBox>
+</HBox>
