@@ -290,7 +290,7 @@ public class UserManagementController {
 
         try {
             UnitConfig unitConfig = Registries.getUserRegistry()
-                    .getUserConfigByUserName(selectedUser.getUserName())
+                    .getUserConfigById(selectedUser.getUserId())
                     .toBuilder()
                     .setUserConfig(selectedUser.getUserConfig())
                     .build();
