@@ -27,7 +27,8 @@
         <VBox prefWidth="${root.width}">
             <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">username</ObserverLabel>
             <TextField fx:id="username"/>
-            <ObserverLabel fx:id="usernameEmptyLabel" visible="false" styleClass="xtra-small-label error-label" alignment="BOTTOM_LEFT">
+            <ObserverLabel fx:id="usernameEmptyLabel" visible="false" styleClass="xtra-small-label error-label"
+                           alignment="BOTTOM_LEFT">
                 mandatory
             </ObserverLabel>
         </VBox>
@@ -52,7 +53,8 @@
         <VBox prefWidth="${root.width}">
             <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">email</ObserverLabel>
             <TextField fx:id="mail"/>
-            <ObserverLabel fx:id="mailEmptyLabel" visible="false" styleClass="xtra-small-label error-label" alignment="BOTTOM_LEFT">
+            <ObserverLabel fx:id="mailEmptyLabel" visible="false" styleClass="xtra-small-label error-label"
+                           alignment="BOTTOM_LEFT">
                 mandatory
             </ObserverLabel>
         </VBox>
@@ -92,9 +94,14 @@
             </HBox>
         </center>
         <right>
-            <ObserverButton fx:id="registerBtn" onAction="#register">
-                register
-            </ObserverButton>
+            <HBox spacing="30.0">
+                <ObserverButton fx:id="deleteButton" onAction="#delete" styleClass="transparent-button">
+                    removeUser
+                </ObserverButton>
+                <ObserverButton fx:id="saveBtn" onAction="#save" styleClass="transparent-button">
+                    register
+                </ObserverButton>
+            </HBox>
         </right>
     </BorderPane>
 

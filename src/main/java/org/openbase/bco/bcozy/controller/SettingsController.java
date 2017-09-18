@@ -112,8 +112,8 @@ public class SettingsController {
         this.tabPane.getStyleClass().addAll("detail-menu");
 
 
-        TitledPane registrationPane = new TitledPane("registration", this.loadRegistrationPane());
-        LanguageSelection.addObserverFor("registration", registrationPane::setText);
+        TitledPane registrationPane = new TitledPane("userManagement", this.loadRegistrationPane());
+        LanguageSelection.addObserverFor("userManagement", registrationPane::setText);
         this.adminAccordion.getPanes().add(registrationPane);
 
         TitledPane groupsPane = new TitledPane("usergroups", this.loadGroupsPane());
