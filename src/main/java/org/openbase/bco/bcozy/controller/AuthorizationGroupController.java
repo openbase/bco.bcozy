@@ -57,6 +57,8 @@ public class AuthorizationGroupController {
 
     private ObservableList<UnitConfigType.UnitConfig> groups = AuthorizationGroups.getAuthorizationGroups();
 
+    private UnitConfigType.UnitConfig lastSelectedUnit;
+
     @FXML
     public void initialize() {
 
@@ -92,27 +94,30 @@ public class AuthorizationGroupController {
      * @param groups the groups to show
      */
     private void showGroups(List<UnitConfigType.UnitConfig> groups) {
-        UnitConfigType.UnitConfig selectedUnit = groupsTable.getSelectionModel().selectedItemProperty().get();
-
+        if (groupsTable.getSelectionModel().getSelectedItem() != null) {
+            lastSelectedUnit = groupsTable.getSelectionModel().getSelectedItem();
+        }
         groupsTable.setItems(FXCollections.observableArrayList(groups));
 
-        reselectUnit(selectedUnit);
+        reselectLastUnit();
     }
 
+
     /**
-     * Selects the unit. Used after a list-update, which deselects the unit.
-     *
-     * @param selectedUnit the unit to select
+     * Selects the last selected unit. Used after a list-update, which deselects the unit.
      */
-    private void reselectUnit(UnitConfigType.UnitConfig selectedUnit) {
-        if (selectedUnit != null) {
-            String id = selectedUnit.getId();
+    private void reselectLastUnit() {
+        if (lastSelectedUnit != null) {
+            String id = lastSelectedUnit.getId();
             for (UnitConfigType.UnitConfig group : groups) {
                 if (group.getId().equals(id)) {
                     groupsTable.getSelectionModel().select(group);
+                    return;
                 }
             }
         }
+        groupsTable.getSelectionModel().select(null);
+
     }
 
     public Pane getRoot() {
@@ -120,7 +125,7 @@ public class AuthorizationGroupController {
     }
 
     private void removeGroup(UnitConfigType.UnitConfig group) {
-        if (!Dialog.getConfirmation("removeGroup.confirmation",group.getLabel())) {
+        if (!Dialog.getConfirmation("removeGroup.confirmation", group.getLabel())) {
             return;
         }
 
@@ -147,7 +152,8 @@ public class AuthorizationGroupController {
     private void addGroup() {
 
         try {
-            AuthorizationGroups.addAuthorizationGroup(label.getText());
+            lastSelectedUnit = AuthorizationGroups.addAuthorizationGroup(label.getText());
+            groupsTable.getSelectionModel().select(null);
             label.clear();
             InfoPane.info("saveSuccess")
                     .backgroundColor(Color.GREEN)

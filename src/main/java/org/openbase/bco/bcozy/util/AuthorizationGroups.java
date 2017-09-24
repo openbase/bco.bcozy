@@ -122,11 +122,10 @@ public final class AuthorizationGroups {
         }
     }
 
-    public static void addAuthorizationGroup(String groupName) throws InterruptedException, CouldNotPerformException {
+    public static UnitConfigType.UnitConfig addAuthorizationGroup(String groupName) throws InterruptedException, CouldNotPerformException {
         try {
-
-            tryAddAuthorizationGroup(groupName).get(5, TimeUnit.SECONDS);
-
+            UnitConfigType.UnitConfig addedGroup = tryAddAuthorizationGroup(groupName).get(5, TimeUnit.SECONDS);
+            return addedGroup;
         } catch (CouldNotPerformException | TimeoutException | ExecutionException ex) {
             throw new CouldNotPerformException("Could not add authorization group.", ex);
         }
