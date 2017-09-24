@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Button?>
+<?import org.openbase.bco.bcozy.view.ObserverButton?>
+<?import javafx.scene.layout.HBox?>
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.openbase.bco.bcozy.controller.group.AuthorizationGroupUsersController">
+
+    <TableView fx:id="userTable">
+        <columns>
+            <TableColumn fx:id="usernameColumn" resizable="false">
+                <cellValueFactory>
+                    <PropertyValueFactory property="name"/>
+                </cellValueFactory>
+            </TableColumn>
+            <TableColumn fx:id="removeUserColumn" resizable="false"/>
+        </columns>
+    </TableView>
+
+    <HBox>
+        <ComboBox fx:id="availableUsersComboBox"/>
+
+        <ObserverButton styleClass="transparent-button" fx:id="addUserButton" identifier="addUser" onAction="#addUser"/>
+    </HBox>
+
+
+</VBox>

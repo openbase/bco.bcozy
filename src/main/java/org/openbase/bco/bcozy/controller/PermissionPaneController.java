@@ -3,7 +3,6 @@ package org.openbase.bco.bcozy.controller;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -80,7 +79,7 @@ public class PermissionPaneController {
         permissionsColumn.setGraphic(new ObserverLabel("permissions"));
         usergroupColumn.widthProperty().addListener(this::onColumnWidthChange);
 //        permissionsColumn.widthProperty().addListener(this::onColumnWidthChange);
-        
+
         readRights.setGraphic(new ObserverLabel("readRight"));
         writeRights.setGraphic(new ObserverLabel("writeRight"));
         accessRights.setGraphic(new ObserverLabel("accessRight"));
@@ -92,13 +91,9 @@ public class PermissionPaneController {
 
 
         newGroupChoiceBox.setConverter(AuthorizationGroups.stringConverter(groups));
+        newGroupChoiceBox.itemsProperty().addListener((observable, oldValue, newValue) -> preselectGroupChoiceBoxValue());
         newGroupChoiceBox.setItems(groups);
         newGroupChoiceBox.setPrefWidth(-1.0);
-        preselectGroupChoiceBoxValue();
-
-        groups.addListener((ListChangeListener.Change<? extends UnitConfigType.UnitConfig> c)
-                -> preselectGroupChoiceBoxValue()
-        );
 
         usergroupColumn.setCellValueFactory(param -> {
                     for (UnitConfigType.UnitConfig group : groups) {
@@ -161,7 +156,7 @@ public class PermissionPaneController {
         usergroupColumn.setPrefWidth(width / 2);
         permissionsColumn.setPrefWidth(width / 2);
     }
-    
+
     /**
      * Dynamically adjust column widths to fill whole space once the width of one column was changed.
      *

@@ -30,8 +30,11 @@
 
         <BorderPane>
             <right>
-                <ObserverButton fx:id="saveButton" styleClass="transparent-button" onAction="#addGroup">save</ObserverButton>
+                <ObserverButton fx:id="saveButton" styleClass="transparent-button" onAction="#addGroup">save
+                </ObserverButton>
             </right>
         </BorderPane>
+
+        <fx:include source="GroupUsersPane.fxml" prefWidth="${root.width}" fx:id="authorizationGroupUsers"/>
     </VBox>
 </HBox>

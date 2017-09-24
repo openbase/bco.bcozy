@@ -2,14 +2,17 @@ package org.openbase.bco.bcozy.controller;
 
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.util.Callback;
 import javafx.util.Duration;
+import org.openbase.bco.bcozy.controller.group.AuthorizationGroupUsersController;
 import org.openbase.bco.bcozy.model.LanguageSelection;
 import org.openbase.bco.bcozy.util.AuthorizationGroups;
 import org.openbase.bco.bcozy.util.ExceptionHelper;
@@ -22,6 +25,8 @@ import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.domotic.unit.UnitConfigType;
+
+import java.util.List;
 
 /**
  * @author vdasilva
@@ -37,12 +42,15 @@ public class AuthorizationGroupController {
     private TextField label;
     @FXML
     private TableColumn<UnitConfigType.UnitConfig, String> removeColumn;
-
     @FXML
     private TableColumn<UnitConfigType.UnitConfig, String> nameColumn;
-
     @FXML
     private TableView<UnitConfigType.UnitConfig> groupsTable;
+
+    @FXML
+    private AuthorizationGroupUsersController authorizationGroupUsersController;
+    @FXML
+    private VBox authorizationGroupUsers;
 
     @FXML
     private Pane root;
@@ -57,9 +65,10 @@ public class AuthorizationGroupController {
         nameColumn.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getLabel()));
         LanguageSelection.addObserverFor("groupLabel", (locale, text) -> nameColumn.setText(text));
 
-
-        removeColumn.setCellFactory(cellFactory());
-
+        removeColumn.setCellFactory(new ButtonTableCellFactory<>(
+                (group, cellIndex) -> removeGroup(group),
+                () -> new SVGIcon(FontAwesomeIcon.TIMES, Constants.EXTRA_SMALL_ICON, true)
+        ));
 
         groupsTable.widthProperty().addListener((observable, oldValue, newValue) ->
                 nameColumn.setPrefWidth(newValue.doubleValue() - removeColumn.getWidth() - 2)
@@ -70,42 +79,44 @@ public class AuthorizationGroupController {
         removeColumn.setResizable(false);
         groupsTable.setItems(groups);
 
+        authorizationGroupUsersController.selectedGroupProperty().bind(groupsTable.getSelectionModel().selectedItemProperty());
+
         LanguageSelection.addObserverFor("groupLabel", (locale, text) -> label.setPromptText(text));
+
+        AuthorizationGroups.addListObserver(this::showGroups);
+    }
+
+    /**
+     * Displays the groups in the group-table.
+     *
+     * @param groups the groups to show
+     */
+    private void showGroups(List<UnitConfigType.UnitConfig> groups) {
+        UnitConfigType.UnitConfig selectedUnit = groupsTable.getSelectionModel().selectedItemProperty().get();
+
+        groupsTable.setItems(FXCollections.observableArrayList(groups));
+
+        reselectUnit(selectedUnit);
+    }
+
+    /**
+     * Selects the unit. Used after a list-update, which deselects the unit.
+     *
+     * @param selectedUnit the unit to select
+     */
+    private void reselectUnit(UnitConfigType.UnitConfig selectedUnit) {
+        if (selectedUnit != null) {
+            String id = selectedUnit.getId();
+            for (UnitConfigType.UnitConfig group : groups) {
+                if (group.getId().equals(id)) {
+                    groupsTable.getSelectionModel().select(group);
+                }
+            }
+        }
     }
 
     public Pane getRoot() {
         return root;
-    }
-
-    private Callback<TableColumn<UnitConfigType.UnitConfig, String>, TableCell<UnitConfigType.UnitConfig, String>> cellFactory() {
-        return new Callback<TableColumn<UnitConfigType.UnitConfig, String>, TableCell<UnitConfigType.UnitConfig, String>>() {
-            @Override
-            public TableCell<UnitConfigType.UnitConfig, String> call(final TableColumn<UnitConfigType.UnitConfig, String> param) {
-                final TableCell<UnitConfigType.UnitConfig, String> cell = new TableCell<UnitConfigType.UnitConfig, String>() {
-
-                    final Button btn = new Button();
-
-                    {
-                        btn.setGraphic(new SVGIcon(FontAwesomeIcon.TIMES, Constants.EXTRA_SMALL_ICON, true));
-                    }
-
-                    @Override
-                    public void updateItem(String item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (empty) {
-                            setGraphic(null);
-                            setText(null);
-                        } else {
-                            btn.setOnAction(event -> removeGroup(getTableView().getItems().get(getIndex())));
-                            setGraphic(btn);
-                            setText(null);
-                        }
-                    }
-                };
-                return cell;
-            }
-
-        };
     }
 
     private void removeGroup(UnitConfigType.UnitConfig group) {
@@ -129,7 +140,7 @@ public class AuthorizationGroupController {
     }
 
     @FXML
-    private void addGroup(ActionEvent actionEvent) {
+    private void addGroup() {
 
         try {
             AuthorizationGroups.addAuthorizationGroup(label.getText());
