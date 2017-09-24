@@ -1,22 +1,24 @@
 /**
  * ==================================================================
  * This file is part of org.openbase.bco.bcozy.
- *
+ * <p>
  * org.openbase.bco.bcozy is free software: you can redistribute it and modify
  * it under the terms of the GNU General Public License (Version 3)
  * as published by the Free Software Foundation.
- *
+ * <p>
  * org.openbase.bco.bcozy is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
 package org.openbase.bco.bcozy.model;
 
+import javafx.beans.property.ReadOnlyStringProperty;
+import javafx.beans.property.ReadOnlyStringWrapper;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
@@ -131,6 +133,20 @@ public final class LanguageSelection extends Observable {
     public static void addObserverFor(String identifier, Consumer<String> newTextConsumer) {
         getInstance().addObserver((o, arg) -> newTextConsumer.accept(getLocalized(identifier)));
         newTextConsumer.accept(getLocalized(identifier));
+    }
+
+    /**
+     * Returns an Observable Property which contains the localized string for the given identifier.
+     *
+     * @param identifier the identifier
+     * @return a property with the localized string
+     */
+    public static ReadOnlyStringProperty getProperty(final String identifier) {
+        ReadOnlyStringWrapper localizedProperty = new ReadOnlyStringWrapper();
+
+        addObserverFor(identifier, (locale, text) -> localizedProperty.set(text));
+
+        return localizedProperty.getReadOnlyProperty();
     }
 
     public interface OnLanguageChangeListener {
