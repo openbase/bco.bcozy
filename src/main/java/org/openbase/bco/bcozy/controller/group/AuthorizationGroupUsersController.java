@@ -13,6 +13,7 @@ import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
 import org.openbase.bco.bcozy.controller.ButtonTableCellFactory;
+import org.openbase.bco.bcozy.controller.Dialog;
 import org.openbase.bco.bcozy.model.LanguageSelection;
 import org.openbase.bco.bcozy.util.AuthorizationGroups;
 import org.openbase.bco.bcozy.util.ExceptionHelper;
@@ -107,7 +108,7 @@ public class AuthorizationGroupUsersController {
             return;
         }
 
-        if (!askForRemoveConfirmation(group, user)) {
+        if (!Dialog.getConfirmation("removeUserFromGroup.confirmation", user.getName(), group.getLabel())) {
             return;
         }
 

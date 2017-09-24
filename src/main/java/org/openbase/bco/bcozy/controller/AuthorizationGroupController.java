@@ -120,6 +120,10 @@ public class AuthorizationGroupController {
     }
 
     private void removeGroup(UnitConfigType.UnitConfig group) {
+        if (!Dialog.getConfirmation("removeGroup.confirmation",group.getLabel())) {
+            return;
+        }
+
         try {
             AuthorizationGroups.removeAuthorizationGroup(group);
             InfoPane.info("deleteSuccess")
