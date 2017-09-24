@@ -1,5 +1,6 @@
 package org.openbase.bco.bcozy.util;
 
+import com.google.protobuf.ProtocolStringList;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -16,10 +17,8 @@ import rst.domotic.unit.UnitTemplateType;
 import rst.domotic.unit.authorizationgroup.AuthorizationGroupConfigType;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
+import java.util.function.Consumer;
 
 /**
  * @author vdasilva
@@ -30,6 +29,32 @@ public final class AuthorizationGroups {
 
     private static final ObservableList<UnitConfigType.UnitConfig> authorizationGroups =
             FXCollections.observableArrayList();
+
+    /**
+     * List of additional Observers, which will be informed if the groups change.
+     */
+    private static final List<Consumer<List<UnitConfigType.UnitConfig>>> observers = new
+            CopyOnWriteArrayList<>();
+
+    /**
+     * Adds an Observer to the list of additional observers, which will be informed if the groups change.
+     *
+     * @param observer the consumer to add
+     */
+    public static void addListObserver(Consumer<List<UnitConfigType.UnitConfig>> observer) {
+        observers.add(observer);
+        List<UnitConfigType.UnitConfig> unitConfigs = getAuthorizationGroups();
+        observer.accept(unitConfigs);
+    }
+
+    /**
+     * Removes an Observer from the list of additional observers.
+     *
+     * @param observer the consumer to remove
+     */
+    public static void removeListObserver(Consumer<? extends List<UnitConfigType.UnitConfig>> observer) {
+        observers.remove(observer);
+    }
 
     private static final Observer<UserRegistryDataType.UserRegistryData> observer = (observable, userRegistryData) ->
             setAuthorizationGroups(userRegistryData.getAuthorizationGroupUnitConfigList(), authorizationGroups);
@@ -63,6 +88,7 @@ public final class AuthorizationGroups {
         Platform.runLater(() -> {
             groups.clear();
             groups.addAll(newGroups);
+            observers.forEach(consumer -> consumer.accept(newGroups));
         });
 
     }
@@ -116,5 +142,32 @@ public final class AuthorizationGroups {
                 .build();
 
         return Registries.getUserRegistry().registerAuthorizationGroupConfig(newGroup);
+    }
+
+    public static void tryAddToGroup(UnitConfigType.UnitConfig group, String userId) throws CouldNotPerformException,
+            InterruptedException {
+        UnitConfigType.UnitConfig.Builder unitConfig = Registries.getUserRegistry().getAuthorizationGroupConfigById(group.getId()).toBuilder();
+        AuthorizationGroupConfigType.AuthorizationGroupConfig.Builder authorizationGroupConfig = unitConfig.getAuthorizationGroupConfigBuilder();
+        authorizationGroupConfig.addMemberId(userId);
+        Registries.getUserRegistry().updateAuthorizationGroupConfig(unitConfig.build());
+    }
+
+    public static void tryRemoveFromGroup(UnitConfigType.UnitConfig group, String userId) throws CouldNotPerformException,
+            InterruptedException {
+
+        UnitConfigType.UnitConfig.Builder unitConfig = Registries.getUserRegistry().getAuthorizationGroupConfigById(group.getId()).toBuilder();
+        AuthorizationGroupConfigType.AuthorizationGroupConfig.Builder authorizationGroupConfig = unitConfig.getAuthorizationGroupConfigBuilder();
+
+        ProtocolStringList members = authorizationGroupConfig.getMemberIdList();
+
+        authorizationGroupConfig.clearMemberId();
+
+        for (String member : members) {
+            if (!member.equals(userId)) {
+                authorizationGroupConfig.addMemberId(member);
+            }
+        }
+
+        Registries.getUserRegistry().updateAuthorizationGroupConfig(unitConfig.build());
     }
 }
