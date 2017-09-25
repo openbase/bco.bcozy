@@ -1,5 +1,6 @@
 package org.openbase.bco.bcozy.model;
 
+import javafx.beans.property.ReadOnlyStringProperty;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -15,6 +16,19 @@ public class LanguageSelectionTest {
         String message = LanguageSelection.getLocalized("deleteError", "");
 
         Assert.assertEquals("Es ist leider ein Fehler aufgetreten: ", message);
+    }
+
+    @Test
+    public void getLocalizedProperty() throws Exception {
+        LanguageSelection.getInstance().setSelectedLocale(Locale.GERMANY);
+        ReadOnlyStringProperty message = LanguageSelection.getProperty("login");
+
+        Assert.assertEquals("ANMELDEN", message.get());
+
+        LanguageSelection.getInstance().setSelectedLocale(new Locale("en", "US"));
+
+        Assert.assertEquals("LOGIN", message.get());
+
     }
 
 
