@@ -13,7 +13,7 @@ public class LanguageSelectionTest {
     @Test
     public void getLocalized() throws Exception {
         LanguageSelection.getInstance().setSelectedLocale(Locale.GERMANY);
-        String message = LanguageSelection.getLocalized("deleteError", "");
+        String message = LanguageSelection.getLocalized("deleteErrorWithMessage", "");
 
         Assert.assertEquals("Es ist leider ein Fehler aufgetreten: ", message);
     }
