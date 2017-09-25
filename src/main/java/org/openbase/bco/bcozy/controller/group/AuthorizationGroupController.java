@@ -1,4 +1,4 @@
-package org.openbase.bco.bcozy.controller;
+package org.openbase.bco.bcozy.controller.group;
 
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import javafx.beans.property.SimpleStringProperty;
@@ -12,7 +12,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
-import org.openbase.bco.bcozy.controller.group.AuthorizationGroupUsersController;
+import org.openbase.bco.bcozy.controller.ButtonTableCellFactory;
+import org.openbase.bco.bcozy.controller.Dialog;
 import org.openbase.bco.bcozy.model.LanguageSelection;
 import org.openbase.bco.bcozy.util.AuthorizationGroups;
 import org.openbase.bco.bcozy.util.ExceptionHelper;

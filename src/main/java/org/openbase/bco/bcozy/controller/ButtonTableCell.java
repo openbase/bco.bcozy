@@ -8,13 +8,18 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 
 /**
+ * Custom TableCell with an clickable Button woth graphic.
+ *
  * @author vdasilva
  */
-
 public class ButtonTableCell<S, T> extends TableCell<S, T> {
 
     final Button btn = new Button();
 
+    /**
+     * @param onAction the onClick-action of the button
+     * @param graphic  the graphic of the button
+     */
     public ButtonTableCell(BiConsumer<S, Integer> onAction, Node graphic) {
         Objects.requireNonNull(onAction);
         Objects.requireNonNull(graphic);
