@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
@@ -35,6 +36,8 @@ public class AuthorizationGroupUsersController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthorizationGroupUsersController.class);
 
+    public BorderPane addUserPane;
+
     @FXML
     private ComboBox<UserViewModel> availableUsersComboBox;
     @FXML
@@ -59,6 +62,8 @@ public class AuthorizationGroupUsersController {
         userTable.visibleProperty().bind(selectedGroup.isNotNull());
         availableUsersComboBox.visibleProperty().bind(selectedGroup.isNotNull());
         addUserButton.visibleProperty().bind(selectedGroup.isNotNull());
+
+        availableUsersComboBox.disableProperty().bind(selectedGroup.isNull());
         addUserButton.disableProperty().bind(selectedGroup.isNull().or(selectedUser.isNull()));
         //#####
 
@@ -73,6 +78,8 @@ public class AuthorizationGroupUsersController {
         userTable.widthProperty().addListener((observable, oldValue, newValue) ->
                 usernameColumn.setPrefWidth(newValue.doubleValue() - removeUserColumn.getWidth() - 2)
         );
+
+        availableUsersComboBox.prefWidthProperty().bind(addUserPane.widthProperty().multiply(0.5));
         //#####
 
         //#####
@@ -97,6 +104,9 @@ public class AuthorizationGroupUsersController {
 
         selectedGroup.addListener((observable, oldValue, newValue) -> showUserTable(newValue));
         selectedUser.bind(availableUsersComboBox.valueProperty());
+
+        //Disable selection
+        userTable.setSelectionModel(null);
     }
 
 

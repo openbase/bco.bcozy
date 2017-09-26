@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Button?>
 <?import org.openbase.bco.bcozy.view.ObserverButton?>
-<?import javafx.scene.layout.HBox?>
 <VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="org.openbase.bco.bcozy.controller.group.AuthorizationGroupUsersController">
+      fx:controller="org.openbase.bco.bcozy.controller.group.AuthorizationGroupUsersController" spacing="10">
 
     <TableView fx:id="userTable">
         <columns>
@@ -22,11 +22,17 @@
         </columns>
     </TableView>
 
-    <HBox>
-        <ComboBox fx:id="availableUsersComboBox"/>
-
-        <ObserverButton styleClass="transparent-button" fx:id="addUserButton" identifier="addUser" onAction="#addUser"/>
-    </HBox>
-
-
+    <BorderPane fx:id="addUserPane">
+        <padding>
+            <Insets left="10" right="10"/>
+        </padding>
+        <left>
+            <ComboBox fx:id="availableUsersComboBox">
+            </ComboBox>
+        </left>
+        <right>
+            <ObserverButton styleClass="transparent-button" fx:id="addUserButton" identifier="addUser"
+                            onAction="#addUser"/>
+        </right>
+    </BorderPane>
 </VBox>
