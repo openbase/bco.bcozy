@@ -144,12 +144,9 @@ public class SettingsController {
             URL url = getFxmlURL("UserSettingsPane.fxml");
 
             FXMLLoader loader = new FXMLLoader(url);
-            loader.setControllerFactory((clazz) -> new UserSettingsController(foregroudPane));
-
             Pane root = loader.load();
 
             this.userSettingsController = loader.getController();
-            userSettingsController.initialize();
 
             this.userSettingsController.getThemeChoice().setOnAction(event -> chooseTheme());
 
