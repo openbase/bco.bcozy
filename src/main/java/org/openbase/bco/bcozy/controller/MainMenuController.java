@@ -19,12 +19,11 @@
 package org.openbase.bco.bcozy.controller;
 
 import javafx.application.Platform;
+import org.openbase.bco.authentication.lib.SessionManager;
 import org.openbase.bco.bcozy.view.ForegroundPane;
 import org.openbase.bco.bcozy.view.mainmenupanes.AvailableUsersPane;
 import org.openbase.bco.bcozy.view.mainmenupanes.ConnectionPane;
 import org.openbase.bco.bcozy.view.mainmenupanes.LoginPane;
-import org.openbase.bco.authentication.lib.SessionManager;
-
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InvalidStateException;
@@ -34,12 +33,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.domotic.unit.UnitConfigType;
 
+import java.io.IOException;
+
 /**
  * Created by hoestreich on 11/24/15.
  */
 public class MainMenuController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MainMenuController.class);
+    private static final String INITIAL_PASSWORD = "admin";
 
     private LoginPane loginPane;
     private AvailableUsersPane availableUsersPane;
@@ -115,7 +117,9 @@ public class MainMenuController {
             }
             // #####
 
-            sessionManager.login(userUnitId, loginPane.getPasswordField().getText());
+            final String password = loginPane.getPasswordField().getText();
+
+            sessionManager.login(userUnitId, password);
 
             Platform.runLater(() -> {
                 loginPane.resetUserOrPasswordWrong();
@@ -124,6 +128,10 @@ public class MainMenuController {
                 loginPane.getPasswordField().setText("");
                 loginPane.setState(LoginPane.State.LOGOUT);
             });
+
+            if (password.equals(INITIAL_PASSWORD)) {
+                showChangeInitialPassword();
+            }
         } catch (CouldNotPerformException ex) {
             Platform.runLater(() -> {
                 loginPane.indicateUserOrPasswordWrong();
@@ -131,6 +139,16 @@ public class MainMenuController {
         } catch (java.lang.OutOfMemoryError error) {
             LOGGER.error(error.getMessage());
         }
+    }
+
+    private void showChangeInitialPassword() {
+        Platform.runLater(() -> {
+            try {
+                InitialPasswordChangeController.loadModalStage().getKey().show();
+            } catch (IOException ioe) {
+                ExceptionPrinter.printHistory(ioe, LOGGER);
+            }
+        });
     }
 
     private void resetLogin() {
