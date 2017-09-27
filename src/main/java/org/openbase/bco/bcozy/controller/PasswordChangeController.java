@@ -13,6 +13,9 @@ import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Objects;
+import java.util.function.Consumer;
+
 /**
  * @author vdasilva
  */
@@ -30,6 +33,10 @@ public class PasswordChangeController extends AbstractCurrentUserAwareController
     @FXML
     private ObserverButton savePassword;
 
+    private Consumer<Boolean> onPasswordChange = success -> {
+    };
+
+
     public void initialize() {
         savePassword.setApplyOnNewText(String::toUpperCase);
     }
@@ -38,20 +45,28 @@ public class PasswordChangeController extends AbstractCurrentUserAwareController
     @FXML
     private void saveNewPassword() throws InterruptedException {
 
+        clearHints();
+
         if (!verifyNewPassword()) {
             InfoPane.warn("passwordsNotEqual").hideAfter(Duration.seconds(5));
             clearPasswordFields();
+
+            newPassword.getStyleClass().add("password-field-wrong");
+            repeatedPassword.getStyleClass().add("password-field-wrong");
+            onPasswordChange.accept(false);
             return;
         }
 
         try {
             SessionManager.getInstance().changeCredentials(getUserId(), oldPassword.getText(), newPassword.getText());
+            onPasswordChange.accept(true);
             showSuccessMessage();
-
         } catch (RejectedException rex) {
-            InfoPane.info("oldPasswordWrong").backgroundColor(Color.RED).hideAfter(Duration.seconds(5));
+            oldPassword.getStyleClass().add("password-field-wrong");
+            onPasswordChange.accept(false);
         } catch (CouldNotPerformException ex) {
             ExceptionPrinter.printHistory(ex, LOGGER);
+            onPasswordChange.accept(false);
         }
 
         clearPasswordFields();
@@ -62,6 +77,12 @@ public class PasswordChangeController extends AbstractCurrentUserAwareController
         oldPassword.clear();
         newPassword.clear();
         repeatedPassword.clear();
+    }
+
+    private void clearHints() {
+        oldPassword.getStyleClass().remove("password-field-wrong");
+        newPassword.getStyleClass().remove("password-field-wrong");
+        repeatedPassword.getStyleClass().remove("password-field-wrong");
     }
 
     private boolean verifyNewPassword() {
@@ -75,4 +96,7 @@ public class PasswordChangeController extends AbstractCurrentUserAwareController
     }
 
 
+    public void setOnPasswordChange(Consumer<Boolean> onPasswordChange) {
+        this.onPasswordChange = Objects.requireNonNull(onPasswordChange);
+    }
 }
