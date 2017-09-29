@@ -23,7 +23,7 @@ import javafx.application.Platform;
 import static org.openbase.bco.bcozy.BCozy.APP_NAME;
 
 import org.openbase.bco.authentication.lib.jp.JPCredentialsDirectory;
-import org.openbase.bco.authentication.lib.jp.JPEnableAuthentication;
+import org.openbase.bco.authentication.lib.jp.JPAuthentication;
 import org.openbase.bco.authentication.lib.jp.JPInitializeCredentials;
 import org.openbase.bco.bcozy.jp.JPLanguage;
 import org.openbase.bco.bcozy.view.LoadingPane;
@@ -68,7 +68,7 @@ public class BCozyLauncher {
         JPService.registerProperty(JPRSBHost.class);
         JPService.registerProperty(JPRSBPort.class);
         JPService.registerProperty(JPRSBTransport.class);
-        JPService.registerProperty(JPEnableAuthentication.class);
+        JPService.registerProperty(JPAuthentication.class);
         try {
             JPService.parseAndExitOnError(args);
             Thread.setDefaultUncaughtExceptionHandler(BCozyLauncher::showError);
