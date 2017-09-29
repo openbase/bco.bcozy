@@ -17,7 +17,7 @@ import org.openbase.bco.bcozy.controller.ButtonTableCellFactory;
 import org.openbase.bco.bcozy.controller.Dialog;
 import org.openbase.bco.bcozy.model.LanguageSelection;
 import org.openbase.bco.bcozy.util.AuthorizationGroups;
-import org.openbase.bco.bcozy.util.ExceptionHelper;
+import org.openbase.jul.exception.ExceptionProcessor;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.InfoPane;
 import org.openbase.bco.bcozy.view.ObserverButton;
@@ -132,7 +132,7 @@ public class AuthorizationGroupUsersController {
             ExceptionPrinter.printHistory(ex, LOGGER);
 
             String failureMessage = LanguageSelection.getLocalized("removeUserFromGroup.failure",
-                    user.getName(), group.getLabel(), ExceptionHelper.getCauseMessage(ex));
+                    user.getName(), group.getLabel(), ExceptionProcessor.getInitialCauseMessage(ex));
 
             InfoPane.info(failureMessage)
                     .backgroundColor(Color.RED)
@@ -162,7 +162,7 @@ public class AuthorizationGroupUsersController {
             ExceptionPrinter.printHistory(ex, LOGGER);
 
             String failureMessage = LanguageSelection.getLocalized("addUserToGroup.failure",
-                    user.getName(), group.getLabel(), ExceptionHelper.getCauseMessage(ex));
+                    user.getName(), group.getLabel(), ExceptionProcessor.getInitialCauseMessage(ex));
 
             InfoPane.info(failureMessage)
                     .backgroundColor(Color.RED)

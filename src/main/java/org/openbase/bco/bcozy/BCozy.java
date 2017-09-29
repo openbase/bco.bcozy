@@ -125,14 +125,13 @@ public class BCozy extends Application {
         BCozy.primaryStage = primaryStage;
         registerResponsiveHandler();
 
-        // TODO: should be removed after a synchronization error in the registry is fixed which
-        // causes waitForData to block forever if it is called on a registry like the userRegitry
-        // before the unitRegitry has its data
+        // TODO: should be removed after issue openbase/bco.registry#67 "UserRegistry blocking sync" has been fixed.
         try {
             Registries.getUnitRegistry(true);
         } catch (CouldNotPerformException ex) {
 
         }
+        ///
 
         final double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
         final double screenHeight = Screen.getPrimary().getVisualBounds().getHeight();

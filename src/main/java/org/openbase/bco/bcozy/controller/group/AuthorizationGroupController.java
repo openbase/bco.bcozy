@@ -16,7 +16,7 @@ import org.openbase.bco.bcozy.controller.ButtonTableCellFactory;
 import org.openbase.bco.bcozy.controller.Dialog;
 import org.openbase.bco.bcozy.model.LanguageSelection;
 import org.openbase.bco.bcozy.util.AuthorizationGroups;
-import org.openbase.bco.bcozy.util.ExceptionHelper;
+import org.openbase.jul.exception.ExceptionProcessor;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.InfoPane;
 import org.openbase.bco.bcozy.view.ObserverButton;
@@ -141,7 +141,7 @@ public class AuthorizationGroupController {
         } catch (CouldNotPerformException ex) {
             ExceptionPrinter.printHistory(ex, LOGGER);
 
-            String message = LanguageSelection.getLocalized("deleteErrorWithMessage", ExceptionHelper.getCauseMessage(ex));
+            String message = LanguageSelection.getLocalized("deleteErrorWithMessage", ExceptionProcessor.getInitialCauseMessage(ex));
 
             InfoPane.info(message)
                     .backgroundColor(Color.RED)
@@ -168,7 +168,7 @@ public class AuthorizationGroupController {
 
             ExceptionPrinter.printHistory(ex, LOGGER);
 
-            String message = LanguageSelection.getLocalized("saveErrorWithMessage", ExceptionHelper.getCauseMessage(ex));
+            String message = LanguageSelection.getLocalized("saveErrorWithMessage", ExceptionProcessor.getInitialCauseMessage(ex));
 
             InfoPane.info(message)
                     .backgroundColor(Color.RED)

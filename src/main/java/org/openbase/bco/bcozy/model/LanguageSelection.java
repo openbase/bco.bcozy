@@ -1,16 +1,13 @@
 /**
  * ==================================================================
  * This file is part of org.openbase.bco.bcozy.
- * <p>
  * org.openbase.bco.bcozy is free software: you can redistribute it and modify
  * it under the terms of the GNU General Public License (Version 3)
  * as published by the Free Software Foundation.
- * <p>
  * org.openbase.bco.bcozy is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * <p>
  * You should have received a copy of the GNU General Public License
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
@@ -36,7 +33,6 @@ import java.util.function.Consumer;
 public final class LanguageSelection extends Observable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LanguageSelection.class);
-
 
     /**
      * Singleton instance.
@@ -89,7 +85,7 @@ public final class LanguageSelection extends Observable {
      * arguments.
      *
      * @param identifier the identifier
-     * @param args       the placeholder-arguments
+     * @param args the placeholder-arguments
      * @return the localized string
      */
     public static String getLocalized(String identifier, Object... args) {
@@ -114,7 +110,7 @@ public final class LanguageSelection extends Observable {
      * Adds an Listener to the given identifier.
      * The Listener is called, each time the language changed and on attach.
      *
-     * @param identifier               the identifier
+     * @param identifier the identifier
      * @param onLanguageChangeListener the listener for this identifier
      */
     public static void addObserverFor(String identifier, OnLanguageChangeListener onLanguageChangeListener) {
@@ -127,7 +123,7 @@ public final class LanguageSelection extends Observable {
      * Adds an Listener to the given identifier.
      * The Listener is called, each time the language changed and on attach.
      *
-     * @param identifier      the identifier
+     * @param identifier the identifier
      * @param newTextConsumer the listener for this identifier
      */
     public static void addObserverFor(String identifier, Consumer<String> newTextConsumer) {
@@ -150,6 +146,7 @@ public final class LanguageSelection extends Observable {
     }
 
     public interface OnLanguageChangeListener {
+
         void onLanguageChange(Locale locale, String text);
     }
 
