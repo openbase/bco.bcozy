@@ -2,9 +2,9 @@
 APP_NAME='bcozy'
 clear &&
 echo "=== clean ${APP_NAME} ===" &&
-mvn clean $@ &&
+mvn clean --quiet $@ &&
 clear &&
-echo "=== deploy ${APP_NAME} to ${prefix} ===" &&
+echo "=== install ${APP_NAME} to ${prefix} ===" &&
 mvn install \
         -DassembleDirectory=${prefix} \
         -DskipTests=true \
@@ -13,6 +13,7 @@ mvn install \
         -Dlicense.skipUpdateProjectLicense=true \
         -Dlicense.skipDownloadLicenses \
         -Dlicense.skipCheckLicense=true \
-        -Dmaven.license.skip=true $@ &&
+        -Dmaven.license.skip=true \
+        --quiet $@ &&
 clear &&
 echo "=== ${APP_NAME} is successfully installed to ${prefix} ==="

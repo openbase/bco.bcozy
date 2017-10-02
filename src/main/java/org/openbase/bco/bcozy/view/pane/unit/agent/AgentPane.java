@@ -20,19 +20,28 @@ package org.openbase.bco.bcozy.view.pane.unit.agent;
 
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import java.util.concurrent.Future;
+import javafx.beans.value.ChangeListener;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import org.openbase.bco.bcozy.view.Constants;
+import org.openbase.bco.bcozy.view.generic.EmphasisAdjustment;
 import org.openbase.bco.bcozy.view.pane.unit.AbstractUnitPane;
 import org.openbase.bco.dal.remote.unit.agent.AgentRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
+import org.openbase.jul.schedule.RecurrenceEventFilter;
 import rst.domotic.state.ActivationStateType.ActivationState.State;
+import rst.domotic.state.EmphasisStateType.EmphasisState;
 import rst.domotic.unit.agent.AgentDataType.AgentData;
 
 /**
  * Created by agatting on 12.04.16.
  */
 public class AgentPane extends AbstractUnitPane<AgentRemote, AgentData> {
+
+    private EmphasisAdjustment emphasisAdjustment;
 
     /**
      * Constructor for the AgentPane.
@@ -41,6 +50,38 @@ public class AgentPane extends AbstractUnitPane<AgentRemote, AgentData> {
     public AgentPane() {
         super(AgentRemote.class, true);
         getIcon().setForegroundIcon(MaterialDesignIcon.POWER);
+    }
+
+    private final RecurrenceEventFilter<EmphasisState> recurrenceEventFilterComfort = new RecurrenceEventFilter<EmphasisState>(Constants.RECURRENCE_EVENT_FILTER_MILLI_TIMEOUT) {
+        @Override
+        public void relay() {
+            try {
+                getUnitRemote().setEmphasisState(getLastValue());
+            } catch (CouldNotPerformException ex) {
+                ExceptionPrinter.printHistory("Could not send color update!", ex, LOGGER);
+            }
+        }
+    };
+
+    @Override
+    protected void initBodyContent(Pane bodyPane) throws CouldNotPerformException {
+        emphasisAdjustment = new EmphasisAdjustment();
+        emphasisAdjustment.initContent();
+
+        ChangeListener changeListener = (ChangeListener) (observable, oldValue, newValue) -> {
+            if (isHover()) {
+                try {
+                    recurrenceEventFilterComfort.trigger(emphasisAdjustment.getCurrentEmphasisState());
+                } catch (CouldNotPerformException ex) {
+                    ExceptionPrinter.printHistory("Could not trigger emphasis change!", ex, LOGGER);
+                }
+            }
+        };
+        emphasisAdjustment.getComfortProperty().addListener(changeListener);
+        emphasisAdjustment.getEnergyProperty().addListener(changeListener);
+        emphasisAdjustment.getSecurityProperty().addListener(changeListener);
+
+        bodyPane.getChildren().add(emphasisAdjustment);
     }
 
     @Override
@@ -65,6 +106,14 @@ public class AgentPane extends AbstractUnitPane<AgentRemote, AgentData> {
                 setPrimaryActivationWithoutNotification(Boolean.FALSE);
             default:
                 break;
+        }
+
+        if (emphasisAdjustment != null && expansionProperty().get()) {
+            try {
+                emphasisAdjustment.setSelectedEmphasis(getData().getEmphasisState());
+            } catch (NotAvailableException ex) {
+                ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.DEBUG);
+            }
         }
     }
 

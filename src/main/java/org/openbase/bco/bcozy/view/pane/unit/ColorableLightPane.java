@@ -50,7 +50,7 @@ public class ColorableLightPane extends AbstractUnitPane<ColorableLightRemote, C
         @Override
         public void relay() {
             try {
-                getUnitRemote().setColor(JFXColorToHSBColorTransformer.transform(getLastValue()));
+                getUnitRemote().setColor(JFXColorToHSBColorTransformer.transform(getLatestValue()));
             } catch (CouldNotPerformException ex) {
                 ExceptionPrinter.printHistory("Could not send color update!", ex, LOGGER);
             }

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import org.openbase.bco.bcozy.view.ObserverButton?>
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.openbase.bco.bcozy.controller.group.AuthorizationGroupUsersController" spacing="10">
+
+    <TableView fx:id="userTable">
+        <columns>
+            <TableColumn fx:id="usernameColumn" resizable="false">
+                <cellValueFactory>
+                    <PropertyValueFactory property="name"/>
+                </cellValueFactory>
+            </TableColumn>
+            <TableColumn fx:id="removeUserColumn" resizable="false"/>
+        </columns>
+    </TableView>
+
+    <BorderPane fx:id="addUserPane">
+        <padding>
+            <Insets left="10" right="10"/>
+        </padding>
+        <left>
+            <ComboBox fx:id="availableUsersComboBox">
+            </ComboBox>
+        </left>
+        <right>
+            <ObserverButton styleClass="transparent-button" fx:id="addUserButton" identifier="addUser"
+                            onAction="#addUser"/>
+        </right>
+    </BorderPane>
+</VBox>

@@ -39,6 +39,7 @@ import org.openbase.bco.bcozy.view.InfoPane;
 import org.openbase.bco.bcozy.view.LoadingPane;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jps.core.JPService;
+import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.FatalImplementationErrorException;
 import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.exception.InstantiationException;
@@ -124,6 +125,14 @@ public class BCozy extends Application {
         BCozy.primaryStage = primaryStage;
         registerResponsiveHandler();
 
+        // TODO: should be removed after issue openbase/bco.registry#67 "UserRegistry blocking sync" has been fixed.
+        try {
+            Registries.getUnitRegistry(true);
+        } catch (CouldNotPerformException ex) {
+
+        }
+        ///
+
         final double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
         final double screenHeight = Screen.getPrimary().getVisualBounds().getHeight();
         primaryStage.setTitle("BCozy");
@@ -153,7 +162,7 @@ public class BCozy extends Application {
         unitsPaneController = new UnitsPaneController(backgroundPane.getUnitsPane(), backgroundPane.getLocationPane());
         maintenanceLayerController = new MaintenanceLayerController(backgroundPane.getMaintenancePane(), backgroundPane.getLocationPane());
         editingLayerController = new EditingLayerController(backgroundPane.getEditingPane(), backgroundPane.getLocationPane());
-        
+
         ResponsiveHandler.addResponsiveToWindow(primaryStage);
         primaryStage.show();
 
@@ -165,7 +174,7 @@ public class BCozy extends Application {
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
         }
-        
+
         initRemotesAndLocation();
     }
 

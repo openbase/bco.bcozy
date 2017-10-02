@@ -152,11 +152,9 @@ public class SettingsController {
             userSettingsController.initialize();
 
             this.userSettingsController.getThemeChoice().setOnAction(event -> chooseTheme());
-            this.userSettingsController.getLanguageChoice().setOnAction(event -> chooseLanguage());
 
             //Necessary to ensure that the first change is not missed by the ChangeListener
             this.userSettingsController.getThemeChoice().getSelectionModel().select(0);
-            this.userSettingsController.getLanguageChoice().getSelectionModel().select(0);
 
             return root;
         } catch (IOException ex) {
@@ -285,22 +283,6 @@ public class SettingsController {
                     }
                 });
     }
-
-    private void chooseLanguage() {
-        userSettingsController.getLanguageChoice().getSelectionModel().selectedIndexProperty()
-                .addListener(new ChangeListener<Number>() {
-
-                    @Override
-                    public void changed(final ObservableValue<? extends Number> observableValue, final Number number, final Number number2) {
-                        if (userSettingsController.getAvailableLanguages().get(number2.intValue()).equals("English")) {
-                            LanguageSelection.getInstance().setSelectedLocale(new Locale("en", "US"));
-                        } else if (userSettingsController.getAvailableLanguages().get(number2.intValue()).equals("Deutsch")) {
-                            LanguageSelection.getInstance().setSelectedLocale(new Locale("de", "DE"));
-                        }
-                    }
-                });
-    }
-
 
     private AnchorPane loadPermissionPane() {
         try {
