@@ -53,6 +53,8 @@ public class InitialPasswordChangeController {
         });
 
         stage.setScene(new Scene(parent));
+        stage.setWidth(440.0);
+        stage.setHeight(440.0);
         stage.getScene().getStylesheets().clear();
         stage.getScene().getStylesheets().addAll(Constants.DEFAULT_CSS, Constants.LIGHT_THEME_CSS);
         return stage;

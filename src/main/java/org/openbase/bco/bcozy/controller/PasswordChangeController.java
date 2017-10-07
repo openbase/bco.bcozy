@@ -24,6 +24,9 @@ public class PasswordChangeController extends AbstractCurrentUserAwareController
     private static final Logger LOGGER = LoggerFactory.getLogger(PasswordChangeController.class);
 
 
+    private static final String PASSWORD_FIELD_WRONG_CLASS = "password-field-wrong";
+
+
     @FXML
     private PasswordField oldPassword;
     @FXML
@@ -51,8 +54,9 @@ public class PasswordChangeController extends AbstractCurrentUserAwareController
             InfoPane.warn("passwordsNotEqual").hideAfter(Duration.seconds(5));
             clearPasswordFields();
 
-            newPassword.getStyleClass().add("password-field-wrong");
-            repeatedPassword.getStyleClass().add("password-field-wrong");
+            newPassword.getStyleClass().add(PASSWORD_FIELD_WRONG_CLASS);
+            repeatedPassword.getStyleClass().add(PASSWORD_FIELD_WRONG_CLASS);
+
             onPasswordChange.accept(false);
             return;
         }
@@ -62,7 +66,7 @@ public class PasswordChangeController extends AbstractCurrentUserAwareController
             onPasswordChange.accept(true);
             showSuccessMessage();
         } catch (RejectedException rex) {
-            oldPassword.getStyleClass().add("password-field-wrong");
+            oldPassword.getStyleClass().add(PASSWORD_FIELD_WRONG_CLASS);
             onPasswordChange.accept(false);
         } catch (CouldNotPerformException ex) {
             ExceptionPrinter.printHistory(ex, LOGGER);
@@ -80,13 +84,15 @@ public class PasswordChangeController extends AbstractCurrentUserAwareController
     }
 
     private void clearHints() {
-        oldPassword.getStyleClass().remove("password-field-wrong");
-        newPassword.getStyleClass().remove("password-field-wrong");
-        repeatedPassword.getStyleClass().remove("password-field-wrong");
+        oldPassword.getStyleClass().remove(PASSWORD_FIELD_WRONG_CLASS);
+        newPassword.getStyleClass().remove(PASSWORD_FIELD_WRONG_CLASS);
+        repeatedPassword.getStyleClass().remove(PASSWORD_FIELD_WRONG_CLASS);
     }
 
     private boolean verifyNewPassword() {
-        return newPassword.getText().equals(repeatedPassword.getText());
+        return newPassword.getText().equals(repeatedPassword.getText())
+                //&& !newPassword.getText().equals("admin")
+                ;
     }
 
     private void showSuccessMessage() {
