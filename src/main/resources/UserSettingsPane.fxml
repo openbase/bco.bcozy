@@ -60,24 +60,8 @@
             <ObserverLabel>changePassword</ObserverLabel>
         </graphic>
 
-        <VBox>
-            <ObserverLabel>oldPassword</ObserverLabel>
-            <PasswordField fx:id="oldPassword"/>
+        <fx:include source="ChangePasswordPane.fxml" fx:id="changePassword"/>
 
-            <ObserverLabel>newPassword</ObserverLabel>
-            <PasswordField fx:id="newPassword"/>
-
-            <ObserverLabel>repeatPassword</ObserverLabel>
-            <PasswordField fx:id="repeatedPassword"/>
-
-            <BorderPane>
-                <right>
-                    <ObserverButton fx:id="savePassword" styleClass="transparent-button" alignment="BOTTOM_RIGHT"
-                                    onAction="#saveNewPassword">save
-                    </ObserverButton>
-                </right>
-            </BorderPane>
-        </VBox>
     </TitledPane>
 </VBox>
 
