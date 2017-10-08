@@ -22,7 +22,7 @@ import com.google.protobuf.GeneratedMessage;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import java.util.Map;
 import javafx.application.Platform;
-import org.openbase.bco.registry.lib.authorization.AuthorizationHelper;
+import org.openbase.bco.authentication.lib.AuthorizationHelper;
 import org.openbase.bco.authentication.lib.SessionManager;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.InfoPane;
@@ -41,7 +41,6 @@ import org.openbase.jul.iface.Shutdownable;
 import org.openbase.jul.pattern.Observable;
 import org.openbase.jul.pattern.Observer;
 import org.openbase.jul.pattern.Remote.ConnectionState;
-import rst.domotic.authentication.PermissionConfigType.PermissionConfig;
 import rst.domotic.unit.UnitConfigType.UnitConfig;
 
 /**
@@ -58,7 +57,7 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
     private final Observer<UnitConfig> unitConfigObserver;
     private final Observer<D> unitDataObserver;
     private final Observer<ConnectionState> unitConnectionObserver;
-    private final Observer<Boolean> loginObserver;
+    private final Observer<String> loginObserver;
 
     /**
      * Constructor for the UnitPane.
@@ -106,12 +105,12 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
                 });
             }
         };
-        this.loginObserver = new Observer<Boolean>() {
+        this.loginObserver = new Observer<String>() {
             @Override
-            public void update(Observable<Boolean> source, Boolean loggedIn) throws Exception {
+            public void update(Observable<String> source, String authority) throws Exception {
                 Platform.runLater(() -> {
                     try {
-                        applyLoginUpdate(loggedIn);
+                        applyLoginUpdate();
                     } catch (CouldNotPerformException ex) {
                         ExceptionPrinter.printHistory("Could not apply data update on " + this, ex, LOGGER);
                     }
@@ -167,7 +166,7 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
         unitRemote.addConfigObserver(unitConfigObserver);
         unitRemote.addDataObserver(unitDataObserver);
         unitRemote.addConnectionStateObserver(unitConnectionObserver);
-        SessionManager.getInstance().getLoginObervable().addObserver(loginObserver);
+        SessionManager.getInstance().addLoginObserver(loginObserver);
 
         if (!unitRemote.isConnected()) {
             setDisable(false);
@@ -192,7 +191,7 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
         }
 
         try {
-            applyLoginUpdate(SessionManager.getInstance().isLoggedIn());
+            applyLoginUpdate();
         } catch (CouldNotPerformException ex) {
             // skip update, config observer will handle the update later on.
         }
@@ -295,16 +294,15 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
      * Checks the permissions for the unit when the login state changes.
      * Sets the disableProperty accordingly to the user's/client's write permissions.
      *
-     * @param loggedIn
      * @throws CouldNotPerformException
      */
-    protected void applyLoginUpdate(final Boolean loggedIn) throws CouldNotPerformException {
+    protected void applyLoginUpdate() throws CouldNotPerformException {
         try {
             String userAtClientId = null;
             Map<String, IdentifiableMessage<String, UnitConfig, UnitConfig.Builder>> groups = null;
             Map<String, IdentifiableMessage<String, UnitConfig, UnitConfig.Builder>> locations = Registries.getUnitRegistry().getLocationUnitConfigRemoteRegistry().getEntryMap();
 
-            if (loggedIn) {
+            if (SessionManager.getInstance().isLoggedIn()) {
                 userAtClientId = SessionManager.getInstance().getUserAtClientId();
                 groups = Registries.getUnitRegistry().getAuthorizationGroupUnitConfigRemoteRegistry().getEntryMap();
             }
