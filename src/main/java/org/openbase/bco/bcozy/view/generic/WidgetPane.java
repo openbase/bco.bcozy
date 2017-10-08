@@ -22,6 +22,7 @@ import com.jfoenix.controls.JFXToggleButton;
 import org.openbase.jul.visual.javafx.iface.DynamicPane;
 import de.jensd.fx.glyphs.GlyphIcons;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -143,12 +144,25 @@ public class WidgetPane extends VBox implements DynamicPane {
                         currentTask.cancel(true);
                     }
                     currentTask = applyPrimaryActivationUpdate(newActivation);
-                } catch (CouldNotPerformException ex) {
+                    currentTask.get();
+                } catch (CouldNotPerformException | ExecutionException | InterruptedException ex) {
                     ExceptionPrinter.printHistory("Could not apply activation update " + this, ex, LOGGER);
+
+                    // If the task failed, reset the activation value.
+                    setPrimaryActivationWithoutNotification(lastActivation);
                 }
             }
         };
         primaryActivationProperty().addListener(primaryActivationObserver);
+
+        // @cromankiewicz: Without this primitive dummy listener, the toggleSwitch does not seem to
+        // be notified if the first try of the primary action fails. Don't ask me why.
+        primaryActivationProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                // do nothing
+            }
+        });
     }
 
     @Override
