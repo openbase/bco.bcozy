@@ -2,6 +2,7 @@ package org.openbase.bco.bcozy.model;
 
 import com.google.protobuf.ProtocolStringList;
 import org.openbase.bco.authentication.lib.SessionManager;
+import org.openbase.bco.bcozy.util.AuthorizationGroups;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.VerificationFailedException;
@@ -58,12 +59,12 @@ public class SessionManagerFacadeImpl implements SessionManagerFacade {
 
         try {
             for (UnitConfigType.UnitConfig group : groups) {
-                tryAddToGroup(group, unitConfig.getId());
+                AuthorizationGroups.tryAddToGroup(group, unitConfig.getId());
             }
         } catch (CouldNotPerformException | InterruptedException ex) {
             // If adding to a group failed, remove the user from all groups...
             for (UnitConfigType.UnitConfig group : groups) {
-                tryRemoveFromGroup(group, unitConfig.getId());
+                AuthorizationGroups.tryRemoveFromGroup(group, unitConfig.getId());
             }
             // ... from the credential storage...
             SessionManager.getInstance().removeUser(unitConfig.getId()/*unitConfig.getId()*/);
@@ -86,31 +87,6 @@ public class SessionManagerFacadeImpl implements SessionManagerFacade {
         Future<UnitConfigType.UnitConfig> registeredUser = Registries.getUserRegistry().registerUserConfig(unitConfig);
 
         return registeredUser.get(5, TimeUnit.SECONDS);
-    }
-
-    private void tryAddToGroup(UnitConfigType.UnitConfig group, String userId) throws CouldNotPerformException, InterruptedException {
-        UnitConfig.Builder unitConfig = Registries.getUserRegistry().getAuthorizationGroupConfigById(group.getId()).toBuilder();
-        AuthorizationGroupConfig.Builder authorizationGroupConfig = unitConfig.getAuthorizationGroupConfigBuilder();
-        authorizationGroupConfig.addMemberId(userId);
-        Registries.getUserRegistry().updateAuthorizationGroupConfig(unitConfig.build());
-    }
-
-    private void tryRemoveFromGroup(UnitConfigType.UnitConfig group, String userId) throws CouldNotPerformException, InterruptedException {
-
-        UnitConfig.Builder unitConfig = Registries.getUserRegistry().getAuthorizationGroupConfigById(group.getId()).toBuilder();
-        AuthorizationGroupConfig.Builder authorizationGroupConfig = unitConfig.getAuthorizationGroupConfigBuilder();
-
-        ProtocolStringList members = authorizationGroupConfig.getMemberIdList();
-
-        authorizationGroupConfig.clearMemberId();
-
-        for (String member : members) {
-            if (!member.equals(userId)) {
-                authorizationGroupConfig.addMemberId(member);
-            }
-        }
-
-        Registries.getUserRegistry().updateAuthorizationGroupConfig(unitConfig.build());
     }
 
     @Override
