@@ -24,8 +24,8 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.PasswordField;
 import javafx.scene.control.TitledPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
@@ -35,10 +35,11 @@ import org.openbase.bco.authentication.lib.SessionManager;
 import org.openbase.bco.bcozy.model.LanguageSelection;
 import org.openbase.bco.bcozy.util.Language;
 import org.openbase.bco.bcozy.util.Languages;
-import org.openbase.bco.bcozy.view.*;
+import org.openbase.bco.bcozy.view.Constants;
+import org.openbase.bco.bcozy.view.InfoPane;
+import org.openbase.bco.bcozy.view.SVGIcon;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
-import org.openbase.jul.exception.RejectedException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,6 +59,8 @@ import java.util.concurrent.TimeoutException;
 public class UserSettingsController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserSettingsController.class);
+    public Pane changePassword;
+    public PasswordChangeController changePasswordController;
 
 
     @FXML
@@ -82,22 +85,10 @@ public class UserSettingsController {
     private JFXCheckBox isOccupantField;
     @FXML
     private TitledPane changePasswordPane;
-    @FXML
-    private PasswordField oldPassword;
-    @FXML
-    private PasswordField newPassword;
-    @FXML
-    private PasswordField repeatedPassword;
-    @FXML
-    private ObserverButton savePassword;
+
 
     private ObservableList<String> availableThemes;
     private ObservableList<Language> availableLanguages;
-    private final ForegroundPane foregroundPane;
-
-    public UserSettingsController(ForegroundPane foregroundPane) {
-        this.foregroundPane = foregroundPane;
-    }
 
 
     public void initialize() {
@@ -120,7 +111,6 @@ public class UserSettingsController {
                 languageBundle.getString(Constants.DARK_THEME_CSS_NAME));
         themeChoice.setItems(availableThemes);
 
-        savePassword.setApplyOnNewText(String::toUpperCase);
         changePasswordPane.setExpanded(false);
 
 
@@ -295,39 +285,6 @@ public class UserSettingsController {
 
     }
 
-    @FXML
-    private void saveNewPassword() throws InterruptedException {
-
-        if (!verifyNewPassword()) {
-            InfoPane.warn("passwordsNotEqual").hideAfter(Duration.seconds(5));
-            clearPasswordFields();
-
-            return;
-        }
-
-        try {
-            SessionManager.getInstance().changeCredentials(SessionManager.getInstance().getUserId(), oldPassword.getText(), newPassword.getText());
-            showSuccessMessage();
-
-        } catch (RejectedException rex) {
-            InfoPane.info("oldPasswordWrong").backgroundColor(Color.RED).hideAfter(Duration.seconds(5));
-        } catch (CouldNotPerformException ex) {
-            ExceptionPrinter.printHistory(ex, LOGGER);
-        }
-
-        clearPasswordFields();
-
-    }
-
-    private void clearPasswordFields() {
-        oldPassword.clear();
-        newPassword.clear();
-        repeatedPassword.clear();
-    }
-
-    private boolean verifyNewPassword() {
-        return newPassword.getText().equals(repeatedPassword.getText());
-    }
 
     private void showSuccessMessage() {
         InfoPane.info("saveSuccess")
