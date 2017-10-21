@@ -31,9 +31,8 @@ import javafx.util.Duration;
 import javafx.util.StringConverter;
 import org.controlsfx.control.textfield.CustomTextField;
 import org.openbase.bco.authentication.lib.SessionManager;
-import org.openbase.bco.bcozy.model.UserData;
-import org.openbase.bco.bcozy.view.*;
 import org.openbase.bco.bcozy.model.LanguageSelection;
+import org.openbase.bco.bcozy.model.UserData;
 import org.openbase.bco.bcozy.util.Language;
 import org.openbase.bco.bcozy.util.Languages;
 import org.openbase.bco.bcozy.view.Constants;
@@ -152,12 +151,48 @@ public class UserSettingsController {
             changeMail.textProperty().bindBidirectional(userData.mailProperty());
             changePhone.textProperty().bindBidirectional(userData.phoneProperty());
 
+           /* initUserName();
+            initFirstName();
+            initLastName();
+            initMail();
+            initPhone();*/
 
-        } catch (CouldNotPerformException | ExecutionException |TimeoutException ex) {
+
+        } catch (CouldNotPerformException ex) {
             ExceptionPrinter.printHistory(ex, LOGGER);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (TimeoutException e) {
+            e.printStackTrace();
         }
     }
 
+
+    private void initPhone() throws InterruptedException, CouldNotPerformException {
+        changePhone.setText(Registries.getUserRegistry().getUserConfigById(SessionManager.getInstance().getUserId
+                ()).getUserConfig().getMobilePhoneNumber());
+    }
+
+    private void initMail() throws InterruptedException, CouldNotPerformException {
+        changeMail.setText(Registries.getUserRegistry().getUserConfigById(SessionManager.getInstance().getUserId
+                ()).getUserConfig().getEmail());
+    }
+
+    private void initUserName() throws InterruptedException, CouldNotPerformException {
+        changeUsername.setText(Registries.getUserRegistry().getUserConfigById(SessionManager.getInstance().getUserId
+                ()).getUserConfig().getUserName());
+    }
+
+    private void initFirstName() throws InterruptedException, CouldNotPerformException {
+        changeFirstname.setText(Registries.getUserRegistry().getUserConfigById(SessionManager.getInstance()
+                .getUserId
+                        ()).getUserConfig().getFirstName());
+    }
+
+    private void initLastName() throws InterruptedException, CouldNotPerformException {
+        changeLastname.setText(Registries.getUserRegistry().getUserConfigById(SessionManager.getInstance().getUserId
+                ()).getUserConfig().getLastName());
+    }
 
     private void initEditableFields(CustomTextField... fields) {
         for (CustomTextField field : fields) {
@@ -199,12 +234,16 @@ public class UserSettingsController {
             UnitConfigType.UnitConfig.Builder newUserConfig = Registries.getUserRegistry().getUserConfigById
                     (SessionManager.getInstance().getUserId()).toBuilder();
 
+//        UserConfigType.UserConfig.newBuilder().setOccupant()
+
             newUserConfig.getUserConfigBuilder()
                     .setUserName(changeUsername.getText())
                     .setFirstName(changeFirstname.getText())
                     .setLastName(changeLastname.getText())
                     .setEmail(changeMail.getText())
-                    .setMobilePhoneNumber(changePhone.getText());
+                    .setMobilePhoneNumber(changePhone.getText())
+            //TODO?: .setOccupant(isOccupantField.isSelected())
+            ;
 
             Registries.getUserRegistry().updateUserConfig(newUserConfig.build());
             showSuccessMessage();

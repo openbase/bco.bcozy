@@ -22,6 +22,7 @@ import org.openbase.jul.exception.printer.LogLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.UnsupportedEncodingException;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -103,7 +104,14 @@ public final class LanguageSelection extends Observable {
             text = identifier;
         }
 
-        return text;
+        try {
+            return new String(text.getBytes("UTF-8"), "ISO-8859-1");
+        } catch (UnsupportedEncodingException ex) {
+            ExceptionPrinter.printHistory("UNSUPPORTED ENCODING", ex, LOGGER);
+            return text;
+        }
+
+
     }
 
     /**

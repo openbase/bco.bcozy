@@ -1,9 +1,9 @@
 package org.openbase.bco.bcozy.controller;
 
 import com.jfoenix.controls.JFXCheckBox;
+import com.sun.javafx.tk.Toolkit;
 import javafx.application.Platform;
 import javafx.beans.property.StringProperty;
-import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -14,6 +14,7 @@ import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
 import org.controlsfx.control.CheckComboBox;
+import org.openbase.bco.authentication.lib.SessionManager;
 import org.openbase.bco.bcozy.model.SessionManagerFacade;
 import org.openbase.bco.bcozy.model.SessionManagerFacadeImpl;
 import org.openbase.bco.bcozy.model.UserData;
@@ -23,6 +24,7 @@ import org.openbase.bco.bcozy.view.ObserverButton;
 import org.openbase.bco.bcozy.view.ObserverLabel;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.VerificationFailedException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.slf4j.Logger;
@@ -30,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import rst.domotic.unit.UnitConfigType.UnitConfig;
 import rst.domotic.unit.user.UserConfigType;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
@@ -93,8 +96,6 @@ public class UserManagementController {
                 -> setGroups(groups)
         );
 
-        ObservableList<UserData> userDataList = FXCollections.observableArrayList();
-
         chooseUserBox.setConverter(new StringConverter<UserData>() {
             @Override
             public String toString(UserData object) {
@@ -106,39 +107,22 @@ public class UserManagementController {
 
             @Override
             public UserData fromString(String string) {
-                return userDataList.stream()
+                return chooseUserBox.getItems().stream()
                         .filter(userData -> !userData.isUnsaved())//filter new user
                         .filter(userData -> userData.getUserName().equals(string))//find user with username
                         .findFirst()//select user
                         .orElse(new UserData());//or null (=new user)
             }
         });
-        chooseUserBox.getItems().add(new UserData());//new User
 
-        chooseUserBox.valueProperty().addListener((observable, oldValue, newValue) ->
-                userSelected(newValue));
-        try {
-            if (Registries.getUserRegistry().isDataAvailable()) {
-                List<UnitConfig> users = Registries.getUserRegistry().getUserConfigs();
-
-
-                for (UnitConfig user : users) {
-                    userDataList.add(new UserData(user));
-                }
-            }
-            chooseUserBox.getItems().addAll(userDataList);
-        } catch (CouldNotPerformException | ExecutionException | TimeoutException ex) {
-            ExceptionPrinter.printHistory(ex, LOGGER);
-        } catch (InterruptedException ex) {
-            Thread.currentThread().interrupt();
-            return;
-        }
+        chooseUserBox.valueProperty().addListener((observable, oldValue, newValue) -> userSelected(newValue));
 
 
         saveBtn.setApplyOnNewText(String::toUpperCase);
         deleteButton.setApplyOnNewText(String::toUpperCase);
 
         usergroupField.setConverter(AuthorizationGroups.stringConverter(groups));
+
         usergroupField.prefWidthProperty().bind(root.widthProperty());
 
         usernameEmptyLabel.getStyleClass().remove("label");
@@ -147,10 +131,67 @@ public class UserManagementController {
         mailEmptyLabel.getStyleClass().remove("label");
 
         chooseUserBox.getSelectionModel().select(0);
+
+
+        try {
+            Registries.getUserRegistry().addDataObserver((source, data) -> fillUserList());
+        } catch (NotAvailableException ex) {
+            ExceptionPrinter.printHistory(ex, LOGGER);
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+        }
+        SessionManager.getInstance().addLoginObserver((source, data) -> fillUserList());
+    }
+
+
+    private void fillUserList() {
+        if (Platform.isFxApplicationThread()) {
+            fillUserListInternal();
+        } else {
+            Platform.runLater(this::fillUserListInternal);
+        }
+    }
+
+    private void fillUserListInternal() {
+        Toolkit.getToolkit().checkFxUserThread();
+
+        UserData userData = selectedUser;
+
+        chooseUserBox.getItems().clear();
+
+        chooseUserBox.getItems().add(new UserData());//new User
+        try {
+            if (Registries.getUserRegistry().isDataAvailable()) {
+                List<UnitConfig> users = Registries.getUserRegistry().getUserConfigs();
+
+                for (UnitConfig user : users) {
+                    chooseUserBox.getItems().add(new UserData(user));
+                }
+            }
+        } catch (CouldNotPerformException | ExecutionException | TimeoutException ex) {
+            ExceptionPrinter.printHistory(ex, LOGGER);
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+        }
+
+        chooseUserBox.getSelectionModel().select(userData);
     }
 
     private void userSelected(UserData selectedUser) {
+        if (Platform.isFxApplicationThread()) {
+            userSelectedInternal(selectedUser);
+        } else {
+            Platform.runLater(() -> userSelectedInternal(selectedUser));
+        }
+    }
+
+    private void userSelectedInternal(UserData selectedUser) {
+        Toolkit.getToolkit().checkFxUserThread();
+
         unbindFields();
+        resetFields();
+        resetHints();
+
         if (selectedUser == null) {
             saveBtn.setDisable(true);
             deleteButton.setDisable(true);
@@ -167,6 +208,16 @@ public class UserManagementController {
         isOccupant.selectedProperty().bindBidirectional(selectedUser.occupantProperty());
         isAdmin.selectedProperty().bindBidirectional(selectedUser.adminProperty());
 
+
+        for (UnitConfig unitConfig : usergroupField.getItems()) {
+            for (UnitConfig userGroup : selectedUser.getGroups()) {
+                if (unitConfig.getId().equals(userGroup.getId())) {
+                    usergroupField.getCheckModel().check(unitConfig);
+                }
+            }
+        }
+
+
         if (selectedUser.isUnsaved()) {
             saveBtn.setIdentifier("register");
             deleteButton.setDisable(true);
@@ -177,7 +228,6 @@ public class UserManagementController {
             saveBtn.setDisable(false);
 
         }
-
     }
 
     private void unbindFields() {
@@ -289,6 +339,8 @@ public class UserManagementController {
     private void saveUser() throws InterruptedException {
 
         try {
+            List<UnitConfig> groups = new ArrayList<>(usergroupField.getCheckModel().getCheckedItems());
+
             UnitConfig unitConfig = Registries.getUserRegistry()
                     .getUserConfigById(selectedUser.getUserId())
                     .toBuilder()
@@ -296,8 +348,18 @@ public class UserManagementController {
                     .build();
 
             Registries.getUserRegistry().updateUserConfig(unitConfig);
+
+            for (UnitConfig config : selectedUser.getGroups()) {
+                AuthorizationGroups.tryRemoveFromGroup(config, selectedUser.getUserId());
+            }
+            for (UnitConfig config : groups) {
+                AuthorizationGroups.tryAddToGroup(config, selectedUser.getUserId());
+            }
+
+            showSuccessMessage();
         } catch (CouldNotPerformException ex) {
             ExceptionPrinter.printHistory(ex, LOGGER);
+            showErrorMessage();
         }
     }
 
