@@ -68,8 +68,6 @@ public class SettingsController {
 
     @FXML
     private CustomTextField filterInput;
-//    private JFXTextField filterInput;
-
 
     @FXML
     private VBox permissionPaneParent;
@@ -82,11 +80,15 @@ public class SettingsController {
 
 
     final ObservableList<RecursiveUnitConfig> list = FXCollections.observableArrayList();
-    private final ForegroundPane foregroudPane;
 
-
+    /**
+     * @deprecated Use {@link #SettingsController()} instead.
+     */
+    @Deprecated
     public SettingsController(ForegroundPane foregroudPane) {
-        this.foregroudPane = foregroudPane;
+    }
+
+    public SettingsController() {
     }
 
     @FXML
@@ -121,11 +123,8 @@ public class SettingsController {
         this.adminAccordion.getPanes().add(groupsPane);
 
         try {
-            Registries.getUnitRegistry().addDataObserver((observable, unitRegistryData) -> {
-                        List<UnitConfigType.UnitConfig> unitConfigList = Registries.getUnitRegistry().getUnitConfigs();
-                        Platform.runLater(() -> fillTable(unitConfigList));
-                    }
-            );
+            fillTable();
+            Registries.getUnitRegistry().addDataObserver((observable, unitRegistryData) -> fillTable());
         } catch (CouldNotPerformException ex) {
             ExceptionPrinter.printHistory(ex, LOGGER);
         } catch (InterruptedException ex) {
@@ -134,7 +133,7 @@ public class SettingsController {
 
     }
 
-    URL getFxmlURL(String filename) throws NullPointerException {
+    private URL getFxmlURL(String filename) throws NullPointerException {
         return Objects.requireNonNull(getClass().getClassLoader().getResource(filename),
                 filename + " not found");
     }
@@ -173,9 +172,6 @@ public class SettingsController {
 
 
     public void fillTreeTableView() {
-        unitsTable.setShowRoot(false);
-        unitsTable.setEditable(true);
-
         JFXTreeTableColumn<RecursiveUnitConfig, String> labelColumn = createJFXTreeTableColumn("Units",
                 (unit) -> unit.getUnit().getLabel());
         labelColumn.setPrefWidth(150);
@@ -227,6 +223,11 @@ public class SettingsController {
 
     }
 
+    private void fillTable() throws CouldNotPerformException, InterruptedException {
+        List<UnitConfigType.UnitConfig> unitConfigList = Registries.getUnitRegistry().getUnitConfigs();
+        Platform.runLater(() -> fillTable(unitConfigList));
+    }
+
     private void fillTable(List<UnitConfigType.UnitConfig> unitConfigList) {
 
         unitsTable.unGroup(this.typeColumn);
@@ -243,12 +244,8 @@ public class SettingsController {
         }
 
         if (!list.isEmpty()) {
-
-
             unitsTable.group(this.typeColumn);
         }
-
-
     }
 
     private <S, T> JFXTreeTableColumn<S, T> createJFXTreeTableColumn(String text, Function<S, T> supplier) {
@@ -350,6 +347,21 @@ public class SettingsController {
             return unit;
         }
 
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            RecursiveUnitConfig that = (RecursiveUnitConfig) o;
+
+            return this.unit.get() != null && that.unit.get() != null
+                    && this.unit.get().getId().equals(that.unit.get().getId());
+        }
+
+        @Override
+        public int hashCode() {
+            return unit.get() != null ? unit.get().getId().hashCode() : 0;
+        }
     }
 
     private class MethodRefCellValueFactory<S, T> implements Callback<TreeTableColumn.CellDataFeatures<S, T>, ObservableValue<T>> {
@@ -366,7 +378,7 @@ public class SettingsController {
         @Override
         public ObservableValue<T> call(TreeTableColumn.CellDataFeatures<S, T> param) {
             if (column.validateValue(param)) {
-                return new SimpleObjectProperty(supplier.apply(param.getValue().getValue()));
+                return new SimpleObjectProperty<>(supplier.apply(param.getValue().getValue()));
             }
             return column.getComputedValue(param);
         }
