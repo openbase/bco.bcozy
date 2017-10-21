@@ -16,25 +16,29 @@ public class SessionManagerFacadeImplTest {
         sessionManagerFacade = new SessionManagerFacadeImpl();
     }
 
-    @Test(expected = VerificationFailedException.class)
+    @Test
     public void verifyUnequalPasswords() throws VerificationFailedException {
-        sessionManagerFacade.verifyPasswords("test", "tset");
-
-        Assert.fail("no VerificationFailedException, fail test");
+        try {
+            sessionManagerFacade.verifyPasswords("test", "tset");
+            Assert.fail("no VerificationFailedException, fail test");
+        } catch (VerificationFailedException ex) {
+            Assert.assertEquals("repeated password does not match!", ex.getMessage());
+        }
     }
 
-    @Test(expected = VerificationFailedException.class)
+    @Test
     public void verifyEmptyPasswords() throws VerificationFailedException {
-        sessionManagerFacade.verifyPasswords("", "");
-
-        Assert.fail("no VerificationFailedException, fail test");
+        try {
+            sessionManagerFacade.verifyPasswords("", "");
+            Assert.fail("no VerificationFailedException, fail test");
+        } catch (VerificationFailedException ex) {
+            Assert.assertEquals("Password must not be empty!", ex.getMessage());
+        }
     }
 
 
     @Test()
     public void verifyPasswords() throws VerificationFailedException {
         sessionManagerFacade.verifyPasswords("test", "test");
-
-        Assert.assertTrue("no VerificationFailedException, test succeeded", true);
     }
 }

@@ -269,7 +269,7 @@ public class UserManagementController {
         }
     }
 
-    private void registerUser() throws InterruptedException {
+    private void registerUser() throws InterruptedException  {
         resetHints();
 
         if (!sessionManager.isAdmin()) {
