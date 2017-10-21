@@ -197,6 +197,8 @@ public class UserManagementController {
         if (selectedUser == null) {
             saveBtn.setDisable(true);
             deleteButton.setDisable(true);
+            passwordField.setDisable(true);
+            repeatPasswordField.setDisable(true);
             return;
         }
         this.selectedUser = selectedUser;
@@ -224,11 +226,14 @@ public class UserManagementController {
             saveBtn.setIdentifier("register");
             deleteButton.setDisable(true);
             saveBtn.setDisable(false);
+            passwordField.setDisable(false);
+            repeatPasswordField.setDisable(false);
         } else {
             saveBtn.setIdentifier("save");
             deleteButton.setDisable(false);
             saveBtn.setDisable(false);
-
+            passwordField.setDisable(true);
+            repeatPasswordField.setDisable(true);
         }
     }
 
@@ -269,30 +274,14 @@ public class UserManagementController {
         }
     }
 
-    private void registerUser() throws InterruptedException  {
+    private void registerUser() throws InterruptedException {
         resetHints();
 
         if (!sessionManager.isAdmin()) {
             return;
         }
 
-        try {
-            sessionManager.verifyUserName(username.getText());
-        } catch (VerificationFailedException ex) {
-            username.getStyleClass().add("text-field-wrong");
-            usernameEmptyLabel.setVisible(true);
-            return;
-        }
-
-        if (firstname.getText().equals("")) {
-            firstname.getStyleClass().add("text-field-wrong");
-            firstnameEmptyLabel.setVisible(true);
-            return;
-        }
-
-        if (lastname.getText().equals("")) {
-            lastname.getStyleClass().add("text-field-wrong");
-            lastnameEmptyLabel.setVisible(true);
+        if (!checkFields()) {
             return;
         }
 
@@ -301,21 +290,6 @@ public class UserManagementController {
         } catch (VerificationFailedException ex) {
             passwordField.getStyleClass().add("password-field-wrong");
             repeatPasswordField.getStyleClass().add("password-field-wrong");
-            return;
-        }
-
-        try {
-            sessionManager.verifyPhoneNumber(phone.getText());
-        } catch (VerificationFailedException ex) {
-            phone.getStyleClass().add("text-field-wrong");
-            return;
-        }
-
-        try {
-            sessionManager.verifyMailAddress(mail.getText());
-        } catch (VerificationFailedException ex) {
-            mail.getStyleClass().add("text-field-wrong");
-            mailEmptyLabel.setVisible(true);
             return;
         }
 
@@ -338,9 +312,60 @@ public class UserManagementController {
         }
     }
 
-    private void saveUser() throws InterruptedException {
+    private boolean checkFields() throws InterruptedException {
+        try {
+            sessionManager.verifyUserName(username.getText());
+        } catch (VerificationFailedException ex) {
+            username.getStyleClass().add("text-field-wrong");
+            usernameEmptyLabel.setVisible(true);
+            return false;
+        }
+
+        if (firstname.getText().equals("")) {
+            firstname.getStyleClass().add("text-field-wrong");
+            firstnameEmptyLabel.setVisible(true);
+            return false;
+        }
+
+        if (lastname.getText().equals("")) {
+            lastname.getStyleClass().add("text-field-wrong");
+            lastnameEmptyLabel.setVisible(true);
+            return false;
+        }
 
         try {
+            sessionManager.verifyPhoneNumber(phone.getText());
+        } catch (VerificationFailedException ex) {
+            phone.getStyleClass().add("text-field-wrong");
+            return false;
+        }
+
+        try {
+            sessionManager.verifyMailAddress(mail.getText());
+        } catch (VerificationFailedException ex) {
+            mail.getStyleClass().add("text-field-wrong");
+            mailEmptyLabel.setVisible(true);
+            return false;
+        }
+
+        return true;
+    }
+
+
+    private void saveUser() throws InterruptedException {
+
+        resetHints();
+
+        if (!sessionManager.isAdmin()) {
+            return;
+        }
+
+        if (!checkFields()) {
+            return;
+        }
+
+        try {
+
             List<UnitConfig> groups = new ArrayList<>(usergroupField.getCheckModel().getCheckedItems());
 
             UnitConfig unitConfig = Registries.getUserRegistry()
@@ -357,8 +382,6 @@ public class UserManagementController {
             for (UnitConfig config : groups) {
                 AuthorizationGroups.tryAddToGroup(config, selectedUser.getUserId());
             }
-
-
 
 
             showSuccessMessage();
