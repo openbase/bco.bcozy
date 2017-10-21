@@ -15,6 +15,7 @@ import javafx.util.Duration;
 import javafx.util.StringConverter;
 import org.controlsfx.control.CheckComboBox;
 import org.openbase.bco.authentication.lib.SessionManager;
+import org.openbase.bco.bcozy.model.LanguageSelection;
 import org.openbase.bco.bcozy.model.SessionManagerFacade;
 import org.openbase.bco.bcozy.model.SessionManagerFacadeImpl;
 import org.openbase.bco.bcozy.model.UserData;
@@ -24,6 +25,7 @@ import org.openbase.bco.bcozy.view.ObserverButton;
 import org.openbase.bco.bcozy.view.ObserverLabel;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.ExceptionProcessor;
 import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.VerificationFailedException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
@@ -332,7 +334,7 @@ public class UserManagementController {
             showSuccessMessage();
         } catch (CouldNotPerformException ex) {
             ExceptionPrinter.printHistory(ex, LOGGER);
-            showErrorMessage();
+            showErrorMessage(ex);
         }
     }
 
@@ -359,7 +361,7 @@ public class UserManagementController {
             showSuccessMessage();
         } catch (CouldNotPerformException ex) {
             ExceptionPrinter.printHistory(ex, LOGGER);
-            showErrorMessage();
+            showErrorMessage(ex);
         }
     }
 
@@ -385,8 +387,10 @@ public class UserManagementController {
         try {
             Registries.getUserRegistry().removeUserConfig(Registries.getUnitRegistry().getUnitConfigById(selectedUser
                     .getUserId()));
+            showSuccessMessage("deleteSuccess");
         } catch (CouldNotPerformException ex) {
             ExceptionPrinter.printHistory(ex, LOGGER);
+            showErrorMessage(ex);
         }
 
         userSelected(null);
@@ -417,13 +421,25 @@ public class UserManagementController {
     }
 
     private void showSuccessMessage() {
-        InfoPane.info("saveSuccess")
+        showSuccessMessage("saveSuccess");
+    }
+
+    private void showSuccessMessage(String message) {
+        InfoPane.info(message)
                 .backgroundColor(Color.GREEN)
                 .hideAfter(Duration.seconds(5));
     }
 
     private void showErrorMessage() {
         InfoPane.info("saveError")
+                .backgroundColor(Color.RED)
+                .hideAfter(Duration.seconds(5));
+    }
+
+    private void showErrorMessage(Exception ex) {
+        String message = LanguageSelection.getLocalized("saveErrorWithMessage", ExceptionProcessor.getInitialCauseMessage(ex));
+
+        InfoPane.info(message)
                 .backgroundColor(Color.RED)
                 .hideAfter(Duration.seconds(5));
     }
