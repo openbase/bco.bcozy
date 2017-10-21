@@ -35,7 +35,6 @@ public class UserData {
     private final StringProperty mail = new SimpleStringProperty("");
     private final StringProperty firstname = new SimpleStringProperty("");
     private final StringProperty lastName = new SimpleStringProperty("");
-    private final StringProperty password = new SimpleStringProperty("");
     private final BooleanProperty occupant = new SimpleBooleanProperty(false);
     private final BooleanProperty admin = new SimpleBooleanProperty(false);
     private final List<UnitConfigType.UnitConfig> groups = new ArrayList<>();
@@ -75,7 +74,6 @@ public class UserData {
         mail.set("mail@example.com");
         lastName.set("Lastname");
         occupant.set(false);
-        password.set("********");
     }
 
     public UserData(UnitConfigType.UnitConfig unitConfig) throws CouldNotPerformException, InterruptedException, TimeoutException, ExecutionException {
@@ -167,14 +165,6 @@ public class UserData {
 
     public StringProperty lastNameProperty() {
         return lastName;
-    }
-
-    public String getPassword() {
-        return password.get();
-    }
-
-    public StringProperty passwordProperty() {
-        return password;
     }
 
     public boolean isOccupant() {

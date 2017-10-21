@@ -358,6 +358,9 @@ public class UserManagementController {
                 AuthorizationGroups.tryAddToGroup(config, selectedUser.getUserId());
             }
 
+
+
+
             showSuccessMessage();
         } catch (CouldNotPerformException ex) {
             ExceptionPrinter.printHistory(ex, LOGGER);
