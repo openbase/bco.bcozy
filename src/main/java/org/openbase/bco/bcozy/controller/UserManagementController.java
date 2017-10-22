@@ -83,11 +83,21 @@ public class UserManagementController {
     @FXML
     private ObserverLabel usernameEmptyLabel;
     @FXML
+    private ObserverLabel usernameAlreadyExistsLabel;
+    @FXML
     private ObserverLabel firstnameEmptyLabel;
     @FXML
     private ObserverLabel lastnameEmptyLabel;
     @FXML
     private ObserverLabel mailEmptyLabel;
+    @FXML
+    private ObserverLabel passwordLabel;
+    @FXML
+    private ObserverLabel repeatPasswordLabel;
+    @FXML
+    private ObserverLabel passwordEmptyLabel;
+    @FXML
+    private ObserverLabel passwordsNotEqualLabel;
 
 
     private UserData selectedUser;
@@ -102,7 +112,7 @@ public class UserManagementController {
             @Override
             public String toString(UserData object) {
                 if (object.isUnsaved()) {
-                    return "neuer Nutzer";//TODO localized
+                    return  LanguageSelection.getLocalized("newUser");
                 }
                 return object.getUserName();
             }
@@ -131,6 +141,8 @@ public class UserManagementController {
         firstnameEmptyLabel.getStyleClass().remove("label");
         lastnameEmptyLabel.getStyleClass().remove("label");
         mailEmptyLabel.getStyleClass().remove("label");
+        usernameAlreadyExistsLabel.getStyleClass().remove("label");
+        usernameAlreadyExistsLabel.setTranslateY(-10.0);
 
 
         try {
@@ -174,10 +186,11 @@ public class UserManagementController {
             Thread.currentThread().interrupt();
         }
 
-        if (userData != null) {
+        if (chooseUserBox.getItems().contains(userData)) {
             chooseUserBox.getSelectionModel().select(userData);
         } else {
             chooseUserBox.getSelectionModel().select(0);
+
         }
     }
 
@@ -199,8 +212,10 @@ public class UserManagementController {
         if (selectedUser == null) {
             saveBtn.setDisable(true);
             deleteButton.setDisable(true);
-            passwordField.setDisable(true);
-            repeatPasswordField.setDisable(true);
+            passwordField.setVisible(false);
+            repeatPasswordField.setVisible(false);
+            passwordLabel.setVisible(false);
+            repeatPasswordLabel.setVisible(false);
             return;
         }
         this.selectedUser = selectedUser;
@@ -228,14 +243,18 @@ public class UserManagementController {
             saveBtn.setIdentifier("register");
             deleteButton.setDisable(true);
             saveBtn.setDisable(false);
-            passwordField.setDisable(false);
-            repeatPasswordField.setDisable(false);
+            passwordField.setVisible(true);
+            repeatPasswordField.setVisible(true);
+            passwordLabel.setVisible(true);
+            repeatPasswordLabel.setVisible(true);
         } else {
             saveBtn.setIdentifier("save");
             deleteButton.setDisable(false);
             saveBtn.setDisable(false);
-            passwordField.setDisable(true);
-            repeatPasswordField.setDisable(true);
+            passwordField.setVisible(false);
+            repeatPasswordField.setVisible(false);
+            passwordLabel.setVisible(false);
+            repeatPasswordLabel.setVisible(false);
         }
     }
 
@@ -292,6 +311,7 @@ public class UserManagementController {
         } catch (VerificationFailedException ex) {
             passwordField.getStyleClass().add("password-field-wrong");
             repeatPasswordField.getStyleClass().add("password-field-wrong");
+            passwordsNotEqualLabel.setVisible(true);
             return;
         }
 
@@ -315,12 +335,16 @@ public class UserManagementController {
     }
 
     private boolean checkFields() throws InterruptedException {
+        if(selectedUser.getUserName().isEmpty()) {
+            username.getStyleClass().add("text-field-wrong");
+            usernameEmptyLabel.setVisible(true);
+        }
         if (needsUserNameVerifing()) {
             try {
                 sessionManager.verifyUserName(username.getText());
             } catch (VerificationFailedException ex) {
                 username.getStyleClass().add("text-field-wrong");
-                usernameEmptyLabel.setVisible(true);
+                usernameAlreadyExistsLabel.setVisible(true);
                 return false;
             }
         }
@@ -334,6 +358,12 @@ public class UserManagementController {
         if (lastname.getText().equals("")) {
             lastname.getStyleClass().add("text-field-wrong");
             lastnameEmptyLabel.setVisible(true);
+            return false;
+        }
+
+        if (passwordField.getText().equals("")) {
+            passwordField.getStyleClass().add("text-field-wrong");
+            passwordEmptyLabel.setVisible(true);
             return false;
         }
 
@@ -356,8 +386,7 @@ public class UserManagementController {
     }
 
     private boolean needsUserNameVerifing() throws InterruptedException {
-        return !selectedUser.getUserName().equals(selectedUser.getOriginalUserName())
-                || selectedUser.getUserName().isEmpty();
+        return !selectedUser.getUserName().equals(selectedUser.getOriginalUserName());
     }
 
     private void saveUser() throws InterruptedException {
@@ -402,7 +431,7 @@ public class UserManagementController {
 
     @FXML
     private void delete(ActionEvent actionEvent) {
-        new Alert(Alert.AlertType.CONFIRMATION, "Wirklich löschen"/*TODO*/)
+        new Alert(Alert.AlertType.CONFIRMATION, LanguageSelection.getLocalized("confirmDelete"))
                 .showAndWait()
                 .filter(response -> response == ButtonType.OK)
                 .ifPresent(response -> {
@@ -416,8 +445,6 @@ public class UserManagementController {
     }
 
     private void deleteUser() throws InterruptedException {
-        //TODO
-
         try {
             Registries.getUserRegistry().removeUserConfig(Registries.getUnitRegistry().getUnitConfigById(selectedUser
                     .getUserId()));
@@ -440,6 +467,9 @@ public class UserManagementController {
         firstnameEmptyLabel.setVisible(false);
         lastnameEmptyLabel.setVisible(false);
         mailEmptyLabel.setVisible(false);
+        usernameAlreadyExistsLabel.setVisible(false);
+        passwordsNotEqualLabel.setVisible(false);
+        passwordEmptyLabel.setVisible(false);
     }
 
     private void resetFields() {

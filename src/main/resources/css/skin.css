@@ -685,7 +685,7 @@
 }
 
 .xtra-small-label.error-label {
-    -fx-text-fill: -error-color;
+    -fx-text-fill: -error-color !important;
 }
 
 /*******************************************************************************

@@ -151,13 +151,6 @@ public class UserSettingsController {
             changeMail.textProperty().bindBidirectional(userData.mailProperty());
             changePhone.textProperty().bindBidirectional(userData.phoneProperty());
 
-           /* initUserName();
-            initFirstName();
-            initLastName();
-            initMail();
-            initPhone();*/
-
-
         } catch (CouldNotPerformException ex) {
             ExceptionPrinter.printHistory(ex, LOGGER);
         } catch (ExecutionException e) {
@@ -165,33 +158,6 @@ public class UserSettingsController {
         } catch (TimeoutException e) {
             e.printStackTrace();
         }
-    }
-
-
-    private void initPhone() throws InterruptedException, CouldNotPerformException {
-        changePhone.setText(Registries.getUserRegistry().getUserConfigById(SessionManager.getInstance().getUserId
-                ()).getUserConfig().getMobilePhoneNumber());
-    }
-
-    private void initMail() throws InterruptedException, CouldNotPerformException {
-        changeMail.setText(Registries.getUserRegistry().getUserConfigById(SessionManager.getInstance().getUserId
-                ()).getUserConfig().getEmail());
-    }
-
-    private void initUserName() throws InterruptedException, CouldNotPerformException {
-        changeUsername.setText(Registries.getUserRegistry().getUserConfigById(SessionManager.getInstance().getUserId
-                ()).getUserConfig().getUserName());
-    }
-
-    private void initFirstName() throws InterruptedException, CouldNotPerformException {
-        changeFirstname.setText(Registries.getUserRegistry().getUserConfigById(SessionManager.getInstance()
-                .getUserId
-                        ()).getUserConfig().getFirstName());
-    }
-
-    private void initLastName() throws InterruptedException, CouldNotPerformException {
-        changeLastname.setText(Registries.getUserRegistry().getUserConfigById(SessionManager.getInstance().getUserId
-                ()).getUserConfig().getLastName());
     }
 
     private void initEditableFields(CustomTextField... fields) {
@@ -234,16 +200,12 @@ public class UserSettingsController {
             UnitConfigType.UnitConfig.Builder newUserConfig = Registries.getUserRegistry().getUserConfigById
                     (SessionManager.getInstance().getUserId()).toBuilder();
 
-//        UserConfigType.UserConfig.newBuilder().setOccupant()
-
             newUserConfig.getUserConfigBuilder()
                     .setUserName(changeUsername.getText())
                     .setFirstName(changeFirstname.getText())
                     .setLastName(changeLastname.getText())
                     .setEmail(changeMail.getText())
-                    .setMobilePhoneNumber(changePhone.getText())
-            //TODO?: .setOccupant(isOccupantField.isSelected())
-            ;
+                    .setMobilePhoneNumber(changePhone.getText());
 
             Registries.getUserRegistry().updateUserConfig(newUserConfig.build());
             showSuccessMessage();
