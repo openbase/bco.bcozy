@@ -132,8 +132,6 @@ public class UserManagementController {
         lastnameEmptyLabel.getStyleClass().remove("label");
         mailEmptyLabel.getStyleClass().remove("label");
 
-        chooseUserBox.getSelectionModel().select(0);
-
 
         try {
             Registries.getUserRegistry().addDataObserver((source, data) -> fillUserList());
@@ -176,7 +174,11 @@ public class UserManagementController {
             Thread.currentThread().interrupt();
         }
 
-        chooseUserBox.getSelectionModel().select(userData);
+        if (userData != null) {
+            chooseUserBox.getSelectionModel().select(userData);
+        } else {
+            chooseUserBox.getSelectionModel().select(0);
+        }
     }
 
     private void userSelected(UserData selectedUser) {
@@ -313,12 +315,14 @@ public class UserManagementController {
     }
 
     private boolean checkFields() throws InterruptedException {
-        try {
-            sessionManager.verifyUserName(username.getText());
-        } catch (VerificationFailedException ex) {
-            username.getStyleClass().add("text-field-wrong");
-            usernameEmptyLabel.setVisible(true);
-            return false;
+        if (needsUserNameVerifing()) {
+            try {
+                sessionManager.verifyUserName(username.getText());
+            } catch (VerificationFailedException ex) {
+                username.getStyleClass().add("text-field-wrong");
+                usernameEmptyLabel.setVisible(true);
+                return false;
+            }
         }
 
         if (firstname.getText().equals("")) {
@@ -351,6 +355,10 @@ public class UserManagementController {
         return true;
     }
 
+    private boolean needsUserNameVerifing() throws InterruptedException {
+        return !selectedUser.getUserName().equals(selectedUser.getOriginalUserName())
+                || selectedUser.getUserName().isEmpty();
+    }
 
     private void saveUser() throws InterruptedException {
 

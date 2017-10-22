@@ -9,10 +9,8 @@ import org.openbase.bco.authentication.lib.SessionManager;
 import org.openbase.bco.bcozy.util.AuthorizationGroups;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
-import org.openbase.jul.pattern.Observer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.domotic.registry.UserRegistryDataType;
 import rst.domotic.unit.UnitConfigType;
 import rst.domotic.unit.user.UserConfigType;
 
@@ -31,6 +29,8 @@ public class UserData {
 
     private final StringProperty userId = new SimpleStringProperty("");
     private final StringProperty phone = new SimpleStringProperty("");
+
+    private final String originalUserName;
     private final StringProperty userName = new SimpleStringProperty("");
     private final StringProperty mail = new SimpleStringProperty("");
     private final StringProperty firstname = new SimpleStringProperty("");
@@ -39,48 +39,28 @@ public class UserData {
     private final BooleanProperty admin = new SimpleBooleanProperty(false);
     private final List<UnitConfigType.UnitConfig> groups = new ArrayList<>();
 
-    //BooleanProperty admin;
-
-
-    private final Observer<UserRegistryDataType.UserRegistryData> userRegistryDataObserver = (source, data) -> updateValues();
 
     public static UserData currentUser() throws CouldNotPerformException, InterruptedException, TimeoutException, ExecutionException {
-        return new UserData(SessionManager.getInstance().getUserId());
+        String userId = SessionManager.getInstance().getUserId();
+        UnitConfigType.UnitConfig userConfig = Registries.getUserRegistry().getUserConfigById(userId);
+
+        return new UserData(userConfig);
     }
 
     /**
      * UserData for non-existing-user.
-     *
-     * @throws CouldNotPerformException
-     * @throws InterruptedException
      */
     public UserData() {
         userId.setValue(null);
-    }
-
-    public UserData(String userId) throws CouldNotPerformException, InterruptedException, TimeoutException, ExecutionException {
-        this.userId.setValue(userId);
-
-//        mock();//FIXME
-
-        updateValues();
-        Registries.getUserRegistry().addDataObserver(userRegistryDataObserver);
-    }
-
-    private void mock() {
-        phone.set("0123-456789");
-        userName.set("Nutzername");
-        firstname.set("Firstname");
-        mail.set("mail@example.com");
-        lastName.set("Lastname");
-        occupant.set(false);
+        originalUserName = "";
     }
 
     public UserData(UnitConfigType.UnitConfig unitConfig) throws CouldNotPerformException, InterruptedException, TimeoutException, ExecutionException {
         userId.setValue(unitConfig.getId());
+        originalUserName = unitConfig.getUserConfig().getUserName();
 
         updateValues(unitConfig.getUserConfig());
-        Registries.getUserRegistry().addDataObserver(userRegistryDataObserver);
+        Registries.getUserRegistry().addDataObserver((source, data) -> updateValues());
     }
 
     private void updateValues() throws CouldNotPerformException, InterruptedException, TimeoutException, ExecutionException {
@@ -213,5 +193,9 @@ public class UserData {
     @Override
     public int hashCode() {
         return userId != null ? userId.hashCode() : 0;
+    }
+
+    public String getOriginalUserName() {
+        return originalUserName;
     }
 }
