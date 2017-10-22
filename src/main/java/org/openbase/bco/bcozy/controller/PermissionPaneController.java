@@ -10,6 +10,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.HBox;
+import org.openbase.bco.bcozy.model.LanguageSelection;
 import org.openbase.bco.bcozy.util.AuthorizationGroups;
 import org.openbase.bco.bcozy.view.ObserverButton;
 import org.openbase.bco.bcozy.view.ObserverLabel;
@@ -154,11 +155,19 @@ public class PermissionPaneController {
     }
 
     private SimpleStringProperty formatPermissions(PermissionType.Permission permission) {
-        return new SimpleStringProperty(
-                (permission.getAccess() ? "A" : "a") + ","
-                        + (permission.getRead() ? "R" : "r") + ","
-                        + (permission.getWrite() ? "W" : "w") + ","
-        );
+
+        List<String> rights = new ArrayList<>();
+       if (permission.getRead()) {
+           rights.add(LanguageSelection.getLocalized("readRight"));
+       }
+       if (permission.getWrite()) {
+           rights.add(LanguageSelection.getLocalized("writeRight"));
+       }
+        if (permission.getAccess()) {
+            rights.add(LanguageSelection.getLocalized("accessRight"));
+        }
+
+        return new SimpleStringProperty(String.join(",", rights));
     }
 
     private void preselectGroupChoiceBoxValue() {
