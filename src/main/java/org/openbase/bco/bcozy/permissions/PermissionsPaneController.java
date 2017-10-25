@@ -33,6 +33,9 @@ import java.util.function.Function;
 import static java.util.Objects.nonNull;
 
 /**
+ * Controller for selecting unit to edit permissions for.
+ * Permissions of the selected group are edited wih subcontroller {@link UnitPermissionController}.
+ *
  * @author vdasilva
  */
 public class PermissionsPaneController {
@@ -80,7 +83,7 @@ public class PermissionsPaneController {
     private void onSelectionChange(javafx.beans.Observable observable, TreeItem oldValue, TreeItem newValue) {
         if (nonNull(newValue) && newValue.getValue() instanceof RecursiveUnitConfig) {
             setUnitPermissionVisible(true);
-            unitPermissionController.setUnitConfig(((RecursiveUnitConfig) newValue.getValue()).getUnit());
+            unitPermissionController.setSelectedUnitId(((RecursiveUnitConfig) newValue.getValue()).getUnit().getId());
         } else {
             setUnitPermissionVisible(false);
         }
