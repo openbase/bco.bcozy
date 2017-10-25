@@ -1,4 +1,4 @@
-package org.openbase.bco.bcozy.controller;
+package org.openbase.bco.bcozy.permissions;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
@@ -32,13 +32,13 @@ import java.util.concurrent.ExecutionException;
 /**
  * @author vdasilva
  */
-public class PermissionPaneController {
+public class UnitPermissionController {
 
 
     /**
      * Application logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(PermissionPaneController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(UnitPermissionController.class);
 
     @FXML
     private TableColumn<PermissionConfigType.PermissionConfig.MapFieldEntry, String> usergroupColumn;

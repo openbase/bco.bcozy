@@ -18,20 +18,8 @@
                  AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="1.0">
             <tabs>
                 <Tab fx:id="settingsTab">
-                    <content>
-                    </content>
                 </Tab>
                 <Tab fx:id="permissionTab">
-                    <content>
-                        <VBox fx:id="permissionPaneParent" minHeight="0.0" minWidth="0.0" prefHeight="180.0"
-                              prefWidth="200.0">
-                            <children>
-                                <CustomTextField fx:id="filterInput" layoutX="433.0" layoutY="2.0" prefHeight="13.0" prefWidth="161.0"/>
-                                <JFXTreeTableView fx:id="unitsTable" showRoot="false" editable="true"/>
-
-                            </children>
-                        </VBox>
-                    </content>
                 </Tab>
                 <Tab>
                     <graphic>
