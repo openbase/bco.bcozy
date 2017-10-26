@@ -22,7 +22,6 @@ import org.openbase.jul.exception.printer.LogLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.UnsupportedEncodingException;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -86,7 +85,7 @@ public final class LanguageSelection extends Observable {
      * arguments.
      *
      * @param identifier the identifier
-     * @param args the placeholder-arguments
+     * @param args       the placeholder-arguments
      * @return the localized string
      */
     public static String getLocalized(String identifier, Object... args) {
@@ -104,21 +103,14 @@ public final class LanguageSelection extends Observable {
             text = identifier;
         }
 
-        try {
-            return new String(text.getBytes("UTF-8"), "ISO-8859-1");
-        } catch (UnsupportedEncodingException ex) {
-            ExceptionPrinter.printHistory("UNSUPPORTED ENCODING", ex, LOGGER);
-            return text;
-        }
-
-
+        return text;
     }
 
     /**
      * Adds an Listener to the given identifier.
      * The Listener is called, each time the language changed and on attach.
      *
-     * @param identifier the identifier
+     * @param identifier               the identifier
      * @param onLanguageChangeListener the listener for this identifier
      */
     public static void addObserverFor(String identifier, OnLanguageChangeListener onLanguageChangeListener) {
@@ -131,7 +123,7 @@ public final class LanguageSelection extends Observable {
      * Adds an Listener to the given identifier.
      * The Listener is called, each time the language changed and on attach.
      *
-     * @param identifier the identifier
+     * @param identifier      the identifier
      * @param newTextConsumer the listener for this identifier
      */
     public static void addObserverFor(String identifier, Consumer<String> newTextConsumer) {
