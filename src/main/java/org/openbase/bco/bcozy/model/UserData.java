@@ -16,6 +16,7 @@ import rst.domotic.unit.user.UserConfigType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -185,14 +186,14 @@ public class UserData {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        UserData userData = (UserData) o;
+        UserData that = (UserData) o;
 
-        return userId != null ? userId.equals(userData.userId) : userData.userId == null;
+        return Objects.equals(this.userId, that.userId);
     }
 
     @Override
     public int hashCode() {
-        return userId != null ? userId.hashCode() : 0;
+        return Objects.hashCode(userId);
     }
 
     public String getOriginalUserName() {
