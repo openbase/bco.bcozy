@@ -1,5 +1,6 @@
 package org.openbase.bco.bcozy.util;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.net.URL;
 import java.util.*;
@@ -12,8 +13,7 @@ import java.util.stream.Collectors;
  *
  * @author vdasilva
  */
-public class Languages {
-
+public final class Languages {
 
     /**
      * Holder-Class for Threadsafe-Singleton.
@@ -26,32 +26,27 @@ public class Languages {
         return InstanceHolder.INSTANCE;
     }
 
-    private final Language english = fromLocale(Locale.US);
+    /**
+     * Fallback-Language, defaults to {@link Locale#US}.
+     */
+    private final Language fallback = new Language(Locale.US);
 
+
+    /**
+     * Loaded Languages.
+     */
     private final List<Language> languages;
 
     /**
      * Initializes Languages from available property-files.
      */
-    private Languages() {
+    Languages() {
         List<Locale> bundles = getLocalesFromBundles();
-        this.languages = bundles.stream().map(this::fromLocale).collect(Collectors.toList());
-    }
-
-    /**
-     * Creates a Language form the given Locale.
-     *
-     * @param locale
-     * @return
-     */
-    private Language fromLocale(Locale locale) {
-        return new Language(locale, locale.getDisplayLanguage(locale));
+        this.languages = bundles.stream().map(Language::new).collect(Collectors.toList());
     }
 
     /**
      * Creates Locales from each property-file available in "/languages".
-     *
-     * @return
      */
     private List<Locale> getLocalesFromBundles() {
         List<String> matches = getFileMatches();
@@ -68,9 +63,8 @@ public class Languages {
 
     /**
      * Gets all Language-Identifier (eg 'de', 'de_DE'), which have available property-files in "/languages".
-     *
-     * @return
      */
+    @Nonnull
     private List<String> getFileMatches() {
         List<String> matches = new LinkedList<>();
         Pattern pattern = Pattern.compile("languages_(\\w+[_\\w+])\\.properties");
@@ -85,10 +79,8 @@ public class Languages {
 
     /**
      * Gets all File-Names from an Resource-Directory.
-     *
-     * @param folder
-     * @return
      */
+    @Nonnull
     private String[] getResourceFolderFiles(String folder) {
         ClassLoader loader = Languages.class.getClassLoader();
         URL url = loader.getResource(folder);
@@ -108,27 +100,27 @@ public class Languages {
     }
 
     /**
-     * Returns the available Language with the locale or defaults to "en_US"
-     *
-     * @param locale
-     * @return
+     * Returns the available Language with the locale or current {@link #fallback}.
      */
+    @Nonnull
     public Language get(Locale locale) {
         return languages.stream().filter(l -> Objects.equals(l.getLocale(), locale))
-                .findAny().orElse(english);
+                .findAny().orElse(fallback);
     }
 
     /**
-     * Returns the available Language with the name or defaults to "en_US"
-     *
-     * @param name
-     * @return
+     * Returns the available Language with the name or current {@link #fallback}.
      */
+    @Nonnull
     public Language get(String name) {
         return languages.stream().filter(l -> Objects.equals(l.getName(), name))
-                .findAny().orElse(english);
+                .findAny().orElse(fallback);
     }
 
+    /**
+     * Returns all available Languages.
+     */
+    @Nonnull
     public List<Language> get() {
         return languages;
     }
