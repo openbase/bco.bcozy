@@ -92,8 +92,13 @@ public class Languages {
     private String[] getResourceFolderFiles(String folder) {
         ClassLoader loader = Languages.class.getClassLoader();
         URL url = loader.getResource(folder);
-        String path = url.getPath();
-        File[] files = new File(path).listFiles();
+
+        File[] files = Optional.ofNullable(url)
+                .map(URL::getPath)
+                .map(File::new)
+                .map(File::listFiles)
+                .orElse(new File[0]);
+
         String[] names = new String[files.length];
 
         for (int i = 0; i < files.length; i++) {
