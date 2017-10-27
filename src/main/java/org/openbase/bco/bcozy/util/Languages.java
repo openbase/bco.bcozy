@@ -1,7 +1,10 @@
 package org.openbase.bco.bcozy.util;
 
+import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.slf4j.Logger;
+
 import javax.annotation.Nonnull;
-import java.io.File;
+import java.io.*;
 import java.net.URL;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -14,6 +17,8 @@ import java.util.stream.Collectors;
  * @author vdasilva
  */
 public final class Languages {
+
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(Languages.class);
 
     /**
      * Holder-Class for Threadsafe-Singleton.
@@ -68,6 +73,12 @@ public final class Languages {
     private List<String> getFileMatches() {
         List<String> matches = new LinkedList<>();
         Pattern pattern = Pattern.compile("languages_(\\w+[_\\w+])\\.properties");
+
+        final List<String> files = getResourceFolderFiles("languages");
+        if (files.isEmpty()) {
+            files.addAll(getResourceFolderFilesWithStream("languages"));
+        }
+
         for (String file : getResourceFolderFiles("languages")) {
             Matcher matcher = pattern.matcher(file);
             if (matcher.find()) {
@@ -81,7 +92,7 @@ public final class Languages {
      * Gets all File-Names from an Resource-Directory.
      */
     @Nonnull
-    private String[] getResourceFolderFiles(String folder) {
+    private List<String> getResourceFolderFiles(String folder) {
         ClassLoader loader = Languages.class.getClassLoader();
         URL url = loader.getResource(folder);
 
@@ -91,12 +102,31 @@ public final class Languages {
                 .map(File::listFiles)
                 .orElse(new File[0]);
 
-        String[] names = new String[files.length];
+        List<String> names = new ArrayList<>();
 
-        for (int i = 0; i < files.length; i++) {
-            names[i] = files[i].getName();
+        for (File file : files) {
+            names.add(file.getName());
         }
         return names;
+    }
+
+    /**
+     * Gets all File-Names from an Resource-Directory, alternative Way
+     */
+    private List<String> getResourceFolderFilesWithStream(String folder) {
+        List<String> filenames = new ArrayList<>();
+
+        try (InputStream in = this.getClass().getClassLoader().getResourceAsStream(folder);
+             BufferedReader br = new BufferedReader(new InputStreamReader(in))) {
+
+            for (String resource = br.readLine(); resource != null; resource = br.readLine()) {
+                filenames.add(resource);
+            }
+        } catch (IOException ex) {
+            ExceptionPrinter.printHistory(ex, LOGGER);
+        }
+
+        return filenames;
     }
 
     /**
