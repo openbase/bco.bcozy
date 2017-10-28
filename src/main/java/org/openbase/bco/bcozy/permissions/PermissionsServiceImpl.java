@@ -12,7 +12,6 @@ import rst.domotic.authentication.PermissionType;
 import rst.domotic.unit.UnitConfigType;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 
@@ -22,8 +21,10 @@ import static rst.domotic.unit.UnitConfigType.UnitConfig;
 /**
  * @author vdasilva
  */
-public class PermissionsServiceImpl implements PermissionsService {
+public final class PermissionsServiceImpl implements PermissionsService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UnitPermissionController.class);
+
+    protected static final PermissionsServiceImpl permissionsService = new PermissionsServiceImpl();
 
     private final ObservableList<UnitConfigType.UnitConfig> groups = AuthorizationGroups.getAuthorizationGroups();
 
@@ -114,13 +115,29 @@ public class PermissionsServiceImpl implements PermissionsService {
     }
 
     @Override
-    public void save(@Nonnull String selectedUnitId, List<UnitGroupPermissionViewModel> permissions, @Nonnull OwnerViewModel owner) throws CouldNotPerformException, InterruptedException, ExecutionException {
+    public OtherPermissionsViewModel getOtherPermissions(String selectedUnitId) throws CouldNotPerformException, InterruptedException {
+        if (selectedUnitId == null) {
+            return null;
+        }
+
+        UnitConfig unitConfig = findUnitConfigById(selectedUnitId);
+
+        return new OtherPermissionsViewModel(unitConfig.getPermissionConfig().getOtherPermission().getRead(),
+                unitConfig.getPermissionConfig().getOtherPermission().getWrite(),
+                unitConfig.getPermissionConfig().getOtherPermission().getAccess());
+    }
+
+    @Override
+    public void save(@Nonnull String selectedUnitId, List<UnitGroupPermissionViewModel> permissions, @Nonnull OwnerViewModel owner, OtherPermissionsViewModel other) throws CouldNotPerformException, InterruptedException, ExecutionException {
         boolean changed = false;
 
         UnitConfig unitConfig = findUnitConfigById(selectedUnitId);
-        @Nullable String ownerId = owner.getUserId();
 
         if (!owner.isCurrentOwner() || owner.changed()) {
+            changed = true;
+        }
+
+        if (other.changed()) {
             changed = true;
         }
 
@@ -135,7 +152,7 @@ public class PermissionsServiceImpl implements PermissionsService {
         }
 
         if (changed) {
-            save(unitConfig, owner, permissionEntries);
+            save(unitConfig, owner, permissionEntries, other);
         }
     }
 
@@ -151,12 +168,18 @@ public class PermissionsServiceImpl implements PermissionsService {
                 .build();
     }
 
-    private void save(UnitConfig unitConfig, OwnerViewModel owner, List<PermissionConfig.MapFieldEntry> permissionEntries) throws CouldNotPerformException, InterruptedException, ExecutionException {
+    private void save(UnitConfig unitConfig, OwnerViewModel owner, List<PermissionConfig.MapFieldEntry> permissionEntries, OtherPermissionsViewModel other)
+            throws CouldNotPerformException, InterruptedException, ExecutionException {
         PermissionConfig.Builder permissionConfigBuilder = unitConfig.getPermissionConfig()
                 .toBuilder()
                 .clearGroupPermission()
                 .addAllGroupPermission(permissionEntries)
                 .clearOwnerId()
+                .clearOtherPermission()
+                .setOtherPermission(PermissionType.Permission.newBuilder()
+                        .setAccess(other.isAccess())
+                        .setWrite(other.isWrite())
+                        .setRead(other.isRead()))
                 .clearOwnerPermission();
 
         if (owner != OwnerViewModel.NULL_OBJECT) {

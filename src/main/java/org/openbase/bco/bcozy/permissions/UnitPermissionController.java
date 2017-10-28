@@ -3,10 +3,9 @@ package org.openbase.bco.bcozy.permissions;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import org.openbase.bco.bcozy.view.ObserverButton;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
@@ -28,6 +27,11 @@ public class UnitPermissionController {
     private static final Logger LOGGER = LoggerFactory.getLogger(UnitPermissionController.class);
 
     @FXML
+    public OwnerPermissionsController ownerPermissionsController;
+    @FXML
+    public Region ownerPermissions;
+
+    @FXML
     private TableView<UnitGroupPermissionViewModel> permissionsTable;
     @FXML
     public TableColumn<UnitGroupPermissionViewModel, String> groupColumn;
@@ -40,11 +44,16 @@ public class UnitPermissionController {
     @FXML
     public ObserverButton saveRightsButton;
     @FXML
-    public ChoiceBox<OwnerViewModel> owner;
-    @FXML
-    public HBox hbox;
+    public Region hbox;
 
-    protected PermissionsService permissionsService = new PermissionsServiceImpl();
+    @FXML
+    private CheckBox otherRead;
+    @FXML
+    private CheckBox otherAccess;
+    @FXML
+    private CheckBox otherWrite;
+
+    protected PermissionsService permissionsService = PermissionsServiceImpl.permissionsService;
 
     private String selectedUnitId;
 
@@ -81,12 +90,22 @@ public class UnitPermissionController {
         this.selectedUnitId = selectedUnitId;
         try {
             updatePermissionsContent();
-            updateOwnerContent();
+            updateOtherContent();
+            ownerPermissionsController.updateOwnerContent(this.selectedUnitId);
         } catch (CouldNotPerformException ex) {
             ExceptionPrinter.printHistory(ex, LOGGER);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
+    }
+
+    private void updateOtherContent() throws CouldNotPerformException, InterruptedException {
+        OtherPermissionsViewModel otherPermissionsViewModel = permissionsService.getOtherPermissions(selectedUnitId);
+
+        otherAccess.setSelected(otherPermissionsViewModel.isAccess());
+        otherRead.setSelected(otherPermissionsViewModel.isRead());
+        otherWrite.setSelected(otherPermissionsViewModel.isWrite());
+
     }
 
     /**
@@ -123,21 +142,15 @@ public class UnitPermissionController {
         permissionsTable.getItems().setAll(groupPermissions);
     }
 
-    private void updateOwnerContent() throws CouldNotPerformException, InterruptedException {
-        final List<OwnerViewModel> ownerModels = permissionsService.getOwners(selectedUnitId);
-
-        owner.getItems().setAll(ownerModels);
-        owner.getItems().add(0, OwnerViewModel.NULL_OBJECT);
-
-        final OwnerViewModel currentOwner = ownerModels.stream().filter(OwnerViewModel::isCurrentOwner).findAny().orElse(null);
-        owner.getSelectionModel().select(currentOwner);
-    }
-
-
     @FXML
     public void save() {
         try {
-            permissionsService.save(selectedUnitId, permissionsTable.getItems(), owner.getValue() != null ? owner.getValue() : OwnerViewModel.NULL_OBJECT);
+            OtherPermissionsViewModel other = new OtherPermissionsViewModel(otherRead.isSelected(),
+                    otherWrite.isSelected(), otherAccess.isSelected());
+
+            OwnerViewModel ownerViewModel = ownerPermissionsController.getSelectedOwner();
+
+            permissionsService.save(selectedUnitId, permissionsTable.getItems(), ownerViewModel, other);
             //TODO: show Success Message
         } catch (ExecutionException | CouldNotPerformException ex) {
             ExceptionPrinter.printHistory(ex, LOGGER);

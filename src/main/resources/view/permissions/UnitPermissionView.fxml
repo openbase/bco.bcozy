@@ -3,7 +3,7 @@
 <?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Text?>
+<?import javafx.scene.shape.Box?>
 <?import org.openbase.bco.bcozy.view.*?>
 <AnchorPane xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="org.openbase.bco.bcozy.permissions.UnitPermissionController"
@@ -49,11 +49,23 @@
         </columns>
     </TableView>
 
-    <HBox fx:id="hbox" layoutX="8.0" layoutY="268.0" prefWidth="250.0" spacing="10">
-        <ChoiceBox fx:id="owner" layoutX="14.0" layoutY="262.0" prefHeight="27.0"/>
+    <VBox fx:id="hbox" layoutX="8.0" layoutY="268.0" prefWidth="250.0" spacing="10">
+        <fx:include fx:id="ownerPermissions" source="OwnerPermissionsView.fxml"/>
 
-        <!--<fx:include fx:id="ownerPermissions" source="OwnerPermissionsView.fxml"/>-->
-    </HBox>
+        <HBox>
+            <ObserverLabel>other</ObserverLabel>
+
+            <ObserverLabel labelFor="${otherRead}">readRight</ObserverLabel>
+            <CheckBox fx:id="otherRead"/>
+
+            <ObserverLabel labelFor="${otherWrite}">writeRight</ObserverLabel>
+            <CheckBox fx:id="otherWrite"/>
+
+            <ObserverLabel labelFor="${otherAccess}">accessRight</ObserverLabel>
+            <CheckBox fx:id="otherAccess"/>
+        </HBox>
+
+    </VBox>
 
     <ObserverButton fx:id="saveRightsButton" identifier="save" layoutY="302.0" mnemonicParsing="false"
                     styleClass="transparent-button"

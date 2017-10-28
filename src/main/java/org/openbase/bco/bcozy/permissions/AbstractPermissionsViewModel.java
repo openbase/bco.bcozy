@@ -11,9 +11,9 @@ import java.util.logging.Logger;
 public abstract class AbstractPermissionsViewModel {
     private static final Logger LOG = Logger.getLogger(AbstractPermissionsViewModel.class.getName());
 
-    protected final boolean originalRead, originalWrite, originalAccess;
+    private final boolean originalRead, originalWrite, originalAccess;
 
-    public AbstractPermissionsViewModel(boolean read, boolean write, boolean access) {
+    AbstractPermissionsViewModel(boolean read, boolean write, boolean access) {
         this.originalAccess = access;
         this.originalRead = read;
         this.originalWrite = write;

@@ -1,8 +1,5 @@
 package org.openbase.bco.bcozy.permissions;
 
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-
 import java.util.Objects;
 
 /**
@@ -23,7 +20,7 @@ public class OwnerViewModel extends AbstractPermissionsViewModel {
 
     private final boolean currentOwner;
 
-    private BooleanProperty read, write, access;
+    private boolean read, write, access;
 
 
     public OwnerViewModel(String userId, String username, boolean currentOwner) {
@@ -36,9 +33,9 @@ public class OwnerViewModel extends AbstractPermissionsViewModel {
         this.username = Objects.requireNonNull(username);
         this.currentOwner = currentOwner;
 
-        this.read = new SimpleBooleanProperty(read);
-        this.write = new SimpleBooleanProperty(write);
-        this.access = new SimpleBooleanProperty(access);
+        this.read = (read);
+        this.write = (write);
+        this.access = (access);
     }
 
     @Override
@@ -50,6 +47,8 @@ public class OwnerViewModel extends AbstractPermissionsViewModel {
 
         return userId.equals(that.userId);
     }
+
+
 
     @Override
     public int hashCode() {
@@ -74,27 +73,27 @@ public class OwnerViewModel extends AbstractPermissionsViewModel {
     }
 
     public boolean isRead() {
-        return read.get();
-    }
-
-    public BooleanProperty readProperty() {
         return read;
     }
 
-    public boolean isWrite() {
-        return write.get();
+    public void setRead(boolean read) {
+        this.read = read;
     }
 
-    public BooleanProperty writeProperty() {
+    public boolean isWrite() {
         return write;
     }
 
-    public boolean isAccess() {
-        return access.get();
+    public void setWrite(boolean write) {
+        this.write = write;
     }
 
-    public BooleanProperty accessProperty() {
+    public boolean isAccess() {
         return access;
+    }
+
+    public void setAccess(boolean access) {
+        this.access = access;
     }
 
     @Override

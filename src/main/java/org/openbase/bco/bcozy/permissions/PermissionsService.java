@@ -31,10 +31,12 @@ public interface PermissionsService {
      * Saves the new Settings for the unit.
      * <p>
      * Permissions for Group and the Owner and his permissions are set.
-     *
-     * @param selectedUnitId the unit to save permissions for
+     *  @param selectedUnitId the unit to save permissions for
      * @param permissions    the group-permissions to save
      * @param owner          the new Owner (or {@link OwnerViewModel#currentOwner} if none
+     * @param other
      */
-    void save(String selectedUnitId, List<UnitGroupPermissionViewModel> permissions, OwnerViewModel owner) throws CouldNotPerformException, InterruptedException, ExecutionException;
+    void save(String selectedUnitId, List<UnitGroupPermissionViewModel> permissions, OwnerViewModel owner, OtherPermissionsViewModel other) throws CouldNotPerformException, InterruptedException, ExecutionException;
+
+    OtherPermissionsViewModel getOtherPermissions(String selectedUnitId) throws CouldNotPerformException, InterruptedException;
 }
