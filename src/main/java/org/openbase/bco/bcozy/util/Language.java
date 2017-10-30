@@ -18,14 +18,14 @@ public class Language {
      *
      * @see Locale#getDisplayLanguage()
      */
-    public Language(Locale locale) {
+    public Language(final Locale locale) {
         this(locale, locale.getDisplayLanguage(locale));
     }
 
     /**
      * Creates a Language with the given Locale and Name.
      */
-    public Language(Locale locale, String name) {
+    public Language(final Locale locale, final String name) {
         this.locale = Objects.requireNonNull(locale);
         this.name = Objects.requireNonNull(name);
     }
