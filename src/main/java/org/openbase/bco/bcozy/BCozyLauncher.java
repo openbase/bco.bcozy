@@ -84,12 +84,14 @@ public class BCozyLauncher {
     private static void showError(Thread t, Throwable ex) {
         errorCounter++;
 
-        if (Platform.isFxApplicationThread()) {
-            ExceptionPrinter.printHistory(new FatalImplementationErrorException("Uncaught exception has "
-                    + "occured!", "FxApplicationThread", ex), LOGGER);
-        } else {
-            ExceptionPrinter.printHistory(new FatalImplementationErrorException("Uncaught exception has "
-                    + "occured!", t.getName(), ex), LOGGER);
+        try {
+            if (Platform.isFxApplicationThread()) {
+                new FatalImplementationErrorException("Uncaught exception has occured!", "FxApplicationThread", ex);
+            } else {
+                new FatalImplementationErrorException("Uncaught exception has occured!", t.getName(), ex);
+            }
+        } catch (AssertionError exx) {
+            // assertion error ignored because exception stack was already printed within the FatalImplementationErrorException.
         }
 
         // check if error counter is to high
