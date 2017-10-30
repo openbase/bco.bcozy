@@ -151,12 +151,8 @@ public class UserSettingsController {
             changeMail.textProperty().bindBidirectional(userData.mailProperty());
             changePhone.textProperty().bindBidirectional(userData.phoneProperty());
 
-        } catch (CouldNotPerformException ex) {
+        } catch (CouldNotPerformException | ExecutionException | TimeoutException ex) {
             ExceptionPrinter.printHistory(ex, LOGGER);
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (TimeoutException e) {
-            e.printStackTrace();
         }
     }
 
@@ -213,8 +209,6 @@ public class UserSettingsController {
             showErrorMessage();
             ExceptionPrinter.printHistory(ex, LOGGER);
         }
-
-
     }
 
 
