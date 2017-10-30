@@ -63,7 +63,7 @@ public class TamperDetectorPane extends AbstractUnitPane<TamperDetectorRemote, T
                 break;
             case TAMPER:
                 getIcon().setForegroundIcon(MaterialDesignIcon.ALERT_CIRCLE, Color.RED);
-                getIcon().startForgroundAnimation(Animation.INDEFINITE);
+                getIcon().startForegroundIconColorFadeAnimation(Animation.INDEFINITE);
                 setInfoText("tamper");
                 break;
             default:

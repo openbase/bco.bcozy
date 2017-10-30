@@ -23,6 +23,8 @@ import de.jensd.fx.glyphs.GlyphsDude;
 import javafx.animation.Animation;
 import javafx.animation.Animation.Status;
 import javafx.animation.FadeTransition;
+import javafx.animation.Interpolator;
+import javafx.animation.RotateTransition;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -32,7 +34,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author hoestreich
- * @author <a href="mailto:divine@openbase.org">Hendrik Threepwood</a>
+ * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>
  *
  */
 public class SVGIcon extends StackPane {
@@ -51,7 +53,8 @@ public class SVGIcon extends StackPane {
 
     private final double size;
     private final boolean styled;
-    private FadeTransition foregroundColorFadeAnimation, backgroundColorFadeAnimation;
+    private FadeTransition foregroundColorFadeAnimation, backgroundIconColorFadeAnimation;
+    private RotateTransition foregroundRotateAnimation, backgroundRotateAnimation;
     private IconState iconState;
 
     /**
@@ -65,7 +68,7 @@ public class SVGIcon extends StackPane {
     public SVGIcon(final GlyphIcons icon, final double size, final boolean styled) {
         this(size, styled);
         this.foregroundIcon = createIcon(icon, Layer.FOREGROUND);
-        this.foregroundFadeIcon = createFadeIcon(icon, Layer.FOREGROUND);
+        this.foregroundFadeIcon = createColorFadeIcon(icon, Layer.FOREGROUND);
         this.backgroundIcon = null;
         this.backgroundFadeIcon = null;
         this.getChildren().addAll(foregroundIcon, foregroundFadeIcon);
@@ -82,9 +85,9 @@ public class SVGIcon extends StackPane {
     public SVGIcon(final GlyphIcons backgroundIcon, final GlyphIcons foregroundIcon, final double size) {
         this(size, true);
         this.foregroundIcon = createIcon(foregroundIcon, Layer.FOREGROUND);
-        this.foregroundFadeIcon = createFadeIcon(foregroundIcon, Layer.FOREGROUND);
+        this.foregroundFadeIcon = createColorFadeIcon(foregroundIcon, Layer.FOREGROUND);
         this.backgroundIcon = createIcon(backgroundIcon, Layer.BACKGROUND);
-        this.backgroundFadeIcon = createFadeIcon(backgroundIcon, Layer.BACKGROUND);
+        this.backgroundFadeIcon = createColorFadeIcon(backgroundIcon, Layer.BACKGROUND);
         this.getChildren().addAll(this.backgroundIcon, this.backgroundFadeIcon, this.foregroundIcon, this.foregroundFadeIcon);
     }
 
@@ -96,7 +99,7 @@ public class SVGIcon extends StackPane {
             if (disabled) {
                 // save values
                 iconState.save(this);
-                stopAnimation();
+                stopIconAnimation();
                 setForegroundIconColor(Color.GRAY);
                 setBackgroundIconColor(Color.GRAY);
             } else {
@@ -108,75 +111,92 @@ public class SVGIcon extends StackPane {
 
     private class IconState {
 
-        private Boolean foregroundAnimated;
-        private Boolean backgroundAnimated;
-        private Color foregroundColor, backgroundColor;
+        private Boolean foregroundIconColorFadeAnimationEnabled, backgroundIconColorFadeAnimationEnabled, foregroundIconRotateAnimationEnabled, backgroundIconRotateAnimationEnabled;
+        private Color foregroundIconColor, backgroundIconColor;
 
-        public boolean forgroundAnimated() {
-            return foregroundAnimated;
+        public Boolean isForegroundIconColorFadeAnimationEnabled() {
+            return foregroundIconColorFadeAnimationEnabled;
         }
 
-        public boolean backgroundAnimated() {
-            return backgroundAnimated;
+        public Boolean isBackgroundIconColorFadeAnimationEnabled() {
+            return backgroundIconColorFadeAnimationEnabled;
         }
 
-        public void setForegroundAnimated(boolean animated) {
-            this.foregroundAnimated = animated;
+        public Boolean isForegroundIconRotateAnimationEnabled() {
+            return foregroundIconRotateAnimationEnabled;
         }
 
-        public void setBackgroundAnimated(boolean animated) {
-            this.backgroundAnimated = animated;
+        public Boolean isBackgroundIconRotateAnimationEnabled() {
+            return backgroundIconRotateAnimationEnabled;
         }
 
-        public Color getForegroundColor() {
-            return foregroundColor;
+        public Color getForegroundIconColor() {
+            return foregroundIconColor;
         }
 
-        public void setForegroundColor(Color foregroundColor) {
-            this.foregroundColor = foregroundColor;
-        }
-
-        public Color getBackgroundColor() {
-            return backgroundColor;
-        }
-
-        public void setBackgroundColor(Color backgroundColor) {
-            this.backgroundColor = backgroundColor;
+        public Color getBackgroundIconColor() {
+            return backgroundIconColor;
         }
 
         public void save(final SVGIcon icon) {
             assert icon != null;
-            foregroundAnimated = icon.foregroundColorFadeAnimation != null && icon.foregroundColorFadeAnimation.getStatus().equals(Status.RUNNING);
-            backgroundAnimated = icon.backgroundColorFadeAnimation != null && icon.backgroundColorFadeAnimation.getStatus().equals(Status.RUNNING);
-            foregroundColor = icon.getForegroundIconColor();
-            backgroundColor = icon.getBackgroundIconColor();
+            foregroundIconColorFadeAnimationEnabled = icon.foregroundColorFadeAnimation != null && icon.foregroundColorFadeAnimation.getStatus().equals(Status.RUNNING);
+            backgroundIconColorFadeAnimationEnabled = icon.backgroundIconColorFadeAnimation != null && icon.backgroundIconColorFadeAnimation.getStatus().equals(Status.RUNNING);
+            foregroundIconRotateAnimationEnabled = icon.foregroundRotateAnimation != null && icon.foregroundRotateAnimation.getStatus().equals(Status.RUNNING);
+            backgroundIconRotateAnimationEnabled = icon.backgroundRotateAnimation != null && icon.backgroundRotateAnimation.getStatus().equals(Status.RUNNING);
+            foregroundIconColor = icon.getForegroundIconColor();
+            backgroundIconColor = icon.getBackgroundIconColor();
         }
 
         public void restore(final SVGIcon icon) {
             if (icon == null) {
                 return;
             }
-            if (foregroundAnimated != null) {
-                setForegroundAnimated(foregroundAnimated);
+
+            if (foregroundIconColorFadeAnimationEnabled != null) {
+                if (foregroundIconColorFadeAnimationEnabled) {
+                    startForegroundIconColorFadeAnimation();
+                } else {
+                    stopForegroundIconColorFadeAnimation();
+                }
             }
-            if (backgroundAnimated != null) {
-                setBackgroundAnimated(backgroundAnimated);
+
+            if (backgroundIconColorFadeAnimationEnabled != null) {
+                if (backgroundIconColorFadeAnimationEnabled) {
+                    startBackgroundIconColorFadeAnimation();
+                } else {
+                    stopBackgroundIconColorFadeAnimation();
+                }
             }
-            if (foregroundColor != null) {
-                icon.setForegroundIconColor(foregroundColor);
+
+            if (foregroundIconRotateAnimationEnabled != null) {
+                if (foregroundIconRotateAnimationEnabled) {
+                    startForegroundIconRotateAnimation();
+                } else {
+                    stopForegroundIconRotateAnimation();
+                }
             }
-            if (backgroundColor != null) {
-                icon.setBackgroundIconColor(backgroundColor);
+
+            if (backgroundIconRotateAnimationEnabled != null) {
+                if (backgroundIconRotateAnimationEnabled) {
+                    startBackgroundIconRotateAnimation();
+                } else {
+                    stopBackgroundIconRotateAnimation();
+                }
+            }
+
+            if (foregroundIconColor != null) {
+                icon.setForegroundIconColor(foregroundIconColor);
+            }
+
+            if (backgroundIconColor != null) {
+                icon.setBackgroundIconColor(backgroundIconColor);
             }
         }
     }
 
     private Text createIcon(final GlyphIcons glyphIcon, final Layer layer) {
         return createIcon(glyphIcon, size, layer == Layer.FOREGROUND && styled);
-    }
-
-    private Text createFadeIcon(final GlyphIcons glyphIcon, final Layer layer) {
-        return createFadeIcon(glyphIcon, size, layer);
     }
 
     private static Text createIcon(final GlyphIcons glyphIcon, final double size, final boolean styled) {
@@ -189,7 +209,11 @@ public class SVGIcon extends StackPane {
         return icon;
     }
 
-    private static Text createFadeIcon(final GlyphIcons glyphIcon, final double size, final Layer layer) {
+    private Text createColorFadeIcon(final GlyphIcons glyphIcon, final Layer layer) {
+        return createColorFadeIcon(glyphIcon, size, layer);
+    }
+
+    private static Text createColorFadeIcon(final GlyphIcons glyphIcon, final double size, final Layer layer) {
         final Text icon = createIcon(glyphIcon, size, layer == Layer.FOREGROUND);
 
         // should be only visible on fade.
@@ -203,9 +227,9 @@ public class SVGIcon extends StackPane {
      *
      * @param cycleCount the number of times the animation should be played (use Animation.INDEFINITE for endless)
      */
-    public void fadeForegroundFromTransparentToOpaque(final int cycleCount) {
-        stopForegroundAnimation();
-        foregroundColorFadeAnimation = AnimationProvider.createFadeTransition(foregroundIcon, Constants.FULLY_TRANSPARENT, Constants.NO_TRANSPARENCY, cycleCount, Constants.SLOW_FADE_DURATION);
+    public void fadeForegroundIconColorFromTransparentToOpaque(final int cycleCount) {
+        stopForegroundIconColorFadeAnimation();
+        foregroundColorFadeAnimation = AnimationProvider.createFadeTransition(foregroundIcon, Constants.FULLY_TRANSPARENT, Constants.NO_TRANSPARENCY, cycleCount, Constants.FADE_DURATION_SLOW);
         foregroundColorFadeAnimation.setOnFinished(event -> foregroundIcon.setOpacity(Constants.NO_TRANSPARENCY));
         foregroundColorFadeAnimation.play();
     }
@@ -216,9 +240,9 @@ public class SVGIcon extends StackPane {
      *
      * @param cycleCount the number of times the animation should be played (use Animation.INDEFINITE for endless)
      */
-    public void fadeForegroundFromOpaqueToTransparent(final int cycleCount) {
-        stopForegroundAnimation();
-        foregroundColorFadeAnimation = AnimationProvider.createFadeTransition(foregroundIcon, Constants.NO_TRANSPARENCY, Constants.FULLY_TRANSPARENT, cycleCount, Constants.SLOW_FADE_DURATION);
+    public void fadeForegroundIconColorFromOpaqueToTransparent(final int cycleCount) {
+        stopForegroundIconColorFadeAnimation();
+        foregroundColorFadeAnimation = AnimationProvider.createFadeTransition(foregroundIcon, Constants.NO_TRANSPARENCY, Constants.FULLY_TRANSPARENT, cycleCount, Constants.FADE_DURATION_SLOW);
         foregroundColorFadeAnimation.setOnFinished(event -> foregroundIcon.setOpacity(Constants.FULLY_TRANSPARENT));
         foregroundColorFadeAnimation.play();
     }
@@ -229,11 +253,11 @@ public class SVGIcon extends StackPane {
      *
      * @param cycleCount the number of times the animation should be played (use Animation.INDEFINITE for endless)
      */
-    public void fadeBackgroundFromTransparentToOpaque(final int cycleCount) {
-        stopBackgroundAnimation();
-        backgroundColorFadeAnimation = AnimationProvider.createFadeTransition(backgroundIcon, Constants.FULLY_TRANSPARENT, Constants.NO_TRANSPARENCY, 1, Constants.SLOW_FADE_DURATION);
-        backgroundColorFadeAnimation.setOnFinished(event -> backgroundIcon.setOpacity(Constants.NO_TRANSPARENCY));
-        backgroundColorFadeAnimation.play();
+    public void fadeBackgroundIconColorFromTransparentToOpaque(final int cycleCount) {
+        stopBackgroundIconColorFadeAnimation();
+        backgroundIconColorFadeAnimation = AnimationProvider.createFadeTransition(backgroundIcon, Constants.FULLY_TRANSPARENT, Constants.NO_TRANSPARENCY, 1, Constants.FADE_DURATION_SLOW);
+        backgroundIconColorFadeAnimation.setOnFinished(event -> backgroundIcon.setOpacity(Constants.NO_TRANSPARENCY));
+        backgroundIconColorFadeAnimation.play();
     }
 
     /**
@@ -242,11 +266,11 @@ public class SVGIcon extends StackPane {
      *
      * @param cycleCount the number of times the animation should be played (use Animation.INDEFINITE for endless)
      */
-    public void fadeBackgroundFromOpaqueToTransparent(final int cycleCount) {
-        stopBackgroundAnimation();
-        backgroundColorFadeAnimation = AnimationProvider.createFadeTransition(backgroundIcon, Constants.NO_TRANSPARENCY, Constants.FULLY_TRANSPARENT, cycleCount, Constants.SLOW_FADE_DURATION);
-        backgroundColorFadeAnimation.setOnFinished(event -> backgroundIcon.setOpacity(Constants.FULLY_TRANSPARENT));
-        backgroundColorFadeAnimation.play();
+    public void fadeBackgroundIconColorFromOpaqueToTransparent(final int cycleCount) {
+        stopBackgroundIconColorFadeAnimation();
+        backgroundIconColorFadeAnimation = AnimationProvider.createFadeTransition(backgroundIcon, Constants.NO_TRANSPARENCY, Constants.FULLY_TRANSPARENT, cycleCount, Constants.FADE_DURATION_SLOW);
+        backgroundIconColorFadeAnimation.setOnFinished(event -> backgroundIcon.setOpacity(Constants.FULLY_TRANSPARENT));
+        backgroundIconColorFadeAnimation.play();
     }
 
     /**
@@ -254,8 +278,8 @@ public class SVGIcon extends StackPane {
      *
      * @param cycleCount the number of times the animation should be played (use Animation.INDEFINITE for endless)
      */
-    public void startForgroundAnimation(final int cycleCount) {
-        foregroundColorFadeAnimation = AnimationProvider.createFadeTransition(foregroundIcon, Constants.FULLY_TRANSPARENT, Constants.NO_TRANSPARENCY, cycleCount, Constants.SLOW_FADE_DURATION);
+    public void startForegroundIconColorFadeAnimation(final int cycleCount) {
+        foregroundColorFadeAnimation = AnimationProvider.createFadeTransition(foregroundIcon, Constants.FULLY_TRANSPARENT, Constants.NO_TRANSPARENCY, cycleCount, Constants.FADE_DURATION_SLOW);
         foregroundColorFadeAnimation.setOnFinished(event -> foregroundIcon.setOpacity(Constants.FULLY_TRANSPARENT));
         foregroundColorFadeAnimation.play();
     }
@@ -265,20 +289,20 @@ public class SVGIcon extends StackPane {
      *
      * @param cycleCount the number of times the animation should be played (use Animation.INDEFINITE for endless)
      */
-    public void startBackgroundAnimation(final int cycleCount) {
+    public void startBackgroundIconColorFadeAnimation(final int cycleCount) {
         if (backgroundIcon == null) {
             LOGGER.warn("Background animation skipped because background icon not set!");
             return;
         }
-        backgroundColorFadeAnimation = AnimationProvider.createFadeTransition(backgroundIcon, Constants.FULLY_TRANSPARENT, Constants.NO_TRANSPARENCY, cycleCount, Constants.SLOW_FADE_DURATION);
-        backgroundColorFadeAnimation.setOnFinished(event -> backgroundIcon.setOpacity(Constants.FULLY_TRANSPARENT));
-        backgroundColorFadeAnimation.play();
+        backgroundIconColorFadeAnimation = AnimationProvider.createFadeTransition(backgroundIcon, Constants.FULLY_TRANSPARENT, Constants.NO_TRANSPARENCY, cycleCount, Constants.FADE_DURATION_SLOW);
+        backgroundIconColorFadeAnimation.setOnFinished(event -> backgroundIcon.setOpacity(Constants.FULLY_TRANSPARENT));
+        backgroundIconColorFadeAnimation.play();
     }
 
     /**
      * Method stops the fade animation of the background icon color.
      */
-    public void stopForegroundAnimation() {
+    public void stopForegroundIconColorFadeAnimation() {
         if (foregroundColorFadeAnimation != null) {
             foregroundColorFadeAnimation.stop();
         }
@@ -287,18 +311,44 @@ public class SVGIcon extends StackPane {
     /**
      * Method stops the fade animation of the background icon color.
      */
-    public void stopBackgroundAnimation() {
-        if (backgroundColorFadeAnimation != null) {
-            backgroundColorFadeAnimation.stop();
+    public void stopBackgroundIconColorFadeAnimation() {
+        if (backgroundIconColorFadeAnimation != null) {
+            backgroundIconColorFadeAnimation.stop();
         }
     }
 
     /**
      * Method stops the foreground and background fade animation .
      */
-    public void stopAnimation() {
-        stopForegroundAnimation();
-        stopBackgroundAnimation();
+    public void stopIconColorFadeAnimation() {
+        stopForegroundIconColorFadeAnimation();
+        stopBackgroundIconColorFadeAnimation();
+    }
+
+    /**
+     * Method starts the fade animation of the background icon color.
+     */
+    public void startForegroundIconColorFadeAnimation() {
+        if (foregroundColorFadeAnimation != null) {
+            foregroundColorFadeAnimation.play();
+        }
+    }
+
+    /**
+     * Method starts the fade animation of the background icon color.
+     */
+    public void startBackgroundIconColorFadeAnimation() {
+        if (backgroundIconColorFadeAnimation != null) {
+            backgroundIconColorFadeAnimation.play();
+        }
+    }
+
+    /**
+     * Method starts the foreground and background fade animation .
+     */
+    public void startIconColorFadeAnimation() {
+        startForegroundIconColorFadeAnimation();
+        startBackgroundIconColorFadeAnimation();
     }
 
     /**
@@ -309,7 +359,7 @@ public class SVGIcon extends StackPane {
      */
     public void setForegroundIconColorAnimated(final Color color, final int cycleCount) {
         assert color != null;
-        stopForegroundAnimation();
+        stopForegroundIconColorFadeAnimation();
         foregroundFadeIcon.setFill(color);
         foregroundColorFadeAnimation = AnimationProvider.createFadeTransition(foregroundFadeIcon, Constants.FULLY_TRANSPARENT, Constants.NO_TRANSPARENCY, Animation.INDEFINITE, Constants.LIGHT_CHANGE_FADE_DURATION);
         foregroundColorFadeAnimation.setOnFinished(event -> {
@@ -330,14 +380,116 @@ public class SVGIcon extends StackPane {
             LOGGER.warn("Background modification skipped because background icon not set!");
             return;
         }
-        stopBackgroundAnimation();
+        stopBackgroundIconColorFadeAnimation();
         backgroundFadeIcon.setFill(color);
-        backgroundColorFadeAnimation = AnimationProvider.createFadeTransition(backgroundFadeIcon, Constants.FULLY_TRANSPARENT, Constants.NO_TRANSPARENCY, cycleCount, Constants.LIGHT_CHANGE_FADE_DURATION);
-        backgroundColorFadeAnimation.setOnFinished(event -> {
+        backgroundIconColorFadeAnimation = AnimationProvider.createFadeTransition(backgroundFadeIcon, Constants.FULLY_TRANSPARENT, Constants.NO_TRANSPARENCY, cycleCount, Constants.LIGHT_CHANGE_FADE_DURATION);
+        backgroundIconColorFadeAnimation.setOnFinished(event -> {
             backgroundFadeIcon.setFill(color);
             backgroundFadeIcon.setOpacity(Constants.FULLY_TRANSPARENT);
         });
-        backgroundColorFadeAnimation.play();
+        backgroundIconColorFadeAnimation.play();
+    }
+
+    /**
+     * Method starts the rotate animation of the foreground icon.
+     *
+     * @param fromAngle the rotation angle where the transition should start.
+     * @param toAngle the rotation angle where the transition should end.
+     * @param cycleCount the number of times the animation should be played (use Animation.INDEFINITE for endless).
+     * @param duration the duration which one animation cycle should take.
+     * @param interpolator defines the rotation value interpolation between {@code fromAngle} and {@code toAngle}.
+     * @param autoReverse defines if the animation should be reversed at the end.
+     */
+    public void startForegroundIconRotateAnimation(final double fromAngle, final double toAngle, final int cycleCount, final double duration, final Interpolator interpolator, final boolean autoReverse) {
+        stopForegroundIconRotateAnimation();
+        foregroundRotateAnimation = AnimationProvider.createRotateTransition(foregroundIcon, fromAngle, toAngle, cycleCount, duration, interpolator, autoReverse);
+        foregroundRotateAnimation.setOnFinished(event -> foregroundIcon.setRotate(0));
+        foregroundRotateAnimation.play();
+    }
+
+    /**
+     * Method starts the rotate animation of the background icon.
+     *
+     * @param fromAngle the rotation angle where the transition should start.
+     * @param toAngle the rotation angle where the transition should end.
+     * @param cycleCount the number of times the animation should be played (use Animation.INDEFINITE for endless).
+     * @param duration the duration which one animation cycle should take.
+     * @param interpolator defines the rotation value interpolation between {@code fromAngle} and {@code toAngle}.
+     * @param autoReverse defines if the animation should be reversed at the end.
+     */
+    public void startBackgroundIconRotateAnimation(final double fromAngle, final double toAngle, final int cycleCount, final double duration, final Interpolator interpolator, final boolean autoReverse) {
+        stopBackgroundIconRotateAnimation();
+        backgroundRotateAnimation = AnimationProvider.createRotateTransition(backgroundIcon, fromAngle, toAngle, cycleCount, duration, interpolator, autoReverse);
+        backgroundRotateAnimation.setOnFinished(event -> backgroundIcon.setRotate(0));
+        backgroundRotateAnimation.play();
+    }
+
+    /**
+     * Method stops the rotate animation of the background icon color.
+     */
+    public void stopForegroundIconRotateAnimation() {
+        if (foregroundRotateAnimation != null) {
+            foregroundRotateAnimation.stop();
+        }
+    }
+
+    /**
+     * Method stops the rotate animation of the background icon color.
+     */
+    public void stopBackgroundIconRotateAnimation() {
+        if (backgroundRotateAnimation != null) {
+            backgroundRotateAnimation.stop();
+        }
+    }
+
+    /**
+     * Method stops the foreground and background rotate animation.
+     */
+    public void stopIconRotateAnimation() {
+        stopForegroundIconRotateAnimation();
+        stopBackgroundIconRotateAnimation();
+    }
+
+    /**
+     * Method starts the rotate animation of the background icon color.
+     */
+    public void startForegroundIconRotateAnimation() {
+        if (foregroundRotateAnimation != null) {
+            foregroundRotateAnimation.play();
+        }
+    }
+
+    /**
+     * Method starts the rotate animation of the background icon color.
+     */
+    public void startBackgroundIconRotateAnimation() {
+        if (backgroundRotateAnimation != null) {
+            backgroundRotateAnimation.play();
+        }
+    }
+
+    /**
+     * Method starts the foreground and background rotate animation.
+     */
+    public void startIconRotateAnimation() {
+        startForegroundIconRotateAnimation();
+        startBackgroundIconRotateAnimation();
+    }
+
+    /**
+     * Method stops the foreground and background fade and rotate animation .
+     */
+    public void stopIconAnimation() {
+        stopIconColorFadeAnimation();
+        stopIconRotateAnimation();
+    }
+
+    /**
+     * Method starts the foreground and background fade and rotate animation .
+     */
+    public void startIconAnimation() {
+        startIconColorFadeAnimation();
+        startIconRotateAnimation();
     }
 
     /**
@@ -346,7 +498,7 @@ public class SVGIcon extends StackPane {
      * @param color the color for the foregroundIcon icon to be set
      */
     public void setForegroundIconColor(final Color color) {
-        stopForegroundAnimation();
+        stopForegroundIconColorFadeAnimation();
         foregroundIcon.setFill(color);
         foregroundIcon.setStroke(Color.TRANSPARENT);
         foregroundIcon.setStrokeWidth(0);
@@ -363,7 +515,7 @@ public class SVGIcon extends StackPane {
             LOGGER.warn("Background modification skipped because background icon not set!");
             return;
         }
-        stopBackgroundAnimation();
+        stopBackgroundIconColorFadeAnimation();
         backgroundIcon.setFill(color);
 //        backgroundIcon.setStroke(Color.TRANSPARENT);
 //        backgroundIcon.setStrokeWidth(0);
@@ -400,7 +552,7 @@ public class SVGIcon extends StackPane {
      * Reset the current foreground icon color to default.
      */
     public void setForegroundIconColorDefault() {
-        stopForegroundAnimation();
+        stopForegroundIconColorFadeAnimation();
         foregroundIcon.getStyleClass().clear();
         foregroundIcon.getStyleClass().add(Constants.ICONS_CSS_STRING);
         foregroundFadeIcon.setFill(Color.TRANSPARENT);
@@ -414,7 +566,7 @@ public class SVGIcon extends StackPane {
             LOGGER.warn("Background modification skipped because background icon not set!");
             return;
         }
-        stopBackgroundAnimation();
+        stopBackgroundIconColorFadeAnimation();
         backgroundIcon.getStyleClass().clear();
         backgroundIcon.getStyleClass().add(Constants.ICONS_CSS_STRING);
         backgroundFadeIcon.setFill(Color.TRANSPARENT);
@@ -477,7 +629,7 @@ public class SVGIcon extends StackPane {
 
         // create new images.
         this.foregroundIcon = createIcon(icon, Layer.FOREGROUND);
-        this.foregroundFadeIcon = createFadeIcon(icon, Layer.FOREGROUND);
+        this.foregroundFadeIcon = createColorFadeIcon(icon, Layer.FOREGROUND);
 
         // setup icon color
         if (color != null) {
@@ -511,7 +663,7 @@ public class SVGIcon extends StackPane {
 
         // create new images.
         this.backgroundIcon = createIcon(icon, Layer.BACKGROUND);
-        this.backgroundFadeIcon = createFadeIcon(icon, Layer.BACKGROUND);
+        this.backgroundFadeIcon = createColorFadeIcon(icon, Layer.BACKGROUND);
 
         // setup icon color
         if (color != null) {
