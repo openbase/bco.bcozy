@@ -19,11 +19,8 @@
 package org.openbase.bco.bcozy;
 
 import javafx.application.Platform;
-
-import static org.openbase.bco.bcozy.BCozy.APP_NAME;
-
-import org.openbase.bco.authentication.lib.jp.JPCredentialsDirectory;
 import org.openbase.bco.authentication.lib.jp.JPAuthentication;
+import org.openbase.bco.authentication.lib.jp.JPCredentialsDirectory;
 import org.openbase.bco.authentication.lib.jp.JPInitializeCredentials;
 import org.openbase.bco.bcozy.jp.JPLanguage;
 import org.openbase.bco.bcozy.view.LoadingPane;
@@ -39,6 +36,8 @@ import org.openbase.jul.extension.rsb.com.jp.JPRSBThreadPooling;
 import org.openbase.jul.extension.rsb.com.jp.JPRSBTransport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.openbase.bco.bcozy.BCozy.APP_NAME;
 
 /**
  * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>

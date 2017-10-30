@@ -80,11 +80,11 @@ public class BatteryPane extends AbstractUnitPane<BatteryRemote, BatteryData> {
                       break;
                 case CRITICAL:
                     getIcon().setBackgroundIconColor(Color.ORANGE);
-                    getIcon().startBackgroundAnimation(Animation.INDEFINITE);
+                    getIcon().startBackgroundIconColorFadeAnimation(Animation.INDEFINITE);
                     break;
                 case INSUFFICIENT:
                     getIcon().setBackgroundIconColor(Color.RED);
-                    getIcon().startBackgroundAnimation(Animation.INDEFINITE);
+                    getIcon().startBackgroundIconColorFadeAnimation(Animation.INDEFINITE);
                     break;
                 default:
                     break;

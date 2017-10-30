@@ -112,8 +112,8 @@ public class SettingsController {
         this.tabPane.getStyleClass().addAll("detail-menu");
 
 
-        TitledPane registrationPane = new TitledPane("registration", this.loadRegistrationPane());
-        LanguageSelection.addObserverFor("registration", registrationPane::setText);
+        TitledPane registrationPane = new TitledPane("userManagement", this.loadRegistrationPane());
+        LanguageSelection.addObserverFor("userManagement", registrationPane::setText);
         this.adminAccordion.getPanes().add(registrationPane);
 
         TitledPane groupsPane = new TitledPane("usergroups", this.loadGroupsPane());
@@ -318,7 +318,7 @@ public class SettingsController {
                     "Registration.fxml not found");
 
             FXMLLoader loader = new FXMLLoader(url);
-            loader.setControllerFactory(clazz -> new RegistrationController());
+            loader.setControllerFactory(clazz -> new UserManagementController());
             Pane root = loader.load();
 
             return root;

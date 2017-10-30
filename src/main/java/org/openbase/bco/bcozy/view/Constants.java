@@ -194,7 +194,12 @@ public final class Constants {
     /**
      * The duration for a slow fade animation.
      */
-    public static final double SLOW_FADE_DURATION = 2000.0;
+    public static final double FADE_DURATION_SLOW = 2000.0;
+    
+    /**
+     * The duration for a slow fade animation.
+     */
+    public static final double FADE_DURATION_FAST = 4000.0;
 
     /**
      * The duration for a glowing fade animation.

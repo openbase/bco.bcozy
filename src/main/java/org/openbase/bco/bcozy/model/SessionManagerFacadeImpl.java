@@ -94,9 +94,7 @@ public class SessionManagerFacadeImpl implements SessionManagerFacade {
         try {
             // Registries.getUserRegistry().getUserIdByUserName(username);
 
-            if (username.isEmpty()){
-                throw new VerificationFailedException("Username must not be empty!");
-            }
+            verifyNotEmpty(username, "Username");
 
             // ##### reimplemented because not included in current master api.
             for (final UnitConfig userUnitConfig : Registries.getUserRegistry().getUserConfigs()) {
@@ -116,6 +114,7 @@ public class SessionManagerFacadeImpl implements SessionManagerFacade {
         if (!password.equals(repeatedPassword)) {
             throw new VerificationFailedException("repeated password does not match!");
         }
+        verifyNotEmpty(password, "Password");
     }
 
     @Override
@@ -128,8 +127,12 @@ public class SessionManagerFacadeImpl implements SessionManagerFacade {
     public void verifyMailAddress(String mailAddress) throws VerificationFailedException {
         //Todo check validity
         // throw new VerificationFailedException("not valid because of ...");
-        if (mailAddress.isEmpty()) {
-            throw new VerificationFailedException("E-Mail Adress must not be empty!");
+        verifyNotEmpty(mailAddress, "E-Mail Adress");
+    }
+
+    private void verifyNotEmpty(String string, String name) throws VerificationFailedException {
+        if (string.isEmpty()) {
+            throw new VerificationFailedException(name + " must not be empty!");
         }
     }
 }

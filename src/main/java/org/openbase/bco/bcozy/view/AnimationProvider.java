@@ -19,6 +19,8 @@
 package org.openbase.bco.bcozy.view;
 
 import javafx.animation.FadeTransition;
+import javafx.animation.Interpolator;
+import javafx.animation.RotateTransition;
 import javafx.scene.Node;
 import javafx.util.Duration;
 
@@ -47,5 +49,30 @@ public final class AnimationProvider {
         fadeTransition.setCycleCount(cycleCount);
         fadeTransition.setAutoReverse(true);
         return fadeTransition;
+    }
+    
+    
+    /**
+     * Method to create a RotateTransition with several parameters.
+     *
+     * @param node the node to which the transition should be applied.
+     * @param fromAngle the rotation angle where the transition should start.
+     * @param toAngle the rotation angle where the transition should end.
+     * @param cycleCount the number of times the animation should be played (use Animation.INDEFINITE for endless).
+     * @param duration the duration which one animation cycle should take.
+     * @param interpolator defines the rotation value interpolation between {@code fromAngle} and {@code toAngle}.
+     * @param autoReverse defines if the animation should be reversed at the end.
+     * @return an instance of the created FadeTransition.
+     */
+    public static RotateTransition createRotateTransition(final Node node, final double fromAngle, final double toAngle, final int cycleCount, final double duration, final Interpolator interpolator, final boolean autoReverse) {
+        assert node != null;
+        
+        final RotateTransition rotateTransition = new RotateTransition(Duration.millis(duration), node);
+        rotateTransition.setFromAngle(fromAngle);
+        rotateTransition.setToAngle(toAngle);
+        rotateTransition.setCycleCount(cycleCount);
+        rotateTransition.setAutoReverse(autoReverse);
+        rotateTransition.setInterpolator(interpolator);
+        return rotateTransition;
     }
 }

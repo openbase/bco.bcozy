@@ -31,5 +31,12 @@ public class LanguageSelectionTest {
 
     }
 
+    //startLogin=ANMELDUNG ÖFFNEN
+    @Test
+    public void getLocalizedWithRightEncoding() throws Exception {
+        LanguageSelection.getInstance().setSelectedLocale(Locale.GERMANY);
+        String message = LanguageSelection.getLocalized("startLogin");
 
+        Assert.assertEquals("ANMELDUNG ÖFFNEN", message);
+    }
 }
