@@ -184,8 +184,11 @@ public class UserData {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
 
+        if (!(o instanceof UserData)) {
+            return false;
+        }
+        
         UserData that = (UserData) o;
 
         return Objects.equals(this.userId, that.userId);
