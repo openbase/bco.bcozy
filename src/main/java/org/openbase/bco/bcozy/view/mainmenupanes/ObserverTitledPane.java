@@ -20,17 +20,9 @@ package org.openbase.bco.bcozy.view.mainmenupanes;
 
 import javafx.scene.control.TitledPane;
 import org.openbase.bco.bcozy.model.LanguageSelection;
-import org.openbase.bco.bcozy.view.Constants;
 
-import java.util.Locale;
-import java.util.MissingResourceException;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.ResourceBundle;
-import org.openbase.jul.exception.printer.ExceptionPrinter;
-import org.openbase.jul.exception.printer.LogLevel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author hoestreich
@@ -38,37 +30,24 @@ import org.slf4j.LoggerFactory;
  */
 public class ObserverTitledPane extends TitledPane implements Observer {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ObserverTitledPane.class);
-
     private final String identifier;
-
-    private ResourceBundle languageBundle = ResourceBundle.getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
 
     /**
      * Constructor to create a button which is capable of observing language changes in the application.
      *
      * @param languageString The language string which combined with the actual language selection determines the
-     * buttons label
+     *                       buttons label
      */
     public ObserverTitledPane(final String languageString) {
         super();
         this.identifier = languageString;
-        setTitle(languageString);
+        setText(LanguageSelection.getLocalized(identifier));
         LanguageSelection.getInstance().addObserver(this);
     }
 
     @Override
     public void update(final Observable observable, final Object arg) {
-        languageBundle = ResourceBundle.getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
-        super.setText(languageBundle.getString(this.identifier));
+        setText(LanguageSelection.getLocalized(identifier));
     }
 
-    public void setTitle(final String languageString) {
-        try {
-            super.setText(languageBundle.getString(identifier));
-        } catch (MissingResourceException ex) {
-            ExceptionPrinter.printHistory("Could resolve LanguageString[" + languageString + "]!", ex, LOGGER, LogLevel.WARN);
-            super.setText(identifier);
-        }
-    }
 }
