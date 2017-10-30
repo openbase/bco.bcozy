@@ -16,22 +16,31 @@
       xmlns:fx="http://javafx.com/fxml"
       fx:id="root"
       styleClass="padding-xtra-large"
-      fx:controller="org.openbase.bco.bcozy.controller.RegistrationController">
+      fx:controller="org.openbase.bco.bcozy.controller.UserManagementController">
     <spacing>
         <Constants fx:constant="INSETS"/>
     </spacing>
+    <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">chooseUser</ObserverLabel>
+    <ComboBox fx:id="chooseUserBox"/>
+
     <HBox spacing="30.0">
         <VBox prefWidth="${root.width}">
             <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">username</ObserverLabel>
             <TextField fx:id="username"/>
-            <ObserverLabel fx:id="usernameEmptyLabel" visible="false" styleClass="xtra-small-label error-label" alignment="BOTTOM_LEFT">
+            <ObserverLabel fx:id="usernameEmptyLabel" visible="false"
+                           styleClass="xtra-small-label, error-label"
+                           alignment="BOTTOM_LEFT">
                 mandatory
+            </ObserverLabel>
+            <ObserverLabel fx:id="usernameAlreadyExistsLabel" visible="false" styleClass="xtra-small-label, error-label"
+                           alignment="BOTTOM_LEFT">
+                usernameAlreadyExists
             </ObserverLabel>
         </VBox>
         <VBox prefWidth="${root.width}">
             <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">firstName</ObserverLabel>
             <TextField fx:id="firstname"/>
-            <ObserverLabel fx:id="firstnameEmptyLabel" visible="false" styleClass="xtra-small-label error-label"
+            <ObserverLabel fx:id="firstnameEmptyLabel" visible="false" styleClass="xtra-small-label, error-label"
                            alignment="BOTTOM_LEFT">
                 mandatory
             </ObserverLabel>
@@ -41,7 +50,7 @@
         <VBox prefWidth="${root.width}">
             <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">lastName</ObserverLabel>
             <TextField fx:id="lastname"/>
-            <ObserverLabel fx:id="lastnameEmptyLabel" visible="false" styleClass="xtra-small-label error-label"
+            <ObserverLabel fx:id="lastnameEmptyLabel" visible="false" styleClass="xtra-small-label, error-label"
                            alignment="BOTTOM_LEFT">
                 mandatory
             </ObserverLabel>
@@ -49,7 +58,8 @@
         <VBox prefWidth="${root.width}">
             <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">email</ObserverLabel>
             <TextField fx:id="mail"/>
-            <ObserverLabel fx:id="mailEmptyLabel" visible="false" styleClass="xtra-small-label error-label" alignment="BOTTOM_LEFT">
+            <ObserverLabel fx:id="mailEmptyLabel" visible="false" styleClass="xtra-small-label, error-label"
+                           alignment="BOTTOM_LEFT">
                 mandatory
             </ObserverLabel>
         </VBox>
@@ -66,12 +76,22 @@
     </HBox>
     <HBox spacing="30.0">
         <VBox prefWidth="${root.width}">
-            <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">password</ObserverLabel>
+            <ObserverLabel fx:id="passwordLabel" styleClass="small-label" alignment="BOTTOM_LEFT">password
+            </ObserverLabel>
             <PasswordField fx:id="passwordField"/>
+            <ObserverLabel fx:id="passwordEmptyLabel" visible="false" styleClass="xtra-small-label, error-label"
+                           alignment="BOTTOM_LEFT">
+                passwordEmpty
+            </ObserverLabel>
         </VBox>
         <VBox prefWidth="${root.width}">
-            <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">repeatPassword</ObserverLabel>
+            <ObserverLabel fx:id="repeatPasswordLabel" styleClass="small-label" alignment="BOTTOM_LEFT">repeatPassword
+            </ObserverLabel>
             <PasswordField fx:id="repeatPasswordField"/>
+            <ObserverLabel fx:id="passwordsNotEqualLabel" visible="false" styleClass="xtra-small-label, error-label"
+                           alignment="BOTTOM_LEFT">
+                passwordsNotEqual
+            </ObserverLabel>
         </VBox>
     </HBox>
 
@@ -89,9 +109,14 @@
             </HBox>
         </center>
         <right>
-            <ObserverButton fx:id="registerBtn" onAction="#register">
-                register
-            </ObserverButton>
+            <HBox spacing="30.0">
+                <ObserverButton fx:id="deleteButton" onAction="#delete" styleClass="transparent-button">
+                    removeUser
+                </ObserverButton>
+                <ObserverButton fx:id="saveBtn" onAction="#save" styleClass="transparent-button">
+                    register
+                </ObserverButton>
+            </HBox>
         </right>
     </BorderPane>
 
