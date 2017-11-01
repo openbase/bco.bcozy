@@ -177,7 +177,7 @@ public class UserPane extends BorderPane implements Shutdownable {
                     userIcon.setForegroundIconColor(Color.DODGERBLUE);
                     setManaged(true);
                     setVisible(true);
-                    return;
+                    break;
                 case AWAY:
                 case SHORT_AWAY:
                 case SOON_AT_HOME:
@@ -189,21 +189,22 @@ public class UserPane extends BorderPane implements Shutdownable {
                         setManaged(false);
                         setVisible(false);
                     }
-                    return;
+                    break;
                 case UNKNOWN:
+                    atHomeIcon = new SVGIcon(MaterialIcon.SEARCH, Constants.EXTRA_SMALL_ICON, true);
+                    userIcon.setForegroundIconColor(Color.DARKGREY);
                     // do not display user pane if user is a guest and not present.
                     if (!user.getConfig().getUserConfig().getOccupant()) {
                         setManaged(false);
                         setVisible(false);
                     }
+                    break;
                 default:
                     ExceptionPrinter.printHistory(new EnumNotSupportedException(user.getUserPresenceState().getValue(), this), LOGGER);
             }
         } catch (final NotAvailableException ex) {
             ExceptionPrinter.printHistory("Could not update user presence state!", ex, LOGGER);
         }
-        atHomeIcon = new SVGIcon(MaterialIcon.SEARCH, Constants.EXTRA_SMALL_ICON, true);
-        userIcon.setForegroundIconColor(Color.DARKGREY);
     }
 
     /**
