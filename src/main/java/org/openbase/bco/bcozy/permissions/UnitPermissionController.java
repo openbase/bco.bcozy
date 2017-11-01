@@ -1,6 +1,5 @@
 package org.openbase.bco.bcozy.permissions;
 
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TableColumn;
@@ -43,8 +42,6 @@ public class UnitPermissionController {
     public TableColumn<UnitGroupPermissionViewModel, CheckBox> readColumn;
     @FXML
     public ObserverButton saveRightsButton;
-    @FXML
-    public Region hbox;
 
     protected PermissionsService permissionsService = PermissionsServiceImpl.permissionsService;
 
@@ -57,35 +54,19 @@ public class UnitPermissionController {
 
     @FXML
     public void initialize() {
-
-        this.onWidthChange(null, null, null);
-        permissionsTable.widthProperty().addListener(this::onWidthChange);
-
         permissionsTable.setEditable(true);
-        accessColumn.setEditable(true);
 
         saveRightsButton.setApplyOnNewText(String::toUpperCase);
+
+        groupColumn.prefWidthProperty().bind(permissionsTable.widthProperty().multiply(0.4));
+        accessColumn.prefWidthProperty().bind(permissionsTable.widthProperty().multiply(0.2));
+        writeColumn.prefWidthProperty().bind(permissionsTable.widthProperty().multiply(0.2));
+        readColumn.prefWidthProperty().bind(permissionsTable.widthProperty().multiply(0.2));
+
 
         Arrays.asList(accessColumn, readColumn, writeColumn)
                 .forEach(column -> column.setComparator((o1, o2) -> Boolean.compare(o1.isSelected(), o2.isSelected())));
 
-        /*
-        usergroupColumn.widthProperty().addListener(this::onColumnWidthChange);
-//        permissionsColumn.widthProperty().addListener(this::onColumnWidthChange);
-
-
-*/
-
-
-/*
-        newGroupChoiceBox.setConverter(AuthorizationGroups.stringConverter(groups));
-        newGroupChoiceBox.itemsProperty().addListener((observable, oldValue, newValue) -> preselectGroupChoiceBoxValue());
-        newGroupChoiceBox.setItems(groups);
-        newGroupChoiceBox.setPrefWidth(-1.0);
-
-        newGroupChoiceBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> selectGroup(newValue));
-
-*/
     }
 
     public void setSelectedUnitId(String selectedUnitId) {
@@ -105,36 +86,6 @@ public class UnitPermissionController {
             Thread.currentThread().interrupt();
         }
     }
-
-    /**
-     * Sets column-widths.
-     *
-     * @param observable ignored
-     * @param oldValue   ignored
-     * @param newValue   ignored
-     */
-    private void onWidthChange(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-        double width = permissionsTable.getWidth();
-
-        hbox.setPrefWidth(width);
-
-        saveRightsButton.setLayoutX(width - 100.0);
-        //TODO: Resize other Elements
-    }
-
-    /**
-     * Dynamically adjust column widths to fill whole space once the width of one column was changed.
-     *
-     * @param observable ignored
-     * @param oldValue   ignored
-     * @param newValue   ignored
-     */
-    private void onColumnWidthChange(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-        double width = permissionsTable.getWidth();
-        //permissionsColumn.setPrefWidth(width - newValue.doubleValue());
-        //TODO: Resize other Elements
-    }
-
 
     @FXML
     public void save() {

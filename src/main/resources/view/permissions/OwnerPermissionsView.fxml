@@ -3,11 +3,12 @@
 <?import javafx.scene.layout.HBox?>
 <?import org.openbase.bco.bcozy.view.ObserverLabel?>
 <HBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="org.openbase.bco.bcozy.permissions.OwnerPermissionsController">
+      fx:controller="org.openbase.bco.bcozy.permissions.OwnerPermissionsController"
+      spacing="10">
 
-    <ObserverLabel labelFor="${owner}">owner</ObserverLabel>
+    <ObserverLabel labelFor="${owner}">permissions.owner</ObserverLabel>
 
-    <ChoiceBox fx:id="owner" layoutX="14.0" layoutY="262.0" prefHeight="27.0"/>
+    <ChoiceBox fx:id="owner"/>
 
     <ObserverLabel labelFor="${read}">readRight</ObserverLabel>
     <CheckBox fx:id="read"/>

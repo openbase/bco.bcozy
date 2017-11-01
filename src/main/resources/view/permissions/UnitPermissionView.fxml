@@ -5,13 +5,14 @@
 <?import javafx.scene.layout.*?>
 <?import org.openbase.bco.bcozy.permissions.CheckBoxTableCellFactory?>
 <?import org.openbase.bco.bcozy.view.*?>
-<AnchorPane xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="org.openbase.bco.bcozy.permissions.UnitPermissionController"
-            styleClass="detail-menu">
+<VBox xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.openbase.bco.bcozy.permissions.UnitPermissionController"
+      styleClass="detail-menu" spacing="10">
 
-    <TableView fx:id="permissionsTable"
-               AnchorPane.bottomAnchor="95.0" AnchorPane.leftAnchor="4.0" AnchorPane.rightAnchor="5.0"
-               AnchorPane.topAnchor="5.0">
+    <fx:include fx:id="ownerPermissions" source="OwnerPermissionsView.fxml"/>
+
+
+    <TableView fx:id="permissionsTable">
         <columns>
             <TableColumn fx:id="groupColumn">
                 <graphic>
@@ -58,11 +59,8 @@
         </columns>
     </TableView>
 
-    <VBox fx:id="hbox" layoutX="8.0" layoutY="268.0" prefWidth="250.0" spacing="10">
-        <fx:include fx:id="ownerPermissions" source="OwnerPermissionsView.fxml"/>
-    </VBox>
 
-    <ObserverButton fx:id="saveRightsButton" identifier="save" layoutY="302.0" mnemonicParsing="false"
+    <ObserverButton fx:id="saveRightsButton" identifier="save" mnemonicParsing="false"
                     styleClass="transparent-button"
                     onAction="#save"/>
-</AnchorPane>
+</VBox>

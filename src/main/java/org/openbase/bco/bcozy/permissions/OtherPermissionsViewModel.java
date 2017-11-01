@@ -11,7 +11,7 @@ public final class OtherPermissionsViewModel extends AbstractTableRowPermissions
     private static final Logger LOG = Logger.getLogger(OtherPermissionsViewModel.class.getName());
 
     public OtherPermissionsViewModel(boolean read, boolean write, boolean access) {
-        super(LanguageSelection.getLocalized("other"), read, write, access);
+        super(LanguageSelection.getLocalized("permissions.other"), read, write, access);
     }
 
 }
