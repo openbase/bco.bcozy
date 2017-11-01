@@ -60,7 +60,6 @@
     </TableView>
 
 
-    <ObserverButton fx:id="saveRightsButton" identifier="save" mnemonicParsing="false"
-                    styleClass="transparent-button"
-                    onAction="#save"/>
+    <ObserverButton identifier="save" upperCase="true"
+                    styleClass="transparent-button" onAction="#save"/>
 </VBox>

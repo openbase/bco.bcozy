@@ -5,7 +5,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.Region;
-import org.openbase.bco.bcozy.view.ObserverButton;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.slf4j.Logger;
@@ -40,8 +39,6 @@ public class UnitPermissionController {
     public TableColumn<UnitGroupPermissionViewModel, CheckBox> writeColumn;
     @FXML
     public TableColumn<UnitGroupPermissionViewModel, CheckBox> readColumn;
-    @FXML
-    public ObserverButton saveRightsButton;
 
     protected PermissionsService permissionsService = PermissionsServiceImpl.permissionsService;
 
@@ -55,8 +52,6 @@ public class UnitPermissionController {
     @FXML
     public void initialize() {
         permissionsTable.setEditable(true);
-
-        saveRightsButton.setApplyOnNewText(String::toUpperCase);
 
         groupColumn.prefWidthProperty().bind(permissionsTable.widthProperty().multiply(0.4));
         accessColumn.prefWidthProperty().bind(permissionsTable.widthProperty().multiply(0.2));
