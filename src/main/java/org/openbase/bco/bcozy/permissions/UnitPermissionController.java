@@ -1,10 +1,9 @@
 package org.openbase.bco.bcozy.permissions;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.layout.Region;
+import org.openbase.bco.bcozy.permissions.model.*;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.slf4j.Logger;
@@ -25,42 +24,39 @@ public class UnitPermissionController {
     private static final Logger LOGGER = LoggerFactory.getLogger(UnitPermissionController.class);
 
     @FXML
-    public OwnerPermissionsController ownerPermissionsController;
-    @FXML
-    public Region ownerPermissions;
-
-    @FXML
     private TableView<Object> permissionsTable;
     @FXML
-    public TableColumn<UnitGroupPermissionViewModel, String> groupColumn;
+    public TableColumn<GroupPermissions, String> groupColumn;
     @FXML
-    public TableColumn<UnitGroupPermissionViewModel, CheckBox> accessColumn;
+    public TableColumn<GroupPermissions, Boolean> accessColumn;
     @FXML
-    public TableColumn<UnitGroupPermissionViewModel, CheckBox> writeColumn;
+    public TableColumn<GroupPermissions, Boolean> writeColumn;
     @FXML
-    public TableColumn<UnitGroupPermissionViewModel, CheckBox> readColumn;
+    public TableColumn<GroupPermissions, Boolean> readColumn;
 
-    protected PermissionsService permissionsService = PermissionsServiceImpl.permissionsService;
+    protected PermissionsService permissionsService = PermissionsServiceImpl.INSTANCE;
 
     private String selectedUnitId;
 
-    private OtherPermissionsViewModel other;
+    private OwnerPermissions ownerPermissions;
 
-    private List<UnitGroupPermissionViewModel> groupPermissions;
+    private OtherPermissions other;
+
+    private List<GroupPermissions> groupPermissions;
 
 
     @FXML
     public void initialize() {
         permissionsTable.setEditable(true);
 
-        groupColumn.prefWidthProperty().bind(permissionsTable.widthProperty().multiply(0.4));
-        accessColumn.prefWidthProperty().bind(permissionsTable.widthProperty().multiply(0.2));
-        writeColumn.prefWidthProperty().bind(permissionsTable.widthProperty().multiply(0.2));
-        readColumn.prefWidthProperty().bind(permissionsTable.widthProperty().multiply(0.2));
-
+        permissionsTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        groupColumn.setMaxWidth(1f * Integer.MAX_VALUE * 40); // 40% width
+        accessColumn.setMaxWidth(1f * Integer.MAX_VALUE * 20); // 20% width
+        writeColumn.setMaxWidth(1f * Integer.MAX_VALUE * 20); // 20% width
+        readColumn.setMaxWidth(1f * Integer.MAX_VALUE * 20); // 20% width
 
         Arrays.asList(accessColumn, readColumn, writeColumn)
-                .forEach(column -> column.setComparator((o1, o2) -> Boolean.compare(o1.isSelected(), o2.isSelected())));
+                .forEach(column -> column.setComparator(Boolean::compare));
 
     }
 
@@ -68,13 +64,14 @@ public class UnitPermissionController {
         this.selectedUnitId = selectedUnitId;
         try {
             permissionsTable.getItems().clear();
+
             groupPermissions = permissionsService.getUnitPermissions(selectedUnitId);
             other = permissionsService.getOtherPermissions(selectedUnitId);
+            ownerPermissions = permissionsService.getOwner(selectedUnitId);
 
+            permissionsTable.getItems().add(ownerPermissions);
             permissionsTable.getItems().add(other);
             permissionsTable.getItems().addAll(groupPermissions);
-
-            ownerPermissionsController.updateOwnerContent(this.selectedUnitId);
         } catch (CouldNotPerformException ex) {
             ExceptionPrinter.printHistory(ex, LOGGER);
         } catch (InterruptedException e) {
@@ -85,9 +82,7 @@ public class UnitPermissionController {
     @FXML
     public void save() {
         try {
-            OwnerViewModel ownerViewModel = ownerPermissionsController.getSelectedOwner();
-
-            permissionsService.save(selectedUnitId, groupPermissions, ownerViewModel, other);
+            permissionsService.save(selectedUnitId, groupPermissions, ownerPermissions, other);
             //TODO: show Success Message
         } catch (ExecutionException | CouldNotPerformException ex) {
             ExceptionPrinter.printHistory(ex, LOGGER);

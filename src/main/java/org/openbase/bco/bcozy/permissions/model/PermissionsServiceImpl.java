@@ -1,6 +1,7 @@
-package org.openbase.bco.bcozy.permissions;
+package org.openbase.bco.bcozy.permissions.model;
 
 import javafx.collections.ObservableList;
+import org.openbase.bco.bcozy.permissions.UnitPermissionController;
 import org.openbase.bco.bcozy.util.AuthorizationGroups;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
@@ -24,7 +25,7 @@ import static rst.domotic.unit.UnitConfigType.UnitConfig;
 public final class PermissionsServiceImpl implements PermissionsService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UnitPermissionController.class);
 
-    protected static final PermissionsServiceImpl permissionsService = new PermissionsServiceImpl();
+    public static final PermissionsServiceImpl INSTANCE = new PermissionsServiceImpl();
 
     private final ObservableList<UnitConfigType.UnitConfig> groups = AuthorizationGroups.getAuthorizationGroups();
 
@@ -58,9 +59,9 @@ public final class PermissionsServiceImpl implements PermissionsService {
     }
 
     @Override
-    public List<OwnerViewModel> getOwners(String selectedUnitId) throws CouldNotPerformException, InterruptedException {
+    public OwnerPermissions getOwner(String selectedUnitId) throws CouldNotPerformException, InterruptedException {
         if (selectedUnitId == null) {
-            return Collections.emptyList();
+            return null;
         }
 
         UnitConfig unit = findUnitConfigById(selectedUnitId);
@@ -69,35 +70,39 @@ public final class PermissionsServiceImpl implements PermissionsService {
 
         List<UnitConfigType.UnitConfig> users = Registries.getUserRegistry().getUserConfigs();
 
-        List<OwnerViewModel> ownerModels = new ArrayList<>();
-        for (UnitConfig user : users) {
-            final boolean isCurrentOwner = Objects.equals(user.getId(), currentOwnerId);
-            final OwnerViewModel model;
-            if (isCurrentOwner) {
-                model = new OwnerViewModel(user.getId(), user.getUserConfig().getUserName(), isCurrentOwner,
-                        unit.getPermissionConfig().getOwnerPermission().getRead(),
-                        unit.getPermissionConfig().getOwnerPermission().getWrite(),
-                        unit.getPermissionConfig().getOwnerPermission().getAccess()
-                );
-            } else {
-                model = new OwnerViewModel(user.getId(), user.getUserConfig().getUserName(), isCurrentOwner);
-            }
 
-            ownerModels.add(model);
+        OwnerPermissions.Owner currentOwner = OwnerPermissions.NULL_OWNER;
+        List<OwnerPermissions.Owner> possibleOwners = new ArrayList<>();
+        possibleOwners.add(OwnerPermissions.NULL_OWNER);
+        for (UnitConfig user : users) {
+
+            final boolean isCurrentOwner = Objects.equals(user.getId(), currentOwnerId);
+            final OwnerPermissions.Owner model = new OwnerPermissions.Owner(user.getId(), user.getUserConfig().getUserName());
+            if (isCurrentOwner) {
+                currentOwner = model;
+            }
+            possibleOwners.add(model);
         }
 
-        return ownerModels;
+        OwnerPermissions ownerPermissions = new OwnerPermissions(currentOwner, possibleOwners,
+                unit.getPermissionConfig().getOwnerPermission().getRead(),
+                unit.getPermissionConfig().getOwnerPermission().getWrite(),
+                unit.getPermissionConfig().getOwnerPermission().getAccess()
+        );
+
+
+        return ownerPermissions;
     }
 
     @Override
-    public List<UnitGroupPermissionViewModel> getUnitPermissions(String selectedUnitId) throws CouldNotPerformException, InterruptedException {
+    public List<GroupPermissions> getUnitPermissions(String selectedUnitId) throws CouldNotPerformException, InterruptedException {
         if (selectedUnitId == null) {
             return Collections.emptyList();
         }
 
         UnitConfig unit = findUnitConfigById(selectedUnitId);
 
-        List<UnitGroupPermissionViewModel> groupPermissions = new ArrayList<>();
+        List<GroupPermissions> groupPermissions = new ArrayList<>();
 
         for (UnitConfig group : groups) {
             Optional<PermissionType.Permission> permission = permissionEntryForGroup(unit, group.getId())
@@ -107,7 +112,7 @@ public final class PermissionsServiceImpl implements PermissionsService {
             boolean write = permission.map(PermissionType.Permission::getWrite).orElse(false);
             boolean access = permission.map(PermissionType.Permission::getAccess).orElse(false);
 
-            UnitGroupPermissionViewModel model = new UnitGroupPermissionViewModel(group.getId(), group.getLabel(), read, write, access);
+            GroupPermissions model = new GroupPermissions(group.getId(), group.getLabel(), read, write, access);
             groupPermissions.add(model);
         }
 
@@ -115,25 +120,25 @@ public final class PermissionsServiceImpl implements PermissionsService {
     }
 
     @Override
-    public OtherPermissionsViewModel getOtherPermissions(String selectedUnitId) throws CouldNotPerformException, InterruptedException {
+    public OtherPermissions getOtherPermissions(String selectedUnitId) throws CouldNotPerformException, InterruptedException {
         if (selectedUnitId == null) {
             return null;
         }
 
         UnitConfig unitConfig = findUnitConfigById(selectedUnitId);
 
-        return new OtherPermissionsViewModel(unitConfig.getPermissionConfig().getOtherPermission().getRead(),
+        return new OtherPermissions(unitConfig.getPermissionConfig().getOtherPermission().getRead(),
                 unitConfig.getPermissionConfig().getOtherPermission().getWrite(),
                 unitConfig.getPermissionConfig().getOtherPermission().getAccess());
     }
 
     @Override
-    public void save(@Nonnull String selectedUnitId, List<UnitGroupPermissionViewModel> permissions, @Nonnull OwnerViewModel owner, OtherPermissionsViewModel other) throws CouldNotPerformException, InterruptedException, ExecutionException {
+    public void save(@Nonnull String selectedUnitId, List<GroupPermissions> permissions, @Nonnull OwnerPermissions owner, OtherPermissions other) throws CouldNotPerformException, InterruptedException, ExecutionException {
         boolean changed = false;
 
         UnitConfig unitConfig = findUnitConfigById(selectedUnitId);
 
-        if (!owner.isCurrentOwner() || owner.changed()) {
+        if (owner.changed()) {
             changed = true;
         }
 
@@ -143,7 +148,7 @@ public final class PermissionsServiceImpl implements PermissionsService {
 
         List<PermissionConfigType.PermissionConfig.MapFieldEntry> permissionEntries = new ArrayList<>(unitConfig.getPermissionConfig().getGroupPermissionList());
 
-        for (UnitGroupPermissionViewModel permission : permissions) {
+        for (GroupPermissions permission : permissions) {
             if (permission.changed()) {
                 permissionEntries.removeIf(entry -> permission.getGroupId().equals(entry.getGroupId()));
                 permissionEntries.add(toEntry(permission));
@@ -156,19 +161,19 @@ public final class PermissionsServiceImpl implements PermissionsService {
         }
     }
 
-    private PermissionConfig.MapFieldEntry toEntry(UnitGroupPermissionViewModel unitGroupPermissionViewModel) {
+    private PermissionConfig.MapFieldEntry toEntry(GroupPermissions groupPermissions) {
         return PermissionConfig
                 .MapFieldEntry.newBuilder()
-                .setGroupId(unitGroupPermissionViewModel.getGroupId())
+                .setGroupId(groupPermissions.getGroupId())
                 .setPermission(PermissionType.Permission.newBuilder()
-                        .setAccess(unitGroupPermissionViewModel.isAccess())
-                        .setWrite(unitGroupPermissionViewModel.isWrite())
-                        .setRead(unitGroupPermissionViewModel.isRead())
+                        .setAccess(groupPermissions.isAccess())
+                        .setWrite(groupPermissions.isWrite())
+                        .setRead(groupPermissions.isRead())
                         .build())
                 .build();
     }
 
-    private void save(UnitConfig unitConfig, OwnerViewModel owner, List<PermissionConfig.MapFieldEntry> permissionEntries, OtherPermissionsViewModel other)
+    private void save(UnitConfig unitConfig, OwnerPermissions ownerPermissions, List<PermissionConfig.MapFieldEntry> permissionEntries, OtherPermissions other)
             throws CouldNotPerformException, InterruptedException, ExecutionException {
         PermissionConfig.Builder permissionConfigBuilder = unitConfig.getPermissionConfig()
                 .toBuilder()
@@ -182,12 +187,12 @@ public final class PermissionsServiceImpl implements PermissionsService {
                         .setRead(other.isRead()))
                 .clearOwnerPermission();
 
-        if (owner != OwnerViewModel.NULL_OBJECT) {
-            permissionConfigBuilder = permissionConfigBuilder.setOwnerId(owner.getUserId())
+        if (ownerPermissions.owner != OwnerPermissions.NULL_OWNER) {
+            permissionConfigBuilder = permissionConfigBuilder.setOwnerId(ownerPermissions.owner.getUserId())
                     .setOwnerPermission(PermissionType.Permission.newBuilder()
-                            .setAccess(owner.isAccess())
-                            .setWrite(owner.isWrite())
-                            .setRead(owner.isRead()));
+                            .setAccess(ownerPermissions.isAccess())
+                            .setWrite(ownerPermissions.isWrite())
+                            .setRead(ownerPermissions.isRead()));
         }
 
 

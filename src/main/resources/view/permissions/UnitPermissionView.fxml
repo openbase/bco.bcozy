@@ -2,15 +2,15 @@
 
 <?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
 <?import org.openbase.bco.bcozy.permissions.CheckBoxTableCellFactory?>
+<?import org.openbase.bco.bcozy.permissions.PermissionTableCellFactory?>
 <?import org.openbase.bco.bcozy.view.*?>
 <VBox xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="org.openbase.bco.bcozy.permissions.UnitPermissionController"
       styleClass="detail-menu" spacing="10">
-
-    <fx:include fx:id="ownerPermissions" source="OwnerPermissionsView.fxml"/>
-
 
     <TableView fx:id="permissionsTable">
         <columns>
@@ -21,6 +21,9 @@
                 <cellValueFactory>
                     <PropertyValueFactory property="name"/>
                 </cellValueFactory>
+                <cellFactory>
+                    <PermissionTableCellFactory/>
+                </cellFactory>
             </TableColumn>
 
             <TableColumn fx:id="accessColumn">
@@ -59,7 +62,10 @@
         </columns>
     </TableView>
 
+    <HBox>
+        <Region HBox.hgrow="ALWAYS"/>
+        <ObserverButton identifier="save" upperCase="true"
+                        styleClass="transparent-button" onAction="#save"/>
+    </HBox>
 
-    <ObserverButton identifier="save" upperCase="true"
-                    styleClass="transparent-button" onAction="#save"/>
 </VBox>

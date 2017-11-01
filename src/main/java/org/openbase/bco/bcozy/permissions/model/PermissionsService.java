@@ -1,4 +1,4 @@
-package org.openbase.bco.bcozy.permissions;
+package org.openbase.bco.bcozy.permissions.model;
 
 import org.openbase.jul.exception.CouldNotPerformException;
 
@@ -12,12 +12,12 @@ public interface PermissionsService {
 
     /**
      * Returns a List of all possible Owners of an unit.
-     * The current owner is marked with {@link OwnerViewModel#currentOwner}.
+     * The current owner is marked with {@link OwnerPermissions#currentOwner}.
      *
      * @param selectedUnitId the unit to get all possible owners
      * @return List of all possible Owners
      */
-    List<OwnerViewModel> getOwners(String selectedUnitId) throws CouldNotPerformException, InterruptedException;
+    OwnerPermissions getOwner(String selectedUnitId) throws CouldNotPerformException, InterruptedException;
 
     /**
      * Returns a list of all group permissions, no matter if the group currently have any rights.
@@ -25,7 +25,7 @@ public interface PermissionsService {
      * @param selectedUnitId the unit to get all Group-permissions
      * @return List of all group permissions
      */
-    List<UnitGroupPermissionViewModel> getUnitPermissions(String selectedUnitId) throws CouldNotPerformException, InterruptedException;
+    List<GroupPermissions> getUnitPermissions(String selectedUnitId) throws CouldNotPerformException, InterruptedException;
 
     /**
      * Saves the new Settings for the unit.
@@ -33,10 +33,10 @@ public interface PermissionsService {
      * Permissions for Group and the Owner and his permissions are set.
      *  @param selectedUnitId the unit to save permissions for
      * @param permissions    the group-permissions to save
-     * @param owner          the new Owner (or {@link OwnerViewModel#currentOwner} if none
+     * @param owner          the new Owner (or {@link OwnerPermissions#currentOwner} if none
      * @param other
      */
-    void save(String selectedUnitId, List<UnitGroupPermissionViewModel> permissions, OwnerViewModel owner, OtherPermissionsViewModel other) throws CouldNotPerformException, InterruptedException, ExecutionException;
+    void save(String selectedUnitId, List<GroupPermissions> permissions, OwnerPermissions owner, OtherPermissions other) throws CouldNotPerformException, InterruptedException, ExecutionException;
 
-    OtherPermissionsViewModel getOtherPermissions(String selectedUnitId) throws CouldNotPerformException, InterruptedException;
+    OtherPermissions getOtherPermissions(String selectedUnitId) throws CouldNotPerformException, InterruptedException;
 }

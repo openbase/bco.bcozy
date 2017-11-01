@@ -15,7 +15,7 @@ import javafx.scene.layout.VBox;
 import javafx.util.Pair;
 import org.openbase.bco.bcozy.BCozy;
 import org.openbase.bco.bcozy.model.LanguageSelection;
-import org.openbase.bco.bcozy.permissions.RecursiveUnitConfig;
+import org.openbase.bco.bcozy.permissions.model.RecursiveUnitConfig;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ForegroundPane;
 import org.openbase.bco.bcozy.view.ObserverLabel;

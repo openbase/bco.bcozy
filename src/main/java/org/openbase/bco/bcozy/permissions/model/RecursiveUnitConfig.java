@@ -1,4 +1,4 @@
-package org.openbase.bco.bcozy.permissions;
+package org.openbase.bco.bcozy.permissions.model;
 
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import javafx.beans.property.SimpleObjectProperty;

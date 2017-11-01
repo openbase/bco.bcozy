@@ -16,6 +16,7 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.util.Callback;
 import org.controlsfx.control.textfield.CustomTextField;
+import org.openbase.bco.bcozy.permissions.model.RecursiveUnitConfig;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ObserverLabel;
 import org.openbase.bco.bcozy.view.SVGIcon;
