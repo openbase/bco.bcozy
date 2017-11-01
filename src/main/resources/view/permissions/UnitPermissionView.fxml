@@ -18,7 +18,7 @@
                     <ObserverLabel>usergroups</ObserverLabel>
                 </graphic>
                 <cellValueFactory>
-                    <PropertyValueFactory property="groupName"/>
+                    <PropertyValueFactory property="name"/>
                 </cellValueFactory>
             </TableColumn>
 
@@ -60,20 +60,6 @@
 
     <VBox fx:id="hbox" layoutX="8.0" layoutY="268.0" prefWidth="250.0" spacing="10">
         <fx:include fx:id="ownerPermissions" source="OwnerPermissionsView.fxml"/>
-
-        <HBox>
-            <ObserverLabel>other</ObserverLabel>
-
-            <ObserverLabel labelFor="${otherRead}">readRight</ObserverLabel>
-            <CheckBox fx:id="otherRead"/>
-
-            <ObserverLabel labelFor="${otherWrite}">writeRight</ObserverLabel>
-            <CheckBox fx:id="otherWrite"/>
-
-            <ObserverLabel labelFor="${otherAccess}">accessRight</ObserverLabel>
-            <CheckBox fx:id="otherAccess"/>
-        </HBox>
-
     </VBox>
 
     <ObserverButton fx:id="saveRightsButton" identifier="save" layoutY="302.0" mnemonicParsing="false"

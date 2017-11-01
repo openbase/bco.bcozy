@@ -32,7 +32,7 @@ public class UnitPermissionController {
     public Region ownerPermissions;
 
     @FXML
-    private TableView<UnitGroupPermissionViewModel> permissionsTable;
+    private TableView<Object> permissionsTable;
     @FXML
     public TableColumn<UnitGroupPermissionViewModel, String> groupColumn;
     @FXML
@@ -46,16 +46,14 @@ public class UnitPermissionController {
     @FXML
     public Region hbox;
 
-    @FXML
-    private CheckBox otherRead;
-    @FXML
-    private CheckBox otherAccess;
-    @FXML
-    private CheckBox otherWrite;
-
     protected PermissionsService permissionsService = PermissionsServiceImpl.permissionsService;
 
     private String selectedUnitId;
+
+    private OtherPermissionsViewModel other;
+
+    private List<UnitGroupPermissionViewModel> groupPermissions;
+
 
     @FXML
     public void initialize() {
@@ -93,23 +91,19 @@ public class UnitPermissionController {
     public void setSelectedUnitId(String selectedUnitId) {
         this.selectedUnitId = selectedUnitId;
         try {
-            updatePermissionsContent();
-            updateOtherContent();
+            permissionsTable.getItems().clear();
+            groupPermissions = permissionsService.getUnitPermissions(selectedUnitId);
+            other = permissionsService.getOtherPermissions(selectedUnitId);
+
+            permissionsTable.getItems().add(other);
+            permissionsTable.getItems().addAll(groupPermissions);
+
             ownerPermissionsController.updateOwnerContent(this.selectedUnitId);
         } catch (CouldNotPerformException ex) {
             ExceptionPrinter.printHistory(ex, LOGGER);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
-    }
-
-    private void updateOtherContent() throws CouldNotPerformException, InterruptedException {
-        OtherPermissionsViewModel otherPermissionsViewModel = permissionsService.getOtherPermissions(selectedUnitId);
-
-        otherAccess.setSelected(otherPermissionsViewModel.isAccess());
-        otherRead.setSelected(otherPermissionsViewModel.isRead());
-        otherWrite.setSelected(otherPermissionsViewModel.isWrite());
-
     }
 
     /**
@@ -141,20 +135,13 @@ public class UnitPermissionController {
         //TODO: Resize other Elements
     }
 
-    private void updatePermissionsContent() throws CouldNotPerformException, InterruptedException {
-        List<UnitGroupPermissionViewModel> groupPermissions = permissionsService.getUnitPermissions(selectedUnitId);
-        permissionsTable.getItems().setAll(groupPermissions);
-    }
 
     @FXML
     public void save() {
         try {
-            OtherPermissionsViewModel other = new OtherPermissionsViewModel(otherRead.isSelected(),
-                    otherWrite.isSelected(), otherAccess.isSelected());
-
             OwnerViewModel ownerViewModel = ownerPermissionsController.getSelectedOwner();
 
-            permissionsService.save(selectedUnitId, permissionsTable.getItems(), ownerViewModel, other);
+            permissionsService.save(selectedUnitId, groupPermissions, ownerViewModel, other);
             //TODO: show Success Message
         } catch (ExecutionException | CouldNotPerformException ex) {
             ExceptionPrinter.printHistory(ex, LOGGER);
