@@ -3,7 +3,7 @@
 <?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.shape.Box?>
+<?import org.openbase.bco.bcozy.permissions.CheckBoxTableCellFactory?>
 <?import org.openbase.bco.bcozy.view.*?>
 <AnchorPane xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="org.openbase.bco.bcozy.permissions.UnitPermissionController"
@@ -29,6 +29,9 @@
                 <cellValueFactory>
                     <PropertyValueFactory property="access"/>
                 </cellValueFactory>
+                <cellFactory>
+                    <CheckBoxTableCellFactory/>
+                </cellFactory>
             </TableColumn>
             <TableColumn fx:id="readColumn">
                 <graphic>
@@ -37,6 +40,9 @@
                 <cellValueFactory>
                     <PropertyValueFactory property="read"/>
                 </cellValueFactory>
+                <cellFactory>
+                    <CheckBoxTableCellFactory/>
+                </cellFactory>
             </TableColumn>
             <TableColumn fx:id="writeColumn">
                 <graphic>
@@ -45,6 +51,9 @@
                 <cellValueFactory>
                     <PropertyValueFactory property="write"/>
                 </cellValueFactory>
+                <cellFactory>
+                    <CheckBoxTableCellFactory/>
+                </cellFactory>
             </TableColumn>
         </columns>
     </TableView>

@@ -62,6 +62,10 @@ public class UnitPermissionController {
 
         this.onWidthChange(null, null, null);
         permissionsTable.widthProperty().addListener(this::onWidthChange);
+
+        permissionsTable.setEditable(true);
+        accessColumn.setEditable(true);
+
         saveRightsButton.setApplyOnNewText(String::toUpperCase);
 
         Arrays.asList(accessColumn, readColumn, writeColumn)

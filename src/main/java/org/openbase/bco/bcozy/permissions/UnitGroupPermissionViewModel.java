@@ -1,6 +1,7 @@
 package org.openbase.bco.bcozy.permissions;
 
-import javafx.scene.control.CheckBox;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 
 /**
  * ViewModel for Permission by a group for an unit, consisting of the group and their rights.
@@ -13,20 +14,20 @@ public class UnitGroupPermissionViewModel extends AbstractPermissionsViewModel {
 
     private final String groupName;
 
-    private final CheckBox read = new CheckBox();
+    private final BooleanProperty read = new SimpleBooleanProperty();
 
-    private final CheckBox write = new CheckBox();
+    private final BooleanProperty write = new SimpleBooleanProperty();
 
-    private final CheckBox access = new CheckBox();
+    private final BooleanProperty access = new SimpleBooleanProperty();
 
     public UnitGroupPermissionViewModel(String groupId, String groupName, boolean read, boolean write, boolean access) {
         super(read, write, access);
         this.groupId = groupId;
         this.groupName = groupName;
 
-        this.read.setSelected(read);
-        this.access.setSelected(access);
-        this.write.setSelected(write);
+        this.read.set(read);
+        this.access.set(access);
+        this.write.set(write);
     }
 
     public String getGroupId() {
@@ -38,29 +39,28 @@ public class UnitGroupPermissionViewModel extends AbstractPermissionsViewModel {
     }
 
 
-    public CheckBox getRead() {
+    public boolean isRead() {
+        return read.get();
+    }
+
+    public BooleanProperty readProperty() {
         return read;
     }
 
-    public CheckBox getWrite() {
+    public boolean isWrite() {
+        return write.get();
+    }
+
+    public BooleanProperty writeProperty() {
         return write;
     }
 
-    public CheckBox getAccess() {
-        return access;
-    }
-
-
-    public boolean isRead() {
-        return read.isSelected();
-    }
-
-    public boolean isWrite() {
-        return write.isSelected();
-    }
-
     public boolean isAccess() {
-        return access.isSelected();
+        return access.get();
+    }
+
+    public BooleanProperty accessProperty() {
+        return access;
     }
 
     @Override
