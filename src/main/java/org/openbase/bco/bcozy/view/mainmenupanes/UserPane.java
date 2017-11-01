@@ -191,7 +191,11 @@ public class UserPane extends BorderPane implements Shutdownable {
                     }
                     return;
                 case UNKNOWN:
-                    break;
+                    // do not display user pane if user is a guest and not present.
+                    if (!user.getConfig().getUserConfig().getOccupant()) {
+                        setManaged(false);
+                        setVisible(false);
+                    }
                 default:
                     ExceptionPrinter.printHistory(new EnumNotSupportedException(user.getUserPresenceState().getValue(), this), LOGGER);
             }
