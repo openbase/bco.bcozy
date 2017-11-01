@@ -19,11 +19,8 @@
 package org.openbase.bco.bcozy;
 
 import javafx.application.Platform;
-
-import static org.openbase.bco.bcozy.BCozy.APP_NAME;
-
-import org.openbase.bco.authentication.lib.jp.JPCredentialsDirectory;
 import org.openbase.bco.authentication.lib.jp.JPAuthentication;
+import org.openbase.bco.authentication.lib.jp.JPCredentialsDirectory;
 import org.openbase.bco.authentication.lib.jp.JPInitializeCredentials;
 import org.openbase.bco.bcozy.jp.JPLanguage;
 import org.openbase.bco.bcozy.view.LoadingPane;
@@ -39,6 +36,8 @@ import org.openbase.jul.extension.rsb.com.jp.JPRSBThreadPooling;
 import org.openbase.jul.extension.rsb.com.jp.JPRSBTransport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.openbase.bco.bcozy.BCozy.APP_NAME;
 
 /**
  * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>
@@ -85,12 +84,14 @@ public class BCozyLauncher {
     private static void showError(Thread t, Throwable ex) {
         errorCounter++;
 
-        if (Platform.isFxApplicationThread()) {
-            ExceptionPrinter.printHistory(new FatalImplementationErrorException("Uncaught exception has "
-                    + "occured!", "FxApplicationThread", ex), LOGGER);
-        } else {
-            ExceptionPrinter.printHistory(new FatalImplementationErrorException("Uncaught exception has "
-                    + "occured!", t.getName(), ex), LOGGER);
+        try {
+            if (Platform.isFxApplicationThread()) {
+                new FatalImplementationErrorException("Uncaught exception has occured!", "FxApplicationThread", ex);
+            } else {
+                new FatalImplementationErrorException("Uncaught exception has occured!", t.getName(), ex);
+            }
+        } catch (AssertionError exx) {
+            // assertion error ignored because exception stack was already printed within the FatalImplementationErrorException.
         }
 
         // check if error counter is to high

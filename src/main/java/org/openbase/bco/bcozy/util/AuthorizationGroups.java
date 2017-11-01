@@ -16,6 +16,7 @@ import rst.domotic.unit.UnitConfigType;
 import rst.domotic.unit.UnitTemplateType;
 import rst.domotic.unit.authorizationgroup.AuthorizationGroupConfigType;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.function.Consumer;
@@ -28,7 +29,7 @@ public final class AuthorizationGroups {
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthorizationGroups.class);
 
     private static final ObservableList<UnitConfigType.UnitConfig> authorizationGroups =
-            FXCollections.observableArrayList();
+            FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
 
     /**
      * List of additional Observers, which will be informed if the groups change.
@@ -149,6 +150,12 @@ public final class AuthorizationGroups {
         AuthorizationGroupConfigType.AuthorizationGroupConfig.Builder authorizationGroupConfig = unitConfig.getAuthorizationGroupConfigBuilder();
         authorizationGroupConfig.addMemberId(userId);
         Registries.getUserRegistry().updateAuthorizationGroupConfig(unitConfig.build());
+    }
+
+    public static List<UnitConfigType.UnitConfig> getGroupsByUser(String userId) {
+        List<UnitConfigType.UnitConfig> groupsWithUser = new ArrayList<>(authorizationGroups);
+        groupsWithUser.removeIf(group -> !group.getAuthorizationGroupConfig().getMemberIdList().contains(userId));
+        return groupsWithUser;
     }
 
     public static void tryRemoveFromGroup(UnitConfigType.UnitConfig group, String userId) throws CouldNotPerformException,

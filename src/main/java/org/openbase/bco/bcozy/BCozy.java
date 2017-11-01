@@ -19,11 +19,6 @@
 package org.openbase.bco.bcozy;
 
 import com.guigarage.responsive.ResponsiveHandler;
-
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-
 import javafx.application.Application;
 import javafx.concurrent.Task;
 import javafx.scene.Scene;
@@ -31,19 +26,11 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.openbase.bco.bcozy.controller.*;
-import org.openbase.bco.bcozy.view.BackgroundPane;
-import org.openbase.bco.bcozy.view.Constants;
-import org.openbase.bco.bcozy.view.ForegroundPane;
-import org.openbase.bco.bcozy.view.ImageViewProvider;
-import org.openbase.bco.bcozy.view.InfoPane;
-import org.openbase.bco.bcozy.view.LoadingPane;
+import org.openbase.bco.bcozy.view.*;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jps.core.JPService;
-import org.openbase.jul.exception.CouldNotPerformException;
-import org.openbase.jul.exception.FatalImplementationErrorException;
-import org.openbase.jul.exception.InitializationException;
+import org.openbase.jul.exception.*;
 import org.openbase.jul.exception.InstantiationException;
-import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
 import org.openbase.jul.pattern.Observable;
@@ -53,6 +40,10 @@ import org.openbase.jul.pattern.Remote.ConnectionState;
 import org.openbase.jul.schedule.GlobalCachedExecutorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 /**
  *

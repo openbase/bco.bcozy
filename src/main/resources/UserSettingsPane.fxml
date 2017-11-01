@@ -50,11 +50,6 @@
         </VBox>
     </HBox>
 
-    <HBox>
-        <JFXCheckBox fx:id="isOccupantField"/>
-        <ObserverLabel styleClass="small-label" alignment="BOTTOM_LEFT">occupant</ObserverLabel>
-    </HBox>
-
     <TitledPane fx:id="changePasswordPane">
         <graphic>
             <ObserverLabel>changePassword</ObserverLabel>
