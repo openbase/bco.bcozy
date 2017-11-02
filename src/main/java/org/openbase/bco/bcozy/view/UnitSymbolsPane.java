@@ -82,7 +82,7 @@ public class UnitSymbolsPane extends Pane {
      * @throws CouldNotPerformException
      * @throws InterruptedException
      */
-    public void addRoomUnit(final UnitRemote<? extends GeneratedMessage> unitRemoteObject, final Point2D position) throws CouldNotPerformException, InterruptedException {
+    public void addLocationUnit(final UnitRemote<? extends GeneratedMessage> unitRemoteObject, final Point2D position) throws CouldNotPerformException, InterruptedException {
         UnitButton newButton;
         try {
             newButton = new UnitButton(unitRemoteObject);
@@ -158,25 +158,25 @@ public class UnitSymbolsPane extends Pane {
             throw new CouldNotPerformException("Could not create unit button for unit " + this, ex);
         }
     }
-    
+
     /**
      * Clears the UnitSymbolsPane to prepare the update.
      */
-public void clearUnits() {
+    public void clearUnits() {
         locationUnitsMap.forEach((unitId, button)
-            -> {
+                -> {
             this.getChildren().remove(button);
         });
         locationUnitsMap.clear();
         unitsPerLocationMap.forEach((locationId, entry)
-            -> entry.forEach((unitId, button)
-                -> {
-                this.getChildren().remove(button);
-            })
+                -> entry.forEach((unitId, button)
+                        -> {
+                    this.getChildren().remove(button);
+                })
         );
         unitsPerLocationMap.clear();
         groupedButtons.forEach((point, button)
-            -> {
+                -> {
             this.getChildren().remove(button);
         });
         groupedButtons.clear();
@@ -186,11 +186,11 @@ public void clearUnits() {
      * Draws all location buttons except for the selected location, draws all unit buttons
      * and grouped buttons for the selected location.
      */
-        public void updateUnitsPane() {
+    public void updateUnitsPane() {
         this.getChildren().clear();
 
         locationUnitsMap.forEach((unitId, button)
-            -> {
+                -> {
             if (!unitId.equals(selectedLocationId.getValue())) {
                 this.getChildren().add(button);
             }
@@ -198,13 +198,13 @@ public void clearUnits() {
 
         if (unitsPerLocationMap.get(selectedLocationId.getValue()) != null) {
             unitsPerLocationMap.get(selectedLocationId.getValue()).forEach((unitId, button)
-                -> {
+                    -> {
                 this.getChildren().add(button);
             }
             );
         }
         groupedButtons.forEach((point, button)
-            -> {
+                -> {
             if (button.getLocationId() == null) {
                 return;
             }
