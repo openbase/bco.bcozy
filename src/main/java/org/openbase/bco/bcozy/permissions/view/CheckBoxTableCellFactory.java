@@ -1,4 +1,4 @@
-package org.openbase.bco.bcozy.permissions;
+package org.openbase.bco.bcozy.permissions.view;
 
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;

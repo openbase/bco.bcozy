@@ -5,8 +5,8 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
-<?import org.openbase.bco.bcozy.permissions.CheckBoxTableCellFactory?>
-<?import org.openbase.bco.bcozy.permissions.PermissionTableCellFactory?>
+<?import org.openbase.bco.bcozy.permissions.view.CheckBoxTableCellFactory?>
+<?import org.openbase.bco.bcozy.permissions.view.PermissionTableCellFactory?>
 <?import org.openbase.bco.bcozy.view.*?>
 <VBox xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="org.openbase.bco.bcozy.permissions.UnitPermissionController"
