@@ -72,12 +72,13 @@ public final class LocationPane extends Pane {
     private static final Logger LOGGER = LoggerFactory.getLogger(LocationPane.class);
 
     private LocationPolygon selectedLocation;
-    private ZonePolygon rootRoom;
+    private ZonePolygon rootLocation;
 
     //private final StackPane backgroundPane;
     private final ForegroundPane foregroundPane;
     private final Map<String, TilePolygon> tileMap;
     private final Map<String, RegionPolygon> regionMap;
+    private final Map<String, ZonePolygon> zoneMap;
     private final Map<String, ConnectionPolygon> connectionMap;
     private final List<Node> debugNodes;
 
@@ -95,49 +96,29 @@ public final class LocationPane extends Pane {
     private LocationPane(final ForegroundPane foregroundPane) throws org.openbase.jul.exception.InstantiationException, InterruptedException {
         super();
 
-//        try {				
         this.foregroundPane = foregroundPane;
 
         tileMap = new HashMap<>();
         regionMap = new HashMap<>();
+        zoneMap = new HashMap<>();
         connectionMap = new HashMap<>();
         debugNodes = new ArrayList<>();
-        /* tileMap = background.getTileMap();
-	   regionMap = background.getRegionMap();
-	   connectionMap = background.getConnectionMap();*/
 
-//            Registries.getLocationRegistry().waitForData();
-//            selectedLocation = new ZonePolygon(0.0, 0.0, 0.0, 0.0);
-//            selectedLocation.init(Registries.getLocationRegistry().getRootLocationConfig());
-//            selectedLocation.activate();
         selectedLocationId = new SimpleStringProperty(Constants.DUMMY_LABEL);
-
-        rootRoom = null;
-//        lastSelectedTile = selectedLocation;
-//        lastFirstClickTarget = selectedLocation;
+        rootLocation = null;
 
         onEmptyAreaClickHandler = event -> {
-            if (event.isStillSincePress() && rootRoom != null) {
-                try {
-                    if (event.getClickCount() == 1) {
-                        if (!rootRoom.equals(selectedLocation)) {
-                            if (selectedLocation != null) {
-                                selectedLocation.setSelected(false);
-                            }
-                            rootRoom.setSelected(true);
-                            this.setSelectedLocation(rootRoom);
-                        }
-                    } else if (event.getClickCount() == 2) {
-                        this.autoFocusPolygonAnimated(rootRoom);
-                    }
+            if (event.isStillSincePress() && rootLocation != null) {
+                if (event.getClickCount() == 1) {
+                    selectRootLocation();
+                } else if (event.getClickCount() == 2) {
+                    this.autoFocusPolygonAnimated(rootLocation);
+                }
 
-                    try {
-                        foregroundPane.getContextMenu().getRoomInfo().setText(selectedLocation.getLabel());
-                    } catch (NotAvailableException ex) {
-                        LOGGER.warn("Could not resolve location label!", ex);
-                    }
-                } catch (CouldNotPerformException ex) {
-                    ExceptionPrinter.printHistory("Could not handle mouse event!", ex, LOGGER);
+                try {
+                    foregroundPane.getContextMenu().getRoomInfo().setText(selectedLocation.getLabel());
+                } catch (NotAvailableException ex) {
+                    LOGGER.warn("Could not resolve location label!", ex);
                 }
             }
         };
@@ -150,9 +131,36 @@ public final class LocationPane extends Pane {
 
         this.foregroundPane.getMainMenuWidthProperty().addListener((observable, oldValue, newValue)
                 -> this.setTranslateX(this.getTranslateX() - ((oldValue.doubleValue() - newValue.doubleValue()) / 2)));
-//        } catch (CouldNotPerformException ex) {
-//            throw new org.openbase.jul.exception.InstantiationException(this, ex);
-//        }
+        
+        onMouseMovedProperty().addListener((observable, oldValue, newValue) -> {
+            LOGGER.info("mouse moved:");
+            
+        });
+    }
+
+    private void selectRootLocation() {
+
+        // check if exists
+        if (rootLocation == null) {
+            LOGGER.debug("Could not select root because its not available.");
+            return;
+        }
+
+        // check is not already selected
+        if (rootLocation.equals(selectedLocation)) {
+            return;
+        }
+
+        // delected selected location
+        if (selectedLocation != null) {
+            selectedLocation.setSelected(false);
+        }
+        rootLocation.setSelected(true);
+        try {
+            this.setSelectedLocation(rootLocation);
+        } catch (CouldNotPerformException ex) {
+            ExceptionPrinter.printHistory("Could not select root loaction!", ex, LOGGER);
+        }
     }
 
     /**
@@ -242,7 +250,10 @@ public final class LocationPane extends Pane {
                     locationPolygon = new ZonePolygon(points);
                     locationPolygon.init(locationUnitConfig);
                     locationPolygon.activate();
-                    rootRoom = (ZonePolygon) locationPolygon; //TODO: handle the situation where several zones exist
+                    if (locationUnitConfig.getLocationConfig().getRoot()) {
+                        rootLocation = (ZonePolygon) locationPolygon; //TODO: handle the situation where several zones exist
+                    }
+                    zoneMap.put(locationUnitConfig.getId(), (ZonePolygon) locationPolygon);
                     break;
                 default:
                     throw new EnumNotSupportedException(locationUnitConfig.getLocationConfig().getType(), this);
@@ -257,15 +268,16 @@ public final class LocationPane extends Pane {
                 final StackPane globalBaseStack = new StackPane();
                 final StackPane locationBaseStack = new StackPane();
                 final StackPane[] locationStacks = new StackPane[vertices.size()];
+                debugNodes.clear();
 
                 // Paint Location Coordinates
-                final double COORDINATE_BLOCLK_SIZE = 0.30 * Constants.METER_TO_PIXEL;
+                final double COORDINATE_BLOCK_SIZE = 0.30 * Constants.METER_TO_PIXEL;
                 for (int i = 0; i < vertices.size(); i++) {
 
                     text = new Text(Integer.toString(i));
                     text.setStroke(Color.BLACK);
 
-                    coordinate = new Circle(COORDINATE_BLOCLK_SIZE);
+                    coordinate = new Circle(COORDINATE_BLOCK_SIZE);
                     coordinate.setFill(Color.WHITE);
                     coordinate.setEffect(new Lighting());
 
@@ -285,7 +297,7 @@ public final class LocationPane extends Pane {
                 text = new Text("X");
                 text.setStroke(Color.BLACK);
 
-                coordinate = new Circle(COORDINATE_BLOCLK_SIZE);
+                coordinate = new Circle(COORDINATE_BLOCK_SIZE);
                 coordinate.setFill(Color.CORNFLOWERBLUE);
                 coordinate.setEffect(new Lighting());
 
@@ -302,7 +314,7 @@ public final class LocationPane extends Pane {
                 text = new Text("O");
                 text.setStroke(Color.BLACK);
 
-                coordinate = new Circle(COORDINATE_BLOCLK_SIZE);
+                coordinate = new Circle(COORDINATE_BLOCK_SIZE);
                 coordinate.setFill(Color.DARKRED);
                 coordinate.setEffect(new Lighting());
 
@@ -422,7 +434,7 @@ public final class LocationPane extends Pane {
         );
         regionMap.clear();
 
-        rootRoom = null;
+        rootLocation = null;
     }
 
     /**
@@ -446,31 +458,28 @@ public final class LocationPane extends Pane {
         this.getChildren().clear();
 
         tileMap.forEach((locationId, locationPolygon) -> {
-            if (rootRoom != null) {
-                rootRoom.addCuttingShape(locationPolygon);
+            if (rootLocation != null) {
+                rootLocation.addCuttingShape(locationPolygon);
             }
             this.getChildren().add(locationPolygon);
         });
 
         regionMap.forEach((locationId, locationPolygon) -> {
-            if (rootRoom != null) {
-                rootRoom.addCuttingShape(locationPolygon);
+            if (rootLocation != null) {
+                rootLocation.addCuttingShape(locationPolygon);
             }
             this.getChildren().add(locationPolygon);
         });
 
         connectionMap.forEach((connectionId, connectionPolygon) -> {
-            if (rootRoom != null) {
-                rootRoom.addCuttingShape(connectionPolygon);
+            if (rootLocation != null) {
+                rootLocation.addCuttingShape(connectionPolygon);
             }
             this.getChildren().add(connectionPolygon);
         });
 
-        // unitSymbols.forEach((icon) -> {
-        //    this.getChildren().add(icon);
-        //});
-        if (rootRoom != null) {
-            this.getChildren().add(rootRoom);
+        if (rootLocation != null) {
+            this.getChildren().add(rootLocation);
         }
 
         if (JPService.debugMode()) {
@@ -479,6 +488,14 @@ public final class LocationPane extends Pane {
                 this.getChildren().add(debugNode);
             }
         }
+
+        if (!isLocationSelected()) {
+            selectRootLocation();
+        }
+    }
+
+    private boolean isLocationSelected() {
+        return selectedLocation != null;
     }
 
     /**
@@ -616,8 +633,8 @@ public final class LocationPane extends Pane {
      * tileMap.
      */
     public void zoomFit() {
-        if (rootRoom != null) { //NOPMD
-            autoFocusPolygon(rootRoom);
+        if (rootLocation != null) { //NOPMD
+            autoFocusPolygon(rootLocation);
         } else if (!tileMap.isEmpty()) {
             autoFocusPolygon(tileMap.values().iterator().next());
         }
@@ -639,7 +656,6 @@ public final class LocationPane extends Pane {
      */
     public void removeSelectedLocationIdListener(final ChangeListener<? super String> changeListener) {
         selectedLocationId.removeListener(changeListener);
-        selectedLocationId.set("home");
     }
 
     /**
@@ -650,7 +666,7 @@ public final class LocationPane extends Pane {
     public EventHandler<MouseEvent> getOnEmptyAreaClickHandler() {
         return onEmptyAreaClickHandler;
     }
-
+    
     private void autoFocusPolygon(final LocationPolygon polygon) {
         final double xScale = (foregroundPane.getBoundingBox().getWidth() / polygon.prefWidth(0))
                 * Constants.ZOOM_FIT_PERCENTAGE_WIDTH;

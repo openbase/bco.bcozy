@@ -164,7 +164,7 @@ public class UnitsPaneController {
                 Point2D coord = new Point2D(vertex.x * Constants.METER_TO_PIXEL, vertex.y * Constants.METER_TO_PIXEL);
                 // Abstract Pane not working with a config object, only with a remote one!
                 UnitRemote<?> u = Units.getUnit(locationConfig.getId(), false);
-                unitSymbolsPane.addRoomUnit(u, coord.add(-halfButtonSize, -halfButtonSize));
+                unitSymbolsPane.addLocationUnit(u, coord.add(-halfButtonSize, -halfButtonSize));
             } catch (CouldNotPerformException | ExecutionException | TimeoutException ex) {
                 // No exception throwing, because loop must continue it's work
                 ExceptionPrinter.printHistory(ex, LOGGER);
