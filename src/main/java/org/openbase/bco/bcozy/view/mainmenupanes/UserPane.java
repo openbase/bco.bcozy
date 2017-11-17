@@ -32,6 +32,7 @@ import org.openbase.bco.bcozy.view.ObserverLabel;
 import org.openbase.bco.bcozy.view.SVGIcon;
 import org.openbase.bco.dal.remote.unit.Units;
 import org.openbase.bco.dal.remote.unit.user.UserRemote;
+import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.EnumNotSupportedException;
 import org.openbase.jul.exception.InitializationException;
@@ -40,10 +41,8 @@ import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.iface.Shutdownable;
 import org.openbase.jul.pattern.Observable;
 import org.openbase.jul.pattern.Observer;
-import org.openbase.jul.processing.StringProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.domotic.state.UserActivityStateType.UserActivityState;
 import rst.domotic.unit.UnitConfigType.UnitConfig;
 import rst.domotic.unit.user.UserDataType;
 
@@ -138,8 +137,14 @@ public class UserPane extends BorderPane implements Shutdownable {
     private void updateUserState() {
         String userState = null;
         try {
-            if (user.getUserActivityState().getCurrentActivity() != UserActivityState.Activity.UNKNOWN) {
-                userState = StringProcessor.transformUpperCaseToCamelCase(user.getUserActivityState().getCurrentActivity().name());
+            if (user.getUserActivityState().hasActivityId() && !user.getUserActivityState().getActivityId().isEmpty()) {
+                try {
+                    userState = Registries.getUserActivityRegistry().getUserActivityConfigById(user.getUserActivityState().getActivityId()).getLabel();
+                } catch (CouldNotPerformException ex) {
+                    // do nothing, fallback is handled below
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                }
             }
 
             // generate user state fallback
