@@ -3,8 +3,13 @@ package org.openbase.bco.bcozy.permissions;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.paint.Color;
+import javafx.util.Duration;
+import org.openbase.bco.bcozy.model.LanguageSelection;
 import org.openbase.bco.bcozy.permissions.model.*;
+import org.openbase.bco.bcozy.view.InfoPane;
 import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.ExceptionProcessor;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,10 +88,16 @@ public class UnitPermissionController {
     public void save() {
         try {
             permissionsService.save(selectedUnitId, groupPermissions, ownerPermissions, other);
-            //TODO: show Success Message
+            InfoPane.info("saveSuccess")
+                    .backgroundColor(Color.GREEN)
+                    .hideAfter(Duration.seconds(5));
         } catch (ExecutionException | CouldNotPerformException ex) {
             ExceptionPrinter.printHistory(ex, LOGGER);
-            //TODO: show Error Message
+            String message = LanguageSelection.getLocalized("saveErrorWithMessage", ExceptionProcessor.getInitialCauseMessage(ex));
+
+            InfoPane.info(message)
+                    .backgroundColor(Color.RED)
+                    .hideAfter(Duration.seconds(5));
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
