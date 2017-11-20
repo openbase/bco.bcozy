@@ -45,7 +45,6 @@ public class ObserverLabel extends Label implements Observer {
      */
     private Function<String, String> applyOnNewText = Function.identity();
 
-
     public ObserverLabel() {
         super();
         identifier.addListener((observable, oldValue, newValue) -> update(null, null));
@@ -56,7 +55,7 @@ public class ObserverLabel extends Label implements Observer {
      * Constructor to create a label which is capable of observing language changes in the application.
      *
      * @param identifier The language string which combined with the actual language selection determines the
-     *                   actual label
+     * actual label
      */
     public ObserverLabel(final String identifier) {
         this();
@@ -66,9 +65,8 @@ public class ObserverLabel extends Label implements Observer {
     /**
      * Constructor to create a label which is capable of observing language changes in the application.
      *
-     * @param identifier The language string which combined with the actual language selection determines the
-     *                   actual label
-     * @param graphic    the graphic which should be displayed next to the label
+     * @param identifier The language string which combined with the actual language selection determines the actual label
+     * @param graphic the graphic which should be displayed next to the label
      */
     public ObserverLabel(final String identifier, final Node graphic) {
         this(identifier);
@@ -77,13 +75,15 @@ public class ObserverLabel extends Label implements Observer {
 
     @Override
     public void update(final Observable observable, final Object arg) {
-        if (getIdentifier() == null) {
+        if (getIdentifier() == null || getIdentifier().equals(Constants.DUMMY_LABEL)) {
             return;
         }
-
-        String text = LanguageSelection.getLocalized(getIdentifier());
-
-        super.setText(applyOnNewText.apply(text));
+        
+        if(getIdentifier().isEmpty()) {
+            super.setText("");
+        }
+        
+        super.setText(applyOnNewText.apply(LanguageSelection.getLocalized(getIdentifier())));
     }
 
     /**
@@ -107,5 +107,4 @@ public class ObserverLabel extends Label implements Observer {
         this.applyOnNewText = applyOnNewText != null ? applyOnNewText : Function.identity();
         this.update(null, null);
     }
-
 }
