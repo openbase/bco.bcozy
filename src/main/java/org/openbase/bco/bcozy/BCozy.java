@@ -126,7 +126,7 @@ public class BCozy extends Application {
 
         final double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
         final double screenHeight = Screen.getPrimary().getVisualBounds().getHeight();
-        primaryStage.setTitle("BCozy");
+        primaryStage.setTitle("BCO BCozy");
 
         final StackPane root = new StackPane();
         foregroundPane = new ForegroundPane(screenHeight, screenWidth);
@@ -272,7 +272,7 @@ public class BCozy extends Application {
     }
 
     private static void registerResponsiveHandler() {
-        LOGGER.info("Executing Registration of Listeners");
+        LOGGER.debug("Register responsive handler...");
         ResponsiveHandler.setOnDeviceTypeChanged((over, oldDeviceType, newDeviceType) -> {
             switch (newDeviceType) {
                 case LARGE:
@@ -294,19 +294,18 @@ public class BCozy extends Application {
     }
 
     private static void adjustToLargeDevice() {
-        LOGGER.info("Detected Large Device");
+        LOGGER.debug("Detected Large Device");
     }
 
     private static void adjustToMediumDevice() {
-        LOGGER.info("Detected Medium Device");
+        LOGGER.debug("Detected Medium Device");
     }
 
     private static void adjustToSmallDevice() {
-        LOGGER.info("Detected Small Device");
+        LOGGER.debug("Detected Small Device");
     }
 
     private static void adjustToExtremeSmallDevice() {
-        LOGGER.info("Detected Extreme Small Device");
+        LOGGER.debug("Detected Extreme Small Device");
     }
-
 }
