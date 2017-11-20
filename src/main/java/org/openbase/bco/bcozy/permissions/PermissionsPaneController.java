@@ -149,10 +149,7 @@ public class PermissionsPaneController {
     private void fillTable(List<UnitConfigType.UnitConfig> unitConfigList) {
 
         unitsTable.unGroup(this.typeColumn);
-
-        //TODO: nicht ganze Tabelle ersetzten, sondern nur geänderte Units
-        // RecursiveUnitConfig.unit-Property nutzen?
-
+        
         list.clear();
 
         for (UnitConfigType.UnitConfig unitConfig : unitConfigList) {
