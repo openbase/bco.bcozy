@@ -161,18 +161,6 @@ public final class PermissionsServiceImpl implements PermissionsService {
         }
     }
 
-    private PermissionConfig.MapFieldEntry toEntry(GroupPermissions groupPermissions) {
-        return PermissionConfig
-                .MapFieldEntry.newBuilder()
-                .setGroupId(groupPermissions.getGroupId())
-                .setPermission(PermissionType.Permission.newBuilder()
-                        .setAccess(groupPermissions.isAccess())
-                        .setWrite(groupPermissions.isWrite())
-                        .setRead(groupPermissions.isRead())
-                        .build())
-                .build();
-    }
-
     private void save(UnitConfig unitConfig, OwnerPermissions ownerPermissions, List<PermissionConfig.MapFieldEntry> permissionEntries, OtherPermissions other)
             throws CouldNotPerformException, InterruptedException, ExecutionException {
         PermissionConfig.Builder permissionConfigBuilder = unitConfig.getPermissionConfig()
@@ -203,6 +191,18 @@ public final class PermissionsServiceImpl implements PermissionsService {
 
         final UnitConfig saved = Registries.getUnitRegistry().updateUnitConfig(newUnitConfig).get();
 
+    }
+    
+    private PermissionConfig.MapFieldEntry toEntry(GroupPermissions groupPermissions) {
+        return PermissionConfig
+                .MapFieldEntry.newBuilder()
+                .setGroupId(groupPermissions.getGroupId())
+                .setPermission(PermissionType.Permission.newBuilder()
+                        .setAccess(groupPermissions.isAccess())
+                        .setWrite(groupPermissions.isWrite())
+                        .setRead(groupPermissions.isRead())
+                        .build())
+                .build();
     }
 
     private UnitConfig findUnitConfigById(String id) throws CouldNotPerformException, InterruptedException {
