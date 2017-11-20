@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import rst.domotic.unit.UnitTemplateType.UnitTemplate.UnitType;
 
 import java.util.List;
+import org.openbase.jps.core.JPService;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
@@ -68,7 +69,11 @@ public class UnitPaneContainer extends ObserverTitledPane {
             try {
                 vBox.getChildren().add(UnitPaneFactoryImpl.getInstance().newInitializedInstance(remote.getConfig()));
             } catch (CouldNotPerformException ex) {
-                ExceptionPrinter.printHistory("UnitType[" + unitType + "] is not supported yet!", ex, LOGGER, LogLevel.WARN);
+                if (JPService.verboseMode()) {
+                    ExceptionPrinter.printHistory("UnitType[" + unitType + "] is not supported yet!", ex, LOGGER, LogLevel.WARN);
+                } else {
+                    ExceptionPrinter.printHistory("UnitType[" + unitType + "] is not supported yet!", ex, LOGGER, LogLevel.DEBUG);
+                }
             }
         }
     }
