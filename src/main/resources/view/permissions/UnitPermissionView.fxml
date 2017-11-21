@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import org.openbase.bco.bcozy.permissions.view.CheckBoxTableCellFactory?>
+<?import org.openbase.bco.bcozy.permissions.view.PermissionTableCellFactory?>
+<?import org.openbase.bco.bcozy.view.*?>
+<VBox xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.openbase.bco.bcozy.permissions.UnitPermissionController"
+      styleClass="detail-menu" spacing="10">
+
+    <TableView fx:id="permissionsTable">
+        <columns>
+            <TableColumn fx:id="groupColumn">
+                <graphic>
+                    <ObserverLabel>usergroups</ObserverLabel>
+                </graphic>
+                <cellValueFactory>
+                    <PropertyValueFactory property="name"/>
+                </cellValueFactory>
+                <cellFactory>
+                    <PermissionTableCellFactory/>
+                </cellFactory>
+            </TableColumn>
+
+            <TableColumn fx:id="accessColumn">
+                <graphic>
+                    <ObserverLabel>accessRight</ObserverLabel>
+                </graphic>
+                <cellValueFactory>
+                    <PropertyValueFactory property="access"/>
+                </cellValueFactory>
+                <cellFactory>
+                    <CheckBoxTableCellFactory/>
+                </cellFactory>
+            </TableColumn>
+            <TableColumn fx:id="readColumn">
+                <graphic>
+                    <ObserverLabel>readRight</ObserverLabel>
+                </graphic>
+                <cellValueFactory>
+                    <PropertyValueFactory property="read"/>
+                </cellValueFactory>
+                <cellFactory>
+                    <CheckBoxTableCellFactory/>
+                </cellFactory>
+            </TableColumn>
+            <TableColumn fx:id="writeColumn">
+                <graphic>
+                    <ObserverLabel>writeRight</ObserverLabel>
+                </graphic>
+                <cellValueFactory>
+                    <PropertyValueFactory property="write"/>
+                </cellValueFactory>
+                <cellFactory>
+                    <CheckBoxTableCellFactory/>
+                </cellFactory>
+            </TableColumn>
+        </columns>
+    </TableView>
+
+    <HBox>
+        <Region HBox.hgrow="ALWAYS"/>
+        <ObserverButton identifier="save" upperCase="true"
+                        styleClass="transparent-button" onAction="#save"/>
+    </HBox>
+
+</VBox>

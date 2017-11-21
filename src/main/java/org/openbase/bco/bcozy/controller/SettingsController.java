@@ -1,47 +1,34 @@
 package org.openbase.bco.bcozy.controller;
 
-import com.jfoenix.controls.JFXTreeTableColumn;
 import com.jfoenix.controls.JFXTreeTableView;
-import com.jfoenix.controls.RecursiveTreeItem;
-import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
-import javafx.application.Platform;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.*;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.Parent;
+import javafx.scene.control.Accordion;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.control.TitledPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.util.Callback;
-import org.controlsfx.control.textfield.CustomTextField;
+import javafx.util.Pair;
 import org.openbase.bco.bcozy.BCozy;
 import org.openbase.bco.bcozy.model.LanguageSelection;
+import org.openbase.bco.bcozy.permissions.model.RecursiveUnitConfig;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ForegroundPane;
 import org.openbase.bco.bcozy.view.ObserverLabel;
-import org.openbase.bco.bcozy.view.SVGIcon;
-import org.openbase.bco.registry.remote.Registries;
-import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.domotic.unit.UnitConfigType;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.URL;
-import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.ResourceBundle;
-import java.util.function.Function;
-
-import static java.util.Objects.nonNull;
 
 /**
  * @author vdasilva
@@ -67,26 +54,20 @@ public class SettingsController {
     private JFXTreeTableView<RecursiveUnitConfig> unitsTable;
 
     @FXML
-    private CustomTextField filterInput;
-//    private JFXTextField filterInput;
-
-
-    @FXML
     private VBox permissionPaneParent;
 
-    private Pane permissionPane;
 
     private UserSettingsController userSettingsController;
-    private PermissionPaneController permissionPaneController;
-    private JFXTreeTableColumn<RecursiveUnitConfig, String> typeColumn;
 
 
-    final ObservableList<RecursiveUnitConfig> list = FXCollections.observableArrayList();
-    private final ForegroundPane foregroudPane;
-
-
+    /**
+     * @deprecated Use {@link #SettingsController()} instead.
+     */
+    @Deprecated
     public SettingsController(ForegroundPane foregroudPane) {
-        this.foregroudPane = foregroudPane;
+    }
+
+    public SettingsController() {
     }
 
     @FXML
@@ -95,17 +76,13 @@ public class SettingsController {
         permissionTab.setGraphic(new ObserverLabel("permissions"));
 
 
-        fillTreeTableView();
-
-
         Pane userSettingsPane = loadUserSettingsPane();
         settingsTab.setContent(userSettingsPane);
 
 
-        permissionPane = loadPermissionPane();
-        permissionPane.setVisible(false);
+        Pair<? extends Parent, ?> permissionPane = loadPermissionPane();
+        permissionTab.setContent(permissionPane.getKey());
 
-        this.permissionPaneParent.getChildren().addAll(permissionPane);
 
         this.tabPane.widthProperty().addListener(this::onPaneWidthChange);
         onPaneWidthChange(null, null, null);
@@ -119,22 +96,9 @@ public class SettingsController {
         TitledPane groupsPane = new TitledPane("usergroups", this.loadGroupsPane());
         LanguageSelection.addObserverFor("usergroups", groupsPane::setText);
         this.adminAccordion.getPanes().add(groupsPane);
-
-        try {
-            Registries.getUnitRegistry().addDataObserver((observable, unitRegistryData) -> {
-                        List<UnitConfigType.UnitConfig> unitConfigList = Registries.getUnitRegistry().getUnitConfigs();
-                        Platform.runLater(() -> fillTable(unitConfigList));
-                    }
-            );
-        } catch (CouldNotPerformException ex) {
-            ExceptionPrinter.printHistory(ex, LOGGER);
-        } catch (InterruptedException ex) {
-            Thread.currentThread().interrupt();
-        }
-
     }
 
-    URL getFxmlURL(String filename) throws NullPointerException {
+    private URL getFxmlURL(String filename) throws NullPointerException {
         return Objects.requireNonNull(getClass().getClassLoader().getResource(filename),
                 filename + " not found");
     }
@@ -171,92 +135,6 @@ public class SettingsController {
         //+1 cause otherwise tabs would overlap with Floating Button 
     }
 
-
-    public void fillTreeTableView() {
-        unitsTable.setShowRoot(false);
-        unitsTable.setEditable(true);
-
-        JFXTreeTableColumn<RecursiveUnitConfig, String> labelColumn = createJFXTreeTableColumn("Units",
-                (unit) -> unit.getUnit().getLabel());
-        labelColumn.setPrefWidth(150);
-
-        JFXTreeTableColumn<RecursiveUnitConfig, String> descColumn = createJFXTreeTableColumn("Description",
-                (unit) -> unit.getUnit().getDescription());
-        descColumn.setPrefWidth(150);
-
-        this.typeColumn = createJFXTreeTableColumn("Type",
-                (unit) -> unit.getUnit().getType().name());
-        this.typeColumn.setPrefWidth(150);
-
-        unitsTable.getColumns().addAll(this.typeColumn, labelColumn, descColumn);
-
-        RecursiveTreeItem<RecursiveUnitConfig> item = new RecursiveTreeItem<>(
-                list, RecursiveTreeObject::getChildren);
-        unitsTable.setRoot(item);
-
-        unitsTable.getSelectionModel()
-                .selectedItemProperty()
-                .addListener(this::onSelectionChange);
-
-        filterInput.setRight(new SVGIcon(FontAwesomeIcon.SEARCH, Constants.EXTRA_SMALL_ICON, true));
-
-        filterInput.promptTextProperty().setValue(new ObserverLabel("searchPlaceholder").getText());
-        filterInput.textProperty().addListener((o, oldVal, newVal) -> {
-            unitsTable.setPredicate(
-                    user -> user.getValue().getUnit().getLabel().toLowerCase().contains(newVal.toLowerCase())
-                            || user.getValue().getUnit().getDescription().toLowerCase().contains(newVal.toLowerCase())
-                            || user.getValue().getUnit().getType().name().toLowerCase().contains(newVal.toLowerCase()));
-        });
-
-
-    }
-
-
-    private void onSelectionChange(javafx.beans.Observable observable, TreeItem oldValue, TreeItem newValue) {
-        if (nonNull(newValue) && newValue.getValue() instanceof RecursiveUnitConfig) {
-            setPermissionPaneVisible(true);
-            permissionPaneController.setUnitConfig(((RecursiveUnitConfig) newValue.getValue()).getUnit());
-        } else {
-            setPermissionPaneVisible(false);
-        }
-    }
-
-    private void setPermissionPaneVisible(boolean visible) {
-        permissionPane.setVisible(visible);
-
-
-    }
-
-    private void fillTable(List<UnitConfigType.UnitConfig> unitConfigList) {
-
-        unitsTable.unGroup(this.typeColumn);
-
-        //TODO: nicht ganze Tabelle ersetzten, sondern nur geänderte Units
-        // RecursiveUnitConfig.unit-Property nutzen?
-
-        list.clear();
-
-        for (UnitConfigType.UnitConfig unitConfig : unitConfigList) {
-            if (nonNull(unitConfig)) {
-                list.add(new RecursiveUnitConfig(unitConfig));
-            }
-        }
-
-        if (!list.isEmpty()) {
-
-
-            unitsTable.group(this.typeColumn);
-        }
-
-
-    }
-
-    private <S, T> JFXTreeTableColumn<S, T> createJFXTreeTableColumn(String text, Function<S, T> supplier) {
-        JFXTreeTableColumn<S, T> column = new JFXTreeTableColumn<>(text);
-        column.setCellValueFactory(new MethodRefCellValueFactory<>(supplier, column));
-        return column;
-    }
-
     public UserSettingsController getUserSettingsController() {
         return userSettingsController;
     }
@@ -281,17 +159,15 @@ public class SettingsController {
                 });
     }
 
-    private AnchorPane loadPermissionPane() {
+    private <VIEW extends Parent, CONTROLLER> Pair<VIEW, CONTROLLER> loadPermissionPane() {
         try {
-            URL url = getFxmlURL("PermissionPane.fxml");
-
+            URL url = getFxmlURL("view/permissions/PermissionsPane.fxml");
             FXMLLoader loader = new FXMLLoader(url);
-            AnchorPane anchorPane = loader.load();
-            this.permissionPaneController = loader.getController();
 
-            anchorPane.getStyleClass().addAll("detail-menu");
+            VIEW anchorPane = loader.load();
+            CONTROLLER controller = loader.getController();
 
-            return anchorPane;
+            return new Pair<>(anchorPane, controller);
         } catch (IOException ex) {
             ExceptionPrinter.printHistory("Content could not be loaded", ex, LOGGER);
             throw new UncheckedIOException(ex);
@@ -329,48 +205,7 @@ public class SettingsController {
         }
     }
 
-    public class RecursiveUnitConfig extends RecursiveTreeObject<RecursiveUnitConfig> {
 
-        final private SimpleObjectProperty<UnitConfigType.UnitConfig> unit = new SimpleObjectProperty<>();
-
-        public RecursiveUnitConfig(UnitConfigType.UnitConfig unitConfig) {
-            this.setUnit(unitConfig);
-        }
-
-        public UnitConfigType.UnitConfig getUnit() {
-            return unit.get();
-        }
-
-        public void setUnit(UnitConfigType.UnitConfig unitConfig) {
-            this.unit.set(Objects.requireNonNull(unitConfig));
-
-        }
-
-        public SimpleObjectProperty unitProperty() {
-            return unit;
-        }
-
-    }
-
-    private class MethodRefCellValueFactory<S, T> implements Callback<TreeTableColumn.CellDataFeatures<S, T>, ObservableValue<T>> {
-
-        Function<S, T> supplier;
-
-        JFXTreeTableColumn<S, T> column;
-
-        public MethodRefCellValueFactory(Function<S, T> supplier, JFXTreeTableColumn<S, T> column) {
-            this.supplier = Objects.requireNonNull(supplier);
-            this.column = Objects.requireNonNull(column);
-        }
-
-        @Override
-        public ObservableValue<T> call(TreeTableColumn.CellDataFeatures<S, T> param) {
-            if (column.validateValue(param)) {
-                return new SimpleObjectProperty(supplier.apply(param.getValue().getValue()));
-            }
-            return column.getComputedValue(param);
-        }
-    }
 }
 
 

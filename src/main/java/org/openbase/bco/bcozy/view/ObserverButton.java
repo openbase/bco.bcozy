@@ -1,17 +1,17 @@
 /**
  * ==================================================================
- *
+ * <p>
  * This file is part of org.openbase.bco.bcozy.
- *
+ * <p>
  * org.openbase.bco.bcozy is free software: you can redistribute it and modify
  * it under the terms of the GNU General Public License (Version 3)
  * as published by the Free Software Foundation.
- *
+ * <p>
  * org.openbase.bco.bcozy is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
@@ -19,6 +19,8 @@
 package org.openbase.bco.bcozy.view;
 
 import javafx.beans.DefaultProperty;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
@@ -41,6 +43,9 @@ public class ObserverButton extends Button implements Observer {
     @FXML
     private SimpleStringProperty identifier = new SimpleStringProperty();
 
+    @FXML
+    private BooleanProperty upperCase = new SimpleBooleanProperty();
+
     /**
      * Is applied to new text when text is changed.
      */
@@ -52,6 +57,8 @@ public class ObserverButton extends Button implements Observer {
      */
     public ObserverButton() {
         identifier.addListener((observable, oldValue, newValue) -> update(null, null));
+        upperCase.addListener((observable, oldValue, newValue) -> update(null, null));
+
         LanguageSelection.getInstance().addObserver(this);
     }
 
@@ -85,6 +92,9 @@ public class ObserverButton extends Button implements Observer {
         }
 
         String text = LanguageSelection.getLocalized(getIdentifier());
+        if (upperCase.get()) {
+            text = text.toUpperCase();
+        }
         super.setText(applyOnNewText.apply(text));
     }
 
@@ -98,6 +108,18 @@ public class ObserverButton extends Button implements Observer {
 
     public void setIdentifier(String identifier) {
         this.identifier.set(identifier != null ? identifier.trim() : null);
+    }
+
+    public boolean isUpperCase() {
+        return upperCase.get();
+    }
+
+    public BooleanProperty upperCaseProperty() {
+        return upperCase;
+    }
+
+    public void setUpperCase(boolean upperCase) {
+        this.upperCase.set(upperCase);
     }
 
     public void setApplyOnNewText(Function<String, String> applyOnNewText) {

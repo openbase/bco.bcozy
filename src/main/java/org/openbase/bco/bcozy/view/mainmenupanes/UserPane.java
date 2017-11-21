@@ -150,7 +150,6 @@ public class UserPane extends BorderPane implements Shutdownable {
                 return;
             }
             userStateLabel.setIdentifier(userState);
-//            userStateLabel.setText(userState);
         } catch (final Exception ex) {
             ExceptionPrinter.printHistory("Could not update user presence state!", ex, LOGGER);
         }

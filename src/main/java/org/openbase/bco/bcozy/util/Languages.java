@@ -74,8 +74,8 @@ public class Languages {
     private List<String> getFileMatches() {
         List<String> matches = new LinkedList<>();
         Pattern pattern = Pattern.compile("languages_(\\w+[_\\w+])\\.properties");
-        for (File file : getResourceFolderFiles("languages")) {
-            Matcher matcher = pattern.matcher(file.getName());
+        for (String file : getResourceFolderFiles("languages")) {
+            Matcher matcher = pattern.matcher(file);
             if (matcher.find()) {
                 matches.add(matcher.group(1));
             }
@@ -84,16 +84,22 @@ public class Languages {
     }
 
     /**
-     * Gets all Files from an Resource-Directory.
+     * Gets all File-Names from an Resource-Directory.
      *
      * @param folder
      * @return
      */
-    private File[] getResourceFolderFiles(String folder) {
+    private String[] getResourceFolderFiles(String folder) {
         ClassLoader loader = Languages.class.getClassLoader();
         URL url = loader.getResource(folder);
         String path = url.getPath();
-        return new File(path).listFiles();
+        File[] files = new File(path).listFiles();
+        String[] names = new String[files.length];
+
+        for (int i = 0; i < files.length; i++) {
+            names[i] = files[i].getName();
+        }
+        return names;
     }
 
     /**
