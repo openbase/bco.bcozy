@@ -3,7 +3,7 @@
     
     <groupId>org.openbase.bco</groupId>
     <artifactId>bcozy</artifactId>
-    <version>1.4-SNAPSHOT</version>
+    <version>1.5-SNAPSHOT</version>
 
     <name>BCO BCozy</name>
     <inceptionYear>2015</inceptionYear>
@@ -314,8 +314,10 @@
         <plugin.javadoc.version>2.10.3</plugin.javadoc.version>
         <failOnStyleError>false</failOnStyleError>
         <logback.version>[1.2,1.3-SNAPSHOT)</logback.version>
-        <dependency.jul.version>1.4-SNAPSHOT</dependency.jul.version>
-        <dependency.bco.dal.version>1.4-SNAPSHOT</dependency.bco.dal.version>
+        <dependency.bco.version>1.5-SNAPSHOT</dependency.bco.version>
+        <dependency.jul.version>${dependency.bco.version}</dependency.jul.version>
+        <dependency.bco.dal.version>${dependency.bco.version}</dependency.bco.dal.version>
+        <dependency.bco.authentication.version>${dependency.bco.version}</dependency.bco.authentication.version>
     </properties>
     
     <pluginRepositories>
@@ -350,7 +352,7 @@
         <dependency>
             <groupId>org.openbase.bco</groupId>
             <artifactId>authentication.lib</artifactId>
-            <version>1.4-SNAPSHOT</version>
+            <version>${dependency.bco.authentication.version}</version>
         </dependency>
         
         <dependency>

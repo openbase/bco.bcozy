@@ -203,10 +203,9 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
 
         hoverProperty().addListener((observable, oldValue, newValue) -> {
             try {
-                InfoPane.info(getUnitRemote().getLabel());
+                InfoPane.info(getUnitStateDescription());
             } catch (NotAvailableException ex) {
-                // do nothing if not possible
-
+                ExceptionPrinter.printHistory("Could not print unit state description!", ex, LOGGER);
             }
         });
     }
@@ -240,6 +239,10 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
      */
     public D getData() throws NotAvailableException {
         return getUnitRemote().getData();
+    }
+
+    public String getUnitStateDescription() throws NotAvailableException {
+        return getUnitRemote().getLabel();
     }
 
     /**

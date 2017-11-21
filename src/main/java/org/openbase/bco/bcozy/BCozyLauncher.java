@@ -27,7 +27,6 @@ import org.openbase.bco.bcozy.view.LoadingPane;
 import org.openbase.jps.core.JPService;
 import org.openbase.jps.preset.JPDebugMode;
 import org.openbase.jul.exception.FatalImplementationErrorException;
-import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
 import org.openbase.jul.extension.rsb.com.jp.JPRSBHost;
@@ -38,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.openbase.bco.bcozy.BCozy.APP_NAME;
+import org.openbase.jul.exception.NotAvailableException;
 
 /**
  * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>

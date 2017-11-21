@@ -19,6 +19,8 @@ package org.openbase.bco.bcozy.view.pane.unit;
  * ==================================================================
  */
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
+import java.text.DateFormat;
+import java.util.Date;
 import javafx.scene.paint.Color;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.jul.exception.CouldNotPerformException;
@@ -33,6 +35,9 @@ import javafx.scene.layout.Pane;
 import org.openbase.bco.bcozy.view.SVGIcon;
 import org.openbase.bco.bcozy.view.generic.ColorChooser;
 import org.openbase.bco.dal.remote.unit.ColorableLightRemote;
+import org.openbase.jul.exception.NotAvailableException;
+import org.openbase.jul.extension.rst.processing.TimestampJavaTimeTransform;
+import org.openbase.jul.processing.StringProcessor;
 import org.openbase.jul.visual.javafx.transform.JFXColorToHSBColorTransformer;
 import rst.domotic.state.PowerStateType.PowerState;
 
@@ -106,7 +111,7 @@ public class ColorableLightPane extends AbstractUnitPane<ColorableLightRemote, C
         if (colorChooser != null && expansionProperty().get()) {
             colorChooser.setSelectedColor(color);
         }
-        
+
         switch (state) {
             case OFF:
                 getIcon().setBackgroundIconColor(Constants.LIGHTBULB_OFF_COLOR);
@@ -129,9 +134,19 @@ public class ColorableLightPane extends AbstractUnitPane<ColorableLightRemote, C
     protected Future applyPrimaryActivationUpdate(final boolean activation) throws CouldNotPerformException {
         return (activation) ? getUnitRemote().setPowerState(PowerState.State.ON) : getUnitRemote().setPowerState(PowerState.State.OFF);
     }
-    
+
     @Override
     public SVGIcon getIconSymbol() {
         return new SVGIcon(MaterialDesignIcon.LIGHTBULB, Constants.SMALL_ICON, false);
+    }
+
+    private final DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.MEDIUM);
+
+    @Override
+    public String getUnitStateDescription() throws NotAvailableException {
+        return getUnitRemote().getLabel()
+                + " was switched " + StringProcessor.transformUpperCaseToCamelCase(getData().getPowerState().getValue().name())
+                + " at " + dateFormat.format(new Date(TimestampJavaTimeTransform.transform(getData().getPowerState().getTimestamp()))) 
+                + " with Action["+getData().getPowerState().getResponsibleAction().getDescription()+"]";
     }
 }

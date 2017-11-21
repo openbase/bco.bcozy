@@ -29,8 +29,6 @@ import javafx.scene.layout.Pane;
 import org.openbase.bco.bcozy.view.location.UnitButton;
 import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
-import org.openbase.jul.exception.printer.ExceptionPrinter;
-import org.openbase.jul.exception.printer.LogLevel;
 
 /**
  * Pane for the editing and the maintenance layer of the room plan that includes buttons for the units
@@ -56,7 +54,7 @@ public class SimpleUnitSymbolsPane extends Pane {
     }
 
     /**
-     * Adds a new button for the control of a unit 
+     * Adds a new button for the control of a unit
      *
      * @param unitRemoteObject Unit to be controlled by the button.
      * @param position Position of the button on the map, should be the center of the location unit pane.
@@ -68,25 +66,20 @@ public class SimpleUnitSymbolsPane extends Pane {
         UnitButton newButton;
         try {
             newButton = new UnitButton(unitRemoteObject);
-
             newButton.setTranslateX(position.getY());
             newButton.setTranslateY(position.getX());
-            
             unitsMap.put(locationId, newButton);
-            
-        }  catch (CouldNotPerformException ex) {
-            ExceptionPrinter.printHistory("UnitType[" + unitRemoteObject.getConfig().getType() + "] is not supported yet!", ex, LOGGER, LogLevel.WARN);
-            throw new CouldNotPerformException("Type not available as pane:"  + unitRemoteObject.getConfig().getType(), ex);
+        } catch (CouldNotPerformException ex) {
+            throw new CouldNotPerformException("UnitType[" + unitRemoteObject.getConfig().getType() + "] is not supported yet!", ex);
         }
     }
 
-    
     /**
      * Clears the pane to prepare the update.
      */
     public void clearUnits() {
         unitsMap.forEach((unitId, button)
-            -> {
+                -> {
             this.getChildren().remove(button);
         });
         unitsMap.clear();
@@ -99,9 +92,9 @@ public class SimpleUnitSymbolsPane extends Pane {
         this.getChildren().clear();
 
         unitsMap.forEach((unitId, button)
-            -> {
-            
-                this.getChildren().add(button);            
+                -> {
+
+            this.getChildren().add(button);
         });
     }
 
