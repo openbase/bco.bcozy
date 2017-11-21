@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.function.Consumer;
+import org.openbase.jps.core.JPService;
 
 /**
  * Created by hoestreich on 1/2/16.
@@ -85,10 +86,10 @@ public final class LanguageSelection extends Observable {
      * arguments.
      *
      * @param identifier the identifier
-     * @param args       the placeholder-arguments
+     * @param args the placeholder-arguments
      * @return the localized string
      */
-    public static String getLocalized(String identifier, Object... args) {
+    public static String getLocalized(final String identifier, final Object... args) {
         Objects.requireNonNull(identifier);
 
         String text;
@@ -97,9 +98,12 @@ public final class LanguageSelection extends Observable {
             for (int i = 0; i < args.length; i++) {
                 text = text.replace("{" + i + "}", Objects.toString(args[i]));
             }
-
         } catch (MissingResourceException ex) {
-            ExceptionPrinter.printHistory("Could not resolve Identifier[" + identifier + "]", ex, LOGGER, LogLevel.WARN);
+            if (JPService.verboseMode()) {
+                ExceptionPrinter.printHistory("Could not resolve Identifier[" + identifier + "]", ex, LOGGER, LogLevel.WARN);
+            } else {
+                ExceptionPrinter.printHistory("Could not resolve Identifier[" + identifier + "]", ex, LOGGER, LogLevel.DEBUG);
+            }
             text = identifier;
         }
 
@@ -110,10 +114,10 @@ public final class LanguageSelection extends Observable {
      * Adds an Listener to the given identifier.
      * The Listener is called, each time the language changed and on attach.
      *
-     * @param identifier               the identifier
+     * @param identifier the identifier
      * @param onLanguageChangeListener the listener for this identifier
      */
-    public static void addObserverFor(String identifier, OnLanguageChangeListener onLanguageChangeListener) {
+    public static void addObserverFor(final String identifier, final OnLanguageChangeListener onLanguageChangeListener) {
         getInstance().addObserver((o, arg) -> onLanguageChangeListener.onLanguageChange(Locale.getDefault(),
                 getLocalized(identifier)));
         onLanguageChangeListener.onLanguageChange(Locale.getDefault(), getLocalized(identifier));
@@ -123,7 +127,7 @@ public final class LanguageSelection extends Observable {
      * Adds an Listener to the given identifier.
      * The Listener is called, each time the language changed and on attach.
      *
-     * @param identifier      the identifier
+     * @param identifier the identifier
      * @param newTextConsumer the listener for this identifier
      */
     public static void addObserverFor(String identifier, Consumer<String> newTextConsumer) {
@@ -146,8 +150,6 @@ public final class LanguageSelection extends Observable {
     }
 
     public interface OnLanguageChangeListener {
-
         void onLanguageChange(Locale locale, String text);
     }
-
 }

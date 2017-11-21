@@ -137,34 +137,21 @@ public class UserPane extends BorderPane implements Shutdownable {
     private void updateUserState() {
         String userState = null;
         try {
-            if (user.getUserActivityState().hasActivityId() && !user.getUserActivityState().getActivityId().isEmpty()) {
-                try {
-                    userState = Registries.getUserActivityRegistry(true).getUserActivityConfigById(user
-                            .getUserActivityState().getActivityId()).getLabel();
-                } catch (CouldNotPerformException ex) {
-                    // do nothing, fallback is handled below
-                } catch (InterruptedException ex) {
-                    Thread.currentThread().interrupt();
-                }
-            }
-
-            // generate user state fallback
-            if (userState == null) {
-                userState = user.getUserPresenceState().getValue().name();
-            }
-
-        } catch (final NotAvailableException ex) {
-            ExceptionPrinter.printHistory("Could not update user presence state!", ex, LOGGER);
             try {
-                if (user.getConfig().getUserConfig().getOccupant()) {
-                    userState = "occupant";
-                } else {
-                    userState = "guest";
+                if (!user.getUserActivityState().hasActivityId() || user.getUserActivityState().getActivityId().isEmpty()) {
+                    throw new NotAvailableException("UserActivity");
                 }
-            } catch (NotAvailableException ex1) {
-                userState = "";
+                userState = Registries.getUserActivityRegistry().getUserActivityConfigById(user.getUserActivityState().getActivityId()).getLabel();
+            } catch (CouldNotPerformException ex) {
+                // generate user state fallback
+                userState = user.getUserPresenceState().getValue().name();
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+                return;
             }
-            userStateLabel.setText(userState);
+            userStateLabel.setIdentifier(userState);
+        } catch (final Exception ex) {
+            ExceptionPrinter.printHistory("Could not update user presence state!", ex, LOGGER);
         }
     }
 
@@ -211,15 +198,6 @@ public class UserPane extends BorderPane implements Shutdownable {
         } catch (final NotAvailableException ex) {
             ExceptionPrinter.printHistory("Could not update user presence state!", ex, LOGGER);
         }
-    }
-
-    /**
-     * Setter for the userState Label.
-     *
-     * @param newUserState must be a string identifier from language properties
-     */
-    public void setUserState(final String newUserState) {
-        userStateLabel.setIdentifier(newUserState);
     }
 
     /**
