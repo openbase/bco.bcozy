@@ -117,11 +117,17 @@ public class BCozy extends Application {
         registerResponsiveHandler();
 
         // TODO: should be removed after issue openbase/bco.registry#67 "UserRegistry blocking sync" has been fixed.
-        try {
-            Registries.getUnitRegistry(true);
-        } catch (CouldNotPerformException ex) {
-
-        }
+//        try {
+//            if (JPService.getProperty(JPAuthentication.class).getValue()) {
+                try {
+                    Registries.getUnitRegistry(true);
+                } catch (CouldNotPerformException ex) {
+                    LOGGER.error("Could not wait for registries", ex);
+                }
+//            }
+//        } catch (JPNotAvailableException ex) {
+//            LOGGER.error("Authentication property not available", ex);
+//        }
         ///
 
         final double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
