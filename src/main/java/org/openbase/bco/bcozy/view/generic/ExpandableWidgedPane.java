@@ -21,6 +21,7 @@ package org.openbase.bco.bcozy.view.generic;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
@@ -113,7 +114,9 @@ public class ExpandableWidgedPane extends WidgetPane {
         bodyPane.setManaged(expanded);
         bodyPane.setVisible(expanded);
 
-        animate(expanded);
+        Platform.runLater(() -> {
+            animate(expanded);
+        });
     }
 
     private void animate(final boolean expanded) {
