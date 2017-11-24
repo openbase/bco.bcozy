@@ -24,7 +24,6 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
@@ -49,7 +48,6 @@ import javafx.scene.shape.Path;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import org.openbase.bco.bcozy.view.Constants;
-import org.openbase.jul.schedule.GlobalCachedExecutorService;
 import org.openbase.jul.visual.javafx.iface.DynamicPane;
 
 /**
@@ -89,13 +87,13 @@ public class ColorChooser extends HBox implements DynamicPane {
         final Pane colorCircleContainer = new Pane();
 
         this.minWidth(COLOR_BOX_SIZE);
-        this.minHeight(COLOR_BOX_SIZE);
+//        this.minHeight(COLOR_BOX_SIZE);
 
         colorCircleContainer.setPrefSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
-        colorCircleContainer.setMinSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
+//        colorCircleContainer.setMinSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
         colorCircleContainer.maxHeightProperty().bind(colorCircleContainer.prefWidthProperty());
 
-        colorHue.setMinSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
+//        colorHue.setMinSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
         colorHue.setPrefSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
 
         colorHue.backgroundProperty().bind(new ObjectBinding<Background>() {
@@ -121,7 +119,7 @@ public class ColorChooser extends HBox implements DynamicPane {
             event.consume();
         };
 
-        colorRectContainer.setMinSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
+//        colorRectContainer.setMinSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
         colorRectContainer.setPrefSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
         colorRectContainer.maxHeightProperty().bind(colorRectContainer.prefWidthProperty());
         colorRectContainer.getChildren().addAll(colorHue, saturationRect(), brightnessRect(), circle);
@@ -297,7 +295,7 @@ public class ColorChooser extends HBox implements DynamicPane {
         final Pane colorRectSaturation = new Pane();
 
         colorRectSaturation.setPrefSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
-        colorRectSaturation.setMinSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
+//        colorRectSaturation.setMinSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
         colorRectSaturation.setBackground(new Background(new BackgroundFill(new LinearGradient(0.0, 0.0, 1.0, 0.0, true,
             CycleMethod.NO_CYCLE, new Stop(0.0, Color.rgb(Constants.RGB255, Constants.RGB255,
                 Constants.RGB255, 1.0)), new Stop(1, Color.rgb(Constants.RGB255, Constants.RGB255,
@@ -310,7 +308,7 @@ public class ColorChooser extends HBox implements DynamicPane {
         final Pane colorRectBrightness = new Pane();
 
         colorRectBrightness.setPrefSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
-        colorRectBrightness.setMinSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
+//        colorRectBrightness.setMinSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
         colorRectBrightness.setBackground(new Background(new BackgroundFill(new LinearGradient(0, 0, 0, 1, true,
             CycleMethod.NO_CYCLE, new Stop(0, Color.rgb(0, 0, 0, 0)), new Stop(1, Color.rgb(0, 0, 0, 1))),
             CornerRadii.EMPTY, Insets.EMPTY)));

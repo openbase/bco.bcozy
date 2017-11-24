@@ -79,7 +79,7 @@ public class ExpandableWidgedPane extends WidgetPane {
         } catch (CouldNotPerformException | RuntimeException ex) {
             ExceptionPrinter.printHistory("Could not init body content of " + this, ex, LOGGER);
         }
-
+        
         // setup animation
         initBodyPaneAnimation(bodyPane);
         prefHeightProperty().bind(headPane.prefHeightProperty().add(bodyPane.prefHeightProperty()));
@@ -111,47 +111,37 @@ public class ExpandableWidgedPane extends WidgetPane {
 
         // apply expantion state
         final boolean expanded = expansionProperty.get();
-//        bodyPane.setManaged(expanded);
-        bodyPane.setVisible(true);
+        bodyPane.setManaged(expanded);
+        bodyPane.setVisible(expanded);
 
-        if (expanded) {
-//            bodyPane.setManaged(true);
-        }
-
+//        if (expanded) {
+////            bodyPane.setManaged(true);
+//        }
+//
         if (!startup) {
-
-            ChangeListener<Number> listener = new ChangeListener<Number>() {
-
-                @Override
-                public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                    System.out.println("PrefHeight change from[" + oldValue + "] to [" + newValue + "]");
-                }
-            };
-            bodyPane.prefHeightProperty().addListener(listener);
-            LOGGER.info("Animate [" + this + "]");
             animate(expanded);
         }
-        startup = false;
-
-        if (!expanded) {
-//            bodyPane.setManaged(false);
-//            bodyPane.setVisible(false);
-        }
+//        startup = false;
+//
+//        if (!expanded) {
+////            bodyPane.setManaged(false);
+////            bodyPane.setVisible(false);
+//        }
 
     }
+
+    double bodyHeight;
 
     private void animate(final boolean expanded) {
         // set the cycle to play the animation forwards or backwards depending on the expanded property
         Timeline timelineTest = new Timeline();
-//        timelineTest.setCycleCount(6);
-//        timelineTest.setAutoReverse(true);
 
         if (expanded) {
             final KeyFrame closed = new KeyFrame(Duration.ZERO, new KeyValue(bodyPane.prefHeightProperty(), 0));
-            final KeyFrame open = new KeyFrame(Duration.millis(500), new KeyValue(bodyPane.prefHeightProperty(), 300));
+            final KeyFrame open = new KeyFrame(Duration.millis(500), new KeyValue(bodyPane.prefHeightProperty(), 230));
             timelineTest.getKeyFrames().addAll(closed, open);
         } else {
-            final KeyFrame open = new KeyFrame(Duration.ZERO, new KeyValue(bodyPane.prefHeightProperty(), 300));
+            final KeyFrame open = new KeyFrame(Duration.ZERO, new KeyValue(bodyPane.prefHeightProperty(), 230));
             final KeyFrame closed = new KeyFrame(Duration.millis(500), new KeyValue(bodyPane.prefHeightProperty(), 0));
             timelineTest.getKeyFrames().addAll(open, closed);
         }
