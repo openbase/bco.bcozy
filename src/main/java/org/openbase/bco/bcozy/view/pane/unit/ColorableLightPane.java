@@ -31,6 +31,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.domotic.unit.dal.ColorableLightDataType.ColorableLightData;
 import java.util.concurrent.Future;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.layout.Pane;
 import org.openbase.bco.bcozy.view.SVGIcon;
 import org.openbase.bco.bcozy.view.generic.ColorChooser;
@@ -82,6 +84,14 @@ public class ColorableLightPane extends AbstractUnitPane<ColorableLightRemote, C
                 } catch (CouldNotPerformException ex) {
                     ExceptionPrinter.printHistory("Could not trigger color change!", ex, LOGGER);
                 }
+            }
+        });
+        colorChooser.prefHeightProperty().bindBidirectional(bodyPane.prefHeightProperty());
+        colorChooser.prefHeightProperty().addListener(new ChangeListener<Number>() {
+
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                System.out.println("Color choser of this from["+oldValue.toString()+"] to["+newValue+"]");
             }
         });
         bodyPane.getChildren().add(colorChooser);

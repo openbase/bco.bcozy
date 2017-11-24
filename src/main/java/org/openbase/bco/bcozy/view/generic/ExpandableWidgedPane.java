@@ -28,7 +28,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
-import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 
@@ -103,7 +102,7 @@ public class ExpandableWidgedPane extends WidgetPane {
             }
         });
     }
-    
+
     private boolean startup = true;
 
     @Override
@@ -112,20 +111,51 @@ public class ExpandableWidgedPane extends WidgetPane {
 
         // apply expantion state
         final boolean expanded = expansionProperty.get();
-        bodyPane.setManaged(expanded);
-        bodyPane.setVisible(expanded);
+//        bodyPane.setManaged(expanded);
+        bodyPane.setVisible(true);
 
-        if(startup) {
-            startup = false;
-            return;
+        if (expanded) {
+//            bodyPane.setManaged(true);
         }
-        animate(expanded);
+
+        if (!startup) {
+
+            ChangeListener<Number> listener = new ChangeListener<Number>() {
+
+                @Override
+                public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                    System.out.println("PrefHeight change from[" + oldValue + "] to [" + newValue + "]");
+                }
+            };
+            bodyPane.prefHeightProperty().addListener(listener);
+            LOGGER.info("Animate [" + this + "]");
+            animate(expanded);
+        }
+        startup = false;
+
+        if (!expanded) {
+//            bodyPane.setManaged(false);
+//            bodyPane.setVisible(false);
+        }
+
     }
 
     private void animate(final boolean expanded) {
         // set the cycle to play the animation forwards or backwards depending on the expanded property
-        timeline.setCycleCount(expanded ? 1 : 0);
-        timeline.play();
+        Timeline timelineTest = new Timeline();
+//        timelineTest.setCycleCount(6);
+//        timelineTest.setAutoReverse(true);
+
+        if (expanded) {
+            final KeyFrame closed = new KeyFrame(Duration.ZERO, new KeyValue(bodyPane.prefHeightProperty(), 0));
+            final KeyFrame open = new KeyFrame(Duration.millis(500), new KeyValue(bodyPane.prefHeightProperty(), 300));
+            timelineTest.getKeyFrames().addAll(closed, open);
+        } else {
+            final KeyFrame open = new KeyFrame(Duration.ZERO, new KeyValue(bodyPane.prefHeightProperty(), 300));
+            final KeyFrame closed = new KeyFrame(Duration.millis(500), new KeyValue(bodyPane.prefHeightProperty(), 0));
+            timelineTest.getKeyFrames().addAll(open, closed);
+        }
+        timelineTest.play();
     }
 
     /**
@@ -142,7 +172,7 @@ public class ExpandableWidgedPane extends WidgetPane {
         timeline.setAutoReverse(true);
         final KeyValue open = new KeyValue(bodyPane.prefHeightProperty(), -1);
         final KeyValue closed = new KeyValue(bodyPane.prefHeightProperty(), 0);
-        final KeyFrame openCloseKeyFrame = new KeyFrame(Duration.millis(Constants.ANIMATION_TIME), closed, open);
+        final KeyFrame openCloseKeyFrame = new KeyFrame(Duration.millis(1000), closed, open);
         timeline.getKeyFrames().add(openCloseKeyFrame);
     }
 
