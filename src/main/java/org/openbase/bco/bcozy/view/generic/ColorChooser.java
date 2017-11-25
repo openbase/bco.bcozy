@@ -55,7 +55,6 @@ import org.openbase.jul.visual.javafx.iface.DynamicPane;
  */
 public class ColorChooser extends HBox implements DynamicPane {
 
-    //    private static final double COLOR_BOX_SIZE = 150.0;
     private static final double COLOR_BOX_SIZE = 75.0;
 
     private final ObjectProperty<Color> selectedColorProperty;
@@ -87,13 +86,13 @@ public class ColorChooser extends HBox implements DynamicPane {
         final Pane colorCircleContainer = new Pane();
 
         this.minWidth(COLOR_BOX_SIZE);
-//        this.minHeight(COLOR_BOX_SIZE);
+        this.minHeight(COLOR_BOX_SIZE);
 
         colorCircleContainer.setPrefSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
-//        colorCircleContainer.setMinSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
+        colorCircleContainer.setMinSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
         colorCircleContainer.maxHeightProperty().bind(colorCircleContainer.prefWidthProperty());
 
-//        colorHue.setMinSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
+        colorHue.setMinSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
         colorHue.setPrefSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
 
         colorHue.backgroundProperty().bind(new ObjectBinding<Background>() {
@@ -119,7 +118,7 @@ public class ColorChooser extends HBox implements DynamicPane {
             event.consume();
         };
 
-//        colorRectContainer.setMinSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
+        colorRectContainer.setMinSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
         colorRectContainer.setPrefSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
         colorRectContainer.maxHeightProperty().bind(colorRectContainer.prefWidthProperty());
         colorRectContainer.getChildren().addAll(colorHue, saturationRect(), brightnessRect(), circle);

@@ -118,9 +118,9 @@ public class ExpandableWidgedPane extends WidgetPane {
 ////            bodyPane.setManaged(true);
 //        }
 //
-        if (!startup) {
-            animate(expanded);
-        }
+//        if (!startup) {
+//            animate(expanded);
+//        }
 //        startup = false;
 //
 //        if (!expanded) {

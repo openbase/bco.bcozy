@@ -43,7 +43,6 @@ public class PermissionsPaneController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PermissionsPaneController.class);
 
-
     @FXML
     private Parent unitPermission;
 
@@ -52,7 +51,6 @@ public class PermissionsPaneController {
 
     @FXML
     private CustomTextField filterInput;
-
 
     @FXML
     private JFXTreeTableView<RecursiveUnitConfig> unitsTable;
@@ -63,7 +61,6 @@ public class PermissionsPaneController {
     @FXML
     private JFXTreeTableColumn<RecursiveUnitConfig, String> labelColumn;
 
-
     private final ObservableList<RecursiveUnitConfig> list = FXCollections.observableArrayList();
 
     @FXML
@@ -71,8 +68,8 @@ public class PermissionsPaneController {
         fillTreeTableView();
 
         try {
-            fillTable();
             Registries.getUnitRegistry().addDataObserver((observable, unitRegistryData) -> fillTable());
+            fillTable();
         } catch (CouldNotPerformException ex) {
             ExceptionPrinter.printHistory(ex, LOGGER);
         } catch (InterruptedException ex) {
@@ -114,10 +111,9 @@ public class PermissionsPaneController {
         filterInput.textProperty().addListener((o, oldVal, newVal) -> {
             unitsTable.setPredicate(
                     user -> user.getValue().getUnit().getLabel().toLowerCase().contains(newVal.toLowerCase())
-                            || user.getValue().getUnit().getDescription().toLowerCase().contains(newVal.toLowerCase())
-                            || user.getValue().getUnit().getType().name().toLowerCase().contains(newVal.toLowerCase()));
+                    || user.getValue().getUnit().getDescription().toLowerCase().contains(newVal.toLowerCase())
+                    || user.getValue().getUnit().getType().name().toLowerCase().contains(newVal.toLowerCase()));
         });
-
 
     }
 
@@ -142,14 +138,16 @@ public class PermissionsPaneController {
     }
 
     private void fillTable() throws CouldNotPerformException, InterruptedException {
-        List<UnitConfigType.UnitConfig> unitConfigList = Registries.getUnitRegistry().getUnitConfigs();
-        Platform.runLater(() -> fillTable(unitConfigList));
+        if (Registries.getUnitRegistry().isDataAvailable()) {
+            List<UnitConfigType.UnitConfig> unitConfigList = Registries.getUnitRegistry().getUnitConfigs();
+            Platform.runLater(() -> fillTable(unitConfigList));
+        }
     }
 
     private void fillTable(List<UnitConfigType.UnitConfig> unitConfigList) {
 
         unitsTable.unGroup(this.typeColumn);
-        
+
         list.clear();
 
         for (UnitConfigType.UnitConfig unitConfig : unitConfigList) {

@@ -385,7 +385,8 @@ public final class LocationPane extends Pane {
                     } catch (CouldNotPerformException | InterruptedException ex) {
                         // id is used instead.
                     }
-                    LOGGER.warn("Location " + unitLabel + " can not be found in the location Map. No Cutting will be applied.");
+                    
+                    LOGGER.debug("Location " + unitLabel + " can not be found in the location Map. No Cutting will be applied.");
                 }
             });
         } catch (CouldNotPerformException ex) {

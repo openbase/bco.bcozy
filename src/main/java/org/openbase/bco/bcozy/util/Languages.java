@@ -6,6 +6,10 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import org.openbase.jul.exception.NotAvailableException;
+import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class to hold available languages.
@@ -14,6 +18,10 @@ import java.util.stream.Collectors;
  */
 public class Languages {
 
+    /**
+     * Application Logger
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(Languages.class);
 
     /**
      * Holder-Class for Threadsafe-Singleton.
@@ -90,6 +98,7 @@ public class Languages {
      * @return
      */
     private String[] getResourceFolderFiles(String folder) {
+        try {
         ClassLoader loader = Languages.class.getClassLoader();
         URL url = loader.getResource(folder);
         String path = url.getPath();
@@ -100,6 +109,10 @@ public class Languages {
             names[i] = files[i].getName();
         }
         return names;
+        } catch (NullPointerException ex) {
+            ExceptionPrinter.printHistory(new NotAvailableException(folder, ex), LOGGER);
+            return new String[0];
+        }
     }
 
     /**
