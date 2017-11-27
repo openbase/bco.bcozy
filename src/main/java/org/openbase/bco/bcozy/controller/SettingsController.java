@@ -1,47 +1,35 @@
 package org.openbase.bco.bcozy.controller;
 
-import com.jfoenix.controls.JFXTreeTableColumn;
 import com.jfoenix.controls.JFXTreeTableView;
-import com.jfoenix.controls.RecursiveTreeItem;
-import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
-import javafx.application.Platform;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.*;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.control.Accordion;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.control.TitledPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.util.Callback;
-import org.controlsfx.control.textfield.CustomTextField;
+import javafx.util.Pair;
 import org.openbase.bco.bcozy.BCozy;
 import org.openbase.bco.bcozy.model.LanguageSelection;
+import org.openbase.bco.bcozy.permissions.model.RecursiveUnitConfig;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ForegroundPane;
 import org.openbase.bco.bcozy.view.ObserverLabel;
-import org.openbase.bco.bcozy.view.SVGIcon;
-import org.openbase.bco.registry.remote.Registries;
-import org.openbase.jul.exception.CouldNotPerformException;
-import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.domotic.unit.UnitConfigType;
 
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.net.URL;
-import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.ResourceBundle;
-import java.util.function.Function;
-
-import static java.util.Objects.nonNull;
+import javafx.util.Callback;
+import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.MultiException;
+import org.openbase.jul.exception.NotAvailableException;
+import org.openbase.jul.exception.printer.ExceptionPrinter;
 
 /**
  * @author vdasilva
@@ -51,7 +39,8 @@ public class SettingsController {
     /**
      * Application Logger
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(MainMenuController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SettingsController.class);
+
     public Accordion adminAccordion;
 
     @FXML
@@ -67,26 +56,18 @@ public class SettingsController {
     private JFXTreeTableView<RecursiveUnitConfig> unitsTable;
 
     @FXML
-    private CustomTextField filterInput;
-//    private JFXTextField filterInput;
-
-
-    @FXML
     private VBox permissionPaneParent;
 
-    private Pane permissionPane;
-
     private UserSettingsController userSettingsController;
-    private PermissionPaneController permissionPaneController;
-    private JFXTreeTableColumn<RecursiveUnitConfig, String> typeColumn;
 
-
-    final ObservableList<RecursiveUnitConfig> list = FXCollections.observableArrayList();
-    private final ForegroundPane foregroudPane;
-
-
+    /**
+     * @deprecated Use {@link #SettingsController()} instead.
+     */
+    @Deprecated
     public SettingsController(ForegroundPane foregroudPane) {
-        this.foregroudPane = foregroudPane;
+    }
+
+    public SettingsController() {
     }
 
     @FXML
@@ -94,74 +75,93 @@ public class SettingsController {
         settingsTab.setGraphic(new ObserverLabel("settings"));
         permissionTab.setGraphic(new ObserverLabel("permissions"));
 
+        try {
+            settingsTab.setContent(loadUserSettingsPane());
+        } catch (CouldNotPerformException es) {
+            ExceptionPrinter.printHistory(es, LOGGER);
+        }
 
-        fillTreeTableView();
-
-
-        Pane userSettingsPane = loadUserSettingsPane();
-        settingsTab.setContent(userSettingsPane);
-
-
-        permissionPane = loadPermissionPane();
-        permissionPane.setVisible(false);
-
-        this.permissionPaneParent.getChildren().addAll(permissionPane);
+        try {
+            permissionTab.setContent(loadPermissionPane());
+        } catch (CouldNotPerformException es) {
+            ExceptionPrinter.printHistory(es, LOGGER);
+        }
 
         this.tabPane.widthProperty().addListener(this::onPaneWidthChange);
         onPaneWidthChange(null, null, null);
         this.tabPane.getStyleClass().addAll("detail-menu");
 
-
-        TitledPane registrationPane = new TitledPane("userManagement", this.loadRegistrationPane());
-        LanguageSelection.addObserverFor("userManagement", registrationPane::setText);
-        this.adminAccordion.getPanes().add(registrationPane);
-
-        TitledPane groupsPane = new TitledPane("usergroups", this.loadGroupsPane());
-        LanguageSelection.addObserverFor("usergroups", groupsPane::setText);
-        this.adminAccordion.getPanes().add(groupsPane);
-
         try {
-            Registries.getUnitRegistry().addDataObserver((observable, unitRegistryData) -> {
-                        List<UnitConfigType.UnitConfig> unitConfigList = Registries.getUnitRegistry().getUnitConfigs();
-                        Platform.runLater(() -> fillTable(unitConfigList));
-                    }
-            );
-        } catch (CouldNotPerformException ex) {
-            ExceptionPrinter.printHistory(ex, LOGGER);
-        } catch (InterruptedException ex) {
-            Thread.currentThread().interrupt();
+            TitledPane registrationPane = new TitledPane("userManagement", loadRegistrationPane());
+            LanguageSelection.addObserverFor("userManagement", registrationPane::setText);
+            this.adminAccordion.getPanes().add(registrationPane);
+        } catch (CouldNotPerformException es) {
+            ExceptionPrinter.printHistory(es, LOGGER);
         }
 
-    }
-
-    URL getFxmlURL(String filename) throws NullPointerException {
-        return Objects.requireNonNull(getClass().getClassLoader().getResource(filename),
-                filename + " not found");
-    }
-
-    private Pane loadUserSettingsPane() {
         try {
-            URL url = getFxmlURL("UserSettingsPane.fxml");
+            TitledPane groupsPane = new TitledPane("usergroups", loadGroupsPane());
+            LanguageSelection.addObserverFor("usergroups", groupsPane::setText);
+            this.adminAccordion.getPanes().add(groupsPane);
+        } catch (CouldNotPerformException es) {
+            ExceptionPrinter.printHistory(es, LOGGER);
+        }
+    }
 
-            FXMLLoader loader = new FXMLLoader(url);
-            Pane root = loader.load();
+    public static <CONTROLLER> Pair<Pane, CONTROLLER> getFxmlPaneAndControllerPair(String filename, final Class clazz) throws CouldNotPerformException {
+        return getFxmlPaneAndControllerPair(filename, clazz, null);
+    }
 
-            this.userSettingsController = loader.getController();
+    // TODO: move to jul
+    public static <CONTROLLER> Pair<Pane, CONTROLLER> getFxmlPaneAndControllerPair(String filename, final Class clazz, final Callback<Class<?>, Object> controllerFactory) throws CouldNotPerformException {
+        URL url;
+        FXMLLoader loader;
+        try {
+            url = clazz.getResource(filename);
+            if (url == null) {
+                throw new NotAvailableException(filename);
+            }
+            loader = new FXMLLoader(url);
+            if (controllerFactory != null) {
+                loader.setControllerFactory(controllerFactory);
+            }
+            return new Pair<>(loader.load(), loader.getController());
+        } catch (NullPointerException | IOException | CouldNotPerformException ex) {
+            try {
+                url = clazz.getClassLoader().getResource(filename);
+                if (url == null) {
+                    throw new NotAvailableException(filename);
+                }
+                loader = new FXMLLoader(url);
+                if (controllerFactory != null) {
+                    loader.setControllerFactory(controllerFactory);
+                }
+                return new Pair<>(loader.load(), loader.getController());
+            } catch (NullPointerException | IOException | CouldNotPerformException exx) {
+                MultiException.ExceptionStack exceptionStack = new MultiException.ExceptionStack();
+                exceptionStack = MultiException.push(clazz, ex, exceptionStack);
+                exceptionStack = MultiException.push(clazz, exx, exceptionStack);
+                throw new MultiException("Could not load FXML[" + filename + "]", exceptionStack);
+            }
+        }
+    }
+
+    private <CONTROLLER> Pane loadUserSettingsPane() throws CouldNotPerformException {
+        try {
+            final Pair<Pane, UserSettingsController> paneAndControllerPair = getFxmlPaneAndControllerPair("UserSettingsPane.fxml", getClass());
+
+            this.userSettingsController = paneAndControllerPair.getValue();
 
             this.userSettingsController.getThemeChoice().setOnAction(event -> chooseTheme());
 
             //Necessary to ensure that the first change is not missed by the ChangeListener
             this.userSettingsController.getThemeChoice().getSelectionModel().select(0);
 
-            return root;
-        } catch (IOException ex) {
-            ExceptionPrinter.printHistory("Content could not be loaded", ex, LOGGER);
-            throw new UncheckedIOException(ex);
+            return paneAndControllerPair.getKey();
+        } catch (CouldNotPerformException ex) {
+            throw new CouldNotPerformException("Content could not be loaded", ex);
         }
-
-
     }
-
 
     private <T> void onPaneWidthChange(ObservableValue<? extends T> observable, T oldValue, T newValue) {
         double width = this.tabPane.getWidth();
@@ -171,209 +171,47 @@ public class SettingsController {
         //+1 cause otherwise tabs would overlap with Floating Button 
     }
 
-
-    public void fillTreeTableView() {
-        unitsTable.setShowRoot(false);
-        unitsTable.setEditable(true);
-
-        JFXTreeTableColumn<RecursiveUnitConfig, String> labelColumn = createJFXTreeTableColumn("Units",
-                (unit) -> unit.getUnit().getLabel());
-        labelColumn.setPrefWidth(150);
-
-        JFXTreeTableColumn<RecursiveUnitConfig, String> descColumn = createJFXTreeTableColumn("Description",
-                (unit) -> unit.getUnit().getDescription());
-        descColumn.setPrefWidth(150);
-
-        this.typeColumn = createJFXTreeTableColumn("Type",
-                (unit) -> unit.getUnit().getType().name());
-        this.typeColumn.setPrefWidth(150);
-
-        unitsTable.getColumns().addAll(this.typeColumn, labelColumn, descColumn);
-
-        RecursiveTreeItem<RecursiveUnitConfig> item = new RecursiveTreeItem<>(
-                list, RecursiveTreeObject::getChildren);
-        unitsTable.setRoot(item);
-
-        unitsTable.getSelectionModel()
-                .selectedItemProperty()
-                .addListener(this::onSelectionChange);
-
-        filterInput.setRight(new SVGIcon(FontAwesomeIcon.SEARCH, Constants.EXTRA_SMALL_ICON, true));
-
-        filterInput.promptTextProperty().setValue(new ObserverLabel("searchPlaceholder").getText());
-        filterInput.textProperty().addListener((o, oldVal, newVal) -> {
-            unitsTable.setPredicate(
-                    user -> user.getValue().getUnit().getLabel().toLowerCase().contains(newVal.toLowerCase())
-                            || user.getValue().getUnit().getDescription().toLowerCase().contains(newVal.toLowerCase())
-                            || user.getValue().getUnit().getType().name().toLowerCase().contains(newVal.toLowerCase()));
-        });
-
-
-    }
-
-
-    private void onSelectionChange(javafx.beans.Observable observable, TreeItem oldValue, TreeItem newValue) {
-        if (nonNull(newValue) && newValue.getValue() instanceof RecursiveUnitConfig) {
-            setPermissionPaneVisible(true);
-            permissionPaneController.setUnitConfig(((RecursiveUnitConfig) newValue.getValue()).getUnit());
-        } else {
-            setPermissionPaneVisible(false);
-        }
-    }
-
-    private void setPermissionPaneVisible(boolean visible) {
-        permissionPane.setVisible(visible);
-
-
-    }
-
-    private void fillTable(List<UnitConfigType.UnitConfig> unitConfigList) {
-
-        unitsTable.unGroup(this.typeColumn);
-
-        //TODO: nicht ganze Tabelle ersetzten, sondern nur geänderte Units
-        // RecursiveUnitConfig.unit-Property nutzen?
-
-        list.clear();
-
-        for (UnitConfigType.UnitConfig unitConfig : unitConfigList) {
-            if (nonNull(unitConfig)) {
-                list.add(new RecursiveUnitConfig(unitConfig));
-            }
-        }
-
-        if (!list.isEmpty()) {
-
-
-            unitsTable.group(this.typeColumn);
-        }
-
-
-    }
-
-    private <S, T> JFXTreeTableColumn<S, T> createJFXTreeTableColumn(String text, Function<S, T> supplier) {
-        JFXTreeTableColumn<S, T> column = new JFXTreeTableColumn<>(text);
-        column.setCellValueFactory(new MethodRefCellValueFactory<>(supplier, column));
-        return column;
-    }
-
     public UserSettingsController getUserSettingsController() {
         return userSettingsController;
     }
 
     private void chooseTheme() {
-        final ResourceBundle languageBundle = ResourceBundle
-                .getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
+        final ResourceBundle languageBundle = ResourceBundle.getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
 
-        userSettingsController.getThemeChoice().getSelectionModel().selectedIndexProperty()
-                .addListener(new ChangeListener<Number>() {
+        userSettingsController.getThemeChoice().getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
 
-                    @Override
-                    public void changed(final ObservableValue<? extends Number> observableValue, final Number number, final Number number2) {
-                        if (userSettingsController.getAvailableThemes().get(number2.intValue())
-                                .equals(languageBundle.getString(Constants.LIGHT_THEME_CSS_NAME))) {
-                            BCozy.changeTheme(Constants.LIGHT_THEME_CSS);
-                        } else if (userSettingsController.getAvailableThemes().get(number2.intValue())
-                                .equals(languageBundle.getString(Constants.DARK_THEME_CSS_NAME))) {
-                            BCozy.changeTheme(Constants.DARK_THEME_CSS);
-                        }
-                    }
-                });
-    }
-
-    private AnchorPane loadPermissionPane() {
-        try {
-            URL url = getFxmlURL("PermissionPane.fxml");
-
-            FXMLLoader loader = new FXMLLoader(url);
-            AnchorPane anchorPane = loader.load();
-            this.permissionPaneController = loader.getController();
-
-            anchorPane.getStyleClass().addAll("detail-menu");
-
-            return anchorPane;
-        } catch (IOException ex) {
-            ExceptionPrinter.printHistory("Content could not be loaded", ex, LOGGER);
-            throw new UncheckedIOException(ex);
-        }
-    }
-
-    private Pane loadGroupsPane() {
-        try {
-            URL url = getFxmlURL("GroupsPane.fxml");
-
-            FXMLLoader loader = new FXMLLoader(url);
-            Pane anchorPane = loader.load();
-
-            return anchorPane;
-        } catch (IOException ex) {
-            ExceptionPrinter.printHistory("Content could not be loaded", ex, LOGGER);
-            throw new UncheckedIOException(ex);
-        }
-    }
-
-    private Pane loadRegistrationPane() {
-        try {
-            URL url = Objects.requireNonNull(getClass().getClassLoader().getResource("Registration.fxml"),
-                    "Registration.fxml not found");
-
-            FXMLLoader loader = new FXMLLoader(url);
-            loader.setControllerFactory(clazz -> new UserManagementController());
-            Pane root = loader.load();
-
-            return root;
-
-        } catch (IOException ex) {
-            ExceptionPrinter.printHistory("Content could not be loaded", ex, LOGGER);
-            throw new UncheckedIOException(ex);
-        }
-    }
-
-    public class RecursiveUnitConfig extends RecursiveTreeObject<RecursiveUnitConfig> {
-
-        final private SimpleObjectProperty<UnitConfigType.UnitConfig> unit = new SimpleObjectProperty<>();
-
-        public RecursiveUnitConfig(UnitConfigType.UnitConfig unitConfig) {
-            this.setUnit(unitConfig);
-        }
-
-        public UnitConfigType.UnitConfig getUnit() {
-            return unit.get();
-        }
-
-        public void setUnit(UnitConfigType.UnitConfig unitConfig) {
-            this.unit.set(Objects.requireNonNull(unitConfig));
-
-        }
-
-        public SimpleObjectProperty unitProperty() {
-            return unit;
-        }
-
-    }
-
-    private class MethodRefCellValueFactory<S, T> implements Callback<TreeTableColumn.CellDataFeatures<S, T>, ObservableValue<T>> {
-
-        Function<S, T> supplier;
-
-        JFXTreeTableColumn<S, T> column;
-
-        public MethodRefCellValueFactory(Function<S, T> supplier, JFXTreeTableColumn<S, T> column) {
-            this.supplier = Objects.requireNonNull(supplier);
-            this.column = Objects.requireNonNull(column);
-        }
-
-        @Override
-        public ObservableValue<T> call(TreeTableColumn.CellDataFeatures<S, T> param) {
-            if (column.validateValue(param)) {
-                return new SimpleObjectProperty(supplier.apply(param.getValue().getValue()));
+            @Override
+            public void changed(final ObservableValue<? extends Number> observableValue, final Number number, final Number number2) {
+                if (userSettingsController.getAvailableThemes().get(number2.intValue()).equals(languageBundle.getString(Constants.LIGHT_THEME_CSS_NAME))) {
+                    BCozy.changeTheme(Constants.LIGHT_THEME_CSS);
+                } else if (userSettingsController.getAvailableThemes().get(number2.intValue()).equals(languageBundle.getString(Constants.DARK_THEME_CSS_NAME))) {
+                    BCozy.changeTheme(Constants.DARK_THEME_CSS);
+                }
             }
-            return column.getComputedValue(param);
+        });
+    }
+
+    private Pane loadPermissionPane() throws CouldNotPerformException {
+        try {
+            return getFxmlPaneAndControllerPair("view/permissions/PermissionsPane.fxml", getClass()).getKey();
+        } catch (CouldNotPerformException ex) {
+            throw new CouldNotPerformException("Could not load permission pane", ex);
+        }
+    }
+
+    private Pane loadGroupsPane() throws CouldNotPerformException {
+        try {
+            return getFxmlPaneAndControllerPair("GroupsPane.fxml", getClass()).getKey();
+        } catch (CouldNotPerformException ex) {
+            throw new CouldNotPerformException("Could not load group pane", ex);
+        }
+    }
+
+    private Pane loadRegistrationPane() throws CouldNotPerformException {
+        try {
+            return getFxmlPaneAndControllerPair("Registration.fxml", getClass(), clazz -> new UserManagementController()).getKey();
+        } catch (CouldNotPerformException ex) {
+            throw new CouldNotPerformException("Could not load registration pane", ex);
         }
     }
 }
-
-
-
-
-

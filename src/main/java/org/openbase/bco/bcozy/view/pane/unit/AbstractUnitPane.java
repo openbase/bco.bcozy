@@ -183,7 +183,7 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
         } catch (CouldNotPerformException ex) {
             // skip update, config observer will handle the update later on. 
         }
-
+        
         try {
             applyDataUpdate(unitRemote.getData());
         } catch (CouldNotPerformException ex) {

@@ -1,11 +1,11 @@
 package org.openbase.bco.bcozy.util;
 
-import org.slf4j.Logger;
-
 import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class to hold available languages.
@@ -14,7 +14,10 @@ import java.util.Objects;
  */
 public final class Languages {
 
-    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(Languages.class);
+    /**
+     * Application Logger
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(Languages.class);
 
     /**
      * Holder-Class for Threadsafe-Singleton.
@@ -31,7 +34,6 @@ public final class Languages {
      * Fallback-Language, defaults to {@link Locale#US}.
      */
     private final Language fallback = new Language(Locale.US);
-
 
     /**
      * Loaded Languages.

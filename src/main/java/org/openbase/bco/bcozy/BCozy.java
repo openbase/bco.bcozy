@@ -44,6 +44,8 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import org.openbase.bco.authentication.lib.jp.JPAuthentication;
+import org.openbase.jps.exception.JPNotAvailableException;
 
 /**
  *
@@ -118,11 +120,17 @@ public class BCozy extends Application {
 
         // TODO: should be removed after issue openbase/bco.registry#67 "UserRegistry blocking sync" has been fixed.
         try {
-            Registries.getUnitRegistry(true);
-        } catch (CouldNotPerformException ex) {
-
+            if (JPService.getProperty(JPAuthentication.class).getValue()) {
+                try {
+                    Registries.getUnitRegistry(true);
+                } catch (CouldNotPerformException ex) {
+                    LOGGER.error("Could not wait for registries", ex);
+                }
+            }
+        } catch (JPNotAvailableException ex) {
+            LOGGER.error("Authentication property not available", ex);
         }
-        ///
+        //
 
         final double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
         final double screenHeight = Screen.getPrimary().getVisualBounds().getHeight();

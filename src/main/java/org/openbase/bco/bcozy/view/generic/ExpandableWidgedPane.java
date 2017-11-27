@@ -25,11 +25,9 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
-import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 
@@ -38,10 +36,9 @@ import org.openbase.jul.exception.printer.ExceptionPrinter;
  */
 public class ExpandableWidgedPane extends WidgetPane {
 
-    final Pane bodyPane;
-    private final Timeline timelineUp;
-    private final Timeline timelineDown;
-    private boolean initialExpanded;
+    private final Pane bodyPane;
+    private final Timeline timeline;
+    private final boolean initialExpanded;
     private final ChangeListener<Boolean> dynamicContentChangeObserver;
 
     /**
@@ -53,7 +50,6 @@ public class ExpandableWidgedPane extends WidgetPane {
         super(activateable);
         this.initialExpanded = initialExpanded;
         this.bodyPane = new HBox();
-        this.timelineDown = new Timeline();
         this.dynamicContentChangeObserver = new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> paramObservableValue, Boolean paramT1, Boolean expaneded) {
@@ -65,7 +61,7 @@ public class ExpandableWidgedPane extends WidgetPane {
                 }
             }
         };
-        this.timelineUp = new Timeline();
+        this.timeline = new Timeline();
         this.expansionProperty = new SimpleBooleanProperty(false);
     }
 
@@ -83,9 +79,9 @@ public class ExpandableWidgedPane extends WidgetPane {
         } catch (CouldNotPerformException | RuntimeException ex) {
             ExceptionPrinter.printHistory("Could not init body content of " + this, ex, LOGGER);
         }
-
+        
         // setup animation
-        animateBodyPane(headPane, bodyPane);
+        initBodyPaneAnimation(bodyPane);
         prefHeightProperty().bind(headPane.prefHeightProperty().add(bodyPane.prefHeightProperty()));
 
         getChildren().add(bodyPane);
@@ -107,6 +103,8 @@ public class ExpandableWidgedPane extends WidgetPane {
         });
     }
 
+    private boolean startup = true;
+
     @Override
     public void updateDynamicContent() {
         super.updateDynamicContent();
@@ -116,13 +114,38 @@ public class ExpandableWidgedPane extends WidgetPane {
         bodyPane.setManaged(expanded);
         bodyPane.setVisible(expanded);
 
+//        if (expanded) {
+////            bodyPane.setManaged(true);
+//        }
+//
+//        if (!startup) {
+//            animate(expanded);
+//        }
+//        startup = false;
+//
+//        if (!expanded) {
+////            bodyPane.setManaged(false);
+////            bodyPane.setVisible(false);
+//        }
+
+    }
+
+    double bodyHeight;
+
+    private void animate(final boolean expanded) {
+        // set the cycle to play the animation forwards or backwards depending on the expanded property
+        Timeline timelineTest = new Timeline();
+
         if (expanded) {
-            // To expand
-            timelineDown.play();
+            final KeyFrame closed = new KeyFrame(Duration.ZERO, new KeyValue(bodyPane.prefHeightProperty(), 0));
+            final KeyFrame open = new KeyFrame(Duration.millis(500), new KeyValue(bodyPane.prefHeightProperty(), 230));
+            timelineTest.getKeyFrames().addAll(closed, open);
         } else {
-            // To close
-            timelineUp.play();
+            final KeyFrame open = new KeyFrame(Duration.ZERO, new KeyValue(bodyPane.prefHeightProperty(), 230));
+            final KeyFrame closed = new KeyFrame(Duration.millis(500), new KeyValue(bodyPane.prefHeightProperty(), 0));
+            timelineTest.getKeyFrames().addAll(open, closed);
         }
+        timelineTest.play();
     }
 
     /**
@@ -135,21 +158,12 @@ public class ExpandableWidgedPane extends WidgetPane {
         // please overwrite for custom content.
     }
 
-    private void animateBodyPane(final BorderPane headPane, final Pane bodyPane) {
-        timelineDown.setCycleCount(0);
-        timelineDown.setAutoReverse(true);
-
-        final KeyValue kvDwn3 = new KeyValue(bodyPane.prefHeightProperty(), -1);
-        final KeyFrame kfDwn = new KeyFrame(Duration.millis(Constants.ANIMATION_TIME), /*kvDwn1, kvDwn2,*/ kvDwn3);
-        timelineDown.getKeyFrames().add(kfDwn);
-
-        // animation for close body pane
-        timelineUp.setCycleCount(1);
-        timelineUp.setAutoReverse(true);
-
-        final KeyValue kvUp3 = new KeyValue(bodyPane.prefHeightProperty(), 0);
-        final KeyFrame kfUp = new KeyFrame(Duration.millis(Constants.ANIMATION_TIME), /*kvUp1, kvUp2,*/ kvUp3);
-        timelineUp.getKeyFrames().add(kfUp);
+    private void initBodyPaneAnimation(final Pane bodyPane) {
+        timeline.setAutoReverse(true);
+        final KeyValue open = new KeyValue(bodyPane.prefHeightProperty(), -1);
+        final KeyValue closed = new KeyValue(bodyPane.prefHeightProperty(), 0);
+        final KeyFrame openCloseKeyFrame = new KeyFrame(Duration.millis(1000), closed, open);
+        timeline.getKeyFrames().add(openCloseKeyFrame);
     }
 
     public BooleanProperty expansionProperty() {

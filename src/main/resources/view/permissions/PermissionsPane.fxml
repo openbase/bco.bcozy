@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXTreeTableColumn?>
+<?import com.jfoenix.controls.JFXTreeTableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+<?import org.controlsfx.control.textfield.CustomTextField?>
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.openbase.bco.bcozy.permissions.PermissionsPaneController">
+
+    <CustomTextField fx:id="filterInput" layoutX="433.0" layoutY="2.0" prefHeight="13.0" prefWidth="161.0"/>
+
+    <JFXTreeTableView fx:id="unitsTable" showRoot="false" editable="true">
+        <columns>
+            <JFXTreeTableColumn fx:id="labelColumn" prefWidth="150">
+                <graphic>
+                    <Text>Units</Text>
+                </graphic>
+            </JFXTreeTableColumn>
+
+            <JFXTreeTableColumn fx:id="typeColumn" prefWidth="150">
+                <graphic>
+                    <Text>Type</Text>
+                </graphic>
+            </JFXTreeTableColumn>
+
+            <JFXTreeTableColumn fx:id="descColumn" prefWidth="150">
+                <graphic>
+                    <Text>Description</Text>
+                </graphic>
+            </JFXTreeTableColumn>
+
+        </columns>
+    </JFXTreeTableView>
+
+    <fx:include source="UnitPermissionView.fxml" fx:id="unitPermission"/>
+
+</VBox>

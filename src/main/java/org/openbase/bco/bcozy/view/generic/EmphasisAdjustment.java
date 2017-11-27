@@ -64,13 +64,13 @@ public class EmphasisAdjustment extends GridPane implements DynamicPane {
 
     @Override
     public void updateDynamicContent() {
-        if (comfort) {
+        if (comfortSlider != null && comfort) {
             comfortProperty.set(comfortSlider.getValue());
         }
-        if (energy) {
+        if (energySlider != null && energy) {
             energyProperty.set(energySlider.getValue());
         }
-        if (security) {
+        if (securitySlider != null && security) {
             securityProperty.set(securitySlider.getValue());
         }
     }
@@ -81,6 +81,7 @@ public class EmphasisAdjustment extends GridPane implements DynamicPane {
 
         if (comfort) {
             comfortSlider = new JFXSlider(0.0, 100.0, 0.0);
+            comfortSlider.getStyleClass().clear();
             ObserverLabel comfortLabel = new ObserverLabel("comfort");
             comfortSlider.valueProperty().addListener((observable) -> {
                 if (isHover()) {
@@ -94,6 +95,7 @@ public class EmphasisAdjustment extends GridPane implements DynamicPane {
         }
         if (energy) {
             energySlider = new JFXSlider(0.0, 100.0, 0.0);
+            energySlider.getStyleClass().clear();
             ObserverLabel energyLabel = new ObserverLabel("energy");
             energySlider.valueProperty().addListener((observable) -> {
                 if (isHover()) {
@@ -107,6 +109,7 @@ public class EmphasisAdjustment extends GridPane implements DynamicPane {
         }
         if (security) {
             securitySlider = new JFXSlider(0.0, 100.0, 0.0);
+            securitySlider.getStyleClass().clear();
             ObserverLabel securityLabel = new ObserverLabel("security");
             securitySlider.valueProperty().addListener((observable) -> {
                 if (isHover()) {
