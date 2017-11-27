@@ -1,13 +1,9 @@
 package org.openbase.bco.bcozy.util;
 
-import java.io.File;
-import java.net.URL;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import org.openbase.jul.exception.NotAvailableException;
-import org.openbase.jul.exception.printer.ExceptionPrinter;
+import javax.annotation.Nonnull;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +12,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author vdasilva
  */
-public class Languages {
+public final class Languages {
 
     /**
      * Application Logger
@@ -34,109 +30,45 @@ public class Languages {
         return InstanceHolder.INSTANCE;
     }
 
-    private final Language english = fromLocale(Locale.US);
+    /**
+     * Fallback-Language, defaults to {@link Locale#US}.
+     */
+    private final Language fallback = new Language(Locale.US);
 
+    /**
+     * Loaded Languages.
+     */
     private final List<Language> languages;
 
     /**
      * Initializes Languages from available property-files.
      */
-    private Languages() {
-        List<Locale> bundles = getLocalesFromBundles();
-        this.languages = bundles.stream().map(this::fromLocale).collect(Collectors.toList());
+    Languages() {
+        this.languages = new FileLanguagesDetector().getLanguages();
     }
 
     /**
-     * Creates a Language form the given Locale.
-     *
-     * @param locale
-     * @return
+     * Returns the available Language with the locale or current {@link #fallback}.
      */
-    private Language fromLocale(Locale locale) {
-        return new Language(locale, locale.getDisplayLanguage(locale));
-    }
-
-    /**
-     * Creates Locales from each property-file available in "/languages".
-     *
-     * @return
-     */
-    private List<Locale> getLocalesFromBundles() {
-        List<String> matches = getFileMatches();
-        List<Locale> locales = new ArrayList<>(matches.size());
-        for (String match : matches) {
-            if (match.contains("_")) {
-                locales.add(new Locale(match.split("_")[0], match.split("_")[1]));
-            } else {
-                locales.add(new Locale(match));
-            }
-        }
-        return locales;
-    }
-
-    /**
-     * Gets all Language-Identifier (eg 'de', 'de_DE'), which have available property-files in "/languages".
-     *
-     * @return
-     */
-    private List<String> getFileMatches() {
-        List<String> matches = new LinkedList<>();
-        Pattern pattern = Pattern.compile("languages_(\\w+[_\\w+])\\.properties");
-        for (String file : getResourceFolderFiles("languages")) {
-            Matcher matcher = pattern.matcher(file);
-            if (matcher.find()) {
-                matches.add(matcher.group(1));
-            }
-        }
-        return matches;
-    }
-
-    /**
-     * Gets all File-Names from an Resource-Directory.
-     *
-     * @param folder
-     * @return
-     */
-    private String[] getResourceFolderFiles(String folder) {
-        try {
-        ClassLoader loader = Languages.class.getClassLoader();
-        URL url = loader.getResource(folder);
-        String path = url.getPath();
-        File[] files = new File(path).listFiles();
-        String[] names = new String[files.length];
-
-        for (int i = 0; i < files.length; i++) {
-            names[i] = files[i].getName();
-        }
-        return names;
-        } catch (NullPointerException ex) {
-            ExceptionPrinter.printHistory(new NotAvailableException(folder, ex), LOGGER);
-            return new String[0];
-        }
-    }
-
-    /**
-     * Returns the available Language with the locale or defaults to "en_US"
-     *
-     * @param locale
-     * @return
-     */
+    @Nonnull
     public Language get(Locale locale) {
         return languages.stream().filter(l -> Objects.equals(l.getLocale(), locale))
-                .findAny().orElse(english);
+                .findAny().orElse(fallback);
     }
 
     /**
-     * Returns the available Language with the name or defaults to "en_US"
-     *
-     * @param name
-     * @return
+     * Returns the available Language with the name or current {@link #fallback}.
      */
+    @Nonnull
     public Language get(String name) {
         return languages.stream().filter(l -> Objects.equals(l.getName(), name))
-                .findAny().orElse(english);
+                .findAny().orElse(fallback);
     }
 
+    /**
+     * Returns all available Languages.
+     */
+    @Nonnull
     public List<Language> get() {
         return languages;
     }
