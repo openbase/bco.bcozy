@@ -3,7 +3,7 @@
     
     <groupId>org.openbase.bco</groupId>
     <artifactId>bcozy</artifactId>
-    <version>1.4.6</version>
+    <version>1.4.7-SNAPSHOT</version>
 
     <name>BCO BCozy</name>
     <inceptionYear>2015</inceptionYear>
