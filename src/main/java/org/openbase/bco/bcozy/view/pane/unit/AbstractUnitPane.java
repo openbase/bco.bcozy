@@ -1,17 +1,17 @@
 /**
  * ==================================================================
- *
+ * <p>
  * This file is part of org.openbase.bco.bcozy.
- *
+ * <p>
  * org.openbase.bco.bcozy is free software: you can redistribute it and modify
  * it under the terms of the GNU General Public License (Version 3)
  * as published by the Free Software Foundation.
- *
+ * <p>
  * org.openbase.bco.bcozy is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
@@ -20,10 +20,10 @@ package org.openbase.bco.bcozy.view.pane.unit;
 
 import com.google.protobuf.GeneratedMessage;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
-import java.util.Map;
 import javafx.application.Platform;
 import org.openbase.bco.authentication.lib.AuthorizationHelper;
 import org.openbase.bco.authentication.lib.SessionManager;
+import org.openbase.bco.authentication.lib.jp.JPAuthentication;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.InfoPane;
 import org.openbase.bco.bcozy.view.SVGIcon;
@@ -31,6 +31,8 @@ import org.openbase.bco.bcozy.view.generic.ExpandableWidgedPane;
 import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
 import org.openbase.bco.dal.remote.unit.Units;
 import org.openbase.bco.registry.remote.Registries;
+import org.openbase.jps.core.JPService;
+import org.openbase.jps.exception.JPNotAvailableException;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.exception.NotAvailableException;
@@ -42,6 +44,8 @@ import org.openbase.jul.pattern.Observable;
 import org.openbase.jul.pattern.Observer;
 import org.openbase.jul.pattern.Remote.ConnectionState;
 import rst.domotic.unit.UnitConfigType.UnitConfig;
+
+import java.util.Map;
 
 /**
  * Created by divine on 25.04.17
@@ -183,7 +187,7 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
         } catch (CouldNotPerformException ex) {
             // skip update, config observer will handle the update later on. 
         }
-        
+
         try {
             applyDataUpdate(unitRemote.getData());
         } catch (CouldNotPerformException ex) {
@@ -191,9 +195,15 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
         }
 
         try {
-            applyLoginUpdate();
-        } catch (CouldNotPerformException ex) {
-            // skip update, config observer will handle the update later on.
+            if (JPService.getProperty(JPAuthentication.class).getValue()) {
+                try {
+                    applyLoginUpdate();
+                } catch (CouldNotPerformException ex) {
+                    // skip update, config observer will handle the update later on.
+                }
+            }
+        } catch(JPNotAvailableException ex) {
+            ExceptionPrinter.printHistory("Could not access JPAuthentication property!", ex, LOGGER);
         }
     }
 
