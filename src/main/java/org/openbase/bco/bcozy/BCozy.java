@@ -29,8 +29,10 @@ import org.openbase.bco.bcozy.controller.*;
 import org.openbase.bco.bcozy.view.*;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jps.core.JPService;
-import org.openbase.jul.exception.*;
+import org.openbase.jul.exception.FatalImplementationErrorException;
+import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.exception.InstantiationException;
+import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
 import org.openbase.jul.pattern.Observable;
@@ -44,8 +46,6 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import org.openbase.bco.authentication.lib.jp.JPAuthentication;
-import org.openbase.jps.exception.JPNotAvailableException;
 
 /**
  *
@@ -117,20 +117,6 @@ public class BCozy extends Application {
     public void start(final Stage primaryStage) throws InitializationException, InterruptedException, InstantiationException {
         BCozy.primaryStage = primaryStage;
         registerResponsiveHandler();
-
-        // TODO: should be removed after issue openbase/bco.registry#67 "UserRegistry blocking sync" has been fixed.
-        try {
-            if (JPService.getProperty(JPAuthentication.class).getValue()) {
-                try {
-                    Registries.getUnitRegistry(true);
-                } catch (CouldNotPerformException ex) {
-                    LOGGER.error("Could not wait for registries", ex);
-                }
-            }
-        } catch (JPNotAvailableException ex) {
-            LOGGER.error("Authentication property not available", ex);
-        }
-        //
 
         final double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
         final double screenHeight = Screen.getPrimary().getVisualBounds().getHeight();
