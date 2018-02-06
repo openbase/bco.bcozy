@@ -314,7 +314,7 @@
         <plugin.javadoc.version>2.10.3</plugin.javadoc.version>
         <failOnStyleError>false</failOnStyleError>
         <logback.version>[1.2,1.3-alpha)</logback.version>
-        <dependency.bco.version>1.5-SNAPSHOT</dependency.bco.version>
+        <dependency.bco.version>1.6-SNAPSHOT</dependency.bco.version>
         <dependency.jul.version>${dependency.bco.version}</dependency.jul.version>
         <dependency.bco.dal.version>${dependency.bco.version}</dependency.bco.dal.version>
         <dependency.bco.authentication.version>${dependency.bco.version}</dependency.bco.authentication.version>
