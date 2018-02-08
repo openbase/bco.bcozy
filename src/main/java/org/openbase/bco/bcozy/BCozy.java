@@ -88,27 +88,24 @@ public class BCozy extends Application {
 
     public BCozy() {
 
-        connectionObserver = new Observer<Remote.ConnectionState>() {
-            @Override
-            public void update(Observable<Remote.ConnectionState> source, Remote.ConnectionState data) throws Exception {
-                switch (data) {
-                    case CONNECTED:
-                        // recover default
-                        InfoPane.confirmation("connected");
-                        break;
-                    case CONNECTING:
-                        // green
-                        InfoPane.warn("connecting");
-                        break;
-                    case DISCONNECTED:
-                        InfoPane.error("disconnected");
-                        // red
-                        break;
-                    case UNKNOWN:
-                    default:
-                        // blue
-                        break;
-                }
+        connectionObserver = (source, data) -> {
+            switch (data) {
+                case CONNECTED:
+                    // recover default
+                    InfoPane.confirmation("connected");
+                    break;
+                case CONNECTING:
+                    // green
+                    InfoPane.warn("connecting");
+                    break;
+                case DISCONNECTED:
+                    InfoPane.error("disconnected");
+                    // red
+                    break;
+                case UNKNOWN:
+                default:
+                    // blue
+                    break;
             }
         };
     }

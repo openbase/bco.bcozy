@@ -99,7 +99,7 @@ public final class Constants {
     /**
      * The max width for a main menu pane.
      */
-    public static final double MAXLOGOWIDTH = 175.0;
+    public static final double MAXLOGOWIDTH = 200.0;
 
     /**
      * The value for a full rotation.
