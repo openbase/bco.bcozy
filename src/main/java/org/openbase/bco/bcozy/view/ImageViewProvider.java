@@ -18,6 +18,8 @@
  */
 package org.openbase.bco.bcozy.view;
 
+import javafx.scene.effect.Blend;
+import javafx.scene.effect.BlendMode;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -64,23 +66,23 @@ public final class ImageViewProvider {
      * Colorizes all icons created by this provider to white.
      */
     public static void colorizeIconsToWhite() {
-        colorizeIcons(360.0, 100, 100.0, 0.0);
+        colorizeIcons(1, 1, 1, 0.0);
     }
 
     /**
      * Colorizes all icons created by this provider to black.
      */
     public static void colorizeIconsToBlack() {
-        colorizeIcons(360.0, 100, -100.0, 0.0);
+        colorizeIcons(1, 1, -1, 0);
     }
 
     /**
      * Colorizes all icons created by this provider to a choosen color (defined by the parameters).
      *
-     * @param hue the hue of the color to be set
-     * @param saturation the saturation of the color to be set
-     * @param brightness the brightness of the color to be set
-     * @param contrast the contrast of the color to be set
+     * @param hue the hue of the color to be set between -1 and 1
+     * @param saturation the saturation of the color to be set between -1 and 1
+     * @param brightness the brightness of the color to be set between -1 and 1
+     * @param contrast the contrast of the color to be set between -1 and 1
      */
     public static void colorizeIcons(final double hue, final double saturation, final double brightness, final double contrast) {
 

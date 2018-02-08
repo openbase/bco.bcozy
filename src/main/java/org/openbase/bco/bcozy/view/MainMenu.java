@@ -49,8 +49,6 @@ public class MainMenu extends StackPane implements VoidInitializable {
     private boolean maximized;
     private final ConnectionPane connectionPane;
     private final AvailableUsersPane availableUsersPane;
-    private final ImageView logoView;
-    private final ImageView logoViewSmall;
     private final LogoPane logoPane;
     private TitledPane loginContainer;
 
@@ -83,10 +81,6 @@ public class MainMenu extends StackPane implements VoidInitializable {
         loginContainer.getStyleClass().addAll("login-titled-pane");
         loginContainer.setGraphic(new SVGIcon(MaterialDesignIcon.LOGIN, Constants.EXTRA_SMALL_ICON, true));
         loginContainer.setContent(loginPane);
-
-
-        this.logoView = ImageViewProvider.createImageView("/icons/bcozy.png", Constants.MAXLOGOWIDTH, Double.MAX_VALUE);
-        this.logoViewSmall = ImageViewProvider.createImageView("/icons/bc.png", Constants.MIDDLE_ICON);
 
         this.connectionPane = new ConnectionPane();
         this.availableUsersPane = new AvailableUsersPane();
@@ -174,7 +168,6 @@ public class MainMenu extends StackPane implements VoidInitializable {
         setPrefWidth(width);
         getChildren().clear();
         StackPane.setAlignment(mainMenuFloatingButton, Pos.TOP_RIGHT);
-        //connectionPane.maximize();
         mainMenuFloatingButton.translateYProperty().set(-(Constants.FLOATING_BUTTON_OFFSET));
         getChildren().addAll(verticalLayout, mainMenuFloatingButton);
     }
@@ -192,8 +185,7 @@ public class MainMenu extends StackPane implements VoidInitializable {
         StackPane.setAlignment(mainMenuFloatingButton, Pos.TOP_CENTER);
         mainMenuFloatingButton.translateYProperty().set(-(Constants.FLOATING_BUTTON_OFFSET));
         verticalLayoutSmall.getChildren().clear();
-        verticalLayoutSmall.getChildren().addAll(logoPane.getStatusIcon(), loginPane.getStatusIcon(), availableUsersPane
-                .getStatusIcon());
+        verticalLayoutSmall.getChildren().addAll(logoPane.getStatusIcon(), loginPane.getStatusIcon(), availableUsersPane.getStatusIcon());
         getChildren().clear();
         getChildren().addAll(verticalLayoutSmall, mainMenuFloatingButton);
     }
