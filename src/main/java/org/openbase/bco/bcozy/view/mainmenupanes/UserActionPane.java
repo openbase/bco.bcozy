@@ -11,7 +11,8 @@ import javafx.scene.control.TabPane;
 import javafx.scene.layout.*;
 import org.openbase.bco.bcozy.controller.UserManagementController;
 import org.openbase.bco.bcozy.view.Constants;
-import org.openbase.bco.bcozy.view.SVGIcon;
+import org.openbase.jul.visual.javafx.JFXConstants;
+import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 
 /**
  * Contains tabs for user login and registration.
@@ -83,8 +84,8 @@ public class UserActionPane extends PaneElement {
      */
     private Tab createTab(Pane pane, GlyphIcons icon) {
         Tab tab = new Tab();
-        SVGIcon svgIcon = new SVGIcon(icon, Constants.EXTRA_SMALL_ICON, true);
-        tab.setGraphic(svgIcon);
+        SVGGlyphIcon SVGGlyphIcon = new SVGGlyphIcon(icon, JFXConstants.ICON_SIZE_EXTRA_SMALL, true);
+        tab.setGraphic(SVGGlyphIcon);
         tab.setContent(pane);
         pane.getStyleClass().add("tab-content-area");
         tab.getStyleClass().add("tab");
@@ -122,13 +123,13 @@ public class UserActionPane extends PaneElement {
     }
 
     public enum State {
-        OPEN(false, new SVGIcon(FontAwesomeIcon.CARET_UP, Constants.EXTRA_SMALL_ICON, true)),
-        CLOSED(true, new SVGIcon(FontAwesomeIcon.CARET_DOWN, Constants.EXTRA_SMALL_ICON, true));
+        OPEN(false, new SVGGlyphIcon(FontAwesomeIcon.CARET_UP, JFXConstants.ICON_SIZE_EXTRA_SMALL, true)),
+        CLOSED(true, new SVGGlyphIcon(FontAwesomeIcon.CARET_DOWN, JFXConstants.ICON_SIZE_EXTRA_SMALL, true));
 
         private final boolean active;
-        private final SVGIcon icon;
+        private final SVGGlyphIcon icon;
 
-        State(boolean active, SVGIcon icon) {
+        State(boolean active, SVGGlyphIcon icon) {
             this.active = active;
             this.icon = icon;
         }
@@ -137,7 +138,7 @@ public class UserActionPane extends PaneElement {
             return active;
         }
 
-        public SVGIcon getIcon() {
+        public SVGGlyphIcon getIcon() {
             return icon;
         }
     }

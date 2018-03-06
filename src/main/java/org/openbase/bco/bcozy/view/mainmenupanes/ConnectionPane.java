@@ -26,23 +26,24 @@ import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import org.openbase.bco.bcozy.view.AnimationProvider;
-import org.openbase.bco.bcozy.view.Constants;
-import org.openbase.bco.bcozy.view.SVGIcon;
+import org.openbase.jul.visual.javafx.animation.Animations;
+import org.openbase.jul.visual.javafx.JFXConstants;
+import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 
 /**
  * Created by hoestreich on 12/8/15.
  */
+@Deprecated
 public class ConnectionPane extends VBox {
 
-    private final SVGIcon connectionSuccessView;
-    private final SVGIcon connectionProblemView;
-    private final SVGIcon connectionUploadView;
-    private final SVGIcon connectionDownloadView;
-    private final SVGIcon connectionSuccessViewSmall;
-    private final SVGIcon connectionProblemViewSmall;
-    private final SVGIcon connectionUploadViewSmall;
-    private final SVGIcon connectionDownloadViewSmall;
+    private final SVGGlyphIcon connectionSuccessView;
+    private final SVGGlyphIcon connectionProblemView;
+    private final SVGGlyphIcon connectionUploadView;
+    private final SVGGlyphIcon connectionDownloadView;
+    private final SVGGlyphIcon connectionSuccessViewSmall;
+    private final SVGGlyphIcon connectionProblemViewSmall;
+    private final SVGGlyphIcon connectionUploadViewSmall;
+    private final SVGGlyphIcon connectionDownloadViewSmall;
     private boolean test;
     private final FadeTransition problemFade, problemFadeSmall;
     private final GridPane connectionIcon, connectionIconSmall;
@@ -53,28 +54,28 @@ public class ConnectionPane extends VBox {
     public ConnectionPane() {
         connectionIcon = new GridPane();
         connectionIconSmall = new GridPane();
-        final SVGIcon connectionView = new SVGIcon(FontAwesomeIcon.DATABASE, Constants.LOGO_ICON, true);
-        final SVGIcon connectionViewSmall = new SVGIcon(FontAwesomeIcon.DATABASE, Constants.SMALL_ICON, true);
+        final SVGGlyphIcon connectionView = new SVGGlyphIcon(FontAwesomeIcon.DATABASE, JFXConstants.ICON_SIZE_MIDDLE, true);
+        final SVGGlyphIcon connectionViewSmall = new SVGGlyphIcon(FontAwesomeIcon.DATABASE, JFXConstants.ICON_SIZE_SMALL, true);
 
-        connectionSuccessView = new SVGIcon(FontAwesomeIcon.CHECK_CIRCLE, Constants.EXTRA_SMALL_ICON, true);
-        connectionSuccessView.setOpacity(Constants.FULLY_TRANSPARENT);
-        connectionSuccessViewSmall = new SVGIcon(FontAwesomeIcon.CHECK_CIRCLE, Constants.EXTRA_SMALL_ICON, true);
-        connectionSuccessViewSmall.setOpacity(Constants.FULLY_TRANSPARENT);
+        connectionSuccessView = new SVGGlyphIcon(FontAwesomeIcon.CHECK_CIRCLE, JFXConstants.ICON_SIZE_EXTRA_EXTRA_SMALL, true);
+        connectionSuccessView.setOpacity(JFXConstants.TRANSPARENCY_FULLY);
+        connectionSuccessViewSmall = new SVGGlyphIcon(FontAwesomeIcon.CHECK_CIRCLE, JFXConstants.ICON_SIZE_EXTRA_EXTRA_SMALL, true);
+        connectionSuccessViewSmall.setOpacity(JFXConstants.TRANSPARENCY_FULLY);
 
-        connectionProblemView = new SVGIcon(FontAwesomeIcon.QUESTION_CIRCLE, Constants.EXTRA_SMALL_ICON, true);
-        connectionProblemView.setOpacity(Constants.FULLY_TRANSPARENT);
-        connectionProblemViewSmall = new SVGIcon(FontAwesomeIcon.QUESTION_CIRCLE, Constants.EXTRA_SMALL_ICON, true);
-        connectionProblemViewSmall.setOpacity(Constants.FULLY_TRANSPARENT);
+        connectionProblemView = new SVGGlyphIcon(FontAwesomeIcon.QUESTION_CIRCLE, JFXConstants.ICON_SIZE_EXTRA_EXTRA_SMALL, true);
+        connectionProblemView.setOpacity(JFXConstants.TRANSPARENCY_FULLY);
+        connectionProblemViewSmall = new SVGGlyphIcon(FontAwesomeIcon.QUESTION_CIRCLE, JFXConstants.ICON_SIZE_EXTRA_EXTRA_SMALL, true);
+        connectionProblemViewSmall.setOpacity(JFXConstants.TRANSPARENCY_FULLY);
 
-        connectionUploadView = new SVGIcon(FontAwesomeIcon.ARROW_UP, Constants.EXTRA_EXTRA_SMALL_ICON, true);
-        connectionUploadView.setOpacity(Constants.FULLY_TRANSPARENT);
-        connectionUploadViewSmall = new SVGIcon(FontAwesomeIcon.ARROW_UP, Constants.EXTRA_SMALL_ICON, true);
-        connectionUploadViewSmall.setOpacity(Constants.FULLY_TRANSPARENT);
+        connectionUploadView = new SVGGlyphIcon(FontAwesomeIcon.ARROW_UP, JFXConstants.ICON_SIZE_EXTRA_EXTRA_SMALL, true);
+        connectionUploadView.setOpacity(JFXConstants.TRANSPARENCY_FULLY);
+        connectionUploadViewSmall = new SVGGlyphIcon(FontAwesomeIcon.ARROW_UP, JFXConstants.ICON_SIZE_EXTRA_EXTRA_SMALL, true);
+        connectionUploadViewSmall.setOpacity(JFXConstants.TRANSPARENCY_FULLY);
 
-        connectionDownloadView = new SVGIcon(FontAwesomeIcon.ARROW_DOWN, Constants.EXTRA_EXTRA_SMALL_ICON, true);
-        connectionDownloadView.setOpacity(Constants.FULLY_TRANSPARENT);
-        connectionDownloadViewSmall = new SVGIcon(FontAwesomeIcon.ARROW_DOWN, Constants.EXTRA_SMALL_ICON, true);
-        connectionDownloadViewSmall.setOpacity(Constants.FULLY_TRANSPARENT);
+        connectionDownloadView = new SVGGlyphIcon(FontAwesomeIcon.ARROW_DOWN, JFXConstants.ICON_SIZE_EXTRA_EXTRA_SMALL, true);
+        connectionDownloadView.setOpacity(JFXConstants.TRANSPARENCY_FULLY);
+        connectionDownloadViewSmall = new SVGGlyphIcon(FontAwesomeIcon.ARROW_DOWN, JFXConstants.ICON_SIZE_EXTRA_EXTRA_SMALL, true);
+        connectionDownloadViewSmall.setOpacity(JFXConstants.TRANSPARENCY_FULLY);
 
         test = false;
         connectionView.setOnMouseClicked(event -> testAnimations());
@@ -97,13 +98,13 @@ public class ConnectionPane extends VBox {
 
         this.getChildren().addAll(connectionIcon);
 
-        problemFade = AnimationProvider.createFadeTransition(
-                connectionProblemView, Constants.NO_TRANSPARENCY, Constants.NEARLY_TRANSPARENT,
-                Animation.INDEFINITE, Constants.GLOWING_FADE_DURATION);
+        problemFade = Animations.createFadeTransition(
+                connectionProblemView, JFXConstants.TRANSPARENCY_NONE, JFXConstants.TRANSPARENCY_NEARLY,
+                Animation.INDEFINITE, JFXConstants.ANIMATION_DURATION_FADE_SLOW);
 
-        problemFadeSmall = AnimationProvider.createFadeTransition(
-                connectionProblemViewSmall, Constants.NO_TRANSPARENCY, Constants.NEARLY_TRANSPARENT,
-                Animation.INDEFINITE, Constants.GLOWING_FADE_DURATION);
+        problemFadeSmall = Animations.createFadeTransition(
+                connectionProblemViewSmall, JFXConstants.TRANSPARENCY_NONE, JFXConstants.TRANSPARENCY_NEARLY,
+                Animation.INDEFINITE, JFXConstants.ANIMATION_DURATION_FADE_GLOWING);
     }
 
     private void testAnimations() {
@@ -132,19 +133,19 @@ public class ConnectionPane extends VBox {
     /**
      * Show the tick mark to indicate that the connection is established and no problems are detected.
      */
-    public void connectionEstablished(SVGIcon successView, SVGIcon problemView,  FadeTransition transition) {
-        successView.setOpacity(Constants.NO_TRANSPARENCY);
+    public void connectionEstablished(SVGGlyphIcon successView, SVGGlyphIcon problemView,  FadeTransition transition) {
+        successView.setOpacity(JFXConstants.TRANSPARENCY_NONE);
         successView.setForegroundIconColorAnimated(Color.LIMEGREEN, 1);
         transition.stop();
-        problemView.setOpacity(Constants.FULLY_TRANSPARENT);
+        problemView.setOpacity(JFXConstants.TRANSPARENCY_FULLY);
     }
 
     /**
      * Show the question mark to indicate that the connection has problems.
      * Animation should generate attention.
      */
-    public void connectionProblem(SVGIcon successView, SVGIcon problemView,  FadeTransition transition) {
-        successView.setOpacity(Constants.FULLY_TRANSPARENT);
+    public void connectionProblem(SVGGlyphIcon successView, SVGGlyphIcon problemView,  FadeTransition transition) {
+        successView.setOpacity(JFXConstants.TRANSPARENCY_FULLY);
         problemView.setForegroundIconColorAnimated(Color.TOMATO, Animation.INDEFINITE);
         transition.play();
     }
@@ -152,25 +153,25 @@ public class ConnectionPane extends VBox {
     /**
      * Show upload arrow to indication that a server request was made.
      */
-    public void uploadActive(SVGIcon uploadView) {
-        uploadView.setOpacity(Constants.NO_TRANSPARENCY);
-        final FadeTransition uploadFade = AnimationProvider.createFadeTransition(
-                uploadView, Constants.FULLY_TRANSPARENT,
-                Constants.NO_TRANSPARENCY, 1, Constants.FASTFADEDURATION);
+    public void uploadActive(SVGGlyphIcon uploadView) {
+        uploadView.setOpacity(JFXConstants.TRANSPARENCY_NONE);
+        final FadeTransition uploadFade = Animations.createFadeTransition(
+                uploadView, JFXConstants.TRANSPARENCY_FULLY,
+                JFXConstants.TRANSPARENCY_NONE, 1, JFXConstants.ANIMATION_DURATION_FADE_FAST);
         uploadFade.play();
-        uploadFade.setOnFinished(event -> uploadView.setOpacity(Constants.FULLY_TRANSPARENT));
+        uploadFade.setOnFinished(event -> uploadView.setOpacity(JFXConstants.TRANSPARENCY_FULLY));
     }
 
     /**
      * Show download arrow to indicate that data is received.
      */
-    public void downloadActive(SVGIcon downloadView) {
-        downloadView.setOpacity(Constants.NO_TRANSPARENCY);
-        final FadeTransition downloadFade = AnimationProvider.createFadeTransition(
-                downloadView, Constants.FULLY_TRANSPARENT,
-                Constants.NO_TRANSPARENCY, 1, Constants.FASTFADEDURATION);
+    public void downloadActive(SVGGlyphIcon downloadView) {
+        downloadView.setOpacity(JFXConstants.TRANSPARENCY_NONE);
+        final FadeTransition downloadFade = Animations.createFadeTransition(
+                downloadView, JFXConstants.TRANSPARENCY_FULLY,
+                JFXConstants.TRANSPARENCY_NONE, 1, JFXConstants.ANIMATION_DURATION_FADE_FAST);
         downloadFade.play();
-        downloadFade.setOnFinished(event -> downloadView.setOpacity(Constants.FULLY_TRANSPARENT));
+        downloadFade.setOnFinished(event -> downloadView.setOpacity(JFXConstants.TRANSPARENCY_FULLY));
     }
 
     /**

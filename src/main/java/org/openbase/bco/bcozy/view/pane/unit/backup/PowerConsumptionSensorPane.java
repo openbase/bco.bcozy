@@ -30,7 +30,7 @@ public class PowerConsumptionSensorPane extends AbstractUnitPane<PowerConsumptio
 //    private static final Logger LOGGER = LoggerFactory.getLogger(PowerConsumptionSensorPane.class);
 //
 //    private final PowerConsumptionSensorRemote powerConsumptionSensorRemote;
-//    private final SVGIcon powerConsumptionIcon;
+//    private final SVGGlyphIcon powerConsumptionIcon;
 //    private final Text currentPowerConsumption;
 //    private final BorderPane headContent;
 //    private final Text sumPowerConsumption;
@@ -47,7 +47,7 @@ public class PowerConsumptionSensorPane extends AbstractUnitPane<PowerConsumptio
 //
 //        headContent = new BorderPane();
 //        bodyContent = new GridPane();
-//        powerConsumptionIcon = new SVGIcon(MaterialDesignIcon.POWER, Constants.SMALL_ICON, true);
+//        powerConsumptionIcon = new SVGGlyphIcon(MaterialDesignIcon.POWER, JFXConstants.ICON_SIZE_SMALL, true);
 //        currentPowerConsumption = new Text();
 //        sumPowerConsumption = new Text();
 //        voltagePowerConsumption = new Text();

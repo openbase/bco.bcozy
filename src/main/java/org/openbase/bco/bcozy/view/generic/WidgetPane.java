@@ -19,8 +19,10 @@
 package org.openbase.bco.bcozy.view.generic;
 
 import com.jfoenix.controls.JFXToggleButton;
-import org.openbase.jul.visual.javafx.iface.DynamicPane;
 import de.jensd.fx.glyphs.GlyphIcons;
+import org.openbase.jul.visual.javafx.JFXConstants;
+import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
+import org.openbase.jul.visual.javafx.iface.DynamicPane;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -40,7 +42,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ObserverText;
-import org.openbase.bco.bcozy.view.SVGIcon;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.slf4j.Logger;
@@ -70,7 +71,7 @@ public class WidgetPane extends VBox implements DynamicPane {
      */
     private final GridPane iconPane = new GridPane();
 
-    private final SVGIcon mainIcon;
+    private final SVGGlyphIcon mainIcon;
 
     private final Label widgetLabel;
     
@@ -130,7 +131,7 @@ public class WidgetPane extends VBox implements DynamicPane {
         this.headPane = new BorderPane();
         this.primaryActivationProperty = new SimpleBooleanProperty();
         this.secondaryActivationProperty = new SimpleBooleanProperty();
-        this.mainIcon = new SVGIcon(MaterialDesignIcon.VECTOR_CIRCLE, Constants.SMALL_ICON, false);
+        this.mainIcon = new SVGGlyphIcon(MaterialDesignIcon.VECTOR_CIRCLE, JFXConstants.ICON_SIZE_SMALL, false);
         this.widgetLabel = new Label("?");
 
         this.primaryActivationObserver = new ChangeListener<Boolean>() {
@@ -228,7 +229,7 @@ public class WidgetPane extends VBox implements DynamicPane {
     public void initHeadPane() {
         headPane.getStyleClass().clear();
         headPane.getStyleClass().add("head-pane");
-        iconPane.getStyleClass().add(Constants.ICONS_CSS_STRING);
+        iconPane.getStyleClass().add(JFXConstants.CSS_ICON);
         iconPane.add(mainIcon, 0, 0);
         iconPane.setAlignment(Pos.CENTER);
 
@@ -246,21 +247,21 @@ public class WidgetPane extends VBox implements DynamicPane {
         }
     }
 
-    public void setIcon(final GlyphIcons foregroundIcon, final Color foregroundIconColor, final GlyphIcons backgroundIcon, final Color backgroundIconColor) {
-        mainIcon.setForegroundIcon(foregroundIcon, foregroundIconColor);
-        mainIcon.setBackgroundIcon(backgroundIcon, backgroundIconColor);
+    public void setIcon(final GlyphIcons foregroundIconProvider, final Color foregroundIconColor, final GlyphIcons backgroundIconProvider, final Color backgroundIconColor) {
+        mainIcon.setForegroundIcon(foregroundIconProvider, foregroundIconColor);
+        mainIcon.setBackgroundIcon(backgroundIconProvider, backgroundIconColor);
     }
 
-    public void setIcon(final GlyphIcons foregroundIcon, final GlyphIcons backgroundIcon) {
-        mainIcon.setForegroundIcon(foregroundIcon);
-        mainIcon.setBackgroundIcon(backgroundIcon);
+    public void setIcon(final GlyphIcons foregroundIconProvider, final GlyphIcons backgroundIconProvider) {
+        mainIcon.setForegroundIcon(foregroundIconProvider);
+        mainIcon.setBackgroundIcon(backgroundIconProvider);
     }
 
     public void setLabel(final String label) {
         widgetLabel.setText(label);
     }
 
-    public SVGIcon getIcon() {
+    public SVGGlyphIcon getIcon() {
         return mainIcon;
     }
 

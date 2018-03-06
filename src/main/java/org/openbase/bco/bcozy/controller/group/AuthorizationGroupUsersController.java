@@ -21,7 +21,8 @@ import org.openbase.jul.exception.ExceptionProcessor;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.InfoPane;
 import org.openbase.bco.bcozy.view.ObserverButton;
-import org.openbase.bco.bcozy.view.SVGIcon;
+import org.openbase.jul.visual.javafx.JFXConstants;
+import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
@@ -86,7 +87,7 @@ public class AuthorizationGroupUsersController {
         //content-formatting
         removeUserColumn.setCellFactory(new ButtonTableCellFactory<>(
                 (user, cellIndex) -> removeFromGroup(user),
-                () -> new SVGIcon(FontAwesomeIcon.TIMES, Constants.EXTRA_SMALL_ICON, true)
+                () -> new SVGGlyphIcon(FontAwesomeIcon.TIMES, JFXConstants.ICON_SIZE_EXTRA_SMALL, true)
         ));
 
         availableUsersComboBox.setConverter(new StringConverter<UserViewModel>() {

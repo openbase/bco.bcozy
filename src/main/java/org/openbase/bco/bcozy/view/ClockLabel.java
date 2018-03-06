@@ -37,7 +37,8 @@ public class ClockLabel extends Label {
      */
     public ClockLabel() {
         final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
-        this.getStyleClass().add("floating-label");
+        this.getStyleClass().clear();
+        this.getStyleClass().add("clock-label");
         final Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
             LocalDateTime time = LocalDateTime.now();
             setText(time.format(formatter));

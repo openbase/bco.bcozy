@@ -24,23 +24,24 @@ import javafx.scene.layout.AnchorPane;
 /**
  * Created by hoestreich on 11/18/15.
  */
+@Deprecated
 public class LocationContextInfo extends AnchorPane {
 
-    private final Label locationInfo;
+//    private final Label locationInfo;
 
     /**
      * Constructor for the RoomContextInfo UI Element.
      */
     public LocationContextInfo() {
 
-        locationInfo = new Label("No location selected.");
-
-        this.getChildren().add(locationInfo);
-
-        this.setLeftAnchor(locationInfo, Constants.INSETS);
-        this.setRightAnchor(locationInfo, Constants.INSETS);
-        this.setTopAnchor(locationInfo, Constants.INSETS);
-        this.setBottomAnchor(locationInfo, Constants.INSETS);
+//        locationInfo = new Label("No location selected.");
+//
+//        this.getChildren().add(locationInfo);
+//
+//        this.setLeftAnchor(locationInfo, Constants.INSETS);
+//        this.setRightAnchor(locationInfo, Constants.INSETS);
+//        this.setTopAnchor(locationInfo, Constants.INSETS);
+//        this.setBottomAnchor(locationInfo, Constants.INSETS);
     }
 
 }

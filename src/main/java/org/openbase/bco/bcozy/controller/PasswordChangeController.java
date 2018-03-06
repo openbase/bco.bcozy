@@ -23,9 +23,7 @@ public class PasswordChangeController extends AbstractCurrentUserAwareController
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PasswordChangeController.class);
 
-
     private static final String PASSWORD_FIELD_WRONG_CLASS = "password-field-wrong";
-
 
     @FXML
     private PasswordField oldPassword;
@@ -39,11 +37,9 @@ public class PasswordChangeController extends AbstractCurrentUserAwareController
     private Consumer<Boolean> onPasswordChange = success -> {
     };
 
-
     public void initialize() {
         savePassword.setApplyOnNewText(String::toUpperCase);
     }
-
 
     @FXML
     private void saveNewPassword() throws InterruptedException {
@@ -74,7 +70,6 @@ public class PasswordChangeController extends AbstractCurrentUserAwareController
         }
 
         clearPasswordFields();
-
     }
 
     private void clearPasswordFields() {
@@ -100,7 +95,6 @@ public class PasswordChangeController extends AbstractCurrentUserAwareController
                 .backgroundColor(Color.GREEN)
                 .hideAfter(Duration.seconds(5));
     }
-
 
     public void setOnPasswordChange(Consumer<Boolean> onPasswordChange) {
         this.onPasswordChange = Objects.requireNonNull(onPasswordChange);

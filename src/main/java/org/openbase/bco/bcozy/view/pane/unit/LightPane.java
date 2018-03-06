@@ -62,16 +62,13 @@ public class LightPane extends AbstractUnitPane<LightRemote, LightData> {
         switch (state) {
             case OFF:
                 getIcon().setBackgroundIconColor(Constants.LIGHTBULB_OFF_COLOR);
-                setInfoText("lightOff");
                 setPrimaryActivationWithoutNotification(Boolean.FALSE);
                 break;
             case ON:
                 getIcon().setBackgroundIconColor(Color.CORNSILK);
-                setInfoText("lightOn");
                 setPrimaryActivationWithoutNotification(Boolean.TRUE);
                 break;
             default:
-                setInfoText("unknown");
                 break;
         }
     }

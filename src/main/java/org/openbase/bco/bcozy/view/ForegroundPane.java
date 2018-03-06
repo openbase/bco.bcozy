@@ -1,33 +1,34 @@
 /**
  * ==================================================================
- *
+ * <p>
  * This file is part of org.openbase.bco.bcozy.
- *
+ * <p>
  * org.openbase.bco.bcozy is free software: you can redistribute it and modify
  * it under the terms of the GNU General Public License (Version 3)
  * as published by the Free Software Foundation.
- *
+ * <p>
  * org.openbase.bco.bcozy is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
 package org.openbase.bco.bcozy.view;
 
-import javafx.beans.property.ObjectProperty;
 import de.jensd.fx.glyphs.materialicons.MaterialIcon;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.BoundingBox;
 import javafx.scene.layout.BorderPane;
-import org.openbase.bco.bcozy.controller.CenterPaneController;
 import javafx.stage.Stage;
+import org.openbase.bco.bcozy.controller.CenterPaneController;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InitializationException;
+import org.openbase.jul.exception.InstantiationException;
 import org.openbase.jul.iface.DefaultInitializable;
 
 /**
@@ -49,31 +50,35 @@ public class ForegroundPane extends BorderPane implements DefaultInitializable {
      * @param height Height of the application window
      * @param width Width of the application window
      */
-    public ForegroundPane(final double height, final double width) throws InterruptedException {
-        this.mainMenu = new MainMenu(height - 150, 300);
-        this.contextMenu = new ContextMenu(height - 150, 300);
-        this.contextMenu.getFullscreen().setOnAction(event -> setMaximizeAction());
-        this.contextMenu.getSettingsBtn().setOnAction(event -> toggleSettings());
-        this.menuHeader = new MenuHeader(30, width);
-        this.infoFooter = new InfoPane(20, width);
-        this.centerPane = new CenterPane(height - 150, this);
+    public ForegroundPane(final double height, final double width) throws InstantiationException {
+        try {
+            this.mainMenu = new MainMenu(height - 150, 300);
+            this.contextMenu = new ContextMenu(height - 150, 300);
+            this.contextMenu.getFullscreen().setOnAction(event -> setMaximizeAction());
+            this.contextMenu.getSettingsBtn().setOnAction(event -> toggleSettings());
+            this.menuHeader = new MenuHeader(30, width);
+            this.infoFooter = new InfoPane(20, width);
+            this.centerPane = new CenterPane(height - 150, this);
 
-        //this.setTop(this.menuHeader);
-        this.setLeft(this.mainMenu);
-        this.setRight(this.contextMenu);
-        this.setBottom(this.infoFooter);
-        this.setCenter(this.centerPane);
-        this.setTop(this.menuHeader);
-        this.setPickOnBounds(false);
+            //this.setTop(this.menuHeader);
+            this.setLeft(this.mainMenu);
+            this.setRight(this.contextMenu);
+            this.setBottom(this.infoFooter);
+            this.setCenter(this.centerPane);
+            this.setTop(this.menuHeader);
+            this.setPickOnBounds(false);
 
-        appState = new SimpleObjectProperty<>(CenterPaneController.State.MOVEMENT);
-        this.appState.bind(centerPane.appStateProperty);
+            appState = new SimpleObjectProperty<>(CenterPaneController.State.MOVEMENT);
+            this.appState.bind(centerPane.appStateProperty);
+        } catch (CouldNotPerformException ex) {
+            throw new InstantiationException(this, ex);
+        }
     }
-    
+
     public ObjectProperty<CenterPaneController.State> getAppState() {
         return this.appState;
     }
-    
+
     @Override
     public void init() throws InitializationException, InterruptedException {
         try {

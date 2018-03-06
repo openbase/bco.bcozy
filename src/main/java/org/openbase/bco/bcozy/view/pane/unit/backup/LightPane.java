@@ -29,9 +29,9 @@ public class LightPane extends AbstractUnitPane<LightRemote, LightData> {
 
 //    private static final Logger LOGGER = LoggerFactory.getLogger(LightPane.class);
 //
-//    private final SVGIcon unknownForegroundIcon;
-//    private final SVGIcon unknownBackgroundIcon;
-//    private final SVGIcon lightBulbIcon;
+//    private final SVGGlyphIcon unknownForegroundIcon;
+//    private final SVGGlyphIcon unknownBackgroundIcon;
+//    private final SVGGlyphIcon lightBulbIcon;
 //    private final BorderPane headContent;
 //
 //    /**
@@ -39,9 +39,9 @@ public class LightPane extends AbstractUnitPane<LightRemote, LightData> {
 //     */
     public LightPane() {
         super(LightRemote.class, true);
-//        lightBulbIcon = new SVGIcon(MaterialDesignIcon.LIGHTBULB, MaterialDesignIcon.LIGHTBULB_OUTLINE, Constants.SMALL_ICON);
-//        unknownBackgroundIcon = new SVGIcon(MaterialDesignIcon.CHECKBOX_BLANK_CIRCLE, Constants.SMALL_ICON - 2, false);
-//        unknownForegroundIcon = new SVGIcon(MaterialDesignIcon.HELP_CIRCLE, Constants.SMALL_ICON, false);
+//        lightBulbIcon = new SVGGlyphIcon(MaterialDesignIcon.LIGHTBULB, MaterialDesignIcon.LIGHTBULB_OUTLINE, JFXConstants.ICON_SIZE_SMALL);
+//        unknownBackgroundIcon = new SVGGlyphIcon(MaterialDesignIcon.CHECKBOX_BLANK_CIRCLE, JFXConstants.ICON_SIZE_SMALL - 2, false);
+//        unknownForegroundIcon = new SVGGlyphIcon(MaterialDesignIcon.HELP_CIRCLE, JFXConstants.ICON_SIZE_SMALL, false);
 //        headContent = new BorderPane();
 //
 //        initTitle();

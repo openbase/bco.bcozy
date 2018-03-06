@@ -66,6 +66,9 @@ public abstract class AbstractUnitPolygon<M extends GeneratedMessage, UR extends
     public void activate() throws CouldNotPerformException, InterruptedException {
         active = true;
         unitRemote.addDataObserver(dataObserver);
+        if(unitRemote.isDataAvailable()) {
+            applyDataUpdate(unitRemote.getData());
+        }
     }
 
     @Override
@@ -113,7 +116,7 @@ public abstract class AbstractUnitPolygon<M extends GeneratedMessage, UR extends
     public class UnitDataObserver implements Observer<M> {
 
         @Override
-        public void update(Observable<M> source, M data) throws Exception {
+        public void update(Observable<M> source, M data) {
             applyDataUpdate(data);
         }
     }

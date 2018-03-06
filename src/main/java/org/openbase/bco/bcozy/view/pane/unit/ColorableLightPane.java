@@ -27,12 +27,13 @@ import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
 import org.openbase.jul.schedule.RecurrenceEventFilter;
+import org.openbase.jul.visual.javafx.JFXConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.domotic.unit.dal.ColorableLightDataType.ColorableLightData;
 import java.util.concurrent.Future;
 import javafx.scene.layout.Pane;
-import org.openbase.bco.bcozy.view.SVGIcon;
+import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 import org.openbase.bco.bcozy.view.generic.ColorChooser;
 import org.openbase.bco.dal.remote.unit.ColorableLightRemote;
 import org.openbase.jul.exception.NotAvailableException;
@@ -136,8 +137,8 @@ public class ColorableLightPane extends AbstractUnitPane<ColorableLightRemote, C
     }
 
     @Override
-    public SVGIcon getIconSymbol() {
-        return new SVGIcon(MaterialDesignIcon.LIGHTBULB, Constants.SMALL_ICON, false);
+    public SVGGlyphIcon getIconSymbol() {
+        return new SVGGlyphIcon(MaterialDesignIcon.LIGHTBULB, JFXConstants.ICON_SIZE_SMALL, false);
     }
 
     private final DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.MEDIUM);

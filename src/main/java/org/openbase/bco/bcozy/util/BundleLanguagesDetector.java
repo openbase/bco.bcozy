@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
  *
  * @author vdasilva
  */
-public class BundleLanguagesDetector implements LanguagesDetector {
+public class BundleLanguagesDetector implements LanguageLoader {
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(BundleLanguagesDetector.class);
 
     private static final String BUNDLE_FOLDER = "languages";

@@ -31,8 +31,6 @@ import rst.domotic.unit.connection.ConnectionDataType.ConnectionData;
  */
 public abstract class ConnectionPolygon extends AbstractUnitPolygon<ConnectionData, ConnectionRemote> {
 
-    private boolean open;
-
     private final double minX;
     private final double maxX;
     private final double minY;
@@ -47,7 +45,6 @@ public abstract class ConnectionPolygon extends AbstractUnitPolygon<ConnectionDa
      */
     public ConnectionPolygon(final double... points) throws InstantiationException {
         super(points);
-        this.open = false;
 
         final ObservableList<Double> pointList = super.getPoints();
 
@@ -73,25 +70,6 @@ public abstract class ConnectionPolygon extends AbstractUnitPolygon<ConnectionDa
         this.horizontal = (maxX - minX > maxY - minY);
 
         this.setConnectionStyle();
-    }
-
-    /**
-     * Getter method for the open boolean.
-     *
-     * @return open as a boolean value
-     */
-    public boolean isOpen() {
-        return open;
-    }
-
-    /**
-     * Setter method for the open boolean.
-     *
-     * @param open as a boolean value
-     */
-    public void setOpen(final boolean open) {
-        this.open = open;
-        this.changeStyleOnOpening(open);
     }
 
     /**
@@ -138,13 +116,6 @@ public abstract class ConnectionPolygon extends AbstractUnitPolygon<ConnectionDa
     protected boolean isHorizontal() {
         return horizontal;
     }
-
-    /**
-     * Will be called when the open value of the Polygon has been toggled.
-     *
-     * @param open boolean for the open status
-     */
-    protected abstract void changeStyleOnOpening(final boolean open);
 
     /**
      * Will be called when the Polygon is constructed and can be used to apply specific styles.

@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * @author vdasilva
  */
-public interface LanguagesDetector {
+public interface LanguageLoader {
 
     List<Language> getLanguages();
 

@@ -26,13 +26,12 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.openbase.bco.bcozy.controller.*;
+import org.openbase.bco.bcozy.util.ThemeManager;
 import org.openbase.bco.bcozy.view.*;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jps.core.JPService;
-import org.openbase.jul.exception.FatalImplementationErrorException;
-import org.openbase.jul.exception.InitializationException;
+import org.openbase.jul.exception.*;
 import org.openbase.jul.exception.InstantiationException;
-import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
 import org.openbase.jul.pattern.Observable;
@@ -40,6 +39,7 @@ import org.openbase.jul.pattern.Observer;
 import org.openbase.jul.pattern.Remote;
 import org.openbase.jul.pattern.Remote.ConnectionState;
 import org.openbase.jul.schedule.GlobalCachedExecutorService;
+import org.openbase.jul.visual.javafx.JFXConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,8 +82,6 @@ public class BCozy extends Application {
 
     private Scene mainScene;
 
-    public static boolean baseColorIsWhite = true;
-
     private static Observer<ConnectionState> connectionObserver;
 
     public BCozy() {
@@ -112,52 +110,57 @@ public class BCozy extends Application {
 
     @Override
     public void start(final Stage primaryStage) throws InitializationException, InterruptedException, InstantiationException {
-        BCozy.primaryStage = primaryStage;
-        registerResponsiveHandler();
-
-        final double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
-        final double screenHeight = Screen.getPrimary().getVisualBounds().getHeight();
-        primaryStage.setTitle("BCO BCozy");
-
-        final StackPane root = new StackPane();
-        foregroundPane = new ForegroundPane(screenHeight, screenWidth);
-        foregroundPane.setMinHeight(root.getHeight());
-        foregroundPane.setMinWidth(root.getWidth());
-        final BackgroundPane backgroundPane = new BackgroundPane(foregroundPane);
-
-        loadingPane = new LoadingPane(screenHeight, screenWidth);
-        loadingPane.setMinHeight(root.getHeight());
-        loadingPane.setMinWidth(root.getWidth());
-        root.getChildren().addAll(backgroundPane, foregroundPane, loadingPane);
-
-        primaryStage.setMinWidth(foregroundPane.getMainMenu().getMinWidth() + foregroundPane.getContextMenu().getMinWidth() + 300);
-        primaryStage.setHeight(screenHeight);
-        mainScene = new Scene(root, screenWidth, screenHeight);
-        primaryStage.setScene(mainScene);
-        primaryStage.getScene().getStylesheets().addAll(Constants.DEFAULT_CSS, Constants.LIGHT_THEME_CSS);
-
-        new MainMenuController(foregroundPane);
-        new CenterPaneController(foregroundPane);
-
-        contextMenuController = new ContextMenuController(foregroundPane, backgroundPane.getLocationPane());
-        locationPaneController = new LocationPaneController(backgroundPane.getLocationPane());
-        unitsPaneController = new UnitsPaneController(backgroundPane.getUnitsPane(), backgroundPane.getLocationPane());
-        maintenanceLayerController = new MaintenanceLayerController(backgroundPane.getMaintenancePane(), backgroundPane.getLocationPane());
-        editingLayerController = new EditingLayerController(backgroundPane.getEditingPane(), backgroundPane.getLocationPane());
-
-        ResponsiveHandler.addResponsiveToWindow(primaryStage);
-        primaryStage.show();
-
-        InfoPane.confirmation("Welcome");
         try {
-            Registries.getUnitRegistry().addConnectionStateObserver(connectionObserver);
-        } catch (NotAvailableException ex) {
-            ExceptionPrinter.printHistory("Could not register bco connection observer!", ex, LOGGER);
-        } catch (InterruptedException ex) {
-            Thread.currentThread().interrupt();
-        }
+            BCozy.primaryStage = primaryStage;
+            registerResponsiveHandler();
 
-        initRemotesAndLocation();
+            final double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
+            final double screenHeight = Screen.getPrimary().getVisualBounds().getHeight();
+            primaryStage.setTitle("BCO BCozy");
+
+            final StackPane root = new StackPane();
+            foregroundPane = new ForegroundPane(screenHeight, screenWidth);
+            foregroundPane.setMinHeight(root.getHeight());
+            foregroundPane.setMinWidth(root.getWidth());
+            final BackgroundPane backgroundPane = new BackgroundPane(foregroundPane);
+
+            loadingPane = new LoadingPane(screenHeight, screenWidth);
+            loadingPane.setMinHeight(root.getHeight());
+            loadingPane.setMinWidth(root.getWidth());
+            root.getChildren().addAll(backgroundPane, foregroundPane, loadingPane);
+
+            primaryStage.setMinWidth(foregroundPane.getMainMenu().getMinWidth() + foregroundPane.getContextMenu().getMinWidth() + 300);
+            primaryStage.setHeight(screenHeight);
+            mainScene = new Scene(root, screenWidth, screenHeight);
+            primaryStage.setScene(mainScene);
+
+            ThemeManager.getInstance().loadDefaultTheme();
+
+            new MainMenuController(foregroundPane);
+            new CenterPaneController(foregroundPane);
+
+            contextMenuController = new ContextMenuController(foregroundPane, backgroundPane.getLocationPane());
+            locationPaneController = new LocationPaneController(backgroundPane.getLocationPane());
+            unitsPaneController = new UnitsPaneController(backgroundPane.getUnitsPane(), backgroundPane.getLocationPane());
+            maintenanceLayerController = new MaintenanceLayerController(backgroundPane.getMaintenancePane(), backgroundPane.getLocationPane());
+            editingLayerController = new EditingLayerController(backgroundPane.getEditingPane(), backgroundPane.getLocationPane());
+
+            ResponsiveHandler.addResponsiveToWindow(primaryStage);
+            primaryStage.show();
+
+            InfoPane.confirmation("Welcome");
+            try {
+                Registries.getUnitRegistry().addConnectionStateObserver(connectionObserver);
+            } catch (NotAvailableException ex) {
+                ExceptionPrinter.printHistory("Could not register bco connection observer!", ex, LOGGER);
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+            }
+
+            initRemotesAndLocation();
+        } catch (final Exception ex) {
+            ExceptionPrinter.printHistory("Could not start "+ JPService.getApplicationName(), ex, LOGGER);
+        }
     }
 
     private void initRemotesAndLocation() {
@@ -165,23 +168,24 @@ public class BCozy extends Application {
             @Override
             protected Object call() throws java.lang.Exception {
                 try {
-                    loadingPane.setTextLabelIdentifier("waitForConnection");
+                    loadingPane.info("waitForConnection");
                     Registries.waitForData();
 
-                    loadingPane.setTextLabelIdentifier("fillContextMenu");
+                    loadingPane.info("fillContextMenu");
                     foregroundPane.init();
 
                     contextMenuController.initTitledPaneMap();
 
-                    loadingPane.setTextLabelIdentifier("connectLocationRemote");
+                    loadingPane.info("connectLocationRemote");
                     locationPaneController.connectLocationRemote();
                     unitsPaneController.connectUnitRemote();
                     maintenanceLayerController.connectUnitRemote();
                     editingLayerController.connectUnitRemote();
+                    loadingPane.info("done");
 
                     return null;
                 } catch (Exception ex) {
-                    loadingPane.setTextLabelIdentifier("errorDuringStartup");
+                    loadingPane.error("errorDuringStartup");
                     Thread.sleep(3000);
                     Exception exx = new FatalImplementationErrorException("Could not init panes", this, ex);
                     ExceptionPrinter.printHistoryAndExit(exx, LOGGER);
@@ -235,32 +239,7 @@ public class BCozy extends Application {
         System.exit(0);
     }
 
-    /**
-     * Method to change application wide theme from other locations in the view.
-     *
-     * @param themeName the name of the theme to be set
-     */
-    public static void changeTheme(final String themeName) {
-        if (primaryStage != null) {
-            switch (themeName) {
-                case Constants.DARK_THEME_CSS:
-                    primaryStage.getScene().getStylesheets().clear();
-                    primaryStage.getScene().getStylesheets().addAll(Constants.DEFAULT_CSS, Constants.DARK_THEME_CSS);
-                    ImageViewProvider.colorizeIconsToWhite();
-                    baseColorIsWhite = true;
-                    break;
-                case Constants.LIGHT_THEME_CSS:
-                    primaryStage.getScene().getStylesheets().clear();
-                    primaryStage.getScene().getStylesheets().addAll(Constants.DEFAULT_CSS, Constants.LIGHT_THEME_CSS);
-                    ImageViewProvider.colorizeIconsToBlack();
-                    baseColorIsWhite = false;
-                    break;
-                default:
-                    primaryStage.getScene().getStylesheets().clear();
-                    break;
-            }
-        }
-    }
+
 
     private static void registerResponsiveHandler() {
         LOGGER.debug("Register responsive handler...");

@@ -40,7 +40,7 @@ public class LightSensorPane extends AbstractUnitPane<LightSensorRemote, LightSe
         super(LightSensorRemote.class, true);
 //
 //        headContent = new BorderPane();
-//        brightnessIcon = new SVGIcon(MaterialDesignIcon.CHECKBOX_BLANK_CIRCLE, MaterialDesignIcon.CHECKBOX_BLANK_CIRCLE_OUTLINE, Constants.SMALL_ICON);
+//        brightnessIcon = new SVGIcon(MaterialDesignIcon.CHECKBOX_BLANK_CIRCLE, MaterialDesignIcon.CHECKBOX_BLANK_CIRCLE_OUTLINE, JFXConstants.ICON_SIZE_SMALL);
 //        brightnessStatus = new Text();
 //
 //        initTitle();

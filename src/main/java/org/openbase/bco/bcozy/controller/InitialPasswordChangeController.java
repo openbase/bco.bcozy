@@ -10,6 +10,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Pair;
+import org.openbase.bco.bcozy.util.ThemeManager;
 import org.openbase.bco.bcozy.view.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +18,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 
 /**
- * Controller for Initial-Password-Cange.
+ * Controller for Initial-Password-Change.
  *
  * Constructs a new, uncloseable, Stage in front of the existing.
  *
@@ -55,10 +56,7 @@ public class InitialPasswordChangeController {
         stage.setScene(new Scene(parent));
         stage.setWidth(440.0);
         stage.setHeight(440.0);
-        stage.getScene().getStylesheets().clear();
-        stage.getScene().getStylesheets().addAll(Constants.DEFAULT_CSS, Constants.LIGHT_THEME_CSS);
+        ThemeManager.getInstance().applyTheme(stage.getScene());
         return stage;
     }
-
-
 }

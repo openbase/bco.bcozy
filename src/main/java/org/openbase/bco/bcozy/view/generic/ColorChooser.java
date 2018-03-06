@@ -1,17 +1,17 @@
 /**
  * ==================================================================
- *
+ * <p>
  * This file is part of org.openbase.bco.bcozy.
- *
+ * <p>
  * org.openbase.bco.bcozy is free software: you can redistribute it and modify
  * it under the terms of the GNU General Public License (Version 3)
  * as published by the Free Software Foundation.
- *
+ * <p>
  * org.openbase.bco.bcozy is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
@@ -32,17 +32,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.CycleMethod;
-import javafx.scene.paint.ImagePattern;
-import javafx.scene.paint.LinearGradient;
-import javafx.scene.paint.Stop;
+import javafx.scene.layout.*;
+import javafx.scene.paint.*;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.Rectangle;
@@ -55,8 +46,24 @@ import org.openbase.jul.visual.javafx.iface.DynamicPane;
  */
 public class ColorChooser extends HBox implements DynamicPane {
 
-    private static final double COLOR_BOX_SIZE = 75.0;
+    /**
+     * Full circle angle in degree.
+     */
+    public static final double ROUND_ANGLE = 360.0;
+    /**
+     * Obtuse angle (270) in degree.
+     */
+    public static final int OBTUSE_ANGLE_270 = 270;
+    /**
+     * Right angle in degree.
+     */
+    public static final int RIGHT_ANGLE = 90;
+    /**
+     * 255 (1 byte) for rgb color.
+     */
+    public static final int RGB255 = 255;
 
+    private static final double COLOR_BOX_SIZE = 75.0;
     private final ObjectProperty<Color> selectedColorProperty;
 
     private final DoubleProperty hueProperty;
@@ -74,6 +81,10 @@ public class ColorChooser extends HBox implements DynamicPane {
         this.brightnessProperty = new SimpleDoubleProperty(0.0);
         this.hueValueSelector = new Rectangle();
         this.selectedColorProperty = new SimpleObjectProperty<>(Color.BLACK);
+    }
+
+    static double clamp(final double value) {
+        return value < 0 ? 0 : value > 1 ? 1 : value;
     }
 
     @Override
@@ -114,7 +125,7 @@ public class ColorChooser extends HBox implements DynamicPane {
             saturationProperty.set(clamp(xMouse / COLOR_BOX_SIZE));
             brightnessProperty.set(1 - (clamp(yMouse / COLOR_BOX_SIZE)));
 
-            updateColor();  
+            updateColor();
             event.consume();
         };
 
@@ -125,8 +136,8 @@ public class ColorChooser extends HBox implements DynamicPane {
         colorRectContainer.setOnMousePressed(colorContainerMouseHandler);
         colorRectContainer.setOnMouseDragged(colorContainerMouseHandler);
 
-        hueValueSelector.setWidth(COLOR_BOX_SIZE / Constants.TEN);
-        hueValueSelector.setHeight(COLOR_BOX_SIZE / Constants.SIX);
+        hueValueSelector.setWidth(COLOR_BOX_SIZE / 10);
+        hueValueSelector.setHeight(COLOR_BOX_SIZE / 6);
         hueValueSelector.setFill(Color.web(Constants.WHITE, 0.0));
         hueValueSelector.getStyleClass().add("rectangle-selector");
         hueValueSelector.setMouseTransparent(true);
@@ -144,7 +155,7 @@ public class ColorChooser extends HBox implements DynamicPane {
             double yMouse = event.getY();
             double xMouse = event.getX();
 
-            angle = (Math.toDegrees(Math.atan2(yMouse, xMouse)) + Constants.ROUND_ANGLE + Constants.RIGHT_ANGLE) % Constants.ROUND_ANGLE;
+            angle = (Math.toDegrees(Math.atan2(yMouse, xMouse)) + ROUND_ANGLE + RIGHT_ANGLE) % ROUND_ANGLE;
             hueProperty.set(angle);
 
             rectSelectorCoordinates();
@@ -192,13 +203,6 @@ public class ColorChooser extends HBox implements DynamicPane {
         return selectedColorProperty;
     }
 
-    public void setSelectedColor(final Color color) {
-        if (!isHover()) {
-            hueProperty.set(color.getHue());
-            angle = color.getHue();
-        }
-    }
-
     private Image colorSpectrumImage(final int width, final int height, final Stop... stops) {
         final WritableImage writableImage = new WritableImage(width, height);
         final PixelWriter pixelWriter = writableImage.getPixelWriter();
@@ -211,20 +215,20 @@ public class ColorChooser extends HBox implements DynamicPane {
                 final double distance = Math.sqrt((deltaX * deltaX) + (deltaY * deltaY));
                 double angle = Math.abs(Math.toDegrees(Math.acos(deltaX / distance)));
                 if (deltaX >= 0 && deltaY <= 0) {
-                    angle = Constants.RIGHT_ANGLE - angle;
+                    angle = RIGHT_ANGLE - angle;
                 } else if (deltaX >= 0 && deltaY >= 0) {
-                    angle += Constants.RIGHT_ANGLE;
+                    angle += RIGHT_ANGLE;
                 } else if (deltaX <= 0 && deltaY >= 0) {
-                    angle += Constants.RIGHT_ANGLE;
+                    angle += RIGHT_ANGLE;
                 } else if (deltaX <= 0 && deltaY <= 0) {
-                    angle = Constants.ROUND_ANGLE + Constants.RIGHT_ANGLE - angle;
+                    angle = ROUND_ANGLE + RIGHT_ANGLE - angle;
                 }
                 for (int i = 0; i < (stops.length - 1); i++) {
                     final double offset = stops[i].getOffset();
                     final double nextOffset = stops[i + 1].getOffset();
-                    if (angle >= (offset * Constants.ROUND_ANGLE) && angle < (nextOffset * Constants.ROUND_ANGLE)) {
-                        final double fraction = (angle - offset * Constants.ROUND_ANGLE)
-                            / ((nextOffset - offset) * Constants.ROUND_ANGLE);
+                    if (angle >= (offset * ROUND_ANGLE) && angle < (nextOffset * ROUND_ANGLE)) {
+                        final double fraction = (angle - offset * ROUND_ANGLE)
+                                / ((nextOffset - offset) * ROUND_ANGLE);
                         color = interpolateColor(stops[i].getColor(), stops[i + 1].getColor(), fraction);
                     }
                 }
@@ -246,28 +250,24 @@ public class ColorChooser extends HBox implements DynamicPane {
         return Color.color(red, green, blue, opacity);
     }
 
-    static double clamp(final double value) {
-        return value < 0 ? 0 : value > 1 ? 1 : value;
-    }
-
     private Stop[] hueStops() {
         double offset;
         int hue;
-        Stop[] stops = new Stop[Constants.RGB255];
+        Stop[] stops = new Stop[RGB255];
 
-        for (int i = 0; i < Constants.RGB255; i++) {
-            offset = (1.0 / Constants.RGB255) * i;
-            hue = (int) ((i / (float) Constants.RGB255) * Constants.ROUND_ANGLE);
+        for (int i = 0; i < RGB255; i++) {
+            offset = (1.0 / RGB255) * i;
+            hue = (int) ((i / (float) RGB255) * ROUND_ANGLE);
             stops[i] = new Stop(offset, Color.hsb(hue, 1, 1));
         }
         return stops;
     }
 
     private Circle circleSelector() {
-        final Circle circle = new Circle(COLOR_BOX_SIZE / Constants.FIFTEEN, Color.web(Constants.WHITE, 0.0));
+        final Circle circle = new Circle(COLOR_BOX_SIZE / 15, Color.web(Constants.WHITE, 0.0));
 
         circle.getStyleClass().add("circle-selector");
-          circle.setMouseTransparent(true);
+        circle.setMouseTransparent(true);
         circle.setStroke(Color.web(Constants.WHITE, 1.0));
         circle.setCache(true);
         circle.setManaged(false);
@@ -290,15 +290,22 @@ public class ColorChooser extends HBox implements DynamicPane {
         return selectedColorProperty.get();
     }
 
+    public void setSelectedColor(final Color color) {
+        if (!isHover()) {
+            hueProperty.set(color.getHue());
+            angle = color.getHue();
+        }
+    }
+
     private Pane saturationRect() {
         final Pane colorRectSaturation = new Pane();
 
         colorRectSaturation.setPrefSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
 //        colorRectSaturation.setMinSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
         colorRectSaturation.setBackground(new Background(new BackgroundFill(new LinearGradient(0.0, 0.0, 1.0, 0.0, true,
-            CycleMethod.NO_CYCLE, new Stop(0.0, Color.rgb(Constants.RGB255, Constants.RGB255,
-                Constants.RGB255, 1.0)), new Stop(1, Color.rgb(Constants.RGB255, Constants.RGB255,
-                Constants.RGB255, 0.0))), CornerRadii.EMPTY, Insets.EMPTY)));
+                CycleMethod.NO_CYCLE, new Stop(0.0, Color.rgb(RGB255, RGB255,
+                RGB255, 1.0)), new Stop(1, Color.rgb(RGB255, RGB255,
+                RGB255, 0.0))), CornerRadii.EMPTY, Insets.EMPTY)));
 
         return colorRectSaturation;
     }
@@ -309,19 +316,19 @@ public class ColorChooser extends HBox implements DynamicPane {
         colorRectBrightness.setPrefSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
 //        colorRectBrightness.setMinSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
         colorRectBrightness.setBackground(new Background(new BackgroundFill(new LinearGradient(0, 0, 0, 1, true,
-            CycleMethod.NO_CYCLE, new Stop(0, Color.rgb(0, 0, 0, 0)), new Stop(1, Color.rgb(0, 0, 0, 1))),
-            CornerRadii.EMPTY, Insets.EMPTY)));
+                CycleMethod.NO_CYCLE, new Stop(0, Color.rgb(0, 0, 0, 0)), new Stop(1, Color.rgb(0, 0, 0, 1))),
+                CornerRadii.EMPTY, Insets.EMPTY)));
 
         return colorRectBrightness;
     }
 
     private Shape hollowCircle() {
         final Circle circleTall = new Circle(COLOR_BOX_SIZE / 2);
-        final Circle circleSmall = new Circle(circleTall.getRadius() - COLOR_BOX_SIZE / Constants.SIX);
+        final Circle circleSmall = new Circle(circleTall.getRadius() - COLOR_BOX_SIZE / 6);
         final Shape hollowCircle = Path.subtract(circleTall, circleSmall);
         final Stop[] hueFraction = hueStops();
         final ImagePattern imagePattern = new ImagePattern(colorSpectrumImage((int) COLOR_BOX_SIZE,
-            (int) COLOR_BOX_SIZE, hueFraction));
+                (int) COLOR_BOX_SIZE, hueFraction));
         hollowCircle.setLayoutX(circleTall.getRadius());
         hollowCircle.setLayoutY(circleTall.getRadius());
         hollowCircle.setFill(imagePattern);
@@ -331,8 +338,8 @@ public class ColorChooser extends HBox implements DynamicPane {
 
     private void rectSelectorCoordinates() {
         rectX = Math.round(COLOR_BOX_SIZE / 2.0 + (COLOR_BOX_SIZE - hueValueSelector.getHeight()) / 2.0
-            * Math.cos(Math.toRadians((angle + Constants.OBTUSE_ANGLE_270) % Constants.ROUND_ANGLE)));
+                * Math.cos(Math.toRadians((angle + OBTUSE_ANGLE_270) % ROUND_ANGLE)));
         rectY = Math.round(COLOR_BOX_SIZE / 2.0 + (COLOR_BOX_SIZE - hueValueSelector.getHeight()) / 2.0
-            * Math.sin(Math.toRadians((angle + Constants.OBTUSE_ANGLE_270) % Constants.ROUND_ANGLE)));
+                * Math.sin(Math.toRadians((angle + OBTUSE_ANGLE_270) % ROUND_ANGLE)));
     }
 }

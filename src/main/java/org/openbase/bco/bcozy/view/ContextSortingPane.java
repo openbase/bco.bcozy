@@ -33,7 +33,6 @@ public class ContextSortingPane extends SegmentedButton {
      * @param width width of the parent
      */
     public ContextSortingPane(final double width) {
-
         final ToggleGroup toggleGroup = new ToggleGroup();
         final ToggleButton locationBtn = new ToggleButton("Location");
         locationBtn.setToggleGroup(toggleGroup);
@@ -43,14 +42,11 @@ public class ContextSortingPane extends SegmentedButton {
         functionBtn.setToggleGroup(toggleGroup);
         functionBtn.setMaxWidth(Double.MAX_VALUE);
         functionBtn.setPrefWidth(width / 2);
-        //CHECKSTYLE.OFF: MultipleStringLiterals
         locationBtn.getStyleClass().addAll("visible-lg", "visible-md", "visible-sm", "visible-xs");
         functionBtn.getStyleClass().addAll("visible-lg", "visible-md", "visible-sm", "visible-xs");
-        //CHECKSTYLE.ON: MultipleStringLiterals
         this.setToggleGroup(toggleGroup);
         this.getButtons().addAll(locationBtn, functionBtn);
         this.setMaxWidth(Double.MAX_VALUE);
-        //this.setPrefWidth(width);
         this.setPadding(new Insets(Constants.INSETS, Constants.INSETS, Constants.INSETS, Constants.INSETS));
     }
 }

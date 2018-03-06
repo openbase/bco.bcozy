@@ -20,23 +20,18 @@ package org.openbase.bco.bcozy.view.location;
 
 import com.google.protobuf.GeneratedMessage;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import org.openbase.bco.bcozy.view.Constants;
-import org.openbase.bco.bcozy.view.SVGIcon;
+import org.openbase.jul.visual.javafx.JFXConstants;
+import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 import org.openbase.bco.bcozy.view.generic.WidgetPane.DisplayMode;
 import org.openbase.bco.bcozy.view.pane.unit.AbstractUnitPane;
 import org.openbase.bco.bcozy.view.pane.unit.UnitPaneFactoryImpl;
@@ -70,7 +65,7 @@ public class UnitButtonGrouped extends Pane {
         locationId = new String();
         expanded = false;
         groupingPane = new FlowPane();
-        groupingPane.setPrefWrapLength(2 * (Constants.SMALL_ICON + (2 * Constants.INSETS)));
+        groupingPane.setPrefWrapLength(2 * (JFXConstants.ICON_SIZE_SMALL + (2 * Constants.INSETS)));
         iconPane = new GridPane();
         stackPane = new StackPane();
         unitCount = new Text("0");
@@ -83,7 +78,7 @@ public class UnitButtonGrouped extends Pane {
         stackPane.getChildren().add(groupingPane);
         this.getChildren().add(stackPane);
 
-        clipRectangle1 = new Rectangle(Constants.SMALL_ICON, Constants.SMALL_ICON);
+        clipRectangle1 = new Rectangle(JFXConstants.ICON_SIZE_SMALL, JFXConstants.ICON_SIZE_SMALL);
         this.setClip(clipRectangle1);
 
         groupingPane.layoutBoundsProperty().addListener((ov, oldValue, newValue) -> {
@@ -129,7 +124,7 @@ public class UnitButtonGrouped extends Pane {
             content.setDisplayMode(DisplayMode.ICON_ONLY);
 
             if (groupingPane.getChildren().isEmpty()) {
-                SVGIcon icon = content.getIconSymbol();
+                SVGGlyphIcon icon = content.getIconSymbol();
                 iconPane.getChildren().add(icon);
                 this.locationId = unit.getConfig().getPlacementConfig().getLocationId();
             }
@@ -158,8 +153,8 @@ public class UnitButtonGrouped extends Pane {
             node.setVisible(false);
         });
         iconPane.setVisible(true);
-        clipRectangle1.setWidth(Constants.SMALL_ICON);
-        clipRectangle1.setHeight(Constants.SMALL_ICON);
+        clipRectangle1.setWidth(JFXConstants.ICON_SIZE_SMALL);
+        clipRectangle1.setHeight(JFXConstants.ICON_SIZE_SMALL);
     }
 
     /**

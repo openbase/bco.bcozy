@@ -1,40 +1,44 @@
 /**
  * ==================================================================
- *
+ * <p>
  * This file is part of org.openbase.bco.bcozy.
- *
+ * <p>
  * org.openbase.bco.bcozy is free software: you can redistribute it and modify
  * it under the terms of the GNU General Public License (Version 3)
  * as published by the Free Software Foundation.
- *
+ * <p>
  * org.openbase.bco.bcozy is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
  */
 package org.openbase.bco.bcozy.view;
 
-import javafx.scene.effect.Blend;
-import javafx.scene.effect.BlendMode;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.NotAvailableException;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by hoestreich on 12/14/15.
+ *
+ * @author hoestreich
+ * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>
+ *
  */
 public final class ImageViewProvider {
 
     private static List<ImageView> imageViews = new ArrayList<>();
 
-    private static ColorAdjust actColor = new ColorAdjust(360.0, 100, -100.0, 0.0);
+    private static ColorAdjust colorEffect = new ColorAdjust(1.0, 1, -1, 0.0);
 
     private ImageViewProvider() {
     }
@@ -42,24 +46,57 @@ public final class ImageViewProvider {
     /**
      * Method to create an Image view with quadratic measures.
      *
-     * @param imagePath the path to the image applied to the image view
      * @param size the width and height (same value used for both)
+     * @param imageURI the path to the image applied to the image view
      * @return a new ImageView Instance initialized with the provided parameters
      */
-    public static ImageView createImageView(final String imagePath, final double size) {
-        return init(imagePath, size, size);
+    public static ImageView createImageView(final double size, final String imageURI) throws CouldNotPerformException {
+        return createImageView(size, size, imageURI);
     }
 
     /**
      * Method to create an Image view with quadratic measures.
      *
-     * @param imagePath the path to the image applied to the image view
      * @param width the width for the image
      * @param height the height for the image
+     * @param imageURI the path to the image applied to the image view
      * @return a new ImageView Instance initialized with the provided parameters
      */
-    public static ImageView createImageView(final String imagePath, final double width, final double height) {
-        return init(imagePath, width, height);
+    public static ImageView createImageView(final double width, final double height, final String imageURI) throws CouldNotPerformException {
+        final Image icon = new Image(ImageViewProvider.class.getResourceAsStream(imageURI));
+        final ImageView imageView = new ImageView(icon);
+        imageView.setPreserveRatio(true);
+        imageView.setFitHeight(height);
+        imageView.setFitWidth(width);
+        return registerImageView(imageView);
+    }
+
+    /**
+     * Method to create an Image view with quadratic measures.
+     *
+     * @param width the width for the image
+     * @param height the height for the image
+     * @param imageURI the path to the image applied to the image view
+     * @return a new ImageView Instance initialized with the provided parameters
+     */
+    public static List<ImageView> createImageView(final double width, final double height, final String... imageURI) throws CouldNotPerformException {
+        final List<ImageView> imageViewList = new ArrayList<>(imageURI.length);
+        for (String uri : imageURI) {
+            imageViewList.add(createImageView(width, height, uri));
+        }
+        return imageViewList;
+    }
+
+    public static ImageView registerImageView(final ImageView imageView) throws CouldNotPerformException {
+
+        if(imageView == null) {
+            throw new NotAvailableException("imageView");
+        }
+
+        imageView.setSmooth(true);
+        imageView.setEffect(colorEffect);
+        imageViews.add(imageView);
+        return imageView;
     }
 
     /**
@@ -86,23 +123,15 @@ public final class ImageViewProvider {
      */
     public static void colorizeIcons(final double hue, final double saturation, final double brightness, final double contrast) {
 
-        actColor = new ColorAdjust(hue, saturation, brightness, contrast);
+        colorEffect = new ColorAdjust(hue, saturation, brightness, contrast);
 
         for (final ImageView imageView : imageViews) {
-            imageView.setEffect(actColor);
+            imageView.setEffect(colorEffect);
             imageView.setSmooth(true);
         }
     }
 
-    private static ImageView init(final String imagePath, final double width, final double height) {
-        final Image icon = new Image(ImageViewProvider.class.getResourceAsStream(imagePath));
-        final ImageView imageView = new ImageView(icon);
-        imageView.setPreserveRatio(true);
-        imageView.setFitHeight(height);
-        imageView.setFitWidth(width);
-        imageView.setEffect(actColor);
-        imageView.setSmooth(true);
-        imageViews.add(imageView);
-        return imageView;
+    public static ColorAdjust getColorEffect() {
+        return colorEffect;
     }
 }

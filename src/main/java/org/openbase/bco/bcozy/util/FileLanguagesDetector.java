@@ -19,7 +19,7 @@ import static org.slf4j.LoggerFactory.getLogger;
  *
  * @author vdasilva
  */
-public class FileLanguagesDetector implements LanguagesDetector {
+public class FileLanguagesDetector implements LanguageLoader {
     private static final org.slf4j.Logger LOGGER = getLogger(FileLanguagesDetector.class);
 
     @Override

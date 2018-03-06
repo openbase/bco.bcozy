@@ -112,7 +112,6 @@ public class PassagePolygon extends ConnectionPolygon {
                 }
             }
         }
-        //CHECKSTYLE.ON: MagicNumber
     }
 
     @Override
@@ -124,11 +123,6 @@ public class PassagePolygon extends ConnectionPolygon {
         this.setMainColor(Constants.PASSAGE_FILL);
         this.setStrokeWidth(0);
         this.setMouseTransparent(true);
-    }
-
-    @Override
-    protected void changeStyleOnOpening(final boolean open) {
-        // nothing to do here...
     }
 
     /**

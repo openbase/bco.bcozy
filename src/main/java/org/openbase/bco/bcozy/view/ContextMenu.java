@@ -28,6 +28,8 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.HiddenSidesPane;
+import org.openbase.jul.visual.javafx.JFXConstants;
+import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 import org.openbase.bco.bcozy.view.pane.unit.TitledUnitPaneContainer;
 
 /**
@@ -59,9 +61,9 @@ public class ContextMenu extends VBox {
         this.setPrefWidth(width);
 
 
-        fullscreenBtn = new FloatingButton(new SVGIcon(MaterialIcon.FULLSCREEN, Constants.MIDDLE_ICON, true));
+        fullscreenBtn = new FloatingButton(new SVGGlyphIcon(MaterialIcon.FULLSCREEN, JFXConstants.ICON_SIZE_MIDDLE, true));
 
-        settingsBtn = new FloatingButton(new SVGIcon(MaterialDesignIcon.SETTINGS, Constants.MIDDLE_ICON, true));
+        settingsBtn = new FloatingButton(new SVGGlyphIcon(MaterialDesignIcon.SETTINGS, JFXConstants.ICON_SIZE_MIDDLE, true));
 
         HBox floatingButtons = new HBox(20.0, settingsBtn, fullscreenBtn);
         floatingButtons.setAlignment(Pos.TOP_LEFT);

@@ -35,7 +35,8 @@ import javafx.scene.layout.VBox;
 import org.controlsfx.control.HiddenSidesPane;
 import org.controlsfx.control.textfield.*;
 import org.openbase.bco.bcozy.view.Constants;
-import org.openbase.bco.bcozy.view.SVGIcon;
+import org.openbase.jul.visual.javafx.JFXConstants;
+import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InitializationException;
@@ -73,12 +74,12 @@ public class AvailableUsersPane extends PaneElement {
      */
     public AvailableUsersPane() {
         searchField = new CustomTextField();
-        searchField.setRight(new SVGIcon(FontAwesomeIcon.SEARCH, Constants.EXTRA_SMALL_ICON, true));
+        searchField.setRight(new SVGGlyphIcon(FontAwesomeIcon.SEARCH, JFXConstants.ICON_SIZE_EXTRA_SMALL, true));
 
         searchField.textProperty().addListener((observable, oldValue, newValue) -> search(newValue));
 
         userPanes = new VBox(Constants.INSETS);
-        statusIcon = new BorderPane(new SVGIcon(MaterialDesignIcon.ACCOUNT_CIRCLE, Constants.MIDDLE_ICON, true));
+        statusIcon = new BorderPane(new SVGGlyphIcon(MaterialDesignIcon.ACCOUNT_CIRCLE, JFXConstants.ICON_SIZE_MIDDLE, true));
 
         final ScrollPane verticalScrollPane = new ScrollPane();
         verticalScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
@@ -106,7 +107,7 @@ public class AvailableUsersPane extends PaneElement {
     private void enableSearchField(final boolean enable) {
         if (enable) {
             getChildren().clear();
-            getChildren().addAll(hiddenSidesPane, searchField);
+            getChildren().addAll(searchField, hiddenSidesPane);
         } else {
             getChildren().clear();
             getChildren().addAll(hiddenSidesPane);
