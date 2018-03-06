@@ -397,21 +397,21 @@ public final class LocationPane extends Pane {
     /**
      * Will add a UnitIcon to the locationPane.
      *
-     * @param svgIcon The icon
+     * @param SVGGlyphIcon The icon
      * @param onActionHandler The Handler that gets activated when the button is
      * pressed
      * @param position The position where the button is to be placed
      *
-     * public void addUnit(final SVGIcon svgIcon, final EventHandler<ActionEvent> onActionHandler,
+     * public void addUnit(final SVGGlyphIcon SVGGlyphIcon, final EventHandler<ActionEvent> onActionHandler,
      * final Point2D position) {
-     * final UnitButton unitButton = new UnitButton(svgIcon, onActionHandler);
+     * final UnitButton unitButton = new UnitButton(SVGGlyphIcon, onActionHandler);
      * unitButton.setTranslateX(position.getX());
      * unitButton.setTranslateY(position.getY());
      * this.getChildren().add(unitButton);
      * } *
-     * public void addUnit(final SVGIcon svgIcon,
+     * public void addUnit(final SVGGlyphIcon SVGGlyphIcon,
      * final Point2D position) {
-     * final UnitButton unitButton = new UnitButton(svgIcon, null);
+     * final UnitButton unitButton = new UnitButton(SVGGlyphIcon, null);
      * unitButton.setTranslateX(position.getX());
      * unitButton.setTranslateY(position.getY());
      * //unitSymbols.add(unitButton);

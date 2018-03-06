@@ -71,23 +71,18 @@ public class LocationPaneController {
     public void connectLocationRemote() {
         try {
             Registries.getLocationRegistry().waitForData();
-            Registries.getLocationRegistry().addDataObserver(new Observer<LocationRegistryData>() {
-                @Override
-                public void update(Observable<LocationRegistryData> source, LocationRegistryData data) throws Exception {
-                    Platform.runLater(() -> {
-                        try {
-                            fetchLocations();
-                            fetchConnections();
-                            locationPane.updateLocationPane();
-                        } catch (CouldNotPerformException | InterruptedException ex) {
-                            ExceptionPrinter.printHistory(ex, LOGGER);
-                        }
-                    });
+            Registries.getLocationRegistry().addDataObserver((source, data) -> Platform.runLater(() -> {
+                try {
+                    fetchLocations();
+                    fetchConnections();
+                    locationPane.updateLocationPane();
+                } catch (CouldNotPerformException | InterruptedException ex) {
+                    ExceptionPrinter.printHistory(ex, LOGGER);
                 }
-            });
+            }));
             updateAndZoomFit();
             locationPane.setInitialized(true);
-        } catch (Exception ex) { //NOPMD
+        } catch (Exception ex) {
             ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
         }
     }
@@ -106,9 +101,7 @@ public class LocationPaneController {
                 }
                 final List<Point2D> vertices = new LinkedList<>();
 
-                //  final List<Point2D> vertices = new LinkedList<>();
                 // Get the transformation for the current room
-//                final Future<Transform> transform = Units.getUnitTransformation(locationUnitConfig, Registries.getUnitRegistry().getUnitConfigById(locationUnitConfig.getPlacementConfig().getLocationId()));
                 final Future<Transform> transform = Registries.getLocationRegistry().getUnitTransformationFuture(locationUnitConfig, Registries.getLocationRegistry().getRootLocationConfig());
 
                 // Get the shape of the room
@@ -124,7 +117,6 @@ public class LocationPaneController {
                     vertices.add(new Point2D(vertex.x, vertex.y));
                 }
                 
-                // locationPane.addLocation(locationUnitConfig.getId(), locationUnitConfig.getLocationConfig().getChildIdList(), vertices, locationUnitConfig.getLocationConfig().getType().toString());
                 locationPane.addLocation(locationUnitConfig, vertices);
    
             } catch (InterruptedException | ExecutionException | TimeoutException ex) {

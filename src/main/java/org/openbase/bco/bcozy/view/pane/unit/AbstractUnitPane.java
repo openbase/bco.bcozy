@@ -26,7 +26,8 @@ import org.openbase.bco.authentication.lib.SessionManager;
 import org.openbase.bco.authentication.lib.jp.JPAuthentication;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.InfoPane;
-import org.openbase.bco.bcozy.view.SVGIcon;
+import org.openbase.jul.visual.javafx.JFXConstants;
+import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 import org.openbase.bco.bcozy.view.generic.ExpandableWidgedPane;
 import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
 import org.openbase.bco.dal.remote.unit.Units;
@@ -341,7 +342,7 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
      *
      * @return
      */
-    public SVGIcon getIconSymbol() {
-        return new SVGIcon(MaterialDesignIcon.VECTOR_CIRCLE, Constants.SMALL_ICON, false);
+    public SVGGlyphIcon getIconSymbol() {
+        return new SVGGlyphIcon(MaterialDesignIcon.VECTOR_CIRCLE, JFXConstants.ICON_SIZE_SMALL, false);
     }
 }

@@ -107,10 +107,10 @@ public class RollerShutterPane extends AbstractUnitPane<RollerShutterRemote, Rol
     public RollerShutterPane() {
         super(RollerShutterRemote.class, true);
 //
-//        rollerShutterIconBackground = new SVGIcon(MaterialDesignIcon.FORMAT_ALIGN_JUSTIFY, Constants.SMALL_ICON, false);
-//        rollerShutterIconForeground = new SVGIcon(MaterialDesignIcon.FORMAT_ALIGN_JUSTIFY, Constants.SMALL_ICON, true);
-//        unknownBackgroundIcon = new SVGIcon(MaterialDesignIcon.CHECKBOX_BLANK_CIRCLE, Constants.SMALL_ICON - 2, false);
-//        unknownForegroundIcon = new SVGIcon(MaterialDesignIcon.HELP_CIRCLE, Constants.SMALL_ICON, false);
+//        rollerShutterIconBackground = new SVGIcon(MaterialDesignIcon.FORMAT_ALIGN_JUSTIFY, JFXConstants.ICON_SIZE_SMALL, false);
+//        rollerShutterIconForeground = new SVGIcon(MaterialDesignIcon.FORMAT_ALIGN_JUSTIFY, JFXConstants.ICON_SIZE_SMALL, true);
+//        unknownBackgroundIcon = new SVGIcon(MaterialDesignIcon.CHECKBOX_BLANK_CIRCLE, JFXConstants.ICON_SIZE_SMALL - 2, false);
+//        unknownForegroundIcon = new SVGIcon(MaterialDesignIcon.HELP_CIRCLE, JFXConstants.ICON_SIZE_SMALL, false);
 //        headContent = new BorderPane();
 //        bodyContent = new HBox();
 //        rollerShutterStatus = new Text();
@@ -160,7 +160,7 @@ public class RollerShutterPane extends AbstractUnitPane<RollerShutterRemote, Rol
 //            rollerShutterIconBackground.changeBackgroundIcon(MaterialDesignIcon.FORMAT_ALIGN_JUSTIFY);
 //            rollerShutterIconBackground.setForegroundIconColor(Color.YELLOW);
 //            rollerShutterIconForeground.changeForegroundIcon(MaterialDesignIcon.FORMAT_ALIGN_JUSTIFY);
-//            ((Rectangle) rollerShutterIconForeground.getClip()).setHeight(Constants.SMALL_ICON * percentage);
+//            ((Rectangle) rollerShutterIconForeground.getClip()).setHeight(JFXConstants.ICON_SIZE_SMALL * percentage);
 //
 //            rollerShutterStatus.setText((int) (Constants.ONE_HUNDRED * percentage) + Constants.PERCENTAGE);
 //
@@ -179,10 +179,10 @@ public class RollerShutterPane extends AbstractUnitPane<RollerShutterRemote, Rol
 //        iconPane.setHgap(Constants.INSETS);
 //        headContent.setCenter(getUnitLabel());
 //        headContent.setAlignment(getUnitLabel(), Pos.CENTER_LEFT);
-//        headContent.prefHeightProperty().set(Constants.SMALL_ICON + Constants.INSETS);
+//        headContent.prefHeightProperty().set(JFXConstants.ICON_SIZE_SMALL + Constants.INSETS);
 //
-//        clip.setWidth(Constants.SMALL_ICON);
-//        clip.setHeight(Constants.SMALL_ICON);
+//        clip.setWidth(JFXConstants.ICON_SIZE_SMALL);
+//        clip.setHeight(JFXConstants.ICON_SIZE_SMALL);
 //
 //        rollerShutterIconForeground.setClip(clip);
 //    }
@@ -205,10 +205,10 @@ public class RollerShutterPane extends AbstractUnitPane<RollerShutterRemote, Rol
 //        buttonDown.setOnMousePressed(sendingDown);
 //        buttonDown.setOnMouseReleased(sendingStop);
 //
-//        arrowUp = new SVGIcon(MaterialDesignIcon.CHEVRON_UP, Constants.SMALL_ICON, true);
-//        arrowDown = new SVGIcon(MaterialDesignIcon.CHEVRON_DOWN, Constants.SMALL_ICON, true);
-//        arrowDoubleUP = new SVGIcon(MaterialDesignIcon.CHEVRON_DOUBLE_UP, Constants.SMALL_ICON, true);
-//        arrowDoubleDown = new SVGIcon(MaterialDesignIcon.CHEVRON_DOUBLE_DOWN, Constants.SMALL_ICON, true);
+//        arrowUp = new SVGIcon(MaterialDesignIcon.CHEVRON_UP, JFXConstants.ICON_SIZE_SMALL, true);
+//        arrowDown = new SVGIcon(MaterialDesignIcon.CHEVRON_DOWN, JFXConstants.ICON_SIZE_SMALL, true);
+//        arrowDoubleUP = new SVGIcon(MaterialDesignIcon.CHEVRON_DOUBLE_UP, JFXConstants.ICON_SIZE_SMALL, true);
+//        arrowDoubleDown = new SVGIcon(MaterialDesignIcon.CHEVRON_DOUBLE_DOWN, JFXConstants.ICON_SIZE_SMALL, true);
 //
 //        buttonUp.setGraphic(arrowUp);
 //        buttonDown.setGraphic(arrowDown);

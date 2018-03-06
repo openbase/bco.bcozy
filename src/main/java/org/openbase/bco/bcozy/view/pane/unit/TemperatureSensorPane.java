@@ -43,12 +43,12 @@ public class TemperatureSensorPane extends AbstractUnitPane<TemperatureSensorRem
         getIcon().setForegroundIcon(WeatherIcon.THERMOMETER_INTERNAL);
 
 //        thermometerIconBackground = new SVGIcon(WeatherIcon.THERMOMETER_EXTERIOR,
-//                Constants.SMALL_ICON * Constants.WEATHER_ICONS_SCALE, true);
+//                JFXConstants.ICON_SIZE_SMALL * Constants.WEATHER_ICONS_SCALE, true);
 //        thermometerIconForeground = new SVGIcon(WeatherIcon.THERMOMETER_INTERNAL,
-//                Constants.SMALL_ICON * Constants.WEATHER_ICONS_SCALE, false);
-//        alarmIcon = new SVGIcon(FontAwesomeIcon.EXCLAMATION_TRIANGLE, Constants.SMALL_ICON, false);
-//        unknownBackgroundIcon = new SVGIcon(MaterialDesignIcon.CHECKBOX_BLANK_CIRCLE, Constants.SMALL_ICON - 2, false);
-//        unknownForegroundIcon = new SVGIcon(MaterialDesignIcon.HELP_CIRCLE, Constants.SMALL_ICON, false);
+//                JFXConstants.ICON_SIZE_SMALL * Constants.WEATHER_ICONS_SCALE, false);
+//        alarmIcon = new SVGIcon(FontAwesomeIcon.EXCLAMATION_TRIANGLE, JFXConstants.ICON_SIZE_SMALL, false);
+//        unknownBackgroundIcon = new SVGIcon(MaterialDesignIcon.CHECKBOX_BLANK_CIRCLE, JFXConstants.ICON_SIZE_SMALL - 2, false);
+//        unknownForegroundIcon = new SVGIcon(MaterialDesignIcon.HELP_CIRCLE, JFXConstants.ICON_SIZE_SMALL, false);
     }
 
     @Override

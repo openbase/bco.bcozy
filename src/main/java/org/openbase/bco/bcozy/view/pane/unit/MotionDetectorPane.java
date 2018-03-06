@@ -22,9 +22,9 @@ import de.jensd.fx.glyphs.materialicons.MaterialIcon;
 import javafx.animation.Animation;
 import javafx.animation.Interpolator;
 import javafx.scene.paint.Color;
-import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.dal.remote.unit.MotionDetectorRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.visual.javafx.JFXConstants;
 import rst.domotic.unit.dal.MotionDetectorDataType.MotionDetectorData;
 
 /**
@@ -46,7 +46,7 @@ public class MotionDetectorPane extends AbstractUnitPane<MotionDetectorRemote, M
                     setIcon(MaterialIcon.BLUR_ON, MaterialIcon.LENS);
                     getIcon().setForegroundIconColor(Color.BLACK);
                     getIcon().setBackgroundIconColor(Color.WHITE);
-                    getIcon().startForegroundIconRotateAnimation(0, 360, Animation.INDEFINITE, Constants.FADE_DURATION_FAST, Interpolator.LINEAR, false);
+                    getIcon().startForegroundIconRotateAnimation(0, 360, Animation.INDEFINITE, JFXConstants.DURATION_ROTATE_FAST, Interpolator.LINEAR, false);
                     break;
                 case NO_MOTION:
                     setIcon(MaterialIcon.BLUR_ON, MaterialIcon.LENS);

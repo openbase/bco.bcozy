@@ -35,9 +35,11 @@ import org.openbase.bco.bcozy.model.LanguageSelection;
 import org.openbase.bco.bcozy.model.UserData;
 import org.openbase.bco.bcozy.util.Language;
 import org.openbase.bco.bcozy.util.Languages;
+import org.openbase.bco.bcozy.util.ThemeManager;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.InfoPane;
-import org.openbase.bco.bcozy.view.SVGIcon;
+import org.openbase.jul.visual.javafx.JFXConstants;
+import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
@@ -97,19 +99,17 @@ public class UserSettingsController {
         });
 
         initEditableFields(changeUsername, changeFirstname, changeLastname, changeMail, changePhone);
-
         initializeLanguages();
 
-        final ResourceBundle languageBundle = ResourceBundle
-                .getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
-        availableThemes = FXCollections.observableArrayList(
-                languageBundle.getString(Constants.LIGHT_THEME_CSS_NAME),
-                languageBundle.getString(Constants.DARK_THEME_CSS_NAME));
+        // load theme list
+        final ResourceBundle languageBundle = ResourceBundle.getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault());
+        availableThemes = FXCollections.observableArrayList();
+        for (String theme : ThemeManager.getInstance().getThemeList()) {
+            availableThemes.add(languageBundle.getString(theme));
+        }
+
         themeChoice.setItems(availableThemes);
-
         changePasswordPane.setExpanded(false);
-
-
     }
 
     /**
@@ -160,7 +160,7 @@ public class UserSettingsController {
         for (CustomTextField field : fields) {
 
             Button editButton = new Button("");
-            editButton.setGraphic(new SVGIcon(FontAwesomeIcon.PENCIL, Constants.EXTRA_SMALL_ICON, true));
+            editButton.setGraphic(new SVGGlyphIcon(FontAwesomeIcon.PENCIL, JFXConstants.ICON_SIZE_EXTRA_SMALL, true));
 
             editButton.setOnAction((a) -> {
 
@@ -168,7 +168,7 @@ public class UserSettingsController {
                     try {
                         saveUserSettings();
                         field.setEditable(false);
-                        editButton.setGraphic(new SVGIcon(FontAwesomeIcon.PENCIL, Constants.EXTRA_SMALL_ICON, true));
+                        editButton.setGraphic(new SVGGlyphIcon(FontAwesomeIcon.PENCIL, JFXConstants.ICON_SIZE_EXTRA_SMALL, true));
                     } catch (InterruptedException ex) {
                         ExceptionPrinter.printHistory("Could not save user settings!", ex, LOGGER);
                         Thread.currentThread().interrupt();
@@ -177,7 +177,7 @@ public class UserSettingsController {
                 } else {
 
                     field.setEditable(true);
-                    editButton.setGraphic(new SVGIcon(FontAwesomeIcon.FLOPPY_ALT, Constants.EXTRA_SMALL_ICON, true));
+                    editButton.setGraphic(new SVGGlyphIcon(FontAwesomeIcon.FLOPPY_ALT, JFXConstants.ICON_SIZE_EXTRA_SMALL, true));
                 }
 
 

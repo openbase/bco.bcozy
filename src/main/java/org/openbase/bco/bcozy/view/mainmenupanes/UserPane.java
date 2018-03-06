@@ -29,7 +29,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ObserverLabel;
-import org.openbase.bco.bcozy.view.SVGIcon;
+import org.openbase.jul.visual.javafx.JFXConstants;
+import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 import org.openbase.bco.dal.remote.unit.Units;
 import org.openbase.bco.dal.remote.unit.user.UserRemote;
 import org.openbase.bco.registry.remote.Registries;
@@ -39,40 +40,34 @@ import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.iface.Shutdownable;
-import org.openbase.jul.pattern.Observable;
-import org.openbase.jul.pattern.Observer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.domotic.unit.UnitConfigType.UnitConfig;
-import rst.domotic.unit.user.UserDataType;
 
 /**
  * @author hoestreich
- * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>
- *
  * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>
  */
 public class UserPane extends BorderPane implements Shutdownable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserPane.class);
 
-    private SVGIcon userIcon;
-    private SVGIcon atHomeIcon;
+    private SVGGlyphIcon userIcon;
+    private SVGGlyphIcon atHomeIcon;
     private Label userNameLabel;
     private ObserverLabel userStateLabel;
     private UserRemote user;
     private final GridPane userIconPane;
 
     public UserPane() {
-        userIcon = new SVGIcon(MaterialIcon.PERSON, Constants.MIDDLE_ICON, false);
-        atHomeIcon = new SVGIcon(MaterialIcon.SEARCH, Constants.EXTRA_SMALL_ICON, true);
+        userIcon = new SVGGlyphIcon(MaterialIcon.PERSON, JFXConstants.ICON_SIZE_MIDDLE, false);
+        atHomeIcon = new SVGGlyphIcon(MaterialIcon.SEARCH, JFXConstants.ICON_SIZE_EXTRA_SMALL, true);
         userIconPane = new GridPane();
         userIconPane.setVgap(Constants.INSETS);
         userIconPane.setHgap(Constants.INSETS);
-        //CHECKSTYLE.OFF: MagicNumbers
+
         userIconPane.add(userIcon, 0, 0, 5, 5);
         userIconPane.add(atHomeIcon, 4, 4, 1, 1);
-        //CHECKSTYLE.ON: MagicNumbers
 
         userNameLabel = new Label();
         userNameLabel.getStyleClass().add(Constants.BOLD_LABEL);
@@ -91,27 +86,12 @@ public class UserPane extends BorderPane implements Shutdownable {
 
     }
 
-//    /**
-//     * Constructor for UserPane.
-//     * @param userName userName.
-//     * @param guest guest.
-//     * @param userState userState.
-//     * @param atHome atHome.
-//     */
-//    public UserPane(final String userName, final boolean guest, final String userState, final boolean atHome) {
-//        init(userName, guest, userState, atHome);
-//    }
     public void init(final UnitConfig userUniConfig) throws InitializationException, InterruptedException {
         try {
             user = Units.getUnit(userUniConfig, false, Units.USER);
-            user.addDataObserver(new Observer<UserDataType.UserData>() {
-                @Override
-                public void update(Observable<UserDataType.UserData> source, UserDataType.UserData data) throws Exception {
-                    Platform.runLater(() -> {
-                        updateDynamicComponents();
-                    });
-                }
-            });
+            user.addDataObserver((source, data) -> Platform.runLater(() -> {
+                updateDynamicComponents();
+            }));
             updateDynamicComponents();
         } catch (CouldNotPerformException ex) {
             throw new InitializationException(this, ex);
@@ -165,7 +145,7 @@ public class UserPane extends BorderPane implements Shutdownable {
                 case SHORT_AT_HOME:
                 case SOON_AWAY:
                     userIconPane.getChildren().remove(atHomeIcon);
-                    atHomeIcon = new SVGIcon(MaterialIcon.HOME, Constants.EXTRA_SMALL_ICON, true);
+                    atHomeIcon = new SVGGlyphIcon(MaterialIcon.HOME, JFXConstants.ICON_SIZE_EXTRA_SMALL, true);
                     userIconPane.add(atHomeIcon, 4, 4, 1, 1);
                     userIcon.setForegroundIconColor(Color.DODGERBLUE);
                     setManaged(true);
@@ -174,7 +154,7 @@ public class UserPane extends BorderPane implements Shutdownable {
                 case AWAY:
                 case SHORT_AWAY:
                 case SOON_AT_HOME:
-                    atHomeIcon = new SVGIcon(MaterialIcon.DIRECTIONS_WALK, Constants.EXTRA_SMALL_ICON, true);
+                    atHomeIcon = new SVGGlyphIcon(MaterialIcon.DIRECTIONS_WALK, JFXConstants.ICON_SIZE_EXTRA_SMALL, true);
                     userIcon.setForegroundIconColor(Color.LIGHTGRAY);
 
                     // do not display user pane if user is a guest and not present.
@@ -184,7 +164,7 @@ public class UserPane extends BorderPane implements Shutdownable {
                     }
                     break;
                 case UNKNOWN:
-                    atHomeIcon = new SVGIcon(MaterialIcon.SEARCH, Constants.EXTRA_SMALL_ICON, true);
+                    atHomeIcon = new SVGGlyphIcon(MaterialIcon.SEARCH, JFXConstants.ICON_SIZE_EXTRA_SMALL, true);
                     userIcon.setForegroundIconColor(Color.DARKGREY);
                     // do not display user pane if user is a guest and not present.
                     if (!user.getConfig().getUserConfig().getOccupant()) {
@@ -198,15 +178,6 @@ public class UserPane extends BorderPane implements Shutdownable {
         } catch (final NotAvailableException ex) {
             ExceptionPrinter.printHistory("Could not update user presence state!", ex, LOGGER);
         }
-    }
-
-    /**
-     * Setter for the user name Label.
-     *
-     * @param newUserName a string value for the label text
-     */
-    public void setUserName(final String newUserName) {
-        userNameLabel.setText(newUserName);
     }
 
     @Override

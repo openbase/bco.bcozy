@@ -30,6 +30,7 @@ import org.openbase.bco.bcozy.controller.SettingsController;
 import org.openbase.bco.bcozy.controller.UserSettingsController;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.openbase.jul.visual.javafx.fxml.FXMLProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,7 +80,7 @@ public class CenterPane extends StackPane {
             appStateProperty.set(CenterPaneController.State.SETTINGS);
         });
 
-        //final FloatingButton settingsBtn = new FloatingButton(new SVGIcon(MaterialDesignIcon.SETTINGS, Constants.MIDDLE_ICON, true));
+        //final FloatingButton settingsBtn = new FloatingButton(new SVGIcon(MaterialDesignIcon.SETTINGS, JFXConstants.ICON_SIZE_MIDDLE, true));
         //this.setAlignment(settingsBtn, Pos.TOP_RIGHT);
         //settingsBtn.setOnAction(e -> toggleSettings());
         // Styling components with CSS
@@ -94,7 +95,7 @@ public class CenterPane extends StackPane {
 
     private Pane loadSettingsMenu(final double height) {
         try {                                                                                                             
-            final Pair<Pane, SettingsController> paneAndControllerPair = SettingsController.getFxmlPaneAndControllerPair("SettingsMenu.fxml", getClass(), (clazz) -> new SettingsController(foregroundPane));
+            final Pair<Pane, SettingsController> paneAndControllerPair = FXMLProcessor.loadFxmlPaneAndControllerPair("SettingsMenu.fxml", SettingsController.class, getClass(), (clazz) -> new SettingsController(foregroundPane));
             Pane anchorPane = paneAndControllerPair.getKey();
 
             final SettingsController settingsController = (SettingsController) paneAndControllerPair.getValue();

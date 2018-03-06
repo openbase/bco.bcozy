@@ -22,19 +22,20 @@ import de.jensd.fx.glyphs.GlyphIcons;
 import javafx.animation.*;
 import javafx.scene.control.Button;
 import javafx.util.Duration;
+import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 
 /**
  * Created by hoestreich on 11/26/15.
  */
 public class FloatingButton extends Button {
 
-    private SVGIcon icon;
+    private SVGGlyphIcon icon;
 
     /**
      * Constructor for a floating button which has only an icon and no text.
      * @param icon the icon to set for the button
      */
-    public FloatingButton(final SVGIcon icon) {
+    public FloatingButton(final SVGGlyphIcon icon) {
         this.icon = icon;
         this.getStyleClass().clear();
         this.getStyleClass().add("floating-button");
@@ -56,7 +57,7 @@ public class FloatingButton extends Button {
      * @param icon The new icon to be set
      */
     public void changeIcon(final GlyphIcons icon) {
-        this.icon = new SVGIcon(icon, this.icon.getSize(), true);
+        this.icon = new SVGGlyphIcon(icon, this.icon.getSize(), true);
         super.setGraphic(this.icon);
     }
 

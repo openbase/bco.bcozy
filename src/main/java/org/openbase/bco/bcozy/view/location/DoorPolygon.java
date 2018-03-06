@@ -73,13 +73,20 @@ public class DoorPolygon extends ConnectionPolygon {
     public void applyDataUpdate(ConnectionData unitData) {
         switch (unitData.getDoorState().getValue()) {
             case CLOSED:
-                setCustomColor(Color.GREEN.brighter());
-                break;
+            setMainColor(Color.WHITE);
+            setCustomColor(Color.WHITE);
+            getStrokeDashArray().clear();
+            getStrokeDashArray().addAll(Constants.DOOR_DASH_WIDTH, Constants.DOOR_DASH_WIDTH);
+            break;
             case IN_BETWEEN:
             case OPEN:
-                setCustomColor(Color.BLUE.brighter());
+                setMainColor(Color.TRANSPARENT);
+                setCustomColor(Color.TRANSPARENT);
+                getStrokeDashArray().clear();
+                getStrokeDashArray().addAll(Constants.DOOR_DASH_WIDTH, Constants.DOOR_DASH_WIDTH * 3);
                 break;
             case UNKNOWN:
+                setMainColor(Color.TRANSPARENT);
                 setCustomColor(Color.YELLOW);
                 break;
             default:
@@ -91,15 +98,10 @@ public class DoorPolygon extends ConnectionPolygon {
     protected void setConnectionStyle() {
         this.setMainColor(Color.TRANSPARENT);
         this.setStroke(Color.WHITE);
-        this.getStrokeDashArray().addAll(Constants.DOOR_DASH_WIDTH, Constants.DOOR_DASH_WIDTH * 2);
+        this.getStrokeDashArray().addAll(Constants.DOOR_DASH_WIDTH, Constants.DOOR_DASH_WIDTH);
         this.setStrokeWidth(Constants.ROOM_STROKE_WIDTH);
         this.setStrokeType(StrokeType.INSIDE);
         this.setMouseTransparent(true);
-    }
-
-    @Override
-    protected void changeStyleOnOpening(final boolean open) {
-        // TODO: To be implemented...
     }
 
     /**

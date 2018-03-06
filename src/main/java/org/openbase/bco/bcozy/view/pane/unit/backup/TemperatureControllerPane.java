@@ -31,7 +31,7 @@ public class TemperatureControllerPane extends AbstractUnitPane<TemperatureContr
 //    private static final Logger LOGGER = LoggerFactory.getLogger(TemperatureControllerPane.class);
 //
 //    private final TemperatureControllerRemote temperatureControllerRemote;
-//    private final SVGIcon temperatureControllerIcon;
+//    private final SVGGlyphIcon temperatureControllerIcon;
 //    private final BorderPane headContent;
 //    private final VBox bodyContent;
 //    private final Slider slider;
@@ -64,7 +64,7 @@ public class TemperatureControllerPane extends AbstractUnitPane<TemperatureContr
 //     */
     public TemperatureControllerPane() {
         super(TemperatureControllerRemote.class, false);
-//        temperatureControllerIcon = new SVGIcon(MaterialDesignIcon.RADIATOR, Constants.SMALL_ICON, true);
+//        temperatureControllerIcon = new SVGGlyphIcon(MaterialDesignIcon.RADIATOR, JFXConstants.ICON_SIZE_SMALL, true);
 //        decimalFormat = new DecimalFormat("#.#");
 //        headContent = new BorderPane();
 //        bodyContent = new VBox();

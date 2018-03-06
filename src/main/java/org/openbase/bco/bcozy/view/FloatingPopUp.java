@@ -6,6 +6,8 @@ import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import org.openbase.jul.visual.javafx.JFXConstants;
+import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,7 +31,7 @@ public class FloatingPopUp extends VBox {
     public FloatingPopUp(final Pos position) {
         super(Constants.INSETS);
 
-        this.setMaxSize(Constants.MIDDLE_ICON, Double.MAX_VALUE);
+        this.setMaxSize(JFXConstants.ICON_SIZE_MIDDLE, Double.MAX_VALUE);
         this.setAlignment(position);
         viewSwitcherPopUp = new VBox(Constants.INSETS);
         viewSwitcherPopUp.setAlignment(Pos.CENTER);
@@ -77,7 +79,7 @@ public class FloatingPopUp extends VBox {
             EventHandler<ActionEvent> handler = glyphIconsEventHandlerEntry.getValue();
 
             if (icon != parent) {
-                FloatingButton element = new FloatingButton(new SVGIcon(icon, Constants.SMALL_ICON, true));
+                FloatingButton element = new FloatingButton(new SVGGlyphIcon(icon, JFXConstants.ICON_SIZE_SMALL, true));
                 viewSwitcherPopUp.getChildren().addAll(element);
                 element.setOnAction(event -> {
                     clickOnChild(icon);
@@ -90,7 +92,7 @@ public class FloatingPopUp extends VBox {
     }
 
     private void showParent() {
-        popUpParent = new FloatingButton(new SVGIcon(parent, Constants.MIDDLE_ICON, true));
+        popUpParent = new FloatingButton(new SVGGlyphIcon(parent, JFXConstants.ICON_SIZE_MIDDLE, true));
         popUpParent.setOnAction(event -> this.switchingButtonsVisible());
     }
 

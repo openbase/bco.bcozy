@@ -47,11 +47,11 @@ public class SmokeDetectorPane extends AbstractUnitPane<SmokeDetectorRemote, Smo
         super(SmokeDetectorRemote.class, false);
 //
 //        headContent = new BorderPane();
-//        smokeDetectorIconFire = new SVGIcon(MaterialDesignIcon.FIRE, Constants.SMALL_ICON, false);
-//        smokeDetectorIconNoFire = new SVGIcon(MaterialDesignIcon.CHECKBOX_MARKED_CIRCLE, Constants.SMALL_ICON, false);
-//        smokeDetectorIconFireFade = new SVGIcon(MaterialDesignIcon.FIRE, Constants.SMALL_ICON, false);
-//        unknownBackgroundIcon = new SVGIcon(MaterialDesignIcon.CHECKBOX_BLANK_CIRCLE, Constants.SMALL_ICON - 2, false);
-//        unknownForegroundIcon = new SVGIcon(MaterialDesignIcon.HELP_CIRCLE, Constants.SMALL_ICON, false);
+//        smokeDetectorIconFire = new SVGIcon(MaterialDesignIcon.FIRE, JFXConstants.ICON_SIZE_SMALL, false);
+//        smokeDetectorIconNoFire = new SVGIcon(MaterialDesignIcon.CHECKBOX_MARKED_CIRCLE, JFXConstants.ICON_SIZE_SMALL, false);
+//        smokeDetectorIconFireFade = new SVGIcon(MaterialDesignIcon.FIRE, JFXConstants.ICON_SIZE_SMALL, false);
+//        unknownBackgroundIcon = new SVGIcon(MaterialDesignIcon.CHECKBOX_BLANK_CIRCLE, JFXConstants.ICON_SIZE_SMALL - 2, false);
+//        unknownForegroundIcon = new SVGIcon(MaterialDesignIcon.HELP_CIRCLE, JFXConstants.ICON_SIZE_SMALL, false);
 //
 //        flashAnimation = new FadeTransition(Duration.millis(Constants.SMOKE_DETECTOR_FADE_DURATION));
 //        flashAnimation.setNode(smokeDetectorIconFireFade);

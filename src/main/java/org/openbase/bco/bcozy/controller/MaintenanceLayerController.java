@@ -35,10 +35,13 @@ import org.openbase.bco.bcozy.view.pane.unit.TitledUnitPaneContainer;
 import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
 import org.openbase.bco.dal.remote.unit.Units;
 import org.openbase.bco.registry.remote.Registries;
+import org.openbase.jps.core.JPService;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.openbase.jul.exception.printer.LogLevel;
 import org.openbase.jul.pattern.Observable;
 import org.openbase.jul.pattern.Observer;
+import org.openbase.jul.visual.javafx.JFXConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rct.Transform;
@@ -91,42 +94,30 @@ public class MaintenanceLayerController {
      */
     public void connectUnitRemote() throws CouldNotPerformException, InterruptedException {
         try {
-            Registries.waitForData();
-            Registries.getUnitRegistry().addDataObserver(new Observer<UnitRegistryData>() {
-                @Override
-                public void update(Observable<UnitRegistryData> source, UnitRegistryData data) throws InterruptedException {
-                    Platform.runLater(() -> {
-                        try {
-                            fetchLocationUnitRemotes();
-                            simpleUnitSymbolsPane.updateUnitsPane();
-                        } catch (CouldNotPerformException ex) {
-                            ExceptionPrinter.printHistory(ex, LOGGER);
-                        } catch (InterruptedException ex) {
-                            Thread.currentThread().interrupt();
-                        }
-                    });
-                }
-            });
-            Registries.getLocationRegistry().addDataObserver(new Observer<LocationRegistryData>() {
-                @Override
-                public void update(Observable<LocationRegistryData> source, LocationRegistryData data) throws Exception {
-                    Platform.runLater(() -> {
-                        try {
-                            fetchLocationUnitRemotes();
-                            simpleUnitSymbolsPane.updateUnitsPane();
-                        } catch (CouldNotPerformException ex) {
-                            ExceptionPrinter.printHistory(ex, LOGGER);
-                        } catch (InterruptedException ex) {
-                            Thread.currentThread().interrupt();
-                        }
-                    });
-                }
-
-            });
+            Registries.getUnitRegistry(false).addDataObserver((source, data) -> Platform.runLater(() -> {
+                updateUnits();
+            }));
             updateUnits();
-        } catch (CouldNotPerformException ex) { //NOPMD
+        } catch (CouldNotPerformException ex) {
             throw new CouldNotPerformException("Could not fetch units from remote registry", ex);
         }
+    }
+
+    /**
+     * Fetches all unit remotes from registry and updates the unit pane,
+     * so all unit buttons represent the correct configuration.
+     */
+    public void updateUnits() {
+        Platform.runLater((() -> {
+            try {
+                fetchLocationUnitRemotes();
+                simpleUnitSymbolsPane.updateUnitsPane();
+            } catch (CouldNotPerformException ex) {
+                ExceptionPrinter.printHistory("Could not update all units!", ex, LOGGER);
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+            }
+        }));
     }
 
     /**
@@ -138,7 +129,7 @@ public class MaintenanceLayerController {
     public void fetchLocationUnitRemotes() throws CouldNotPerformException, InterruptedException {
         
         simpleUnitSymbolsPane.clearUnits();
-        final double halfButtonSize = (Constants.SMALL_ICON + (2 * Constants.INSETS)) / 2;
+        final double halfButtonSize = (JFXConstants.ICON_SIZE_SMALL + (2 * Constants.INSETS)) / 2;
 
         final List<UnitConfig> locationUnitConfigList = Registries.getLocationRegistry().getLocationConfigs();
 
@@ -154,11 +145,11 @@ public class MaintenanceLayerController {
                     continue;
                 }
 
-                for (UnitRemote<?> u : nextEntry.getValue()) {
+                for (UnitRemote<?> unit : nextEntry.getValue()) {
                     if (nextEntry.getKey() == UnitType.BATTERY | nextEntry.getKey() == UnitType.TAMPER_DETECTOR | 
                         nextEntry.getKey() == UnitType.TEMPERATURE_SENSOR | nextEntry.getKey() == UnitType.SMOKE_DETECTOR) {
 
-                        UnitConfig config = u.getConfig();
+                        UnitConfig config = unit.getConfig();
                         if (config.getEnablingState().getValue() != EnablingStateType.EnablingState.State.ENABLED) {
                             continue; 
                         }
@@ -176,34 +167,20 @@ public class MaintenanceLayerController {
                                 getTransform().transform(unitVertex);
                             Point2D coord = new Point2D(unitVertex.x * Constants.METER_TO_PIXEL, unitVertex.y * Constants.METER_TO_PIXEL);
                             // correction of position necessary because:
-                            // "pose" is left bottom of unit bounding box (y correction) and the unit button's center 
+                            // "pose" is left bottom of unit bounding box (y correction) and the unit button's center
                             // should be at the unit position (x correction) Attention: X and Y swapped in UnitButton 
-                            simpleUnitSymbolsPane.addUnit(u, coord.add(- 0.5 * halfButtonSize, - halfButtonSize), locationConfig.getId());
+                            simpleUnitSymbolsPane.addUnit(unit, coord.add(- 0.5 * halfButtonSize, - halfButtonSize), locationConfig.getId());
                         } catch (CouldNotPerformException | ExecutionException | TimeoutException ex) {
                             // No exception throwing, because loop must continue it's work
-                            ExceptionPrinter.printHistory(ex, LOGGER);
-
+                            if(JPService.verboseMode()) {
+                                ExceptionPrinter.printHistory("Could not fetch " + unit + "!", ex, LOGGER, LogLevel.WARN);
+                            } else {
+                                ExceptionPrinter.printHistory("Could not fetch " + unit + "!", ex, LOGGER, LogLevel.DEBUG);
+                            }
                         }
                     }
                 }
             }
         }
-    }
-
-    /**
-     * Fetches all unit remotes from registry and updates the unit pane,
-     * so all unit buttons represent the correct configuration.
-     */
-    public void updateUnits() {
-        Platform.runLater((() -> {
-            try {
-                fetchLocationUnitRemotes();
-                simpleUnitSymbolsPane.updateUnitsPane();
-            } catch (CouldNotPerformException ex) {
-                ExceptionPrinter.printHistory(ex, LOGGER);
-            } catch (InterruptedException ex) {
-                Thread.currentThread().interrupt();
-            }
-        }));
     }
 }

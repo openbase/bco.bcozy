@@ -18,6 +18,7 @@
  */
 package org.openbase.bco.bcozy.view.pane.unit;
 
+import de.jensd.fx.glyphs.GlyphIcons;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.animation.Animation;
 import javafx.scene.paint.Color;
@@ -43,29 +44,31 @@ public class BatteryPane extends AbstractUnitPane<BatteryRemote, BatteryData> {
 
         try {
             final double level = getUnitRemote().getData().getBatteryState().getLevel();
+            final GlyphIcons icon;
             if (level > 90) {
-                getIcon().setBackgroundIcon(MaterialDesignIcon.BATTERY);
+                icon = MaterialDesignIcon.BATTERY;
             } else if (level > 80) {
-                getIcon().setBackgroundIcon(MaterialDesignIcon.BATTERY_90);
+                icon = MaterialDesignIcon.BATTERY_90;
             } else if (level > 70) {
-                getIcon().setBackgroundIcon(MaterialDesignIcon.BATTERY_80);
+                icon = MaterialDesignIcon.BATTERY_80;
             } else if (level > 60) {
-                getIcon().setBackgroundIcon(MaterialDesignIcon.BATTERY_70);
+                icon = MaterialDesignIcon.BATTERY_70;
             } else if (level > 50) {
-                getIcon().setBackgroundIcon(MaterialDesignIcon.BATTERY_60);
+                icon = MaterialDesignIcon.BATTERY_60;
             } else if (level > 40) {
-                getIcon().setBackgroundIcon(MaterialDesignIcon.BATTERY_50);
+                icon = MaterialDesignIcon.BATTERY_50;
             } else if (level > 30) {
-                getIcon().setBackgroundIcon(MaterialDesignIcon.BATTERY_40);
+                icon = MaterialDesignIcon.BATTERY_40;
             } else if (level > 20) {
-                getIcon().setBackgroundIcon(MaterialDesignIcon.BATTERY_30);
+                icon = MaterialDesignIcon.BATTERY_30;
             } else if (level > 10) {
-                getIcon().setBackgroundIcon(MaterialDesignIcon.BATTERY_20);
+                icon = MaterialDesignIcon.BATTERY_20;
             } else if (level > 5) {
-                getIcon().setBackgroundIcon(MaterialDesignIcon.BATTERY_10);
+                icon = MaterialDesignIcon.BATTERY_10;
             } else {
-                getIcon().setBackgroundIcon(MaterialDesignIcon.BATTERY_ALERT);
+                icon = MaterialDesignIcon.BATTERY_ALERT;
             }
+            getIcon().setBackgroundIcon(icon);
         } catch (CouldNotPerformException ex) {
             ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.DEBUG);
         }

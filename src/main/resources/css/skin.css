@@ -28,17 +28,22 @@
     -fx-background-color: -bg-color;
 }
 
-.main-menu {
-    -fx-background-color: -bg-color;
-}
-
 .detail-menu {
     -fx-background-color: -bg-color;
 }
 
-.info-footer {
-    /*-fx-background-color: -bg-color;*/
-    -fx-text-fill: -fx-text-base-color;
+.clock-label {
+    -fx-text-fill: white;
+    -fx-alignment: center;
+    -fx-font-size: 20;
+    -fx-font-weight: bolder;
+}
+
+.info-pane {
+    -fx-text-fill: white;
+    -fx-alignment: center;
+    -fx-font-size: 20;
+    -fx-font-weight: bolder;
 }
 
 .floating-button {
@@ -508,17 +513,6 @@
     -fx-background-color: rgb(64.0, 64.0, 64.0);
 }
 
-.info-pane {
-    -fx-background-color: linear-gradient(from 50% 0% to 50% 100%,
-    rgba(255.0, 255.0, 255.0, 0.3),
-    rgba(255.0, 255.0, 255.0, 0.4),
-    rgba(255.0, 255.0, 255.0, 0.7),
-    rgba(255.0, 255.0, 255.0, 0.9),
-    rgba(255.0, 255.0, 255.0, 0.7),
-    rgba(255.0, 255.0, 255.0, 0.4),
-    rgba(255.0, 255.0, 255.0, 0.3));
-}
-
 /*******************************************************************************
  *                                                                             *
  * DimmerPane                                                                  *
@@ -609,6 +603,7 @@
     -fx-background-radius: 0;
     -fx-background-insets: 10.0 0.0 10.0 10.0;
     -fx-padding: 30.0 10.0 10.0 20.0;
+    -fx-background-color: -bg-color;
 }
 
 .detail-menu {
@@ -1344,8 +1339,11 @@
     -fx-max-height: 10.0;
 }
 
-.info-pane {
+.loading-pane {
     -fx-background-insets: 5 5 5 5;
+    -fx-background-color: rgba(0.0, 0.0, 0.0, 0.7);
+    -fx-text-fill: white;
+    -fx-font-size: 16;
 }
 
 .observer-titled-pane {

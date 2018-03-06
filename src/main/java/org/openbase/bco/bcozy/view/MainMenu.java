@@ -1,17 +1,17 @@
 /**
  * ==================================================================
- *
+ * <p>
  * This file is part of org.openbase.bco.bcozy.
- *
+ * <p>
  * org.openbase.bco.bcozy is free software: you can redistribute it and modify
  * it under the terms of the GNU General Public License (Version 3)
  * as published by the Free Software Foundation.
- *
+ * <p>
  * org.openbase.bco.bcozy is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
@@ -22,11 +22,20 @@ import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import de.jensd.fx.glyphs.materialicons.MaterialIcon;
 import javafx.geometry.Pos;
 import javafx.scene.control.TitledPane;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
-import org.openbase.bco.bcozy.view.mainmenupanes.*;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import org.openbase.bco.authentication.lib.jp.JPAuthentication;
+import org.openbase.jul.visual.javafx.JFXConstants;
+import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
+import org.openbase.bco.bcozy.view.mainmenupanes.AvailableUsersPane;
+import org.openbase.bco.bcozy.view.mainmenupanes.LoginPane;
+import org.openbase.bco.bcozy.view.mainmenupanes.LogoPane;
+import org.openbase.bco.bcozy.view.mainmenupanes.ObserverTitledPane;
+import org.openbase.jps.core.JPService;
+import org.openbase.jps.exception.JPNotAvailableException;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InitializationException;
+import org.openbase.jul.exception.InstantiationException;
 import org.openbase.jul.iface.VoidInitializable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,10 +55,9 @@ public class MainMenu extends StackPane implements VoidInitializable {
     private final VBox verticalLayoutSmall;
     private final double height;
     private final double width;
-    private boolean maximized;
-    private final ConnectionPane connectionPane;
     private final AvailableUsersPane availableUsersPane;
     private final LogoPane logoPane;
+    private boolean maximized;
     private TitledPane loginContainer;
 
 
@@ -57,48 +65,58 @@ public class MainMenu extends StackPane implements VoidInitializable {
      * Constructor for the MainMenu.
      *
      * @param height Height
-     * @param width Width
+     * @param width  Width
      */
-    public MainMenu(final double height, final double width) throws InterruptedException {
+    public MainMenu(final double height, final double width) throws InstantiationException {
+        try {
+            // Initializing the container (StackPane)
+            this.height = height;
+            this.width = width;
+            this.maximized = true;
+            this.setMinHeight(height);
+            this.setMinWidth(width);
+            this.setPrefWidth(width);
 
-        // Initializing the container (StackPane)
-        this.height = height;
-        this.width = width;
-        this.maximized = true;
-        this.setMinHeight(height);
-        this.setMinWidth(width);
-        this.setPrefWidth(width);
+            // Initializing components
+            this.verticalLayout = new VBox(Constants.INSETS);
+            this.verticalLayout.setAlignment(Pos.TOP_CENTER);
+            this.verticalLayoutSmall = new VBox(Constants.INSETS * 2);
+            this.verticalLayoutSmall.setAlignment(Pos.TOP_CENTER);
+            this.logoPane = new LogoPane();
+            this.loginPane = new LoginPane();
+            this.availableUsersPane = new AvailableUsersPane();
+            this.mainMenuFloatingButton = new FloatingButton(new SVGGlyphIcon(MaterialIcon.MENU, JFXConstants.ICON_SIZE_MIDDLE, true));
 
-        // Initializing components
-        this.verticalLayout = new VBox(Constants.INSETS);
-        this.verticalLayout.setAlignment(Pos.TOP_CENTER);
-        this.verticalLayoutSmall = new VBox(Constants.INSETS * 2);
-        this.verticalLayoutSmall.setAlignment(Pos.TOP_CENTER);
-        this.loginPane = new LoginPane();
-        this.logoPane = new LogoPane();
+            loginContainer = new ObserverTitledPane("login");
+            loginContainer.getStyleClass().addAll("login-titled-pane");
+            loginContainer.setGraphic(new SVGGlyphIcon(MaterialDesignIcon.LOGIN, JFXConstants.ICON_SIZE_EXTRA_SMALL, true));
+            loginContainer.setContent(loginPane);
 
-        loginContainer = new ObserverTitledPane("login");
-        loginContainer.getStyleClass().addAll("login-titled-pane");
-        loginContainer.setGraphic(new SVGIcon(MaterialDesignIcon.LOGIN, Constants.EXTRA_SMALL_ICON, true));
-        loginContainer.setContent(loginPane);
+            // Setting Alignment in Stackpane
+            StackPane.setAlignment(mainMenuFloatingButton, Pos.TOP_RIGHT);
+            StackPane.setAlignment(verticalLayout, Pos.TOP_CENTER);
+            StackPane.setAlignment(verticalLayoutSmall, Pos.TOP_CENTER);
+            this.mainMenuFloatingButton.translateYProperty().set(-(Constants.FLOATING_BUTTON_OFFSET));
 
-        this.connectionPane = new ConnectionPane();
-        this.availableUsersPane = new AvailableUsersPane();
-        this.mainMenuFloatingButton = new FloatingButton(new SVGIcon(MaterialIcon.MENU, Constants.MIDDLE_ICON, true));
+            // Adding components to their parents
+            try {
+                if (JPService.getProperty(JPAuthentication.class).getValue()) {
+                    this.verticalLayout.getChildren().addAll(logoPane, loginContainer, availableUsersPane);
+                } else {
+                    this.verticalLayout.getChildren().addAll(logoPane, availableUsersPane);
+                }
+            } catch (JPNotAvailableException e) {
+                // just ignore is property is not available
+                this.verticalLayout.getChildren().addAll(logoPane, availableUsersPane);
+            }
 
-        // Setting Alignment in Stackpane
-        StackPane.setAlignment(mainMenuFloatingButton, Pos.TOP_RIGHT);
-        StackPane.setAlignment(verticalLayout, Pos.TOP_CENTER);
-        StackPane.setAlignment(verticalLayoutSmall, Pos.TOP_CENTER);
-        this.mainMenuFloatingButton.translateYProperty().set(-(Constants.FLOATING_BUTTON_OFFSET));
+            this.getChildren().addAll(verticalLayout, mainMenuFloatingButton);
 
-        // Adding components to their parents
-        this.verticalLayout.getChildren().addAll(logoPane, loginContainer, availableUsersPane);
-        this.getChildren().addAll(verticalLayout, mainMenuFloatingButton);
-
-        // Styling components with CSS
-        this.getStyleClass().addAll("main-menu");
-
+            // Styling components with CSS
+            this.getStyleClass().addAll("main-menu");
+        } catch (CouldNotPerformException ex) {
+            throw new InstantiationException(this, ex);
+        }
     }
 
     @Override
@@ -136,15 +154,6 @@ public class MainMenu extends StackPane implements VoidInitializable {
      */
     public AvailableUsersPane getAvailableUsersPanePane() {
         return availableUsersPane;
-    }
-
-    /**
-     * Getter for the connectionPane.
-     *
-     * @return the instance of the connectionPane
-     */
-    public ConnectionPane getConnectionPane() {
-        return connectionPane;
     }
 
     /**

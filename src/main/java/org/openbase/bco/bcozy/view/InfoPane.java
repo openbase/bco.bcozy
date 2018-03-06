@@ -32,6 +32,7 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import org.openbase.bco.bcozy.BCozy;
+import org.openbase.bco.bcozy.util.ThemeManager;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InvalidStateException;
 import org.openbase.jul.exception.NotAvailableException;
@@ -61,15 +62,17 @@ public class InfoPane extends BorderPane {
      * @param width  Width
      */
     public InfoPane(final double height, final double width) {
+        this.getStyleClass().clear();
+        this.getStyleClass().add("info-pane");
         this.textLabel = new ObserverLabel();
-        this.textLabel.getStyleClass().add("floating-label");
-        //this.mouseOverText.getStyleClass().add("small-label");
+        this.textLabel.getStyleClass().clear();
+        this.textLabel.getStyleClass().add("info-pane");
         this.textLabel.setAlignment(Pos.CENTER);
         this.setCenter(textLabel);
         this.setPrefHeight(height);
         this.setPrefWidth(width);
         InfoPane.instance = this;
-        //this.getStyleClass().add("info-footer");
+
     }
 
     public static InfoPane getInstance() throws NotAvailableException {
@@ -91,14 +94,14 @@ public class InfoPane extends BorderPane {
     }
 
     public static InfoPaneConfigurer info(final String identifier) {
-        final String style;
-        if (BCozy.baseColorIsWhite) {
-            style = ("-fx-text-fill: white;");
-        } else {
-            style = ("-fx-text-fill: black;");
-        }
+//        final String style;
+//        if (ThemeManager.isDarkThemeSelected()) {
+//            style = ("-fx-text-fill: white;");
+//        } else {
+//            style = ("-fx-text-fill: black;");
+//        }
 
-        return show(identifier, style);
+        return show(identifier, "");
     }
 
     public static InfoPaneConfigurer confirmation(final String identifier) {
@@ -129,7 +132,7 @@ public class InfoPane extends BorderPane {
             Platform.runLater(() -> {
                 infoPane.clearBackground();
                 infoPane.setStyle(infopaneStyle);
-                infoPane.textLabel.setStyle(style + "-fx-font-size: 16;");
+                infoPane.textLabel.setStyle(style);
                 infoPane.textLabel.setIdentifier(identifier);
             });
         } catch (CouldNotPerformException ex) {

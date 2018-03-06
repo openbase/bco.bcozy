@@ -11,10 +11,10 @@ import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.pattern.Observer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.domotic.registry.UserRegistryDataType;
-import rst.domotic.unit.UnitConfigType;
+import rst.domotic.registry.UserRegistryDataType.UserRegistryData;
+import rst.domotic.unit.UnitConfigType.UnitConfig;
 import rst.domotic.unit.UnitTemplateType;
-import rst.domotic.unit.authorizationgroup.AuthorizationGroupConfigType;
+import rst.domotic.unit.authorizationgroup.AuthorizationGroupConfigType.AuthorizationGroupConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,24 +28,30 @@ public final class AuthorizationGroups {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthorizationGroups.class);
 
-    private static final ObservableList<UnitConfigType.UnitConfig> authorizationGroups =
-            FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
+    private static boolean initialized = false;
+
+    private static final ObservableList<UnitConfig> authorizationGroups = FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
 
     /**
      * List of additional Observers, which will be informed if the groups change.
      */
-    private static final List<Consumer<List<UnitConfigType.UnitConfig>>> observers = new
-            CopyOnWriteArrayList<>();
+    private static final List<Consumer<List<UnitConfig>>> observers = new CopyOnWriteArrayList<>();
+
+    /**
+     * UnitRegistry observer used for registry synchronization.
+     */
+    private static final Observer<UserRegistryData> unitRegistryObserver = (observable, userRegistryData) -> {
+        updateAuthorizationGroups(userRegistryData.getAuthorizationGroupUnitConfigList());
+    };
 
     /**
      * Adds an Observer to the list of additional observers, which will be informed if the groups change.
      *
      * @param observer the consumer to add
      */
-    public static void addListObserver(Consumer<List<UnitConfigType.UnitConfig>> observer) {
+    public static void addListObserver(Consumer<List<UnitConfig>> observer) {
         observers.add(observer);
-        List<UnitConfigType.UnitConfig> unitConfigs = getAuthorizationGroups();
-        observer.accept(unitConfigs);
+        observer.accept(getAuthorizationGroups());
     }
 
     /**
@@ -53,59 +59,52 @@ public final class AuthorizationGroups {
      *
      * @param observer the consumer to remove
      */
-    public static void removeListObserver(Consumer<? extends List<UnitConfigType.UnitConfig>> observer) {
+    public static void removeListObserver(Consumer<? extends List<UnitConfig>> observer) {
         observers.remove(observer);
     }
 
-    private static final Observer<UserRegistryDataType.UserRegistryData> observer = (observable, userRegistryData) ->
-            setAuthorizationGroups(userRegistryData.getAuthorizationGroupUnitConfigList(), authorizationGroups);
-
-    public static synchronized ObservableList<UnitConfigType.UnitConfig> getAuthorizationGroups() {
-        if (Registries.isDataAvailable()) {
-            try {
-                setAuthorizationGroups(Registries.getUserRegistry().getAuthorizationGroupConfigs(), authorizationGroups);
-            } catch (CouldNotPerformException ex) {
-                ExceptionPrinter.printHistory(ex, LOGGER);
-            } catch (InterruptedException ex) {
-                Thread.currentThread().interrupt();
-            }
-        }
-
+    private static void init() {
         try {
-            Registries.getUserRegistry().addDataObserver(observer);
+            // register for updates
+            Registries.getUserRegistry().addDataObserver(unitRegistryObserver);
+
+            // force update if data is available
+            if (Registries.getUserRegistry().isDataAvailable()) {
+                updateAuthorizationGroups(Registries.getUserRegistry().getAuthorizationGroupConfigs());
+            }
+            initialized = true;
         } catch (CouldNotPerformException ex) {
-            ExceptionPrinter.printHistory(ex, LOGGER);
+            ExceptionPrinter.printHistory("Could not update AuthorizationGroups!", ex, LOGGER);
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
         }
+    }
 
+    public static synchronized ObservableList<UnitConfig> getAuthorizationGroups() {
+        if(!initialized) {
+            init();
+        }
         return authorizationGroups;
-
     }
 
-    private static void setAuthorizationGroups(List<UnitConfigType.UnitConfig> newGroups,
-                                               ObservableList<UnitConfigType.UnitConfig> groups) {
-
+    private static void updateAuthorizationGroups(final List<UnitConfig> authorizationGroupList) {
         Platform.runLater(() -> {
-            groups.clear();
-            groups.addAll(newGroups);
-            observers.forEach(consumer -> consumer.accept(newGroups));
+            authorizationGroups.clear();
+            authorizationGroups.addAll(authorizationGroupList);
+            observers.forEach(consumer -> consumer.accept(authorizationGroupList));
         });
-
     }
 
-    public static StringConverter<UnitConfigType.UnitConfig> stringConverter(
-            List<UnitConfigType.UnitConfig> groups) {
-
-        return new StringConverter<UnitConfigType.UnitConfig>() {
+    public static StringConverter<UnitConfig> stringConverter(final List<UnitConfig> groups) {
+        return new StringConverter<UnitConfig>() {
             @Override
-            public String toString(UnitConfigType.UnitConfig object) {
+            public String toString(final UnitConfig object) {
                 return object.getLabel();
             }
 
             @Override
-            public UnitConfigType.UnitConfig fromString(String string) {
-                for (UnitConfigType.UnitConfig group : groups) {
+            public UnitConfig fromString(final String string) {
+                for (final UnitConfig group : groups) {
                     if ((group.getLabel().equals(string))) {
                         return group;
                     }
@@ -115,7 +114,7 @@ public final class AuthorizationGroups {
         };
     }
 
-    public static void removeAuthorizationGroup(UnitConfigType.UnitConfig group) throws InterruptedException, CouldNotPerformException {
+    public static void removeAuthorizationGroup(final UnitConfig group) throws InterruptedException, CouldNotPerformException {
         try {
             Registries.getUserRegistry().removeAuthorizationGroupConfig(group);
         } catch (CouldNotPerformException ex) {
@@ -123,52 +122,47 @@ public final class AuthorizationGroups {
         }
     }
 
-    public static UnitConfigType.UnitConfig addAuthorizationGroup(String groupName) throws InterruptedException, CouldNotPerformException {
+    public static UnitConfig addAuthorizationGroup(final String groupName) throws InterruptedException, CouldNotPerformException {
         try {
-            UnitConfigType.UnitConfig addedGroup = tryAddAuthorizationGroup(groupName).get(5, TimeUnit.SECONDS);
-            return addedGroup;
+            return tryAddAuthorizationGroup(groupName).get(5, TimeUnit.SECONDS);
         } catch (CouldNotPerformException | TimeoutException | ExecutionException ex) {
             throw new CouldNotPerformException("Could not add authorization group.", ex);
         }
     }
 
-    public static Future<UnitConfigType.UnitConfig> tryAddAuthorizationGroup(String groupName)
-            throws CouldNotPerformException, InterruptedException {
+    public static Future<UnitConfig> tryAddAuthorizationGroup(final String groupName) throws CouldNotPerformException, InterruptedException {
 
-        UnitConfigType.UnitConfig newGroup = UnitConfigType.UnitConfig.newBuilder()
+        UnitConfig newGroup = UnitConfig.newBuilder()
                 .setLabel(groupName)
                 .setType(UnitTemplateType.UnitTemplate.UnitType.AUTHORIZATION_GROUP)
-                .setAuthorizationGroupConfig(AuthorizationGroupConfigType.AuthorizationGroupConfig.newBuilder())
+                .setAuthorizationGroupConfig(AuthorizationGroupConfig.newBuilder())
                 .build();
 
         return Registries.getUserRegistry().registerAuthorizationGroupConfig(newGroup);
     }
 
-    public static void tryAddToGroup(UnitConfigType.UnitConfig group, String userId) throws CouldNotPerformException,
-            InterruptedException {
-        UnitConfigType.UnitConfig.Builder unitConfig = Registries.getUserRegistry().getAuthorizationGroupConfigById(group.getId()).toBuilder();
-        AuthorizationGroupConfigType.AuthorizationGroupConfig.Builder authorizationGroupConfig = unitConfig.getAuthorizationGroupConfigBuilder();
-        authorizationGroupConfig.addMemberId(userId);
+    public static void tryAddToGroup(final UnitConfig group, final String userId) throws CouldNotPerformException, InterruptedException {
+        UnitConfig.Builder unitConfig = Registries.getUserRegistry().getAuthorizationGroupConfigById(group.getId()).toBuilder();
+        unitConfig.getAuthorizationGroupConfigBuilder().addMemberId(userId);
         Registries.getUserRegistry().updateAuthorizationGroupConfig(unitConfig.build());
     }
 
-    public static List<UnitConfigType.UnitConfig> getGroupsByUser(String userId) {
-        List<UnitConfigType.UnitConfig> groupsWithUser = new ArrayList<>(authorizationGroups);
+    public static List<UnitConfig> getGroupsByUser(final String userId) {
+        final List<UnitConfig> groupsWithUser = new ArrayList<>(authorizationGroups);
         groupsWithUser.removeIf(group -> !group.getAuthorizationGroupConfig().getMemberIdList().contains(userId));
         return groupsWithUser;
     }
 
-    public static void tryRemoveFromGroup(UnitConfigType.UnitConfig group, String userId) throws CouldNotPerformException,
-            InterruptedException {
+    public static void tryRemoveFromGroup(final UnitConfig group, final String userId) throws CouldNotPerformException, InterruptedException {
 
-        UnitConfigType.UnitConfig.Builder unitConfig = Registries.getUserRegistry().getAuthorizationGroupConfigById(group.getId()).toBuilder();
-        AuthorizationGroupConfigType.AuthorizationGroupConfig.Builder authorizationGroupConfig = unitConfig.getAuthorizationGroupConfigBuilder();
+        UnitConfig.Builder unitConfig = Registries.getUserRegistry().getAuthorizationGroupConfigById(group.getId()).toBuilder();
+        AuthorizationGroupConfig.Builder authorizationGroupConfig = unitConfig.getAuthorizationGroupConfigBuilder();
 
         ProtocolStringList members = authorizationGroupConfig.getMemberIdList();
 
         authorizationGroupConfig.clearMemberId();
 
-        for (String member : members) {
+        for (final String member : members) {
             if (!member.equals(userId)) {
                 authorizationGroupConfig.addMemberId(member);
             }

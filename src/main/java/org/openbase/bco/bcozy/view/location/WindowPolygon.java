@@ -51,13 +51,16 @@ public class WindowPolygon extends ConnectionPolygon {
     public void applyDataUpdate(ConnectionDataType.ConnectionData unitData) {
         switch (unitData.getDoorState().getValue()) {
             case CLOSED:
-                setCustomColor(Color.GREEN.brighter());
+                setMainColor(Color.WHITE);
+                setCustomColor(Color.WHITE);
                 break;
             case IN_BETWEEN:
             case OPEN:
-                setCustomColor(Color.BLUE.brighter());
+                setMainColor(Color.TRANSPARENT);
+                setCustomColor(Color.TRANSPARENT);
                 break;
             case UNKNOWN:
+                setMainColor(Color.TRANSPARENT);
                 setCustomColor(Color.YELLOW);
                 break;
             default:
@@ -71,11 +74,6 @@ public class WindowPolygon extends ConnectionPolygon {
         this.setStrokeWidth(Constants.ROOM_STROKE_WIDTH);
         this.setMouseTransparent(true);
         this.setMainColor(Color.TRANSPARENT);
-    }
-
-    @Override
-    protected void changeStyleOnOpening(final boolean open) {
-        // TODO: To be implemented...
     }
 
     /**

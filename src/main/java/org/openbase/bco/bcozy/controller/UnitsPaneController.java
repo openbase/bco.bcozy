@@ -37,6 +37,7 @@ import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.pattern.Observable;
 import org.openbase.jul.pattern.Observer;
+import org.openbase.jul.visual.javafx.JFXConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rct.Transform;
@@ -140,7 +141,7 @@ public class UnitsPaneController {
 
         unitSymbolsPane.clearUnits();
 
-        final double halfButtonSize = (Constants.SMALL_ICON + (2 * Constants.INSETS)) / 2;
+        final double halfButtonSize = (JFXConstants.ICON_SIZE_SMALL + (2 * Constants.INSETS)) / 2;
 
         final List<UnitConfig> locationUnitConfigList = Registries.getLocationRegistry().getLocationConfigs();
 

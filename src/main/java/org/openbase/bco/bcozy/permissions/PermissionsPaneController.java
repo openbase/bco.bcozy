@@ -19,7 +19,8 @@ import org.controlsfx.control.textfield.CustomTextField;
 import org.openbase.bco.bcozy.permissions.model.RecursiveUnitConfig;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ObserverLabel;
-import org.openbase.bco.bcozy.view.SVGIcon;
+import org.openbase.jul.visual.javafx.JFXConstants;
+import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
@@ -105,7 +106,7 @@ public class PermissionsPaneController {
                 .selectedItemProperty()
                 .addListener(this::onSelectionChange);
 
-        filterInput.setRight(new SVGIcon(FontAwesomeIcon.SEARCH, Constants.EXTRA_SMALL_ICON, true));
+        filterInput.setRight(new SVGGlyphIcon(FontAwesomeIcon.SEARCH, JFXConstants.ICON_SIZE_EXTRA_SMALL, true));
 
         filterInput.promptTextProperty().setValue(new ObserverLabel("searchPlaceholder").getText());
         filterInput.textProperty().addListener((o, oldVal, newVal) -> {

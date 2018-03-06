@@ -20,7 +20,8 @@ import org.openbase.jul.exception.ExceptionProcessor;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.InfoPane;
 import org.openbase.bco.bcozy.view.ObserverButton;
-import org.openbase.bco.bcozy.view.SVGIcon;
+import org.openbase.jul.visual.javafx.JFXConstants;
+import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.slf4j.Logger;
@@ -70,7 +71,7 @@ public class AuthorizationGroupController {
 
         removeColumn.setCellFactory(new ButtonTableCellFactory<>(
                 (group, cellIndex) -> removeGroup(group),
-                () -> new SVGIcon(FontAwesomeIcon.TIMES, Constants.EXTRA_SMALL_ICON, true)
+                () -> new SVGGlyphIcon(FontAwesomeIcon.TIMES, JFXConstants.ICON_SIZE_EXTRA_SMALL, true)
         ));
 
         groupsTable.widthProperty().addListener((observable, oldValue, newValue) ->

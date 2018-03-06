@@ -24,6 +24,7 @@ import javafx.geometry.Pos;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import org.openbase.bco.bcozy.BCozy;
+import org.openbase.bco.bcozy.util.ThemeManager;
 import org.openbase.jul.exception.NotAvailableException;
 
 /**
@@ -31,7 +32,6 @@ import org.openbase.jul.exception.NotAvailableException;
  */
 public class LoadingPane extends BorderPane {
 
-    
     private static LoadingPane instance;
     private final VBox centerPane;
     private final ObserverLabel textLabel;
@@ -45,9 +45,11 @@ public class LoadingPane extends BorderPane {
      */
     public LoadingPane(final double height, final double width) {
         this.setPrefSize(width, height);
-        this.getStyleClass().add("info-pane");
+        this.getStyleClass().add("loading-pane");
 
         this.textLabel = new ObserverLabel("initRemotes");
+        this.textLabel.getStyleClass().clear();
+        this.textLabel.getStyleClass().add("loading-pane");
 
         this.progressSpinner = new JFXSpinner();
 
@@ -67,48 +69,53 @@ public class LoadingPane extends BorderPane {
     }
 
     /**
-     * Sets the new identifier for the TextLabel.
+     * Shows an info text in the loading pane referred by the identifier.
      *
-     * @param identifier identifier
-     * @deprecated please use info instead.
+     * @param identifier identifier which is used to resolved the text via the language bundle.
      */
-    @Deprecated
-    public void setTextLabelIdentifier(final String identifier) {
-        info(identifier);
-    }
-
     public void info(final String identifier) {
         assert identifier != null;
         Platform.runLater(() -> {
-            if (BCozy.baseColorIsWhite) {
-                textLabel.setStyle("-fx-text-fill: white; -fx-font-size: 16;");
-            } else {
-                textLabel.setStyle("-fx-text-fill: black; -fx-font-size: 16;");
-            }
+            textLabel.setStyle("");
             textLabel.setIdentifier(identifier);
         });
     }
 
+    /**
+     * Shows an confirmation text in the loading pane referred by the identifier.
+     *
+     * @param identifier identifier which is used to resolved the text via the language bundle.
+     */
     public void confirmation(final String identifier) {
         assert identifier != null;
         Platform.runLater(() -> {
-            textLabel.setStyle("-fx-text-fill: green; -fx-font-size: 16;");
+            textLabel.setStyle("-fx-text-fill: green;");
             textLabel.setIdentifier(identifier);
         });
     }
 
+    /**
+     * Shows an warning text in the loading pane referred by the identifier.
+     *
+     * @param identifier identifier which is used to resolved the text via the language bundle.
+     */
     public void warn(final String identifier) {
         assert identifier != null;
         Platform.runLater(() -> {
-            textLabel.setStyle("-fx-text-fill: orange; -fx-font-size: 16;");
+            textLabel.setStyle("-fx-text-fill: orange;");
             textLabel.setIdentifier(identifier);
         });
     }
 
+    /**
+     * Shows an error text in the loading pane referred by the identifier.
+     *
+     * @param identifier identifier which is used to resolved the text via the language bundle.
+     */
     public void error(final String identifier) {
         assert identifier != null;
         Platform.runLater(() -> {
-            textLabel.setStyle("-fx-text-fill: red; -fx-font-size: 16;");
+            textLabel.setStyle("-fx-text-fill: red;");
             textLabel.setIdentifier(identifier);
         });
     }

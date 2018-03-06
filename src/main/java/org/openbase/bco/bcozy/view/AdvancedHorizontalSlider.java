@@ -27,6 +27,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
+import org.openbase.jul.visual.javafx.JFXConstants;
+import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 
 /**
  * Created by hoestreich on 1/28/16.
@@ -38,8 +40,8 @@ public class AdvancedHorizontalSlider extends Pane {
     private final Circle thumb;
     private final StackPane topLabelPane;
     private final StackPane bottomLabelPane;
-    private final SVGIcon topLabelShape;
-    private final SVGIcon bottomLabelShape;
+    private final SVGGlyphIcon topLabelShape;
+    private final SVGGlyphIcon bottomLabelShape;
     private final Label topLabel;
     private final Label bottomLabel;
     private final VBox verticalLayout;
@@ -69,10 +71,10 @@ public class AdvancedHorizontalSlider extends Pane {
         slider.setAlignment(sliderBackground, Pos.CENTER_LEFT);
         slider.setAlignment(sliderActualStatus, Pos.CENTER_LEFT);
         slider.setAlignment(thumb, Pos.CENTER_LEFT);
-        topLabelShape = new SVGIcon(MaterialIcon.CHAT_BUBBLE, Constants.MIDDLE_ICON, false);
+        topLabelShape = new SVGGlyphIcon(MaterialIcon.CHAT_BUBBLE, JFXConstants.ICON_SIZE_MIDDLE, false);
         topLabel = new Label("");
         topLabelShape.getStyleClass().addAll(Constants.SMALL_LABEL, "advanced-horizontal-slider-label-top");
-        bottomLabelShape = new SVGIcon(MaterialIcon.CHAT_BUBBLE, Constants.MIDDLE_ICON, false);
+        bottomLabelShape = new SVGGlyphIcon(MaterialIcon.CHAT_BUBBLE, JFXConstants.ICON_SIZE_MIDDLE, false);
         bottomLabelShape.setRotate(180.0);
         //CHECKSTYLE.ON: MagicNumber
         bottomLabel = new Label("");

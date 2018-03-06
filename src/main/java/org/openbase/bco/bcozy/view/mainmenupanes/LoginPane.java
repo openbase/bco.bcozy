@@ -18,18 +18,29 @@
  */
 package org.openbase.bco.bcozy.view.mainmenupanes;
 
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import org.openbase.bco.authentication.lib.SessionManager;
+import org.openbase.bco.bcozy.controller.InitialPasswordChangeController;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ObserverButton;
 import org.openbase.bco.bcozy.view.ObserverLabel;
-import org.openbase.bco.bcozy.view.SVGIcon;
+import org.openbase.jul.visual.javafx.JFXConstants;
+import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
+import org.openbase.bco.registry.remote.Registries;
+import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.openbase.jul.schedule.GlobalCachedExecutorService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 
 /**
@@ -37,6 +48,10 @@ import org.openbase.bco.bcozy.view.SVGIcon;
  * @author vdasilva
  */
 public class LoginPane extends PaneElement {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoginPane.class);
+
+    private static final String INITIAL_PASSWORD = "admin";
 
     private final ObserverButton loginBtn;
     private final ObserverButton logoutBtn;
@@ -85,7 +100,7 @@ public class LoginPane extends PaneElement {
 
         //Case: User logged in
         logoutLayout = new VBox(Constants.INSETS);
-        final SVGIcon loggedInUserIcon = new SVGIcon(MaterialDesignIcon.ACCOUNT_CIRCLE, Constants.SMALL_ICON, true);
+        final SVGGlyphIcon loggedInUserIcon = new SVGGlyphIcon(MaterialDesignIcon.ACCOUNT_CIRCLE, JFXConstants.ICON_SIZE_SMALL, true);
         loggedInUserLbl = new Label();
         logoutBtn = new ObserverButton("logout");
         final HBox rightAlignLogoutButton = new HBox(logoutBtn);
@@ -112,8 +127,15 @@ public class LoginPane extends PaneElement {
         this.setPrefHeight(100);
         this.setMaxHeight(100);
 
-        this.statusIcon = new VBox(new SVGIcon(MaterialDesignIcon.LOGIN, Constants.MIDDLE_ICON, true));
+        this.statusIcon = new VBox(new SVGGlyphIcon(MaterialDesignIcon.LOGIN, JFXConstants.ICON_SIZE_MIDDLE, true));
         setState(State.LOGINACTIVE);
+
+        getLoginBtn().setOnAction(event -> loginUser());
+        getLogoutBtn().setOnAction(event -> resetLogin());
+        getPasswordField().setOnAction(event -> loginUser());
+        getNameTxt().setOnAction(event -> loginUser());
+        getNameTxt().setOnKeyTyped(event -> resetWrongInput());
+        getPasswordField().setOnKeyTyped(event -> resetWrongInput());
 
     }
 
@@ -232,7 +254,7 @@ public class LoginPane extends PaneElement {
                 this.getChildren().clear();
                 this.getChildren().addAll(loginLayout);
                 this.statusIcon.getChildren().clear();
-                this.statusIcon.getChildren().addAll(new SVGIcon(MaterialDesignIcon.LOGIN, Constants.MIDDLE_ICON,
+                this.statusIcon.getChildren().addAll(new SVGGlyphIcon(MaterialDesignIcon.LOGIN, JFXConstants.ICON_SIZE_MIDDLE,
                         true));
                 break;
 
@@ -240,10 +262,78 @@ public class LoginPane extends PaneElement {
                 this.getChildren().clear();
                 this.getChildren().addAll(logoutLayout);
                 this.statusIcon.getChildren().clear();
-                this.statusIcon.getChildren().addAll(new SVGIcon(MaterialDesignIcon.LOGOUT, Constants.MIDDLE_ICON,
+                this.statusIcon.getChildren().addAll(new SVGGlyphIcon(MaterialDesignIcon.LOGOUT, JFXConstants.ICON_SIZE_MIDDLE,
                         true));
                 break;
 
         }
+    }
+
+    private void startLogin() {
+        setState(LoginPane.State.LOGINACTIVE);
+    }
+
+    private void resetWrongInput() {
+        if (getInputWrongLbl().isVisible()) {
+            resetUserOrPasswordWrong();
+        }
+    }
+
+    private void loginUser() {
+        GlobalCachedExecutorService.submit(() -> {
+            try {
+                loginUserAsync();
+            } catch (InterruptedException ex) {
+                ExceptionPrinter.printHistory("Could not login!", ex, LOGGER);
+            }
+        });
+    }
+
+    private void loginUserAsync() throws InterruptedException {
+        SessionManager sessionManager = SessionManager.getInstance();
+
+        try {
+            final String password = getPasswordField().getText();
+            sessionManager.login(Registries.getUserRegistry().getUserIdByUserName(getNameTxt().getText()), password);
+            Platform.runLater(() -> {
+                resetUserOrPasswordWrong();
+                getLoggedInUserLbl().setText(getNameTxt().getText());
+                getNameTxt().setText("");
+                getPasswordField().setText("");
+                setState(LoginPane.State.LOGOUT);
+            });
+
+            if (password.equals(INITIAL_PASSWORD)) {
+                showChangeInitialPassword();
+            }
+        } catch (CouldNotPerformException ex) {
+            Platform.runLater(() -> {
+                indicateUserOrPasswordWrong();
+            });
+        } catch (java.lang.OutOfMemoryError error) {
+            LOGGER.error(error.getMessage());
+        }
+    }
+
+    private void showChangeInitialPassword() {
+        Platform.runLater(() -> {
+            try {
+                InitialPasswordChangeController.loadModalStage().getKey().show();
+            } catch (IOException ioe) {
+                ExceptionPrinter.printHistory(ioe, LOGGER);
+            }
+        });
+    }
+
+    private void resetLogin() {
+        SessionManager.getInstance().logout();
+
+        if (getInputWrongLbl().isVisible()) {
+            resetUserOrPasswordWrong();
+        }
+        getNameTxt().setText("");
+        getPasswordField().setText("");
+        getLoggedInUserLbl().setText("");
+        setState(LoginPane.State.LOGINACTIVE);
     }
 }

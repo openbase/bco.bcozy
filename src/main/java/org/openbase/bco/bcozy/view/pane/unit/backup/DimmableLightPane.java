@@ -60,9 +60,9 @@ public class DimmableLightPane extends AbstractUnitPane<DimmableLightRemote, Dim
     public DimmableLightPane() {
         super(DimmableLightRemote.class, true);
 //
-//        lightBulbIcon = new SVGIcon(MaterialDesignIcon.LIGHTBULB, MaterialDesignIcon.LIGHTBULB_OUTLINE, Constants.SMALL_ICON);
-//        unknownBackgroundIcon = new SVGIcon(MaterialDesignIcon.CHECKBOX_BLANK_CIRCLE, Constants.SMALL_ICON - 2, false);
-//        unknownForegroundIcon = new SVGIcon(MaterialDesignIcon.HELP_CIRCLE, Constants.SMALL_ICON, false);
+//        lightBulbIcon = new SVGIcon(MaterialDesignIcon.LIGHTBULB, MaterialDesignIcon.LIGHTBULB_OUTLINE, JFXConstants.ICON_SIZE_SMALL);
+//        unknownBackgroundIcon = new SVGIcon(MaterialDesignIcon.CHECKBOX_BLANK_CIRCLE, JFXConstants.ICON_SIZE_SMALL - 2, false);
+//        unknownForegroundIcon = new SVGIcon(MaterialDesignIcon.HELP_CIRCLE, JFXConstants.ICON_SIZE_SMALL, false);
 //        progressBar = new ProgressBar();
 //        headContent = new BorderPane();
 //        stackPane = new StackPane();

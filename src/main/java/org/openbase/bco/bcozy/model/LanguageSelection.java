@@ -17,6 +17,7 @@ package org.openbase.bco.bcozy.model;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import org.openbase.bco.bcozy.view.Constants;
+import org.openbase.jps.core.JPService;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
 import org.slf4j.Logger;
@@ -24,7 +25,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.function.Consumer;
-import org.openbase.jps.core.JPService;
 
 /**
  * Created by hoestreich on 1/2/16.
@@ -61,20 +61,10 @@ public final class LanguageSelection extends Observable {
     }
 
     /**
-     * Setter method to allow changing the language and notifying all gui elements to adapt afterwards.
-     *
-     * @param selectedLocale the new locale which should be set as default.
-     */
-    public void setSelectedLocale(final Locale selectedLocale) {
-        this.setChanged();
-        Locale.setDefault(selectedLocale);
-        notifyObservers(Locale.getDefault());
-    }
-
-    /**
      * Retunrns the localized text for the given identifier.
      *
      * @param identifier the identifier
+     *
      * @return the localized string
      */
     public static String getLocalized(String identifier) {
@@ -86,11 +76,16 @@ public final class LanguageSelection extends Observable {
      * arguments.
      *
      * @param identifier the identifier
-     * @param args the placeholder-arguments
+     * @param args       the placeholder-arguments
+     *
      * @return the localized string
      */
     public static String getLocalized(final String identifier, final Object... args) {
-        Objects.requireNonNull(identifier);
+
+        // handle dummy and empty identifier.
+        if (identifier == null || identifier.isEmpty() || identifier.equals(Constants.DUMMY_LABEL)) {
+            return "";
+        }
 
         String text;
         try {
@@ -114,7 +109,7 @@ public final class LanguageSelection extends Observable {
      * Adds an Listener to the given identifier.
      * The Listener is called, each time the language changed and on attach.
      *
-     * @param identifier the identifier
+     * @param identifier               the identifier
      * @param onLanguageChangeListener the listener for this identifier
      */
     public static void addObserverFor(final String identifier, final OnLanguageChangeListener onLanguageChangeListener) {
@@ -127,7 +122,7 @@ public final class LanguageSelection extends Observable {
      * Adds an Listener to the given identifier.
      * The Listener is called, each time the language changed and on attach.
      *
-     * @param identifier the identifier
+     * @param identifier      the identifier
      * @param newTextConsumer the listener for this identifier
      */
     public static void addObserverFor(String identifier, Consumer<String> newTextConsumer) {
@@ -139,6 +134,7 @@ public final class LanguageSelection extends Observable {
      * Returns an Observable Property which contains the localized string for the given identifier.
      *
      * @param identifier the identifier
+     *
      * @return a property with the localized string
      */
     public static ReadOnlyStringProperty getProperty(final String identifier) {
@@ -147,6 +143,17 @@ public final class LanguageSelection extends Observable {
         addObserverFor(identifier, (locale, text) -> localizedProperty.set(text));
 
         return localizedProperty.getReadOnlyProperty();
+    }
+
+    /**
+     * Setter method to allow changing the language and notifying all gui elements to adapt afterwards.
+     *
+     * @param selectedLocale the new locale which should be set as default.
+     */
+    public void setSelectedLocale(final Locale selectedLocale) {
+        this.setChanged();
+        Locale.setDefault(selectedLocale);
+        notifyObservers(Locale.getDefault());
     }
 
     public interface OnLanguageChangeListener {
