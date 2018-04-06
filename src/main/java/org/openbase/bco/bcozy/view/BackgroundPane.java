@@ -47,8 +47,7 @@ public class BackgroundPane extends StackPane {
      */
     public BackgroundPane(final ForegroundPane foregroundPane) throws InstantiationException, InterruptedException {
         try {
-
-            locationPane = LocationPane.getInstance(foregroundPane);
+            locationPane = new LocationPane(foregroundPane);
             this.getChildren().add(locationPane);
 
             // default layer: changing light states on the location map
