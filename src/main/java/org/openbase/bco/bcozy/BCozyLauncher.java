@@ -21,12 +21,12 @@ package org.openbase.bco.bcozy;
 import javafx.application.Platform;
 import org.openbase.bco.authentication.lib.jp.JPAuthentication;
 import org.openbase.bco.authentication.lib.jp.JPCredentialsDirectory;
-import org.openbase.bco.authentication.lib.jp.JPInitializeCredentials;
 import org.openbase.bco.bcozy.jp.JPLanguage;
 import org.openbase.bco.bcozy.view.LoadingPane;
 import org.openbase.jps.core.JPService;
 import org.openbase.jps.preset.JPDebugMode;
 import org.openbase.jul.exception.FatalImplementationErrorException;
+import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
 import org.openbase.jul.extension.rsb.com.jp.JPRSBHost;
@@ -37,7 +37,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.openbase.bco.bcozy.BCozy.APP_NAME;
-import org.openbase.jul.exception.NotAvailableException;
 
 /**
  * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>
@@ -61,7 +60,6 @@ public class BCozyLauncher {
         JPService.setApplicationName(APP_NAME);
         JPService.registerProperty(JPDebugMode.class);
         JPService.registerProperty(JPLanguage.class);
-        JPService.registerProperty(JPInitializeCredentials.class);
         JPService.registerProperty(JPCredentialsDirectory.class);
         JPService.registerProperty(JPRSBThreadPooling.class);
         JPService.registerProperty(JPRSBHost.class);

@@ -19,31 +19,24 @@
  */
 package org.openbase.bco.bcozy.view.location;
 
-import java.util.ArrayList;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.event.EventHandler;
-import javafx.geometry.Point2D;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Pane;
-import org.openbase.bco.bcozy.view.Constants;
-import org.openbase.bco.bcozy.view.ForegroundPane;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import javafx.animation.ParallelTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
+import javafx.event.EventHandler;
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.effect.Lighting;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+import org.openbase.bco.bcozy.view.Constants;
+import org.openbase.bco.bcozy.view.ForegroundPane;
 import org.openbase.bco.bcozy.view.InfoPane;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jps.core.JPService;
@@ -51,7 +44,14 @@ import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.EnumNotSupportedException;
 import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rst.domotic.unit.UnitConfigType.UnitConfig;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author julian
@@ -59,11 +59,6 @@ import rst.domotic.unit.UnitConfigType.UnitConfig;
  */
 public final class LocationPane extends Pane {
 
-    /**
-     *
-     * Singleton instance.
-     */
-    private static LocationPane instance;
     private static boolean initialized;
 
     /**
@@ -93,7 +88,7 @@ public final class LocationPane extends Pane {
      *
      * @param foregroundPane The foregroundPane
      */
-    private LocationPane(final ForegroundPane foregroundPane) throws org.openbase.jul.exception.InstantiationException, InterruptedException {
+    public LocationPane(final ForegroundPane foregroundPane) throws org.openbase.jul.exception.InstantiationException, InterruptedException {
         super();
 
         this.foregroundPane = foregroundPane;
@@ -163,23 +158,6 @@ public final class LocationPane extends Pane {
         }
     }
 
-    /**
-     * Singleton Pattern. This method call can not be used to instantiate the
-     * singleton.
-     *
-     * @return the singleton instance of the location pane
-     * @throws InstantiationException thrown if no getInstance(ForegroundPane
-     * foregroundPane) is called before
-     */
-    public static LocationPane getInstance() throws InstantiationException {
-        synchronized (LocationPane.class) {
-            if (LocationPane.instance == null) {
-                throw new InstantiationException();
-            }
-        }
-        return LocationPane.instance;
-    }
-
     public void setInitialized(boolean init) {
         initialized = init;
     }
@@ -190,22 +168,6 @@ public final class LocationPane extends Pane {
 
     public ForegroundPane getForeground() {
         return this.foregroundPane;
-    }
-
-    /**
-     * Singleton Pattern.
-     *
-     * @return the singleton instance of the location pane
-     * @param foregroundPane the foreground pane needed for instantiation
-     * @throws org.openbase.jul.exception.InstantiationException
-     */
-    public static LocationPane getInstance(final ForegroundPane foregroundPane) throws org.openbase.jul.exception.InstantiationException, InterruptedException {
-        synchronized (LocationPane.class) {
-            if (LocationPane.instance == null) {
-                LocationPane.instance = new LocationPane(foregroundPane);
-            }
-        }
-        return LocationPane.instance;
     }
 
     /**

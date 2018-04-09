@@ -1340,7 +1340,7 @@
 }
 
 .loading-pane {
-    -fx-background-insets: 5 5 5 5;
+    -fx-background-insets: 0 0 0 0;
     -fx-background-color: rgba(0.0, 0.0, 0.0, 0.7);
     -fx-text-fill: white;
     -fx-font-size: 16;
