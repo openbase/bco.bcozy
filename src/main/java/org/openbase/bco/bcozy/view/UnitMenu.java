@@ -37,7 +37,7 @@ import org.openbase.bco.bcozy.view.pane.unit.TitledUnitPaneContainer;
  * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>
  * @author vdasilva
  */
-public class ContextMenu extends VBox {
+public class UnitMenu extends VBox {
 
     private final ContextSortingPane contextSortingPane;
     private final Label roomInfo;
@@ -53,7 +53,7 @@ public class ContextMenu extends VBox {
      * @param height Height
      * @param width  Width
      */
-    public ContextMenu(final double height, final double width) {
+    public UnitMenu(final double height, final double width) {
 
         this.setMinHeight(height);
         this.setMinWidth(width);

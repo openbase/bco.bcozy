@@ -80,7 +80,7 @@ public class CenterPane extends StackPane {
             appStateProperty.set(CenterPaneController.State.SETTINGS);
         });
 
-        //final FloatingButton settingsBtn = new FloatingButton(new SVGIcon(MaterialDesignIcon.SETTINGS, JFXConstants.ICON_SIZE_MIDDLE, true));
+        //final FloatingButton settingsBtn = new FloatinrgButton(new SVGIcon(MaterialDesignIcon.SETTINGS, JFXConstants.ICON_SIZE_MIDDLE, true));
         //this.setAlignment(settingsBtn, Pos.TOP_RIGHT);
         //settingsBtn.setOnAction(e -> toggleSettings());
         // Styling components with CSS

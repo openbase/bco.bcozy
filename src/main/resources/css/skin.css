@@ -668,7 +668,7 @@
 }
 
 .label:disabled {
-    -fx-opacity: -fx-disabled-opacity;
+    -fx-opacity: 0.0;
 }
 
 .label.success-label {

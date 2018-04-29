@@ -38,6 +38,7 @@ import javafx.util.Duration;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ForegroundPane;
 import org.openbase.bco.bcozy.view.InfoPane;
+import org.openbase.bco.bcozy.view.generic.MultiTouchPane;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jps.core.JPService;
 import org.openbase.jul.exception.CouldNotPerformException;
@@ -57,7 +58,7 @@ import java.util.Map;
  * @author julian
  * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>
  */
-public final class LocationPane extends Pane {
+public final class LocationPane extends MultiTouchPane {
 
     private static boolean initialized;
 
@@ -81,7 +82,6 @@ public final class LocationPane extends Pane {
 
     private LocationPolygon lastFirstClickTarget;
     private LocationPolygon lastSelectedTile;
-    private final EventHandler<MouseEvent> onEmptyAreaClickHandler;
 
     /**
      * Private constructor to deny manual instantiation.
@@ -102,7 +102,14 @@ public final class LocationPane extends Pane {
         selectedLocationId = new SimpleStringProperty(Constants.DUMMY_LABEL);
         rootLocation = null;
 
-        onEmptyAreaClickHandler = event -> {
+        // handle location selections
+        setOnMouseClicked(event -> {
+
+            // filter touch events
+            if (event.isSynthesized()) {
+                return;
+            }
+
             if (event.isStillSincePress() && rootLocation != null) {
                 if (event.getClickCount() == 1) {
                     selectRootLocation();
@@ -111,12 +118,12 @@ public final class LocationPane extends Pane {
                 }
 
                 try {
-                    foregroundPane.getContextMenu().getRoomInfo().setText(selectedLocation.getLabel());
+                    foregroundPane.getUnitMenu().getRoomInfo().setText(selectedLocation.getLabel());
                 } catch (NotAvailableException ex) {
                     LOGGER.warn("Could not resolve location label!", ex);
                 }
             }
-        };
+        });
 
         this.heightProperty().addListener((observable, oldValue, newValue)
                 -> this.setTranslateY(this.getTranslateY() - ((oldValue.doubleValue() - newValue.doubleValue()) / 2) * this.getScaleY()));
@@ -126,11 +133,6 @@ public final class LocationPane extends Pane {
 
         this.foregroundPane.getMainMenuWidthProperty().addListener((observable, oldValue, newValue)
                 -> this.setTranslateX(this.getTranslateX() - ((oldValue.doubleValue() - newValue.doubleValue()) / 2)));
-        
-        onMouseMovedProperty().addListener((observable, oldValue, newValue) -> {
-            LOGGER.info("mouse moved:");
-            
-        });
     }
 
     private void selectRootLocation() {
@@ -146,7 +148,7 @@ public final class LocationPane extends Pane {
             return;
         }
 
-        // delected selected location
+        // deselect selected location
         if (selectedLocation != null) {
             selectedLocation.setSelected(false);
         }
@@ -520,7 +522,6 @@ public final class LocationPane extends Pane {
                             selectedLocation.fireEvent(event.copyFor(null, selectedLocation));
                         }
                     }
-
                 }
             } catch (CouldNotPerformException ex) {
                 ExceptionPrinter.printHistory("Could not handle mouse event!", ex, LOGGER);
@@ -584,7 +585,7 @@ public final class LocationPane extends Pane {
             selectedLocation = newSelectedLocation;
             selectedLocationId.set(newSelectedLocation.getUnitId());
 
-            foregroundPane.getContextMenu().getRoomInfo().setText(selectedLocation.getLabel());
+            foregroundPane.getUnitMenu().getRoomInfo().setText(selectedLocation.getLabel());
 
         } catch (CouldNotPerformException ex) {
             throw new CouldNotPerformException("Could not select location polygon!", ex);
@@ -621,15 +622,6 @@ public final class LocationPane extends Pane {
         selectedLocationId.removeListener(changeListener);
     }
 
-    /**
-     * Getter for the OnEmptyAreaClickHandler.
-     *
-     * @return The EventHandler.
-     */
-    public EventHandler<MouseEvent> getOnEmptyAreaClickHandler() {
-        return onEmptyAreaClickHandler;
-    }
-    
     private void autoFocusPolygon(final LocationPolygon polygon) {
         final double xScale = (foregroundPane.getBoundingBox().getWidth() / polygon.prefWidth(0))
                 * Constants.ZOOM_FIT_PERCENTAGE_WIDTH;

@@ -32,6 +32,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TouchEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.*;
 import javafx.scene.shape.Circle;
@@ -129,12 +130,19 @@ public class ColorChooser extends HBox implements DynamicPane {
             event.consume();
         };
 
+        final EventHandler<TouchEvent> colorContainerTouchHandler = event -> {
+            event.consume();
+        };
+
         colorRectContainer.setMinSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
         colorRectContainer.setPrefSize(COLOR_BOX_SIZE, COLOR_BOX_SIZE);
         colorRectContainer.maxHeightProperty().bind(colorRectContainer.prefWidthProperty());
         colorRectContainer.getChildren().addAll(colorHue, saturationRect(), brightnessRect(), circle);
         colorRectContainer.setOnMousePressed(colorContainerMouseHandler);
         colorRectContainer.setOnMouseDragged(colorContainerMouseHandler);
+        setOnTouchMoved(colorContainerTouchHandler);
+        setOnTouchPressed(colorContainerTouchHandler);
+        setOnTouchReleased(colorContainerTouchHandler);
 
         hueValueSelector.setWidth(COLOR_BOX_SIZE / 10);
         hueValueSelector.setHeight(COLOR_BOX_SIZE / 6);

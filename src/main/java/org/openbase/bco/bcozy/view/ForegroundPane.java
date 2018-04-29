@@ -38,7 +38,7 @@ import org.openbase.jul.iface.DefaultInitializable;
 public class ForegroundPane extends BorderPane implements DefaultInitializable {
 
     private final MainMenu mainMenu;
-    private final ContextMenu contextMenu;
+    private final UnitMenu unitMenu;
     private final CenterPane centerPane;
     private final MenuHeader menuHeader;
     private final InfoPane infoFooter;
@@ -53,16 +53,16 @@ public class ForegroundPane extends BorderPane implements DefaultInitializable {
     public ForegroundPane(final double height, final double width) throws InstantiationException {
         try {
             this.mainMenu = new MainMenu(height - 150, 300);
-            this.contextMenu = new ContextMenu(height - 150, 300);
-            this.contextMenu.getFullscreen().setOnAction(event -> setMaximizeAction());
-            this.contextMenu.getSettingsBtn().setOnAction(event -> toggleSettings());
+            this.unitMenu = new UnitMenu(height - 150, 300);
+            this.unitMenu.getFullscreen().setOnAction(event -> setMaximizeAction());
+            this.unitMenu.getSettingsBtn().setOnAction(event -> toggleSettings());
             this.menuHeader = new MenuHeader(30, width);
             this.infoFooter = new InfoPane(20, width);
             this.centerPane = new CenterPane(height - 150, this);
 
             //this.setTop(this.menuHeader);
             this.setLeft(this.mainMenu);
-            this.setRight(this.contextMenu);
+            this.setRight(this.unitMenu);
             this.setBottom(this.infoFooter);
             this.setCenter(this.centerPane);
             this.setTop(this.menuHeader);
@@ -102,8 +102,8 @@ public class ForegroundPane extends BorderPane implements DefaultInitializable {
      *
      * @return ContextMenu Instance (VBox)
      */
-    public ContextMenu getContextMenu() {
-        return contextMenu;
+    public UnitMenu getUnitMenu() {
+        return unitMenu;
     }
 
     /**
@@ -147,12 +147,12 @@ public class ForegroundPane extends BorderPane implements DefaultInitializable {
 
 
     private void setMaximizeAction() {
-        final Stage stage = (Stage) contextMenu.getScene().getWindow();
+        final Stage stage = (Stage) unitMenu.getScene().getWindow();
         if (stage.isFullScreen()) {
-            contextMenu.getFullscreen().changeIcon(MaterialIcon.FULLSCREEN);
+            unitMenu.getFullscreen().changeIcon(MaterialIcon.FULLSCREEN);
             stage.setFullScreen(false);
         } else {
-            contextMenu.getFullscreen().changeIcon(MaterialIcon.FULLSCREEN_EXIT);
+            unitMenu.getFullscreen().changeIcon(MaterialIcon.FULLSCREEN_EXIT);
             stage.setFullScreen(true);
         }
     }
