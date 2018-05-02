@@ -59,6 +59,7 @@ public class MainMenu extends StackPane implements VoidInitializable {
     private final LogoPane logoPane;
     private boolean maximized;
     private TitledPane loginContainer;
+    private final SVGGlyphIcon menuStateIcon;
 
 
     /**
@@ -85,7 +86,9 @@ public class MainMenu extends StackPane implements VoidInitializable {
             this.logoPane = new LogoPane();
             this.loginPane = new LoginPane();
             this.availableUsersPane = new AvailableUsersPane();
-            this.mainMenuFloatingButton = new FloatingButton(new SVGGlyphIcon(MaterialIcon.MENU, JFXConstants.ICON_SIZE_MIDDLE, true));
+
+            this.menuStateIcon = new SVGGlyphIcon(MaterialIcon.KEYBOARD_ARROW_LEFT, JFXConstants.ICON_SIZE_MIDDLE, true);
+            this.mainMenuFloatingButton = new FloatingButton(menuStateIcon);
 
             loginContainer = new ObserverTitledPane("login");
             loginContainer.getStyleClass().addAll("login-titled-pane");
@@ -93,7 +96,7 @@ public class MainMenu extends StackPane implements VoidInitializable {
             loginContainer.setContent(loginPane);
 
             // Setting Alignment in Stackpane
-            StackPane.setAlignment(mainMenuFloatingButton, Pos.TOP_RIGHT);
+            StackPane.setAlignment(mainMenuFloatingButton, Pos.BOTTOM_RIGHT);
             StackPane.setAlignment(verticalLayout, Pos.TOP_CENTER);
             StackPane.setAlignment(verticalLayoutSmall, Pos.TOP_CENTER);
             this.mainMenuFloatingButton.translateYProperty().set(-(Constants.FLOATING_BUTTON_OFFSET));
@@ -171,12 +174,13 @@ public class MainMenu extends StackPane implements VoidInitializable {
      */
     public void maximizeMainMenu() {
         maximized = true;
+        menuStateIcon.setForegroundIcon(MaterialIcon.KEYBOARD_ARROW_LEFT);
         setMinHeight(height);
         setMinWidth(width);
         setPrefHeight(height);
         setPrefWidth(width);
         getChildren().clear();
-        StackPane.setAlignment(mainMenuFloatingButton, Pos.TOP_RIGHT);
+        StackPane.setAlignment(mainMenuFloatingButton, Pos.BOTTOM_RIGHT);
         mainMenuFloatingButton.translateYProperty().set(-(Constants.FLOATING_BUTTON_OFFSET));
         getChildren().addAll(verticalLayout, mainMenuFloatingButton);
     }
@@ -187,11 +191,12 @@ public class MainMenu extends StackPane implements VoidInitializable {
      */
     public void minimizeMainMenu() {
         maximized = false;
+        menuStateIcon.setForegroundIcon(MaterialIcon.KEYBOARD_ARROW_RIGHT);
         setMinHeight(height);
         setPrefHeight(height);
         setMinWidth(Constants.SMALL_MAIN_MENU_WIDTH);
         setPrefWidth(Constants.SMALL_MAIN_MENU_WIDTH_PREF);
-        StackPane.setAlignment(mainMenuFloatingButton, Pos.TOP_CENTER);
+        StackPane.setAlignment(mainMenuFloatingButton, Pos.BOTTOM_CENTER);
         mainMenuFloatingButton.translateYProperty().set(-(Constants.FLOATING_BUTTON_OFFSET));
         verticalLayoutSmall.getChildren().clear();
         verticalLayoutSmall.getChildren().addAll(logoPane.getStatusIcon(), loginPane.getStatusIcon(), availableUsersPane.getStatusIcon());

@@ -668,7 +668,8 @@
 }
 
 .label:disabled {
-    -fx-opacity: 0.0;
+    -fx-opacity: -fx-disabled-opacity;
+    /*-fx-opacity: 1.0;*/
 }
 
 .label.success-label {

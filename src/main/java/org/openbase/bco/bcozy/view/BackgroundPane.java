@@ -88,6 +88,9 @@ public class BackgroundPane extends StackPane {
             });
             this.getStyleClass().add("background-pane");
 
+            // init touch
+            locationPane.initMultiTouch();
+
         } catch (CouldNotPerformException ex) {
             throw new InstantiationException(this, ex);
         }
