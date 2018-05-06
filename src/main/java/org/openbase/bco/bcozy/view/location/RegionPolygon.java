@@ -20,9 +20,10 @@ package org.openbase.bco.bcozy.view.location;
 
 import javafx.scene.paint.Color;
 import org.openbase.bco.bcozy.view.Constants;
-
-import java.util.List;
+import org.openbase.bco.bcozy.view.InfoPane;
+import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InstantiationException;
+import org.openbase.jul.exception.printer.ExceptionPrinter;
 import rst.domotic.unit.location.LocationDataType.LocationData;
 
 /**
@@ -31,15 +32,49 @@ import rst.domotic.unit.location.LocationDataType.LocationData;
 public class RegionPolygon extends LocationPolygon {
 
     private boolean selectable;
+    private final LocationPane locationPane;
 
     /**
      * The Constructor for a RegionPolygon.
      *
      * @param points The vertices of the location
      */
-    public RegionPolygon(final double... points) throws InstantiationException {
+    public RegionPolygon(final LocationPane locationPane, final double... points) throws InstantiationException {
         super(points);
+        this.locationPane = locationPane;
         this.selectable = false;
+        setOnMouseClicked(event -> {
+            try {
+                event.consume();
+                if (event.isStillSincePress()) {
+                    if (event.getClickCount() == 1) {
+                        locationPane.setSelectedLocation(this);
+                    } else if (event.getClickCount() == 2) {
+                        if (locationPane.getLastClickTarget().equals(this)) {
+                            locationPane.autoFocusPolygonAnimated(this);
+                        } else {
+                            locationPane.getLastClickTarget().fireEvent(event.copyFor(null, locationPane.getLastClickTarget()));
+                        }
+                    }
+                }
+            } catch (CouldNotPerformException ex) {
+                ExceptionPrinter.printHistory("Could not handle mouse event!", ex, LOGGER);
+            }
+        });
+        setOnMouseEntered(event -> {
+            try {
+                event.consume();
+                mouseEntered();
+                InfoPane.info(getLabel());
+            } catch (CouldNotPerformException ex) {
+                ExceptionPrinter.printHistory("Could not handle mouse event!", ex, LOGGER);
+            }
+        });
+        setOnMouseExited(event -> {
+            event.consume();
+            mouseLeft();
+            InfoPane.info("");
+        });
     }
 
     @Override
@@ -110,14 +145,14 @@ public class RegionPolygon extends LocationPolygon {
     /**
      * This method should be called when the mouse enters the polygon.
      */
-    public void mouseEntered() {
+    private void mouseEntered() {
         this.setStrokeWidth(Constants.REGION_STROKE_WIDTH_MOUSE_OVER);
     }
 
     /**
      * This method should be called when the mouse leaves the polygon.
      */
-    public void mouseLeft() {
+    private void mouseLeft() {
         this.setStrokeWidth(Constants.REGION_STROKE_WIDTH);
     }
 }

@@ -20,20 +20,31 @@ package org.openbase.bco.bcozy.view.location;
 
 import javafx.scene.shape.Path;
 import javafx.scene.shape.Shape;
-
-import java.util.List;
 import org.openbase.bco.dal.remote.unit.location.LocationRemote;
+import org.openbase.bco.registry.remote.Registries;
+import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.exception.InstantiationException;
 import org.openbase.jul.exception.NotAvailableException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import rst.domotic.unit.UnitConfigType.UnitConfig;
 import rst.domotic.unit.location.LocationDataType.LocationData;
+
+import java.util.List;
 
 /**
  * A Polygon that represents different kinds of locations.
  */
 public abstract class LocationPolygon extends AbstractUnitPolygon<LocationData, LocationRemote> {
 
+    protected static final Logger LOGGER = LoggerFactory.getLogger(TilePolygon.class);
+
     private boolean selected;
     private Shape cuttingShape;
+
+    // the level in the location hierarchy
+    private int locationLevel;
 
     /**
      * Constructor for the LocationPolygon.
@@ -45,7 +56,30 @@ public abstract class LocationPolygon extends AbstractUnitPolygon<LocationData, 
         super(points);
         this.selected = false;
         this.cuttingShape = this;
-        this.setLocationStyle();							
+        this.setLocationStyle();
+    }
+
+    @Override
+    public void init(final UnitConfig unitConfig) throws InitializationException, InterruptedException {
+        super.init(unitConfig);
+
+        try {
+            // calculate location level
+            int level = 0;
+            UnitConfig locationUnitConfig = unitConfig;
+
+            while (!locationUnitConfig.getLocationConfig().getRoot()) {
+                level++;
+                locationUnitConfig = Registries.getUnitRegistry(true).getUnitConfigById(locationUnitConfig.getPlacementConfig().getLocationId());
+            }
+            locationLevel = level;
+        } catch (CouldNotPerformException ex) {
+            throw new InitializationException(this, ex);
+        }
+    }
+
+    public int getLocationLevel() {
+        return locationLevel;
     }
 
     /**

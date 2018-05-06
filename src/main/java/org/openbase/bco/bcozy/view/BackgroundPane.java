@@ -18,14 +18,10 @@
  */
 package org.openbase.bco.bcozy.view;
 
-import javafx.scene.input.TouchPoint;
 import javafx.scene.layout.StackPane;
 import org.openbase.bco.bcozy.view.location.LocationPane;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InstantiationException;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  *
@@ -47,23 +43,23 @@ public class BackgroundPane extends StackPane {
      */
     public BackgroundPane(final ForegroundPane foregroundPane) throws InstantiationException, InterruptedException {
         try {
-            locationPane = new LocationPane(foregroundPane);
+            this.locationPane = new LocationPane(foregroundPane);
             this.getChildren().add(locationPane);
 
             // default layer: changing light states on the location map
-            unitSymbolsPane = new UnitSymbolsPane();
-            unitSymbolsPane.setPickOnBounds(false);
+            this.unitSymbolsPane = new UnitSymbolsPane();
+            this.unitSymbolsPane.setPickOnBounds(false);
             this.getChildren().add(unitSymbolsPane);
 
-            unitSymbolsPane.selectedLocationId.bind(locationPane.selectedLocationId);
+            this.unitSymbolsPane.selectedLocationId.bind(locationPane.selectedLocationId);
 
             // layer for fast overview over maintenance-relevant units
-            maintenanceLayerPane = new SimpleUnitSymbolsPane();
-            maintenanceLayerPane.setPickOnBounds(false);
+            this.maintenanceLayerPane = new SimpleUnitSymbolsPane();
+            this.maintenanceLayerPane.setPickOnBounds(false);
 
             // layer for editing unit positions, shows all supported units
-            editingLayerPane = new SimpleUnitSymbolsPane();
-            editingLayerPane.setPickOnBounds(false);
+            this.editingLayerPane = new SimpleUnitSymbolsPane();
+            this.editingLayerPane.setPickOnBounds(false);
 
             // layer management
             foregroundPane.getAppState().addListener((observable, oldValue, newValue) -> {
@@ -87,9 +83,11 @@ public class BackgroundPane extends StackPane {
 
             });
             this.getStyleClass().add("background-pane");
-
             // init touch
-            locationPane.initMultiTouch();
+            this.locationPane.initMultiTouch();
+            this.onMouseClickedProperty().bindBidirectional(locationPane.onMouseClickedProperty());
+            this.onMouseEnteredProperty().bindBidirectional(locationPane.onMouseEnteredProperty());
+            this.onMouseExitedProperty().bindBidirectional(locationPane.onMouseExitedProperty());
 
         } catch (CouldNotPerformException ex) {
             throw new InstantiationException(this, ex);

@@ -33,37 +33,35 @@ public abstract class MultiTouchPane extends Pane {
     public void initMultiTouch() throws CouldNotPerformException {
         try {
             // handle node mouse translations
-            setOnMousePressed(event -> {
+            getParent().setOnMousePressed(event -> {
 
                 // filter touch events
                 if (event.isSynthesized()) {
                     return;
                 }
 
-                System.out.println("handle mouse pressed...");
-
+                // System.out.println("handle mouse pressed...");
                 this.prevMouseCordX = event.getX();
                 this.prevMouseCordY = event.getY();
                 event.consume();
             });
-            setOnMouseDragged(event -> {
+            getParent().setOnMouseDragged(event -> {
 
                 // filter touch events
                 if (event.isSynthesized()) {
                     return;
                 }
 
-                System.out.println("handle mouse dragged...");
-
+                // System.out.println("handle mouse dragged...");
                 setTranslateX(getTranslateX() + (event.getX() - prevMouseCordX));
                 setTranslateY(getTranslateY() + (event.getY() - prevMouseCordY));
                 prevMouseCordX = event.getX();
                 prevMouseCordY = event.getY();
+                event.consume();
             });
 
             // handle node mouse zoom
-            setOnScroll(event -> {
-
+            getParent().setOnScroll(event -> {
 
                 // filter touch events
                 if (event.isDirect()) {
@@ -79,7 +77,7 @@ public abstract class MultiTouchPane extends Pane {
                     return;
                 }
 
-                System.out.println("handle mouse scroll...");
+                // System.out.println("handle mouse scroll...");
 
                 // calculate scale factor
                 final double scaleFactor = (event.getDeltaY() > 0) ? Constants.SCALE_DELTA : 1 / Constants.SCALE_DELTA;
@@ -93,7 +91,7 @@ public abstract class MultiTouchPane extends Pane {
             });
 
             // handle node touch translations
-            setOnTouchPressed(event -> {
+            getParent().setOnTouchPressed(event -> {
 
                 // skip if movement is already registered
                 if (isTouchMovementInProcess()) {
@@ -131,14 +129,14 @@ public abstract class MultiTouchPane extends Pane {
                     }
                 }
 
-                //System.out.println("handle touch moved...");
+                // System.out.println("handle touch moved...");
                 setTranslateX(getTranslateX() + (event.getTouchPoint().getSceneX() - prevTouchCordX));
                 setTranslateY(getTranslateY() + (event.getTouchPoint().getSceneY() - prevTouchCordY));
                 prevTouchCordX = event.getTouchPoint().getX();
                 prevTouchCordY = event.getTouchPoint().getY();
                 event.consume();
             });
-            setOnTouchReleased(event -> {
+            getParent().setOnTouchReleased(event -> {
 
                 // filter if no movement was detected
                 if (!isTouchMovementInProcess()) {
