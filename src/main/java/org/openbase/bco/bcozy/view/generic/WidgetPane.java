@@ -209,20 +209,20 @@ public class WidgetPane extends VBox implements DynamicPane {
             toggleSwitch.selectedProperty().bindBidirectional(primaryActivationProperty);
             toggleSwitch.setOnMouseClicked(mouseEventHandler);
             headPane.setOnMouseClicked(mouseEventHandler);
-            headPane.setOnSwipeDown((event) -> {
-                secondaryActivationProperty.set(true);
-            });
-            headPane.setOnSwipeUp((event) -> {
-                secondaryActivationProperty.set(false);
-            });
-            headPane.setOnScrollStarted((event) -> {
-                if (event.getDeltaY() > 0) {
-                    secondaryActivationProperty.set(true);
-                } else if (event.getDeltaY() < 0) {
-                    secondaryActivationProperty.set(false);
-
-                }
-            });
+//            headPane.setOnSwipeDown((event) -> {
+//                secondaryActivationProperty.set(true);
+//            });
+//            headPane.setOnSwipeUp((event) -> {
+//                secondaryActivationProperty.set(false);
+//            });
+//            headPane.setOnScrollStarted((event) -> {
+//                if (event.getDeltaY() > 0) {
+//                    secondaryActivationProperty.set(true);
+//                } else if (event.getDeltaY() < 0) {
+//                    secondaryActivationProperty.set(false);
+//
+//                }
+//            });
         }
     }
 

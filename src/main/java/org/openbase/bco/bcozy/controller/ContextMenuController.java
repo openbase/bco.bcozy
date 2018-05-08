@@ -98,7 +98,7 @@ public class ContextMenuController {
                 fillTitledPaneContainer(titledPaneContainer, locationID);
             }
 
-            foregroundPane.getContextMenu().setTitledPaneContainer(titledPaneContainer);
+            foregroundPane.getUnitMenu().setTitledPaneContainer(titledPaneContainer);
         } catch (CouldNotPerformException ex) {
             throw new CouldNotPerformException("Could not set context menu.", ex);
         }
@@ -138,7 +138,7 @@ public class ContextMenuController {
         }
 
         this.titledPaneMap.clear();
-        this.foregroundPane.getContextMenu().clearVerticalScrollPane();
+        this.foregroundPane.getUnitMenu().clearVerticalScrollPane();
     }
 
     /**

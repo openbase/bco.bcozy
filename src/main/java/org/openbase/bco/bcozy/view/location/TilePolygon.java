@@ -1,17 +1,17 @@
 /**
  * ==================================================================
- *
+ * <p>
  * This file is part of org.openbase.bco.bcozy.
- *
+ * <p>
  * org.openbase.bco.bcozy is free software: you can redistribute it and modify
  * it under the terms of the GNU General Public License (Version 3)
  * as published by the Free Software Foundation.
- *
+ * <p>
  * org.openbase.bco.bcozy is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
@@ -20,12 +20,10 @@ package org.openbase.bco.bcozy.view.location;
 
 import javafx.scene.paint.Color;
 import org.openbase.bco.bcozy.view.Constants;
-
+import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.EnumNotSupportedException;
 import org.openbase.jul.exception.InstantiationException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import rst.domotic.unit.location.LocationDataType;
 
 /**
@@ -33,7 +31,7 @@ import rst.domotic.unit.location.LocationDataType;
  */
 public class TilePolygon extends LocationPolygon {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TilePolygon.class);
+    private final LocationPane locationPane;
 
     /**
      * The Constructor for a TilePolygon.
@@ -41,8 +39,26 @@ public class TilePolygon extends LocationPolygon {
      * @param points The vertices of the location
      * @throws org.openbase.jul.exception.InstantiationException
      */
-    public TilePolygon(final double... points) throws InstantiationException {
+    public TilePolygon(final LocationPane locationPane, final double... points) throws InstantiationException {
         super(points);
+        this.locationPane = locationPane;
+
+        setOnMouseClicked(event -> {
+            try {
+                if (event.isStillSincePress()) {
+                    if (event.getClickCount() == 1) {
+                        locationPane.setSelectedLocation(this);
+                    } else if (event.getClickCount() == 2) {
+                        locationPane.autoFocusPolygonAnimated(this);
+                    }
+                    event.consume();
+                }
+            } catch (CouldNotPerformException ex) {
+                ExceptionPrinter.printHistory("Could not handle mouse event!", ex, LOGGER);
+            }
+        });
+
+        hoverProperty().addListener((observable,  oldValue, newValue) -> locationPane.handleHoverUpdate(TilePolygon.this, newValue));
     }
 
     @Override
@@ -52,8 +68,6 @@ public class TilePolygon extends LocationPolygon {
                 setCustomColor(Color.GREEN.brighter());
                 break;
             case ABSENT:
-                setCustomColor(Color.TRANSPARENT);
-                break;
             case UNKNOWN:
                 setCustomColor(Color.TRANSPARENT);
                 break;
@@ -92,19 +106,5 @@ public class TilePolygon extends LocationPolygon {
         } else {
             this.setFill(mainColor.interpolate(customColor, CUSTOM_COLOR_WEIGHT));
         }
-    }
-
-    /**
-     * This method should be called when the mouse enters the polygon.
-     */
-    public void mouseEntered() {
-        this.setStrokeWidth(Constants.ROOM_STROKE_WIDTH_MOUSE_OVER);
-    }
-
-    /**
-     * This method should be called when the mouse leaves the polygon.
-     */
-    public void mouseLeft() {
-        this.setStrokeWidth(Constants.ROOM_STROKE_WIDTH);
     }
 }

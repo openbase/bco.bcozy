@@ -91,7 +91,6 @@ public class LocationPaneController {
         final List<UnitConfig> locationUnitConfigList = Registries.getLocationRegistry().getLocationConfigs();
 
         locationPane.clearLocations();
-        
 
         for (final UnitConfig locationUnitConfig : locationUnitConfigList) {
             try {

@@ -54,13 +54,14 @@ public abstract class AbstractUnitPolygon<M extends GeneratedMessage, UR extends
         }
     }
 
-    public void init(final String unitID) throws InitializationException, InterruptedException {
-        try {
-            this.unitRemote = (UR) Units.getUnit(unitID, false);
-        } catch (final CouldNotPerformException ex) {
-            throw new InitializationException(this, ex);
-        }
-    }
+//    public void init(final String unitID) throws InitializationException, InterruptedException {
+//        try {
+//            init = true;
+//            this.unitRemote = (UR) Units.getUnit(unitID, false);
+//        } catch (final CouldNotPerformException ex) {
+//            throw new InitializationException(this, ex);
+//        }
+//    }
 
     @Override
     public void activate() throws CouldNotPerformException, InterruptedException {

@@ -91,9 +91,7 @@ public class SimpleUnitSymbolsPane extends Pane {
     public void updateUnitsPane() {
         this.getChildren().clear();
 
-        unitsMap.forEach((unitId, button)
-                -> {
-
+        unitsMap.forEach((unitId, button) -> {
             this.getChildren().add(button);
         });
     }

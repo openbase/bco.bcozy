@@ -129,7 +129,7 @@ public class BCozy extends Application {
             loadingPane.setMinWidth(root.getWidth());
             root.getChildren().addAll(backgroundPane, foregroundPane, loadingPane);
 
-            primaryStage.setMinWidth(foregroundPane.getMainMenu().getMinWidth() + foregroundPane.getContextMenu().getMinWidth() + 300);
+            primaryStage.setMinWidth(foregroundPane.getMainMenu().getMinWidth() + foregroundPane.getUnitMenu().getMinWidth() + 300);
             primaryStage.setHeight(screenHeight);
             mainScene = new Scene(root, screenWidth, screenHeight);
             primaryStage.setScene(mainScene);

@@ -1,17 +1,17 @@
 /**
  * ==================================================================
- *
+ * <p>
  * This file is part of org.openbase.bco.bcozy.
- *
+ * <p>
  * org.openbase.bco.bcozy is free software: you can redistribute it and modify
  * it under the terms of the GNU General Public License (Version 3)
  * as published by the Free Software Foundation.
- *
+ * <p>
  * org.openbase.bco.bcozy is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with org.openbase.bco.bcozy. If not, see
  * <http://www.gnu.org/licenses/>.
@@ -24,12 +24,9 @@ import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.effect.Lighting;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -38,6 +35,7 @@ import javafx.util.Duration;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ForegroundPane;
 import org.openbase.bco.bcozy.view.InfoPane;
+import org.openbase.bco.bcozy.view.generic.MultiTouchPane;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jps.core.JPService;
 import org.openbase.jul.exception.CouldNotPerformException;
@@ -48,40 +46,31 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.domotic.unit.UnitConfigType.UnitConfig;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author julian
  * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>
  */
-public final class LocationPane extends Pane {
-
-    private static boolean initialized;
+public final class LocationPane extends MultiTouchPane {
 
     /**
      * Application logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(LocationPane.class);
-
-    private LocationPolygon selectedLocation;
-    private ZonePolygon rootLocation;
-
-    //private final StackPane backgroundPane;
+    private static boolean initialized;
+    public final SimpleStringProperty selectedLocationId;
     private final ForegroundPane foregroundPane;
+    private final List<LocationPolygon> locationHoverLevelList;
     private final Map<String, TilePolygon> tileMap;
     private final Map<String, RegionPolygon> regionMap;
     private final Map<String, ZonePolygon> zoneMap;
     private final Map<String, ConnectionPolygon> connectionMap;
     private final List<Node> debugNodes;
-
-    public final SimpleStringProperty selectedLocationId;
-
-    private LocationPolygon lastFirstClickTarget;
+    private LocationPolygon selectedLocation;
+    private ZonePolygon rootLocation;
+    private LocationPolygon lastClickTarget;
     private LocationPolygon lastSelectedTile;
-    private final EventHandler<MouseEvent> onEmptyAreaClickHandler;
 
     /**
      * Private constructor to deny manual instantiation.
@@ -92,31 +81,15 @@ public final class LocationPane extends Pane {
         super();
 
         this.foregroundPane = foregroundPane;
+        this.locationHoverLevelList = new ArrayList<>();
+        this.tileMap = new HashMap<>();
+        this.regionMap = new HashMap<>();
+        this.zoneMap = new HashMap<>();
+        this.connectionMap = new HashMap<>();
+        this.debugNodes = new ArrayList<>();
 
-        tileMap = new HashMap<>();
-        regionMap = new HashMap<>();
-        zoneMap = new HashMap<>();
-        connectionMap = new HashMap<>();
-        debugNodes = new ArrayList<>();
-
-        selectedLocationId = new SimpleStringProperty(Constants.DUMMY_LABEL);
-        rootLocation = null;
-
-        onEmptyAreaClickHandler = event -> {
-            if (event.isStillSincePress() && rootLocation != null) {
-                if (event.getClickCount() == 1) {
-                    selectRootLocation();
-                } else if (event.getClickCount() == 2) {
-                    this.autoFocusPolygonAnimated(rootLocation);
-                }
-
-                try {
-                    foregroundPane.getContextMenu().getRoomInfo().setText(selectedLocation.getLabel());
-                } catch (NotAvailableException ex) {
-                    LOGGER.warn("Could not resolve location label!", ex);
-                }
-            }
-        };
+        this.selectedLocationId = new SimpleStringProperty(Constants.DUMMY_LABEL);
+        this.rootLocation = null;
 
         this.heightProperty().addListener((observable, oldValue, newValue)
                 -> this.setTranslateY(this.getTranslateY() - ((oldValue.doubleValue() - newValue.doubleValue()) / 2) * this.getScaleY()));
@@ -126,11 +99,6 @@ public final class LocationPane extends Pane {
 
         this.foregroundPane.getMainMenuWidthProperty().addListener((observable, oldValue, newValue)
                 -> this.setTranslateX(this.getTranslateX() - ((oldValue.doubleValue() - newValue.doubleValue()) / 2)));
-        
-        onMouseMovedProperty().addListener((observable, oldValue, newValue) -> {
-            LOGGER.info("mouse moved:");
-            
-        });
     }
 
     private void selectRootLocation() {
@@ -146,7 +114,7 @@ public final class LocationPane extends Pane {
             return;
         }
 
-        // delected selected location
+        // deselect selected location
         if (selectedLocation != null) {
             selectedLocation.setSelected(false);
         }
@@ -158,12 +126,12 @@ public final class LocationPane extends Pane {
         }
     }
 
-    public void setInitialized(boolean init) {
-        initialized = init;
-    }
-
     public boolean isInitialized() {
         return initialized;
+    }
+
+    public void setInitialized(boolean init) {
+        initialized = init;
     }
 
     public ForegroundPane getForeground() {
@@ -173,11 +141,12 @@ public final class LocationPane extends Pane {
     /**
      * Adds a room to the location Pane and use the controls to add a mouse
      * event handler.
-     *
+     * <p>
      * If a room with the same id already exists, it will be overwritten.
      *
      * @param locationUnitConfig the configuration of the location to add.
-     * @param vertices A list of vertices which defines the shape of the room
+     * @param vertices           A list of vertices which defines the shape of the room
+     *
      * @throws org.openbase.jul.exception.CouldNotPerformException
      * @throws java.lang.InterruptedException
      */
@@ -191,37 +160,35 @@ public final class LocationPane extends Pane {
                 points[i * 2 + 1] = vertices.get(i).getX() * Constants.METER_TO_PIXEL;
             }
 
-            final LocationPolygon locationPolygon;
-
             switch (locationUnitConfig.getLocationConfig().getType()) {
                 case TILE:
-                    locationPolygon = new TilePolygon(points);
-                    locationPolygon.init(locationUnitConfig);
-                    locationPolygon.activate();
-                    addMouseEventHandlerToTile((TilePolygon) locationPolygon);
-                    tileMap.put(locationUnitConfig.getId(), (TilePolygon) locationPolygon);
+                    final TilePolygon tilePolygon = new TilePolygon(this, points);
+                    tilePolygon.init(locationUnitConfig);
+                    tilePolygon.activate();
+                    tileMap.put(locationUnitConfig.getId(), (TilePolygon) tilePolygon);
                     break;
                 case REGION:
-                    locationPolygon = new RegionPolygon(points);
-                    locationPolygon.init(locationUnitConfig);
-                    locationPolygon.activate();
-                    addMouseEventHandlerToRegion((RegionPolygon) locationPolygon);
-                    regionMap.put(locationUnitConfig.getId(), (RegionPolygon) locationPolygon);
+                    final RegionPolygon regionPolygon = new RegionPolygon(this, points);
+                    regionPolygon.init(locationUnitConfig);
+                    regionPolygon.activate();
+                    regionMap.put(locationUnitConfig.getId(), (RegionPolygon) regionPolygon);
                     break;
                 case ZONE:
-                    locationPolygon = new ZonePolygon(points);
-                    locationPolygon.init(locationUnitConfig);
-                    locationPolygon.activate();
+                    final ZonePolygon zonePolygon = new ZonePolygon(this, points);
+                    zonePolygon.init(locationUnitConfig);
+                    zonePolygon.activate();
+
+                    // configure root location if detected
                     if (locationUnitConfig.getLocationConfig().getRoot()) {
-                        rootLocation = (ZonePolygon) locationPolygon; //TODO: handle the situation where several zones exist
+                        setRootLocation(zonePolygon);
                     }
-                    zoneMap.put(locationUnitConfig.getId(), (ZonePolygon) locationPolygon);
+                    zoneMap.put(locationUnitConfig.getId(), (ZonePolygon) zonePolygon);
                     break;
                 default:
                     throw new EnumNotSupportedException(locationUnitConfig.getLocationConfig().getType(), this);
             }
 
-            // Paint debug informations
+            // Paint debug information
             if (JPService.debugMode()) {
 
                 // declare vars
@@ -296,12 +263,13 @@ public final class LocationPane extends Pane {
 
     /**
      * Adds a connection to the location Pane.
-     *
+     * <p>
      * If a connection with the same id already exists, it will be overwritten.
      *
      * @param connectionUnitConfig the unit config of this connection.
-     * @param vertices A list of vertices which defines the shape of the
-     * connection
+     * @param vertices             A list of vertices which defines the shape of the
+     *                             connection
+     *
      * @throws org.openbase.jul.exception.CouldNotPerformException
      * @throws java.lang.InterruptedException
      */
@@ -347,7 +315,7 @@ public final class LocationPane extends Pane {
                     } catch (CouldNotPerformException | InterruptedException ex) {
                         // id is used instead.
                     }
-                    
+
                     LOGGER.debug("Location " + unitLabel + " can not be found in the location Map. No Cutting will be applied.");
                 }
             });
@@ -384,20 +352,46 @@ public final class LocationPane extends Pane {
      */
     public void clearLocations() {
         tileMap.forEach((locationId, locationPolygon) -> {
-            locationPolygon.shutdown();
-            this.getChildren().remove(locationPolygon);
-        }
+                    locationPolygon.shutdown();
+                    this.getChildren().remove(locationPolygon);
+                }
         );
         tileMap.clear();
 
         regionMap.forEach((locationId, locationPolygon) -> {
-            locationPolygon.shutdown();
-            this.getChildren().remove(locationPolygon);
-        }
+                    locationPolygon.shutdown();
+                    this.getChildren().remove(locationPolygon);
+                }
         );
         regionMap.clear();
 
-        rootLocation = null;
+        // clear root location
+        setRootLocation(null);
+    }
+
+    private synchronized void setRootLocation(final ZonePolygon rootLocation) {
+
+        // filter if nothing has been changed.
+        if (this.rootLocation == rootLocation) {
+            return;
+        }
+
+        // deregister old root location bindings
+        if (this.rootLocation != null) {
+            onMouseClickedProperty().unbind();
+            onMouseEnteredProperty().unbind();
+            onMouseExitedProperty().unbind();
+        }
+
+        // setup new root location
+        this.rootLocation = rootLocation;
+
+        // apply new binding if the new root location is valid
+        if (this.rootLocation != null) {
+            onMouseClickedProperty().bind(rootLocation.onMouseClickedProperty());
+            onMouseEnteredProperty().bind(rootLocation.onMouseEnteredProperty());
+            onMouseExitedProperty().bind(rootLocation.onMouseExitedProperty());
+        }
     }
 
     /**
@@ -405,9 +399,9 @@ public final class LocationPane extends Pane {
      */
     public void clearConnections() {
         connectionMap.forEach((connectionId, connectionPolygon) -> {
-            connectionPolygon.shutdown();
-            this.getChildren().remove(connectionPolygon);
-        }
+                    connectionPolygon.shutdown();
+                    this.getChildren().remove(connectionPolygon);
+                }
         );
         connectionMap.clear();
     }
@@ -427,6 +421,10 @@ public final class LocationPane extends Pane {
             this.getChildren().add(locationPolygon);
         });
 
+        if (rootLocation != null) {
+            this.getChildren().add(rootLocation);
+        }
+
         regionMap.forEach((locationId, locationPolygon) -> {
             if (rootLocation != null) {
                 rootLocation.addCuttingShape(locationPolygon);
@@ -440,10 +438,6 @@ public final class LocationPane extends Pane {
             }
             this.getChildren().add(connectionPolygon);
         });
-
-        if (rootLocation != null) {
-            this.getChildren().add(rootLocation);
-        }
 
         if (JPService.debugMode()) {
             // debug print
@@ -461,89 +455,13 @@ public final class LocationPane extends Pane {
         return selectedLocation != null;
     }
 
-    /**
-     * Adds a mouse eventHandler to the tile.
-     *
-     * @param tile The tile
-     */
-    public void addMouseEventHandlerToTile(final TilePolygon tile) {
-        tile.setOnMouseClicked(event -> {
-            try {
-                event.consume();
-
-                if (event.isStillSincePress()) {
-                    if (event.getClickCount() == 1) {
-                        this.setSelectedLocation(tile);
-                        this.lastFirstClickTarget = tile;
-                    } else if (event.getClickCount() == 2) {
-                        autoFocusPolygonAnimated(tile);
-                    }
-                }
-            } catch (CouldNotPerformException ex) {
-                ExceptionPrinter.printHistory("Could not handle mouse event!", ex, LOGGER);
-            }
-        });
-        tile.setOnMouseEntered(event -> {
-            event.consume();
-            tile.mouseEntered();
-            try {
-                InfoPane.info(tile.getLabel());
-            } catch (final NotAvailableException ex) {
-                LOGGER.warn("Could not resolve location label!", ex);
-            }
-        });
-        tile.setOnMouseExited(event -> {
-            event.consume();
-            tile.mouseLeft();
-            InfoPane.info("");
-        });
+    public LocationPolygon getLastClickTarget() {
+        return lastClickTarget;
     }
 
-    /**
-     * Adds a mouse eventHandler to the region.
-     *
-     * @param region The region
-     */
-    public void addMouseEventHandlerToRegion(final RegionPolygon region) {
-        region.setOnMouseClicked(event -> {
-            try {
-                event.consume();
-
-                if (event.isStillSincePress()) {
-                    if (event.getClickCount() == 1) {
-                        this.setSelectedLocation(region);
-                        this.lastFirstClickTarget = region;
-                    } else if (event.getClickCount() == 2) {
-                        if (this.lastFirstClickTarget.equals(region)) {
-                            autoFocusPolygonAnimated(region);
-                        } else {
-                            selectedLocation.fireEvent(event.copyFor(null, selectedLocation));
-                        }
-                    }
-
-                }
-            } catch (CouldNotPerformException ex) {
-                ExceptionPrinter.printHistory("Could not handle mouse event!", ex, LOGGER);
-            }
-        });
-        region.setOnMouseEntered(event -> {
-            try {
-                event.consume();
-                region.mouseEntered();
-                InfoPane.info(region.getLabel());
-            } catch (CouldNotPerformException ex) {
-                ExceptionPrinter.printHistory("Could not handle mouse event!", ex, LOGGER);
-            }
-        });
-        region.setOnMouseExited(event -> {
-            event.consume();
-            region.mouseLeft();
-            InfoPane.info("");
-        });
-    }
-
-    private void setSelectedLocation(final LocationPolygon newSelectedLocation) throws CouldNotPerformException {
+    void setSelectedLocation(final LocationPolygon newSelectedLocation) throws CouldNotPerformException {
         try {
+            lastClickTarget = newSelectedLocation;
             if (selectedLocation != null && selectedLocation.equals(newSelectedLocation)) {
                 // already selected
                 return;
@@ -584,7 +502,7 @@ public final class LocationPane extends Pane {
             selectedLocation = newSelectedLocation;
             selectedLocationId.set(newSelectedLocation.getUnitId());
 
-            foregroundPane.getContextMenu().getRoomInfo().setText(selectedLocation.getLabel());
+            foregroundPane.getUnitMenu().getRoomInfo().setText(selectedLocation.getLabel());
 
         } catch (CouldNotPerformException ex) {
             throw new CouldNotPerformException("Could not select location polygon!", ex);
@@ -621,15 +539,6 @@ public final class LocationPane extends Pane {
         selectedLocationId.removeListener(changeListener);
     }
 
-    /**
-     * Getter for the OnEmptyAreaClickHandler.
-     *
-     * @return The EventHandler.
-     */
-    public EventHandler<MouseEvent> getOnEmptyAreaClickHandler() {
-        return onEmptyAreaClickHandler;
-    }
-    
     private void autoFocusPolygon(final LocationPolygon polygon) {
         final double xScale = (foregroundPane.getBoundingBox().getWidth() / polygon.prefWidth(0))
                 * Constants.ZOOM_FIT_PERCENTAGE_WIDTH;
@@ -646,7 +555,7 @@ public final class LocationPane extends Pane {
         this.setTranslateY(transition.getY());
     }
 
-    private void autoFocusPolygonAnimated(final LocationPolygon polygon) {
+    void autoFocusPolygonAnimated(final LocationPolygon polygon) {
         final double xScale = (foregroundPane.getBoundingBox().getWidth() / polygon.prefWidth(0))
                 * Constants.ZOOM_FIT_PERCENTAGE_WIDTH;
         final double yScale = (foregroundPane.getBoundingBox().getHeight() / polygon.prefHeight(0))
@@ -675,15 +584,57 @@ public final class LocationPane extends Pane {
     private Point2D calculateTransition(final double scale, final LocationPolygon polygon) {
         final double polygonDistanceToCenterX = (-(polygon.getCenterX() - (getLayoutBounds().getWidth() / 2))) * scale;
         final double polygonDistanceToCenterY = (-(polygon.getCenterY() - (getLayoutBounds().getHeight() / 2))) * scale;
-        final double boundingBoxCenterX
-                = (foregroundPane.getBoundingBox().getMinX() + foregroundPane.getBoundingBox().getMaxX()) / 2;
-        final double boundingBoxCenterY
-                = (foregroundPane.getBoundingBox().getMinY() + foregroundPane.getBoundingBox().getMaxY()) / 2;
+        final double boundingBoxCenterX = (foregroundPane.getBoundingBox().getMinX() + foregroundPane.getBoundingBox().getMaxX()) / 2;
+        final double boundingBoxCenterY = (foregroundPane.getBoundingBox().getMinY() + foregroundPane.getBoundingBox().getMaxY()) / 2;
         final double bbCenterDistanceToCenterX = ((getLayoutBounds().getWidth() / 2) - boundingBoxCenterX);
         final double bbCenterDistanceToCenterY = ((getLayoutBounds().getHeight() / 2) - boundingBoxCenterY);
         final double transitionX = polygonDistanceToCenterX - bbCenterDistanceToCenterX;
         final double transitionY = polygonDistanceToCenterY - bbCenterDistanceToCenterY;
 
         return new Point2D(transitionX, transitionY);
+    }
+
+    public void handleHoverUpdate(final LocationPolygon locationPolygon, boolean hover) {
+
+        if (hover) {
+            locationHoverLevelList.add(locationPolygon);
+        } else {
+            locationHoverLevelList.remove(locationPolygon);
+
+            // only deselect
+            if (!locationHoverLevelList.contains(locationPolygon)) {
+                locationPolygon.setStrokeWidth(Constants.ROOM_STROKE_WIDTH);
+            }
+        }
+
+        // sort by location level
+        Collections.sort(locationHoverLevelList, (o1, o2) -> Integer.compare(o2.getLocationLevel(), o1.getLocationLevel()));
+
+        InfoPane.info("");
+
+        boolean first = true;
+        LocationPolygon lastPolygon = null;
+        for (LocationPolygon polygon : locationHoverLevelList) {
+
+            // only handle ones
+            if (lastPolygon == polygon) {
+                continue;
+            }
+
+            // select top level location
+            if (first) {
+                first = false;
+                polygon.setStrokeWidth(Constants.ROOM_STROKE_WIDTH_MOUSE_OVER);
+                try {
+                    InfoPane.info(polygon.getLabel());
+                } catch (final NotAvailableException ex) {
+                    LOGGER.warn("Could not resolve location label!", ex);
+                }
+            } else {
+                polygon.setStrokeWidth(Constants.ROOM_STROKE_WIDTH);
+            }
+
+            lastPolygon = polygon;
+        }
     }
 }
