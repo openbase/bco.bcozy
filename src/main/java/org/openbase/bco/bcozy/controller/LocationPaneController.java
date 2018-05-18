@@ -26,13 +26,11 @@ import org.openbase.bco.bcozy.view.location.LocationPane;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
-import org.openbase.jul.pattern.Observable;
-import org.openbase.jul.pattern.Observer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rct.Transform;
-import rst.domotic.registry.LocationRegistryDataType.LocationRegistryData;
 import rst.domotic.unit.UnitConfigType.UnitConfig;
+import rst.domotic.unit.UnitTemplateType.UnitTemplate.UnitType;
 import rst.math.Vec3DDoubleType;
 import javax.vecmath.Point3d;
 import java.util.LinkedList;
@@ -70,8 +68,8 @@ public class LocationPaneController {
      */
     public void connectLocationRemote() {
         try {
-            Registries.getLocationRegistry().waitForData();
-            Registries.getLocationRegistry().addDataObserver((source, data) -> Platform.runLater(() -> {
+            Registries.waitForData();
+            Registries.getUnitRegistry().addDataObserver((source, data) -> Platform.runLater(() -> {
                 try {
                     fetchLocations();
                     fetchConnections();
@@ -88,7 +86,7 @@ public class LocationPaneController {
     }
 
     private void fetchLocations() throws CouldNotPerformException, InterruptedException {
-        final List<UnitConfig> locationUnitConfigList = Registries.getLocationRegistry().getLocationConfigs();
+        final List<UnitConfig> locationUnitConfigList = Registries.getUnitRegistry().getUnitConfigs(UnitType.LOCATION);
 
         locationPane.clearLocations();
 
@@ -101,7 +99,7 @@ public class LocationPaneController {
                 final List<Point2D> vertices = new LinkedList<>();
 
                 // Get the transformation for the current room
-                final Future<Transform> transform = Registries.getLocationRegistry().getUnitTransformationFuture(locationUnitConfig, Registries.getLocationRegistry().getRootLocationConfig());
+                final Future<Transform> transform = Registries.getUnitRegistry().getUnitTransformationFuture(locationUnitConfig, Registries.getUnitRegistry().getRootLocationConfig());
 
                 // Get the shape of the room
                 final List<Vec3DDoubleType.Vec3DDouble> shape = locationUnitConfig.getPlacementConfig().getShape().getFloorList();
@@ -126,7 +124,7 @@ public class LocationPaneController {
     }
 
     private void fetchConnections() throws CouldNotPerformException, InterruptedException {
-        final List<UnitConfig> connectionUnitConfigList = Registries.getLocationRegistry().getConnectionConfigs();
+        final List<UnitConfig> connectionUnitConfigList = Registries.getUnitRegistry().getUnitConfigs(UnitType.CONNECTION);
 
         locationPane.clearConnections();
 
@@ -140,8 +138,8 @@ public class LocationPaneController {
 
                 final List<Point2D> vertices = new LinkedList<>();
 
-//                final Future<Transform> transform = Registries.getLocationRegistry().getUnitTransformation(connectionUnitConfig, Registries.getUnitRegistry().getUnitConfigById(connectionUnitConfig.getPlacementConfig().getLocationId()));
-                final Future<Transform> transform = Registries.getLocationRegistry().getUnitTransformationFuture(connectionUnitConfig, Registries.getLocationRegistry().getRootLocationConfig());
+//                final Future<Transform> transform = Registries.getUnitRegistry().getUnitTransformation(connectionUnitConfig, Registries.getUnitRegistry().getUnitConfigById(connectionUnitConfig.getPlacementConfig().getLocationId()));
+                final Future<Transform> transform = Registries.getUnitRegistry().getUnitTransformationFuture(connectionUnitConfig, Registries.getUnitRegistry().getRootLocationConfig());
 
                 // Get the shape of the room
                 final List<Vec3DDoubleType.Vec3DDouble> shape = connectionUnitConfig.getPlacementConfig().getShape().getFloorList();

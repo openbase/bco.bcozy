@@ -153,8 +153,6 @@ public class BCozy extends Application {
                 Registries.getUnitRegistry().addConnectionStateObserver(connectionObserver);
             } catch (NotAvailableException ex) {
                 ExceptionPrinter.printHistory("Could not register bco connection observer!", ex, LOGGER);
-            } catch (InterruptedException ex) {
-                Thread.currentThread().interrupt();
             }
 
             initRemotesAndLocation();

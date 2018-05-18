@@ -106,7 +106,7 @@ public class UnitsPaneController {
                     });
                 }
             });
-            Registries.getLocationRegistry().addDataObserver(new Observer<LocationRegistryData>() {
+            Registries.getUnitRegistry().addDataObserver(new Observer<LocationRegistryData>() {
                 @Override
                 public void update(Observable<LocationRegistryData> source, LocationRegistryData data) throws Exception {
                     Platform.runLater(() -> {
@@ -143,7 +143,7 @@ public class UnitsPaneController {
 
         final double halfButtonSize = (JFXConstants.ICON_SIZE_SMALL + (2 * Constants.INSETS)) / 2;
 
-        final List<UnitConfig> locationUnitConfigList = Registries.getLocationRegistry().getLocationConfigs();
+        final List<UnitConfig> locationUnitConfigList = Registries.getUnitRegistry().getUnitConfigs(UnitType.LOCATION);
 
         for (final UnitConfig locationConfig : locationUnitConfigList) {
 
@@ -159,8 +159,8 @@ public class UnitsPaneController {
             Point3d vertex = calculateCoordinates(locationConfig);
 
             try {
-                final Future<Transform> transform = Registries.getLocationRegistry().getUnitTransformationFuture(locationConfig,
-                        Registries.getLocationRegistry().getRootLocationConfig());
+                final Future<Transform> transform = Registries.getUnitRegistry().getUnitTransformationFuture(locationConfig,
+                        Registries.getUnitRegistry().getRootLocationConfig());
                 transform.get(Constants.TRANSFORMATION_TIMEOUT / 10, TimeUnit.MILLISECONDS).getTransform().transform(vertex);
                 Point2D coord = new Point2D(vertex.x * Constants.METER_TO_PIXEL, vertex.y * Constants.METER_TO_PIXEL);
                 // Abstract Pane not working with a config object, only with a remote one!
@@ -194,8 +194,8 @@ public class UnitsPaneController {
 
                     PoseType.Pose pose = config.getPlacementConfig().getPosition();
                     try {
-                        final Future<Transform> transform = Registries.getLocationRegistry().getUnitTransformationFuture(config,
-                                Registries.getLocationRegistry().getRootLocationConfig());
+                        final Future<Transform> transform = Registries.getUnitRegistry().getUnitTransformationFuture(config,
+                                Registries.getUnitRegistry().getRootLocationConfig());
                         // transformation already in unit's coordinate space, therefore the zeros
                         final Point3d unitVertex = new Point3d(0.0, 0.0, 1.0);
                         transform.get(Constants.TRANSFORMATION_TIMEOUT / 10, TimeUnit.MILLISECONDS).

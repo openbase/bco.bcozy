@@ -149,7 +149,7 @@ public class ContextMenuController {
      */
     public void initTitledPaneMap() throws CouldNotPerformException, InterruptedException {
         try {
-            for (final UnitConfig locationUnitConfig : Registries.getLocationRegistry().getLocationConfigs()) {
+            for (final UnitConfig locationUnitConfig : Registries.getUnitRegistry().getUnitConfigs(UnitType.LOCATION)) {
                 final String locationID = locationUnitConfig.getId();
 
                 final TitledUnitPaneContainer titledPaneContainer = new TitledUnitPaneContainer();
