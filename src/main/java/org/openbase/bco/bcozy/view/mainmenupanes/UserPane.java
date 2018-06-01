@@ -105,7 +105,7 @@ public class UserPane extends BorderPane implements Shutdownable {
                 return;
             }
 
-            updateUserPresenceState();
+            updateUserTransitState();
             userNameLabel.setText(user.getName());
             updateUserState();
             updateBounds();
@@ -124,7 +124,7 @@ public class UserPane extends BorderPane implements Shutdownable {
                 userState = Registries.getActivityRegistry().getActivityConfigById(user.getActivityState().getActivityId()).getLabel();
             } catch (CouldNotPerformException ex) {
                 // generate user state fallback
-                userState = user.getUserPresenceState().getValue().name();
+                userState = user.getUserTransitState().getValue().name();
             } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
                 return;
@@ -138,9 +138,9 @@ public class UserPane extends BorderPane implements Shutdownable {
     /**
      * Visualize the presence state of the user.
      */
-    private void updateUserPresenceState() {
+    private void updateUserTransitState() {
         try {
-            switch (user.getUserPresenceState().getValue()) {
+            switch (user.getUserTransitState().getValue()) {
                 case AT_HOME:
                 case SHORT_AT_HOME:
                 case SOON_AWAY:
@@ -173,7 +173,7 @@ public class UserPane extends BorderPane implements Shutdownable {
                     }
                     break;
                 default:
-                    ExceptionPrinter.printHistory(new EnumNotSupportedException(user.getUserPresenceState().getValue(), this), LOGGER);
+                    ExceptionPrinter.printHistory(new EnumNotSupportedException(user.getUserTransitState().getValue(), this), LOGGER);
             }
         } catch (final NotAvailableException ex) {
             ExceptionPrinter.printHistory("Could not update user presence state!", ex, LOGGER);
