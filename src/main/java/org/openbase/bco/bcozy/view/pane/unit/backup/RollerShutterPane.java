@@ -79,7 +79,7 @@ public class RollerShutterPane extends AbstractUnitPane<RollerShutterRemote, Rol
 //        @Override
 //        protected Object call() {
 //            try {
-//                rollershutterRemote.setBlindState(BlindState.newBuilder().setOpeningRatio(0.0).setMovementState(MovementState.STOP).build()).get(Constants.OPERATION_SERVICE_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
+//                rollershutterRemote.setBlindState(BlindState.newBuilder().setOpeningRatio(0.0).setValue(MovementState.STOP).build()).get(Constants.OPERATION_SERVICE_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
 //            } catch (InterruptedException | ExecutionException | TimeoutException | CouldNotPerformException ex) {
 //                ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
 //            }
@@ -91,7 +91,7 @@ public class RollerShutterPane extends AbstractUnitPane<RollerShutterRemote, Rol
 //        @Override
 //        protected Object call() {
 //            try {
-//                rollershutterRemote.setBlindState(BlindState.newBuilder().setOpeningRatio(1.0).setMovementState(MovementState.STOP).build()).get(Constants.OPERATION_SERVICE_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
+//                rollershutterRemote.setBlindState(BlindState.newBuilder().setOpeningRatio(1.0).setValue(MovementState.STOP).build()).get(Constants.OPERATION_SERVICE_MILLI_TIMEOUT, TimeUnit.MILLISECONDS);
 //            } catch (InterruptedException | ExecutionException | TimeoutException | CouldNotPerformException ex) {
 //                ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
 //            }
@@ -129,7 +129,7 @@ public class RollerShutterPane extends AbstractUnitPane<RollerShutterRemote, Rol
 //
 //        try {
 //            openingPercentage = rollershutterRemote.getBlindState().getOpeningRatio();
-//            shutterState = rollershutterRemote.getBlindState().getMovementState();
+//            shutterState = rollershutterRemote.getBlindState().getValue();
 //        } catch (CouldNotPerformException ex) {
 //            ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
 //        }
@@ -226,7 +226,7 @@ public class RollerShutterPane extends AbstractUnitPane<RollerShutterRemote, Rol
 //    public void update(final Observable observable, final Object rollerShutter) throws java.lang.Exception {
 //        Platform.runLater(() -> {
 //            final double openingPercentage = ((RollerShutterData) rollerShutter).getBlindState().getOpeningRatio();
-//            final MovementState shutterState = ((RollerShutterData) rollerShutter).getBlindState().getMovementState();
+//            final MovementState shutterState = ((RollerShutterData) rollerShutter).getBlindState().getValue();
 //            setEffectOpeningRatio(openingPercentage, shutterState);
 //        });
 //    }

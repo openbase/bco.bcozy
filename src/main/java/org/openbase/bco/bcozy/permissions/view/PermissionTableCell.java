@@ -49,7 +49,7 @@ public class PermissionTableCell<T> extends TableCell<AbstractPermissions, T> {
                 updateItem((OwnerPermissions) permissionsRow);
             } else {
                 setGraphic(null);
-                setText(permissionsRow.getName());
+                setText(permissionsRow.getLabel());
             }
         }
     }

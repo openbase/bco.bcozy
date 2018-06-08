@@ -75,59 +75,6 @@ public interface UnitPaneFactory extends Factory<AbstractUnitPane, UnitConfigTyp
     public AbstractUnitPane newInstance(String unitId, long timeout, final TimeUnit timeUnit) throws InstantiationException, CouldNotPerformException, InterruptedException;
 
     /**
-     * Creates an unit pane out of the given unit scope.
-     *
-     * @param scope the unit scope which defines the remote type..
-     * @param timeout the timeout for the unit registry lookup.
-     * @param timeUnit the time unit of the timeout.
-     * @return the new created unit pane.
-     * @throws InstantiationException is thrown if the unit could not be instantiated with the given information.
-     * @throws InterruptedException is thrown if the thread was externally interrupted.
-     */
-    public AbstractUnitPane newInstance(ScopeType.Scope scope, long timeout, final TimeUnit timeUnit) throws InstantiationException, CouldNotPerformException, InterruptedException;
-
-    /**
-     * Creates and initializes an unit pane out of the given unit scope and type declaration.
-     *
-     * @param scope the unit scope which is used for the remote initialization.
-     * @param type the unit to instantiate.
-     * @return the new created unit pane.
-     * @throws InitializationException is thrown if the unit could not be initialized with the given information.
-     * @throws InstantiationException is thrown if the unit could not be instantiated with the given information.
-     * @throws CouldNotPerformException is thrown if any other error occurs during buildup.
-     * @throws InterruptedException is thrown if the thread was externally interrupted.
-     */
-    public AbstractUnitPane newInitializedInstance(final ScopeType.Scope scope, final UnitTemplateType.UnitTemplate.UnitType type) throws InitializationException, InstantiationException, CouldNotPerformException, InterruptedException;
-
-    /**
-     * Creates and initializes an unit pane out of the given unit scope and class type.
-     *
-     * @param <R> the unit pane class type.
-     * @param scope the unit scope which is used for the remote initialization.
-     * @param unitRemoteClass to identify the unit type.
-     * @return the new created and initialized unit pane.
-     * @throws InitializationException is thrown if the unit could not be initialized with the given information.
-     * @throws InstantiationException is thrown if the unit could not be instantiated with the given information.
-     * @throws CouldNotPerformException is thrown if any other error occurs during buildup.
-     * @throws InterruptedException is thrown if the thread was externally interrupted. is thrown if the thread was externally interrupted.
-     */
-    public <R extends AbstractUnitPane> R newInitializedInstance(final ScopeType.Scope scope, final Class<R> unitRemoteClass) throws InitializationException, InstantiationException, CouldNotPerformException, InterruptedException;
-
-    /**
-     * Creates and initializes an unit pane out of the given unit scope.
-     *
-     * @param scope the unit scope which is used for the remote initialization.
-     * @param timeout the timeout for the unit registry lookup.
-     * @param timeUnit the time unit of the timeout.
-     * @return the new created and initialized unit pane.
-     * @throws InitializationException is thrown if the unit could not be initialized with the given information.
-     * @throws InstantiationException is thrown if the unit could not be instantiated with the given information.
-     * @throws CouldNotPerformException is thrown if any other error occurs during buildup.
-     * @throws InterruptedException is thrown if the thread was externally interrupted. is thrown if the thread was externally interrupted.
-     */
-    public AbstractUnitPane newInitializedInstance(final ScopeType.Scope scope, long timeout, final TimeUnit timeUnit) throws InitializationException, InstantiationException, CouldNotPerformException, InterruptedException;
-
-    /**
      * Creates and initializes an unit pane out of the given unit id.
      *
      * @param unitId the unit id which is used for the remote initialization.

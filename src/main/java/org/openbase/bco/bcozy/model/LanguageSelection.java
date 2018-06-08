@@ -61,7 +61,7 @@ public final class LanguageSelection extends Observable {
     }
 
     /**
-     * Retunrns the localized text for the given identifier.
+     * Returns the localized text for the given identifier.
      *
      * @param identifier the identifier
      *
@@ -103,6 +103,10 @@ public final class LanguageSelection extends Observable {
         }
 
         return text;
+    }
+
+    public static Locale getSelectedLocale() {
+        return Locale.getDefault();
     }
 
     /**

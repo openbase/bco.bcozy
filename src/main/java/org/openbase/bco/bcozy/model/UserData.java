@@ -43,7 +43,7 @@ public class UserData {
 
     public static UserData currentUser() throws CouldNotPerformException, InterruptedException, TimeoutException, ExecutionException {
         String userId = SessionManager.getInstance().getUserId();
-        UnitConfigType.UnitConfig userConfig = Registries.getUserRegistry().getUserConfigById(userId);
+        UnitConfigType.UnitConfig userConfig = Registries.getUnitRegistry().getUnitConfigById(userId);
 
         return new UserData(userConfig);
     }
@@ -61,16 +61,16 @@ public class UserData {
         originalUserName = unitConfig.getUserConfig().getUserName();
 
         updateValues(unitConfig.getUserConfig());
-        Registries.getUserRegistry().addDataObserver((source, data) -> updateValues());
+        Registries.getUnitRegistry().addDataObserver((source, data) -> updateValues());
     }
 
     private void updateValues() throws CouldNotPerformException, InterruptedException, TimeoutException, ExecutionException {
-        if (!Registries.getUserRegistry().isDataAvailable()) {
-            LOGGER.warn("!Registries.getUserRegistry().isDataAvailable()");
+        if (!Registries.getUnitRegistry().isDataAvailable()) {
+            LOGGER.warn("!Registries.getUnitRegistry().isDataAvailable()");
             return;
         }
 
-        UserConfigType.UserConfig userConfig = Registries.getUserRegistry().getUserConfigById(userId.get()).getUserConfig();
+        UserConfigType.UserConfig userConfig = Registries.getUnitRegistry().getUnitConfigById(userId.get()).getUserConfig();
 
         updateValues(userConfig);
     }

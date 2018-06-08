@@ -193,7 +193,7 @@ public class UserSettingsController {
 
         try {
 
-            UnitConfigType.UnitConfig.Builder newUserConfig = Registries.getUserRegistry().getUserConfigById
+            UnitConfigType.UnitConfig.Builder newUserConfig = Registries.getUnitRegistry().getUserConfigById
                     (SessionManager.getInstance().getUserId()).toBuilder();
 
             newUserConfig.getUserConfigBuilder()
@@ -203,7 +203,7 @@ public class UserSettingsController {
                     .setEmail(changeMail.getText())
                     .setMobilePhoneNumber(changePhone.getText());
 
-            Registries.getUserRegistry().updateUserConfig(newUserConfig.build());
+            Registries.getUnitRegistry().updateUserConfig(newUserConfig.build());
             showSuccessMessage();
         } catch (CouldNotPerformException ex) {
             showErrorMessage();

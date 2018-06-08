@@ -41,7 +41,7 @@ import org.openbase.jul.visual.javafx.JFXConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rct.Transform;
-import rst.domotic.registry.LocationRegistryDataType.LocationRegistryData;
+import rst.domotic.registry.UnitRegistryDataType.UnitRegistryData;
 import rst.domotic.registry.UnitRegistryDataType.UnitRegistryData;
 import rst.domotic.state.EnablingStateType;
 import rst.domotic.unit.UnitConfigType.UnitConfig;
@@ -103,9 +103,9 @@ public class EditingLayerController {
                     });
                 }
             });
-            Registries.getUnitRegistry().addDataObserver(new Observer<LocationRegistryData>() {
+            Registries.getUnitRegistry().addDataObserver(new Observer<UnitRegistryData>() {
                 @Override
-                public void update(Observable<LocationRegistryData> source, LocationRegistryData data) throws Exception {
+                public void update(Observable<UnitRegistryData> source, UnitRegistryData data) throws Exception {
                     Platform.runLater(() -> {
                         try {
                             fetchLocationUnitRemotes();

@@ -97,7 +97,7 @@ public class PermissionsPaneController {
 
         descColumn.setCellValueFactory(new MethodRefCellValueFactory<>((unit) -> unit.getUnit().getDescription(), descColumn));
 
-        typeColumn.setCellValueFactory(new MethodRefCellValueFactory<>((unit) -> unit.getUnit().getType().name(), typeColumn));
+        typeColumn.setCellValueFactory(new MethodRefCellValueFactory<>((unit) -> unit.getUnit().getUnitType().name(), typeColumn));
 
         RecursiveTreeItem<RecursiveUnitConfig> item = new RecursiveTreeItem<>(list, RecursiveTreeObject::getChildren);
         unitsTable.setRoot(item);
@@ -113,7 +113,7 @@ public class PermissionsPaneController {
             unitsTable.setPredicate(
                     user -> user.getValue().getUnit().getLabel().toLowerCase().contains(newVal.toLowerCase())
                     || user.getValue().getUnit().getDescription().toLowerCase().contains(newVal.toLowerCase())
-                    || user.getValue().getUnit().getType().name().toLowerCase().contains(newVal.toLowerCase()));
+                    || user.getValue().getUnit().getUnitType().name().toLowerCase().contains(newVal.toLowerCase()));
         });
 
     }

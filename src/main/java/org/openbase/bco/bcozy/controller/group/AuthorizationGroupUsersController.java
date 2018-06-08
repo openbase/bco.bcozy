@@ -188,7 +188,7 @@ public class AuthorizationGroupUsersController {
 
 
         try {
-            for (final UnitConfigType.UnitConfig userUnitConfig : Registries.getUserRegistry().getUserConfigs()) {
+            for (final UnitConfigType.UnitConfig userUnitConfig : Registries.getUnitRegistry().getUnitConfigs(UnitType.USER)) {
                 availableUsers.add(new UserViewModel(userUnitConfig));
             }
 

@@ -27,6 +27,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import org.openbase.bco.bcozy.BCozy;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ObserverLabel;
 import org.openbase.jul.visual.javafx.JFXConstants;
@@ -121,6 +122,7 @@ public class UserPane extends BorderPane implements Shutdownable {
                 if (!user.getActivityState().hasActivityId() || user.getActivityState().getActivityId().isEmpty()) {
                     throw new NotAvailableException("Activity");
                 }
+
                 userState = Registries.getActivityRegistry().getActivityConfigById(user.getActivityState().getActivityId()).getLabel();
             } catch (CouldNotPerformException ex) {
                 // generate user state fallback
@@ -140,10 +142,8 @@ public class UserPane extends BorderPane implements Shutdownable {
      */
     private void updateUserTransitState() {
         try {
-            switch (user.getUserTransitState().getValue()) {
-                case AT_HOME:
-                case SHORT_AT_HOME:
-                case SOON_AWAY:
+            switch (user.getPresenceState().getValue()) {
+                case PRESENT:
                     userIconPane.getChildren().remove(atHomeIcon);
                     atHomeIcon = new SVGGlyphIcon(MaterialIcon.HOME, JFXConstants.ICON_SIZE_EXTRA_SMALL, true);
                     userIconPane.add(atHomeIcon, 4, 4, 1, 1);
@@ -151,9 +151,7 @@ public class UserPane extends BorderPane implements Shutdownable {
                     setManaged(true);
                     setVisible(true);
                     break;
-                case AWAY:
-                case SHORT_AWAY:
-                case SOON_AT_HOME:
+                case ABSENT:
                     atHomeIcon = new SVGGlyphIcon(MaterialIcon.DIRECTIONS_WALK, JFXConstants.ICON_SIZE_EXTRA_SMALL, true);
                     userIcon.setForegroundIconColor(Color.LIGHTGRAY);
 

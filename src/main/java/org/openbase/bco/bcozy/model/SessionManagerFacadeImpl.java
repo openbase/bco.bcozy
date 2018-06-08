@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import rst.domotic.unit.UnitConfigType;
 import rst.domotic.unit.UnitConfigType.UnitConfig;
 import rst.domotic.unit.UnitTemplateType;
+import rst.domotic.unit.UnitTemplateType.UnitTemplate.UnitType;
 import rst.domotic.unit.authorizationgroup.AuthorizationGroupConfigType.AuthorizationGroupConfig;
 import rst.domotic.unit.user.UserConfigType;
 
@@ -53,7 +54,7 @@ public class SessionManagerFacadeImpl implements SessionManagerFacade {
                     asAdmin);
         } catch (CouldNotPerformException ex) {
             // If adding to the credential storage failed, remove the user from the registry to prevent inconsistencies.
-            Registries.getUserRegistry().removeUserConfig(unitConfig);
+            Registries.getUnitRegistry().removeUnitConfig(unitConfig);
             throw ex;
         }
 
@@ -70,7 +71,7 @@ public class SessionManagerFacadeImpl implements SessionManagerFacade {
             SessionManager.getInstance().removeUser(unitConfig.getId()/*unitConfig.getId()*/);
 
             // ... and from the registry.
-            Registries.getUserRegistry().removeUserConfig(unitConfig);
+            Registries.getUnitRegistry().removeUnitConfig(unitConfig);
             throw ex;
         }
     }
@@ -81,10 +82,10 @@ public class SessionManagerFacadeImpl implements SessionManagerFacade {
 
         UnitConfigType.UnitConfig unitConfig = builder
                 .setUserConfig(user)
-                .setType(UnitTemplateType.UnitTemplate.UnitType.USER)//TODO: right way?
+                .setUnitType(UnitTemplateType.UnitTemplate.UnitType.USER)//TODO: right way?
                 .build();
 
-        Future<UnitConfigType.UnitConfig> registeredUser = Registries.getUserRegistry().registerUserConfig(unitConfig);
+        Future<UnitConfigType.UnitConfig> registeredUser = Registries.getUnitRegistry().registerUnitConfig(unitConfig);
 
         return registeredUser.get(5, TimeUnit.SECONDS);
     }
@@ -92,12 +93,12 @@ public class SessionManagerFacadeImpl implements SessionManagerFacade {
     @Override
     public void verifyUserName(String username) throws VerificationFailedException, InterruptedException {
         try {
-            // Registries.getUserRegistry().getUserIdByUserName(username);
+            // Registries.getUnitRegistry().getUserIdByUserName(username);
 
             verifyNotEmpty(username, "Username");
 
             // ##### reimplemented because not included in current master api.
-            for (final UnitConfig userUnitConfig : Registries.getUserRegistry().getUserConfigs()) {
+            for (final UnitConfig userUnitConfig : Registries.getUnitRegistry().getUnitConfigs(UnitType.USER)) {
                 if (userUnitConfig.getUserConfig().getUserName().equals(username)) {
                     throw new VerificationFailedException("Username[" + username + "] already in use!");
                 }

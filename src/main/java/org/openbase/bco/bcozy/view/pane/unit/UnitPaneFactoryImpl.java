@@ -60,7 +60,7 @@ public class UnitPaneFactoryImpl implements UnitPaneFactory {
      * @throws CouldNotPerformException is thrown if something went wrong during class loading.
      */
     public static Class<? extends AbstractUnitPane> loadUnitPaneClass(final UnitConfig config) throws CouldNotPerformException {
-        return loadUnitPaneClass(config.getType());
+        return loadUnitPaneClass(config.getUnitType());
     }
 
     /**
@@ -152,19 +152,6 @@ public class UnitPaneFactoryImpl implements UnitPaneFactory {
     /**
      * {@inheritDoc}
      *
-     * @param scope {@inheritDoc}
-     * @return {@inheritDoc}
-     * @throws InstantiationException {@inheritDoc}
-     */
-    @Override
-    public AbstractUnitPane newInstance(ScopeType.Scope scope, long timeout, TimeUnit timeUnit) throws InstantiationException, CouldNotPerformException, InterruptedException {
-        CachedUnitRegistryRemote.waitForData(timeout, timeUnit);
-        return newInstance(CachedUnitRegistryRemote.getRegistry().getUnitConfigByScope(scope));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
      * @param config {@inheritDoc}
      * @return {@inheritDoc}
      * @throws InitializationException {@inheritDoc}
@@ -176,58 +163,6 @@ public class UnitPaneFactoryImpl implements UnitPaneFactory {
         AbstractUnitPane unitPane = newInstance(config);
         unitPane.init(config);
         return unitPane;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param scope {@inheritDoc}
-     * @param type {@inheritDoc}
-     * @return {@inheritDoc}
-     * @throws InitializationException {@inheritDoc}
-     * @throws InstantiationException {@inheritDoc}
-     * @throws InterruptedException {@inheritDoc}
-     */
-    @Override
-    public AbstractUnitPane newInitializedInstance(final ScopeType.Scope scope, final UnitTemplateType.UnitTemplate.UnitType type) throws InitializationException, InstantiationException, InterruptedException {
-        AbstractUnitPane unitPane = newInstance(type);
-        unitPane.init(scope);
-        return unitPane;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param scope {@inheritDoc}
-     * @param unitPaneClass {@inheritDoc}
-     * @return {@inheritDoc}
-     * @throws InitializationException {@inheritDoc}
-     * @throws InstantiationException {@inheritDoc}
-     * @throws InterruptedException {@inheritDoc}
-     */
-    @Override
-    public <R extends AbstractUnitPane> R newInitializedInstance(final ScopeType.Scope scope, final Class<R> unitPaneClass) throws InitializationException, InstantiationException, InterruptedException {
-        R unitPane = newInstance(unitPaneClass);
-        unitPane.init(scope);
-        return unitPane;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param scope {@inheritDoc}
-     * @param timeout {@inheritDoc}
-     * @param timeUnit {@inheritDoc}
-     * @return {@inheritDoc}
-     * @throws InitializationException {@inheritDoc}
-     * @throws InstantiationException {@inheritDoc}
-     * @throws CouldNotPerformException {@inheritDoc}
-     * @throws InterruptedException {@inheritDoc}
-     */
-    @Override
-    public AbstractUnitPane newInitializedInstance(ScopeType.Scope scope, long timeout, TimeUnit timeUnit) throws InitializationException, InstantiationException, CouldNotPerformException, InterruptedException {
-        CachedUnitRegistryRemote.waitForData(timeout, timeUnit);
-        return newInitializedInstance(CachedUnitRegistryRemote.getRegistry().getUnitConfigByScope(scope));
     }
 
     /**

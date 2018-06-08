@@ -45,8 +45,9 @@ import org.openbase.jul.pattern.Observable;
 import org.openbase.jul.pattern.Observer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.domotic.registry.UserRegistryDataType.UserRegistryData;
+import rst.domotic.registry.UnitRegistryDataType.UnitRegistryData;
 import rst.domotic.unit.UnitConfigType.UnitConfig;
+import rst.domotic.unit.UnitTemplateType.UnitTemplate.UnitType;
 import rst.domotic.unit.user.UserConfigType;
 
 /**
@@ -135,9 +136,9 @@ public class AvailableUsersPane extends PaneElement {
     public void init() throws InitializationException, InterruptedException {
 
         try {
-            Registries.getUserRegistry().addDataObserver(new Observer<UserRegistryData>() {
+            Registries.getUnitRegistry().addDataObserver(new Observer<UnitRegistryData>() {
                 @Override
-                public void update(Observable<UserRegistryData> source, UserRegistryData data) throws Exception {
+                public void update(Observable<UnitRegistryData> source, UnitRegistryData data) throws Exception {
                     Platform.runLater(() -> {
                         updateDynamicComponents();
                     });
@@ -153,7 +154,7 @@ public class AvailableUsersPane extends PaneElement {
 
     public void updateDynamicComponents() {
         try {
-            if (!Registries.getUserRegistry().isDataAvailable()) {
+            if (!Registries.getUnitRegistry().isDataAvailable()) {
                 return;
             }
 
@@ -162,7 +163,7 @@ public class AvailableUsersPane extends PaneElement {
                 userPanes.getChildren().remove(userPane);
             });
 
-            for (final UnitConfig userUnitConfig : Registries.getUserRegistry().getUserConfigs()) {
+            for (final UnitConfig userUnitConfig : Registries.getUnitRegistry().getUnitConfigs(UnitType.USER)) {
 
                 // filter users by predicate
                 if (!userPredicate.test(userUnitConfig.getUserConfig())) {

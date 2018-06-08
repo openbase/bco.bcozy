@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import rst.domotic.authentication.PermissionConfigType;
 import rst.domotic.authentication.PermissionType;
 import rst.domotic.unit.UnitConfigType;
+import rst.domotic.unit.UnitTemplateType.UnitTemplate.UnitType;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -45,8 +46,6 @@ public final class PermissionsServiceImpl implements PermissionsService {
                 setCachedUnits(Registries.getUnitRegistry().getUnitConfigs());
             }
             Registries.getUnitRegistry().addDataObserver((source, data) -> setCachedUnits(Registries.getUnitRegistry().getUnitConfigs()));
-        } catch (InterruptedException ex) {
-            ExceptionPrinter.printHistory(ex, LOGGER);
         } catch (CouldNotPerformException ex) {
             ExceptionPrinter.printHistory(ex, LOGGER);
             Thread.currentThread().interrupt();
@@ -68,7 +67,7 @@ public final class PermissionsServiceImpl implements PermissionsService {
 
         String currentOwnerId = unit.getPermissionConfig().getOwnerId();
 
-        List<UnitConfigType.UnitConfig> users = Registries.getUserRegistry().getUserConfigs();
+        List<UnitConfigType.UnitConfig> users = Registries.getUnitRegistry().getUnitConfigs(UnitType.USER);
 
 
         OwnerPermissions.Owner currentOwner = OwnerPermissions.NULL_OWNER;

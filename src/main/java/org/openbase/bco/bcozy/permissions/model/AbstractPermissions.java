@@ -1,9 +1,7 @@
 package org.openbase.bco.bcozy.permissions.model;
 
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
+import rst.configuration.LabelType.Label;
 
 import java.util.logging.Logger;
 
@@ -14,11 +12,11 @@ import java.util.logging.Logger;
  * @author vdasilva
  */
 public abstract class AbstractPermissions {
-    private static final Logger LOG = Logger.getLogger(AbstractPermissions.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(AbstractPermissions.class.getName());
 
     private final boolean originalRead, originalWrite, originalAccess;
 
-    private final StringProperty name = new SimpleStringProperty();
+    private final ObjectProperty<Label> label = new SimpleObjectProperty<>();
 
     private final BooleanProperty read = new SimpleBooleanProperty();
 
@@ -26,27 +24,27 @@ public abstract class AbstractPermissions {
 
     private final BooleanProperty access = new SimpleBooleanProperty();
 
-    AbstractPermissions(String name, boolean read, boolean write, boolean access) {
+    AbstractPermissions(Label label, boolean read, boolean write, boolean access) {
         this.originalAccess = access;
         this.originalRead = read;
         this.originalWrite = write;
 
-        this.name.setValue(name);
+        this.label.setValue(label);
         this.read.set(read);
         this.access.set(access);
         this.write.set(write);
     }
 
-    public String getName() {
-        return name.get();
+    public Label getLabel() {
+        return label.get();
     }
 
-    public StringProperty nameProperty() {
-        return name;
+    public ObjectProperty<Label> labelProperty() {
+        return label;
     }
 
-    public void setName(String name) {
-        this.name.set(name);
+    public void setLabel(Label label) {
+        this.label.set(label);
     }
 
     public boolean isRead() {

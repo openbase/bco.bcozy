@@ -146,7 +146,7 @@ public class UserManagementController {
 
 
         try {
-            Registries.getUserRegistry().addDataObserver((source, data) -> fillUserList());
+            Registries.getUnitRegistry().addDataObserver((source, data) -> fillUserList());
         } catch (NotAvailableException ex) {
             ExceptionPrinter.printHistory(ex, LOGGER);
         } catch (InterruptedException ex) {
@@ -173,8 +173,8 @@ public class UserManagementController {
 
         chooseUserBox.getItems().add(new UserData());//new User
         try {
-            if (Registries.getUserRegistry().isDataAvailable()) {
-                List<UnitConfig> users = Registries.getUserRegistry().getUserConfigs();
+            if (Registries.getUnitRegistry().isDataAvailable()) {
+                List<UnitConfig> users = Registries.getUnitRegistry().getUnitConfigs(UnitType.USER);
 
                 for (UnitConfig user : users) {
                     chooseUserBox.getItems().add(new UserData(user));
@@ -405,13 +405,13 @@ public class UserManagementController {
 
             List<UnitConfig> groups = new ArrayList<>(usergroupField.getCheckModel().getCheckedItems());
 
-            UnitConfig unitConfig = Registries.getUserRegistry()
+            UnitConfig unitConfig = Registries.getUnitRegistry()
                     .getUserConfigById(selectedUser.getUserId())
                     .toBuilder()
                     .setUserConfig(selectedUser.getUserConfig())
                     .build();
 
-            Registries.getUserRegistry().updateUserConfig(unitConfig);
+            Registries.getUnitRegistry().updateUserConfig(unitConfig);
 
             for (UnitConfig config : selectedUser.getGroups()) {
                 AuthorizationGroups.tryRemoveFromGroup(config, selectedUser.getUserId());
@@ -446,7 +446,7 @@ public class UserManagementController {
 
     private void deleteUser() throws InterruptedException {
         try {
-            Registries.getUserRegistry().removeUserConfig(Registries.getUnitRegistry().getUnitConfigById(selectedUser
+            Registries.getUnitRegistry().removeUserConfig(Registries.getUnitRegistry().getUnitConfigById(selectedUser
                     .getUserId()));
             showSuccessMessage("deleteSuccess");
         } catch (CouldNotPerformException ex) {

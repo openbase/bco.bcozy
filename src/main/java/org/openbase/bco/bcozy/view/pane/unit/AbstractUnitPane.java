@@ -24,8 +24,10 @@ import javafx.application.Platform;
 import org.openbase.bco.authentication.lib.AuthorizationHelper;
 import org.openbase.bco.authentication.lib.SessionManager;
 import org.openbase.bco.authentication.lib.jp.JPAuthentication;
+import org.openbase.bco.bcozy.model.LanguageSelection;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.InfoPane;
+import org.openbase.jul.extension.rst.processing.LabelProcessor;
 import org.openbase.jul.visual.javafx.JFXConstants;
 import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 import org.openbase.bco.bcozy.view.generic.ExpandableWidgedPane;
@@ -52,7 +54,7 @@ import java.util.Map;
  * Created by divine on 25.04.17
  *
  * @param <UR> UnitRemote
- * @param <D> Unit Data
+ * @param <D>  Unit Data
  */
 public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends GeneratedMessage> extends ExpandableWidgedPane implements Initializable<UR>, Shutdownable {
 
@@ -128,7 +130,8 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
      * Method initializes this pane with a unit referred by the given id.
      *
      * @param unitId a unit id to init the pane.
-     * @throws InterruptedException is thrown if the current thread was externally interrupted.
+     *
+     * @throws InterruptedException    is thrown if the current thread was externally interrupted.
      * @throws InitializationException is thrown if the initialization has been failed.
      */
     public void init(final String unitId) throws InterruptedException, InitializationException {
@@ -143,7 +146,8 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
      * Method initializes this pane with a unit referred by the given id.
      *
      * @param unitConfig a unit config to unit the pane.
-     * @throws InterruptedException is thrown if the current thread was externally interrupted.
+     *
+     * @throws InterruptedException    is thrown if the current thread was externally interrupted.
      * @throws InitializationException is thrown if the initialization has been failed.
      */
     public void init(final UnitConfig unitConfig) throws InterruptedException, InitializationException {
@@ -158,7 +162,8 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
      * Method initializes this pane with the given unit remote.
      *
      * @param unitRemote the unit remote.
-     * @throws InterruptedException is thrown if the current thread was externally interrupted.
+     *
+     * @throws InterruptedException    is thrown if the current thread was externally interrupted.
      * @throws InitializationException is thrown if the initialization has been failed.
      */
     @Override
@@ -203,7 +208,7 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
                     // skip update, config observer will handle the update later on.
                 }
             }
-        } catch(JPNotAvailableException ex) {
+        } catch (JPNotAvailableException ex) {
             ExceptionPrinter.printHistory("Could not access JPAuthentication property!", ex, LOGGER);
         }
     }
@@ -233,6 +238,7 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
      * Returns the UnitRemote.
      *
      * @return UnitRemote which is connected to these unit pane.
+     *
      * @throws NotAvailableException if the pane is not connected to any unit remote.
      */
     public UR getUnitRemote() throws NotAvailableException {
@@ -246,6 +252,7 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
      * Method returns the data object of the linked unit.
      *
      * @return the data object.
+     *
      * @throws NotAvailableException is thrown if the data is currently not available.
      */
     public D getData() throws NotAvailableException {
@@ -268,16 +275,18 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
      * Notifies about unit data changes.
      *
      * @param config
+     *
      * @throws org.openbase.jul.exception.CouldNotPerformException
      */
     protected void applyConfigUpdate(final UnitConfig config) throws CouldNotPerformException {
-        setLabel(config.getLabel());
+        setLabel(LabelProcessor.getLabelByLanguage(getSelectedLocale(), config.getLabel()));
     }
 
     /**
      * Notifies about unit data changes.
      *
      * @param data
+     *
      * @throws org.openbase.jul.exception.CouldNotPerformException
      */
     protected void applyDataUpdate(final D data) throws CouldNotPerformException {
@@ -288,6 +297,7 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
      * Notifies about unit data changes.
      *
      * @param connectionState
+     *
      * @throws CouldNotPerformException
      */
     protected void applyConnectionStateUpdate(final ConnectionState connectionState) throws CouldNotPerformException {
@@ -311,20 +321,16 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
      * @throws CouldNotPerformException
      */
     protected void applyLoginUpdate() throws CouldNotPerformException {
-        try {
-            String userAtClientId = null;
-            Map<String, IdentifiableMessage<String, UnitConfig, UnitConfig.Builder>> groups = null;
-            Map<String, IdentifiableMessage<String, UnitConfig, UnitConfig.Builder>> locations = Registries.getUnitRegistry().getLocationUnitConfigRemoteRegistry().getEntryMap();
+        String userAtClientId = null;
+        Map<String, IdentifiableMessage<String, UnitConfig, UnitConfig.Builder>> groups = null;
+        Map<String, IdentifiableMessage<String, UnitConfig, UnitConfig.Builder>> locations = Registries.getUnitRegistry().getLocationUnitConfigRemoteRegistry().getEntryMap();
 
-            if (SessionManager.getInstance().isLoggedIn()) {
-                userAtClientId = SessionManager.getInstance().getUserAtClientId();
-                groups = Registries.getUnitRegistry().getAuthorizationGroupUnitConfigRemoteRegistry().getEntryMap();
-            }
-
-            disableProperty().set(!AuthorizationHelper.canAccess(AbstractUnitPane.this.unitRemote.getConfig(), userAtClientId, groups, locations));
-        } catch (InterruptedException ex) {
-            Thread.currentThread().interrupt();
+        if (SessionManager.getInstance().isLoggedIn()) {
+            userAtClientId = SessionManager.getInstance().getUserAtClientId();
+            groups = Registries.getUnitRegistry().getAuthorizationGroupUnitConfigRemoteRegistry().getEntryMap();
         }
+
+        disableProperty().set(!AuthorizationHelper.canAccess(AbstractUnitPane.this.unitRemote.getConfig(), userAtClientId, groups, locations));
     }
 
     /**

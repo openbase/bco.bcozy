@@ -320,7 +320,7 @@ public final class LocationPane extends MultiTouchPane {
                 }
             });
         } catch (CouldNotPerformException ex) {
-            throw new CouldNotPerformException("Could not add connection!", ex);
+            throw new CouldNotPerformException("Could not add connection!", ex);StateSources.java
         }
     }
 
