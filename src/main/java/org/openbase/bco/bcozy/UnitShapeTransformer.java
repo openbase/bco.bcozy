@@ -65,7 +65,7 @@ public class UnitShapeTransformer extends Application {
 
         try {
 
-            final UnitConfigType.UnitConfig rootLocationConfig = Registries.getLocationRegistry(true).getRootLocationConfig();
+            final UnitConfigType.UnitConfig rootLocationConfig = Registries.getUnitRegistry(true).getRootLocationConfig();
 
             UnitRemote<? extends GeneratedMessage> location = Units.getUnit(rootLocationConfig, true, Units.LOCATION);
 
