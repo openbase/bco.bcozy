@@ -18,28 +18,28 @@
  */
 package org.openbase.bco.bcozy;
 
-import com.google.protobuf.GeneratedMessage;
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import org.openbase.bco.registry.remote.Registries;
+import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.NotAvailableException;
+import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.openbase.jul.extension.rst.processing.LabelProcessor;
+import org.openbase.jul.schedule.GlobalCachedExecutorService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import rst.domotic.unit.UnitConfigType.UnitConfig;
+import rst.math.Vec3DDoubleType.Vec3DDouble;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
-import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
-import org.openbase.bco.dal.remote.unit.Units;
-import org.openbase.bco.registry.remote.Registries;
-import org.openbase.jul.exception.CouldNotPerformException;
-import org.openbase.jul.exception.printer.ExceptionPrinter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import rst.domotic.unit.UnitConfigType;
-import rst.domotic.unit.UnitConfigType.UnitConfig;
-import rst.math.Vec3DDoubleType.Vec3DDouble;
+import java.util.concurrent.Future;
 
 /**
  *
@@ -49,13 +49,69 @@ public class UnitShapeTransformer extends Application {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UnitShapeTransformer.class);
 
+    private Future registryTask;
+    private Label label;
+    private Slider slider;
+    private class LocationHolder {
+        UnitConfig latestUnitConfig;
+        final UnitConfig originUnitConfig;
+
+        public LocationHolder(UnitConfig originUnitConfig) {
+            this.originUnitConfig = originUnitConfig;
+            this.latestUnitConfig = originUnitConfig;
+            try {
+                Registries.getUnitRegistry().addDataObserver((source, data) -> latestUnitConfig = Registries.getUnitRegistry().getUnitConfigById(originUnitConfig.getId()));
+            } catch (NotAvailableException e) {
+                e.printStackTrace();
+            }
+        }
+
+        public UnitConfig getOriginUnitConfig() {
+            return originUnitConfig;
+        }
+
+        public UnitConfig getLatestUnitConfig() {
+            return latestUnitConfig;
+        }
+
+        @Override
+        public String toString() {
+            try {
+                return LabelProcessor.getBestMatch(originUnitConfig.getLabel());
+            } catch (NotAvailableException e) {
+                return "?";
+            }
+        }
+    }
+
     @Override
     public void start(Stage primaryStage) throws CouldNotPerformException, InterruptedException, ExecutionException {
         Button resetButton = new Button();
         resetButton.setText("Reset");
+        CheckBox checkBox = new CheckBox();
+
+        label = new Label("select a unit");
+        slider = new Slider();
 
         StackPane root = new StackPane();
+        final VBox main = new VBox();
         root.getChildren().add(resetButton);
+
+        List<LocationHolder> holders = new ArrayList<>();
+        for (UnitConfig unitConfig : Registries.getUnitRegistry(true).getUnitConfigs()) {
+            if(unitConfig.getPlacementConfig().hasShape()) {
+                holders.add(new LocationHolder(unitConfig));
+            }
+        }
+
+        final ComboBox<LocationHolder> unitComboBox = new ComboBox<>();
+        unitComboBox.getItems().addAll(holders);
+
+        resetButton.disableProperty().bind(checkBox.selectedProperty());
+        unitComboBox.disableProperty().bind(checkBox.selectedProperty());
+
+        main.getChildren().addAll(label, unitComboBox, resetButton, checkBox, slider);
+        root.getChildren().add(main);
 
         Scene scene = new Scene(root, 300, 250);
 
@@ -64,50 +120,51 @@ public class UnitShapeTransformer extends Application {
         primaryStage.show();
 
         try {
-
-            final UnitConfigType.UnitConfig rootLocationConfig = Registries.getUnitRegistry(true).getRootLocationConfig();
-
-            UnitRemote<? extends GeneratedMessage> location = Units.getUnit(rootLocationConfig, true, Units.LOCATION);
-
-            resetButton.setOnAction(new EventHandler<ActionEvent>() {
-
-                @Override
-                public void handle(ActionEvent event) {
-                    try {
-                        resetButton.setDisable(true);
-                        // update location in registry
-                        Registries.getUnitRegistry(true).updateUnitConfig(rootLocationConfig).get();
-                        resetButton.setDisable(false);
-                    } catch (CouldNotPerformException | ExecutionException | InterruptedException ex) {
-                        ExceptionPrinter.printHistory("Could not reset unit config", ex, LOGGER);
-                        resetButton.setDisable(false);
-                    }
+            resetButton.setOnAction(event -> {
+                resetButton.disableProperty().unbind();
+                try {
+                    resetButton.disableProperty().setValue(true);
+                    // update location in registry
+                    Registries.getUnitRegistry(true).updateUnitConfig(unitComboBox.getSelectionModel().getSelectedItem().getOriginUnitConfig()).get();
+                    resetButton.disableProperty().setValue(false);
+                } catch (CouldNotPerformException | ExecutionException | InterruptedException ex) {
+                    ExceptionPrinter.printHistory("Could not reset unit config", ex, LOGGER);
+                    resetButton.disableProperty().setValue(false);
                 }
+                resetButton.disableProperty().bind(checkBox.selectedProperty());
             });
 
-            scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
-                @Override
-                public void handle(KeyEvent event) {
-                    try {
+            scene.setOnKeyPressed(event -> {
+                try {
 
-                        double offset = 0.1d;
-                        switch (event.getCode()) {
-                            case UP:
-                                translateUnitShape(-offset, 0, location.getConfig());
-                                break;
-                            case DOWN:
-                                translateUnitShape(offset, 0, location.getConfig());
-                                break;
-                            case LEFT:
-                                translateUnitShape(0, -offset, location.getConfig());
-                                break;
-                            case RIGHT:
-                                translateUnitShape(0, offset, location.getConfig());
-                                break;
-                        }
-                    } catch (CouldNotPerformException | InterruptedException ex) {
-                        ExceptionPrinter.printHistory("Task could not be performed!", ex, LOGGER);
+                    if(registryTask != null && !registryTask.isDone()) {
+                        return;
                     }
+                    double scale = slider.getValue() ;
+                    System.out.println("scale: "+ scale);
+                    double offset = 0.01d + scale /100;
+                    System.out.println("offset: "+ offset);
+
+                    switch (event.getCode()) {
+                        case UP:
+                            translateUnitShape(-offset, 0, unitComboBox.getSelectionModel().getSelectedItem().getLatestUnitConfig());
+                            event.consume();
+                            break;
+                        case DOWN:
+                            translateUnitShape(offset, 0, unitComboBox.getSelectionModel().getSelectedItem().getLatestUnitConfig());
+                            event.consume();
+                            break;
+                        case LEFT:
+                            translateUnitShape(0, -offset, unitComboBox.getSelectionModel().getSelectedItem().getLatestUnitConfig());
+                            event.consume();
+                            break;
+                        case RIGHT:
+                            translateUnitShape(0, offset, unitComboBox.getSelectionModel().getSelectedItem().getLatestUnitConfig());
+                            event.consume();
+                            break;
+                    }
+                } catch (CouldNotPerformException | InterruptedException ex) {
+                    ExceptionPrinter.printHistory("Task could not be performed!", ex, LOGGER);
                 }
             });
 
@@ -117,19 +174,28 @@ public class UnitShapeTransformer extends Application {
     }
 
     private void translateUnitShape(final double xOffset, final double yOffset, final UnitConfig unitConfig) throws CouldNotPerformException, InterruptedException {
-        // create builder
-        final UnitConfig.Builder builder = unitConfig.toBuilder();
+        registryTask = GlobalCachedExecutorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                Platform.runLater(() -> label.setText("store transformation..."));
 
-        // update location positions with given offset
-        builder.getPlacementConfigBuilder().getShapeBuilder().clearFloor().addAllFloor(updatePositions(xOffset, yOffset, unitConfig.getPlacementConfig().getShape().getFloorList()));
-        builder.getPlacementConfigBuilder().getShapeBuilder().clearCeiling().addAllCeiling(updatePositions(xOffset, yOffset, unitConfig.getPlacementConfig().getShape().getCeilingList()));
+                // create builder
+                final UnitConfig.Builder builder = unitConfig.toBuilder();
 
-        try {
-            // update location in registry
-            Registries.getUnitRegistry().updateUnitConfig(builder.build()).get();
-        } catch (ExecutionException ex) {
-            throw new CouldNotPerformException("Could not translate unit shape");
-        }
+                // update location positions with given offset
+                builder.getPlacementConfigBuilder().getShapeBuilder().clearFloor().addAllFloor(updatePositions(xOffset, yOffset, unitConfig.getPlacementConfig().getShape().getFloorList()));
+                builder.getPlacementConfigBuilder().getShapeBuilder().clearCeiling().addAllCeiling(updatePositions(xOffset, yOffset, unitConfig.getPlacementConfig().getShape().getCeilingList()));
+
+                try {
+//             update location in registry
+                    Registries.getUnitRegistry().updateUnitConfig(builder.build()).get();
+                } catch (ExecutionException | CouldNotPerformException | InterruptedException ex) {
+                    ExceptionPrinter.printHistory("Could not translate unit shape", ex, System.err);
+                }
+                Platform.runLater(() -> label.setText("ready"));
+            }
+        });
+
     }
 
     private List<Vec3DDouble> updatePositions(final double xOffset, final double yOffset, final List<Vec3DDouble> originalPostionList) {

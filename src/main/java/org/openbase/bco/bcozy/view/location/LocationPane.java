@@ -19,6 +19,10 @@
  */
 package org.openbase.bco.bcozy.view.location;
 
+//import javafx.animation.ParallelTransition;
+//import javafx.animation.ScaleTransition;
+//import javafx.animation.TranslateTransition;
+
 import javafx.animation.ParallelTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
@@ -562,7 +566,7 @@ public final class LocationPane extends MultiTouchPane {
                 * Constants.ZOOM_FIT_PERCENTAGE_HEIGHT;
         final double scale = (xScale < yScale) ? xScale : yScale;
 
-        final ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(500));
+        final ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(100));
         scaleTransition.setToX(scale);
         scaleTransition.setToY(scale);
         scaleTransition.setCycleCount(1);
@@ -570,7 +574,7 @@ public final class LocationPane extends MultiTouchPane {
 
         final Point2D transition = calculateTransition(scale, polygon);
 
-        final TranslateTransition translateTransition = new TranslateTransition(Duration.millis(500));
+        final TranslateTransition translateTransition = new TranslateTransition(Duration.millis(100));
         translateTransition.setToX(transition.getX());
         translateTransition.setToY(transition.getY());
         translateTransition.setCycleCount(1);
