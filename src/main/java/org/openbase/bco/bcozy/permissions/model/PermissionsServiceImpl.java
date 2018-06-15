@@ -6,6 +6,7 @@ import org.openbase.bco.bcozy.util.AuthorizationGroups;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.openbase.jul.extension.rst.processing.LabelProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.domotic.authentication.PermissionConfigType;
@@ -76,7 +77,7 @@ public final class PermissionsServiceImpl implements PermissionsService {
         for (UnitConfig user : users) {
 
             final boolean isCurrentOwner = Objects.equals(user.getId(), currentOwnerId);
-            final OwnerPermissions.Owner model = new OwnerPermissions.Owner(user.getId(), user.getUserConfig().getUserName());
+            final OwnerPermissions.Owner model = new OwnerPermissions.Owner(user.getId(), LabelProcessor.buildLabel(user.getUserConfig().getUserName()));
             if (isCurrentOwner) {
                 currentOwner = model;
             }

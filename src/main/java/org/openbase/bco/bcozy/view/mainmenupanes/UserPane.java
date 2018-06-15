@@ -30,7 +30,6 @@ import javafx.scene.paint.Color;
 import org.openbase.bco.bcozy.model.LanguageSelection;
 import org.openbase.bco.bcozy.util.LabelSynchronizer;
 import org.openbase.bco.bcozy.view.Constants;
-import org.openbase.bco.bcozy.view.ObserverLabel;
 import org.openbase.bco.dal.remote.unit.Units;
 import org.openbase.bco.dal.remote.unit.user.UserRemote;
 import org.openbase.bco.registry.remote.Registries;
@@ -80,7 +79,8 @@ public class UserPane extends BorderPane implements Shutdownable {
         final HBox nameAndGuestLayout = new HBox(Constants.INSETS);
         nameAndGuestLayout.getChildren().addAll(userNameLabel);
         nameAndGuestLayout.setAlignment(Pos.CENTER);
-        userStateLabel = new ObserverLabel("");
+        userStateLabel = new Label("");
+        userStateLabel.textProperty().bind(labelSynchronizer.textProperty());
 
         final VBox nameAndStateLayout = new VBox(Constants.INSETS / 2);
         nameAndStateLayout.setAlignment(Pos.CENTER);

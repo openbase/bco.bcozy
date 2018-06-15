@@ -4,6 +4,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableCell;
 import org.openbase.bco.bcozy.permissions.model.AbstractPermissions;
 import org.openbase.bco.bcozy.permissions.model.OwnerPermissions;
+import org.openbase.bco.bcozy.util.LabelSynchronizer;
 
 /**
  * Table-Cell, which contains a ComboBox for {@link OwnerPermissions}-Rows and simple Text otherwise.
@@ -19,12 +20,16 @@ public class PermissionTableCell<T> extends TableCell<AbstractPermissions, T> {
      */
     private final ComboBox<OwnerPermissions.Owner> comboBox = new ComboBox<>();
 
+    private LabelSynchronizer labelSynchronizer;
+
     /**
      * Current Row, if {@link OwnerPermissions}.
      */
     private OwnerPermissions model;
 
     PermissionTableCell() {
+        this.labelSynchronizer = new LabelSynchronizer();
+        textProperty().bind(labelSynchronizer.textProperty());
         this.comboBox.valueProperty().addListener((observable, oldValue, newValue) ->
                 {
                     if (model != null) {
@@ -49,7 +54,7 @@ public class PermissionTableCell<T> extends TableCell<AbstractPermissions, T> {
                 updateItem((OwnerPermissions) permissionsRow);
             } else {
                 setGraphic(null);
-                setText(permissionsRow.getLabel());
+                labelSynchronizer.updateLabel(permissionsRow.getLabel());
             }
         }
     }

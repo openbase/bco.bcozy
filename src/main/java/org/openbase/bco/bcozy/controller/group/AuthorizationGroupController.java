@@ -1,7 +1,7 @@
 package org.openbase.bco.bcozy.controller.group;
 
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
-import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -16,16 +16,16 @@ import org.openbase.bco.bcozy.controller.ButtonTableCellFactory;
 import org.openbase.bco.bcozy.controller.Dialog;
 import org.openbase.bco.bcozy.model.LanguageSelection;
 import org.openbase.bco.bcozy.util.AuthorizationGroups;
-import org.openbase.jul.exception.ExceptionProcessor;
-import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.InfoPane;
 import org.openbase.bco.bcozy.view.ObserverButton;
+import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.ExceptionProcessor;
+import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.visual.javafx.JFXConstants;
 import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
-import org.openbase.jul.exception.CouldNotPerformException;
-import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rst.configuration.LabelType.Label;
 import rst.domotic.unit.UnitConfigType;
 
 import java.util.List;
@@ -45,7 +45,7 @@ public class AuthorizationGroupController {
     @FXML
     private TableColumn<UnitConfigType.UnitConfig, String> removeColumn;
     @FXML
-    private TableColumn<UnitConfigType.UnitConfig, String> nameColumn;
+    private TableColumn<UnitConfigType.UnitConfig, Label> nameColumn;
     @FXML
     private TableView<UnitConfigType.UnitConfig> groupsTable;
 
@@ -66,7 +66,7 @@ public class AuthorizationGroupController {
 
         saveButton.setApplyOnNewText(String::toUpperCase);
 
-        nameColumn.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getLabel()));
+        nameColumn.setCellValueFactory(param -> new SimpleObjectProperty<>(param.getValue().getLabel()));
         LanguageSelection.addObserverFor("groupLabel", (locale, text) -> nameColumn.setText(text));
 
         removeColumn.setCellFactory(new ButtonTableCellFactory<>(
