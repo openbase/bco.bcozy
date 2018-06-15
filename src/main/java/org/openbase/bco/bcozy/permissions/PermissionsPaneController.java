@@ -75,10 +75,7 @@ public class PermissionsPaneController {
             fillTable();
         } catch (CouldNotPerformException ex) {
             ExceptionPrinter.printHistory(ex, LOGGER);
-        } catch (InterruptedException ex) {
-            Thread.currentThread().interrupt();
         }
-
     }
 
     private void onSelectionChange(javafx.beans.Observable observable, TreeItem oldValue, TreeItem newValue) {
