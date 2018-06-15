@@ -18,15 +18,8 @@
  */
 package org.openbase.bco.bcozy.controller;
 
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import javafx.application.Platform;
 import javafx.geometry.Point2D;
-import javax.vecmath.Point3d;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.SimpleUnitSymbolsPane;
 import org.openbase.bco.bcozy.view.location.LocationPane;
@@ -42,11 +35,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rct.Transform;
 import rst.domotic.registry.UnitRegistryDataType.UnitRegistryData;
-import rst.domotic.registry.UnitRegistryDataType.UnitRegistryData;
 import rst.domotic.state.EnablingStateType;
 import rst.domotic.unit.UnitConfigType.UnitConfig;
 import rst.domotic.unit.UnitTemplateType;
+import rst.domotic.unit.UnitTemplateType.UnitTemplate.UnitType;
 import rst.geometry.PoseType;
+
+import javax.vecmath.Point3d;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Controller for the editing layer of the room plan that includes buttons for all supported unit types.

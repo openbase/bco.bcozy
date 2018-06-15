@@ -16,12 +16,17 @@ package org.openbase.bco.bcozy.model;
 
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import org.openbase.bco.bcozy.util.Language;
+import org.openbase.bco.bcozy.util.Languages;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.jps.core.JPService;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rst.configuration.LabelType.Label;
+import rst.configuration.LabelType.Label.Builder;
+import rst.configuration.LabelType.Label.MapFieldEntry;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -162,5 +167,14 @@ public final class LanguageSelection extends Observable {
 
     public interface OnLanguageChangeListener {
         void onLanguageChange(Locale locale, String text);
+    }
+
+    public static Label buildLabel(final String identifier) {
+        final Builder builder = Label.newBuilder();
+        for (final Language language : Languages.getInstance().get()) {
+            final String value = ResourceBundle.getBundle(Constants.LANGUAGE_RESOURCE_BUNDLE, Locale.getDefault()).getString(identifier);
+            builder.addEntry(MapFieldEntry.newBuilder().setKey(language.getLocale().getLanguage()).addValue(value).build());
+        }
+        return builder.build();
     }
 }

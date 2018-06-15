@@ -115,9 +115,6 @@ public class LogoPane extends HBox {
             updateIconState(Registries.getUnitRegistry().getConnectionState(), animation);
         } catch (NotAvailableException ex) {
             ExceptionPrinter.printHistory("Could not update icon state!", ex, LOGGER);
-        } catch (InterruptedException ex) {
-            Thread.currentThread().interrupt();
-            // handling can be  removed in bco v2.0
         }
     }
 

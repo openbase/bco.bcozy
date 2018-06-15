@@ -279,7 +279,7 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
      * @throws org.openbase.jul.exception.CouldNotPerformException
      */
     protected void applyConfigUpdate(final UnitConfig config) throws CouldNotPerformException {
-        setLabel(LabelProcessor.getLabelByLanguage(getSelectedLocale(), config.getLabel()));
+        setLabel(config.getLabel());
     }
 
     /**

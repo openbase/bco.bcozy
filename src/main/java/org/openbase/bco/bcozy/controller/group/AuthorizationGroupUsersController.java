@@ -17,18 +17,18 @@ import org.openbase.bco.bcozy.controller.ButtonTableCellFactory;
 import org.openbase.bco.bcozy.controller.Dialog;
 import org.openbase.bco.bcozy.model.LanguageSelection;
 import org.openbase.bco.bcozy.util.AuthorizationGroups;
-import org.openbase.jul.exception.ExceptionProcessor;
-import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.InfoPane;
 import org.openbase.bco.bcozy.view.ObserverButton;
-import org.openbase.jul.visual.javafx.JFXConstants;
-import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.ExceptionProcessor;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.openbase.jul.visual.javafx.JFXConstants;
+import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.domotic.unit.UnitConfigType;
+import rst.domotic.unit.UnitTemplateType.UnitTemplate.UnitType;
 
 /**
  * @author vdasilva
@@ -202,8 +202,6 @@ public class AuthorizationGroupUsersController {
 
         } catch (CouldNotPerformException ex) {
             ExceptionPrinter.printHistory(ex, LOGGER);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
         }
 
         userTable.setItems(usersInGroup);

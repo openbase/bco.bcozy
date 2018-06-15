@@ -11,7 +11,6 @@ public final class OtherPermissions extends AbstractPermissions {
     private static final Logger LOG = Logger.getLogger(OtherPermissions.class.getName());
 
     public OtherPermissions(boolean read, boolean write, boolean access) {
-        super(LanguageSelection.getLocalized("permissions.other"), read, write, access);
+        super(LanguageSelection.buildLabel("permissions.other"), read, write, access);
     }
-
 }

@@ -42,6 +42,7 @@ import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.EnumNotSupportedException;
 import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.openbase.jul.extension.rst.processing.LabelProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.domotic.unit.UnitConfigType.UnitConfig;
@@ -311,16 +312,15 @@ public final class LocationPane extends MultiTouchPane {
                 } else {
                     String unitLabel = locationId;
                     try {
-                        unitLabel = Registries.getUnitRegistry(false).getUnitConfigById(locationId).getLabel();
+                        unitLabel = LabelProcessor.getFirstLabel(Registries.getUnitRegistry(false).getUnitConfigById(locationId).getLabel());
                     } catch (CouldNotPerformException | InterruptedException ex) {
                         // id is used instead.
                     }
-
                     LOGGER.debug("Location " + unitLabel + " can not be found in the location Map. No Cutting will be applied.");
                 }
             });
         } catch (CouldNotPerformException ex) {
-            throw new CouldNotPerformException("Could not add connection!", ex);StateSources.java
+            throw new CouldNotPerformException("Could not add connection!", ex);
         }
     }
 

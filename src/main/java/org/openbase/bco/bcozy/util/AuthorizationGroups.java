@@ -7,7 +7,9 @@ import javafx.collections.ObservableList;
 import javafx.util.StringConverter;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.openbase.jul.extension.rst.processing.LabelProcessor;
 import org.openbase.jul.pattern.Observer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -98,7 +100,11 @@ public final class AuthorizationGroups {
         return new StringConverter<UnitConfig>() {
             @Override
             public String toString(final UnitConfig object) {
-                return object.getLabel();
+                try {
+                    return LabelProcessor.getBestMatch(object.getLabel());
+                } catch (NotAvailableException e) {
+                    return "?";
+                }
             }
 
             @Override
@@ -115,7 +121,7 @@ public final class AuthorizationGroups {
 
     public static void removeAuthorizationGroup(final UnitConfig group) throws InterruptedException, CouldNotPerformException {
         try {
-            Registries.getUnitRegistry().removeAuthorizationGroupConfig(group);
+            Registries.getUnitRegistry().removeUnitConfig(group);
         } catch (CouldNotPerformException ex) {
             throw new CouldNotPerformException("Could not remove authorization group.", ex);
         }
@@ -132,8 +138,8 @@ public final class AuthorizationGroups {
     public static Future<UnitConfig> tryAddAuthorizationGroup(final String groupName) throws CouldNotPerformException, InterruptedException {
 
         UnitConfig newGroup = UnitConfig.newBuilder()
-                .setLabel(groupName)
-                .setType(UnitTemplateType.UnitTemplate.UnitType.AUTHORIZATION_GROUP)
+                .setLabel(LabelProcessor.buildLabel(groupName))
+                .setUnitType(UnitTemplateType.UnitTemplate.UnitType.AUTHORIZATION_GROUP)
                 .setAuthorizationGroupConfig(AuthorizationGroupConfig.newBuilder())
                 .build();
 

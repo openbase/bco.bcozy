@@ -20,12 +20,7 @@ package org.openbase.bco.bcozy.view.generic;
 
 import com.jfoenix.controls.JFXToggleButton;
 import de.jensd.fx.glyphs.GlyphIcons;
-import org.openbase.jul.visual.javafx.JFXConstants;
-import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
-import org.openbase.jul.visual.javafx.iface.DynamicPane;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
@@ -40,12 +35,20 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import org.openbase.bco.bcozy.util.LabelSynchronizer;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ObserverText;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.openbase.jul.visual.javafx.JFXConstants;
+import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
+import org.openbase.jul.visual.javafx.iface.DynamicPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rst.configuration.LabelType;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 /**
  * @author agatting
@@ -74,6 +77,8 @@ public class WidgetPane extends VBox implements DynamicPane {
     private final SVGGlyphIcon mainIcon;
 
     private final Label widgetLabel;
+
+    private LabelSynchronizer labelSynchronizer;
     
     //private final Label unitCount;
 
@@ -129,10 +134,12 @@ public class WidgetPane extends VBox implements DynamicPane {
         this.activateable = activateable;
 //        this.getStyleClass().add("widget-pane");
         this.headPane = new BorderPane();
+        this.labelSynchronizer = new LabelSynchronizer();
         this.primaryActivationProperty = new SimpleBooleanProperty();
         this.secondaryActivationProperty = new SimpleBooleanProperty();
         this.mainIcon = new SVGGlyphIcon(MaterialDesignIcon.VECTOR_CIRCLE, JFXConstants.ICON_SIZE_SMALL, false);
-        this.widgetLabel = new Label("?");
+        this.widgetLabel = new Label();
+        this.widgetLabel.textProperty().bind(labelSynchronizer.textProperty());
 
         this.primaryActivationObserver = new ChangeListener<Boolean>() {
             private Future currentTask;
@@ -257,8 +264,8 @@ public class WidgetPane extends VBox implements DynamicPane {
         mainIcon.setBackgroundIcon(backgroundIconProvider);
     }
 
-    public void setLabel(final String label) {
-        widgetLabel.setText(label);
+    public void setLabel(final LabelType.Label label) {
+        labelSynchronizer.updateLabel(label);
     }
 
     public SVGGlyphIcon getIcon() {

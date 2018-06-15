@@ -294,7 +294,7 @@ public class LoginPane extends PaneElement {
 
         try {
             final String password = getPasswordField().getText();
-            sessionManager.login(Registries.getUnitRegistry().getUserIdByUserName(getNameTxt().getText()), password);
+            sessionManager.login(Registries.getUnitRegistry().getUserUnitIdByUserName(getNameTxt().getText()), password);
             Platform.runLater(() -> {
                 resetUserOrPasswordWrong();
                 getLoggedInUserLbl().setText(getNameTxt().getText());

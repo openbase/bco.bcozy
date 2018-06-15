@@ -17,16 +17,18 @@ import javafx.scene.control.TreeTableColumn;
 import javafx.util.Callback;
 import org.controlsfx.control.textfield.CustomTextField;
 import org.openbase.bco.bcozy.permissions.model.RecursiveUnitConfig;
-import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ObserverLabel;
-import org.openbase.jul.visual.javafx.JFXConstants;
-import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.openbase.jul.visual.javafx.JFXConstants;
+import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rst.configuration.LabelType;
+import rst.configuration.LabelType.Label.MapFieldEntry;
 import rst.domotic.unit.UnitConfigType;
+import rst.domotic.unit.UnitConfigType.UnitConfig;
 
 import java.util.List;
 import java.util.Objects;
@@ -60,7 +62,7 @@ public class PermissionsPaneController {
     @FXML
     private JFXTreeTableColumn<RecursiveUnitConfig, String> descColumn;
     @FXML
-    private JFXTreeTableColumn<RecursiveUnitConfig, String> labelColumn;
+    private JFXTreeTableColumn<RecursiveUnitConfig, LabelType.Label> labelColumn;
 
     private final ObservableList<RecursiveUnitConfig> list = FXCollections.observableArrayList();
 
@@ -110,12 +112,20 @@ public class PermissionsPaneController {
 
         filterInput.promptTextProperty().setValue(new ObserverLabel("searchPlaceholder").getText());
         filterInput.textProperty().addListener((o, oldVal, newVal) -> {
-            unitsTable.setPredicate(
-                    user -> user.getValue().getUnit().getLabel().toLowerCase().contains(newVal.toLowerCase())
+            unitsTable.setPredicate(user ->
+                    detectMatch(newVal.toLowerCase(), user.getValue().getUnit())
                     || user.getValue().getUnit().getDescription().toLowerCase().contains(newVal.toLowerCase())
                     || user.getValue().getUnit().getUnitType().name().toLowerCase().contains(newVal.toLowerCase()));
-        });
+            });
+    }
 
+    private static boolean detectMatch(String key, UnitConfig unitConfig) {
+        for (MapFieldEntry mapFieldEntry : unitConfig.getLabel().getEntryList()) {
+            if(mapFieldEntry.getValueList().contains(key)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private class MethodRefCellValueFactory<S, T> implements Callback<TreeTableColumn.CellDataFeatures<S, T>, ObservableValue<T>> {

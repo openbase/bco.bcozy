@@ -32,6 +32,7 @@ import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.domotic.unit.UnitConfigType.UnitConfig;
+import rst.domotic.unit.UnitTemplateType.UnitTemplate.UnitType;
 import rst.domotic.unit.user.UserConfigType;
 
 import java.util.ArrayList;
@@ -149,8 +150,6 @@ public class UserManagementController {
             Registries.getUnitRegistry().addDataObserver((source, data) -> fillUserList());
         } catch (NotAvailableException ex) {
             ExceptionPrinter.printHistory(ex, LOGGER);
-        } catch (InterruptedException ex) {
-            Thread.currentThread().interrupt();
         }
         SessionManager.getInstance().addLoginObserver((source, data) -> fillUserList());
     }
@@ -406,12 +405,12 @@ public class UserManagementController {
             List<UnitConfig> groups = new ArrayList<>(usergroupField.getCheckModel().getCheckedItems());
 
             UnitConfig unitConfig = Registries.getUnitRegistry()
-                    .getUserConfigById(selectedUser.getUserId())
+                    .getUnitConfigById(selectedUser.getUserId())
                     .toBuilder()
                     .setUserConfig(selectedUser.getUserConfig())
                     .build();
 
-            Registries.getUnitRegistry().updateUserConfig(unitConfig);
+            Registries.getUnitRegistry().updateUnitConfig(unitConfig);
 
             for (UnitConfig config : selectedUser.getGroups()) {
                 AuthorizationGroups.tryRemoveFromGroup(config, selectedUser.getUserId());
@@ -446,7 +445,7 @@ public class UserManagementController {
 
     private void deleteUser() throws InterruptedException {
         try {
-            Registries.getUnitRegistry().removeUserConfig(Registries.getUnitRegistry().getUnitConfigById(selectedUser
+            Registries.getUnitRegistry().removeUnitConfig(Registries.getUnitRegistry().getUnitConfigById(selectedUser
                     .getUserId()));
             showSuccessMessage("deleteSuccess");
         } catch (CouldNotPerformException ex) {

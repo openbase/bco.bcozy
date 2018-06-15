@@ -46,6 +46,7 @@ import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.domotic.unit.UnitConfigType;
+import rst.domotic.unit.UnitTemplateType.UnitTemplate.UnitType;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -130,8 +131,7 @@ public class UserSettingsController {
             }
         });
         languageChoice.getSelectionModel().select(Languages.getInstance().get(Locale.getDefault()));
-        languageChoice.getSelectionModel().selectedItemProperty().addListener((observable, oldLocale, newLocale)
-                -> {
+        languageChoice.getSelectionModel().selectedItemProperty().addListener((observable, oldLocale, newLocale) -> {
             if (newLocale != null) {
                 LanguageSelection.getInstance().setSelectedLocale(newLocale.getLocale());
             }
@@ -193,8 +193,7 @@ public class UserSettingsController {
 
         try {
 
-            UnitConfigType.UnitConfig.Builder newUserConfig = Registries.getUnitRegistry().getUserConfigById
-                    (SessionManager.getInstance().getUserId()).toBuilder();
+            UnitConfigType.UnitConfig.Builder newUserConfig = Registries.getUnitRegistry().getUnitConfigById(SessionManager.getInstance().getUserId(), UnitType.USER).toBuilder();
 
             newUserConfig.getUserConfigBuilder()
                     .setUserName(changeUsername.getText())
@@ -203,7 +202,7 @@ public class UserSettingsController {
                     .setEmail(changeMail.getText())
                     .setMobilePhoneNumber(changePhone.getText());
 
-            Registries.getUnitRegistry().updateUserConfig(newUserConfig.build());
+            Registries.getUnitRegistry().updateUnitConfig(newUserConfig.build());
             showSuccessMessage();
         } catch (CouldNotPerformException ex) {
             showErrorMessage();

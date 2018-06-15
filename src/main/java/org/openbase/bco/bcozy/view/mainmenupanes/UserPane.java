@@ -27,11 +27,10 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import org.openbase.bco.bcozy.BCozy;
+import org.openbase.bco.bcozy.model.LanguageSelection;
+import org.openbase.bco.bcozy.util.LabelSynchronizer;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ObserverLabel;
-import org.openbase.jul.visual.javafx.JFXConstants;
-import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 import org.openbase.bco.dal.remote.unit.Units;
 import org.openbase.bco.dal.remote.unit.user.UserRemote;
 import org.openbase.bco.registry.remote.Registries;
@@ -41,8 +40,11 @@ import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.iface.Shutdownable;
+import org.openbase.jul.visual.javafx.JFXConstants;
+import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rst.configuration.LabelType;
 import rst.domotic.unit.UnitConfigType.UnitConfig;
 
 /**
@@ -56,13 +58,15 @@ public class UserPane extends BorderPane implements Shutdownable {
     private SVGGlyphIcon userIcon;
     private SVGGlyphIcon atHomeIcon;
     private Label userNameLabel;
-    private ObserverLabel userStateLabel;
+    private Label userStateLabel;
+    private LabelSynchronizer labelSynchronizer;
     private UserRemote user;
     private final GridPane userIconPane;
 
     public UserPane() {
         userIcon = new SVGGlyphIcon(MaterialIcon.PERSON, JFXConstants.ICON_SIZE_MIDDLE, false);
         atHomeIcon = new SVGGlyphIcon(MaterialIcon.SEARCH, JFXConstants.ICON_SIZE_EXTRA_SMALL, true);
+        labelSynchronizer = new LabelSynchronizer();
         userIconPane = new GridPane();
         userIconPane.setVgap(Constants.INSETS);
         userIconPane.setHgap(Constants.INSETS);
@@ -76,7 +80,7 @@ public class UserPane extends BorderPane implements Shutdownable {
         final HBox nameAndGuestLayout = new HBox(Constants.INSETS);
         nameAndGuestLayout.getChildren().addAll(userNameLabel);
         nameAndGuestLayout.setAlignment(Pos.CENTER);
-        userStateLabel = new ObserverLabel("---");
+        userStateLabel = new ObserverLabel("");
 
         final VBox nameAndStateLayout = new VBox(Constants.INSETS / 2);
         nameAndStateLayout.setAlignment(Pos.CENTER);
@@ -116,22 +120,19 @@ public class UserPane extends BorderPane implements Shutdownable {
     }
 
     private void updateUserState() {
-        String userState = null;
+        LabelType.Label activityLabel = null;
         try {
             try {
                 if (!user.getActivityState().hasActivityId() || user.getActivityState().getActivityId().isEmpty()) {
                     throw new NotAvailableException("Activity");
                 }
 
-                userState = Registries.getActivityRegistry().getActivityConfigById(user.getActivityState().getActivityId()).getLabel();
+                activityLabel = Registries.getActivityRegistry().getActivityConfigById(user.getActivityState().getActivityId()).getLabel();
             } catch (CouldNotPerformException ex) {
                 // generate user state fallback
-                userState = user.getUserTransitState().getValue().name();
-            } catch (InterruptedException ex) {
-                Thread.currentThread().interrupt();
-                return;
+                activityLabel = LanguageSelection.buildLabel(user.getUserTransitState().getValue().name());
             }
-            userStateLabel.setIdentifier(userState);
+            labelSynchronizer.updateLabel(activityLabel);
         } catch (final Exception ex) {
             ExceptionPrinter.printHistory("Could not update user presence state!", ex, LOGGER);
         }
