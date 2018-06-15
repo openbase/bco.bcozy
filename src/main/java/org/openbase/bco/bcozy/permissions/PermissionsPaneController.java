@@ -148,7 +148,7 @@ public class PermissionsPaneController {
         }
     }
 
-    private void fillTable() throws CouldNotPerformException, InterruptedException {
+    private void fillTable() throws CouldNotPerformException {
         if (Registries.getUnitRegistry().isDataAvailable()) {
             List<UnitConfigType.UnitConfig> unitConfigList = Registries.getUnitRegistry().getUnitConfigs();
             Platform.runLater(() -> fillTable(unitConfigList));
