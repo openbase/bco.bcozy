@@ -20,24 +20,29 @@ public class LabelSynchronizer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LabelSynchronizer.class);
 
-    private StringProperty textProperty = new SimpleStringProperty();
-    private Label.Builder labelBuilder;
+    private final StringProperty textProperty = new SimpleStringProperty();
+    private final Label.Builder labelBuilder;
 
     /**
      * Constructor creates a new label synchronizer.
      * The text property will be empty until a label is passed via the {@code updateLabel(final LabelOrBuilder label)} method.
      */
     public LabelSynchronizer() {
-        this(null);
+        this.labelBuilder = Label.newBuilder();
     }
 
     /**
      * Constructor creates a new label synchronizer preconfigured with the given label.
-     * @param labelBuilder
+     * @param label this message is used to setup the initial label. Any passed builder instance will not be modified.
      */
-    public LabelSynchronizer(final Label.Builder labelBuilder) {
-        this.labelBuilder = labelBuilder;
+    public LabelSynchronizer(final LabelOrBuilder label) {
+        // create internal builder
+        this();
 
+        // init the internal builder
+        updateLabel(label);
+
+        // register language selection observer
         LanguageSelection.getInstance().addObserver((localeOld, localeNew) -> {
             synchronizeLabel();
         });
