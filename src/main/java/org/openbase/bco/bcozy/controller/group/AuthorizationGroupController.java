@@ -20,6 +20,7 @@ import org.openbase.bco.bcozy.view.InfoPane;
 import org.openbase.bco.bcozy.view.ObserverButton;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.ExceptionProcessor;
+import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.visual.javafx.JFXConstants;
 import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
@@ -142,7 +143,12 @@ public class AuthorizationGroupController {
         } catch (CouldNotPerformException ex) {
             ExceptionPrinter.printHistory(ex, LOGGER);
 
-            String message = LanguageSelection.getLocalized("deleteErrorWithMessage", ExceptionProcessor.getInitialCauseMessage(ex));
+            String message = null;
+            try {
+                message = LanguageSelection.getLocalized("deleteErrorWithMessage", ExceptionProcessor.getInitialCauseMessage(ex));
+            } catch (NotAvailableException e) {
+                message = "Unknown Error";
+            }
 
             InfoPane.info(message)
                     .backgroundColor(Color.RED)
@@ -169,7 +175,12 @@ public class AuthorizationGroupController {
 
             ExceptionPrinter.printHistory(ex, LOGGER);
 
-            String message = LanguageSelection.getLocalized("saveErrorWithMessage", ExceptionProcessor.getInitialCauseMessage(ex));
+            String message = null;
+            try {
+                message = LanguageSelection.getLocalized("saveErrorWithMessage", ExceptionProcessor.getInitialCauseMessage(ex));
+            } catch (NotAvailableException e) {
+                message = "Unknown Error";
+            }
 
             InfoPane.info(message)
                     .backgroundColor(Color.RED)

@@ -500,7 +500,12 @@ public class UserManagementController {
     }
 
     private void showErrorMessage(Exception ex) {
-        String message = LanguageSelection.getLocalized("saveErrorWithMessage", ExceptionProcessor.getInitialCauseMessage(ex));
+        String message = null;
+        try {
+            message = LanguageSelection.getLocalized("saveErrorWithMessage", ExceptionProcessor.getInitialCauseMessage(ex));
+        } catch (NotAvailableException e) {
+            message = "Unknown Error";
+        }
 
         InfoPane.info(message)
                 .backgroundColor(Color.RED)

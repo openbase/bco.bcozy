@@ -22,6 +22,7 @@ import org.openbase.bco.bcozy.view.ObserverButton;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.ExceptionProcessor;
+import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.visual.javafx.JFXConstants;
 import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
@@ -132,8 +133,15 @@ public class AuthorizationGroupUsersController {
         } catch (CouldNotPerformException ex) {
             ExceptionPrinter.printHistory(ex, LOGGER);
 
+            String message = null;
+            try {
+                message = ExceptionProcessor.getInitialCauseMessage(ex);
+            } catch (NotAvailableException e) {
+                message = "Unknown Error";
+            }
+
             String failureMessage = LanguageSelection.getLocalized("removeUserFromGroup.failure",
-                    user.getName(), group.getLabel(), ExceptionProcessor.getInitialCauseMessage(ex));
+                    user.getName(), group.getLabel(), message);
 
             InfoPane.info(failureMessage)
                     .backgroundColor(Color.RED)
@@ -162,8 +170,15 @@ public class AuthorizationGroupUsersController {
         } catch (CouldNotPerformException ex) {
             ExceptionPrinter.printHistory(ex, LOGGER);
 
+            String message = null;
+            try {
+                message = ExceptionProcessor.getInitialCauseMessage(ex);
+            } catch (NotAvailableException e) {
+                message = "Unknown Error";
+            }
+
             String failureMessage = LanguageSelection.getLocalized("addUserToGroup.failure",
-                    user.getName(), group.getLabel(), ExceptionProcessor.getInitialCauseMessage(ex));
+                    user.getName(), group.getLabel(), message);
 
             InfoPane.info(failureMessage)
                     .backgroundColor(Color.RED)

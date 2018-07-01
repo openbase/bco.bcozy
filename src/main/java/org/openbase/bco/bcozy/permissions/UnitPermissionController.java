@@ -10,6 +10,7 @@ import org.openbase.bco.bcozy.permissions.model.*;
 import org.openbase.bco.bcozy.view.InfoPane;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.ExceptionProcessor;
+import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,7 +94,12 @@ public class UnitPermissionController {
                     .hideAfter(Duration.seconds(5));
         } catch (ExecutionException | CouldNotPerformException ex) {
             ExceptionPrinter.printHistory(ex, LOGGER);
-            String message = LanguageSelection.getLocalized("saveErrorWithMessage", ExceptionProcessor.getInitialCauseMessage(ex));
+            String message = null;
+            try {
+                message = LanguageSelection.getLocalized("saveErrorWithMessage", ExceptionProcessor.getInitialCauseMessage(ex));
+            } catch (NotAvailableException e) {
+                message = "Unknown Error";
+            }
 
             InfoPane.info(message)
                     .backgroundColor(Color.RED)
