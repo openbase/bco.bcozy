@@ -312,7 +312,7 @@ public final class LocationPane extends MultiTouchPane {
                 } else {
                     String unitLabel = locationId;
                     try {
-                        unitLabel = LabelProcessor.getFirstLabel(Registries.getUnitRegistry(false).getUnitConfigById(locationId).getLabel());
+                        unitLabel = LabelProcessor.getBestMatch(Registries.getUnitRegistry(false).getUnitConfigById(locationId).getLabel());
                     } catch (CouldNotPerformException | InterruptedException ex) {
                         // id is used instead.
                     }

@@ -1,17 +1,17 @@
 /**
  * ==================================================================
- *
+ * <p>
  * This file is part of org.openbase.bco.bcozy.
- *
+ * <p>
  * org.openbase.bco.bcozy is free software: you can redistribute it and modify
  * it under the terms of the GNU General Public License (Version 3)
  * as published by the Free Software Foundation.
- *
+ * <p>
  * org.openbase.bco.bcozy is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
@@ -53,14 +53,13 @@ import rst.domotic.unit.UnitConfigType.UnitConfig;
 public class UserPane extends BorderPane implements Shutdownable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserPane.class);
-
+    private final GridPane userIconPane;
     private SVGGlyphIcon userIcon;
     private SVGGlyphIcon atHomeIcon;
     private Label userNameLabel;
     private Label userStateLabel;
     private LabelSynchronizer labelSynchronizer;
     private UserRemote user;
-    private final GridPane userIconPane;
 
     public UserPane() {
         userIcon = new SVGGlyphIcon(MaterialIcon.PERSON, JFXConstants.ICON_SIZE_MIDDLE, false);
@@ -130,9 +129,16 @@ public class UserPane extends BorderPane implements Shutdownable {
                 activityLabel = Registries.getActivityRegistry().getActivityConfigById(user.getActivityState().getActivityId()).getLabel();
             } catch (CouldNotPerformException ex) {
                 // generate user state fallback
-                activityLabel = LanguageSelection.buildLabel(user.getUserTransitState().getValue().name());
+                switch (user.getUserTransitState().getValue()) {
+                    case UNKNOWN:
+                        labelSynchronizer.clearLabels();
+                        break;
+                    default:
+                        activityLabel = LanguageSelection.buildLabel(user.getUserTransitState().getValue().name());
+                        labelSynchronizer.updateLabel(activityLabel);
+                        break;
+                }
             }
-            labelSynchronizer.updateLabel(activityLabel);
         } catch (final Exception ex) {
             ExceptionPrinter.printHistory("Could not update user presence state!", ex, LOGGER);
         }

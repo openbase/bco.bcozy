@@ -56,17 +56,15 @@ public class LabelSynchronizer {
 
         // lookup value
         try {
-            LabelProcessor.getLabelByLanguage(Locale.getDefault(), labelBuilder);
+            textProperty.setValue(LabelProcessor.getLabelByLanguage(Locale.getDefault(), labelBuilder));
         } catch (NotAvailableException ex) {
             // apply fallback value
             try {
-                textProperty.setValue(LabelProcessor.getFirstLabel(labelBuilder));
+                textProperty.setValue(LabelProcessor.getBestMatch(labelBuilder));
             } catch (NotAvailableException exx) {
-                ExceptionPrinter.printHistory("Label is missing!", exx, LOGGER);
                 textProperty.set("");
             }
-        }
-    }
+        } }
 
     public Label getLabel() {
         return labelBuilder.build();
@@ -80,6 +78,11 @@ public class LabelSynchronizer {
     public synchronized void updateLabel(final LabelOrBuilder label) {
         labelBuilder.clearEntry();
         labelBuilder.addAllEntry(label.getEntryList());
+        synchronizeLabel();
+    }
+
+    public void clearLabels()              {
+        labelBuilder.clearEntry();
         synchronizeLabel();
     }
 
