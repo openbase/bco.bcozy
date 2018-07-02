@@ -122,11 +122,11 @@ public class UserPane extends BorderPane implements Shutdownable {
         LabelType.Label activityLabel = null;
         try {
             try {
-                if (!user.getActivityState().hasActivityId() || user.getActivityState().getActivityId().isEmpty()) {
+                if (!user.getActivityStateList().isEmpty()) {
                     throw new NotAvailableException("Activity");
                 }
 
-                activityLabel = Registries.getActivityRegistry().getActivityConfigById(user.getActivityState().getActivityId()).getLabel();
+                activityLabel = Registries.getActivityRegistry().getActivityConfigById(user.getActivityStateList().get(0).getActivityId()).getLabel();
             } catch (CouldNotPerformException ex) {
                 // generate user state fallback
                 switch (user.getUserTransitState().getValue()) {
