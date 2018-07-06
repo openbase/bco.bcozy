@@ -22,13 +22,11 @@ import de.jensd.fx.glyphs.materialicons.MaterialIcon;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import org.openbase.bco.bcozy.model.LanguageSelection;
 import org.openbase.bco.bcozy.util.LabelSynchronizer;
+import org.openbase.bco.bcozy.util.MultiLabelSynchronizer;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.dal.remote.unit.Units;
 import org.openbase.bco.dal.remote.unit.user.UserRemote;
@@ -46,6 +44,9 @@ import org.slf4j.LoggerFactory;
 import rst.configuration.LabelType;
 import rst.domotic.unit.UnitConfigType.UnitConfig;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author hoestreich
  * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>
@@ -57,14 +58,14 @@ public class UserPane extends BorderPane implements Shutdownable {
     private SVGGlyphIcon userIcon;
     private SVGGlyphIcon atHomeIcon;
     private Label userNameLabel;
-    private Label userStateLabel;
-    private LabelSynchronizer labelSynchronizer;
+    private VBox userStatePane;
+    private MultiLabelSynchronizer multiLabelSynchronizer;
     private UserRemote user;
 
     public UserPane() {
         userIcon = new SVGGlyphIcon(MaterialIcon.PERSON, JFXConstants.ICON_SIZE_MIDDLE, false);
         atHomeIcon = new SVGGlyphIcon(MaterialIcon.SEARCH, JFXConstants.ICON_SIZE_EXTRA_SMALL, true);
-        labelSynchronizer = new LabelSynchronizer();
+        multiLabelSynchronizer = new MultiLabelSynchronizer();
         userIconPane = new GridPane();
         userIconPane.setVgap(Constants.INSETS);
         userIconPane.setHgap(Constants.INSETS);
@@ -78,12 +79,11 @@ public class UserPane extends BorderPane implements Shutdownable {
         final HBox nameAndGuestLayout = new HBox(Constants.INSETS);
         nameAndGuestLayout.getChildren().addAll(userNameLabel);
         nameAndGuestLayout.setAlignment(Pos.CENTER);
-        userStateLabel = new Label("");
-        userStateLabel.textProperty().bind(labelSynchronizer.textProperty());
+        userStatePane = new VBox();
 
         final VBox nameAndStateLayout = new VBox(Constants.INSETS / 2);
         nameAndStateLayout.setAlignment(Pos.CENTER);
-        nameAndStateLayout.getChildren().addAll(nameAndGuestLayout, userStateLabel);
+        nameAndStateLayout.getChildren().addAll(nameAndGuestLayout, userStatePane);
 
         this.setLeft(userIconPane);
         this.setCenter(nameAndStateLayout);
@@ -119,28 +119,34 @@ public class UserPane extends BorderPane implements Shutdownable {
     }
 
     private void updateUserState() {
-        LabelType.Label activityLabel = null;
+        List<LabelType.Label> activityLabelList = new ArrayList<>();
         try {
-            try {
-                if (!user.getActivityStateList().isEmpty()) {
-                    throw new NotAvailableException("Activity");
-                }
+            for (final String activityId : user.getActivityMultiState().getActivityIdList()) {
+                activityLabelList.add(Registries.getActivityRegistry().getActivityConfigById(activityId).getLabel());
+            }
 
-                activityLabel = Registries.getActivityRegistry().getActivityConfigById(user.getActivityStateList().get(0).getActivityId()).getLabel();
-            } catch (CouldNotPerformException ex) {
-                // generate user state fallback
+            // generate backup label
+            if(activityLabelList.isEmpty()) {
                 switch (user.getUserTransitState().getValue()) {
                     case UNKNOWN:
-                        labelSynchronizer.clearLabels();
                         break;
                     default:
-                        activityLabel = LanguageSelection.buildLabel(user.getUserTransitState().getValue().name());
-                        labelSynchronizer.updateLabel(activityLabel);
+                        activityLabelList.add(LanguageSelection.buildLabel(user.getUserTransitState().getValue().name()));
                         break;
                 }
             }
+
+            // update synchronizer
+            multiLabelSynchronizer.removeAll();
+            for (final LabelType.Label label : activityLabelList) {
+                multiLabelSynchronizer.register(label);
+            }
+
+            // update userStatePane
+            userStatePane.getChildren().clear();
+            userStatePane.getChildren().addAll(multiLabelSynchronizer.getLabels());
         } catch (final Exception ex) {
-            ExceptionPrinter.printHistory("Could not update user presence state!", ex, LOGGER);
+            ExceptionPrinter.printHistory("Could not update user state!", ex, LOGGER);
         }
     }
 
