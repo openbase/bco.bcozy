@@ -94,7 +94,9 @@ public class LabelSynchronizer implements Shutdownable {
      */
     public synchronized void updateLabel(final LabelOrBuilder label) {
         labelBuilder.clearEntry();
-        labelBuilder.addAllEntry(label.getEntryList());
+        if (label != null) {
+            labelBuilder.addAllEntry(label.getEntryList());
+        }
         synchronizeLabel();
     }
 
