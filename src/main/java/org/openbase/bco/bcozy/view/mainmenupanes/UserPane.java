@@ -22,10 +22,12 @@ import de.jensd.fx.glyphs.materialicons.MaterialIcon;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import org.openbase.bco.bcozy.model.LanguageSelection;
-import org.openbase.bco.bcozy.util.LabelSynchronizer;
 import org.openbase.bco.bcozy.util.MultiLabelSynchronizer;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.dal.remote.unit.Units;
@@ -80,11 +82,12 @@ public class UserPane extends BorderPane implements Shutdownable {
         nameAndGuestLayout.getChildren().addAll(userNameLabel);
         nameAndGuestLayout.setAlignment(Pos.CENTER);
         userStatePane = new VBox();
+        userStatePane.setAlignment(Pos.CENTER);
+
 
         final VBox nameAndStateLayout = new VBox(Constants.INSETS / 2);
         nameAndStateLayout.setAlignment(Pos.CENTER);
         nameAndStateLayout.getChildren().addAll(nameAndGuestLayout, userStatePane);
-
         this.setLeft(userIconPane);
         this.setCenter(nameAndStateLayout);
 
@@ -126,7 +129,7 @@ public class UserPane extends BorderPane implements Shutdownable {
             }
 
             // generate backup label
-            if(activityLabelList.isEmpty()) {
+            if (activityLabelList.isEmpty()) {
                 switch (user.getUserTransitState().getValue()) {
                     case UNKNOWN:
                         break;

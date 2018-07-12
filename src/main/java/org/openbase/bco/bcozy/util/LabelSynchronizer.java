@@ -62,9 +62,13 @@ public class LabelSynchronizer implements Shutdownable {
 
         // register language selection observer
         LanguageSelection.getInstance().addObserver(languageSelectionObserver);
+
+        // perform initial sync
+        synchronizeLabel();
     }
 
     private void synchronizeLabel() {
+
         // set neutral string if no label is available
         if (labelBuilder.getEntryCount() == 0) {
             textProperty.set("");

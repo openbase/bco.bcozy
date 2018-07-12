@@ -34,7 +34,7 @@ public class MultiLabelSynchronizer {
 
     public javafx.scene.control.Label register(final Label label, final javafx.scene.control.Label fxlabel) {
         final LabelSynchronizer labelSynchronizer = new LabelSynchronizer(label);
-        labelSynchronizerMap.put(fxlabel,labelSynchronizer);
+        labelSynchronizerMap.put(fxlabel, labelSynchronizer);
         fxlabel.textProperty().bind(labelSynchronizer.textProperty());
         return fxlabel;
     }
