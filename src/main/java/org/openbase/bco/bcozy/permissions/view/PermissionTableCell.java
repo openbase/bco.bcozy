@@ -44,7 +44,7 @@ public class PermissionTableCell<T> extends TableCell<AbstractPermissions, T> {
         super.updateItem(item, empty);
 
         if (empty) {
-            setText(null);
+            labelSynchronizer.clearLabels();
             setGraphic(null);
         } else {
 
@@ -65,7 +65,7 @@ public class PermissionTableCell<T> extends TableCell<AbstractPermissions, T> {
         comboBox.getItems().setAll(this.model.owners);
         comboBox.getSelectionModel().select(this.model.owner);
 
-        setText(null);
+        labelSynchronizer.clearLabels();
         setGraphic(comboBox);
     }
 }
