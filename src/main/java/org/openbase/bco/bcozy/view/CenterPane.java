@@ -95,10 +95,10 @@ public class CenterPane extends StackPane {
 
     private Pane loadSettingsMenu(final double height) {
         try {                                                                                                             
-            final Pair<Pane, SettingsController> paneAndControllerPair = FXMLProcessor.loadFxmlPaneAndControllerPair("SettingsMenu.fxml", SettingsController.class, getClass(), (clazz) -> new SettingsController(foregroundPane));
+            final Pair<Pane, SettingsController> paneAndControllerPair = FXMLProcessor.loadFxmlPaneAndControllerPair("SettingsMenu.fxml", SettingsController.class, getClass(), (clazz) -> new SettingsController());
             Pane anchorPane = paneAndControllerPair.getKey();
 
-            final SettingsController settingsController = (SettingsController) paneAndControllerPair.getValue();
+            final SettingsController settingsController = paneAndControllerPair.getValue();
             userSettingsController = settingsController.getUserSettingsController();
 
             this.setMinHeight(height);
