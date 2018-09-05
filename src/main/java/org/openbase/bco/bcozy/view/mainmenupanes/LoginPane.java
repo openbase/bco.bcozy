@@ -1,17 +1,17 @@
 /**
  * ==================================================================
- *
+ * <p>
  * This file is part of org.openbase.bco.bcozy.
- *
+ * <p>
  * org.openbase.bco.bcozy is free software: you can redistribute it and modify
  * it under the terms of the GNU General Public License (Version 3)
  * as published by the Free Software Foundation.
- *
+ * <p>
  * org.openbase.bco.bcozy is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
@@ -22,7 +22,9 @@ import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -31,12 +33,12 @@ import org.openbase.bco.bcozy.controller.InitialPasswordChangeController;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ObserverButton;
 import org.openbase.bco.bcozy.view.ObserverLabel;
-import org.openbase.jul.visual.javafx.JFXConstants;
-import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.schedule.GlobalCachedExecutorService;
+import org.openbase.jul.visual.javafx.JFXConstants;
+import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,7 +78,6 @@ public class LoginPane extends PaneElement {
      * Constructor for the LoginPane.
      */
     public LoginPane() {
-
         // Case: Login active
         nameLbl = new ObserverLabel("username");
         nameLbl.setAlignment(Pos.BOTTOM_LEFT);
@@ -137,6 +138,7 @@ public class LoginPane extends PaneElement {
         getNameTxt().setOnKeyTyped(event -> resetWrongInput());
         getPasswordField().setOnKeyTyped(event -> resetWrongInput());
 
+        SessionManager.getInstance().addLoginObserver((observable, userAtClientId) -> onLoggedInChanged(userAtClientId));
     }
 
     /**
@@ -280,38 +282,28 @@ public class LoginPane extends PaneElement {
     }
 
     private void loginUser() {
-        GlobalCachedExecutorService.submit(() -> {
-            try {
-                loginUserAsync();
-            } catch (InterruptedException ex) {
-                ExceptionPrinter.printHistory("Could not login!", ex, LOGGER);
-            }
-        });
+        GlobalCachedExecutorService.submit(this::loginUserAsync);
     }
 
-    private void loginUserAsync() throws InterruptedException {
-        SessionManager sessionManager = SessionManager.getInstance();
-
+    private void loginUserAsync() {
         try {
             final String password = getPasswordField().getText();
-            sessionManager.login(Registries.getUnitRegistry().getUserUnitIdByUserName(getNameTxt().getText()), password);
+            final String userName = getNameTxt().getText();
+            final String userId = Registries.getUnitRegistry().getUserUnitIdByUserName(userName);
+            SessionManager.getInstance().login(userId, password);
             Platform.runLater(() -> {
                 resetUserOrPasswordWrong();
                 getLoggedInUserLbl().setText(getNameTxt().getText());
                 getNameTxt().setText("");
                 getPasswordField().setText("");
-                setState(LoginPane.State.LOGOUT);
+                setState(State.LOGOUT);
             });
 
             if (password.equals(INITIAL_PASSWORD)) {
                 showChangeInitialPassword();
             }
         } catch (CouldNotPerformException ex) {
-            Platform.runLater(() -> {
-                indicateUserOrPasswordWrong();
-            });
-        } catch (java.lang.OutOfMemoryError error) {
-            LOGGER.error(error.getMessage());
+            Platform.runLater(this::indicateUserOrPasswordWrong);
         }
     }
 
@@ -335,5 +327,31 @@ public class LoginPane extends PaneElement {
         getPasswordField().setText("");
         getLoggedInUserLbl().setText("");
         setState(LoginPane.State.LOGINACTIVE);
+    }
+
+
+    private void onLoggedInChanged(final String userAtClientId) {
+        System.err.println("MainMenuController.onLoggedInChanged: " + userAtClientId);
+        if (userAtClientId.equals("@")) {
+            afterLogout();
+        } else {
+            afterLogin();
+        }
+    }
+
+    private void afterLogin() {
+
+    }
+
+    private void afterLogout() {
+        Platform.runLater(() -> {
+            if (getInputWrongLbl().isVisible()) {
+                resetUserOrPasswordWrong();
+            }
+            getNameTxt().setText("");
+            getPasswordField().setText("");
+            getLoggedInUserLbl().setText("");
+            setState(LoginPane.State.LOGINACTIVE);
+        });
     }
 }
