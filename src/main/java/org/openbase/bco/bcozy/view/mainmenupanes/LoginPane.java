@@ -293,7 +293,14 @@ public class LoginPane extends PaneElement {
             SessionManager.getInstance().login(userId, password);
             Platform.runLater(() -> {
                 resetUserOrPasswordWrong();
-                getLoggedInUserLbl().setText(getNameTxt().getText());
+                // since case is ignored for resolving a user, the displayed username should be retrieved from the registry
+                String displayedUserName;
+                try {
+                    displayedUserName = Registries.getUnitRegistry().getUnitConfigById(userId).getUserConfig().getUserName();
+                } catch (CouldNotPerformException ex) {
+                    displayedUserName = getNameTxt().getText();
+                }
+                getLoggedInUserLbl().setText(displayedUserName);
                 getNameTxt().setText("");
                 getPasswordField().setText("");
                 setState(State.LOGOUT);
