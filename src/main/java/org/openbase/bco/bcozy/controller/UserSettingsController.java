@@ -38,11 +38,11 @@ import org.openbase.bco.bcozy.util.Languages;
 import org.openbase.bco.bcozy.util.ThemeManager;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.InfoPane;
-import org.openbase.jul.visual.javafx.JFXConstants;
-import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.openbase.jul.visual.javafx.JFXConstants;
+import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.domotic.unit.UnitConfigType;
@@ -91,12 +91,8 @@ public class UserSettingsController {
 
     @FXML
     public void initialize() {
-
-        SessionManager.getInstance().addLoginObserver((o, b) -> {
-            LOGGER.warn("isLoggedIn is " + b);
-            if (b != null) {
-                onLogin();
-            }
+        SessionManager.getInstance().addLoginObserver((source, data) -> {
+            onLoginChange();
         });
 
         initEditableFields(changeUsername, changeFirstname, changeLastname, changeMail, changePhone);
@@ -136,23 +132,20 @@ public class UserSettingsController {
                 LanguageSelection.getInstance().setSelectedLocale(newLocale.getLocale());
             }
         });
-
     }
 
-    private void onLogin() throws InterruptedException {
-        LOGGER.warn("UserID is " + SessionManager.getInstance().getUserId());
-
-        try {
-            UserData userData = UserData.currentUser();
-
-            changeUsername.textProperty().bindBidirectional(userData.userNameProperty());
-            changeFirstname.textProperty().bindBidirectional(userData.firstnameProperty());
-            changeLastname.textProperty().bindBidirectional(userData.lastNameProperty());
-            changeMail.textProperty().bindBidirectional(userData.mailProperty());
-            changePhone.textProperty().bindBidirectional(userData.phoneProperty());
-
-        } catch (CouldNotPerformException | ExecutionException | TimeoutException ex) {
-            ExceptionPrinter.printHistory(ex, LOGGER);
+    private void onLoginChange() throws InterruptedException {
+        if (SessionManager.getInstance().isLoggedIn()) {
+            try {
+                UserData userData = UserData.currentUser();
+                changeUsername.textProperty().bindBidirectional(userData.userNameProperty());
+                changeFirstname.textProperty().bindBidirectional(userData.firstnameProperty());
+                changeLastname.textProperty().bindBidirectional(userData.lastNameProperty());
+                changeMail.textProperty().bindBidirectional(userData.mailProperty());
+                changePhone.textProperty().bindBidirectional(userData.phoneProperty());
+            } catch (CouldNotPerformException | ExecutionException | TimeoutException ex) {
+                ExceptionPrinter.printHistory(ex, LOGGER);
+            }
         }
     }
 

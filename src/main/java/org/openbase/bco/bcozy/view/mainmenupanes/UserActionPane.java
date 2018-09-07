@@ -32,7 +32,6 @@ public class UserActionPane extends PaneElement {
     public UserActionPane(LoginPane lp, UserManagementController rp) {
         super(true);
         loginPane = lp;
-        loginPane.setState(LoginPane.State.LOGINACTIVE);
         //registrationController = rp;
         BorderPane root = new BorderPane();
         userActionPane = new TabPane();

@@ -1,17 +1,17 @@
 /**
  * ==================================================================
- *
+ * <p>
  * This file is part of org.openbase.bco.bcozy.
- *
+ * <p>
  * org.openbase.bco.bcozy is free software: you can redistribute it and modify
  * it under the terms of the GNU General Public License (Version 3)
  * as published by the Free Software Foundation.
- *
+ * <p>
  * org.openbase.bco.bcozy is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
@@ -20,7 +20,6 @@ package org.openbase.bco.bcozy;
 
 import com.guigarage.responsive.ResponsiveHandler;
 import javafx.application.Application;
-import javafx.concurrent.Task;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Screen;
@@ -32,6 +31,7 @@ import org.openbase.bco.bcozy.view.ForegroundPane;
 import org.openbase.bco.bcozy.view.InfoPane;
 import org.openbase.bco.bcozy.view.LoadingPane;
 import org.openbase.bco.registry.remote.Registries;
+import org.openbase.bco.registry.remote.login.BCOLogin;
 import org.openbase.jps.core.JPService;
 import org.openbase.jul.exception.FatalImplementationErrorException;
 import org.openbase.jul.exception.InitializationException;
@@ -72,7 +72,7 @@ public class BCozy extends Application {
     private static final Logger LOGGER = LoggerFactory.getLogger(BCozy.class);
 
     public static Stage primaryStage;
-
+    private static Observer<ConnectionState> connectionObserver;
     private LoadingPane loadingPane;
     private ContextMenuController contextMenuController;
     private LocationPaneController locationPaneController;
@@ -81,10 +81,7 @@ public class BCozy extends Application {
     private MaintenanceLayerController maintenanceLayerController;
     private EditingLayerController editingLayerController;
     private Future initTask;
-
     private Scene mainScene;
-
-    private static Observer<ConnectionState> connectionObserver;
 
     public BCozy() {
 
@@ -108,6 +105,44 @@ public class BCozy extends Application {
                     break;
             }
         };
+    }
+
+    private static void registerResponsiveHandler() {
+        LOGGER.debug("Register responsive handler...");
+        ResponsiveHandler.setOnDeviceTypeChanged((over, oldDeviceType, newDeviceType) -> {
+            switch (newDeviceType) {
+                case LARGE:
+                    adjustToLargeDevice();
+                    break;
+                case MEDIUM:
+                    adjustToMediumDevice();
+                    break;
+                case SMALL:
+                    adjustToSmallDevice();
+                    break;
+                case EXTRA_SMALL:
+                    adjustToExtremeSmallDevice();
+                    break;
+                default:
+                    break;
+            }
+        });
+    }
+
+    private static void adjustToLargeDevice() {
+        LOGGER.debug("Detected Large Device");
+    }
+
+    private static void adjustToMediumDevice() {
+        LOGGER.debug("Detected Medium Device");
+    }
+
+    private static void adjustToSmallDevice() {
+        LOGGER.debug("Detected Small Device");
+    }
+
+    private static void adjustToExtremeSmallDevice() {
+        LOGGER.debug("Detected Extreme Small Device");
     }
 
     @Override
@@ -159,44 +194,38 @@ public class BCozy extends Application {
 
             initRemotesAndLocation();
         } catch (final Exception ex) {
-            ExceptionPrinter.printHistory("Could not start "+ JPService.getApplicationName(), ex, LOGGER);
+            ExceptionPrinter.printHistory("Could not start " + JPService.getApplicationName(), ex, LOGGER);
         }
     }
 
     private void initRemotesAndLocation() {
-        initTask = GlobalCachedExecutorService.submit(new Task() {
-            @Override
-            protected Object call() throws java.lang.Exception {
-                try {
-                    loadingPane.info("waitForConnection");
-                    Registries.waitForData();
+        initTask = GlobalCachedExecutorService.submit(() -> {
+            try {
+                loadingPane.info("waitForConnection");
+                Registries.waitForData();
 
-                    loadingPane.info("fillContextMenu");
-                    foregroundPane.init();
+                loadingPane.info("fillContextMenu");
+                foregroundPane.init();
 
-                    contextMenuController.initTitledPaneMap();
+                contextMenuController.initTitledPaneMap();
 
-                    loadingPane.info("connectLocationRemote");
-                    locationPaneController.connectLocationRemote();
-                    unitsPaneController.connectUnitRemote();
-                    maintenanceLayerController.connectUnitRemote();
-                    editingLayerController.connectUnitRemote();
-                    loadingPane.info("done");
-
-                    return null;
-                } catch (Exception ex) {
-                    loadingPane.error("errorDuringStartup");
-                    Thread.sleep(3000);
-                    Exception exx = new FatalImplementationErrorException("Could not init panes", this, ex);
-                    ExceptionPrinter.printHistoryAndExit(exx, LOGGER);
-                    throw exx;
-                }
-            }
-
-            @Override
-            protected void succeeded() {
-                super.succeeded();
+                loadingPane.info("connectLocationRemote");
+                locationPaneController.connectLocationRemote();
+                unitsPaneController.connectUnitRemote();
+                maintenanceLayerController.connectUnitRemote();
+                editingLayerController.connectUnitRemote();
+                loadingPane.info("done");
                 loadingPane.setVisible(false);
+                return null;
+            } catch (InterruptedException | CancellationException ex) {
+                // init canceled.
+                return null;
+            } catch (Exception ex) {
+                loadingPane.error("errorDuringStartup");
+                Thread.sleep(3000);
+                Exception exx = new FatalImplementationErrorException("Could not init panes", this, ex);
+                ExceptionPrinter.printHistoryAndExit(exx, LOGGER);
+                return null;
             }
         });
     }
@@ -237,43 +266,9 @@ public class BCozy extends Application {
         System.exit(0);
     }
 
-
-
-    private static void registerResponsiveHandler() {
-        LOGGER.debug("Register responsive handler...");
-        ResponsiveHandler.setOnDeviceTypeChanged((over, oldDeviceType, newDeviceType) -> {
-            switch (newDeviceType) {
-                case LARGE:
-                    adjustToLargeDevice();
-                    break;
-                case MEDIUM:
-                    adjustToMediumDevice();
-                    break;
-                case SMALL:
-                    adjustToSmallDevice();
-                    break;
-                case EXTRA_SMALL:
-                    adjustToExtremeSmallDevice();
-                    break;
-                default:
-                    break;
-            }
-        });
-    }
-
-    private static void adjustToLargeDevice() {
-        LOGGER.debug("Detected Large Device");
-    }
-
-    private static void adjustToMediumDevice() {
-        LOGGER.debug("Detected Medium Device");
-    }
-
-    private static void adjustToSmallDevice() {
-        LOGGER.debug("Detected Small Device");
-    }
-
-    private static void adjustToExtremeSmallDevice() {
-        LOGGER.debug("Detected Extreme Small Device");
+    @Override
+    public void init() throws Exception {
+        super.init();
+        BCOLogin.autoLogin(false);
     }
 }

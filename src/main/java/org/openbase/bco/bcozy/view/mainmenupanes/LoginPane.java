@@ -55,187 +55,104 @@ public class LoginPane extends PaneElement {
 
     private static final String INITIAL_PASSWORD = "admin";
 
-    private final ObserverButton loginBtn;
-    private final ObserverButton logoutBtn;
-    private final TextField nameTxt;
+    private final ObserverButton loginButton;
+    private final ObserverButton logoutButton;
+    private final TextField userNameTextField;
     private final PasswordField passwordField;
-    private final ObserverLabel inputWrongLbl;
-    private final Label loggedInUserLbl;
+    private final ObserverLabel inputWrongLabel;
+    private final Label userLabel;
     private final VBox loginLayout;
-    private final VBox logoutLayout;
-    private final ObserverLabel nameLbl;
-    private final ObserverLabel pwLbl;
+    private final VBox userInfoLayout;
+    private final ObserverLabel nameLabel;
+    private final ObserverLabel passwordLabel;
     private final VBox statusIcon;
-
-    /**
-     * Enum to control the display state.
-     */
-    public enum State {
-        LOGINACTIVE, LOGOUT
-    }
 
     /**
      * Constructor for the LoginPane.
      */
     public LoginPane() {
-        // Case: Login active
-        nameLbl = new ObserverLabel("username");
-        nameLbl.setAlignment(Pos.BOTTOM_LEFT);
-        nameTxt = new TextField();
-        pwLbl = new ObserverLabel("password");
+        nameLabel = new ObserverLabel("username");
+        nameLabel.setAlignment(Pos.BOTTOM_LEFT);
+        userNameTextField = new TextField();
+        passwordLabel = new ObserverLabel("password");
         passwordField = new PasswordField();
-        inputWrongLbl = new ObserverLabel("inputWrong");
-        inputWrongLbl.setAlignment(Pos.TOP_LEFT);
-        loginBtn = new ObserverButton("login");
+        inputWrongLabel = new ObserverLabel("inputWrong");
+        inputWrongLabel.setAlignment(Pos.TOP_LEFT);
+        loginButton = new ObserverButton("login");
 
-        final HBox rightAlignLoginButton = new HBox(loginBtn);
+        final HBox rightAlignLoginButton = new HBox(loginButton);
         rightAlignLoginButton.setAlignment(Pos.CENTER_RIGHT);
 
         loginLayout = new VBox(Constants.INSETS);
         final BorderPane loginFirstLineLayout = new BorderPane();
-        loginFirstLineLayout.setLeft(nameLbl);
+        loginFirstLineLayout.setLeft(nameLabel);
         loginLayout.getStyleClass().clear();
         loginLayout.setAlignment(Pos.BOTTOM_LEFT);
-        loginLayout.getChildren().addAll(loginFirstLineLayout, nameTxt, pwLbl, passwordField,
+        loginLayout.getChildren().addAll(loginFirstLineLayout, userNameTextField, passwordLabel, passwordField,
                 rightAlignLoginButton);
 
         //Case: User logged in
-        logoutLayout = new VBox(Constants.INSETS);
+        userInfoLayout = new VBox(Constants.INSETS);
         final SVGGlyphIcon loggedInUserIcon = new SVGGlyphIcon(MaterialDesignIcon.ACCOUNT_CIRCLE, JFXConstants.ICON_SIZE_SMALL, true);
-        loggedInUserLbl = new Label();
-        logoutBtn = new ObserverButton("logout");
-        final HBox rightAlignLogoutButton = new HBox(logoutBtn);
+        userLabel = new Label();
+        logoutButton = new ObserverButton("logout");
+        final HBox rightAlignLogoutButton = new HBox(logoutButton);
         rightAlignLogoutButton.setAlignment(Pos.CENTER_RIGHT);
 
-        logoutLayout.getStyleClass().clear();
-        logoutLayout.setAlignment(Pos.TOP_CENTER);
-        logoutLayout.getChildren().addAll(loggedInUserIcon, loggedInUserLbl, rightAlignLogoutButton);
+        userInfoLayout.getStyleClass().clear();
+        userInfoLayout.setAlignment(Pos.TOP_CENTER);
+        userInfoLayout.getChildren().addAll(loggedInUserIcon, userLabel, rightAlignLogoutButton);
 
         //Setting styles
-        //CHECKSTYLE.OFF: MultipleStringLiterals
-        nameLbl.getStyleClass().clear();
-        nameLbl.getStyleClass().add("small-label");
-        inputWrongLbl.getStyleClass().clear();
-        inputWrongLbl.getStyleClass().add("wrong-input-indicator");
-        pwLbl.getStyleClass().clear();
-        pwLbl.getStyleClass().add("small-label");
-        loginBtn.getStyleClass().clear();
-        loginBtn.getStyleClass().add("transparent-button");
-        logoutBtn.getStyleClass().clear();
-        logoutBtn.getStyleClass().add("transparent-button");
-        //CHECKSTYLE.ON: MultipleStringLiterals
+        nameLabel.getStyleClass().clear();
+        nameLabel.getStyleClass().add("small-label");
+        inputWrongLabel.getStyleClass().clear();
+        inputWrongLabel.getStyleClass().add("wrong-input-indicator");
+        passwordLabel.getStyleClass().clear();
+        passwordLabel.getStyleClass().add("small-label");
+        loginButton.getStyleClass().clear();
+        loginButton.getStyleClass().add("transparent-button");
+        logoutButton.getStyleClass().clear();
+        logoutButton.getStyleClass().add("transparent-button");
 
         this.setPrefHeight(100);
         this.setMaxHeight(100);
 
         this.statusIcon = new VBox(new SVGGlyphIcon(MaterialDesignIcon.LOGIN, JFXConstants.ICON_SIZE_MIDDLE, true));
-        setState(State.LOGINACTIVE);
 
-        getLoginBtn().setOnAction(event -> loginUser());
-        getLogoutBtn().setOnAction(event -> resetLogin());
-        getPasswordField().setOnAction(event -> loginUser());
-        getNameTxt().setOnAction(event -> loginUser());
-        getNameTxt().setOnKeyTyped(event -> resetWrongInput());
-        getPasswordField().setOnKeyTyped(event -> resetWrongInput());
+        loginButton.setOnAction(event -> loginUser());
+        logoutButton.setOnAction(event -> resetLogin());
+        passwordField.setOnAction(event -> loginUser());
+        userNameTextField.setOnAction(event -> loginUser());
+        userNameTextField.setOnKeyTyped(event -> resetWrongInput());
+        passwordField.setOnKeyTyped(event -> resetWrongInput());
 
-        SessionManager.getInstance().addLoginObserver((observable, userAtClientId) -> onLoggedInChanged(userAtClientId));
-    }
-
-    /**
-     * Getter for the login button which initiates the user login.
-     *
-     * @return instance of the button
-     */
-    public ObserverButton getLoginBtn() {
-        return loginBtn;
-    }
-
-
-    /**
-     * Getter for the name textfield.
-     *
-     * @return instance of the textfield
-     */
-    public TextField getNameTxt() {
-        return nameTxt;
-    }
-
-    /**
-     * Getter for the passwordfield.
-     *
-     * @return instance of the passwordfield
-     */
-    public PasswordField getPasswordField() {
-        return passwordField;
-    }
-
-    /**
-     * Getter for the logoutBtn.
-     *
-     * @return instance of the logoutBtn
-     */
-    public ObserverButton getLogoutBtn() {
-        return logoutBtn;
-    }
-
-    /**
-     * Getter for the inputWrongLabel.
-     *
-     * @return instance of the inputWrongLbl
-     */
-    public ObserverLabel getInputWrongLbl() {
-        return inputWrongLbl;
-    }
-
-    /**
-     * Getter for the loggedInUserLbl.
-     *
-     * @return instance of the loggedInUserLbl
-     */
-    public Label getLoggedInUserLbl() {
-        return loggedInUserLbl;
-    }
-
-    /**
-     * Getter for the pwLbl.
-     *
-     * @return instance of the pwLbl
-     */
-    public ObserverLabel getPwLbl() {
-        return pwLbl;
-    }
-
-    /**
-     * Getter for the nameLbl.
-     *
-     * @return instance of the nameLbl
-     */
-    public ObserverLabel getNameLbl() {
-        return nameLbl;
+        SessionManager.getInstance().addLoginObserver((observable, userAtClientId) -> onLoggedInChanged());
+        onLoggedInChanged();
     }
 
     /**
      * Change CSS Style to indicate that at least one of the informations
      * password or the name were wrong.
      */
-    public void indicateUserOrPasswordWrong() {
-        if (!loginLayout.getChildren().contains(inputWrongLbl)) {
+    private void indicateUserOrPasswordWrong() {
+        if (!loginLayout.getChildren().contains(inputWrongLabel)) {
             passwordField.getStyleClass().add("password-field-wrong");
-            nameTxt.getStyleClass().add("text-field-wrong");
-            loginLayout.getChildren().add(loginLayout.getChildren().size() - 1, inputWrongLbl);
+            userNameTextField.getStyleClass().add("text-field-wrong");
+            loginLayout.getChildren().add(loginLayout.getChildren().size() - 1, inputWrongLabel);
         }
     }
 
     /**
      * Reset CSS Style if name or password are corrected.
      */
-    public void resetUserOrPasswordWrong() {
+    private void resetUserOrPasswordWrong() {
         passwordField.getStyleClass().clear();
-        nameTxt.getStyleClass().clear();
+        userNameTextField.getStyleClass().clear();
         passwordField.getStyleClass().add("password-field");
-        nameTxt.getStyleClass().add("text-field");
-        if (loginLayout.getChildren().contains(inputWrongLbl)) {
-            loginLayout.getChildren().remove(inputWrongLbl);
+        userNameTextField.getStyleClass().add("text-field");
+        if (loginLayout.getChildren().contains(inputWrongLabel)) {
+            loginLayout.getChildren().remove(inputWrongLabel);
         }
     }
 
@@ -249,34 +166,26 @@ public class LoginPane extends PaneElement {
      *
      * @param state A state from the defined Enum
      */
-    public void setState(final State state) {
+    private void setState(final State state) {
         switch (state) {
-
-            case LOGINACTIVE:
+            case SHOW_LOGIN:
                 this.getChildren().clear();
                 this.getChildren().addAll(loginLayout);
                 this.statusIcon.getChildren().clear();
-                this.statusIcon.getChildren().addAll(new SVGGlyphIcon(MaterialDesignIcon.LOGIN, JFXConstants.ICON_SIZE_MIDDLE,
-                        true));
+                this.statusIcon.getChildren().addAll(new SVGGlyphIcon(MaterialDesignIcon.LOGIN, JFXConstants.ICON_SIZE_MIDDLE, true));
                 break;
 
-            case LOGOUT:
+            case SHOW_USER_INFO:
                 this.getChildren().clear();
-                this.getChildren().addAll(logoutLayout);
+                this.getChildren().addAll(userInfoLayout);
                 this.statusIcon.getChildren().clear();
-                this.statusIcon.getChildren().addAll(new SVGGlyphIcon(MaterialDesignIcon.LOGOUT, JFXConstants.ICON_SIZE_MIDDLE,
-                        true));
+                this.statusIcon.getChildren().addAll(new SVGGlyphIcon(MaterialDesignIcon.LOGOUT, JFXConstants.ICON_SIZE_MIDDLE, true));
                 break;
-
         }
     }
 
-    private void startLogin() {
-        setState(LoginPane.State.LOGINACTIVE);
-    }
-
     private void resetWrongInput() {
-        if (getInputWrongLbl().isVisible()) {
+        if (inputWrongLabel.isVisible()) {
             resetUserOrPasswordWrong();
         }
     }
@@ -287,24 +196,10 @@ public class LoginPane extends PaneElement {
 
     private void loginUserAsync() {
         try {
-            final String password = getPasswordField().getText();
-            final String userName = getNameTxt().getText();
+            final String password = passwordField.getText();
+            final String userName = userNameTextField.getText();
             final String userId = Registries.getUnitRegistry().getUserUnitIdByUserName(userName);
             SessionManager.getInstance().login(userId, password);
-            Platform.runLater(() -> {
-                resetUserOrPasswordWrong();
-                // since case is ignored for resolving a user, the displayed username should be retrieved from the registry
-                String displayedUserName;
-                try {
-                    displayedUserName = Registries.getUnitRegistry().getUnitConfigById(userId).getUserConfig().getUserName();
-                } catch (CouldNotPerformException ex) {
-                    displayedUserName = getNameTxt().getText();
-                }
-                getLoggedInUserLbl().setText(displayedUserName);
-                getNameTxt().setText("");
-                getPasswordField().setText("");
-                setState(State.LOGOUT);
-            });
 
             if (password.equals(INITIAL_PASSWORD)) {
                 showChangeInitialPassword();
@@ -327,38 +222,51 @@ public class LoginPane extends PaneElement {
     private void resetLogin() {
         SessionManager.getInstance().logout();
 
-        if (getInputWrongLbl().isVisible()) {
+        if (inputWrongLabel.isVisible()) {
             resetUserOrPasswordWrong();
         }
-        getNameTxt().setText("");
-        getPasswordField().setText("");
-        getLoggedInUserLbl().setText("");
-        setState(LoginPane.State.LOGINACTIVE);
+        userNameTextField.setText("");
+        passwordField.setText("");
+        userLabel.setText("");
     }
 
+    private void onLoggedInChanged() {
+        if (SessionManager.getInstance().isLoggedIn()) {
+            // load user name from registry if possible.
+            String displayedUserName;
+            try {
+                displayedUserName = Registries.getUnitRegistry().getUnitConfigById(SessionManager.getInstance().getUserId()).getUserConfig().getUserName();
+            } catch (CouldNotPerformException ex) {
+                displayedUserName = userNameTextField.getText();
+            }
 
-    private void onLoggedInChanged(final String userAtClientId) {
-        System.err.println("MainMenuController.onLoggedInChanged: " + userAtClientId);
-        if (userAtClientId.equals("@")) {
-            afterLogout();
+            final String userName = displayedUserName;
+
+            Platform.runLater(() -> {
+                resetUserOrPasswordWrong();
+
+                userLabel.setText(userName);
+                userNameTextField.setText("");
+                passwordField.setText("");
+                setState(State.SHOW_USER_INFO);
+            });
         } else {
-            afterLogin();
+            Platform.runLater(() -> {
+                if (inputWrongLabel.isVisible()) {
+                    resetUserOrPasswordWrong();
+                }
+                userNameTextField.setText("");
+                passwordField.setText("");
+                userLabel.setText("");
+                setState(LoginPane.State.SHOW_LOGIN);
+            });
         }
     }
 
-    private void afterLogin() {
-
-    }
-
-    private void afterLogout() {
-        Platform.runLater(() -> {
-            if (getInputWrongLbl().isVisible()) {
-                resetUserOrPasswordWrong();
-            }
-            getNameTxt().setText("");
-            getPasswordField().setText("");
-            getLoggedInUserLbl().setText("");
-            setState(LoginPane.State.LOGINACTIVE);
-        });
+    /**
+     * Enum to control the display state.
+     */
+    public enum State {
+        SHOW_LOGIN, SHOW_USER_INFO
     }
 }
