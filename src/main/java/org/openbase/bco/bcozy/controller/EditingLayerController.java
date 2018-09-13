@@ -30,6 +30,7 @@ import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.pattern.Observable;
 import org.openbase.jul.pattern.Observer;
+import org.openbase.jul.pattern.provider.DataProvider;
 import org.openbase.jul.visual.javafx.JFXConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,37 +90,26 @@ public class EditingLayerController {
     public void connectUnitRemote() throws CouldNotPerformException, InterruptedException {
         try {
             Registries.waitForData();
-            Registries.getUnitRegistry().addDataObserver(new Observer<UnitRegistryData>() {
-                @Override
-                public void update(Observable<UnitRegistryData> source, UnitRegistryData data) throws InterruptedException {
-                    Platform.runLater(() -> {
-                        try {
-                            fetchLocationUnitRemotes();
-                            unitSymbolsPane.updateUnitsPane();
-                        } catch (CouldNotPerformException ex) {
-                            ExceptionPrinter.printHistory(ex, LOGGER);
-                        } catch (InterruptedException ex) {
-                            Thread.currentThread().interrupt();
-                        }
-                    });
+            Registries.getUnitRegistry().addDataObserver((source, data) -> Platform.runLater(() -> {
+                try {
+                    fetchLocationUnitRemotes();
+                    unitSymbolsPane.updateUnitsPane();
+                } catch (CouldNotPerformException ex) {
+                    ExceptionPrinter.printHistory(ex, LOGGER);
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
                 }
-            });
-            Registries.getUnitRegistry().addDataObserver(new Observer<UnitRegistryData>() {
-                @Override
-                public void update(Observable<UnitRegistryData> source, UnitRegistryData data) throws Exception {
-                    Platform.runLater(() -> {
-                        try {
-                            fetchLocationUnitRemotes();
-                            unitSymbolsPane.updateUnitsPane();
-                        } catch (CouldNotPerformException ex) {
-                            ExceptionPrinter.printHistory(ex, LOGGER);
-                        } catch (InterruptedException ex) {
-                            Thread.currentThread().interrupt();
-                        }
-                    });
+            }));
+            Registries.getUnitRegistry().addDataObserver((source, data) -> Platform.runLater(() -> {
+                try {
+                    fetchLocationUnitRemotes();
+                    unitSymbolsPane.updateUnitsPane();
+                } catch (CouldNotPerformException ex) {
+                    ExceptionPrinter.printHistory(ex, LOGGER);
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
                 }
-
-            });
+            }));
             updateUnits();
         } catch (CouldNotPerformException ex) { //NOPMD
             throw new CouldNotPerformException("Could not fetch units from remote registry", ex);

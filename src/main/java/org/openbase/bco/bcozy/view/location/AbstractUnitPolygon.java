@@ -19,6 +19,7 @@
 package org.openbase.bco.bcozy.view.location;
 
 import com.google.protobuf.GeneratedMessage;
+import org.apache.http.cookie.SM;
 import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
 import org.openbase.bco.dal.remote.unit.Units;
 import org.openbase.jul.exception.CouldNotPerformException;
@@ -28,6 +29,7 @@ import org.openbase.jul.exception.InstantiationException;
 import org.openbase.jul.iface.Manageable;
 import org.openbase.jul.pattern.Observable;
 import org.openbase.jul.pattern.Observer;
+import org.openbase.jul.pattern.provider.DataProvider;
 import rst.domotic.unit.UnitConfigType.UnitConfig;
 
 /**
@@ -114,10 +116,10 @@ public abstract class AbstractUnitPolygon<M extends GeneratedMessage, UR extends
 
     public abstract void applyDataUpdate(final M unitData);
 
-    public class UnitDataObserver implements Observer<M> {
+    public class UnitDataObserver implements Observer<DataProvider<M>, M> {
 
         @Override
-        public void update(Observable<M> source, M data) {
+        public void update(DataProvider<M> source, M data) {
             applyDataUpdate(data);
         }
     }

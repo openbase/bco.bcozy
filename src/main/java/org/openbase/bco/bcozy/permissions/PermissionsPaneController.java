@@ -21,6 +21,7 @@ import org.openbase.bco.bcozy.view.ObserverLabel;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.openbase.jul.pattern.provider.DataProvider;
 import org.openbase.jul.visual.javafx.JFXConstants;
 import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 import org.slf4j.Logger;
@@ -71,7 +72,7 @@ public class PermissionsPaneController {
         fillTreeTableView();
 
         try {
-            Registries.getUnitRegistry().addDataObserver((observable, unitRegistryData) -> fillTable());
+            Registries.getUnitRegistry().addDataObserver((o, unitRegistryData) -> fillTable());
             fillTable();
         } catch (CouldNotPerformException ex) {
             ExceptionPrinter.printHistory(ex, LOGGER);

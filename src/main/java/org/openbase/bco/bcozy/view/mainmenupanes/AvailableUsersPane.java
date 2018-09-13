@@ -35,6 +35,7 @@ import javafx.scene.layout.VBox;
 import org.controlsfx.control.HiddenSidesPane;
 import org.controlsfx.control.textfield.*;
 import org.openbase.bco.bcozy.view.Constants;
+import org.openbase.jul.pattern.provider.DataProvider;
 import org.openbase.jul.visual.javafx.JFXConstants;
 import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 import org.openbase.bco.registry.remote.Registries;
@@ -133,17 +134,12 @@ public class AvailableUsersPane extends PaneElement {
         return text.toLowerCase().contains(toFind.toLowerCase());
     }
 
-    public void init() throws InitializationException, InterruptedException {
+    public void init() throws InitializationException {
 
         try {
-            Registries.getUnitRegistry().addDataObserver(new Observer<UnitRegistryData>() {
-                @Override
-                public void update(Observable<UnitRegistryData> source, UnitRegistryData data) throws Exception {
-                    Platform.runLater(() -> {
-                        updateDynamicComponents();
-                    });
-                }
-            });
+            Registries.getUnitRegistry().addDataObserver((source, data) -> Platform.runLater(() -> {
+                updateDynamicComponents();
+            }));
             Platform.runLater(() -> {
                 updateDynamicComponents();
             });

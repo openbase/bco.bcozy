@@ -28,6 +28,9 @@ import org.openbase.bco.bcozy.model.LanguageSelection;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.InfoPane;
 import org.openbase.jul.extension.rst.processing.LabelProcessor;
+import org.openbase.jul.pattern.ConfigurableRemote;
+import org.openbase.jul.pattern.Remote;
+import org.openbase.jul.pattern.provider.DataProvider;
 import org.openbase.jul.visual.javafx.JFXConstants;
 import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 import org.openbase.bco.bcozy.view.generic.ExpandableWidgedPane;
@@ -61,10 +64,10 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
     private final Class<UR> unitRemoteClass;
     private UR unitRemote;
 
-    private final Observer<UnitConfig> unitConfigObserver;
-    private final Observer<D> unitDataObserver;
-    private final Observer<ConnectionState> unitConnectionObserver;
-    private final Observer<String> loginObserver;
+    private final Observer<ConfigurableRemote<String, D, UnitConfig>, UnitConfig> unitConfigObserver;
+    private final Observer<DataProvider<D>,D> unitDataObserver;
+    private final Observer<Remote, ConnectionState> unitConnectionObserver;
+    private final Observer<SessionManager, String> loginObserver;
 
     /**
      * Constructor for the UnitPane.
@@ -76,9 +79,9 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
         super(false, activateable);
         this.unitRemoteClass = unitRemoteClass;
         //TODO: Set css styling for unitlabel
-        this.unitConfigObserver = new Observer<UnitConfig>() {
+        this.unitConfigObserver = new Observer<ConfigurableRemote<String, D, UnitConfig>, UnitConfig>() {
             @Override
-            public void update(Observable<UnitConfig> source, UnitConfig config) throws Exception {
+            public void update(ConfigurableRemote<String, D, UnitConfig> source, UnitConfig config) {
                 Platform.runLater(() -> {
                     try {
                         applyConfigUpdate(config);
@@ -88,9 +91,9 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
                 });
             }
         };
-        this.unitDataObserver = new Observer<D>() {
+        this.unitDataObserver = new Observer<DataProvider<D>, D>() {
             @Override
-            public void update(Observable<D> source, D data) throws Exception {
+            public void update(DataProvider<D> source, D data) throws Exception {
                 Platform.runLater(() -> {
                     try {
                         applyDataUpdate(data);
@@ -100,9 +103,9 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
                 });
             }
         };
-        this.unitConnectionObserver = new Observer<ConnectionState>() {
+        this.unitConnectionObserver = new Observer<Remote, ConnectionState>() {
             @Override
-            public void update(Observable<ConnectionState> source, ConnectionState connectionState) throws Exception {
+            public void update(Remote source, ConnectionState connectionState) throws Exception {
                 Platform.runLater(() -> {
                     try {
                         applyConnectionStateUpdate(connectionState);
@@ -112,9 +115,9 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
                 });
             }
         };
-        this.loginObserver = new Observer<String>() {
+        this.loginObserver = new Observer<SessionManager, String>() {
             @Override
-            public void update(Observable<String> source, String authority) throws Exception {
+            public void update(SessionManager source, String authority) throws Exception {
                 Platform.runLater(() -> {
                     try {
                         applyLoginUpdate();

@@ -11,6 +11,7 @@ import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.extension.rst.processing.LabelProcessor;
 import org.openbase.jul.pattern.Observer;
+import org.openbase.jul.pattern.provider.DataProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.domotic.registry.UnitRegistryDataType.UnitRegistryData;
@@ -43,7 +44,7 @@ public final class AuthorizationGroups {
     /**
      * UnitRegistry observer used for registry synchronization.
      */
-    private static final Observer<UnitRegistryData> unitRegistryObserver = (observable, unitRegistryData) -> {
+    private static final Observer<DataProvider<UnitRegistryData>, UnitRegistryData> unitRegistryObserver = (observable, unitRegistryData) -> {
         updateAuthorizationGroups(unitRegistryData.getAuthorizationGroupUnitConfigList());
     };
 
