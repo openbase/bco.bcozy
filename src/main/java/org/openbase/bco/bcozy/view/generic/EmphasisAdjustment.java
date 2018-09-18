@@ -41,11 +41,11 @@ public class EmphasisAdjustment extends GridPane implements DynamicPane {
     private final boolean security;
 
     private final DoubleProperty comfortProperty;
-    private final DoubleProperty energyProperty;
+    private final DoubleProperty economyProperty;
     private final DoubleProperty securityProperty;
 
     private JFXSlider comfortSlider;
-    private JFXSlider energySlider;
+    private JFXSlider economySlider;
     private JFXSlider securitySlider;
 
     public EmphasisAdjustment() {
@@ -58,7 +58,7 @@ public class EmphasisAdjustment extends GridPane implements DynamicPane {
         this.security = security;
 
         this.comfortProperty = new SimpleDoubleProperty(0.0);
-        this.energyProperty = new SimpleDoubleProperty(0.0);
+        this.economyProperty = new SimpleDoubleProperty(0.0);
         this.securityProperty = new SimpleDoubleProperty(0.0);
     }
 
@@ -67,8 +67,8 @@ public class EmphasisAdjustment extends GridPane implements DynamicPane {
         if (comfortSlider != null && comfort) {
             comfortProperty.set(comfortSlider.getValue());
         }
-        if (energySlider != null && energy) {
-            energyProperty.set(energySlider.getValue());
+        if (economySlider != null && energy) {
+            economyProperty.set(economySlider.getValue());
         }
         if (securitySlider != null && security) {
             securityProperty.set(securitySlider.getValue());
@@ -94,17 +94,17 @@ public class EmphasisAdjustment extends GridPane implements DynamicPane {
             counter++;
         }
         if (energy) {
-            energySlider = new JFXSlider(0.0, 100.0, 0.0);
-            energySlider.getStyleClass().clear();
-            ObserverLabel energyLabel = new ObserverLabel("energy");
-            energySlider.valueProperty().addListener((observable) -> {
+            economySlider = new JFXSlider(0.0, 100.0, 0.0);
+            economySlider.getStyleClass().clear();
+            ObserverLabel energyLabel = new ObserverLabel("economy");
+            economySlider.valueProperty().addListener((observable) -> {
                 if (isHover()) {
-                    energyProperty.set(energySlider.getValue());
+                    economyProperty.set(economySlider.getValue());
                 }
             });
             setConstraints(energyLabel, 0, counter);
-            setConstraints(energySlider, 1, counter);
-            getChildren().addAll(energySlider, energyLabel);
+            setConstraints(economySlider, 1, counter);
+            getChildren().addAll(economySlider, energyLabel);
             counter++;
         }
         if (security) {
@@ -126,8 +126,8 @@ public class EmphasisAdjustment extends GridPane implements DynamicPane {
         return comfortProperty;
     }
 
-    public DoubleProperty getEnergyProperty() {
-        return energyProperty;
+    public DoubleProperty getEconomyProperty() {
+        return economyProperty;
     }
 
     public DoubleProperty getSecurityProperty() {
@@ -141,7 +141,7 @@ public class EmphasisAdjustment extends GridPane implements DynamicPane {
             emphasisStateBuilder.setComfort(comfortSlider.getValue());
         }
         if (energy) {
-            emphasisStateBuilder.setEnergy(energySlider.getValue());
+            emphasisStateBuilder.setEconomy(economySlider.getValue());
         }
         if (security) {
             emphasisStateBuilder.setSecurity(securitySlider.getValue());
@@ -155,7 +155,7 @@ public class EmphasisAdjustment extends GridPane implements DynamicPane {
                 comfortSlider.setValue(emphasisState.getComfort());
             }
             if (energy) {
-                energySlider.setValue(emphasisState.getEnergy());
+                economySlider.setValue(emphasisState.getEconomy());
             }
             if (security) {
                 securitySlider.setValue(emphasisState.getSecurity());

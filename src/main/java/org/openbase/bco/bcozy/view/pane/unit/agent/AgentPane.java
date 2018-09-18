@@ -78,7 +78,7 @@ public class AgentPane extends AbstractUnitPane<AgentRemote, AgentData> {
             }
         };
         emphasisAdjustment.getComfortProperty().addListener(changeListener);
-        emphasisAdjustment.getEnergyProperty().addListener(changeListener);
+        emphasisAdjustment.getEconomyProperty().addListener(changeListener);
         emphasisAdjustment.getSecurityProperty().addListener(changeListener);
 
         bodyPane.getChildren().add(emphasisAdjustment);
