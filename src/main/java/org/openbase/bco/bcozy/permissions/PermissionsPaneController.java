@@ -26,8 +26,9 @@ import org.openbase.jul.visual.javafx.JFXConstants;
 import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.configuration.LabelType;
-import rst.configuration.LabelType.Label.MapFieldEntry;
+import rst.language.DescriptionType;
+import rst.language.LabelType;
+import rst.language.LabelType.Label.MapFieldEntry;
 import rst.domotic.unit.UnitConfigType;
 import rst.domotic.unit.UnitConfigType.UnitConfig;
 
@@ -61,7 +62,7 @@ public class PermissionsPaneController {
     @FXML
     private JFXTreeTableColumn<RecursiveUnitConfig, String> typeColumn;
     @FXML
-    private JFXTreeTableColumn<RecursiveUnitConfig, String> descColumn;
+    private JFXTreeTableColumn<RecursiveUnitConfig, DescriptionType.Description> descColumn;
     @FXML
     private JFXTreeTableColumn<RecursiveUnitConfig, LabelType.Label> labelColumn;
 
@@ -112,7 +113,6 @@ public class PermissionsPaneController {
         filterInput.textProperty().addListener((o, oldVal, newVal) -> {
             unitsTable.setPredicate(user ->
                     detectMatch(newVal.toLowerCase(), user.getValue().getUnit())
-                    || user.getValue().getUnit().getDescription().toLowerCase().contains(newVal.toLowerCase())
                     || user.getValue().getUnit().getUnitType().name().toLowerCase().contains(newVal.toLowerCase()));
             });
     }
@@ -123,7 +123,7 @@ public class PermissionsPaneController {
                 return true;
             }
         }
-        return false;
+        return unitConfig.getAliasList().contains(key) || unitConfig.getDescription().getEntryList().contains(key);
     }
 
     private class MethodRefCellValueFactory<S, T> implements Callback<TreeTableColumn.CellDataFeatures<S, T>, ObservableValue<T>> {

@@ -1,7 +1,7 @@
 package org.openbase.bco.bcozy.permissions.model;
 
 import javafx.beans.property.*;
-import rst.configuration.LabelType.Label;
+import rst.language.LabelType.Label;
 
 import java.util.logging.Logger;
 
