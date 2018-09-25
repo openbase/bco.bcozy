@@ -26,7 +26,7 @@ import org.openbase.jul.visual.javafx.JFXConstants;
 import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.language.DescriptionType;
+import rst.language.MultiLanguageTextType;
 import rst.language.LabelType;
 import rst.language.LabelType.Label.MapFieldEntry;
 import rst.domotic.unit.UnitConfigType;
@@ -62,7 +62,7 @@ public class PermissionsPaneController {
     @FXML
     private JFXTreeTableColumn<RecursiveUnitConfig, String> typeColumn;
     @FXML
-    private JFXTreeTableColumn<RecursiveUnitConfig, DescriptionType.Description> descColumn;
+    private JFXTreeTableColumn<RecursiveUnitConfig, MultiLanguageTextType.MultiLanguageText> descColumn;
     @FXML
     private JFXTreeTableColumn<RecursiveUnitConfig, LabelType.Label> labelColumn;
 
