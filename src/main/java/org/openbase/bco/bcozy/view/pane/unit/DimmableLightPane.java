@@ -29,7 +29,7 @@ import org.openbase.jul.schedule.RecurrenceEventFilter;
 import rst.domotic.unit.dal.DimmableLightDataType.DimmableLightData;
 import java.util.concurrent.Future;
 import javafx.scene.layout.Pane;
-import org.openbase.bco.dal.remote.unit.DimmableLightRemote;
+import org.openbase.bco.dal.remote.layer.unit.DimmableLightRemote;
 import rst.domotic.state.BrightnessStateType.BrightnessState;
 import rst.domotic.state.PowerStateType.PowerState;
 

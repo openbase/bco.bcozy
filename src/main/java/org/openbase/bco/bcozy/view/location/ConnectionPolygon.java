@@ -19,7 +19,7 @@
 package org.openbase.bco.bcozy.view.location;
 
 import javafx.collections.ObservableList;
-import org.openbase.bco.dal.remote.unit.connection.ConnectionRemote;
+import org.openbase.bco.dal.remote.layer.unit.connection.ConnectionRemote;
 import org.openbase.jul.exception.InstantiationException;
 import rst.domotic.unit.connection.ConnectionDataType.ConnectionData;
 

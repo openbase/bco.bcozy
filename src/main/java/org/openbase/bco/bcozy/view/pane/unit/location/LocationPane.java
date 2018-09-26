@@ -31,7 +31,7 @@ import java.util.concurrent.Future;
 import javafx.scene.layout.Pane;
 import org.openbase.bco.bcozy.view.generic.ColorChooser;
 import org.openbase.bco.bcozy.view.pane.unit.AbstractUnitPane;
-import org.openbase.bco.dal.remote.unit.location.LocationRemote;
+import org.openbase.bco.dal.remote.layer.unit.location.LocationRemote;
 import org.openbase.jul.visual.javafx.transform.JFXColorToHSBColorTransformer;
 import rst.domotic.state.PowerStateType.PowerState;
 import rst.domotic.unit.UnitTemplateType.UnitTemplate.UnitType;

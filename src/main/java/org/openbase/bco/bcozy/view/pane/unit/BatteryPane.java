@@ -22,7 +22,7 @@ import de.jensd.fx.glyphs.GlyphIcons;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.animation.Animation;
 import javafx.scene.paint.Color;
-import org.openbase.bco.dal.remote.unit.BatteryRemote;
+import org.openbase.bco.dal.remote.layer.unit.BatteryRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;

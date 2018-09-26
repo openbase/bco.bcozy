@@ -22,7 +22,7 @@ import de.jensd.fx.glyphs.materialicons.MaterialIcon;
 import javafx.animation.Animation;
 import javafx.animation.Interpolator;
 import javafx.scene.paint.Color;
-import org.openbase.bco.dal.remote.unit.MotionDetectorRemote;
+import org.openbase.bco.dal.remote.layer.unit.MotionDetectorRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.visual.javafx.JFXConstants;
 import rst.domotic.unit.dal.MotionDetectorDataType.MotionDetectorData;

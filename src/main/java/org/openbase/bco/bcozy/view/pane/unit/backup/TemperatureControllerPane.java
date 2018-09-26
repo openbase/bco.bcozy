@@ -19,7 +19,7 @@
 package org.openbase.bco.bcozy.view.pane.unit.backup;
 
 import org.openbase.bco.bcozy.view.pane.unit.AbstractUnitPane;
-import org.openbase.bco.dal.remote.unit.TemperatureControllerRemote;
+import org.openbase.bco.dal.remote.layer.unit.TemperatureControllerRemote;
 import rst.domotic.unit.dal.TemperatureControllerDataType.TemperatureControllerData;
 
 

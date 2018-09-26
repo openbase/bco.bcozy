@@ -19,7 +19,7 @@
 package org.openbase.bco.bcozy.view.pane.unit.backup;
 
 import org.openbase.bco.bcozy.view.pane.unit.AbstractUnitPane;
-import org.openbase.bco.dal.remote.unit.DimmableLightRemote;
+import org.openbase.bco.dal.remote.layer.unit.DimmableLightRemote;
 import rst.domotic.unit.dal.DimmableLightDataType.DimmableLightData;
 
 /**

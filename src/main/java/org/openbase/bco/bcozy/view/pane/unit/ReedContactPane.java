@@ -21,7 +21,7 @@ package org.openbase.bco.bcozy.view.pane.unit;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import de.jensd.fx.glyphs.materialicons.MaterialIcon;
 import javafx.scene.paint.Color;
-import org.openbase.bco.dal.remote.unit.ReedContactRemote;
+import org.openbase.bco.dal.remote.layer.unit.ReedContactRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import rst.domotic.unit.dal.ReedContactDataType.ReedContactData;
 

@@ -35,7 +35,7 @@ import java.util.concurrent.Future;
 import javafx.scene.layout.Pane;
 import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 import org.openbase.bco.bcozy.view.generic.ColorChooser;
-import org.openbase.bco.dal.remote.unit.ColorableLightRemote;
+import org.openbase.bco.dal.remote.layer.unit.ColorableLightRemote;
 import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.extension.rst.processing.TimestampJavaTimeTransform;
 import org.openbase.jul.processing.StringProcessor;

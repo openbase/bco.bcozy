@@ -21,7 +21,7 @@ package org.openbase.bco.bcozy.view.pane.unit;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import java.util.concurrent.Future;
 import javafx.scene.paint.Color;
-import org.openbase.bco.dal.remote.unit.PowerSwitchRemote;
+import org.openbase.bco.dal.remote.layer.unit.PowerSwitchRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;

@@ -21,13 +21,11 @@ package org.openbase.bco.bcozy.view.pane.unit;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.animation.Animation;
 import javafx.scene.paint.Color;
-import org.openbase.bco.dal.remote.unit.TamperDetectorRemote;
+import org.openbase.bco.dal.remote.layer.unit.TamperDetectorRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
 import rst.domotic.state.TamperStateType.TamperState.State;
-import static rst.domotic.state.TamperStateType.TamperState.State.NO_TAMPER;
-import static rst.domotic.state.TamperStateType.TamperState.State.TAMPER;
 import rst.domotic.unit.dal.TamperDetectorDataType.TamperDetectorData;
 
 /**

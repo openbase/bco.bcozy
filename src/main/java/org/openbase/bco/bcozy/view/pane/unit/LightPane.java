@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 import rst.domotic.unit.dal.LightDataType.LightData;
 import java.util.concurrent.Future;
 import org.openbase.bco.bcozy.view.Constants;
-import org.openbase.bco.dal.remote.unit.LightRemote;
+import org.openbase.bco.dal.remote.layer.unit.LightRemote;
 import rst.domotic.state.PowerStateType.PowerState;
 
 /**

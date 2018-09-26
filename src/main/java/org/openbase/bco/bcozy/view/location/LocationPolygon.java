@@ -20,7 +20,7 @@ package org.openbase.bco.bcozy.view.location;
 
 import javafx.scene.shape.Path;
 import javafx.scene.shape.Shape;
-import org.openbase.bco.dal.remote.unit.location.LocationRemote;
+import org.openbase.bco.dal.remote.layer.unit.location.LocationRemote;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InitializationException;
