@@ -139,6 +139,13 @@
                                 <platform>unix</platform>
                             </platforms>
                         </program>
+                        <program>
+                            <mainClass>org.openbase.bco.bcozy.BCOConsole</mainClass>
+                            <id>bco-console</id>
+                            <platforms>
+                                <platform>unix</platform>
+                            </platforms>
+                        </program>
                     </programs>
                     <copyConfigurationDirectory>true</copyConfigurationDirectory>
                 </configuration>
@@ -359,6 +366,12 @@
             <groupId>com.guigarage</groupId>
             <artifactId>responsivefx</artifactId>
             <version>0.8</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openbase</groupId>
+            <artifactId>bco.app.cloud.connector</artifactId>
+            <version>${dependency.bco.version}</version>
         </dependency>
 
         <!-- Just so maven doesn't complain about a missing version. -->
