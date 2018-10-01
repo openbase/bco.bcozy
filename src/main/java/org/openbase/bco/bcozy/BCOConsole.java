@@ -49,8 +49,10 @@ public class BCOConsole {
         System.out.println("available commands:");
         System.out.println("");
         System.out.println("passwd - change the password of a given user");
-        System.out.println("cloud - connect a user with the bco cloud service");
-        System.out.println("exit - close this console");
+        System.out.println("cloud connect - connect a user with the bco cloud service");
+        System.out.println("cloud disconnect - disconnect a user from the bco cloud service");
+        System.out.println("exit, quit, logout - close this console");
+        System.out.println("register user - creates a new user account");
         System.out.println("");
         System.out.println("");
 
