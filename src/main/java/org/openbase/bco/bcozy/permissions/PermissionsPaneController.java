@@ -20,9 +20,11 @@ import org.openbase.bco.bcozy.permissions.model.RecursiveUnitConfig;
 import org.openbase.bco.bcozy.view.ObserverLabel;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.pattern.provider.DataProvider;
 import org.openbase.jul.visual.javafx.JFXConstants;
+import org.openbase.jul.visual.javafx.control.AbstractFXController;
 import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +46,7 @@ import static java.util.Objects.nonNull;
  *
  * @author vdasilva
  */
-public class PermissionsPaneController {
+public class PermissionsPaneController extends AbstractFXController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PermissionsPaneController.class);
 
@@ -67,6 +69,23 @@ public class PermissionsPaneController {
     private JFXTreeTableColumn<RecursiveUnitConfig, LabelType.Label> labelColumn;
 
     private final ObservableList<RecursiveUnitConfig> list = FXCollections.observableArrayList();
+
+    @Override
+    public void initContent() throws InitializationException {
+        fillTreeTableView();
+
+        try {
+            Registries.getUnitRegistry().addDataObserver((o, unitRegistryData) -> fillTable());
+            fillTable();
+        } catch (CouldNotPerformException ex) {
+            ExceptionPrinter.printHistory(ex, LOGGER);
+        }
+    }
+
+    @Override
+    public void updateDynamicContent() {
+
+    }
 
     @FXML
     public void initialize() {

@@ -20,9 +20,11 @@ import org.openbase.bco.bcozy.view.InfoPane;
 import org.openbase.bco.bcozy.view.ObserverButton;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.ExceptionProcessor;
+import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.visual.javafx.JFXConstants;
+import org.openbase.jul.visual.javafx.control.AbstractFXController;
 import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +36,7 @@ import java.util.List;
 /**
  * @author vdasilva
  */
-public class AuthorizationGroupController {
+public class AuthorizationGroupController  extends AbstractFXController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthorizationGroupController.class);
 
@@ -62,9 +64,9 @@ public class AuthorizationGroupController {
 
     private UnitConfigType.UnitConfig lastSelectedUnit;
 
-    @FXML
-    public void initialize() {
 
+    @Override
+    public void initContent() {
         saveButton.setApplyOnNewText(String::toUpperCase);
 
         nameColumn.setCellValueFactory(param -> new SimpleObjectProperty<>(param.getValue().getLabel()));
@@ -89,6 +91,11 @@ public class AuthorizationGroupController {
         LanguageSelection.addObserverFor("groupLabel", (locale, text) -> label.setPromptText(text));
 
         AuthorizationGroups.addListObserver(this::showGroups);
+    }
+
+    @Override
+    public void updateDynamicContent() {
+        
     }
 
     /**

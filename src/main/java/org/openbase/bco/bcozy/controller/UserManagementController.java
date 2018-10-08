@@ -24,11 +24,9 @@ import org.openbase.bco.bcozy.view.InfoPane;
 import org.openbase.bco.bcozy.view.ObserverButton;
 import org.openbase.bco.bcozy.view.ObserverLabel;
 import org.openbase.bco.registry.remote.Registries;
-import org.openbase.jul.exception.CouldNotPerformException;
-import org.openbase.jul.exception.ExceptionProcessor;
-import org.openbase.jul.exception.NotAvailableException;
-import org.openbase.jul.exception.VerificationFailedException;
+import org.openbase.jul.exception.*;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.openbase.jul.visual.javafx.control.AbstractFXController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rst.domotic.unit.UnitConfigType.UnitConfig;
@@ -46,7 +44,7 @@ import java.util.function.Function;
  *
  * @author vdasilva
  */
-public class UserManagementController {
+public class UserManagementController extends AbstractFXController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserManagementController.class);
 
@@ -103,7 +101,8 @@ public class UserManagementController {
 
     private UserData selectedUser;
 
-    public void initialize() {
+    @Override
+    public void initContent() {
         ObservableList<UnitConfig> groups = AuthorizationGroups.getAuthorizationGroups();
         groups.addListener((ListChangeListener.Change<? extends UnitConfig> c)
                 -> setGroups(groups)
@@ -154,6 +153,10 @@ public class UserManagementController {
         SessionManager.getInstance().addLoginObserver((source, data) -> fillUserList());
     }
 
+    @Override
+    public void updateDynamicContent() {
+
+    }
 
     private void fillUserList() {
         if (Platform.isFxApplicationThread()) {
