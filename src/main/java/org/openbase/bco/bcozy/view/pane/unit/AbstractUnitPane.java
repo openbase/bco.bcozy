@@ -275,7 +275,6 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
      *
      * @param data
      *
-     * @throws org.openbase.jul.exception.CouldNotPerformException
      */
     protected void applyDataUpdate(final D data) {
         update();
