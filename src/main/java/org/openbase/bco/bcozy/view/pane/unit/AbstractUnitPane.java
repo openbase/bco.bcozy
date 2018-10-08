@@ -87,21 +87,10 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
                 });
             }
         };
-        this.unitDataObserver = new Observer<DataProvider<D>, D>() {
-            @Override
-            public void update(DataProvider<D> source, D data) throws Exception {
-                Platform.runLater(() -> {
-                    try {
-                        applyDataUpdate(data);
-                    } catch (CouldNotPerformException ex) {
-                        ExceptionPrinter.printHistory("Could not apply data update on " + this, ex, LOGGER);
-                    }
-                });
-            }
-        };
+        this.unitDataObserver = (source, data) -> applyDataUpdate(data);
         this.unitConnectionObserver = new Observer<Remote, ConnectionState>() {
             @Override
-            public void update(Remote source, ConnectionState connectionState) throws Exception {
+            public void update(Remote source, ConnectionState connectionState) {
                 Platform.runLater(() -> {
                     try {
                         applyConnectionStateUpdate(connectionState);
@@ -288,8 +277,8 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Gener
      *
      * @throws org.openbase.jul.exception.CouldNotPerformException
      */
-    protected void applyDataUpdate(final D data) throws CouldNotPerformException {
-        updateDynamicContent();
+    protected void applyDataUpdate(final D data) {
+        update();
     }
 
     /**

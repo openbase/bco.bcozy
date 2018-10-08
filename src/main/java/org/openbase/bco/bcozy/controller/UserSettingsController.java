@@ -40,8 +40,10 @@ import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.InfoPane;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.visual.javafx.JFXConstants;
+import org.openbase.jul.visual.javafx.control.AbstractFXController;
 import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +58,7 @@ import java.util.concurrent.TimeoutException;
 /**
  * @author vdasilva
  */
-public class UserSettingsController {
+public class UserSettingsController extends AbstractFXController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserSettingsController.class);
     public Pane changePassword;
@@ -89,8 +91,8 @@ public class UserSettingsController {
     private ObservableList<Language> availableLanguages;
 
 
-    @FXML
-    public void initialize() {
+    @Override
+    public void initContent() throws InitializationException {
         SessionManager.getInstance().addLoginObserver((source, data) -> {
             onLoginChange();
         });
@@ -107,6 +109,11 @@ public class UserSettingsController {
 
         themeChoice.setItems(availableThemes);
         changePasswordPane.setExpanded(false);
+    }
+
+    @Override
+    public void updateDynamicContent() throws CouldNotPerformException {
+
     }
 
     /**

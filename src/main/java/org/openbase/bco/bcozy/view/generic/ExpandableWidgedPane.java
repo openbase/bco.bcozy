@@ -53,12 +53,7 @@ public class ExpandableWidgedPane extends WidgetPane {
         this.dynamicContentChangeObserver = new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> paramObservableValue, Boolean paramT1, Boolean expaneded) {
-                try {
-                    updateDynamicContent();
-                } catch (final Exception ex) {
-                    // catch all exceptions to stablize the fx thread.
-                    ExceptionPrinter.printHistory("Could not update all dynamic components of " + ExpandableWidgedPane.this, ex, LOGGER);
-                }
+                update();
             }
         };
         this.timeline = new Timeline();

@@ -17,7 +17,9 @@ import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ForegroundPane;
 import org.openbase.bco.bcozy.view.ObserverLabel;
 import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.openbase.jul.visual.javafx.control.AbstractFXController;
 import org.openbase.jul.visual.javafx.fxml.FXMLProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +30,7 @@ import java.util.ResourceBundle;
 /**
  * @author vdasilva
  */
-public class SettingsController {
+public class SettingsController extends AbstractFXController {
 
     /**
      * Application Logger
@@ -64,8 +66,8 @@ public class SettingsController {
     public SettingsController() {
     }
 
-    @FXML
-    public void initialize() {
+    @Override
+    public void initContent() throws InitializationException {
         settingsTab.setGraphic(new ObserverLabel("settings"));
         permissionTab.setGraphic(new ObserverLabel("permissions"));
 
@@ -102,6 +104,10 @@ public class SettingsController {
         }
     }
 
+    @Override
+    public void updateDynamicContent() throws CouldNotPerformException {
+
+    }
 
     private Pane loadUserSettingsPane() throws CouldNotPerformException {
         try {
