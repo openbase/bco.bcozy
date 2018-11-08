@@ -299,10 +299,11 @@ public class WidgetPane extends VBox implements DynamicPane {
         secondaryActivationProperty.set(!secondaryActivationProperty.getValue());
     }
 
-    @Deprecated
     public void setInfoText(final String identifier) {
-//        infoText.setIdentifier(identifier);
+        infoText.setIdentifier(identifier);
     }
+
+    // todo: show info text an the global info pane placed at bottom main frame when the mouse hovers the control element of this pane.
 
     /**
      * Overwrite this method to get informed about main function updates.

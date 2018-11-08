@@ -46,6 +46,7 @@ import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.EnumNotSupportedException;
 import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.openbase.jul.exception.printer.LogLevel;
 import org.openbase.jul.extension.rst.processing.LabelProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -632,7 +633,7 @@ public final class LocationPane extends MultiTouchPane {
                 try {
                     InfoPane.info(polygon.getLabel());
                 } catch (final NotAvailableException ex) {
-                    LOGGER.warn("Could not resolve location label!", ex);
+                    ExceptionPrinter.printHistory("Could not resolve location label!", ex, LOGGER, LogLevel.WARN);
                 }
             } else {
                 polygon.setStrokeWidth(Constants.ROOM_STROKE_WIDTH);

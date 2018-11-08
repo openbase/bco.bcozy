@@ -104,7 +104,6 @@ public class SessionManagerFacadeImpl implements SessionManagerFacade {
                 }
             }
         } catch (CouldNotPerformException ex) {
-            LOGGER.warn("Could not verify user name!", ex);
             throw new VerificationFailedException("Could not verify user name!", ex);
         }
     }
