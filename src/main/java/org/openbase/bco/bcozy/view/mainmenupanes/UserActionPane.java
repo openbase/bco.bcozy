@@ -10,7 +10,6 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.*;
 import org.openbase.bco.bcozy.controller.UserManagementController;
-import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.jul.visual.javafx.JFXConstants;
 import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 
