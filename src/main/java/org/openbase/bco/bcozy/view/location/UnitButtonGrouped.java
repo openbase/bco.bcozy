@@ -18,7 +18,7 @@
  */
 package org.openbase.bco.bcozy.view.location;
 
-import com.google.protobuf.GeneratedMessage;
+import com.google.protobuf.Message;
 import javafx.beans.binding.Bindings;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
@@ -116,7 +116,7 @@ public class UnitButtonGrouped extends Pane {
      * @throws InterruptedException
      * @throws CouldNotPerformException
      */
-    public void addUnit(final UnitRemote<? extends GeneratedMessage> unit) throws InterruptedException, CouldNotPerformException {
+    public void addUnit(final UnitRemote<? extends Message> unit) throws InterruptedException, CouldNotPerformException {
 
         try {
             AbstractUnitPane content;

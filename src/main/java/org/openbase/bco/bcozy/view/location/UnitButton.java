@@ -18,7 +18,7 @@
  */
 package org.openbase.bco.bcozy.view.location;
 
-import com.google.protobuf.GeneratedMessage;
+import com.google.protobuf.Message;
 import javafx.scene.layout.Pane;
 import org.openbase.bco.bcozy.view.generic.WidgetPane.DisplayMode;
 import org.openbase.bco.bcozy.view.pane.unit.AbstractUnitPane;
@@ -38,7 +38,7 @@ public class UnitButton extends Pane {
      */
     protected final Logger LOGGER = LoggerFactory.getLogger(UnitButton.class);
 
-    private UnitRemote<? extends GeneratedMessage> unitRemote;
+    private UnitRemote<? extends Message> unitRemote;
 
     /**
      * Constructor for UnitButton. Creates the content with the help of the UnitPaneFactory dynamically,
@@ -48,7 +48,7 @@ public class UnitButton extends Pane {
      * @throws java.lang.InterruptedException
      * @throws org.openbase.jul.exception.CouldNotPerformException
      */
-    public UnitButton(final UnitRemote<? extends GeneratedMessage> unitRemote) throws InterruptedException, CouldNotPerformException {
+    public UnitButton(final UnitRemote<? extends Message> unitRemote) throws InterruptedException, CouldNotPerformException {
             AbstractUnitPane content;
             content = UnitPaneFactoryImpl.getInstance().newInitializedInstance(unitRemote.getConfig());
             
@@ -65,7 +65,7 @@ public class UnitButton extends Pane {
      *
      * @return Underlying UnitRemote object
      */
-    public UnitRemote<? extends GeneratedMessage> getUnitRemote() {
+    public UnitRemote<? extends Message> getUnitRemote() {
         return this.unitRemote;
     }
 

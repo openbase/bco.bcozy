@@ -19,7 +19,7 @@
  */
 package org.openbase.bco.bcozy.view;
 
-import com.google.protobuf.GeneratedMessage;
+import com.google.protobuf.Message;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -82,7 +82,7 @@ public class UnitSymbolsPane extends Pane {
      * @throws CouldNotPerformException
      * @throws InterruptedException
      */
-    public void addLocationUnit(final UnitRemote<? extends GeneratedMessage> unitRemoteObject, final Point2D position) throws CouldNotPerformException, InterruptedException {
+    public void addLocationUnit(final UnitRemote<? extends Message> unitRemoteObject, final Point2D position) throws CouldNotPerformException, InterruptedException {
         UnitButton newButton;
         try {
             newButton = new UnitButton(unitRemoteObject);
@@ -104,7 +104,7 @@ public class UnitSymbolsPane extends Pane {
      * @throws CouldNotPerformException
      * @throws InterruptedException
      */
-    public void addUnit(final UnitRemote<? extends GeneratedMessage> unitRemoteObject, final Point2D position, final String locationId) throws CouldNotPerformException, InterruptedException {
+    public void addUnit(final UnitRemote<? extends Message> unitRemoteObject, final Point2D position, final String locationId) throws CouldNotPerformException, InterruptedException {
         UnitButton newButton;
         try {
             newButton = new UnitButton(unitRemoteObject);

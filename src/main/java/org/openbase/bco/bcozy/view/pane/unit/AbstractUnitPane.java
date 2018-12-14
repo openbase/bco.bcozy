@@ -18,7 +18,7 @@
  */
 package org.openbase.bco.bcozy.view.pane.unit;
 
-import com.google.protobuf.GeneratedMessage;
+import com.google.protobuf.Message;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.application.Platform;
 import org.openbase.bco.authentication.lib.AuthorizationHelper;
@@ -55,7 +55,7 @@ import java.util.Map;
  * @param <UR> UnitRemote
  * @param <D>  Unit Data
  */
-public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends GeneratedMessage> extends ExpandableWidgedPane implements Initializable<UR>, Shutdownable {
+public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Message> extends ExpandableWidgedPane implements Initializable<UR>, Shutdownable {
 
     private final Class<UR> unitRemoteClass;
     private UR unitRemote;

@@ -18,7 +18,7 @@
  */
 package org.openbase.bco.bcozy.view.location;
 
-import com.google.protobuf.GeneratedMessage;
+import com.google.protobuf.Message;
 import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
 import org.openbase.bco.dal.remote.layer.unit.Units;
 import org.openbase.jul.exception.CouldNotPerformException;
@@ -33,7 +33,7 @@ import rst.domotic.unit.UnitConfigType.UnitConfig;
 /**
  * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>
  */
-public abstract class AbstractUnitPolygon<M extends GeneratedMessage, UR extends UnitRemote<M>> extends AbstractPolygon implements Manageable<UnitConfig> {
+public abstract class AbstractUnitPolygon<M extends Message, UR extends UnitRemote<M>> extends AbstractPolygon implements Manageable<UnitConfig> {
 
     private UR unitRemote;
     private UnitDataObserver dataObserver;
