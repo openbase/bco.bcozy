@@ -21,7 +21,7 @@ package org.openbase.bco.bcozy.view.location;
 import javafx.collections.ObservableList;
 import org.openbase.bco.dal.remote.layer.unit.connection.ConnectionRemote;
 import org.openbase.jul.exception.InstantiationException;
-import rst.domotic.unit.connection.ConnectionDataType.ConnectionData;
+import org.openbase.type.domotic.unit.connection.ConnectionDataType.ConnectionData;
 
 /**
  * A Polygon that represents different kinds of connections.

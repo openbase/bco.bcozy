@@ -20,7 +20,7 @@ package org.openbase.bco.bcozy.view.pane.unit.backup;
 
 import org.openbase.bco.bcozy.view.pane.unit.AbstractUnitPane;
 import org.openbase.bco.dal.remote.layer.unit.SmokeDetectorRemote;
-import rst.domotic.unit.dal.SmokeDetectorDataType.SmokeDetectorData;
+import org.openbase.type.domotic.unit.dal.SmokeDetectorDataType.SmokeDetectorData;
 
 /**
  * Created by agatting on 11.04.16.

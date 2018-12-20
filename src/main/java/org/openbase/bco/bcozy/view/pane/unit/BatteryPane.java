@@ -26,7 +26,7 @@ import org.openbase.bco.dal.remote.layer.unit.BatteryRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
-import rst.domotic.unit.dal.BatteryDataType.BatteryData;
+import org.openbase.type.domotic.unit.dal.BatteryDataType.BatteryData;
 
 /**
  * Created by tmichalski on 13.01.16.

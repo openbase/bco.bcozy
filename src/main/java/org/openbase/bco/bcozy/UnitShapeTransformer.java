@@ -33,8 +33,8 @@ import org.openbase.jul.extension.rst.processing.LabelProcessor;
 import org.openbase.jul.schedule.GlobalCachedExecutorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.domotic.unit.UnitConfigType.UnitConfig;
-import rst.math.Vec3DDoubleType.Vec3DDouble;
+import org.openbase.type.domotic.unit.UnitConfigType.UnitConfig;
+import org.openbase.type.math.Vec3DDoubleType.Vec3DDouble;
 
 import java.util.ArrayList;
 import java.util.List;

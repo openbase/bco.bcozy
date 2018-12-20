@@ -331,11 +331,6 @@
         <!-- Openbase Deps -->
         <dependency>
             <groupId>org.openbase</groupId>
-            <artifactId>jul.extension.rct</artifactId>
-            <version>${dependency.jul.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openbase</groupId>
             <artifactId>jul.schedule</artifactId>
             <version>${dependency.jul.version}</version>
         </dependency>

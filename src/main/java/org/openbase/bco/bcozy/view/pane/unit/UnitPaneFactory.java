@@ -22,9 +22,9 @@ import java.util.concurrent.TimeUnit;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.pattern.Factory;
-import rst.domotic.unit.UnitConfigType;
-import rst.domotic.unit.UnitTemplateType;
-import rst.rsb.ScopeType;
+import org.openbase.type.domotic.unit.UnitConfigType;
+import org.openbase.type.domotic.unit.UnitTemplateType;
+import org.openbase.type.com.ScopeType;
 import org.openbase.jul.exception.InstantiationException;
 
 /**

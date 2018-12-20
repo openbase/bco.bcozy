@@ -25,7 +25,7 @@ import javafx.scene.paint.Color;
 import org.openbase.bco.dal.remote.layer.unit.MotionDetectorRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.visual.javafx.JFXConstants;
-import rst.domotic.unit.dal.MotionDetectorDataType.MotionDetectorData;
+import org.openbase.type.domotic.unit.dal.MotionDetectorDataType.MotionDetectorData;
 
 /**
  * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>

@@ -20,7 +20,7 @@ package org.openbase.bco.bcozy.view.pane.unit.backup;
 
 import org.openbase.bco.bcozy.view.pane.unit.AbstractUnitPane;
 import org.openbase.bco.dal.remote.layer.unit.LightSensorRemote;
-import rst.domotic.unit.dal.LightSensorDataType;
+import org.openbase.type.domotic.unit.dal.LightSensorDataType;
 
 /**
  * Created by tmichalski on 15.01.16.

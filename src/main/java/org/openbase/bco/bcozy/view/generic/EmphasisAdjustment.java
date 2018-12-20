@@ -26,7 +26,7 @@ import org.openbase.bco.bcozy.view.ObserverLabel;
 import org.openbase.jul.visual.javafx.iface.DynamicPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.domotic.state.EmphasisStateType.EmphasisState;
+import org.openbase.type.domotic.state.EmphasisStateType.EmphasisState;
 
 /**
  *

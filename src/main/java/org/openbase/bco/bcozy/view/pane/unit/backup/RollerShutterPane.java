@@ -20,7 +20,7 @@ package org.openbase.bco.bcozy.view.pane.unit.backup;
 
 import org.openbase.bco.bcozy.view.pane.unit.AbstractUnitPane;
 import org.openbase.bco.dal.remote.layer.unit.RollerShutterRemote;
-import rst.domotic.unit.dal.RollerShutterDataType.RollerShutterData;
+import org.openbase.type.domotic.unit.dal.RollerShutterDataType.RollerShutterData;
 
 /**
  * Created by hoestreich on 11/19/15.

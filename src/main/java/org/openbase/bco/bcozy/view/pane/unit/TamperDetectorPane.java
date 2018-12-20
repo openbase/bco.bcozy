@@ -25,8 +25,8 @@ import org.openbase.bco.dal.remote.layer.unit.TamperDetectorRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
-import rst.domotic.state.TamperStateType.TamperState.State;
-import rst.domotic.unit.dal.TamperDetectorDataType.TamperDetectorData;
+import org.openbase.type.domotic.state.TamperStateType.TamperState.State;
+import org.openbase.type.domotic.unit.dal.TamperDetectorDataType.TamperDetectorData;
 
 /**
  * Created by agatting on 12.04.16.

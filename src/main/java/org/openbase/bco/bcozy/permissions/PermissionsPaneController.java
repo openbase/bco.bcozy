@@ -28,11 +28,11 @@ import org.openbase.jul.visual.javafx.control.AbstractFXController;
 import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.language.MultiLanguageTextType;
-import rst.language.LabelType;
-import rst.language.LabelType.Label.MapFieldEntry;
-import rst.domotic.unit.UnitConfigType;
-import rst.domotic.unit.UnitConfigType.UnitConfig;
+import org.openbase.type.language.MultiLanguageTextType;
+import org.openbase.type.language.LabelType;
+import org.openbase.type.language.LabelType.Label.MapFieldEntry;
+import org.openbase.type.domotic.unit.UnitConfigType;
+import org.openbase.type.domotic.unit.UnitConfigType.UnitConfig;
 
 import java.util.List;
 import java.util.Objects;

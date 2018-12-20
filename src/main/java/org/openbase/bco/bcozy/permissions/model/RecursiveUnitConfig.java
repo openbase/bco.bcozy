@@ -3,7 +3,7 @@ package org.openbase.bco.bcozy.permissions.model;
 import com.jfoenix.controls.JFXTreeTableView;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import javafx.beans.property.SimpleObjectProperty;
-import rst.domotic.unit.UnitConfigType;
+import org.openbase.type.domotic.unit.UnitConfigType;
 
 import java.util.Objects;
 

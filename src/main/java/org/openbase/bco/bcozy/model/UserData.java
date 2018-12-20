@@ -11,8 +11,8 @@ import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.domotic.unit.UnitConfigType;
-import rst.domotic.unit.user.UserConfigType;
+import org.openbase.type.domotic.unit.UnitConfigType;
+import org.openbase.type.domotic.unit.user.UserConfigType;
 
 import java.util.ArrayList;
 import java.util.List;

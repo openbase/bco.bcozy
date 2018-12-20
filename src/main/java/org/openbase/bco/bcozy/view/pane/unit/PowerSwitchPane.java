@@ -25,8 +25,8 @@ import org.openbase.bco.dal.remote.layer.unit.PowerSwitchRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
-import rst.domotic.state.PowerStateType.PowerState;
-import rst.domotic.unit.dal.PowerSwitchDataType.PowerSwitchData;
+import org.openbase.type.domotic.state.PowerStateType.PowerState;
+import org.openbase.type.domotic.unit.dal.PowerSwitchDataType.PowerSwitchData;
 
 /**
  * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>

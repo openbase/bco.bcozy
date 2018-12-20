@@ -39,13 +39,13 @@ import org.openbase.jul.visual.javafx.JFXConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rct.Transform;
-import rst.domotic.state.EnablingStateType;
-import rst.domotic.unit.UnitConfigType.UnitConfig;
-import rst.domotic.unit.UnitTemplateType;
-import rst.domotic.unit.UnitTemplateType.UnitTemplate.UnitType;
-import rst.domotic.unit.location.LocationConfigType;
-import rst.geometry.AxisAlignedBoundingBox3DFloatType;
-import rst.geometry.PoseType;
+import org.openbase.type.domotic.state.EnablingStateType;
+import org.openbase.type.domotic.unit.UnitConfigType.UnitConfig;
+import org.openbase.type.domotic.unit.UnitTemplateType;
+import org.openbase.type.domotic.unit.UnitTemplateType.UnitTemplate.UnitType;
+import org.openbase.type.domotic.unit.location.LocationConfigType;
+import org.openbase.type.geometry.AxisAlignedBoundingBox3DFloatType;
+import org.openbase.type.geometry.PoseType;
 
 /**
  * Controller for the top layer of the room plan that includes buttons for the light units.

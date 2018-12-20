@@ -26,8 +26,8 @@ import org.openbase.bco.dal.remote.layer.unit.scene.SceneRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
-import rst.domotic.state.ActivationStateType.ActivationState.State;
-import rst.domotic.unit.scene.SceneDataType.SceneData;
+import org.openbase.type.domotic.state.ActivationStateType.ActivationState.State;
+import org.openbase.type.domotic.unit.scene.SceneDataType.SceneData;
 
 /**
  * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>

@@ -30,7 +30,7 @@ import org.openbase.jul.schedule.RecurrenceEventFilter;
 import org.openbase.jul.visual.javafx.JFXConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.domotic.unit.dal.ColorableLightDataType.ColorableLightData;
+import org.openbase.type.domotic.unit.dal.ColorableLightDataType.ColorableLightData;
 import java.util.concurrent.Future;
 import javafx.scene.layout.Pane;
 import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
@@ -40,7 +40,7 @@ import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.extension.rst.processing.TimestampJavaTimeTransform;
 import org.openbase.jul.processing.StringProcessor;
 import org.openbase.jul.visual.javafx.transform.JFXColorToHSBColorTransformer;
-import rst.domotic.state.PowerStateType.PowerState;
+import org.openbase.type.domotic.state.PowerStateType.PowerState;
 
 /**
  * Created by agatting on 03.12.15.

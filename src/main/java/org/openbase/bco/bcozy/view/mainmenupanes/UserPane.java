@@ -43,8 +43,8 @@ import org.openbase.jul.visual.javafx.JFXConstants;
 import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.language.LabelType;
-import rst.domotic.unit.UnitConfigType.UnitConfig;
+import org.openbase.type.language.LabelType;
+import org.openbase.type.domotic.unit.UnitConfigType.UnitConfig;
 
 import java.util.ArrayList;
 import java.util.List;

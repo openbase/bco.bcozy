@@ -2,7 +2,7 @@ package org.openbase.bco.bcozy.permissions.model;
 
 import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.extension.rst.processing.LabelProcessor;
-import rst.language.LabelType.Label;
+import org.openbase.type.language.LabelType.Label;
 
 import javax.annotation.Nonnull;
 import java.util.List;

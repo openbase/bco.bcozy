@@ -46,10 +46,10 @@ import org.openbase.jul.pattern.Observable;
 import org.openbase.jul.pattern.Observer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.domotic.registry.UnitRegistryDataType.UnitRegistryData;
-import rst.domotic.unit.UnitConfigType.UnitConfig;
-import rst.domotic.unit.UnitTemplateType.UnitTemplate.UnitType;
-import rst.domotic.unit.user.UserConfigType;
+import org.openbase.type.domotic.registry.UnitRegistryDataType.UnitRegistryData;
+import org.openbase.type.domotic.unit.UnitConfigType.UnitConfig;
+import org.openbase.type.domotic.unit.UnitTemplateType.UnitTemplate.UnitType;
+import org.openbase.type.domotic.unit.user.UserConfigType;
 
 /**
  * Created by hoestreich on 12/15/15.

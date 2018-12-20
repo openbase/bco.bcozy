@@ -45,7 +45,7 @@ import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 import org.openbase.jul.visual.javafx.iface.DynamicPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.language.LabelType;
+import org.openbase.type.language.LabelType;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;

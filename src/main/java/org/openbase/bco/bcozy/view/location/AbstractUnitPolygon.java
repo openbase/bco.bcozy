@@ -28,7 +28,7 @@ import org.openbase.jul.exception.InstantiationException;
 import org.openbase.jul.iface.Manageable;
 import org.openbase.jul.pattern.Observer;
 import org.openbase.jul.pattern.provider.DataProvider;
-import rst.domotic.unit.UnitConfigType.UnitConfig;
+import org.openbase.type.domotic.unit.UnitConfigType.UnitConfig;
 
 /**
  * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>

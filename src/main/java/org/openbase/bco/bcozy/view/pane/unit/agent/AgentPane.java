@@ -32,9 +32,9 @@ import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
 import org.openbase.jul.schedule.RecurrenceEventFilter;
-import rst.domotic.state.ActivationStateType.ActivationState.State;
-import rst.domotic.state.EmphasisStateType.EmphasisState;
-import rst.domotic.unit.agent.AgentDataType.AgentData;
+import org.openbase.type.domotic.state.ActivationStateType.ActivationState.State;
+import org.openbase.type.domotic.state.EmphasisStateType.EmphasisState;
+import org.openbase.type.domotic.unit.agent.AgentDataType.AgentData;
 
 /**
  * Created by agatting on 12.04.16.

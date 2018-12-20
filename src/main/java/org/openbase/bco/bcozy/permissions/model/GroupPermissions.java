@@ -1,6 +1,6 @@
 package org.openbase.bco.bcozy.permissions.model;
 
-import rst.language.LabelType.Label;
+import org.openbase.type.language.LabelType.Label;
 
 /**
  * ViewModel for Permission by a group for an unit, consisting of the group and their rights.

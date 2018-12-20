@@ -25,11 +25,11 @@ import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.domotic.unit.dal.LightDataType.LightData;
+import org.openbase.type.domotic.unit.dal.LightDataType.LightData;
 import java.util.concurrent.Future;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.dal.remote.layer.unit.LightRemote;
-import rst.domotic.state.PowerStateType.PowerState;
+import org.openbase.type.domotic.state.PowerStateType.PowerState;
 
 /**
  * Created by agatting on 03.12.15.

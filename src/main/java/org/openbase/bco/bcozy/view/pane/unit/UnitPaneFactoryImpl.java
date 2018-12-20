@@ -26,9 +26,9 @@ import org.openbase.jul.exception.EnumNotSupportedException;
 import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.exception.InstantiationException;
 import org.openbase.jul.processing.StringProcessor;
-import rst.domotic.unit.UnitConfigType.UnitConfig;
-import rst.domotic.unit.UnitTemplateType;
-import rst.rsb.ScopeType;
+import org.openbase.type.domotic.unit.UnitConfigType.UnitConfig;
+import org.openbase.type.domotic.unit.UnitTemplateType;
+import org.openbase.type.com.ScopeType;
 
 /**
  * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>

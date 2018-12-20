@@ -22,7 +22,7 @@ import javafx.scene.Node;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import rst.domotic.unit.UnitTemplateType.UnitTemplate.UnitType;
+import org.openbase.type.domotic.unit.UnitTemplateType.UnitTemplate.UnitType;
 
 import java.util.List;
 import org.openbase.bco.dal.lib.layer.unit.UnitRemote;

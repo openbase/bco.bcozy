@@ -20,7 +20,7 @@ package org.openbase.bco.bcozy.view.pane.unit.backup;
 
 import org.openbase.bco.bcozy.view.pane.unit.AbstractUnitPane;
 import org.openbase.bco.dal.remote.layer.unit.PowerConsumptionSensorRemote;
-import rst.domotic.unit.dal.PowerConsumptionSensorDataType.PowerConsumptionSensorData;
+import org.openbase.type.domotic.unit.dal.PowerConsumptionSensorDataType.PowerConsumptionSensorData;
 
 /**
  * Created by andi on 08.04.16.

@@ -7,8 +7,8 @@ import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.extension.rst.processing.LabelProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.language.LabelType.Label;
-import rst.language.LabelType.LabelOrBuilder;
+import org.openbase.type.language.LabelType.Label;
+import org.openbase.type.language.LabelType.LabelOrBuilder;
 
 import java.util.*;
 

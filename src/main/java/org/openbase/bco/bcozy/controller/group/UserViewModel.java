@@ -2,7 +2,7 @@ package org.openbase.bco.bcozy.controller.group;
 
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.SimpleStringProperty;
-import rst.domotic.unit.UnitConfigType;
+import org.openbase.type.domotic.unit.UnitConfigType;
 
 /**
  * ViewModel, used to display user in tables.

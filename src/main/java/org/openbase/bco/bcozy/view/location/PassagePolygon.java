@@ -23,7 +23,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.paint.Color;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.jul.exception.InstantiationException;
-import rst.domotic.unit.connection.ConnectionDataType;
+import org.openbase.type.domotic.unit.connection.ConnectionDataType;
 
 /**
  *

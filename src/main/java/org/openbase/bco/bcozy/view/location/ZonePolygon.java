@@ -24,7 +24,7 @@ import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.EnumNotSupportedException;
 import org.openbase.jul.exception.InstantiationException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
-import rst.domotic.unit.location.LocationDataType;
+import org.openbase.type.domotic.unit.location.LocationDataType;
 
 /**
  *

@@ -8,12 +8,12 @@ import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.VerificationFailedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.domotic.unit.UnitConfigType;
-import rst.domotic.unit.UnitConfigType.UnitConfig;
-import rst.domotic.unit.UnitTemplateType;
-import rst.domotic.unit.UnitTemplateType.UnitTemplate.UnitType;
-import rst.domotic.unit.authorizationgroup.AuthorizationGroupConfigType.AuthorizationGroupConfig;
-import rst.domotic.unit.user.UserConfigType;
+import org.openbase.type.domotic.unit.UnitConfigType;
+import org.openbase.type.domotic.unit.UnitConfigType.UnitConfig;
+import org.openbase.type.domotic.unit.UnitTemplateType;
+import org.openbase.type.domotic.unit.UnitTemplateType.UnitTemplate.UnitType;
+import org.openbase.type.domotic.unit.authorizationgroup.AuthorizationGroupConfigType.AuthorizationGroupConfig;
+import org.openbase.type.domotic.unit.user.UserConfigType;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;

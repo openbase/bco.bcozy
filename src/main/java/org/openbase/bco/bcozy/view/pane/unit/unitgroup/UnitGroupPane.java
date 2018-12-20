@@ -26,8 +26,8 @@ import org.openbase.bco.dal.remote.layer.unit.unitgroup.UnitGroupRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
-import rst.domotic.state.PowerStateType.PowerState;
-import rst.domotic.unit.unitgroup.UnitGroupDataType.UnitGroupData;
+import org.openbase.type.domotic.state.PowerStateType.PowerState;
+import org.openbase.type.domotic.unit.unitgroup.UnitGroupDataType.UnitGroupData;
 
 /**
  * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>

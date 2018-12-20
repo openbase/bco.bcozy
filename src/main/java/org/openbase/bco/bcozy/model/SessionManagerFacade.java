@@ -1,11 +1,11 @@
 package org.openbase.bco.bcozy.model;
 
-import rst.domotic.unit.UnitConfigType;
+import org.openbase.type.domotic.unit.UnitConfigType;
 
 import java.util.List;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.VerificationFailedException;
-import rst.domotic.unit.user.UserConfigType;
+import org.openbase.type.domotic.unit.user.UserConfigType;
 
 /**
  * @author vdasilva

@@ -43,11 +43,11 @@ import org.openbase.jul.visual.javafx.JFXConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rct.Transform;
-import rst.domotic.state.EnablingStateType;
-import rst.domotic.unit.UnitConfigType.UnitConfig;
-import rst.domotic.unit.UnitTemplateType;
-import rst.domotic.unit.UnitTemplateType.UnitTemplate.UnitType;
-import rst.geometry.PoseType;
+import org.openbase.type.domotic.state.EnablingStateType;
+import org.openbase.type.domotic.unit.UnitConfigType.UnitConfig;
+import org.openbase.type.domotic.unit.UnitTemplateType;
+import org.openbase.type.domotic.unit.UnitTemplateType.UnitTemplate.UnitType;
+import org.openbase.type.geometry.PoseType;
 
 /**
  * Controller for the pane for the maintenance layer of the room plan that includes buttons for the following units:

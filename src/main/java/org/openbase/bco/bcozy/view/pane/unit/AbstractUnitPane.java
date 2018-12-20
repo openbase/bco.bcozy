@@ -45,7 +45,7 @@ import org.openbase.jul.iface.Initializable;
 import org.openbase.jul.iface.Shutdownable;
 import org.openbase.jul.pattern.Observer;
 import org.openbase.jul.pattern.Remote.ConnectionState;
-import rst.domotic.unit.UnitConfigType.UnitConfig;
+import org.openbase.type.domotic.unit.UnitConfigType.UnitConfig;
 
 import java.util.Map;
 

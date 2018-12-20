@@ -23,7 +23,7 @@ import de.jensd.fx.glyphs.materialicons.MaterialIcon;
 import javafx.scene.paint.Color;
 import org.openbase.bco.dal.remote.layer.unit.ReedContactRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
-import rst.domotic.unit.dal.ReedContactDataType.ReedContactData;
+import org.openbase.type.domotic.unit.dal.ReedContactDataType.ReedContactData;
 
 /**
  * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>

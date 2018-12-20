@@ -29,9 +29,9 @@ import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.visual.javafx.control.AbstractFXController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.domotic.unit.UnitConfigType.UnitConfig;
-import rst.domotic.unit.UnitTemplateType.UnitTemplate.UnitType;
-import rst.domotic.unit.user.UserConfigType;
+import org.openbase.type.domotic.unit.UnitConfigType.UnitConfig;
+import org.openbase.type.domotic.unit.UnitTemplateType.UnitTemplate.UnitType;
+import org.openbase.type.domotic.unit.user.UserConfigType;
 
 import java.util.ArrayList;
 import java.util.List;

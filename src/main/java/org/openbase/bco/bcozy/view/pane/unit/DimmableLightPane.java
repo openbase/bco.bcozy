@@ -26,12 +26,12 @@ import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
 import org.openbase.jul.schedule.RecurrenceEventFilter;
-import rst.domotic.unit.dal.DimmableLightDataType.DimmableLightData;
+import org.openbase.type.domotic.unit.dal.DimmableLightDataType.DimmableLightData;
 import java.util.concurrent.Future;
 import javafx.scene.layout.Pane;
 import org.openbase.bco.dal.remote.layer.unit.DimmableLightRemote;
-import rst.domotic.state.BrightnessStateType.BrightnessState;
-import rst.domotic.state.PowerStateType.PowerState;
+import org.openbase.type.domotic.state.BrightnessStateType.BrightnessState;
+import org.openbase.type.domotic.state.PowerStateType.PowerState;
 
 /**
  * Created by agatting on 03.12.15.

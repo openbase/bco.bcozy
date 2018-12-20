@@ -28,7 +28,7 @@ import org.openbase.jul.exception.InstantiationException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.domotic.unit.connection.ConnectionDataType;
+import org.openbase.type.domotic.unit.connection.ConnectionDataType;
 
 /**
  *

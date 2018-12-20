@@ -25,8 +25,8 @@ import org.openbase.bco.dal.remote.layer.unit.TemperatureSensorRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
-import rst.domotic.state.TemperatureStateType;
-import rst.domotic.unit.dal.TemperatureSensorDataType.TemperatureSensorData;
+import org.openbase.type.domotic.state.TemperatureStateType;
+import org.openbase.type.domotic.unit.dal.TemperatureSensorDataType.TemperatureSensorData;
 
 /**
  * Created by tmichalski on 17.01.16.

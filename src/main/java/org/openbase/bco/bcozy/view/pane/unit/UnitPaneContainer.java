@@ -24,7 +24,7 @@ import org.openbase.bco.bcozy.view.mainmenupanes.ObserverTitledPane;
 import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rst.domotic.unit.UnitTemplateType.UnitTemplate.UnitType;
+import org.openbase.type.domotic.unit.UnitTemplateType.UnitTemplate.UnitType;
 
 import java.util.List;
 import org.openbase.jps.core.JPService;
