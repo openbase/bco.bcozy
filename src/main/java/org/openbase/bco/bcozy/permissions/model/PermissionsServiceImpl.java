@@ -18,8 +18,8 @@ import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 
-import static rst.domotic.authentication.PermissionConfigType.PermissionConfig;
-import static rst.domotic.unit.UnitConfigType.UnitConfig;
+import static org.openbase.type.domotic.authentication.PermissionConfigType.PermissionConfig;
+import static org.openbase.type.domotic.unit.UnitConfigType.UnitConfig;
 
 /**
  * @author vdasilva
