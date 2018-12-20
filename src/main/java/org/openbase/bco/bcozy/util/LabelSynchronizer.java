@@ -4,17 +4,14 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import org.openbase.bco.bcozy.model.LanguageSelection;
 import org.openbase.jul.exception.NotAvailableException;
-import org.openbase.jul.exception.printer.ExceptionPrinter;
-import org.openbase.jul.extension.rst.processing.LabelProcessor;
+import org.openbase.jul.extension.type.processing.LabelProcessor;
 import org.openbase.jul.iface.Shutdownable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.openbase.type.language.LabelType.Label;
 import org.openbase.type.language.LabelType.LabelOrBuilder;
 
-import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.Locale;
-import java.util.Observable;
 import java.util.Observer;
 
 /**

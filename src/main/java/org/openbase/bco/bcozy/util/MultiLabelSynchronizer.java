@@ -1,10 +1,5 @@
 package org.openbase.bco.bcozy.util;
 
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-import org.openbase.bco.bcozy.model.LanguageSelection;
-import org.openbase.jul.exception.NotAvailableException;
-import org.openbase.jul.extension.rst.processing.LabelProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.openbase.type.language.LabelType.Label;
