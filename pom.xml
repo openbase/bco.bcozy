@@ -328,6 +328,13 @@
     </pluginRepositories>
 
     <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+
         <!-- Openbase Deps -->
         <dependency>
             <groupId>org.openbase</groupId>
