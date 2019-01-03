@@ -172,11 +172,11 @@ public class UnitsPaneController {
                     if (config.getEnablingState().getValue() != EnablingStateType.EnablingState.State.ENABLED) {
                         continue;
                     }
-                    if (!config.getPlacementConfig().hasPosition()) {
+                    if (!config.getPlacementConfig().hasPose()) {
                         continue;
                     }
 
-                    PoseType.Pose pose = config.getPlacementConfig().getPosition();
+                    PoseType.Pose pose = config.getPlacementConfig().getPose();
                     try {
                         final Future<Transform> transform = Registries.getUnitRegistry().getUnitTransformationFuture(config,
                                 Registries.getUnitRegistry().getRootLocationConfig());

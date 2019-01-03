@@ -238,8 +238,8 @@ public final class LocationPane extends MultiTouchPane {
 
                 locationBaseStack.getChildren().addAll(coordinate, text);
                 locationBaseStack.autosize();
-                locationBaseStack.setLayoutX(locationUnitConfig.getPlacementConfig().getPosition().getTranslation().getY() * Constants.METER_TO_PIXEL - (locationBaseStack.getWidth() / 2));
-                locationBaseStack.setLayoutY(locationUnitConfig.getPlacementConfig().getPosition().getTranslation().getX() * Constants.METER_TO_PIXEL - (locationBaseStack.getHeight() / 2));
+                locationBaseStack.setLayoutX(locationUnitConfig.getPlacementConfig().getPose().getTranslation().getY() * Constants.METER_TO_PIXEL - (locationBaseStack.getWidth() / 2));
+                locationBaseStack.setLayoutY(locationUnitConfig.getPlacementConfig().getPose().getTranslation().getX() * Constants.METER_TO_PIXEL - (locationBaseStack.getHeight() / 2));
                 locationBaseStack.hoverProperty().addListener((observable, oldValue, newValue) -> {
                     InfoPane.info("This is the base of the " + locationUnitConfig.getLabel());
                 });
