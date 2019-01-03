@@ -25,8 +25,8 @@ import org.openbase.bco.authentication.lib.AuthorizationHelper;
 import org.openbase.bco.authentication.lib.SessionManager;
 import org.openbase.bco.authentication.lib.jp.JPAuthentication;
 import org.openbase.bco.bcozy.view.InfoPane;
-import org.openbase.jul.pattern.ConfigurableRemote;
-import org.openbase.jul.pattern.Remote;
+import org.openbase.jul.pattern.controller.ConfigurableRemote;
+import org.openbase.jul.pattern.controller.Remote;
 import org.openbase.jul.pattern.provider.DataProvider;
 import org.openbase.jul.visual.javafx.JFXConstants;
 import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
@@ -44,7 +44,7 @@ import org.openbase.jul.extension.protobuf.IdentifiableMessage;
 import org.openbase.jul.iface.Initializable;
 import org.openbase.jul.iface.Shutdownable;
 import org.openbase.jul.pattern.Observer;
-import org.openbase.jul.pattern.Remote.ConnectionState;
+import org.openbase.type.domotic.state.ConnectionStateType.ConnectionState;
 import org.openbase.type.domotic.unit.UnitConfigType.UnitConfig;
 
 import java.util.Map;
@@ -62,7 +62,7 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Messa
 
     private final Observer<ConfigurableRemote<String, D, UnitConfig>, UnitConfig> unitConfigObserver;
     private final Observer<DataProvider<D>,D> unitDataObserver;
-    private final Observer<Remote, ConnectionState> unitConnectionObserver;
+    private final Observer<Remote, ConnectionState.State> unitConnectionObserver;
     private final Observer<SessionManager, String> loginObserver;
 
     /**
@@ -88,9 +88,9 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Messa
             }
         };
         this.unitDataObserver = (source, data) -> applyDataUpdate(data);
-        this.unitConnectionObserver = new Observer<Remote, ConnectionState>() {
+        this.unitConnectionObserver = new Observer<Remote, ConnectionState.State>() {
             @Override
-            public void update(Remote source, ConnectionState connectionState) {
+            public void update(Remote source, ConnectionState.State connectionState) {
                 Platform.runLater(() -> {
                     try {
                         applyConnectionStateUpdate(connectionState);
@@ -287,7 +287,7 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Messa
      *
      * @throws CouldNotPerformException
      */
-    protected void applyConnectionStateUpdate(final ConnectionState connectionState) throws CouldNotPerformException {
+    protected void applyConnectionStateUpdate(final ConnectionState.State connectionState) throws CouldNotPerformException {
         switch (connectionState) {
             case CONNECTED:
                 setDisable(false);

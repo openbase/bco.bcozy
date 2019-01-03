@@ -15,7 +15,7 @@ import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InstantiationException;
 import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
-import org.openbase.jul.pattern.Remote.ConnectionState;
+import org.openbase.type.domotic.state.ConnectionStateType.ConnectionState;
 import org.openbase.jul.schedule.GlobalScheduledExecutorService;
 import org.openbase.jul.visual.javafx.JFXConstants;
 import org.openbase.jul.visual.javafx.fxml.FXMLProcessor;
@@ -118,10 +118,10 @@ public class LogoPane extends HBox {
         }
     }
 
-    private void updateIconState(final ConnectionState connectionState) {
+    private void updateIconState(final ConnectionState.State connectionState) {
         updateIconState(connectionState, true);
     }
-    private void updateIconState(final ConnectionState connectionState, boolean animation) {
+    private void updateIconState(final ConnectionState.State connectionState, boolean animation) {
 
         Color defaultColor, inversDefaultColor;
         if (ThemeManager.isDarkThemeSelected()) {

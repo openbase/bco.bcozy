@@ -40,8 +40,8 @@ import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
 import org.openbase.jul.pattern.Observer;
-import org.openbase.jul.pattern.Remote;
-import org.openbase.jul.pattern.Remote.ConnectionState;
+import org.openbase.jul.pattern.controller.Remote;
+import org.openbase.type.domotic.state.ConnectionStateType.ConnectionState;
 import org.openbase.jul.schedule.GlobalCachedExecutorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,7 +73,7 @@ public class BCozy extends Application {
     private static final Logger LOGGER = LoggerFactory.getLogger(BCozy.class);
 
     public static Stage primaryStage;
-    private static Observer<Remote, ConnectionState> connectionObserver;
+    private static Observer<Remote, ConnectionState.State> connectionObserver;
     private LoadingPane loadingPane;
     private ContextMenuController contextMenuController;
     private LocationPaneController locationPaneController;
