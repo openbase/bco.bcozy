@@ -133,15 +133,8 @@ public class AuthorizationGroupUsersController {
         } catch (CouldNotPerformException ex) {
             ExceptionPrinter.printHistory(ex, LOGGER);
 
-            String message = null;
-            try {
-                message = ExceptionProcessor.getInitialCauseMessage(ex);
-            } catch (NotAvailableException e) {
-                message = "Unknown Error";
-            }
-
             String failureMessage = LanguageSelection.getLocalized("removeUserFromGroup.failure",
-                    user.getName(), group.getLabel(), message);
+                    user.getName(), group.getLabel(), ExceptionProcessor.getInitialCauseMessage(ex));
 
             InfoPane.info(failureMessage)
                     .backgroundColor(Color.RED)
@@ -149,7 +142,6 @@ public class AuthorizationGroupUsersController {
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
         }
-
     }
 
     @FXML
@@ -170,15 +162,8 @@ public class AuthorizationGroupUsersController {
         } catch (CouldNotPerformException ex) {
             ExceptionPrinter.printHistory(ex, LOGGER);
 
-            String message = null;
-            try {
-                message = ExceptionProcessor.getInitialCauseMessage(ex);
-            } catch (NotAvailableException e) {
-                message = "Unknown Error";
-            }
-
             String failureMessage = LanguageSelection.getLocalized("addUserToGroup.failure",
-                    user.getName(), group.getLabel(), message);
+                    user.getName(), group.getLabel(), ExceptionProcessor.getInitialCauseMessage(ex));
 
             InfoPane.info(failureMessage)
                     .backgroundColor(Color.RED)
@@ -187,7 +172,6 @@ public class AuthorizationGroupUsersController {
             Thread.currentThread().interrupt();
         }
     }
-
 
     public ObjectProperty<UnitConfigType.UnitConfig> selectedGroupProperty() {
         return selectedGroup;

@@ -94,14 +94,7 @@ public class UnitPermissionController {
                     .hideAfter(Duration.seconds(5));
         } catch (ExecutionException | CouldNotPerformException ex) {
             ExceptionPrinter.printHistory(ex, LOGGER);
-            String message = null;
-            try {
-                message = LanguageSelection.getLocalized("saveErrorWithMessage", ExceptionProcessor.getInitialCauseMessage(ex));
-            } catch (NotAvailableException e) {
-                message = "Unknown Error";
-            }
-
-            InfoPane.info(message)
+            InfoPane.info(LanguageSelection.getLocalized("saveErrorWithMessage", ExceptionProcessor.getInitialCauseMessage(ex)))
                     .backgroundColor(Color.RED)
                     .hideAfter(Duration.seconds(5));
         } catch (InterruptedException e) {

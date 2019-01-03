@@ -503,14 +503,7 @@ public class UserManagementController extends AbstractFXController {
     }
 
     private void showErrorMessage(Exception ex) {
-        String message = null;
-        try {
-            message = LanguageSelection.getLocalized("saveErrorWithMessage", ExceptionProcessor.getInitialCauseMessage(ex));
-        } catch (NotAvailableException e) {
-            message = "Unknown Error";
-        }
-
-        InfoPane.info(message)
+        InfoPane.info(LanguageSelection.getLocalized("saveErrorWithMessage", ExceptionProcessor.getInitialCauseMessage(ex)))
                 .backgroundColor(Color.RED)
                 .hideAfter(Duration.seconds(5));
     }
