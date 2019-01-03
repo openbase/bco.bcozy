@@ -40,7 +40,7 @@ public interface UnitPaneFactory extends Factory<AbstractUnitPane, UnitConfigTyp
      * @throws CouldNotPerformException is thrown if any other error occurs during buildup.
      * @throws InterruptedException
      */
-    public AbstractUnitPane newInitializedInstance(final UnitConfigType.UnitConfig config) throws CouldNotPerformException, InterruptedException;
+    AbstractUnitPane newInitializedInstance(final UnitConfigType.UnitConfig config) throws CouldNotPerformException, InterruptedException;
 
     /**
      * Creates an unit pane out of the given unit configuration.
@@ -50,7 +50,7 @@ public interface UnitPaneFactory extends Factory<AbstractUnitPane, UnitConfigTyp
      * @throws InstantiationException
      */
     @Override
-    public AbstractUnitPane newInstance(final UnitConfigType.UnitConfig config) throws InstantiationException;
+    AbstractUnitPane newInstance(final UnitConfigType.UnitConfig config) throws InstantiationException;
 
     /**
      * Creates an unit pane out of the given unit class.
@@ -60,7 +60,7 @@ public interface UnitPaneFactory extends Factory<AbstractUnitPane, UnitConfigTyp
      * @return the new created unit pane.
      * @throws InstantiationException
      */
-    public <R extends AbstractUnitPane> R newInstance(final Class<R> unitRemoteClass) throws InstantiationException;
+    <R extends AbstractUnitPane> R newInstance(final Class<R> unitRemoteClass) throws InstantiationException;
 
     /**
      * Creates an unit pane out of the given unit id.
@@ -72,7 +72,7 @@ public interface UnitPaneFactory extends Factory<AbstractUnitPane, UnitConfigTyp
      * @throws InstantiationException is thrown if the unit could not be instantiated with the given information.
      * @throws InterruptedException is thrown if the thread was externally interrupted.
      */
-    public AbstractUnitPane newInstance(String unitId, long timeout, final TimeUnit timeUnit) throws InstantiationException, CouldNotPerformException, InterruptedException;
+    AbstractUnitPane newInstance(String unitId, long timeout, final TimeUnit timeUnit) throws CouldNotPerformException, InterruptedException;
 
     /**
      * Creates and initializes an unit pane out of the given unit id.
@@ -86,7 +86,7 @@ public interface UnitPaneFactory extends Factory<AbstractUnitPane, UnitConfigTyp
      * @throws CouldNotPerformException is thrown if any other error occurs during buildup.
      * @throws InterruptedException is thrown if the thread was externally interrupted.
      */
-    public AbstractUnitPane newInitializedInstance(final String unitId, long timeout, final TimeUnit timeUnit) throws InitializationException, InstantiationException, CouldNotPerformException, InterruptedException;
+    AbstractUnitPane newInitializedInstance(final String unitId, long timeout, final TimeUnit timeUnit) throws InitializationException, InstantiationException, CouldNotPerformException, InterruptedException;
 
     /**
      * Creates an unit pane out of the given unit configuration.
@@ -95,6 +95,6 @@ public interface UnitPaneFactory extends Factory<AbstractUnitPane, UnitConfigTyp
      * @return the new created and initialized unit pane.
      * @throws InstantiationException is thrown if the unit could not be instantiated with the given information.
      */
-    public AbstractUnitPane newInstance(final UnitTemplateType.UnitTemplate.UnitType type) throws InstantiationException;
+    AbstractUnitPane newInstance(final UnitTemplateType.UnitTemplate.UnitType type) throws InstantiationException;
 
 }

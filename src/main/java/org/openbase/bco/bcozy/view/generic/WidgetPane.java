@@ -243,14 +243,14 @@ public class WidgetPane extends VBox implements DynamicPane {
         toggleSwitch.setBackground(Background.EMPTY);
 
         headPane.setLeft(iconPane);
-        headPane.setAlignment(iconPane, Pos.CENTER);
+        BorderPane.setAlignment(iconPane, Pos.CENTER);
 
         headPane.setCenter(widgetLabel);
-        headPane.setAlignment(widgetLabel, Pos.CENTER_LEFT);
+        BorderPane.setAlignment(widgetLabel, Pos.CENTER_LEFT);
 
         if (activateable) {
             headPane.setRight(toggleSwitch);
-            headPane.setAlignment(toggleSwitch, Pos.CENTER);
+            BorderPane.setAlignment(toggleSwitch, Pos.CENTER);
         }
     }
 

@@ -68,9 +68,9 @@ public class AdvancedHorizontalSlider extends Pane {
         slider = new StackPane(sliderBackground, sliderActualStatus, thumb);
         slider.setOnMouseDragged(event -> addMouseEventHandler(event));
         slider.setOnMouseClicked(event -> addMouseEventHandler(event));
-        slider.setAlignment(sliderBackground, Pos.CENTER_LEFT);
-        slider.setAlignment(sliderActualStatus, Pos.CENTER_LEFT);
-        slider.setAlignment(thumb, Pos.CENTER_LEFT);
+        StackPane.setAlignment(sliderBackground, Pos.CENTER_LEFT);
+        StackPane.setAlignment(sliderActualStatus, Pos.CENTER_LEFT);
+        StackPane.setAlignment(thumb, Pos.CENTER_LEFT);
         topLabelShape = new SVGGlyphIcon(MaterialIcon.CHAT_BUBBLE, JFXConstants.ICON_SIZE_MIDDLE, false);
         topLabel = new Label("");
         topLabelShape.getStyleClass().addAll(Constants.SMALL_LABEL, "advanced-horizontal-slider-label-top");

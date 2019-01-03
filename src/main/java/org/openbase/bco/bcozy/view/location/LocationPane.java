@@ -171,13 +171,13 @@ public final class LocationPane extends MultiTouchPane {
                     final TilePolygon tilePolygon = new TilePolygon(this, points);
                     tilePolygon.init(locationUnitConfig);
                     tilePolygon.activate();
-                    tileMap.put(locationUnitConfig.getId(), (TilePolygon) tilePolygon);
+                    tileMap.put(locationUnitConfig.getId(), tilePolygon);
                     break;
                 case REGION:
                     final RegionPolygon regionPolygon = new RegionPolygon(this, points);
                     regionPolygon.init(locationUnitConfig);
                     regionPolygon.activate();
-                    regionMap.put(locationUnitConfig.getId(), (RegionPolygon) regionPolygon);
+                    regionMap.put(locationUnitConfig.getId(), regionPolygon);
                     break;
                 case ZONE:
                     final ZonePolygon zonePolygon = new ZonePolygon(this, points);
@@ -188,7 +188,7 @@ public final class LocationPane extends MultiTouchPane {
                     if (locationUnitConfig.getLocationConfig().getRoot()) {
                         setRootLocation(zonePolygon);
                     }
-                    zoneMap.put(locationUnitConfig.getId(), (ZonePolygon) zonePolygon);
+                    zoneMap.put(locationUnitConfig.getId(), zonePolygon);
                     break;
                 default:
                     throw new EnumNotSupportedException(locationUnitConfig.getLocationConfig().getType(), this);

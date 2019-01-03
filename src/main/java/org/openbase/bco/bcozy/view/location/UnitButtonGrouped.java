@@ -62,7 +62,7 @@ public class UnitButtonGrouped extends Pane {
      * Constructor for the grouped button.
      */
     public UnitButtonGrouped() {
-        locationId = new String();
+        locationId = "";
         expanded = false;
         groupingPane = new FlowPane();
         groupingPane.setPrefWrapLength(2 * (JFXConstants.ICON_SIZE_SMALL + (2 * Constants.INSETS)));

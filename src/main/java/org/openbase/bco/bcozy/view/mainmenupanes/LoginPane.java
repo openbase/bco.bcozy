@@ -151,9 +151,7 @@ public class LoginPane extends PaneElement {
         userNameTextField.getStyleClass().clear();
         passwordField.getStyleClass().add("password-field");
         userNameTextField.getStyleClass().add("text-field");
-        if (loginLayout.getChildren().contains(inputWrongLabel)) {
-            loginLayout.getChildren().remove(inputWrongLabel);
-        }
+        loginLayout.getChildren().remove(inputWrongLabel);
     }
 
     @Override

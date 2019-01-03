@@ -68,7 +68,7 @@ public class AgentPane extends AbstractUnitPane<AgentRemote, AgentData> {
         emphasisAdjustment = new EmphasisAdjustment();
         emphasisAdjustment.initContent();
 
-        ChangeListener changeListener = (ChangeListener) (observable, oldValue, newValue) -> {
+        ChangeListener changeListener = (observable, oldValue, newValue) -> {
             if (isHover()) {
                 try {
                     recurrenceEventFilterComfort.trigger(emphasisAdjustment.getCurrentEmphasisState());

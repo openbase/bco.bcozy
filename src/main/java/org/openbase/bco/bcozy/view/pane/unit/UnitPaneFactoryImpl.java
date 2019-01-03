@@ -144,7 +144,7 @@ public class UnitPaneFactoryImpl implements UnitPaneFactory {
      * @throws InstantiationException {@inheritDoc}
      */
     @Override
-    public AbstractUnitPane newInstance(String unitId, long timeout, TimeUnit timeUnit) throws InstantiationException, CouldNotPerformException, InterruptedException {
+    public AbstractUnitPane newInstance(String unitId, long timeout, TimeUnit timeUnit) throws CouldNotPerformException, InterruptedException {
         CachedUnitRegistryRemote.waitForData(timeout, timeUnit);
         return newInstance(CachedUnitRegistryRemote.getRegistry().getUnitConfigById(unitId));
     }
