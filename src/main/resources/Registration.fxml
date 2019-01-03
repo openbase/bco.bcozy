@@ -1,17 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
+<?import com.jfoenix.controls.JFXCheckBox?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-
-<?import org.openbase.bco.bcozy.view.ObserverButton?>
-
-<?import com.jfoenix.controls.JFXCheckBox?>
-<?import org.openbase.bco.bcozy.view.ObserverLabel?>
 <?import org.controlsfx.control.CheckComboBox?>
-<?import org.openbase.bco.bcozy.view.Constants?>
+<?import org.openbase.bco.bcozy.view.*?>
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:id="root"

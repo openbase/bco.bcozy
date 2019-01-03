@@ -1,14 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.JFXTextField?>
-<?import com.jfoenix.controls.JFXTreeTableView?>
-<?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TabPane?>
-<?import javafx.scene.layout.AnchorPane?>
-
-<?import javafx.scene.layout.VBox?>
-<?import org.controlsfx.control.textfield.CustomTextField?>
-<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <?import org.openbase.bco.bcozy.view.ObserverLabel?>
 <AnchorPane fx:id="settingsPaneParent" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="org.openbase.bco.bcozy.controller.SettingsController">

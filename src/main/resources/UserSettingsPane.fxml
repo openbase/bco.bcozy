@@ -1,16 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.*?>
-
-<?import org.controlsfx.control.textfield.CustomTextField?>
-<?import org.openbase.bco.bcozy.view.ObserverButton?>
-<?import org.openbase.bco.bcozy.view.ObserverLabel?>
-<?import com.jfoenix.controls.JFXCheckBox?>
-<?import com.jfoenix.controls.JFXPasswordField?>
+<?import org.controlsfx.control.textfield.*?>
+<?import org.openbase.bco.bcozy.view.*?>
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="org.openbase.bco.bcozy.controller.UserSettingsController" fx:id="root"
