@@ -3,11 +3,8 @@ package org.openbase.bco.bcozy.util;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.Scene;
 import org.openbase.bco.bcozy.BCozy;
-import org.openbase.bco.bcozy.view.Constants;
-import org.openbase.bco.bcozy.view.ImageViewProvider;
 import org.openbase.jul.visual.javafx.JFXConstants;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ThemeManager {

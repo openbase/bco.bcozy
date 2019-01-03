@@ -18,11 +18,6 @@
  */
 package org.openbase.bco.bcozy.controller;
 
-import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
-import de.jensd.fx.glyphs.materialicons.MaterialIcon;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.event.ActionEvent;
-import javafx.stage.Stage;
 import org.openbase.bco.bcozy.view.CenterPane;
 import org.openbase.bco.bcozy.view.ForegroundPane;
 import org.slf4j.Logger;

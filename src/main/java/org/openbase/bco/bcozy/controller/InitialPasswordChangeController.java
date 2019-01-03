@@ -11,7 +11,6 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Pair;
 import org.openbase.bco.bcozy.util.ThemeManager;
-import org.openbase.bco.bcozy.view.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

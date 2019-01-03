@@ -24,7 +24,6 @@ import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.pattern.Factory;
 import org.openbase.type.domotic.unit.UnitConfigType;
 import org.openbase.type.domotic.unit.UnitTemplateType;
-import org.openbase.type.com.ScopeType;
 import org.openbase.jul.exception.InstantiationException;
 
 /**

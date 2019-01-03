@@ -1,6 +1,5 @@
 package org.openbase.bco.bcozy.model;
 
-import com.google.protobuf.ProtocolStringList;
 import org.openbase.bco.authentication.lib.SessionManager;
 import org.openbase.bco.bcozy.util.AuthorizationGroups;
 import org.openbase.bco.registry.remote.Registries;
@@ -12,7 +11,6 @@ import org.openbase.type.domotic.unit.UnitConfigType;
 import org.openbase.type.domotic.unit.UnitConfigType.UnitConfig;
 import org.openbase.type.domotic.unit.UnitTemplateType;
 import org.openbase.type.domotic.unit.UnitTemplateType.UnitTemplate.UnitType;
-import org.openbase.type.domotic.unit.authorizationgroup.AuthorizationGroupConfigType.AuthorizationGroupConfig;
 import org.openbase.type.domotic.unit.user.UserConfigType;
 
 import java.util.List;

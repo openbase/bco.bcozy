@@ -18,7 +18,6 @@
  */
 package org.openbase.bco.bcozy.view;
 
-import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 
 /**

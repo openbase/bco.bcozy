@@ -20,8 +20,6 @@ package org.openbase.bco.bcozy.controller;
 
 import org.openbase.bco.bcozy.view.ForegroundPane;
 import org.openbase.bco.bcozy.view.mainmenupanes.AvailableUsersPane;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Created by hoestreich on 11/24/15.

@@ -28,7 +28,6 @@ import org.openbase.jul.exception.InstantiationException;
 import org.openbase.jul.processing.StringProcessor;
 import org.openbase.type.domotic.unit.UnitConfigType.UnitConfig;
 import org.openbase.type.domotic.unit.UnitTemplateType;
-import org.openbase.type.com.ScopeType;
 
 /**
  * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>

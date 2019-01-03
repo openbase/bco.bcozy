@@ -23,8 +23,6 @@ import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import org.openbase.bco.bcozy.BCozy;
-import org.openbase.bco.bcozy.util.ThemeManager;
 import org.openbase.jul.exception.NotAvailableException;
 
 /**

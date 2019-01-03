@@ -13,7 +13,6 @@ import javafx.util.Pair;
 import org.openbase.bco.bcozy.model.LanguageSelection;
 import org.openbase.bco.bcozy.permissions.model.RecursiveUnitConfig;
 import org.openbase.bco.bcozy.util.ThemeManager;
-import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ForegroundPane;
 import org.openbase.bco.bcozy.view.ObserverLabel;
 import org.openbase.jul.exception.CouldNotPerformException;
@@ -23,9 +22,6 @@ import org.openbase.jul.visual.javafx.control.AbstractFXController;
 import org.openbase.jul.visual.javafx.fxml.FXMLProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Locale;
-import java.util.ResourceBundle;
 
 /**
  * @author vdasilva
