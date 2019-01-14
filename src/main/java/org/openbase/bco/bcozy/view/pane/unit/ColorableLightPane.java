@@ -146,7 +146,7 @@ public class ColorableLightPane extends AbstractUnitPane<ColorableLightRemote, C
     @Override
     public String getUnitStateDescription() throws NotAvailableException {
         return getUnitRemote().getLabel()
-                + " was switched " + StringProcessor.transformUpperCaseToCamelCase(getData().getPowerState().getValue().name())
+                + " was switched " + StringProcessor.transformUpperCaseToPascalCase(getData().getPowerState().getValue().name())
                 + " at " + dateFormat.format(new Date(TimestampJavaTimeTransform.transform(getData().getPowerState().getTimestamp()))) 
                 + " with Action["+getData().getPowerState().getResponsibleAction().getDescription()+"]";
     }

@@ -74,9 +74,9 @@ public class UnitPaneFactoryImpl implements UnitPaneFactory {
             String remoteClassName = null;
             // check unit type and load related class.
             if (UnitConfigProcessor.isBaseUnit(unitType)) {
-                remoteClassName = AbstractUnitPane.class.getPackage().getName() + "." + unitType.name().toLowerCase().replaceAll("_", "") + "." + StringProcessor.transformUpperCaseToCamelCase(unitType.name()) + "Pane";
+                remoteClassName = AbstractUnitPane.class.getPackage().getName() + "." + unitType.name().toLowerCase().replaceAll("_", "") + "." + StringProcessor.transformUpperCaseToPascalCase(unitType.name()) + "Pane";
             } else if (UnitConfigProcessor.isDalUnit(unitType)) {
-                remoteClassName = AbstractUnitPane.class.getPackage().getName() + "." + StringProcessor.transformUpperCaseToCamelCase(unitType.name()) + "Pane";
+                remoteClassName = AbstractUnitPane.class.getPackage().getName() + "." + StringProcessor.transformUpperCaseToPascalCase(unitType.name()) + "Pane";
             } else {
                 throw new EnumNotSupportedException(unitType, UnitPaneFactoryImpl.class);
             }
