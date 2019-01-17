@@ -7,6 +7,17 @@ branches:
       #- /^(?i:feature)-.*$/
       #- /^(?i:release)-.*$/
 
+jdk:
+  - openjdk11
+  - openjdk-ea
+
+install:
+  - mvn --settings .travis/settings.xml clean install -DskipTests=true -Dmaven.javadoc.skip=true -B -U -V -q
+
+before_install:
+  - echo $GPG_SECRET_KEYS | base64 --decode | $GPG_EXECUTABLE --import
+  - echo $GPG_OWNERTRUST | base64 --decode | $GPG_EXECUTABLE --import-ownertrust
+
 notifications:
     email:
         on_success: never
@@ -17,17 +28,6 @@ notifications:
         rooms:
             - openbase-org:vGz7LO4CvGoGMneYkEm3ON7E#build
             #- openbase-org:vGz7LO4CvGoGMneYkEm3ON7E#bco-bcozy
-
-jdk:
-  - openjdk11
-  - openjdk-ea
-  
-install:
-  - mvn --settings .travis/settings.xml clean install -DskipTests=true -Dmaven.javadoc.skip=true -B -U -V -q
-
-before_install:
-  - echo $GPG_SECRET_KEYS | base64 --decode | $GPG_EXECUTABLE --import
-  - echo $GPG_OWNERTRUST | base64 --decode | $GPG_EXECUTABLE --import-ownertrust
 
 deploy:
   - provider: script
