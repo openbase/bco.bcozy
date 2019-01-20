@@ -307,8 +307,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <test.configs>${project.basedir}/target/generated-test-config</test.configs>
-        <target.java.version>1.8</target.java.version>
-        <source.java.version>1.8</source.java.version>
+        <target.java.version>11</target.java.version>
+        <source.java.version>11</source.java.version>
         <plugin.checkstyle.version>2.15</plugin.checkstyle.version>
         <plugin.pmd.version>3.5</plugin.pmd.version>
         <plugin.javadoc.version>2.10.3</plugin.javadoc.version>
