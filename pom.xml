@@ -166,30 +166,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- Generate PMD warnings on the command line during compilation -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-pmd-plugin</artifactId>
-                <version>${plugin.pmd.version}</version>
-                <configuration>
-                    <targetJdk>${target.java.version}</targetJdk>
-                    <rulesets>
-                        <ruleset>${project.basedir}/codecheck/pmd-rules.xml</ruleset>
-                    </rulesets>
-                    <failOnViolation>${failOnStyleError}</failOnViolation>
-                    <verbose>true</verbose>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>pmd-check</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>check</goal>
-                            <goal>cpd-check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -310,7 +286,7 @@
         <target.java.version>11</target.java.version>
         <source.java.version>11</source.java.version>
         <plugin.checkstyle.version>2.15</plugin.checkstyle.version>
-        <plugin.pmd.version>3.5</plugin.pmd.version>
+        <plugin.pmd.version>3.11.0</plugin.pmd.version>
         <plugin.javadoc.version>2.10.3</plugin.javadoc.version>
         <failOnStyleError>false</failOnStyleError>
         <logback.version>[1.2,1.3-alpha)</logback.version>
@@ -395,19 +371,6 @@
                     <show>protected</show>
                     <excludePackageNames>spread</excludePackageNames>
                     <quiet>true</quiet>
-                </configuration>
-            </plugin>
-
-            <!-- Also generate a PMD report. -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-pmd-plugin</artifactId>
-                <version>${plugin.pmd.version}</version>
-                <configuration>
-                    <targetJdk>${target.java.version}</targetJdk>
-                    <rulesets>
-                        <ruleset>${project.basedir}/codecheck/pmd-rules.xml</ruleset>
-                    </rulesets>
                 </configuration>
             </plugin>
 
