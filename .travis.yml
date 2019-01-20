@@ -1,7 +1,5 @@
 language: java
 
-dist: xenial
-
 branches:
   except:
       #- /^(?i:feature)-.*$/
