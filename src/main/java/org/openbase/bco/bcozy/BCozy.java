@@ -21,6 +21,7 @@ package org.openbase.bco.bcozy;
 import com.guigarage.responsive.ResponsiveHandler;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -154,7 +155,16 @@ public class BCozy extends Application {
 
             final double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
             final double screenHeight = Screen.getPrimary().getVisualBounds().getHeight();
-            primaryStage.setTitle("BCO BCozy");
+            primaryStage.setTitle("BCozy");
+
+            try {
+                LOGGER.debug("Try to load icon...");
+                primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/icons/bco_logo_black_white.png")));
+                LOGGER.debug("App icon loaded...");
+            } catch (Exception ex) {
+                ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.WARN);
+            }
+
 
             final StackPane root = new StackPane();
             foregroundPane = new ForegroundPane(screenHeight, screenWidth);
