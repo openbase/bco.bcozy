@@ -69,6 +69,6 @@ public class ScenePane extends AbstractUnitPane<SceneRemote, SceneData> {
 
     @Override
     protected Future applyPrimaryActivationUpdate(final boolean activation) throws CouldNotPerformException {
-        return (activation) ? getUnitRemote().setActivationState(State.ACTIVE) : getUnitRemote().setActivationState(State.DEACTIVE);
+        return (activation) ? getUnitRemote().setActivationState(State.ACTIVE) : getUnitRemote().setActivationState(State.INACTIVE);
     }
 }
