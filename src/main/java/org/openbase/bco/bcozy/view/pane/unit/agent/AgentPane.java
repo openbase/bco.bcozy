@@ -56,7 +56,7 @@ public class AgentPane extends AbstractUnitPane<AgentRemote, AgentData> {
         @Override
         public void relay() {
             try {
-                getUnitRemote().getBaseLocationRemote(false).setEmphasisState(getLatestValue());
+                getUnitRemote().getParentLocationRemote(false).setEmphasisState(getLatestValue());
             } catch (CouldNotPerformException | InterruptedException ex) {
                 ExceptionPrinter.printHistory("Could not send color update!", ex, LOGGER);
             }
