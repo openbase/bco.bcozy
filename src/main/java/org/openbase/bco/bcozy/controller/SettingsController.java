@@ -52,12 +52,6 @@ public class SettingsController extends AbstractFXController {
 
     private UserSettingsController userSettingsController;
 
-    /**
-     * @deprecated Use {@link #SettingsController()} instead.
-     */
-    @Deprecated
-    public SettingsController(ForegroundPane foregroudPane) {
-    }
 
     public SettingsController() {
     }

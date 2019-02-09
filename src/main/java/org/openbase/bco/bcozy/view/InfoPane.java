@@ -80,17 +80,6 @@ public class InfoPane extends BorderPane {
         return instance;
     }
 
-    /**
-     * Getter for the actual mouseOverLabel.
-     *
-     * @return the actual text which is set as a string
-     * @deprecated please use method info() instead.
-     */
-    @Deprecated
-    public Label getMouseOverText() {
-        return textLabel;
-    }
-
     public static InfoPaneConfigurer info(final String identifier) {
 //        final String style;
 //        if (ThemeManager.isDarkThemeSelected()) {
