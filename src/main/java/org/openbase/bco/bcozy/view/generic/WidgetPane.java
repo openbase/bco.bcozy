@@ -39,6 +39,7 @@ import org.openbase.bco.bcozy.util.LabelSynchronizer;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ObserverText;
 import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.ExceptionProcessor;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.visual.javafx.JFXConstants;
 import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
@@ -141,7 +142,7 @@ public class WidgetPane extends VBox implements DynamicPane {
         this.widgetLabel = new Label();
         this.widgetLabel.textProperty().bind(labelSynchronizer.textProperty());
 
-        this.primaryActivationObserver = new ChangeListener<Boolean>() {
+        this.primaryActivationObserver = new ChangeListener<>() {
             private Future currentTask;
 
             @Override
@@ -310,7 +311,6 @@ public class WidgetPane extends VBox implements DynamicPane {
      *
      * @param activation a boolean value which refers to the current function activation.
      * @return should return a future object of the triggered tasks or null if no task was triggered.
-     * @throws CouldNotPerformException can be thrown if the update fails.
      */
     protected Future applyPrimaryActivationUpdate(final boolean activation) throws CouldNotPerformException {
         return null;
