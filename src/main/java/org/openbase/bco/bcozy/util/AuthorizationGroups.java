@@ -12,6 +12,7 @@ import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.extension.type.processing.LabelProcessor;
 import org.openbase.jul.pattern.Observer;
 import org.openbase.jul.pattern.provider.DataProvider;
+import org.openbase.jul.schedule.FutureProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.openbase.type.domotic.registry.UnitRegistryDataType.UnitRegistryData;
@@ -131,20 +132,23 @@ public final class AuthorizationGroups {
     public static UnitConfig addAuthorizationGroup(final String groupName) throws InterruptedException, CouldNotPerformException {
         try {
             return tryAddAuthorizationGroup(groupName).get(5, TimeUnit.SECONDS);
-        } catch (CouldNotPerformException | TimeoutException | ExecutionException ex) {
+        } catch (TimeoutException | ExecutionException ex) {
             throw new CouldNotPerformException("Could not add authorization group.", ex);
         }
     }
 
-    public static Future<UnitConfig> tryAddAuthorizationGroup(final String groupName) throws CouldNotPerformException, InterruptedException {
+    public static Future<UnitConfig> tryAddAuthorizationGroup(final String groupName) {
+        try {
+            UnitConfig newGroup = UnitConfig.newBuilder()
+                    .setLabel(LabelProcessor.buildLabel(groupName))
+                    .setUnitType(UnitTemplateType.UnitTemplate.UnitType.AUTHORIZATION_GROUP)
+                    .setAuthorizationGroupConfig(AuthorizationGroupConfig.newBuilder())
+                    .build();
 
-        UnitConfig newGroup = UnitConfig.newBuilder()
-                .setLabel(LabelProcessor.buildLabel(groupName))
-                .setUnitType(UnitTemplateType.UnitTemplate.UnitType.AUTHORIZATION_GROUP)
-                .setAuthorizationGroupConfig(AuthorizationGroupConfig.newBuilder())
-                .build();
-
-        return Registries.getUnitRegistry().registerUnitConfig(newGroup);
+            return Registries.getUnitRegistry().registerUnitConfig(newGroup);
+        } catch (NotAvailableException ex) {
+            return FutureProcessor.canceledFuture(ex);
+        }
     }
 
     public static void tryAddToGroup(final UnitConfig group, final String userId) throws CouldNotPerformException, InterruptedException {
