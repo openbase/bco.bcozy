@@ -166,7 +166,7 @@ public final class LocationPane extends MultiTouchPane {
                 points[i * 2 + 1] = vertices.get(i).getX() * Constants.METER_TO_PIXEL;
             }
 
-            switch (locationUnitConfig.getLocationConfig().getType()) {
+            switch (locationUnitConfig.getLocationConfig().getLocationType()) {
                 case TILE:
                     final TilePolygon tilePolygon = new TilePolygon(this, points);
                     tilePolygon.init(locationUnitConfig);
@@ -191,7 +191,7 @@ public final class LocationPane extends MultiTouchPane {
                     zoneMap.put(locationUnitConfig.getId(), zonePolygon);
                     break;
                 default:
-                    throw new EnumNotSupportedException(locationUnitConfig.getLocationConfig().getType(), this);
+                    throw new EnumNotSupportedException(locationUnitConfig.getLocationConfig().getLocationType(), this);
             }
 
             // Paint debug information
@@ -292,7 +292,7 @@ public final class LocationPane extends MultiTouchPane {
 
             ConnectionPolygon connectionPolygon;
 
-            switch (connectionUnitConfig.getConnectionConfig().getType()) {
+            switch (connectionUnitConfig.getConnectionConfig().getConnectionType()) {
                 case DOOR:
                     connectionPolygon = new DoorPolygon(points);
                     break;
@@ -303,7 +303,7 @@ public final class LocationPane extends MultiTouchPane {
                     connectionPolygon = new PassagePolygon(points);
                     break;
                 default:
-                    throw new EnumNotSupportedException(connectionUnitConfig.getConnectionConfig().getType(), this);
+                    throw new EnumNotSupportedException(connectionUnitConfig.getConnectionConfig().getConnectionType(), this);
             }
 
             connectionPolygon.init(connectionUnitConfig);

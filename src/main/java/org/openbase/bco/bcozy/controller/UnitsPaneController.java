@@ -133,7 +133,7 @@ public class UnitsPaneController {
         for (final UnitConfig locationConfig : locationUnitConfigList) {
 
             // Tiles are the clickable polygons 
-            if (locationConfig.getLocationConfig().getType() != LocationConfigType.LocationConfig.LocationType.TILE) {
+            if (locationConfig.getLocationConfig().getLocationType() != LocationConfigType.LocationConfig.LocationType.TILE) {
                 continue;
             }
             // Only use locations with a valuable shape
