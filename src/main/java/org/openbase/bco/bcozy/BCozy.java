@@ -20,6 +20,7 @@ package org.openbase.bco.bcozy;
 
 import com.guigarage.responsive.ResponsiveHandler;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
@@ -52,13 +53,12 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 /**
- *
  * @author hoestreich
  * @author timo
  * @author agatting
  * @author julian
  * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>
- *
+ * <p>
  * Main Class of the BCozy Program.
  */
 public class BCozy extends Application {
@@ -226,7 +226,9 @@ public class BCozy extends Application {
                 maintenanceLayerController.connectUnitRemote();
                 editingLayerController.connectUnitRemote();
                 loadingPane.info("done");
-                loadingPane.setVisible(false);
+                Platform.runLater(() -> {
+                    loadingPane.setVisible(false);
+                });
                 return null;
             } catch (InterruptedException | CancellationException ex) {
                 // init canceled.
