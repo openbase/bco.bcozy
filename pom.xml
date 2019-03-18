@@ -1,6 +1,7 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    
+
     <groupId>org.openbase</groupId>
     <artifactId>bco.bcozy</artifactId>
     <version>2.0-SNAPSHOT</version>
@@ -8,14 +9,14 @@
     <name>BCO BCozy</name>
     <inceptionYear>2015</inceptionYear>
     <description>This is a user centered and location based smarthome visual control interface.</description>
-    
+
     <url>http://bcozy.org</url>
 
     <organization>
         <name>openbase.org</name>
         <url>http://openbase.org</url>
     </organization>
-    
+
     <developers>
         <developer>
             <id>agatting</id>
@@ -98,7 +99,7 @@
         <developerConnection>scm:git:https://github.com/openbase/bco.bcozy.git</developerConnection>
         <url>https://github.com/openbase/bco.bcozy.git</url>
     </scm>
-    
+
     <build>
         <plugins>
             <plugin>
@@ -204,6 +205,20 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>com.sandec.jpro</groupId>
+                <artifactId>jpro-maven-plugin</artifactId>
+                <version>${jproVersion}</version>
+                <configuration>
+                    <visible>false</visible>
+                    <!--<JVMArgs>-->
+                        <!--<JVMArg>arg1</JVMArg>-->
+                        <!--<JVMArg>arg2</JVMArg>-->
+                    <!--</JVMArgs>-->
+                    <mainClassName>org.openbase.bco.bcozy.BCozy</mainClassName>
+                    <openingPath>/</openingPath>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
@@ -289,14 +304,26 @@
         <dependency.jul.version>${dependency.bco.version}</dependency.jul.version>
         <dependency.bco.dal.version>${dependency.bco.version}</dependency.bco.dal.version>
         <dependency.bco.authentication.version>${dependency.bco.version}</dependency.bco.authentication.version>
+        <jproVersion>2018.1.11</jproVersion>
     </properties>
-    
+
     <pluginRepositories>
         <pluginRepository>
             <id>onejar-maven-plugin.googlecode.com</id>
             <url>http://onejar-maven-plugin.googlecode.com/svn/mavenrepo</url>
         </pluginRepository>
+        <pluginRepository>
+            <id>jpro - sandec repository</id>
+            <url>http://sandec.bintray.com/repo</url>
+        </pluginRepository>
     </pluginRepositories>
+
+    <repositories>
+        <repository>
+            <id>jpro - sandec repository</id>
+            <url>http://sandec.bintray.com/repo</url>
+        </repository>
+    </repositories>
 
     <dependencies>
         <dependency>
@@ -327,7 +354,7 @@
             <artifactId>bco.authentication.lib</artifactId>
             <version>${dependency.bco.authentication.version}</version>
         </dependency>
-        
+
         <dependency>
             <groupId>com.guigarage</groupId>
             <artifactId>responsivefx</artifactId>
@@ -345,6 +372,19 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>${logback.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sandec.jpro</groupId>
+            <artifactId>jpro-webapi</artifactId>
+            <version>${jproVersion}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-web</artifactId>
+            <version>11.0.2</version>
+            <classifier>linux</classifier>
         </dependency>
     </dependencies>
 
