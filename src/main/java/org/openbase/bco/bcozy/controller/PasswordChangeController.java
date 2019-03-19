@@ -58,7 +58,7 @@ public class PasswordChangeController extends AbstractCurrentUserAwareController
         }
 
         try {
-            SessionManager.getInstance().changeCredentials(getUserId(), oldPassword.getText(), newPassword.getText());
+            SessionManager.getInstance().changePassword(getUserId(), oldPassword.getText(), newPassword.getText());
             onPasswordChange.accept(true);
             showSuccessMessage();
         } catch (RejectedException rex) {

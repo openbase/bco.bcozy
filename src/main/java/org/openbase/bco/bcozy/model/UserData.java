@@ -42,7 +42,7 @@ public class UserData {
 
 
     public static UserData currentUser() throws CouldNotPerformException, InterruptedException, TimeoutException, ExecutionException {
-        String userId = SessionManager.getInstance().getUserId();
+        String userId = SessionManager.getInstance().getUserClientPair().getUserId();
         UnitConfigType.UnitConfig userConfig = Registries.getUnitRegistry().getUnitConfigById(userId);
 
         return new UserData(userConfig);

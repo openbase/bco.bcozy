@@ -233,7 +233,7 @@ public class LoginPane extends PaneElement {
             // load user name from registry if possible.
             String displayedUserName;
             try {
-                displayedUserName = Registries.getUnitRegistry().getUnitConfigById(SessionManager.getInstance().getUserId()).getUserConfig().getUserName();
+                displayedUserName = Registries.getUnitRegistry().getUnitConfigById(SessionManager.getInstance().getUserClientPair().getUserId()).getUserConfig().getUserName();
             } catch (CouldNotPerformException ex) {
                 displayedUserName = userNameTextField.getText();
             }

@@ -45,10 +45,10 @@ import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.visual.javafx.JFXConstants;
 import org.openbase.jul.visual.javafx.control.AbstractFXController;
 import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.openbase.type.domotic.unit.UnitConfigType;
 import org.openbase.type.domotic.unit.UnitTemplateType.UnitTemplate.UnitType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -193,7 +193,7 @@ public class UserSettingsController extends AbstractFXController {
 
         try {
 
-            UnitConfigType.UnitConfig.Builder newUserConfig = Registries.getUnitRegistry().getUnitConfigById(SessionManager.getInstance().getUserId(), UnitType.USER).toBuilder();
+            UnitConfigType.UnitConfig.Builder newUserConfig = Registries.getUnitRegistry().getUnitConfigById(SessionManager.getInstance().getUserClientPair().getUserId(), UnitType.USER).toBuilder();
 
             newUserConfig.getUserConfigBuilder()
                     .setUserName(changeUsername.getText())

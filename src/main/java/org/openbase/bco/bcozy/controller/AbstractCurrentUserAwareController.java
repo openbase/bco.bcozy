@@ -15,7 +15,7 @@ public abstract class AbstractCurrentUserAwareController {
 
     protected AbstractCurrentUserAwareController() {
         SessionManager.getInstance().addLoginObserver((o, b) ->
-                userId.set(SessionManager.getInstance().getUserId()));
+                userId.set(SessionManager.getInstance().getUserClientPair().getUserId()));
     }
 
     public String getUserId() {

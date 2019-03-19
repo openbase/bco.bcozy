@@ -44,6 +44,7 @@ import org.openbase.jul.extension.protobuf.IdentifiableMessage;
 import org.openbase.jul.iface.Initializable;
 import org.openbase.jul.iface.Shutdownable;
 import org.openbase.jul.pattern.Observer;
+import org.openbase.type.domotic.authentication.UserClientPairType.UserClientPair;
 import org.openbase.type.domotic.state.ConnectionStateType.ConnectionState;
 import org.openbase.type.domotic.unit.UnitConfigType.UnitConfig;
 
@@ -63,7 +64,7 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Messa
     private final Observer<ConfigurableRemote<String, D, UnitConfig>, UnitConfig> unitConfigObserver;
     private final Observer<DataProvider<D>,D> unitDataObserver;
     private final Observer<Remote, ConnectionState.State> unitConnectionObserver;
-    private final Observer<SessionManager, String> loginObserver;
+    private final Observer<SessionManager, UserClientPair> loginObserver;
 
     /**
      * Constructor for the UnitPane.
@@ -100,9 +101,9 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Messa
                 });
             }
         };
-        this.loginObserver = new Observer<SessionManager, String>() {
+        this.loginObserver = new Observer<SessionManager, UserClientPair>() {
             @Override
-            public void update(SessionManager source, String authority) throws Exception {
+            public void update(SessionManager source, UserClientPair authority) throws Exception {
                 Platform.runLater(() -> {
                     try {
                         applyLoginUpdate();
@@ -308,16 +309,16 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Messa
      * @throws CouldNotPerformException
      */
     protected void applyLoginUpdate() throws CouldNotPerformException {
-        String userAtClientId = null;
+        UserClientPair userClientPair = null;
         Map<String, IdentifiableMessage<String, UnitConfig, UnitConfig.Builder>> groups = null;
         Map<String, IdentifiableMessage<String, UnitConfig, UnitConfig.Builder>> locations = Registries.getUnitRegistry().getLocationUnitConfigRemoteRegistry().getEntryMap();
 
         if (SessionManager.getInstance().isLoggedIn()) {
-            userAtClientId = SessionManager.getInstance().getUserAtClientId();
+            userClientPair = SessionManager.getInstance().getUserClientPair();
             groups = Registries.getUnitRegistry().getAuthorizationGroupUnitConfigRemoteRegistry().getEntryMap();
         }
 
-        disableProperty().set(!AuthorizationHelper.canAccess(AbstractUnitPane.this.unitRemote.getConfig(), userAtClientId, groups, locations));
+        disableProperty().set(!AuthorizationHelper.canAccess(AbstractUnitPane.this.unitRemote.getConfig(), userClientPair, groups, locations));
     }
 
     /**
