@@ -1,5 +1,8 @@
 # BCozy Project - A location based smart home user interface
 
+This section is outdated!
+please checkout the documentation at basecubeone.org
+
 ## Development Rules
 The development rules must be fulfilled to allow project build with maven.
 If violations are noticed, the build will be aborted!
