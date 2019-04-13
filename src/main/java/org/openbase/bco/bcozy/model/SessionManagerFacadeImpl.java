@@ -49,8 +49,8 @@ public class SessionManagerFacadeImpl implements SessionManagerFacade {
             SessionManager.getInstance().registerUser(
                     unitConfig.getId(),
                     plainPassword,
-                    asAdmin);
-        } catch (CouldNotPerformException ex) {
+                    asAdmin).get();
+        } catch (ExecutionException ex) {
             // If adding to the credential storage failed, remove the user from the registry to prevent inconsistencies.
             Registries.getUnitRegistry().removeUnitConfig(unitConfig);
             throw ex;
@@ -66,7 +66,7 @@ public class SessionManagerFacadeImpl implements SessionManagerFacade {
                 AuthorizationGroups.tryRemoveFromGroup(group, unitConfig.getId());
             }
             // ... from the credential storage...
-            SessionManager.getInstance().removeUser(unitConfig.getId()/*unitConfig.getId()*/);
+            SessionManager.getInstance().removeUser(unitConfig.getId()/*unitConfig.getId()*/).get();
 
             // ... and from the registry.
             Registries.getUnitRegistry().removeUnitConfig(unitConfig);

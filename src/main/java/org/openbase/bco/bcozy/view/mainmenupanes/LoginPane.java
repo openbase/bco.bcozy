@@ -197,7 +197,8 @@ public class LoginPane extends PaneElement {
             final String password = passwordField.getText();
             final String userName = userNameTextField.getText();
             final String userId = Registries.getUnitRegistry().getUserUnitIdByUserName(userName);
-            SessionManager.getInstance().login(userId, password);
+            //TODO: allow users to select to stay logged in
+            SessionManager.getInstance().loginUser(userId, password, false);
 
             if (password.equals(INITIAL_PASSWORD)) {
                 showChangeInitialPassword();

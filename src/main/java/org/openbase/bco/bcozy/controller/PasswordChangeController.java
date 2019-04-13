@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
 /**
@@ -58,13 +59,13 @@ public class PasswordChangeController extends AbstractCurrentUserAwareController
         }
 
         try {
-            SessionManager.getInstance().changePassword(getUserId(), oldPassword.getText(), newPassword.getText());
+            SessionManager.getInstance().changePassword(getUserId(), oldPassword.getText(), newPassword.getText()).get();
             onPasswordChange.accept(true);
             showSuccessMessage();
         } catch (RejectedException rex) {
             oldPassword.getStyleClass().add(PASSWORD_FIELD_WRONG_CLASS);
             onPasswordChange.accept(false);
-        } catch (CouldNotPerformException ex) {
+        } catch (ExecutionException | CouldNotPerformException ex) {
             ExceptionPrinter.printHistory(ex, LOGGER);
             onPasswordChange.accept(false);
         }
