@@ -282,6 +282,6 @@ public class BCozy extends Application {
     @Override
     public void init() throws Exception {
         super.init();
-        BCOLogin.autoLogin(false);
+        BCOLogin.getSession().autoLogin(false);
     }
 }
