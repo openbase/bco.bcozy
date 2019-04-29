@@ -45,25 +45,25 @@ public class BatteryPane extends AbstractUnitPane<BatteryRemote, BatteryData> {
         try {
             final double level = getUnitRemote().getData().getBatteryState().getLevel();
             final GlyphIcons icon;
-            if (level > 90) {
+            if (level > 0.90) {
                 icon = MaterialDesignIcon.BATTERY;
-            } else if (level > 80) {
+            } else if (level > 0.80) {
                 icon = MaterialDesignIcon.BATTERY_90;
-            } else if (level > 70) {
+            } else if (level > 0.70) {
                 icon = MaterialDesignIcon.BATTERY_80;
-            } else if (level > 60) {
+            } else if (level > 0.60) {
                 icon = MaterialDesignIcon.BATTERY_70;
-            } else if (level > 50) {
+            } else if (level > 0.50) {
                 icon = MaterialDesignIcon.BATTERY_60;
-            } else if (level > 40) {
+            } else if (level > 0.40) {
                 icon = MaterialDesignIcon.BATTERY_50;
-            } else if (level > 30) {
+            } else if (level > 0.30) {
                 icon = MaterialDesignIcon.BATTERY_40;
-            } else if (level > 20) {
+            } else if (level > 0.20) {
                 icon = MaterialDesignIcon.BATTERY_30;
-            } else if (level > 10) {
+            } else if (level > 0.10) {
                 icon = MaterialDesignIcon.BATTERY_20;
-            } else if (level > 5) {
+            } else if (level > 0.05) {
                 icon = MaterialDesignIcon.BATTERY_10;
             } else {
                 icon = MaterialDesignIcon.BATTERY_ALERT;

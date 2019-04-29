@@ -40,7 +40,7 @@ public class DimmableLightPane extends AbstractUnitPane<DimmableLightRemote, Dim
 
     private JFXSlider brightnessSlider;
 
-    private final RecurrenceEventFilter<Double> recurrenceEventFilterHSV = new RecurrenceEventFilter<Double>(Constants.RECURRENCE_EVENT_FILTER_MILLI_TIMEOUT) {
+    private final RecurrenceEventFilter<Double> recurrenceEventFilterHSV = new RecurrenceEventFilter<>(Constants.RECURRENCE_EVENT_FILTER_MILLI_TIMEOUT) {
 
         @Override
         public void relay() {
@@ -63,7 +63,7 @@ public class DimmableLightPane extends AbstractUnitPane<DimmableLightRemote, Dim
 
     @Override
     protected void initBodyContent(Pane bodyPane) throws CouldNotPerformException {
-        brightnessSlider = new JFXSlider();
+        brightnessSlider = new JFXSlider(0,1,0);
         brightnessSlider.valueProperty().addListener((observable) -> {
             if (isHover()) {
                 try {
@@ -93,7 +93,7 @@ public class DimmableLightPane extends AbstractUnitPane<DimmableLightRemote, Dim
         try {
             brightness = getData().getBrightnessState().getBrightness();
         } catch (CouldNotPerformException ex) {
-            brightness = 100d;
+            brightness = 1d;
             ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.DEBUG);
         }
 

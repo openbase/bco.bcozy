@@ -51,7 +51,7 @@ public class ColorableLightPane extends AbstractUnitPane<ColorableLightRemote, C
 
     private ColorChooser colorChooser;
 
-    private final RecurrenceEventFilter<Color> recurrenceEventFilterHSV = new RecurrenceEventFilter<Color>(Constants.RECURRENCE_EVENT_FILTER_MILLI_TIMEOUT) {
+    private final RecurrenceEventFilter<Color> recurrenceEventFilterHSV = new RecurrenceEventFilter<>(Constants.RECURRENCE_EVENT_FILTER_MILLI_TIMEOUT) {
 
         @Override
         public void relay() {
