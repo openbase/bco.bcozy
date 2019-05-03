@@ -309,7 +309,7 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Messa
      * @throws CouldNotPerformException
      */
     protected void applyLoginUpdate() throws CouldNotPerformException {
-        UserClientPair userClientPair = null;
+        UserClientPair userClientPair = UserClientPair.getDefaultInstance();
         Map<String, IdentifiableMessage<String, UnitConfig, UnitConfig.Builder>> groups = null;
         Map<String, IdentifiableMessage<String, UnitConfig, UnitConfig.Builder>> locations = Registries.getUnitRegistry().getLocationUnitConfigRemoteRegistry().getEntryMap();
 
