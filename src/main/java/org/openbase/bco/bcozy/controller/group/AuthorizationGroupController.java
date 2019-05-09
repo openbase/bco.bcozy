@@ -22,6 +22,7 @@ import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.ExceptionProcessor;
 import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.openbase.jul.extension.type.processing.LabelProcessor;
 import org.openbase.jul.visual.javafx.JFXConstants;
 import org.openbase.jul.visual.javafx.control.AbstractFXController;
 import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
@@ -134,7 +135,7 @@ public class AuthorizationGroupController  extends AbstractFXController {
     }
 
     private void removeGroup(UnitConfigType.UnitConfig group) {
-        if (!Dialog.getConfirmation("removeGroup.confirmation", group.getLabel())) {
+        if (!Dialog.getConfirmation("removeGroup.confirmation", LabelProcessor.getBestMatch(group.getLabel(), "?"))) {
             return;
         }
 

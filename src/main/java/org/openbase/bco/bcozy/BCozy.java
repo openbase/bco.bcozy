@@ -196,7 +196,7 @@ public class BCozy extends Application {
             ResponsiveHandler.addResponsiveToWindow(primaryStage);
             primaryStage.show();
 
-            InfoPane.confirmation("Welcome");
+            InfoPane.confirmation("WELCOME");
             try {
                 Registries.getUnitRegistry().addConnectionStateObserver(connectionObserver);
             } catch (NotAvailableException ex) {

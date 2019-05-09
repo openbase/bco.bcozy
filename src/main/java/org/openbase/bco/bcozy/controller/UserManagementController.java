@@ -108,17 +108,17 @@ public class UserManagementController extends AbstractFXController {
                 -> setGroups(groups)
         );
 
-        chooseUserBox.setConverter(new StringConverter<UserData>() {
+        chooseUserBox.setConverter(new StringConverter<>() {
             @Override
-            public String toString(UserData object) {
-                if (object.isUnsaved()) {
+            public String toString(final UserData userData) {
+                if (userData == null || userData.isUnsaved()) {
                     return  LanguageSelection.getLocalized("newUser");
                 }
-                return object.getUserName();
+                return userData.getUserName();
             }
 
             @Override
-            public UserData fromString(String string) {
+            public UserData fromString(final String string) {
                 return chooseUserBox.getItems().stream()
                         .filter(userData -> !userData.isUnsaved())//filter new user
                         .filter(userData -> userData.getUserName().equals(string))//find user with username

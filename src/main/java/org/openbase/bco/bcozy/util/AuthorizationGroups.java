@@ -99,11 +99,11 @@ public final class AuthorizationGroups {
     }
 
     public static StringConverter<UnitConfig> stringConverter(final List<UnitConfig> groups) {
-        return new StringConverter<UnitConfig>() {
+        return new StringConverter<>() {
             @Override
-            public String toString(final UnitConfig object) {
+            public String toString(final UnitConfig unitConfig) {
                 try {
-                    return LabelProcessor.getBestMatch(object.getLabel());
+                    return (unitConfig == null ? "" : LabelProcessor.getBestMatch(unitConfig.getLabel()));
                 } catch (NotAvailableException e) {
                     return "?";
                 }
@@ -112,7 +112,7 @@ public final class AuthorizationGroups {
             @Override
             public UnitConfig fromString(final String string) {
                 for (final UnitConfig group : groups) {
-                    if ((group.getLabel().equals(string))) {
+                    if ((LabelProcessor.getBestMatch(group.getLabel(), "?").equals(string))) {
                         return group;
                     }
                 }

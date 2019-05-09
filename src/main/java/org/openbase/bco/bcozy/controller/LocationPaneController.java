@@ -26,6 +26,7 @@ import org.openbase.bco.bcozy.view.location.LocationPane;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
+import org.openbase.jul.extension.type.processing.LabelProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.openbase.rct.Transform;
@@ -117,7 +118,7 @@ public class LocationPaneController {
                 locationPane.addLocation(locationUnitConfig, vertices);
    
             } catch (InterruptedException | ExecutionException | TimeoutException ex) {
-                ExceptionPrinter.printHistory("Error while fetching transformation for location \"" + locationUnitConfig.getLabel() + "\", locationID: " + locationUnitConfig.getId(), ex, LOGGER, LogLevel.ERROR);
+                ExceptionPrinter.printHistory("Error while fetching transformation for location \"" + LabelProcessor.getBestMatch(locationUnitConfig.getLabel(),"?") + "\", locationID: " + locationUnitConfig.getId(), ex, LOGGER, LogLevel.ERROR);
             }
           
         }
@@ -157,7 +158,7 @@ public class LocationPaneController {
                 locationPane.addConnection(connectionUnitConfig, vertices);
             } catch (InterruptedException | ExecutionException | TimeoutException ex) {
                 ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
-                LOGGER.error("Error while fetching transformation for connection \"" + connectionUnitConfig.getLabel()
+                LOGGER.error("Error while fetching transformation for connection \"" + LabelProcessor.getBestMatch(connectionUnitConfig.getLabel(),"?")
                         + "\", connectionID: " + connectionUnitConfig.getId());
             }
         }

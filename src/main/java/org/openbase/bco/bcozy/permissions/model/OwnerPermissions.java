@@ -48,11 +48,7 @@ public class OwnerPermissions extends AbstractPermissions {
 
         @Override
         public String toString() {
-            try {
-                return LabelProcessor.getBestMatch(getLabel());
-            } catch (NotAvailableException e) {
-                return "?";
-            }
+            return LabelProcessor.getBestMatch(getLabel(), "?");
         }
 
         public String getUserId() {

@@ -22,6 +22,8 @@ import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.openbase.jul.extension.type.processing.LabelProcessor;
+import org.openbase.jul.extension.type.processing.MultiLanguageTextProcessor;
 import org.openbase.jul.visual.javafx.JFXConstants;
 import org.openbase.jul.visual.javafx.control.AbstractFXController;
 import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
@@ -63,9 +65,9 @@ public class PermissionsPaneController extends AbstractFXController {
     @FXML
     private JFXTreeTableColumn<RecursiveUnitConfig, String> typeColumn;
     @FXML
-    private JFXTreeTableColumn<RecursiveUnitConfig, MultiLanguageTextType.MultiLanguageText> descColumn;
+    private JFXTreeTableColumn<RecursiveUnitConfig, String> descColumn;
     @FXML
-    private JFXTreeTableColumn<RecursiveUnitConfig, LabelType.Label> labelColumn;
+    private JFXTreeTableColumn<RecursiveUnitConfig, String> labelColumn;
 
     private final ObservableList<RecursiveUnitConfig> list = FXCollections.observableArrayList();
 
@@ -112,9 +114,9 @@ public class PermissionsPaneController extends AbstractFXController {
     }
 
     private void fillTreeTableView() {
-        labelColumn.setCellValueFactory(new MethodRefCellValueFactory<>((unit) -> unit.getUnit().getLabel(), labelColumn));
+        labelColumn.setCellValueFactory(new MethodRefCellValueFactory<>((unit) -> LabelProcessor.getBestMatch(unit.getUnit().getLabel(),""), labelColumn));
 
-        descColumn.setCellValueFactory(new MethodRefCellValueFactory<>((unit) -> unit.getUnit().getDescription(), descColumn));
+        descColumn.setCellValueFactory(new MethodRefCellValueFactory<>((unit) -> MultiLanguageTextProcessor.getBestMatch(unit.getUnit().getDescription(),""), descColumn));
 
         typeColumn.setCellValueFactory(new MethodRefCellValueFactory<>((unit) -> unit.getUnit().getUnitType().name(), typeColumn));
 

@@ -24,6 +24,7 @@ import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.ExceptionProcessor;
 import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.openbase.jul.extension.type.processing.LabelProcessor;
 import org.openbase.jul.visual.javafx.JFXConstants;
 import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 import org.slf4j.Logger;
@@ -91,10 +92,10 @@ public class AuthorizationGroupUsersController {
                 () -> new SVGGlyphIcon(FontAwesomeIcon.TIMES, JFXConstants.ICON_SIZE_EXTRA_SMALL, true)
         ));
 
-        availableUsersComboBox.setConverter(new StringConverter<UserViewModel>() {
+        availableUsersComboBox.setConverter(new StringConverter<>() {
             @Override
-            public String toString(UserViewModel object) {
-                return object.getName();
+            public String toString(UserViewModel model) {
+                return (model == null ? "" : model.getName());
             }
 
             @Override
@@ -118,7 +119,7 @@ public class AuthorizationGroupUsersController {
             return;
         }
 
-        if (!Dialog.getConfirmation("removeUserFromGroup.confirmation", user.getName(), group.getLabel())) {
+        if (!Dialog.getConfirmation("removeUserFromGroup.confirmation", user.getName(), LabelProcessor.getBestMatch(group.getLabel(), "?"))) {
             return;
         }
 
@@ -126,7 +127,7 @@ public class AuthorizationGroupUsersController {
             AuthorizationGroups.tryRemoveFromGroup(selectedGroup.get(), user.getId());
 
             String successMessage = LanguageSelection.getLocalized("removeUserFromGroup.success",
-                    user.getName(), group.getLabel());
+                    user.getName(), LabelProcessor.getBestMatch(group.getLabel(), "?"));
             InfoPane.info(successMessage)
                     .backgroundColor(Color.GREEN)
                     .hideAfter(Duration.seconds(5));
@@ -134,7 +135,7 @@ public class AuthorizationGroupUsersController {
             ExceptionPrinter.printHistory(ex, LOGGER);
 
             String failureMessage = LanguageSelection.getLocalized("removeUserFromGroup.failure",
-                    user.getName(), group.getLabel(), ExceptionProcessor.getInitialCauseMessage(ex));
+                    user.getName(), LabelProcessor.getBestMatch(group.getLabel(), "?"), ExceptionProcessor.getInitialCauseMessage(ex));
 
             InfoPane.info(failureMessage)
                     .backgroundColor(Color.RED)
@@ -155,7 +156,7 @@ public class AuthorizationGroupUsersController {
         try {
             AuthorizationGroups.tryAddToGroup(group, user.getId());
             String successMessage = LanguageSelection.getLocalized("addUserToGroup.success",
-                    user.getName(), group.getLabel());
+                    user.getName(), LabelProcessor.getBestMatch(group.getLabel(), "?"));
             InfoPane.info(successMessage)
                     .backgroundColor(Color.GREEN)
                     .hideAfter(Duration.seconds(5));
@@ -163,7 +164,7 @@ public class AuthorizationGroupUsersController {
             ExceptionPrinter.printHistory(ex, LOGGER);
 
             String failureMessage = LanguageSelection.getLocalized("addUserToGroup.failure",
-                    user.getName(), group.getLabel(), ExceptionProcessor.getInitialCauseMessage(ex));
+                    user.getName(), LabelProcessor.getBestMatch(group.getLabel(), "?"), ExceptionProcessor.getInitialCauseMessage(ex));
 
             InfoPane.info(failureMessage)
                     .backgroundColor(Color.RED)

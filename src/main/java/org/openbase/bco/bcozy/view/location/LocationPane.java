@@ -223,7 +223,7 @@ public final class LocationPane extends MultiTouchPane {
                     locationStacks[i].setLayoutY(vertices.get(i).getX() * Constants.METER_TO_PIXEL - (locationStacks[i].getHeight() / 2));
                     final int pos = i;
                     locationStacks[i].hoverProperty().addListener((observable, oldValue, newValue) -> {
-                        InfoPane.info("This is the " + pos + ". coordinate of the " + locationUnitConfig.getLabel());
+                        InfoPane.info("This is the " + pos + ". coordinate of the " + LabelProcessor.getBestMatch(locationUnitConfig.getLabel(),"?"));
                     });
                     debugNodes.add(locationStacks[i]);
                 }
@@ -241,7 +241,7 @@ public final class LocationPane extends MultiTouchPane {
                 locationBaseStack.setLayoutX(locationUnitConfig.getPlacementConfig().getPose().getTranslation().getY() * Constants.METER_TO_PIXEL - (locationBaseStack.getWidth() / 2));
                 locationBaseStack.setLayoutY(locationUnitConfig.getPlacementConfig().getPose().getTranslation().getX() * Constants.METER_TO_PIXEL - (locationBaseStack.getHeight() / 2));
                 locationBaseStack.hoverProperty().addListener((observable, oldValue, newValue) -> {
-                    InfoPane.info("This is the base of the " + locationUnitConfig.getLabel());
+                    InfoPane.info("This is the base of the " + LabelProcessor.getBestMatch(locationUnitConfig.getLabel(),"?"));
                 });
                 debugNodes.add(locationBaseStack);
 
