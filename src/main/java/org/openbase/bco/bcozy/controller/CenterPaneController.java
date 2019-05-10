@@ -40,7 +40,7 @@ public class CenterPaneController {
      * Enum to control the display state.
      */
     public enum State {
-        SETTINGS, TEMPERATURE, MOVEMENT
+        SETTINGS, TEMPERATURE, MOVEMENT, ENERGY
     }
 
     /**
@@ -55,7 +55,6 @@ public class CenterPaneController {
 
     public CenterPaneController(CenterPane centerPane) {
         this.centerPane = centerPane;
-
         isShowing = false;
         activeState = State.SETTINGS;
 

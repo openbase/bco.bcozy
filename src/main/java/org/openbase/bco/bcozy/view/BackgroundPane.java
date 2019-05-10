@@ -79,6 +79,9 @@ public class BackgroundPane extends StackPane {
                         getChildren().add(locationPane);
                         getChildren().add(unitSymbolsPane);
                         break;
+                    case ENERGY:
+                        getChildren().clear();
+                        //TODO: Eigene Pane für Energy machen und hier hinzufügen
                 }
 
             });

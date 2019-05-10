@@ -79,6 +79,9 @@ public class CenterPane extends StackPane {
         viewModes.addElement(MaterialIcon.VISIBILITY, () -> {
             appStateProperty.set(CenterPaneController.State.SETTINGS);
         });
+        viewModes.addElement(MaterialIcon.BATTERY_CHARGING_FULL, () -> {
+           appStateProperty.set(CenterPaneController.State.ENERGY);
+        });
 
         //final FloatingButton settingsBtn = new FloatinrgButton(new SVGIcon(MaterialDesignIcon.SETTINGS, JFXConstants.ICON_SIZE_MIDDLE, true));
         //this.setAlignment(settingsBtn, Pos.TOP_RIGHT);
