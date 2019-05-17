@@ -18,10 +18,16 @@
  */
 package org.openbase.bco.bcozy.view;
 
+import javafx.fxml.FXMLLoader;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import org.openbase.bco.bcozy.view.location.LocationPane;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InstantiationException;
+
+import java.io.IOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -32,6 +38,10 @@ public class BackgroundPane extends StackPane {
     private final UnitSymbolsPane unitSymbolsPane;
     private final SimpleUnitSymbolsPane editingLayerPane;
     private final SimpleUnitSymbolsPane maintenanceLayerPane;
+    private Pane powerDrawPane;
+
+
+    Logger logger = LoggerFactory.getLogger(BackgroundPane.class);
 
     /**
      * The constructor for a BackgroundPane.
@@ -61,6 +71,16 @@ public class BackgroundPane extends StackPane {
             this.editingLayerPane = new SimpleUnitSymbolsPane();
             this.editingLayerPane.setPickOnBounds(false);
 
+            // Pane layer for fast overview over power draw
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("powerTerminal/PowerDrawPane.fxml"));
+            try {
+                this.powerDrawPane = fxmlLoader.load();
+            } catch(IOException e) {
+                logger.error("Failed loading PowerDrawPane.fxml!", e);
+                System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!");
+                powerDrawPane = null;
+            }
+
             // layer management
             foregroundPane.getAppState().addListener((observable, oldValue, newValue) -> {
                 switch (newValue) {
@@ -81,6 +101,7 @@ public class BackgroundPane extends StackPane {
                         break;
                     case ENERGY:
                         getChildren().clear();
+                        getChildren().add(powerDrawPane);
                         //TODO: Eigene Pane für Energy machen und hier hinzufügen
                 }
 
