@@ -80,7 +80,7 @@ public class EmphasisAdjustment extends GridPane implements DynamicPane {
         int counter = 0;
 
         if (comfort) {
-            comfortSlider = new JFXSlider(0.0, 100.0, 0.0);
+            comfortSlider = new JFXSlider(0.0, 1, 0.0);
             comfortSlider.getStyleClass().clear();
             ObserverLabel comfortLabel = new ObserverLabel("comfort");
             comfortSlider.valueProperty().addListener((observable) -> {
@@ -94,7 +94,7 @@ public class EmphasisAdjustment extends GridPane implements DynamicPane {
             counter++;
         }
         if (energy) {
-            economySlider = new JFXSlider(0.0, 100.0, 0.0);
+            economySlider = new JFXSlider(0.0, 1, 0.0);
             economySlider.getStyleClass().clear();
             ObserverLabel energyLabel = new ObserverLabel("economy");
             economySlider.valueProperty().addListener((observable) -> {
@@ -108,7 +108,7 @@ public class EmphasisAdjustment extends GridPane implements DynamicPane {
             counter++;
         }
         if (security) {
-            securitySlider = new JFXSlider(0.0, 100.0, 0.0);
+            securitySlider = new JFXSlider(0.0, 1, 0.0);
             securitySlider.getStyleClass().clear();
             ObserverLabel securityLabel = new ObserverLabel("security");
             securitySlider.valueProperty().addListener((observable) -> {
