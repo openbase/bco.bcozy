@@ -72,7 +72,7 @@ public class BackgroundPane extends StackPane {
             this.editingLayerPane.setPickOnBounds(false);
 
             // Pane layer for fast overview over power draw
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("powerTerminal/PowerDrawPane.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("fxml/powerTerminal/PowerDrawPane.fxml"));
             try {
                 this.powerDrawPane = fxmlLoader.load();
             } catch(IOException e) {
