@@ -18,6 +18,6 @@ public class PowerDrawVisualizationController implements Initializable {
     @Override
     public void initialize (URL url, ResourceBundle rb) {
         webEngine = webView.getEngine();
-        webEngine.load("https://docs.influxdata.com/chronograf/v1.7/introduction/getting-started/");
+        webEngine.load("192.168.75.100:9999");
     }
 }
