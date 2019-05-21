@@ -18,6 +18,10 @@ import java.util.ResourceBundle;
 
 public class PowerDrawVisualizationController implements Initializable {
 
+    public static final String WEBENGINE_ALERT_MESSAGE = "Webengine alert detected!";
+    public static final String WEBENGINE_ERROR_MESSAGE = "Webengine error detected!";
+    public static final String CHRONOGRAPH_URL = "http://192.168.75.100:9999";
+
     @FXML
     WebView webView;
     private WebEngine webEngine;
@@ -27,11 +31,11 @@ public class PowerDrawVisualizationController implements Initializable {
     public void initialize (URL url, ResourceBundle rb) {
         webEngine = webView.getEngine();
         webEngine.setOnAlert((WebEvent<String> event) -> {
-            ExceptionPrinter.printHistory(new InvalidStateException("Webengine alert detected!", new CouldNotPerformException(event.toString())), logger);
+            ExceptionPrinter.printHistory(new InvalidStateException(WEBENGINE_ALERT_MESSAGE, new CouldNotPerformException(event.toString())), logger);
         });
         webEngine.setOnError((WebErrorEvent event) -> {
-            ExceptionPrinter.printHistory(new InvalidStateException("Webengine error detected!", new CouldNotPerformException(event.toString())), logger);
+            ExceptionPrinter.printHistory(new InvalidStateException(WEBENGINE_ERROR_MESSAGE, new CouldNotPerformException(event.toString())), logger);
         });
-        webEngine.load("http://192.168.75.100:9999");
+        webEngine.load(CHRONOGRAPH_URL);
     }
 }

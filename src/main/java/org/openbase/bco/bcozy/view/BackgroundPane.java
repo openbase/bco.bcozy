@@ -34,6 +34,9 @@ import org.slf4j.LoggerFactory;
  */
 public class BackgroundPane extends StackPane {
 
+    public static final String POWER_DRAW_PANE_FXML_LOCATION = "fxml/powerTerminal/PowerDrawPane.fxml";
+    public static final String FXML_LOAD_EXCEPTION_MESSAGE = "Failed loading PowerDrawPane.fxml!";
+
     private final LocationPane locationPane;
     private final UnitSymbolsPane unitSymbolsPane;
     private final SimpleUnitSymbolsPane editingLayerPane;
@@ -72,12 +75,11 @@ public class BackgroundPane extends StackPane {
             this.editingLayerPane.setPickOnBounds(false);
 
             // Pane layer for fast overview over power draw
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("fxml/powerTerminal/PowerDrawPane.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource(POWER_DRAW_PANE_FXML_LOCATION));
             try {
                 this.powerDrawPane = fxmlLoader.load();
             } catch(IOException e) {
-                logger.error("Failed loading PowerDrawPane.fxml!", e);
-                System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!");
+                logger.error(FXML_LOAD_EXCEPTION_MESSAGE, e);
                 powerDrawPane = null;
             }
 

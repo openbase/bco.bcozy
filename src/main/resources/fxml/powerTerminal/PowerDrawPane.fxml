@@ -7,7 +7,7 @@
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="org.openbase.bco.bcozy.controller.powerTerminal.PowerDrawVisualizationController"
             prefWidth="500" prefHeight="400">
-    <StackPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+    <StackPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="300.0" AnchorPane.rightAnchor="300.0" AnchorPane.topAnchor="0.0">
         <WebView fx:id="webView"/>
     </StackPane>
  </AnchorPane>
