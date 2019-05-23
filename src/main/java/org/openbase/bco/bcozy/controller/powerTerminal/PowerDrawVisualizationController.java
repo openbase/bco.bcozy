@@ -20,7 +20,7 @@ public class PowerDrawVisualizationController implements Initializable {
 
     public static final String WEBENGINE_ALERT_MESSAGE = "Webengine alert detected!";
     public static final String WEBENGINE_ERROR_MESSAGE = "Webengine error detected!";
-    public static final String CHRONOGRAPH_URL = "http://192.168.75.100:9999";
+    public static final String CHRONOGRAPH_URL = "http://192.168.75.100:9999/orgs/03e2c6b79272c000/dashboards/03e529b61ff2c000?lower=now%28%29%20-%2024h";
 
     @FXML
     WebView webView;
