@@ -25,8 +25,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import org.controlsfx.control.HiddenSidesPane;
 import org.openbase.jul.visual.javafx.JFXConstants;
 import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
@@ -45,6 +44,14 @@ public class UnitMenu extends VBox {
     private TitledUnitPaneContainer titledPaneContainer;
     private FloatingButton fullscreenBtn;
     private final FloatingButton settingsBtn;
+    private final SVGGlyphIcon collapseIcon;
+    private FloatingButton collapseBtn;
+    private HBox collapseButtons;
+    private boolean maximized;
+    private HBox floatingButtons;
+    private final HiddenSidesPane hiddenSidesPane;
+    private final double height;
+    private final double width;
 
 
     /**
@@ -59,13 +66,27 @@ public class UnitMenu extends VBox {
         this.setMinWidth(width);
         this.setPrefHeight(height);
         this.setPrefWidth(width);
+        this.height = height;
+        this.width = width;
+        this.maximized = true;
 
 
         fullscreenBtn = new FloatingButton(new SVGGlyphIcon(MaterialIcon.FULLSCREEN, JFXConstants.ICON_SIZE_MIDDLE, true));
 
         settingsBtn = new FloatingButton(new SVGGlyphIcon(MaterialDesignIcon.SETTINGS, JFXConstants.ICON_SIZE_MIDDLE, true));
 
-        HBox floatingButtons = new HBox(20.0, settingsBtn, fullscreenBtn);
+        collapseIcon = new SVGGlyphIcon(MaterialIcon.KEYBOARD_ARROW_RIGHT, JFXConstants.ICON_SIZE_MIDDLE, true);
+        collapseBtn = new FloatingButton(collapseIcon);
+        collapseBtn.translateYProperty().set(-(Constants.FLOATING_BUTTON_OFFSET));
+
+        collapseButtons = new HBox();
+        collapseButtons.getChildren().add(collapseBtn);
+        collapseButtons.setAlignment(Pos.BOTTOM_LEFT);
+        collapseButtons.translateXProperty().set(Constants.INSETS);
+        this.setVgrow(collapseButtons, Priority.ALWAYS);
+
+
+        floatingButtons = new HBox(20.0, settingsBtn, fullscreenBtn);
         floatingButtons.setAlignment(Pos.TOP_LEFT);
         floatingButtons.translateYProperty().set(Constants.FLOATING_BUTTON_OFFSET_Y);
         floatingButtons.translateXProperty().set(Constants.FLOATING_BUTTON_OFFSET_X);
@@ -82,7 +103,7 @@ public class UnitMenu extends VBox {
 
         final ScrollBar scrollBar = new ScrollBar();
         scrollBar.setOrientation(Orientation.VERTICAL);
-        final HiddenSidesPane hiddenSidesPane = new HiddenSidesPane();
+        this.hiddenSidesPane = new HiddenSidesPane();
         hiddenSidesPane.setContent(verticalScrollPane);
         hiddenSidesPane.setRight(scrollBar);
         hiddenSidesPane.setTriggerDistance(Constants.TRIGGER_DISTANCE);
@@ -139,6 +160,50 @@ public class UnitMenu extends VBox {
     }
 
     /**
+     * Method to make this menu invisible.
+     * Animations should be added in the future
+     */
+    public void minimizeUnitMenu() {
+        maximized = false;
+        collapseIcon.setForegroundIcon(MaterialIcon.KEYBOARD_ARROW_LEFT);
+        this.getChildren().clear();
+        this.getChildren().addAll(collapseBtn);
+        this.setAlignment(Pos.BOTTOM_CENTER);
+        this.setMinWidth(Constants.SMALL_MAIN_MENU_WIDTH);
+        this.setPrefWidth(Constants.SMALL_MAIN_MENU_WIDTH_PREF);
+    }
+
+    /**
+     * Method to make this menu visible.
+     * Animations should be added in the future
+     */
+    public void maximizeUnitMenu() {
+        maximized = true;
+        collapseIcon.setForegroundIcon(MaterialIcon.KEYBOARD_ARROW_RIGHT);
+        this.getChildren().clear();
+        setMinHeight(height);
+        setMinWidth(width);
+        setPrefHeight(height);
+        setPrefWidth(width);
+        collapseButtons.getChildren().add(collapseBtn);
+        collapseButtons.setAlignment(Pos.BOTTOM_LEFT);
+        collapseButtons.translateXProperty().set(Constants.INSETS);
+        this.setVgrow(collapseButtons, Priority.ALWAYS);
+        this.getChildren().addAll(floatingButtons, roomInfo, hiddenSidesPane, collapseButtons);
+        this.getStyleClass().addAll("detail-menu");
+    }
+
+    public void removeCollapseBtn () {
+        if (this.getChildren().contains(collapseBtn))
+            this.getChildren().remove(collapseButtons);
+    }
+
+    public void addCollapseBtn () {
+        if(!this.getChildren().contains(collapseBtn))
+            this.getChildren().add(collapseButtons);
+    }
+
+    /**
      * Clears the vertical ScrollPane of the ContextMenu.
      */
     public void clearVerticalScrollPane() {
@@ -151,5 +216,22 @@ public class UnitMenu extends VBox {
 
     public FloatingButton getSettingsBtn() {
         return settingsBtn;
+    }
+
+    /**
+     * Getter for the current display state.
+     *
+     * @return true if maximized, false if minimized
+     */
+    public boolean isMaximized() {
+        return maximized;
+    }
+
+    public SVGGlyphIcon getCollapseIcon() {
+        return collapseIcon;
+    }
+
+    public FloatingButton getCollapseBtn() {
+        return collapseBtn;
     }
 }

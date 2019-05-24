@@ -104,10 +104,10 @@ public class BackgroundPane extends StackPane {
                     case ENERGY:
                         getChildren().clear();
                         getChildren().add(powerDrawPane);
-                        //TODO: Eigene Pane für Energy machen und hier hinzufügen
+                        break;
                 }
-
             });
+
             this.getStyleClass().add("background-pane");
             // init touch
             this.locationPane.initMultiTouch();

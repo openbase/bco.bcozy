@@ -24,6 +24,8 @@ import java.util.Map;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import org.openbase.bco.bcozy.view.ForegroundPane;
+import org.openbase.bco.bcozy.view.UnitMenu;
+import org.openbase.bco.bcozy.view.mainmenupanes.AvailableUsersPane;
 import org.openbase.bco.bcozy.view.pane.unit.TitledUnitPaneContainer;
 import org.openbase.bco.bcozy.view.location.LocationPane;
 import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
@@ -73,6 +75,34 @@ public class ContextMenuController {
                 }
             }
         });
+
+
+        final UnitMenu unitMenu = foregroundPane.getUnitMenu();
+        foregroundPane.getAppState().addListener((observable, oldValue, newValue) -> {
+            switch (newValue) {
+                case ENERGY:
+                    unitMenu.addCollapseBtn();
+                    unitMenu.getCollapseIcon().setOnMouseClicked(event -> showHideContextMenu(unitMenu));
+                    unitMenu.getCollapseBtn().setOnAction(event -> showHideContextMenu(unitMenu));
+                    break;
+                default:
+                    if (!unitMenu.isMaximized())
+                        unitMenu.maximizeUnitMenu();
+                    unitMenu.removeCollapseBtn();
+                    break;
+            }
+        });
+    }
+
+    /**
+     * Maximizes oder minimizes the Contect Menu
+     */
+    private void showHideContextMenu(final UnitMenu unitMenu) {
+        if (unitMenu.isMaximized()) {
+            unitMenu.minimizeUnitMenu();
+        } else {
+            unitMenu.maximizeUnitMenu();
+        }
     }
     
     //idea: addselected unit id listener
