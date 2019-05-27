@@ -100,7 +100,7 @@ public final class LanguageSelection extends Observable {
             }
         } catch (MissingResourceException ex) {
             if (JPService.verboseMode()) {
-                ExceptionPrinter.printHistory("Could not resolve Identifier[" + identifier + "]", ex, LOGGER, LogLevel.WARN);
+                //ExceptionPrinter.printHistory("Could not resolve Identifier[" + identifier + "]", ex, LOGGER, LogLevel.WARN);
             } else {
                 ExceptionPrinter.printHistory("Could not resolve Identifier[" + identifier + "]", ex, LOGGER, LogLevel.DEBUG);
             }

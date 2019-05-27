@@ -70,7 +70,7 @@ public class UnitPaneContainer extends ObserverTitledPane {
                 vBox.getChildren().add(UnitPaneFactoryImpl.getInstance().newInitializedInstance(remote.getConfig()));
             } catch (CouldNotPerformException ex) {
                 if (JPService.verboseMode()) {
-                    ExceptionPrinter.printHistory("UnitType[" + unitType + "] is not supported yet!", ex, LOGGER, LogLevel.WARN);
+                    //ExceptionPrinter.printHistory("UnitType[" + unitType + "] is not supported yet!", ex, LOGGER, LogLevel.WARN);
                 } else {
                     ExceptionPrinter.printHistory("UnitType[" + unitType + "] is not supported yet!", ex, LOGGER, LogLevel.DEBUG);
                 }

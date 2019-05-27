@@ -70,7 +70,7 @@ public class SimpleUnitSymbolsPane extends Pane {
             newButton.setTranslateY(position.getX());
             unitsMap.put(locationId, newButton);
         } catch (CouldNotPerformException ex) {
-            throw new CouldNotPerformException("UnitType[" + unitRemoteObject.getConfig().getUnitType() + "] is not supported yet!", ex);
+            //throw new CouldNotPerformException("UnitType[" + unitRemoteObject.getConfig().getUnitType() + "] is not supported yet!", ex);
         }
     }
 
