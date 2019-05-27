@@ -203,7 +203,6 @@ public final class LocationPane extends MultiTouchPane {
                 final StackPane globalBaseStack = new StackPane();
                 final StackPane locationBaseStack = new StackPane();
                 final StackPane[] locationStacks = new StackPane[vertices.size()];
-                debugNodes.clear();
 
                 // Paint Location Coordinates
                 final double COORDINATE_BLOCK_SIZE = 0.30 * Constants.METER_TO_PIXEL;
@@ -370,6 +369,8 @@ public final class LocationPane extends MultiTouchPane {
         );
         regionMap.clear();
 
+        debugNodes.clear();
+
         // clear root location
         setRootLocation(null);
     }
@@ -477,7 +478,7 @@ public final class LocationPane extends MultiTouchPane {
                 if (!newSelectedLocation.getClass().equals(RegionPolygon.class)) {
                     lastSelectedTile.getChildIds().forEach(childId -> {
                         try {
-                            // make all regions non selecable
+                            // make all regions non selectable
                             if (regionMap.containsKey(childId)) {
                                 regionMap.get(childId).changeStyleOnSelectable(false);
                             }
@@ -519,7 +520,7 @@ public final class LocationPane extends MultiTouchPane {
      * tileMap.
      */
     public void zoomFit() {
-        if (rootLocation != null) { //NOPMD
+        if (rootLocation != null) {
             autoFocusPolygon(rootLocation);
         } else if (!tileMap.isEmpty()) {
             autoFocusPolygon(tileMap.values().iterator().next());
