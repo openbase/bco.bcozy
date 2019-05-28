@@ -185,22 +185,25 @@ public class UnitMenu extends VBox {
         setMinWidth(width);
         setPrefHeight(height);
         setPrefWidth(width);
-        collapseButtons.getChildren().add(collapseBtn);
-        collapseButtons.setAlignment(Pos.BOTTOM_LEFT);
-        collapseButtons.translateXProperty().set(Constants.INSETS);
-        this.setVgrow(collapseButtons, Priority.ALWAYS);
-        this.getChildren().addAll(floatingButtons, roomInfo, hiddenSidesPane, collapseButtons);
+        this.getChildren().addAll(floatingButtons, roomInfo, hiddenSidesPane);
         this.getStyleClass().addAll("detail-menu");
     }
 
     public void removeCollapseBtn () {
-        if (this.getChildren().contains(collapseBtn))
+        if (this.getChildren().contains(collapseButtons))
             this.getChildren().remove(collapseButtons);
     }
 
     public void addCollapseBtn () {
-        if(!this.getChildren().contains(collapseBtn))
+        if(!this.getChildren().contains(collapseButtons)) {
+            collapseButtons = new HBox();
+            collapseButtons.getChildren().add(collapseBtn);
+            collapseButtons.setAlignment(Pos.BOTTOM_LEFT);
+            collapseButtons.translateXProperty().set(Constants.INSETS);
+            this.setVgrow(collapseButtons, Priority.ALWAYS);
             this.getChildren().add(collapseButtons);
+        }
+
     }
 
     /**
