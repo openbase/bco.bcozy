@@ -189,8 +189,8 @@
                 <configuration>
                     <visible>false</visible>
                     <!--<JVMArgs>-->
-                        <!--<JVMArg>arg1</JVMArg>-->
-                        <!--<JVMArg>arg2</JVMArg>-->
+                    <!--<JVMArg>arg1</JVMArg>-->
+                    <!--<JVMArg>arg2</JVMArg>-->
                     <!--</JVMArgs>-->
                     <mainClassName>org.openbase.bco.bcozy.BCozy</mainClassName>
                     <openingPath>/</openingPath>
@@ -198,6 +198,7 @@
             </plugin>
         </plugins>
     </build>
+
 
     <profiles>
         <profile>
@@ -298,6 +299,17 @@
             <id>jpro - sandec repository</id>
             <url>http://sandec.bintray.com/repo</url>
         </repository>
+        <repository>
+            <id>bonitoo-snapshot</id>
+            <name>Bonitoo.io snapshot repository</name>
+            <url>https://apitea.com/nexus/content/repositories/bonitoo-snapshot/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -361,6 +373,22 @@
             <version>11.0.2</version>
             <classifier>linux</classifier>
         </dependency>
+
+        <dependency>
+            <groupId>org.influxdb</groupId>
+            <artifactId>influxdb-java</artifactId>
+            <version>2.15</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openbase</groupId>
+            <artifactId>bco.dal.control</artifactId>
+            <version>${dependency.bco.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.influxdata</groupId>
+            <artifactId>influxdb-client-java</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <reporting>
@@ -398,6 +426,7 @@
         </plugins>
     </reporting>
 
+
     <distributionManagement>
         <snapshotRepository>
             <id>ossrh</id>
@@ -407,6 +436,7 @@
             <id>ossrh</id>
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
+
     </distributionManagement>
 
 </project>
