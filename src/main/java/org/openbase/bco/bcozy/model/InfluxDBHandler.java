@@ -55,7 +55,8 @@ public class InfluxDBHandler {
         for (FluxTable fluxTable : tables) {
             List<FluxRecord> records = fluxTable.getRecords();
             for (FluxRecord fluxRecord : records) {
-                //    logger.info(fluxRecord.getValues() + ": " + fluxRecord.getValueByKey("_value"));
+                // just one entry:
+               return (double) fluxRecord.getValueByKey("_value");
 
 
             }
