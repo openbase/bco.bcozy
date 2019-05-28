@@ -81,14 +81,15 @@ public class ContextMenuController {
         foregroundPane.getAppState().addListener((observable, oldValue, newValue) -> {
             switch (newValue) {
                 case ENERGY:
-                    unitMenu.addCollapseBtn();
                     unitMenu.getCollapseIcon().setOnMouseClicked(event -> showHideContextMenu(unitMenu));
                     unitMenu.getCollapseBtn().setOnAction(event -> showHideContextMenu(unitMenu));
+                    unitMenu.addCollapseBtn();
                     break;
                 default:
                     if (!unitMenu.isMaximized())
                         unitMenu.maximizeUnitMenu();
-                    unitMenu.removeCollapseBtn();
+                    else
+                        unitMenu.removeCollapseBtn();
                     break;
             }
         });
@@ -102,6 +103,7 @@ public class ContextMenuController {
             unitMenu.minimizeUnitMenu();
         } else {
             unitMenu.maximizeUnitMenu();
+            unitMenu.addCollapseBtn();
         }
     }
     
