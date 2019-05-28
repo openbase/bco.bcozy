@@ -1,4 +1,4 @@
-package org.openbase.bco.bcozy.controller.powerTerminal;
+package org.openbase.bco.bcozy.controller.powerterminal;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;

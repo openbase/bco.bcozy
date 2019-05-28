@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
  */
 public class BackgroundPane extends StackPane {
 
-    public static final String POWER_DRAW_PANE_FXML_LOCATION = "fxml/powerTerminal/PowerDrawPane.fxml";
+    public static final String POWER_DRAW_PANE_FXML_LOCATION = "gorg/openbase/bco/bcozy/controller/powerterminal/PowerDrawPane.fxml";
     public static final String FXML_LOAD_EXCEPTION_MESSAGE = "Failed loading PowerDrawPane.fxml!";
 
     private final LocationPane locationPane;
