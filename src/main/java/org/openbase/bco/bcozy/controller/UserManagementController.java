@@ -183,6 +183,10 @@ public class UserManagementController extends AbstractFXController {
                 }
             }
         } catch (CouldNotPerformException | ExecutionException | TimeoutException ex) {
+            if (ExceptionProcessor.getInitialCause(ex) instanceof ShutdownInProgressException) {
+                // update canceled because of an application shutdown.
+                return;
+            }
             ExceptionPrinter.printHistory(ex, LOGGER);
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();

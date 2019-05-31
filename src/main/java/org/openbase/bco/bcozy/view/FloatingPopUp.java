@@ -33,6 +33,7 @@ public class FloatingPopUp extends VBox {
 
         this.setMaxSize(JFXConstants.ICON_SIZE_MIDDLE, Double.MAX_VALUE);
         this.setAlignment(position);
+        this.setPickOnBounds(false);
         viewSwitcherPopUp = new VBox(Constants.INSETS);
         viewSwitcherPopUp.setAlignment(Pos.CENTER);
 

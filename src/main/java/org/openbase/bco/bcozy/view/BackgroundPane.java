@@ -19,7 +19,7 @@
 package org.openbase.bco.bcozy.view;
 
 import javafx.scene.layout.StackPane;
-import org.openbase.bco.bcozy.view.location.LocationPane;
+import org.openbase.bco.bcozy.view.location.LocationMapPane;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InstantiationException;
 
@@ -28,7 +28,7 @@ import org.openbase.jul.exception.InstantiationException;
  */
 public class BackgroundPane extends StackPane {
 
-    private final LocationPane locationPane;
+    private final LocationMapPane locationMapPane;
     private final UnitSymbolsPane unitSymbolsPane;
     private final SimpleUnitSymbolsPane editingLayerPane;
     private final SimpleUnitSymbolsPane maintenanceLayerPane;
@@ -43,15 +43,15 @@ public class BackgroundPane extends StackPane {
      */
     public BackgroundPane(final ForegroundPane foregroundPane) throws InstantiationException, InterruptedException {
         try {
-            this.locationPane = new LocationPane(foregroundPane);
-            this.getChildren().add(locationPane);
+            this.locationMapPane = new LocationMapPane(foregroundPane);
+            this.getChildren().add(locationMapPane);
 
             // default layer: changing light states on the location map
             this.unitSymbolsPane = new UnitSymbolsPane();
             this.unitSymbolsPane.setPickOnBounds(false);
             this.getChildren().add(unitSymbolsPane);
 
-            this.unitSymbolsPane.selectedLocationId.bind(locationPane.selectedLocationId);
+            this.unitSymbolsPane.selectedUnit.bind(locationMapPane.selectedUnit);
 
             // layer for fast overview over maintenance-relevant units
             this.maintenanceLayerPane = new SimpleUnitSymbolsPane();
@@ -66,17 +66,17 @@ public class BackgroundPane extends StackPane {
                 switch (newValue) {
                     case SETTINGS:
                         getChildren().clear();
-                        getChildren().add(locationPane);
+                        getChildren().add(locationMapPane);
                         getChildren().add(editingLayerPane);
                         break;
                     case TEMPERATURE:
                         getChildren().clear();
-                        getChildren().add(locationPane);
+                        getChildren().add(locationMapPane);
                         getChildren().add(maintenanceLayerPane);
                         break;
                     case MOVEMENT:
                         getChildren().clear();
-                        getChildren().add(locationPane);
+                        getChildren().add(locationMapPane);
                         getChildren().add(unitSymbolsPane);
                         break;
                 }
@@ -84,10 +84,10 @@ public class BackgroundPane extends StackPane {
             });
             this.getStyleClass().add("background-pane");
             // init touch
-            this.locationPane.initMultiTouch();
-            this.onMouseClickedProperty().bindBidirectional(locationPane.onMouseClickedProperty());
-            this.onMouseEnteredProperty().bindBidirectional(locationPane.onMouseEnteredProperty());
-            this.onMouseExitedProperty().bindBidirectional(locationPane.onMouseExitedProperty());
+            this.locationMapPane.initMultiTouch();
+            this.onMouseClickedProperty().bindBidirectional(locationMapPane.onMouseClickedProperty());
+            this.onMouseEnteredProperty().bindBidirectional(locationMapPane.onMouseEnteredProperty());
+            this.onMouseExitedProperty().bindBidirectional(locationMapPane.onMouseExitedProperty());
 
         } catch (CouldNotPerformException ex) {
             throw new InstantiationException(this, ex);
@@ -118,7 +118,7 @@ public class BackgroundPane extends StackPane {
     /**
      * @return The Location Pane.
      */
-    public LocationPane getLocationPane() {
-        return locationPane;
+    public LocationMapPane getLocationMapPane() {
+        return locationMapPane;
     }
 }

@@ -1,17 +1,17 @@
 /**
  * ==================================================================
- *
+ * <p>
  * This file is part of org.openbase.bco.bcozy.
- *
+ * <p>
  * org.openbase.bco.bcozy is free software: you can redistribute it and modify
  * it under the terms of the GNU General Public License (Version 3)
  * as published by the Free Software Foundation.
- *
+ * <p>
  * org.openbase.bco.bcozy is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
@@ -22,6 +22,7 @@ import javafx.scene.paint.Color;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.InfoPane;
 import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.EnumNotSupportedException;
 import org.openbase.jul.exception.InstantiationException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.type.domotic.unit.location.LocationDataType.LocationData;
@@ -31,54 +32,55 @@ import org.openbase.type.domotic.unit.location.LocationDataType.LocationData;
  */
 public class RegionPolygon extends LocationPolygon {
 
-    private boolean selectable;
-    private final LocationPane locationPane;
 
     /**
      * The Constructor for a RegionPolygon.
-     *
-     * @param points The vertices of the location
      */
-    public RegionPolygon(final LocationPane locationPane, final double... points) throws InstantiationException {
-        super(points);
-        this.locationPane = locationPane;
-        this.selectable = false;
-        setOnMouseClicked(event -> {
-            try {
-                event.consume();
-                if (event.isStillSincePress()) {
-                    if (event.getClickCount() == 1) {
-                        locationPane.setSelectedLocation(this);
-                    } else if (event.getClickCount() == 2) {
-                        if (locationPane.getLastClickTarget().equals(this)) {
-                            locationPane.autoFocusPolygonAnimated(this);
-                        } else {
-                            locationPane.getLastClickTarget().fireEvent(event.copyFor(null, locationPane.getLastClickTarget()));
-                        }
-                    }
-                }
-            } catch (CouldNotPerformException ex) {
-                ExceptionPrinter.printHistory("Could not handle mouse event!", ex, LOGGER);
-            }
-        });
-        setOnMouseEntered(event -> {
-            try {
-                event.consume();
-                mouseEntered();
-                InfoPane.info(getLabel());
-            } catch (CouldNotPerformException ex) {
-                ExceptionPrinter.printHistory("Could not handle mouse event!", ex, LOGGER);
-            }
-        });
-        setOnMouseExited(event -> {
-            event.consume();
-            mouseLeft();
-            InfoPane.info("");
-        });
+    public RegionPolygon(final LocationMap locationMap) throws InstantiationException {
+        super(locationMap);
+//        setOnMouseClicked(event -> {
+//            try {
+//                if (event.isStillSincePress()) {
+//                    if (event.getClickCount() == 1) {
+//                        locationMap.setSelectedUnit(this);
+//                    } else if (event.getClickCount() == 2) {
+//                        if (locationMap.getLastClickTarget().equals(this)) {
+//                            locationMap.autoFocusPolygonAnimated(this);
+//                        } else {
+//                            locationMap.getLastClickTarget().fireEvent(event.copyFor(null, locationMap.getLastClickTarget()));
+//                        }
+//                    }
+//                    event.consume();
+//                }
+//            } catch (CouldNotPerformException ex) {
+//                ExceptionPrinter.printHistory("Could not handle mouse event!", ex, LOGGER);
+//            }
+//        });
+//        setOnMouseEntered(event -> {
+//            event.consume();
+//            mouseEntered();
+//            InfoPane.info(getLabel());
+//        });
+//        setOnMouseExited(event -> {
+//            event.consume();
+//            mouseLeft();
+//            InfoPane.info("");
+//        });
     }
 
     @Override
     public void applyDataUpdate(LocationData unitData) {
+        switch (unitData.getPresenceState().getValue()) {
+            case PRESENT:
+                setCustomColor(Color.GREEN.brighter());
+                break;
+            case ABSENT:
+            case UNKNOWN:
+                setCustomColor(Color.TRANSPARENT);
+                break;
+            default:
+                ExceptionPrinter.printHistory(new EnumNotSupportedException(unitData.getPresenceState().getValue(), this), LOGGER);
+        }
     }
 
     @Override
@@ -92,28 +94,9 @@ public class RegionPolygon extends LocationPolygon {
     @Override
     protected void changeStyleOnSelection(final boolean selected) {
         if (selected) {
-            this.setMainColor(Constants.TILE_SELECTION);
+            this.setMainColor(Constants.REGION_SELECTION);
         } else {
             this.setMainColor(Constants.REGION_FILL);
-        }
-    }
-
-    /**
-     * This method should be called to change the selectable status.
-     *
-     * @param selectable Whether the Region should be selectable or not.
-     */
-    public void changeStyleOnSelectable(final boolean selectable) {
-        if (selectable) {
-            this.selectable = true;
-            this.getStrokeDashArray().addAll(Constants.REGION_DASH_WIDTH, Constants.REGION_DASH_WIDTH);
-            this.setStrokeWidth(Constants.REGION_STROKE_WIDTH);
-            this.setMouseTransparent(false);
-        } else {
-            this.selectable = false;
-            this.getStrokeDashArray().clear();
-            this.setStrokeWidth(0.0);
-            this.setMouseTransparent(true);
         }
     }
 
@@ -131,15 +114,6 @@ public class RegionPolygon extends LocationPolygon {
         } else {
             this.setFill(mainColor.interpolate(customColor, CUSTOM_COLOR_WEIGHT));
         }
-    }
-
-    /**
-     * Getter for the selectable status.
-     *
-     * @return The selectable status.
-     */
-    public boolean isSelectable() {
-        return selectable;
     }
 
     /**

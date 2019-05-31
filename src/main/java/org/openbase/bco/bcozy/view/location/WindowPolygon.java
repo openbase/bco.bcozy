@@ -40,11 +40,10 @@ public class WindowPolygon extends ConnectionPolygon {
     /**
      * Constructor for the WindowPolygon.
      *
-     * @param points The vertices of the connection.
      * @throws org.openbase.jul.exception.InstantiationException
      */
-    public WindowPolygon(final double... points) throws InstantiationException {
-        super(points);
+    public WindowPolygon(final LocationMap locationMap) throws InstantiationException {
+        super(locationMap);
     }
 
     @Override
@@ -72,7 +71,6 @@ public class WindowPolygon extends ConnectionPolygon {
     protected void setConnectionStyle() {
         this.setStroke(Color.WHITE);
         this.setStrokeWidth(Constants.ROOM_STROKE_WIDTH);
-        this.setMouseTransparent(true);
         this.setMainColor(Color.TRANSPARENT);
     }
 

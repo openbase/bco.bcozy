@@ -78,27 +78,35 @@ public final class Constants {
     /**
      * The color for a selected tile.
      */
-    public static final Color TILE_SELECTION = new Color(1.0, 1.0, 1.0, 0.4);
+    public static final Color TILE_SELECTION = Color.hsb(0.0, 0.0, 0.5, 1.0);
+
+
+
+    public static final Color TILE_FILL = Color.hsb(0.0, 0.0, 0.35, 1.0);
 
     /**
      * The color for a region.
      */
-    public static final Color REGION_FILL = new Color(1.0, 1.0, 1.0, 0.04);
+    public static final Color REGION_FILL = Color.hsb(0.0, 0.0, 0.0, 0.0);
 
     /**
      * The color for a door.
      */
-    public static final Color PASSAGE_FILL = new Color(1.0, 1.0, 1.0, 0.05);
+    public static final Color PASSAGE_FILL = Color.hsb(0.0, 0.0, 0.7, 1.0);
+
+    public static final Color ZONE_SELECTION = Color.hsb(0.0, 0.0, 0.15, 1.0);
+
+    public static final Color REGION_SELECTION = TILE_SELECTION;
 
     /**
      * The color for a zone.
      */
-    public static final Color ZONE_FILL = new Color(1.0, 1.0, 1.0, 0.25);
+    public static final Color ZONE_FILL = Color.hsb(0.0, 0.0, 0.05, 1.0);
 
     /**
      * The color for a door.
      */
-    public static final Color WINDOW_EFFECT = new Color(1.0, 1.0, 1.0, 0.40);
+    public static final Color WINDOW_EFFECT = Color.hsb(0.0, 0.0, 0.7, 1.0);
 
     /**
      * The name of a dummy label.
