@@ -40,7 +40,6 @@ public class InfluxDBHandler {
 
 
         List<FluxTable> tables = queryApi.query(query, INFLUXDB_ORG_ID_DEFAULT);
-        // logger.info("----");
         return tables;
 
 
@@ -50,6 +49,7 @@ public class InfluxDBHandler {
     /**
      * Some query return just a single value.
      * This Method returns it.
+     *
      * @param tables Tables which a query returned
      * @return
      */
@@ -152,6 +152,7 @@ public class InfluxDBHandler {
 
     /**
      * Get the full data from a field from the power_consumption_state_service in a specific time window.
+     *
      * @param timeStart Timestamp when the measurement should start
      * @param timeStop  Timestamp when the measurement should stop
      * @param field     Name of the field which should be checked (e.g consumption, current, voltage)
@@ -171,26 +172,124 @@ public class InfluxDBHandler {
     }
 
     /**
+     * Get the full data of a field and location_alias from the power_consumption_state_service in a specific time window.
+     *
+     * @param timeStart      Timestamp when the measurement should start
+     * @param timeStop       Timestamp when the measurement should stop
+     * @param location_alias Alias of location which should be filtered
+     * @param field          Name of the field which should be checked (e.g consumption, current, voltage)
+     * @return List of FluxTables
+     * @throws CouldNotPerformException
+     */
+    public static List<FluxTable> getPowerConsumption(Long timeStart, Long timeStop, String field, String location_alias) throws CouldNotPerformException {
+        String query = "from(bucket: \"" + INFLUXDB_BUCKET_DEFAULT + "\")" +
+                " |> range(start: " + timeStart + ", stop: " + timeStop + ")" +
+                " |> filter(fn: (r) => r._measurement == \"power_consumption_state_service\")" +
+                " |> filter(fn: (r) => r._field == \"" + field + "\")" +
+                " |> filter(fn: (r) => r.location_alias == \"" + location_alias + "\")" +
+                " |> group(columns: [\"_field\"], mode:\"by\")";
+        List<FluxTable> tables = sendQuery(query);
+        return tables;
+
+
+    }
+
+
+    /**
+     * Get the full data of a field and location_alias from the power_consumption_state_service in a specific time window.
+     *
+     * @param timeStart Timestamp when the measurement should start
+     * @param timeStop  Timestamp when the measurement should stop
+     * @param unit_id   Id of Unit
+     * @param field     Name of the field which should be checked (e.g consumption, current, voltage)
+     * @return List of FluxTables
+     * @throws CouldNotPerformException
+     */
+    public static List<FluxTable> getPowerConsumption(String unit_id, Long timeStart, Long timeStop, String field) throws CouldNotPerformException {
+        String query = "from(bucket: \"" + INFLUXDB_BUCKET_DEFAULT + "\")" +
+                " |> range(start: " + timeStart + ", stop: " + timeStop + ")" +
+                " |> filter(fn: (r) => r._measurement == \"power_consumption_state_service\")" +
+                " |> filter(fn: (r) => r._field == \"" + field + "\")" +
+                " |> filter(fn: (r) => r.unit_id == \"" + unit_id + "\")" +
+                " |> group(columns: [\"_field\"], mode:\"by\")";
+        List<FluxTable> tables = sendQuery(query);
+        return tables;
+
+
+    }
+
+    /**
      * Get the total sum of a field from the power_consumption_state_service in a specific time window.
+     *
      * @param timeStart Timestamp when the measurement should start
      * @param timeStop  Timestamp when the measurement should stop
      * @param field     Name of the field which should be checked (e.g consumption, current, voltage)
      * @return Total sum of the field
      * @throws CouldNotPerformException
      */
-    public  static Double getPowerConsumptionTotal(Long timeStart, Long timeStop, String field) throws CouldNotPerformException {
+    public static Double getPowerConsumptionTotal(Long timeStart, Long timeStop, String field) throws CouldNotPerformException {
         String query = "from(bucket: \"" + INFLUXDB_BUCKET_DEFAULT + "\")" +
                 " |> range(start: " + timeStart + ", stop: " + timeStop + ")" +
                 " |> filter(fn: (r) => r._measurement == \"power_consumption_state_service\")" +
                 " |> filter(fn: (r) => r._field == \"" + field + "\")" +
-                " |> group(columns: [\"_field\"], mode:\"by\")"+
+                " |> group(columns: [\"_field\"], mode:\"by\")" +
                 " |> sum(column: \"_value\")";
 
         List<FluxTable> tables = sendQuery(query);
         return getSingleValueFromTables(tables);
 
 
+    }
+
+    /**
+     * Get the total sum of a field from the power_consumption_state_service in a specific time window.
+     *
+     * @param timeStart      Timestamp when the measurement should start
+     * @param timeStop       Timestamp when the measurement should stop
+     * @param location_alias Alias of location which should be filtered
+     * @param field          Name of the field which should be checked (e.g consumption, current, voltage)
+     * @return Total sum of the field
+     * @throws CouldNotPerformException
+     */
+    public static Double getPowerConsumptionTotal(Long timeStart, Long timeStop, String field, String location_alias) throws CouldNotPerformException {
+        String query = "from(bucket: \"" + INFLUXDB_BUCKET_DEFAULT + "\")" +
+                " |> range(start: " + timeStart + ", stop: " + timeStop + ")" +
+                " |> filter(fn: (r) => r._measurement == \"power_consumption_state_service\")" +
+                " |> filter(fn: (r) => r._field == \"" + field + "\")" +
+                " |> filter(fn: (r) => r.location_alias == \"" + location_alias + "\")" +
+                " |> group(columns: [\"_field\"], mode:\"by\")" +
+                " |> sum(column: \"_value\")";
+
+        List<FluxTable> tables = sendQuery(query);
+        return getSingleValueFromTables(tables);
+
 
     }
+
+    /**
+     * Get the total sum of a field from the power_consumption_state_service in a specific time window.
+     *
+     * @param timeStart Timestamp when the measurement should start
+     * @param timeStop  Timestamp when the measurement should stop
+     * @param unit_id   Id of Unit
+     * @param field     Name of the field which should be checked (e.g consumption, current, voltage)
+     * @return Total sum of the field
+     * @throws CouldNotPerformException
+     */
+    public static Double getPowerConsumptionTotal(String unit_id, Long timeStart, Long timeStop, String field) throws CouldNotPerformException {
+        String query = "from(bucket: \"" + INFLUXDB_BUCKET_DEFAULT + "\")" +
+                " |> range(start: " + timeStart + ", stop: " + timeStop + ")" +
+                " |> filter(fn: (r) => r._measurement == \"power_consumption_state_service\")" +
+                " |> filter(fn: (r) => r._field == \"" + field + "\")" +
+                " |> filter(fn: (r) => r.unit_id == \"" + unit_id + "\")" +
+                " |> group(columns: [\"_field\"], mode:\"by\")" +
+                " |> sum(column: \"_value\")";
+
+        List<FluxTable> tables = sendQuery(query);
+        return getSingleValueFromTables(tables);
+
+
+    }
+
 
 }
