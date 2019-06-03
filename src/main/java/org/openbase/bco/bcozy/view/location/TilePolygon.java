@@ -23,6 +23,7 @@ import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.EnumNotSupportedException;
 import org.openbase.jul.exception.InstantiationException;
+import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.type.domotic.unit.location.LocationDataType;
 
@@ -31,34 +32,31 @@ import org.openbase.type.domotic.unit.location.LocationDataType;
  */
 public class TilePolygon extends LocationPolygon {
 
-    private final LocationPane locationPane;
-
     /**
      * The Constructor for a TilePolygon.
      *
-     * @param points The vertices of the location
      * @throws org.openbase.jul.exception.InstantiationException
      */
-    public TilePolygon(final LocationPane locationPane, final double... points) throws InstantiationException {
-        super(points);
-        this.locationPane = locationPane;
+    public TilePolygon(final LocationMap locationMap) throws InstantiationException {
+        super(locationMap);
 
-        setOnMouseClicked(event -> {
-            try {
-                if (event.isStillSincePress()) {
-                    if (event.getClickCount() == 1) {
-                        locationPane.setSelectedLocation(this);
-                    } else if (event.getClickCount() == 2) {
-                        locationPane.autoFocusPolygonAnimated(this);
-                    }
-                    event.consume();
-                }
-            } catch (CouldNotPerformException ex) {
-                ExceptionPrinter.printHistory("Could not handle mouse event!", ex, LOGGER);
-            }
-        });
-
-        hoverProperty().addListener((observable,  oldValue, newValue) -> locationPane.handleHoverUpdate(TilePolygon.this, newValue));
+//        setOnMouseClicked(event -> {
+//            try {
+//                if (event.isStillSincePress()) {
+//                    System.out.println("tile me: "+ event.isConsumed());
+//                    if (event.getClickCount() == 1) {
+//                        locationMap.setSelectedUnit(this);
+//                    } else if (event.getClickCount() == 2) {
+//                        locationMap.autoFocusPolygonAnimated(this);
+//                    }
+//                    event.consume();
+//                }
+//            } catch (CouldNotPerformException ex) {
+//                ExceptionPrinter.printHistory("Could not handle mouse event!", ex, LOGGER);
+//            }
+//        });
+//
+//        hoverProperty().addListener((observable, oldValue, newValue) -> locationMap.handleHoverUpdate(TilePolygon.this, newValue));
     }
 
     @Override
@@ -78,9 +76,9 @@ public class TilePolygon extends LocationPolygon {
 
     @Override
     protected void setLocationStyle() {
-        this.setMainColor(Color.TRANSPARENT);
-        this.setStroke(Color.WHITE);
-        this.setStrokeWidth(Constants.ROOM_STROKE_WIDTH);
+        this.setMainColor(Constants.TILE_FILL);
+        setStroke(Color.WHITE);
+        setStrokeWidth(Constants.ROOM_STROKE_WIDTH);
     }
 
     @Override
@@ -88,7 +86,7 @@ public class TilePolygon extends LocationPolygon {
         if (selected) {
             this.setMainColor(Constants.TILE_SELECTION);
         } else {
-            this.setMainColor(Color.TRANSPARENT);
+            this.setMainColor(Constants.TILE_FILL);
         }
     }
 
@@ -96,15 +94,15 @@ public class TilePolygon extends LocationPolygon {
      * Will be called when either the main or the custom color changes.
      * The initial values for both colors are Color.TRANSPARENT.
      *
-     * @param mainColor The main color
+     * @param mainColor   The main color
      * @param customColor The custom color
      */
     @Override
     protected void onColorChange(final Color mainColor, final Color customColor) {
         if (customColor.equals(Color.TRANSPARENT)) {
-            this.setFill(mainColor);
+            setFill(mainColor);
         } else {
-            this.setFill(mainColor.interpolate(customColor, CUSTOM_COLOR_WEIGHT));
+            setFill(mainColor.interpolate(customColor, CUSTOM_COLOR_WEIGHT));
         }
     }
 }

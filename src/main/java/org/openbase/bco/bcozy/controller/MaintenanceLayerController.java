@@ -30,7 +30,7 @@ import javafx.geometry.Point2D;
 import javax.vecmath.Point3d;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.SimpleUnitSymbolsPane;
-import org.openbase.bco.bcozy.view.location.LocationPane;
+import org.openbase.bco.bcozy.view.location.LocationMapPane;
 import org.openbase.bco.bcozy.view.pane.unit.TitledUnitPaneContainer;
 import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
 import org.openbase.bco.dal.remote.layer.unit.Units;
@@ -61,7 +61,7 @@ public class MaintenanceLayerController {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(MaintenanceLayerController.class);
 
-    private final LocationPane locationPane;
+    private final LocationMapPane locationMapPane;
     private final SimpleUnitSymbolsPane simpleUnitSymbolsPane;
     private final Map<String, TitledUnitPaneContainer> titledPaneMap;
 
@@ -69,17 +69,17 @@ public class MaintenanceLayerController {
      * Constructor
      *
      * @param unitPane
-     * @param locationPane
+     * @param locationMapPane
      */
-    public MaintenanceLayerController(final SimpleUnitSymbolsPane unitPane, final LocationPane locationPane) {
-        this.locationPane = locationPane;
+    public MaintenanceLayerController(final SimpleUnitSymbolsPane unitPane, final LocationMapPane locationMapPane) {
+        this.locationMapPane = locationMapPane;
         this.simpleUnitSymbolsPane = unitPane;
         this.titledPaneMap = new HashMap<>();
 
-        unitPane.scaleXProperty().bind(locationPane.scaleXProperty());
-        unitPane.scaleYProperty().bind(locationPane.scaleYProperty());
-        unitPane.translateXProperty().bind(locationPane.translateXProperty());
-        unitPane.translateYProperty().bind(locationPane.translateYProperty());
+        unitPane.scaleXProperty().bind(locationMapPane.scaleXProperty());
+        unitPane.scaleYProperty().bind(locationMapPane.scaleYProperty());
+        unitPane.translateXProperty().bind(locationMapPane.translateXProperty());
+        unitPane.translateYProperty().bind(locationMapPane.translateYProperty());
     }
 
     /**

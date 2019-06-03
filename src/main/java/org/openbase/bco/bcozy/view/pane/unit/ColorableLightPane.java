@@ -26,6 +26,7 @@ import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
+import org.openbase.jul.extension.type.processing.MultiLanguageTextProcessor;
 import org.openbase.jul.schedule.RecurrenceEventFilter;
 import org.openbase.jul.visual.javafx.JFXConstants;
 import org.slf4j.Logger;
@@ -145,9 +146,11 @@ public class ColorableLightPane extends AbstractUnitPane<ColorableLightRemote, C
 
     @Override
     public String getUnitStateDescription() throws NotAvailableException {
-        return getUnitRemote().getLabel()
-                + " was switched " + StringProcessor.transformUpperCaseToPascalCase(getData().getPowerState().getValue().name())
-                + " at " + dateFormat.format(new Date(TimestampJavaTimeTransform.transform(getData().getPowerState().getTimestamp()))) 
-                + " with Action["+getData().getPowerState().getResponsibleAction().getDescription()+"]";
+
+        return MultiLanguageTextProcessor.getBestMatch(getData().getPowerState().getResponsibleAction().getDescription(), getUnitRemote().getLabel());
+//        return
+//                + " was switched " + StringProcessor.transformUpperCaseToPascalCase(getData().getPowerState().getValue().name())
+//                + " at " + dateFormat.format(new Date(TimestampJavaTimeTransform.transform(getData().getPowerState().getTimestamp())))
+//                + " with Action["+ +"]";
     }
 }

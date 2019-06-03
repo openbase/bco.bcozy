@@ -25,9 +25,12 @@ import org.openbase.bco.authentication.lib.AuthorizationHelper;
 import org.openbase.bco.authentication.lib.SessionManager;
 import org.openbase.bco.authentication.lib.jp.JPAuthentication;
 import org.openbase.bco.bcozy.view.InfoPane;
+import org.openbase.jul.exception.*;
+import org.openbase.jul.extension.type.processing.TimestampJavaTimeTransform;
 import org.openbase.jul.pattern.controller.ConfigurableRemote;
 import org.openbase.jul.pattern.controller.Remote;
 import org.openbase.jul.pattern.provider.DataProvider;
+import org.openbase.jul.processing.StringProcessor;
 import org.openbase.jul.visual.javafx.JFXConstants;
 import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 import org.openbase.bco.bcozy.view.generic.ExpandableWidgedPane;
@@ -36,9 +39,6 @@ import org.openbase.bco.dal.remote.layer.unit.Units;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jps.core.JPService;
 import org.openbase.jps.exception.JPNotAvailableException;
-import org.openbase.jul.exception.CouldNotPerformException;
-import org.openbase.jul.exception.InitializationException;
-import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.extension.protobuf.IdentifiableMessage;
 import org.openbase.jul.iface.Initializable;
@@ -48,6 +48,7 @@ import org.openbase.type.domotic.authentication.UserClientPairType.UserClientPai
 import org.openbase.type.domotic.state.ConnectionStateType.ConnectionState;
 import org.openbase.type.domotic.unit.UnitConfigType.UnitConfig;
 
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -89,25 +90,33 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Messa
             }
         };
         this.unitDataObserver = (source, data) -> applyDataUpdate(data);
-        this.unitConnectionObserver = new Observer<Remote, ConnectionState.State>() {
+        this.unitConnectionObserver = new Observer<>() {
             @Override
             public void update(Remote source, ConnectionState.State connectionState) {
                 Platform.runLater(() -> {
                     try {
                         applyConnectionStateUpdate(connectionState);
                     } catch (CouldNotPerformException ex) {
+                        if (ExceptionProcessor.getInitialCause(ex) instanceof ShutdownInProgressException) {
+                            // update canceled because of an application shutdown.
+                            return;
+                        }
                         ExceptionPrinter.printHistory("Could not apply data update on " + this, ex, LOGGER);
                     }
                 });
             }
         };
-        this.loginObserver = new Observer<SessionManager, UserClientPair>() {
+        this.loginObserver = new Observer<>() {
             @Override
             public void update(SessionManager source, UserClientPair authority) throws Exception {
                 Platform.runLater(() -> {
                     try {
                         applyLoginUpdate();
                     } catch (CouldNotPerformException ex) {
+                        if (ExceptionProcessor.getInitialCause(ex) instanceof ShutdownInProgressException) {
+                            // update canceled because of an application shutdown.
+                            return;
+                        }
                         ExceptionPrinter.printHistory("Could not apply data update on " + this, ex, LOGGER);
                     }
                 });

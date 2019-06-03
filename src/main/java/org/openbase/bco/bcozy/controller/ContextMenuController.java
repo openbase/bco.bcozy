@@ -21,13 +21,11 @@ package org.openbase.bco.bcozy.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import org.openbase.bco.bcozy.view.ForegroundPane;
+import org.openbase.bco.bcozy.view.location.DynamicUnitPolygon;
 import org.openbase.bco.bcozy.view.UnitMenu;
-import org.openbase.bco.bcozy.view.mainmenupanes.AvailableUsersPane;
 import org.openbase.bco.bcozy.view.pane.unit.TitledUnitPaneContainer;
-import org.openbase.bco.bcozy.view.location.LocationPane;
+import org.openbase.bco.bcozy.view.location.LocationMapPane;
 import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
 import org.openbase.bco.dal.remote.layer.unit.Units;
 import org.openbase.bco.registry.remote.Registries;
@@ -56,23 +54,19 @@ public class ContextMenuController {
      * @param foregroundPane foregroundPane
      * @param backgroundPane backgroundPane
      */
-    public ContextMenuController(final ForegroundPane foregroundPane, final LocationPane backgroundPane) {
+    public ContextMenuController(final ForegroundPane foregroundPane, final LocationMapPane backgroundPane) {
         this.foregroundPane = foregroundPane;
         this.titledPaneMap = new HashMap<>();
 
-
-        backgroundPane.addSelectedLocationIdListener(new ChangeListener<String>() {
-            @Override
-            public void changed(final ObservableValue<? extends String> observable, final String oldValue, final String location) {
-                if (Registries.isDataAvailable()) {
-                    try {
-                        setContextMenuUnitPanes(location);
-                    } catch (CouldNotPerformException | InterruptedException ex) {
-                        ExceptionPrinter.printHistory("Units for selected location[" + location + "] could not be loaded.", ex, LOGGER, LogLevel.ERROR);
-                    }
-                } else {
-                    LOGGER.warn("Registries not ready yet! Thus no Context Menu will be loaded!");
+        backgroundPane.addSelectedUnitListener((observable, oldValue, unit) -> {
+            if (Registries.isDataAvailable()) {
+                try {
+                    setContextMenuUnitPanes(unit);
+                } catch (CouldNotPerformException | InterruptedException ex) {
+                    ExceptionPrinter.printHistory("Units for selected location[" + unit + "] could not be loaded.", ex, LOGGER, LogLevel.ERROR);
                 }
+            } else {
+                LOGGER.warn("Registries not ready yet! Thus no Context Menu will be loaded!");
             }
         });
 
@@ -81,14 +75,15 @@ public class ContextMenuController {
         foregroundPane.getAppState().addListener((observable, oldValue, newValue) -> {
             switch (newValue) {
                 case ENERGY:
-                    unitMenu.addCollapseBtn();
                     unitMenu.getCollapseIcon().setOnMouseClicked(event -> showHideContextMenu(unitMenu));
                     unitMenu.getCollapseBtn().setOnAction(event -> showHideContextMenu(unitMenu));
+                    unitMenu.addCollapseBtn();
                     break;
                 default:
                     if (!unitMenu.isMaximized())
                         unitMenu.maximizeUnitMenu();
-                    unitMenu.removeCollapseBtn();
+                    else
+                        unitMenu.removeCollapseBtn();
                     break;
             }
         });
@@ -102,30 +97,31 @@ public class ContextMenuController {
             unitMenu.minimizeUnitMenu();
         } else {
             unitMenu.maximizeUnitMenu();
+            unitMenu.addCollapseBtn();
         }
     }
-    
-    //idea: addselected unit id listener
 
     /**
      * Takes a locationId and creates new TitledPanes for all UnitTypes.
      *
-     * @param locationID locationID
+     * @param unit the unit to load the context for.
      * @throws CouldNotPerformException CouldNotPerformException
      * @throws java.lang.InterruptedException
      */
-    public void setContextMenuUnitPanes(final String locationID) throws CouldNotPerformException, InterruptedException {
+    public void setContextMenuUnitPanes(final DynamicUnitPolygon unit) throws CouldNotPerformException, InterruptedException {
         try {
-            if ("none".equals(locationID)) {
+            if (unit == null) {
                 throw new CouldNotPerformException("No location is selected.");
             }
 
+            final String unitId = unit.getUnitId();
+
             TitledUnitPaneContainer titledPaneContainer;
-            if (titledPaneMap.containsKey(locationID)) {
-                titledPaneContainer = titledPaneMap.get(locationID);
+            if (titledPaneMap.containsKey(unitId)) {
+                titledPaneContainer = titledPaneMap.get(unitId);
             } else {
                 titledPaneContainer = new TitledUnitPaneContainer();
-                fillTitledPaneContainer(titledPaneContainer, locationID);
+                fillTitledPaneContainer(titledPaneContainer, unitId);
             }
 
             foregroundPane.getUnitMenu().setTitledPaneContainer(titledPaneContainer);
@@ -180,10 +176,7 @@ public class ContextMenuController {
     public void initTitledPaneMap() throws CouldNotPerformException, InterruptedException {
         try {
             for (final UnitConfig locationUnitConfig : Registries.getUnitRegistry().getUnitConfigs(UnitType.LOCATION)) {
-                final String locationID = locationUnitConfig.getId();
-
-                final TitledUnitPaneContainer titledPaneContainer = new TitledUnitPaneContainer();
-                fillTitledPaneContainer(titledPaneContainer, locationID);
+                fillTitledPaneContainer(new TitledUnitPaneContainer(), locationUnitConfig.getId());
             }
         } catch (CouldNotPerformException | NullPointerException ex) {
             ExceptionPrinter.printHistory(new CouldNotPerformException("Could not init initTitledPaneMap!", ex), LOGGER);

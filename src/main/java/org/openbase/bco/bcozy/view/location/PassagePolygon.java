@@ -23,6 +23,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.paint.Color;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.jul.exception.InstantiationException;
+import org.openbase.type.domotic.unit.UnitConfigType.UnitConfig;
 import org.openbase.type.domotic.unit.connection.ConnectionDataType;
 
 /**
@@ -32,83 +33,83 @@ public class PassagePolygon extends ConnectionPolygon {
 
     /**
      * Constructor for the PassagePolygon.
-     *
-     * @param points          The vertices of the connection.
      */
-    public PassagePolygon(final double... points) throws InstantiationException {
-        super(points);
+    public PassagePolygon(final LocationMap locationMap) throws InstantiationException {
+        super(locationMap);
+    }
 
-        final ObservableList<Double> pointList = super.getPoints();
-
-        //The following Code adjusts passagePolygon to properly cut out room walls and yes...
-        //It is unfortunately ugly as hell... :(
-        //CHECKSTYLE.OFF: MagicNumber
+    @Override
+    public void applyConfigUpdate(UnitConfig unitConfig) throws InterruptedException {
+        super.applyConfigUpdate(unitConfig);
+        
+        // The following Code adjusts passagePolygon to properly cut out room walls.
+        // Yes, it is unfortunately ugly as hell... :(
         if (isHorizontal()) {
-            if (pointList.get(0).equals(pointList.get(2))) { //Start Top Right or Bottom Left
-                pointList.set(1, pointList.get(1) - Constants.ROOM_STROKE_WIDTH / 2);
-                pointList.set(3, pointList.get(3) + Constants.ROOM_STROKE_WIDTH / 2);
-                pointList.set(5, pointList.get(5) + Constants.ROOM_STROKE_WIDTH / 2);
-                pointList.set(7, pointList.get(7) - Constants.ROOM_STROKE_WIDTH / 2);
-                if (pointList.get(0) < pointList.get(4)) { //Start Bottom Left
-                    pointList.set(0, pointList.get(0) + Constants.ROOM_STROKE_WIDTH / 2);
-                    pointList.set(2, pointList.get(2) + Constants.ROOM_STROKE_WIDTH / 2);
-                    pointList.set(4, pointList.get(4) - Constants.ROOM_STROKE_WIDTH / 2);
-                    pointList.set(6, pointList.get(6) - Constants.ROOM_STROKE_WIDTH / 2);
+            if ( getPoints() .get(0).equals( getPoints() .get(2))) { //Start Top Right or Bottom Left
+                 getPoints() .set(1,  getPoints() .get(1) - Constants.ROOM_STROKE_WIDTH / 2);
+                 getPoints() .set(3,  getPoints() .get(3) + Constants.ROOM_STROKE_WIDTH / 2);
+                 getPoints() .set(5,  getPoints() .get(5) + Constants.ROOM_STROKE_WIDTH / 2);
+                 getPoints() .set(7,  getPoints() .get(7) - Constants.ROOM_STROKE_WIDTH / 2);
+                if ( getPoints() .get(0) <  getPoints() .get(4)) { //Start Bottom Left
+                     getPoints() .set(0,  getPoints() .get(0) + Constants.ROOM_STROKE_WIDTH / 2);
+                     getPoints() .set(2,  getPoints() .get(2) + Constants.ROOM_STROKE_WIDTH / 2);
+                     getPoints() .set(4,  getPoints() .get(4) - Constants.ROOM_STROKE_WIDTH / 2);
+                     getPoints() .set(6,  getPoints() .get(6) - Constants.ROOM_STROKE_WIDTH / 2);
                 } else { // Start Top Right
-                    pointList.set(0, pointList.get(0) - Constants.ROOM_STROKE_WIDTH / 2);
-                    pointList.set(2, pointList.get(2) - Constants.ROOM_STROKE_WIDTH / 2);
-                    pointList.set(4, pointList.get(4) + Constants.ROOM_STROKE_WIDTH / 2);
-                    pointList.set(6, pointList.get(6) + Constants.ROOM_STROKE_WIDTH / 2);
+                     getPoints() .set(0,  getPoints() .get(0) - Constants.ROOM_STROKE_WIDTH / 2);
+                     getPoints() .set(2,  getPoints() .get(2) - Constants.ROOM_STROKE_WIDTH / 2);
+                     getPoints() .set(4,  getPoints() .get(4) + Constants.ROOM_STROKE_WIDTH / 2);
+                     getPoints() .set(6,  getPoints() .get(6) + Constants.ROOM_STROKE_WIDTH / 2);
                 }
             } else { //Start Top Left or Bottom Right
-                pointList.set(1, pointList.get(1) - Constants.ROOM_STROKE_WIDTH / 2);
-                pointList.set(3, pointList.get(3) - Constants.ROOM_STROKE_WIDTH / 2);
-                pointList.set(5, pointList.get(5) + Constants.ROOM_STROKE_WIDTH / 2);
-                pointList.set(7, pointList.get(7) + Constants.ROOM_STROKE_WIDTH / 2);
-                if (pointList.get(0) < pointList.get(4)) { //Start Top Left
-                    pointList.set(0, pointList.get(0) + Constants.ROOM_STROKE_WIDTH / 2);
-                    pointList.set(2, pointList.get(2) - Constants.ROOM_STROKE_WIDTH / 2);
-                    pointList.set(4, pointList.get(4) - Constants.ROOM_STROKE_WIDTH / 2);
-                    pointList.set(6, pointList.get(6) + Constants.ROOM_STROKE_WIDTH / 2);
+                 getPoints() .set(1,  getPoints() .get(1) - Constants.ROOM_STROKE_WIDTH / 2);
+                 getPoints() .set(3,  getPoints() .get(3) - Constants.ROOM_STROKE_WIDTH / 2);
+                 getPoints() .set(5,  getPoints() .get(5) + Constants.ROOM_STROKE_WIDTH / 2);
+                 getPoints() .set(7,  getPoints() .get(7) + Constants.ROOM_STROKE_WIDTH / 2);
+                if ( getPoints() .get(0) <  getPoints() .get(4)) { //Start Top Left
+                     getPoints() .set(0,  getPoints() .get(0) + Constants.ROOM_STROKE_WIDTH / 2);
+                     getPoints() .set(2,  getPoints() .get(2) - Constants.ROOM_STROKE_WIDTH / 2);
+                     getPoints() .set(4,  getPoints() .get(4) - Constants.ROOM_STROKE_WIDTH / 2);
+                     getPoints() .set(6,  getPoints() .get(6) + Constants.ROOM_STROKE_WIDTH / 2);
                 } else { // Start Bottom Right
-                    pointList.set(0, pointList.get(0) - Constants.ROOM_STROKE_WIDTH / 2);
-                    pointList.set(2, pointList.get(2) + Constants.ROOM_STROKE_WIDTH / 2);
-                    pointList.set(4, pointList.get(4) + Constants.ROOM_STROKE_WIDTH / 2);
-                    pointList.set(6, pointList.get(6) - Constants.ROOM_STROKE_WIDTH / 2);
+                     getPoints() .set(0,  getPoints() .get(0) - Constants.ROOM_STROKE_WIDTH / 2);
+                     getPoints() .set(2,  getPoints() .get(2) + Constants.ROOM_STROKE_WIDTH / 2);
+                     getPoints() .set(4,  getPoints() .get(4) + Constants.ROOM_STROKE_WIDTH / 2);
+                     getPoints() .set(6,  getPoints() .get(6) - Constants.ROOM_STROKE_WIDTH / 2);
                 }
             }
         } else {
-            if (pointList.get(1).equals(pointList.get(3))) { //Start Top Left or Bottom Right
-                pointList.set(0, pointList.get(0) - Constants.ROOM_STROKE_WIDTH / 2);
-                pointList.set(2, pointList.get(2) + Constants.ROOM_STROKE_WIDTH / 2);
-                pointList.set(4, pointList.get(4) + Constants.ROOM_STROKE_WIDTH / 2);
-                pointList.set(6, pointList.get(6) - Constants.ROOM_STROKE_WIDTH / 2);
-                if (pointList.get(1) < pointList.get(5)) { //Start Top Left
-                    pointList.set(1, pointList.get(1) + Constants.ROOM_STROKE_WIDTH / 2);
-                    pointList.set(3, pointList.get(3) + Constants.ROOM_STROKE_WIDTH / 2);
-                    pointList.set(5, pointList.get(5) - Constants.ROOM_STROKE_WIDTH / 2);
-                    pointList.set(7, pointList.get(7) - Constants.ROOM_STROKE_WIDTH / 2);
+            if ( getPoints() .get(1).equals( getPoints() .get(3))) { //Start Top Left or Bottom Right
+                 getPoints() .set(0,  getPoints() .get(0) - Constants.ROOM_STROKE_WIDTH / 2);
+                 getPoints() .set(2,  getPoints() .get(2) + Constants.ROOM_STROKE_WIDTH / 2);
+                 getPoints() .set(4,  getPoints() .get(4) + Constants.ROOM_STROKE_WIDTH / 2);
+                 getPoints() .set(6,  getPoints() .get(6) - Constants.ROOM_STROKE_WIDTH / 2);
+                if ( getPoints() .get(1) <  getPoints() .get(5)) { //Start Top Left
+                     getPoints() .set(1,  getPoints() .get(1) + Constants.ROOM_STROKE_WIDTH / 2);
+                     getPoints() .set(3,  getPoints() .get(3) + Constants.ROOM_STROKE_WIDTH / 2);
+                     getPoints() .set(5,  getPoints() .get(5) - Constants.ROOM_STROKE_WIDTH / 2);
+                     getPoints() .set(7,  getPoints() .get(7) - Constants.ROOM_STROKE_WIDTH / 2);
                 } else { // Start Bottom Right
-                    pointList.set(1, pointList.get(1) - Constants.ROOM_STROKE_WIDTH / 2);
-                    pointList.set(3, pointList.get(3) - Constants.ROOM_STROKE_WIDTH / 2);
-                    pointList.set(5, pointList.get(5) + Constants.ROOM_STROKE_WIDTH / 2);
-                    pointList.set(7, pointList.get(7) + Constants.ROOM_STROKE_WIDTH / 2);
+                     getPoints() .set(1,  getPoints() .get(1) - Constants.ROOM_STROKE_WIDTH / 2);
+                     getPoints() .set(3,  getPoints() .get(3) - Constants.ROOM_STROKE_WIDTH / 2);
+                     getPoints() .set(5,  getPoints() .get(5) + Constants.ROOM_STROKE_WIDTH / 2);
+                     getPoints() .set(7,  getPoints() .get(7) + Constants.ROOM_STROKE_WIDTH / 2);
                 }
             } else { //Start Top Right or Bottom Left
-                pointList.set(0, pointList.get(0) + Constants.ROOM_STROKE_WIDTH / 2);
-                pointList.set(2, pointList.get(2) + Constants.ROOM_STROKE_WIDTH / 2);
-                pointList.set(4, pointList.get(4) - Constants.ROOM_STROKE_WIDTH / 2);
-                pointList.set(6, pointList.get(6) - Constants.ROOM_STROKE_WIDTH / 2);
-                if (pointList.get(1) < pointList.get(5)) { //Start Top Right
-                    pointList.set(1, pointList.get(1) + Constants.ROOM_STROKE_WIDTH / 2);
-                    pointList.set(3, pointList.get(3) - Constants.ROOM_STROKE_WIDTH / 2);
-                    pointList.set(5, pointList.get(5) - Constants.ROOM_STROKE_WIDTH / 2);
-                    pointList.set(7, pointList.get(7) + Constants.ROOM_STROKE_WIDTH / 2);
+                 getPoints() .set(0,  getPoints() .get(0) + Constants.ROOM_STROKE_WIDTH / 2);
+                 getPoints() .set(2,  getPoints() .get(2) + Constants.ROOM_STROKE_WIDTH / 2);
+                 getPoints() .set(4,  getPoints() .get(4) - Constants.ROOM_STROKE_WIDTH / 2);
+                 getPoints() .set(6,  getPoints() .get(6) - Constants.ROOM_STROKE_WIDTH / 2);
+                if ( getPoints() .get(1) <  getPoints() .get(5)) { //Start Top Right
+                     getPoints() .set(1,  getPoints() .get(1) + Constants.ROOM_STROKE_WIDTH / 2);
+                     getPoints() .set(3,  getPoints() .get(3) - Constants.ROOM_STROKE_WIDTH / 2);
+                     getPoints() .set(5,  getPoints() .get(5) - Constants.ROOM_STROKE_WIDTH / 2);
+                     getPoints() .set(7,  getPoints() .get(7) + Constants.ROOM_STROKE_WIDTH / 2);
                 } else { // Start Bottom Left
-                    pointList.set(1, pointList.get(1) - Constants.ROOM_STROKE_WIDTH / 2);
-                    pointList.set(3, pointList.get(3) + Constants.ROOM_STROKE_WIDTH / 2);
-                    pointList.set(5, pointList.get(5) + Constants.ROOM_STROKE_WIDTH / 2);
-                    pointList.set(7, pointList.get(7) - Constants.ROOM_STROKE_WIDTH / 2);
+                     getPoints() .set(1,  getPoints() .get(1) - Constants.ROOM_STROKE_WIDTH / 2);
+                     getPoints() .set(3,  getPoints() .get(3) + Constants.ROOM_STROKE_WIDTH / 2);
+                     getPoints() .set(5,  getPoints() .get(5) + Constants.ROOM_STROKE_WIDTH / 2);
+                     getPoints() .set(7,  getPoints() .get(7) - Constants.ROOM_STROKE_WIDTH / 2);
                 }
             }
         }

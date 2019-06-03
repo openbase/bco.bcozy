@@ -31,53 +31,24 @@ import org.openbase.type.domotic.unit.location.LocationDataType;
  */
 public class ZonePolygon extends LocationPolygon {
 
-    private final LocationPane locationPane;
-
     /**
      * The Constructor for a ZonePolygon.
      *
-     * @param points The vertices of the location
      * @throws org.openbase.jul.exception.InstantiationException
      */
-    public ZonePolygon(final LocationPane locationPane, final double... points) throws InstantiationException {
-        super(points);
-        this.locationPane = locationPane;
-
-        setOnMouseClicked(event -> {
-            try {
-                if (event.isStillSincePress()) {
-                    if (event.getClickCount() == 1) {
-                        locationPane.setSelectedLocation(this);
-                    } else if (event.getClickCount() == 2) {
-                        if (locationPane.getLastClickTarget().equals(this)) {
-                            locationPane.autoFocusPolygonAnimated(this);
-                        } else {
-                            locationPane.getLastClickTarget().fireEvent(event.copyFor(null, locationPane.getLastClickTarget()));
-                        }
-                    }
-                    event.consume();
-                }
-            } catch (CouldNotPerformException ex) {
-                ExceptionPrinter.printHistory("Could not handle mouse event!", ex, LOGGER);
-            }
-        });
-
-        // needed to handle background pane selection of the root pane
-        setOnMouseEntered(event -> {locationPane.handleHoverUpdate(ZonePolygon.this, true);});
-        setOnMouseExited(event -> {locationPane.handleHoverUpdate(ZonePolygon.this, false);});
-
-        hoverProperty().addListener((observable,  oldValue, newValue) -> locationPane.handleHoverUpdate(ZonePolygon.this, newValue));
+    public ZonePolygon(final LocationMap locationMap) throws InstantiationException {
+        super(locationMap);
     }
 
     @Override
     public void applyDataUpdate(LocationDataType.LocationData unitData) {
         switch (unitData.getPresenceState().getValue()) {
             case PRESENT:
-                setCustomColor(Color.GREEN.brighter());
+                setStroke(Color.GREEN);
                 break;
             case ABSENT:
             case UNKNOWN:
-                setCustomColor(Color.TRANSPARENT);
+                setStroke(Color.WHITE);
                 break;
             default:
                 ExceptionPrinter.printHistory(new EnumNotSupportedException(unitData.getPresenceState().getValue(), this), LOGGER);
@@ -94,9 +65,9 @@ public class ZonePolygon extends LocationPolygon {
     @Override
     protected void changeStyleOnSelection(final boolean selected) {
         if (selected) {
-            this.setMainColor(Constants.TILE_SELECTION);
+            setMainColor(Constants.ZONE_SELECTION);
         } else {
-            this.setMainColor(Constants.ZONE_FILL);
+            setMainColor(Constants.ZONE_FILL);
         }
     }
 
@@ -104,7 +75,7 @@ public class ZonePolygon extends LocationPolygon {
      * Will be called when either the main or the custom color changes.
      * The initial values for both colors are Color.TRANSPARENT.
      *
-     * @param mainColor The main color
+     * @param mainColor   The main color
      * @param customColor The custom color
      */
     @Override
