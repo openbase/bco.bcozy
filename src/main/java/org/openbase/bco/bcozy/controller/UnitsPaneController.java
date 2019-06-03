@@ -29,7 +29,7 @@ import javafx.geometry.Point2D;
 import javax.vecmath.Point3d;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.UnitSymbolsPane;
-import org.openbase.bco.bcozy.view.location.LocationPane;
+import org.openbase.bco.bcozy.view.location.LocationMapPane;
 import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
 import org.openbase.bco.dal.remote.layer.unit.Units;
 import org.openbase.bco.registry.remote.Registries;
@@ -59,23 +59,23 @@ public class UnitsPaneController {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(UnitsPaneController.class);
 
-    private final LocationPane locationPane;
+    private final LocationMapPane locationMapPane;
     private final UnitSymbolsPane unitSymbolsPane;
 
     /**
      * Constructor
      *
      * @param unitPane
-     * @param locationPane
+     * @param locationMapPane
      */
-    public UnitsPaneController(final UnitSymbolsPane unitPane, final LocationPane locationPane) {
-        this.locationPane = locationPane;
+    public UnitsPaneController(final UnitSymbolsPane unitPane, final LocationMapPane locationMapPane) {
+        this.locationMapPane = locationMapPane;
         this.unitSymbolsPane = unitPane;
 
-        unitPane.scaleXProperty().bind(locationPane.scaleXProperty());
-        unitPane.scaleYProperty().bind(locationPane.scaleYProperty());
-        unitPane.translateXProperty().bind(locationPane.translateXProperty());
-        unitPane.translateYProperty().bind(locationPane.translateYProperty());
+        unitPane.scaleXProperty().bind(locationMapPane.scaleXProperty());
+        unitPane.scaleYProperty().bind(locationMapPane.scaleYProperty());
+        unitPane.translateXProperty().bind(locationMapPane.translateXProperty());
+        unitPane.translateYProperty().bind(locationMapPane.translateYProperty());
     }
 
     /**

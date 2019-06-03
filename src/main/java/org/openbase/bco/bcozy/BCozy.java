@@ -77,7 +77,7 @@ public class BCozy extends Application {
     private static Observer<Remote, ConnectionState.State> connectionObserver;
     private LoadingPane loadingPane;
     private ContextMenuController contextMenuController;
-    private LocationPaneController locationPaneController;
+    private LocationMapPaneController locationMapPaneController;
     private ForegroundPane foregroundPane;
     private UnitsPaneController unitsPaneController;
     private MaintenanceLayerController maintenanceLayerController;
@@ -187,11 +187,11 @@ public class BCozy extends Application {
             new MainMenuController(foregroundPane);
             new CenterPaneController(foregroundPane);
 
-            contextMenuController = new ContextMenuController(foregroundPane, backgroundPane.getLocationPane());
-            locationPaneController = new LocationPaneController(backgroundPane.getLocationPane());
-            unitsPaneController = new UnitsPaneController(backgroundPane.getUnitsPane(), backgroundPane.getLocationPane());
-            maintenanceLayerController = new MaintenanceLayerController(backgroundPane.getMaintenancePane(), backgroundPane.getLocationPane());
-            editingLayerController = new EditingLayerController(backgroundPane.getEditingPane(), backgroundPane.getLocationPane());
+            contextMenuController = new ContextMenuController(foregroundPane, backgroundPane.getLocationMapPane());
+            locationMapPaneController = new LocationMapPaneController(backgroundPane.getLocationMapPane());
+            unitsPaneController = new UnitsPaneController(backgroundPane.getUnitsPane(), backgroundPane.getLocationMapPane());
+            maintenanceLayerController = new MaintenanceLayerController(backgroundPane.getMaintenancePane(), backgroundPane.getLocationMapPane());
+            editingLayerController = new EditingLayerController(backgroundPane.getEditingPane(), backgroundPane.getLocationMapPane());
 
             ResponsiveHandler.addResponsiveToWindow(primaryStage);
             primaryStage.show();
@@ -221,7 +221,7 @@ public class BCozy extends Application {
                 contextMenuController.initTitledPaneMap();
 
                 loadingPane.info("connectLocationRemote");
-                locationPaneController.connectLocationRemote();
+                locationMapPaneController.init();
                 unitsPaneController.connectUnitRemote();
                 maintenanceLayerController.connectUnitRemote();
                 editingLayerController.connectUnitRemote();

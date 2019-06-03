@@ -3,6 +3,7 @@ package org.openbase.bco.bcozy.view.generic;
 import javafx.scene.Node;
 import javafx.scene.input.TouchPoint;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.NotAvailableException;
@@ -49,6 +50,10 @@ public abstract class MultiTouchPane extends Pane {
 
                 // filter touch events
                 if (event.isSynthesized()) {
+                    return;
+                }
+
+                if (!event.isPrimaryButtonDown()) {
                     return;
                 }
 

@@ -19,22 +19,15 @@
  */
 package org.openbase.bco.bcozy.view.location;
 
-//import javafx.animation.ParallelTransition;
-//import javafx.animation.ScaleTransition;
-//import javafx.animation.TranslateTransition;
-
 import javafx.animation.ParallelTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
-import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
-import javafx.scene.effect.Lighting;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.text.Text;
 import javafx.util.Duration;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ForegroundPane;
@@ -44,9 +37,7 @@ import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jps.core.JPService;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.EnumNotSupportedException;
-import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
-import org.openbase.jul.exception.printer.LogLevel;
 import org.openbase.jul.extension.type.processing.LabelProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,34 +49,47 @@ import java.util.*;
  * @author julian
  * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>
  */
-public final class LocationPane extends MultiTouchPane {
+public final class LocationMapPane extends MultiTouchPane implements LocationMap {
 
     /**
      * Application logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(LocationPane.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LocationMapPane.class);
     private static boolean initialized;
-    public final SimpleStringProperty selectedLocationId;
+    public final SimpleObjectProperty<DynamicUnitPolygon<?,?>> selectedUnit;
     private final ForegroundPane foregroundPane;
-    private final List<LocationPolygon> locationHoverLevelList;
-    private final Map<String, TilePolygon> tileMap;
-    private final Map<String, RegionPolygon> regionMap;
-    private final Map<String, ZonePolygon> zoneMap;
+    private final List<DynamicPolygon> locationHoverLevelList;
+    private final Map<String, LocationPolygon> tileMap;
+    private final Map<String, LocationPolygon> regionMap;
+    private final Map<String, LocationPolygon> zoneMap;
     private final Map<String, ConnectionPolygon> connectionMap;
     private final List<Node> debugNodes;
-    private LocationPolygon selectedLocation;
-    private ZonePolygon rootLocation;
-    private LocationPolygon lastClickTarget;
+    private DynamicPolygon selectedLocation;
+    private LocationPolygon rootLocation;
+    private DynamicPolygon lastClickTarget;
     private LocationPolygon lastSelectedTile;
+
+    //private final EventHandler<MouseEvent> mouseEventHandler;
+
+    private final List<AnchorPoint> anchorPointList;
+
+    private final StackPane editOverlay;
+
+    private SelectionMode anchorManipulationMode;
+
+    private double prevMouseCordX;
+    private double prevMouseCordY;
+
+    public enum SelectionMode {NON, HORIZONTAL, VERTICAL, BOTH}
 
     /**
      * Private constructor to deny manual instantiation.
      *
      * @param foregroundPane The foregroundPane
      */
-    public LocationPane(final ForegroundPane foregroundPane) throws org.openbase.jul.exception.InstantiationException, InterruptedException {
+    public LocationMapPane(final ForegroundPane foregroundPane) {
         super();
-
+        this.anchorManipulationMode = SelectionMode.NON;
         this.foregroundPane = foregroundPane;
         this.locationHoverLevelList = new ArrayList<>();
         this.tileMap = new HashMap<>();
@@ -93,8 +97,10 @@ public final class LocationPane extends MultiTouchPane {
         this.zoneMap = new HashMap<>();
         this.connectionMap = new HashMap<>();
         this.debugNodes = new ArrayList<>();
+        this.editOverlay = new StackPane();
+        this.anchorPointList = new ArrayList<>();
 
-        this.selectedLocationId = new SimpleStringProperty(Constants.DUMMY_LABEL);
+        this.selectedUnit = new SimpleObjectProperty<>();
         this.rootLocation = null;
 
         this.heightProperty().addListener((observable, oldValue, newValue)
@@ -105,33 +111,60 @@ public final class LocationPane extends MultiTouchPane {
 
         this.foregroundPane.getMainMenuWidthProperty().addListener((observable, oldValue, newValue)
                 -> this.setTranslateX(this.getTranslateX() - ((oldValue.doubleValue() - newValue.doubleValue()) / 2)));
+
+        this.editOverlay.setPickOnBounds(false);
+
+
+        // handle node mouse translations
+        editOverlay.setOnMousePressed(event -> {
+
+            // filter touch events
+            if (event.isSynthesized()) {
+                return;
+            }
+
+            if (anchorManipulationMode == SelectionMode.NON) {
+                return;
+            }
+
+            if (!event.isSecondaryButtonDown()) {
+                return;
+            }
+
+            // System.out.println("handle mouse pressed...");
+            this.prevMouseCordX = event.getX();
+            this.prevMouseCordY = event.getY();
+            event.consume();
+        });
+        editOverlay.setOnMouseDragged(event -> {
+
+            // filter touch events
+            if (event.isSynthesized()) {
+                return;
+            }
+
+            if (anchorManipulationMode == SelectionMode.NON) {
+                return;
+            }
+
+            if (!event.isSecondaryButtonDown()) {
+                return;
+            }
+
+            final double deltaX = event.getX() - prevMouseCordX;
+            final double deltaY = event.getY() - prevMouseCordY;
+            prevMouseCordX = event.getX();
+            prevMouseCordY = event.getY();
+
+            for (AnchorPoint anchorPoint : anchorPointList) {
+                anchorPoint.translate(deltaX, deltaY, anchorManipulationMode);
+            }
+
+            event.consume();
+        });
     }
 
-    private void selectRootLocation() {
-
-        // check if exists
-        if (rootLocation == null) {
-            LOGGER.debug("Could not select root because its not available.");
-            return;
-        }
-
-        // check is not already selected
-        if (rootLocation.equals(selectedLocation)) {
-            return;
-        }
-
-        // deselect selected location
-        if (selectedLocation != null) {
-            selectedLocation.setSelected(false);
-        }
-        rootLocation.setSelected(true);
-        try {
-            this.setSelectedLocation(rootLocation);
-        } catch (CouldNotPerformException ex) {
-            ExceptionPrinter.printHistory("Could not select root loaction!", ex, LOGGER);
-        }
-    }
-
+    @Override
     public boolean isInitialized() {
         return initialized;
     }
@@ -140,8 +173,57 @@ public final class LocationPane extends MultiTouchPane {
         initialized = init;
     }
 
-    public ForegroundPane getForeground() {
-        return this.foregroundPane;
+    @Override
+    public void deselectAnchorPoint(final AnchorPoint anchorPoint) {
+        anchorPointList.remove(anchorPoint);
+        anchorManipulationMode = computeAnchorManipulationMode();
+        if (anchorPointList.isEmpty()) {
+            editOverlay.setPickOnBounds(false);
+        }
+    }
+
+    @Override
+    public void selectAnchorPoint(final AnchorPoint anchorPoint) {
+        editOverlay.setPickOnBounds(true);
+        anchorPointList.add(anchorPoint);
+        anchorManipulationMode = computeAnchorManipulationMode();
+    }
+
+    public void clearAncorpointSelection() {
+        editOverlay.setPickOnBounds(false);
+        anchorPointList.clear();
+        anchorManipulationMode = computeAnchorManipulationMode();
+    }
+
+    public boolean isSelected(final AnchorPoint anchorPoint) {
+        return anchorPointList.contains(anchorPoint);
+    }
+
+    private SelectionMode computeAnchorManipulationMode() {
+
+        if (anchorPointList.isEmpty()) {
+            return SelectionMode.NON;
+        } else if (anchorPointList.size() == 1 && anchorPointList.get(0).getPolygon().isAllAnchorsSelected()) {
+            return SelectionMode.BOTH;
+        }
+
+        double minX = Double.MAX_VALUE;
+        double maxX = -Double.MAX_VALUE;
+        double minY = Double.MAX_VALUE;
+        double maxY = -Double.MAX_VALUE;
+
+        for (AnchorPoint point : anchorPointList) {
+            minX = Math.min(point.getTranslateX(), minX);
+            maxX = Math.max(point.getTranslateX(), maxX);
+            minY = Math.min(point.getTranslateY(), minY);
+            maxY = Math.max(point.getTranslateY(), maxY);
+        }
+
+        if (Math.abs(maxX - minX) > Math.abs(maxY - minY)) {
+            return SelectionMode.HORIZONTAL;
+        } else {
+            return SelectionMode.VERTICAL;
+        }
     }
 
     /**
@@ -151,117 +233,39 @@ public final class LocationPane extends MultiTouchPane {
      * If a room with the same id already exists, it will be overwritten.
      *
      * @param locationUnitConfig the configuration of the location to add.
-     * @param vertices           A list of vertices which defines the shape of the room
      *
      * @throws org.openbase.jul.exception.CouldNotPerformException
      * @throws java.lang.InterruptedException
      */
-    public void addLocation(final UnitConfig locationUnitConfig, final List<Point2D> vertices) throws CouldNotPerformException, InterruptedException {
+    public void addLocation(final UnitConfig locationUnitConfig) throws CouldNotPerformException, InterruptedException {
         try {
-            // Fill the list of vertices into an array of points
-            double[] points = new double[vertices.size() * 2];
-            for (int i = 0; i < vertices.size(); i++) {
-                // TODO: X and Y are swapped in the world of the csra... make it more generic...
-                points[i * 2] = vertices.get(i).getY() * Constants.METER_TO_PIXEL;
-                points[i * 2 + 1] = vertices.get(i).getX() * Constants.METER_TO_PIXEL;
-            }
 
+            LocationPolygon locationPolygon;
             switch (locationUnitConfig.getLocationConfig().getLocationType()) {
                 case TILE:
-                    final TilePolygon tilePolygon = new TilePolygon(this, points);
-                    tilePolygon.init(locationUnitConfig);
-                    tilePolygon.activate();
-                    tileMap.put(locationUnitConfig.getId(), tilePolygon);
+                    locationPolygon = new TilePolygon(this);
+                    tileMap.put(locationUnitConfig.getId(), locationPolygon);
                     break;
                 case REGION:
-                    final RegionPolygon regionPolygon = new RegionPolygon(this, points);
-                    regionPolygon.init(locationUnitConfig);
-                    regionPolygon.activate();
-                    regionMap.put(locationUnitConfig.getId(), regionPolygon);
+                    locationPolygon = new RegionPolygon(this);
+                    regionMap.put(locationUnitConfig.getId(), locationPolygon);
                     break;
                 case ZONE:
-                    final ZonePolygon zonePolygon = new ZonePolygon(this, points);
-                    zonePolygon.init(locationUnitConfig);
-                    zonePolygon.activate();
-
-                    // configure root location if detected
-                    if (locationUnitConfig.getLocationConfig().getRoot()) {
-                        setRootLocation(zonePolygon);
-                    }
-                    zoneMap.put(locationUnitConfig.getId(), zonePolygon);
+                    locationPolygon = new ZonePolygon(this);
+                    zoneMap.put(locationUnitConfig.getId(), locationPolygon);
                     break;
                 default:
                     throw new EnumNotSupportedException(locationUnitConfig.getLocationConfig().getLocationType(), this);
             }
 
-            // Paint debug information
-            if (JPService.debugMode()) {
+            locationPolygon.init(locationUnitConfig);
+            locationPolygon.activate();
 
-                // declare vars
-                Text text;
-                Circle coordinate;
-                final StackPane globalBaseStack = new StackPane();
-                final StackPane locationBaseStack = new StackPane();
-                final StackPane[] locationStacks = new StackPane[vertices.size()];
-                debugNodes.clear();
-
-                // Paint Location Coordinates
-                final double COORDINATE_BLOCK_SIZE = 0.30 * Constants.METER_TO_PIXEL;
-                for (int i = 0; i < vertices.size(); i++) {
-
-                    text = new Text(Integer.toString(i));
-                    text.setStroke(Color.BLACK);
-
-                    coordinate = new Circle(COORDINATE_BLOCK_SIZE);
-                    coordinate.setFill(Color.WHITE);
-                    coordinate.setEffect(new Lighting());
-
-                    locationStacks[i] = new StackPane();
-                    locationStacks[i].getChildren().addAll(coordinate, text);
-                    locationStacks[i].autosize();
-                    locationStacks[i].setLayoutX(vertices.get(i).getY() * Constants.METER_TO_PIXEL - (locationStacks[i].getWidth() / 2));
-                    locationStacks[i].setLayoutY(vertices.get(i).getX() * Constants.METER_TO_PIXEL - (locationStacks[i].getHeight() / 2));
-                    final int pos = i;
-                    locationStacks[i].hoverProperty().addListener((observable, oldValue, newValue) -> {
-                        InfoPane.info("This is the " + pos + ". coordinate of the " + LabelProcessor.getBestMatch(locationUnitConfig.getLabel(),"?"));
-                    });
-                    debugNodes.add(locationStacks[i]);
-                }
-
-                // Paint LocationBase
-                text = new Text("X");
-                text.setStroke(Color.BLACK);
-
-                coordinate = new Circle(COORDINATE_BLOCK_SIZE);
-                coordinate.setFill(Color.CORNFLOWERBLUE);
-                coordinate.setEffect(new Lighting());
-
-                locationBaseStack.getChildren().addAll(coordinate, text);
-                locationBaseStack.autosize();
-                locationBaseStack.setLayoutX(locationUnitConfig.getPlacementConfig().getPose().getTranslation().getY() * Constants.METER_TO_PIXEL - (locationBaseStack.getWidth() / 2));
-                locationBaseStack.setLayoutY(locationUnitConfig.getPlacementConfig().getPose().getTranslation().getX() * Constants.METER_TO_PIXEL - (locationBaseStack.getHeight() / 2));
-                locationBaseStack.hoverProperty().addListener((observable, oldValue, newValue) -> {
-                    InfoPane.info("This is the base of the " + LabelProcessor.getBestMatch(locationUnitConfig.getLabel(),"?"));
-                });
-                debugNodes.add(locationBaseStack);
-
-                // Paint Gloabl Base
-                text = new Text("O");
-                text.setStroke(Color.BLACK);
-
-                coordinate = new Circle(COORDINATE_BLOCK_SIZE);
-                coordinate.setFill(Color.DARKRED);
-                coordinate.setEffect(new Lighting());
-
-                globalBaseStack.getChildren().addAll(coordinate, text);
-                globalBaseStack.autosize();
-                globalBaseStack.setLayoutX(0 - (globalBaseStack.getWidth() / 2));
-                globalBaseStack.setLayoutY(0 - (globalBaseStack.getHeight() / 2));
-                globalBaseStack.hoverProperty().addListener((observable, oldValue, newValue) -> {
-                    InfoPane.info("This is the global base.");
-                });
-                debugNodes.add(globalBaseStack);
+            // configure root location if detected
+            if (locationUnitConfig.getLocationConfig().getRoot()) {
+                setRootLocation(locationPolygon);
             }
+
         } catch (Exception ex) {
             throw new CouldNotPerformException("Could not add location!", ex);
         }
@@ -273,34 +277,23 @@ public final class LocationPane extends MultiTouchPane {
      * If a connection with the same id already exists, it will be overwritten.
      *
      * @param connectionUnitConfig the unit config of this connection.
-     * @param vertices             A list of vertices which defines the shape of the
-     *                             connection
      *
      * @throws org.openbase.jul.exception.CouldNotPerformException
      * @throws java.lang.InterruptedException
      */
-    public void addConnection(final UnitConfig connectionUnitConfig, final List<Point2D> vertices) throws CouldNotPerformException, InterruptedException {
+    public void addConnection(final UnitConfig connectionUnitConfig) throws CouldNotPerformException, InterruptedException {
 
         try {
-            // Fill the list of vertices into an array of points
-            double[] points = new double[vertices.size() * 2];
-            for (int i = 0; i < vertices.size(); i++) {
-                // TODO: X and Y are swapped in the world of the csra... make it more generic...
-                points[i * 2] = vertices.get(i).getY() * Constants.METER_TO_PIXEL;
-                points[i * 2 + 1] = vertices.get(i).getX() * Constants.METER_TO_PIXEL;
-            }
-
             ConnectionPolygon connectionPolygon;
-
             switch (connectionUnitConfig.getConnectionConfig().getConnectionType()) {
                 case DOOR:
-                    connectionPolygon = new DoorPolygon(points);
+                    connectionPolygon = new DoorPolygon(this);
                     break;
                 case WINDOW:
-                    connectionPolygon = new WindowPolygon(points);
+                    connectionPolygon = new WindowPolygon(this);
                     break;
                 case PASSAGE:
-                    connectionPolygon = new PassagePolygon(points);
+                    connectionPolygon = new PassagePolygon(this);
                     break;
                 default:
                     throw new EnumNotSupportedException(connectionUnitConfig.getConnectionConfig().getConnectionType(), this);
@@ -313,6 +306,7 @@ public final class LocationPane extends MultiTouchPane {
 
             connectionUnitConfig.getConnectionConfig().getTileIdList().forEach(locationId -> {
                 if (tileMap.containsKey(locationId)) {
+
                     tileMap.get(locationId).addCuttingShape(connectionPolygon);
                 } else {
                     String unitLabel = locationId;
@@ -356,6 +350,14 @@ public final class LocationPane extends MultiTouchPane {
      * Erases all locations from the locationPane.
      */
     public void clearLocations() {
+
+        zoneMap.forEach((locationId, locationPolygon) -> {
+                    locationPolygon.shutdown();
+                    this.getChildren().remove(locationPolygon);
+                }
+        );
+        zoneMap.clear();
+
         tileMap.forEach((locationId, locationPolygon) -> {
                     locationPolygon.shutdown();
                     this.getChildren().remove(locationPolygon);
@@ -370,11 +372,13 @@ public final class LocationPane extends MultiTouchPane {
         );
         regionMap.clear();
 
+        debugNodes.clear();
+
         // clear root location
         setRootLocation(null);
     }
 
-    private synchronized void setRootLocation(final ZonePolygon rootLocation) {
+    private synchronized void setRootLocation(final LocationPolygon rootLocation) {
 
         // filter if nothing has been changed.
         if (this.rootLocation == rootLocation) {
@@ -419,30 +423,40 @@ public final class LocationPane extends MultiTouchPane {
     public void updateLocationPane() {
         this.getChildren().clear();
 
-        tileMap.forEach((locationId, locationPolygon) -> {
-            if (rootLocation != null) {
-                rootLocation.addCuttingShape(locationPolygon);
-            }
+
+        zoneMap.forEach((locationId, locationPolygon) -> {
+//            if (rootLocation != null) {
+//                rootLocation.addCuttingShape(locationPolygon);
+//            }
             this.getChildren().add(locationPolygon);
         });
 
-        if (rootLocation != null) {
-            this.getChildren().add(rootLocation);
-        }
+        tileMap.forEach((locationId, locationPolygon) -> {
+//            if (rootLocation != null) {
+//                rootLocation.addCuttingShape(locationPolygon);
+//            }
+            this.getChildren().add(locationPolygon);
+        });
+
+//        if (rootLocation != null) {
+//            this.getChildren().add(rootLocation);
+//        }
 
         regionMap.forEach((locationId, locationPolygon) -> {
-            if (rootLocation != null) {
-                rootLocation.addCuttingShape(locationPolygon);
-            }
+//            if (rootLocation != null) {
+//                rootLocation.addCuttingShape(locationPolygon);
+//            }
             this.getChildren().add(locationPolygon);
         });
 
         connectionMap.forEach((connectionId, connectionPolygon) -> {
-            if (rootLocation != null) {
-                rootLocation.addCuttingShape(connectionPolygon);
-            }
+//            if (rootLocation != null) {
+//                rootLocation.addCuttingShape(connectionPolygon);
+//            }
             this.getChildren().add(connectionPolygon);
         });
+
+        getChildren().add(editOverlay);
 
         if (JPService.debugMode()) {
             // debug print
@@ -456,15 +470,18 @@ public final class LocationPane extends MultiTouchPane {
         }
     }
 
-    private boolean isLocationSelected() {
-        return selectedLocation != null;
+    @Override
+    public Pane getEditOverlay() {
+        return editOverlay;
     }
 
-    public LocationPolygon getLastClickTarget() {
+    @Override
+    public DynamicPolygon getLastClickTarget() {
         return lastClickTarget;
     }
 
-    void setSelectedLocation(final LocationPolygon newSelectedLocation) throws CouldNotPerformException {
+    @Override
+    public void setSelectedUnit(final DynamicPolygon newSelectedLocation) throws CouldNotPerformException {
         try {
             lastClickTarget = newSelectedLocation;
             if (selectedLocation != null && selectedLocation.equals(newSelectedLocation)) {
@@ -472,14 +489,21 @@ public final class LocationPane extends MultiTouchPane {
                 return;
             }
 
+            // deselect anchors of other locations
+            for (AnchorPoint anchorPoint : new ArrayList<>(anchorPointList)) {
+                if (!anchorPoint.getPolygon().equals(newSelectedLocation)) {
+                    deselectAnchorPoint(anchorPoint);
+                }
+            }
+
             if (lastSelectedTile != null) {
                 // make sub sub regions unselectable
                 if (!newSelectedLocation.getClass().equals(RegionPolygon.class)) {
                     lastSelectedTile.getChildIds().forEach(childId -> {
                         try {
-                            // make all regions non selecable
+                            // make all regions non selectable
                             if (regionMap.containsKey(childId)) {
-                                regionMap.get(childId).changeStyleOnSelectable(false);
+                                regionMap.get(childId).setSelectable(false);
                             }
                         } catch (Exception ex) {
                             ExceptionPrinter.printHistory(ex, LOGGER);
@@ -490,10 +514,10 @@ public final class LocationPane extends MultiTouchPane {
 
             // allow selection of sub regions.
             if (newSelectedLocation.getClass().equals(TilePolygon.class)) {
-                lastSelectedTile = newSelectedLocation;
-                newSelectedLocation.getChildIds().forEach(childId -> {
+                lastSelectedTile = (TilePolygon) newSelectedLocation;
+                lastSelectedTile.getChildIds().forEach(childId -> {
                     try {
-                        regionMap.get(childId).changeStyleOnSelectable(true);
+                        regionMap.get(childId).setSelectable(true);
                     } catch (Exception ex) {
                         ExceptionPrinter.printHistory(ex, LOGGER);
                     }
@@ -505,8 +529,7 @@ public final class LocationPane extends MultiTouchPane {
             }
             newSelectedLocation.setSelected(true);
             selectedLocation = newSelectedLocation;
-            selectedLocationId.set(newSelectedLocation.getUnitId());
-
+            selectedUnit.set((DynamicUnitPolygon) newSelectedLocation);
             foregroundPane.getUnitMenu().getRoomInfo().setText(selectedLocation.getLabel());
 
         } catch (CouldNotPerformException ex) {
@@ -514,60 +537,30 @@ public final class LocationPane extends MultiTouchPane {
         }
     }
 
-    /**
-     * ZoomFits to the root if available. Otherwise to the first location in the
-     * tileMap.
-     */
+    @Override
     public void zoomFit() {
-        if (rootLocation != null) { //NOPMD
+        if (rootLocation != null) {
             autoFocusPolygon(rootLocation);
         } else if (!tileMap.isEmpty()) {
             autoFocusPolygon(tileMap.values().iterator().next());
         }
     }
 
-    /**
-     * Adds a change listener to the selectedRoomID property.
-     *
-     * @param changeListener The change Listener
-     */
-    public void addSelectedLocationIdListener(final ChangeListener<? super String> changeListener) {
-        selectedLocationId.addListener(changeListener);
+    @Override
+    public void addSelectedUnitListener(final ChangeListener<? super DynamicUnitPolygon> changeListener) {
+        selectedUnit.addListener(changeListener);
     }
 
-    /**
-     * Remove the specified change listener from the selectedRoomID property.
-     *
-     * @param changeListener The change Listener
-     */
-    public void removeSelectedLocationIdListener(final ChangeListener<? super String> changeListener) {
-        selectedLocationId.removeListener(changeListener);
+    @Override
+    public void removeSelectedUnitListener(final ChangeListener<? super DynamicUnitPolygon> changeListener) {
+        selectedUnit.removeListener(changeListener);
     }
 
-    private void autoFocusPolygon(final LocationPolygon polygon) {
-        final double xScale = (foregroundPane.getBoundingBox().getWidth() / polygon.prefWidth(0))
-                * Constants.ZOOM_FIT_PERCENTAGE_WIDTH;
-        final double yScale = (foregroundPane.getBoundingBox().getHeight() / polygon.prefHeight(0))
-                * Constants.ZOOM_FIT_PERCENTAGE_HEIGHT;
-        final double scale = (xScale < yScale) ? xScale : yScale;
 
-        this.setScaleX(scale);
-        this.setScaleY(scale);
-
-        final Point2D transition = calculateTransition(scale, polygon);
-
-        this.setTranslateX(transition.getX());
-        this.setTranslateY(transition.getY());
-    }
-
-    void autoFocusPolygonAnimated(final LocationPolygon polygon) {
-        final double xScale = (foregroundPane.getBoundingBox().getWidth() / polygon.prefWidth(0))
-                * Constants.ZOOM_FIT_PERCENTAGE_WIDTH;
-        final double yScale = (foregroundPane.getBoundingBox().getHeight() / polygon.prefHeight(0))
-                * Constants.ZOOM_FIT_PERCENTAGE_HEIGHT;
-        final double scale = (xScale < yScale) ? xScale : yScale;
-
+    @Override
+    public void autoFocusPolygonAnimated(final DynamicPolygon polygon) {
         final ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(100));
+        final double scale = computeScale(polygon);
         scaleTransition.setToX(scale);
         scaleTransition.setToY(scale);
         scaleTransition.setCycleCount(1);
@@ -586,20 +579,8 @@ public final class LocationPane extends MultiTouchPane {
         parallelTransition.play();
     }
 
-    private Point2D calculateTransition(final double scale, final LocationPolygon polygon) {
-        final double polygonDistanceToCenterX = (-(polygon.getCenterX() - (getLayoutBounds().getWidth() / 2))) * scale;
-        final double polygonDistanceToCenterY = (-(polygon.getCenterY() - (getLayoutBounds().getHeight() / 2))) * scale;
-        final double boundingBoxCenterX = (foregroundPane.getBoundingBox().getMinX() + foregroundPane.getBoundingBox().getMaxX()) / 2;
-        final double boundingBoxCenterY = (foregroundPane.getBoundingBox().getMinY() + foregroundPane.getBoundingBox().getMaxY()) / 2;
-        final double bbCenterDistanceToCenterX = ((getLayoutBounds().getWidth() / 2) - boundingBoxCenterX);
-        final double bbCenterDistanceToCenterY = ((getLayoutBounds().getHeight() / 2) - boundingBoxCenterY);
-        final double transitionX = polygonDistanceToCenterX - bbCenterDistanceToCenterX;
-        final double transitionY = polygonDistanceToCenterY - bbCenterDistanceToCenterY;
-
-        return new Point2D(transitionX, transitionY);
-    }
-
-    public void handleHoverUpdate(final LocationPolygon locationPolygon, boolean hover) {
+    @Override
+    public void handleHoverUpdate(final DynamicPolygon locationPolygon, boolean hover) {
 
         if (hover) {
             locationHoverLevelList.add(locationPolygon);
@@ -613,13 +594,13 @@ public final class LocationPane extends MultiTouchPane {
         }
 
         // sort by location level
-        Collections.sort(locationHoverLevelList, (o1, o2) -> Integer.compare(o2.getLocationLevel(), o1.getLocationLevel()));
+        Collections.sort(locationHoverLevelList, (o1, o2) -> Integer.compare(o2.getLevel(), o1.getLevel()));
 
         InfoPane.info("");
 
         boolean first = true;
-        LocationPolygon lastPolygon = null;
-        for (LocationPolygon polygon : locationHoverLevelList) {
+        DynamicPolygon lastPolygon = null;
+        for (DynamicPolygon polygon : locationHoverLevelList) {
 
             // only handle ones
             if (lastPolygon == polygon) {
@@ -630,16 +611,77 @@ public final class LocationPane extends MultiTouchPane {
             if (first) {
                 first = false;
                 polygon.setStrokeWidth(Constants.ROOM_STROKE_WIDTH_MOUSE_OVER);
-                try {
-                    InfoPane.info(polygon.getLabel());
-                } catch (final NotAvailableException ex) {
-                    ExceptionPrinter.printHistory("Could not resolve location label!", ex, LOGGER, LogLevel.WARN);
-                }
+                InfoPane.info(polygon.getLabel("?"));
             } else {
                 polygon.setStrokeWidth(Constants.ROOM_STROKE_WIDTH);
             }
 
             lastPolygon = polygon;
         }
+    }
+
+    @Override
+    public Point2D calculateTransition(double scale, DynamicPolygon polygon) {
+        final double polygonDistanceToCenterX = (-(polygon.getCenterX() - (getLayoutBounds().getWidth() / 2))) * scale;
+        final double polygonDistanceToCenterY = (-(polygon.getCenterY() - (getLayoutBounds().getHeight() / 2))) * scale;
+        final double boundingBoxCenterX = (foregroundPane.getBoundingBox().getMinX() + foregroundPane.getBoundingBox().getMaxX()) / 2;
+        final double boundingBoxCenterY = (foregroundPane.getBoundingBox().getMinY() + foregroundPane.getBoundingBox().getMaxY()) / 2;
+        final double bbCenterDistanceToCenterX = ((getLayoutBounds().getWidth() / 2) - boundingBoxCenterX);
+        final double bbCenterDistanceToCenterY = ((getLayoutBounds().getHeight() / 2) - boundingBoxCenterY);
+        final double transitionX = polygonDistanceToCenterX - bbCenterDistanceToCenterX;
+        final double transitionY = polygonDistanceToCenterY - bbCenterDistanceToCenterY;
+
+        return new Point2D(transitionX, transitionY);
+    }
+
+    @Override
+    public void autoFocusPolygon(DynamicPolygon polygon) {
+        final double scale = computeScale(polygon);
+        this.setScaleX(scale);
+        this.setScaleY(scale);
+
+        final Point2D transition = calculateTransition(scale, polygon);
+        this.setTranslateX(transition.getX());
+        this.setTranslateY(transition.getY());
+    }
+
+    @Override
+    public double computeScale(DynamicPolygon polygon) {
+        final double xScale = (foregroundPane.getBoundingBox().getWidth() / polygon.prefWidth(0))
+                * Constants.ZOOM_FIT_PERCENTAGE_WIDTH;
+        final double yScale = (foregroundPane.getBoundingBox().getHeight() / polygon.prefHeight(0))
+                * Constants.ZOOM_FIT_PERCENTAGE_HEIGHT;
+        return (xScale < yScale) ? xScale : yScale;
+    }
+
+    @Override
+    public void selectRootLocation() {
+
+        // check if exists
+        if (rootLocation == null) {
+            LocationMapPane.LOGGER.debug("Could not select root because its not available.");
+            return;
+        }
+
+        // check is not already selected
+        if (rootLocation.equals(selectedLocation)) {
+            return;
+        }
+
+        // deselect selected location
+        if (selectedLocation != null) {
+            selectedLocation.setSelected(false);
+        }
+        rootLocation.setSelected(true);
+        try {
+            setSelectedUnit(rootLocation);
+        } catch (CouldNotPerformException ex) {
+            ExceptionPrinter.printHistory("Could not select root loaction!", ex, LocationMapPane.LOGGER);
+        }
+    }
+
+    @Override
+    public boolean isLocationSelected() {
+        return selectedLocation != null;
     }
 }

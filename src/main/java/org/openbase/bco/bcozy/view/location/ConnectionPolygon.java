@@ -19,8 +19,14 @@
 package org.openbase.bco.bcozy.view.location;
 
 import javafx.collections.ObservableList;
+import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.dal.remote.layer.unit.connection.ConnectionRemote;
+import org.openbase.bco.registry.remote.Registries;
+import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.exception.InstantiationException;
+import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.openbase.type.domotic.unit.UnitConfigType.UnitConfig;
 import org.openbase.type.domotic.unit.connection.ConnectionDataType.ConnectionData;
 
 /**
@@ -29,96 +35,59 @@ import org.openbase.type.domotic.unit.connection.ConnectionDataType.ConnectionDa
  * @author julian
  * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>
  */
-public abstract class ConnectionPolygon extends AbstractUnitPolygon<ConnectionData, ConnectionRemote> {
+public abstract class ConnectionPolygon extends DynamicUnitPolygon<ConnectionData, ConnectionRemote> {
 
-    private final double minX;
-    private final double maxX;
-    private final double minY;
-    private final double maxY;
-    private final boolean horizontal;
+    // the level in the location hierarchy
+    private int level;
 
     /**
      * Constructor for the ConnectionPolygon.
      *
-     * @param points Points for the shape
      * @throws org.openbase.jul.exception.InstantiationException
      */
-    public ConnectionPolygon(final double... points) throws InstantiationException {
-        super(points);
-
-        final ObservableList<Double> pointList = super.getPoints();
-
-        double tempMinX = Double.MAX_VALUE;
-        double tempMaxX = Double.MIN_VALUE;
-        double tempMinY = Double.MAX_VALUE;
-        double tempMaxY = Double.MIN_VALUE;
-
-        for (int i = 0; i < pointList.size(); i = i + 2) {
-            tempMinX = pointList.get(i) < tempMinX ? pointList.get(i) : tempMinX;
-            tempMaxX = pointList.get(i) > tempMaxX ? pointList.get(i) : tempMaxX;
-        }
-
-        for (int i = 1; i < pointList.size(); i = i + 2) {
-            tempMinY = pointList.get(i) < tempMinY ? pointList.get(i) : tempMinY;
-            tempMaxY = pointList.get(i) > tempMaxY ? pointList.get(i) : tempMaxY;
-        }
-
-        minX = tempMinX;
-        maxX = tempMaxX;
-        minY = tempMinY;
-        maxY = tempMaxY;
-        this.horizontal = (maxX - minX > maxY - minY);
-
+    public ConnectionPolygon(final LocationMap locationMap) throws InstantiationException {
+        super(locationMap);
         this.setConnectionStyle();
     }
 
-    /**
-     * Getter method for the minX value.
-     *
-     * @return minX
-     */
-    protected double getMinX() {
-        return minX;
+    @Override
+    public void applyConfigUpdate(final UnitConfig unitConfig) throws InterruptedException {
+        super.applyConfigUpdate(unitConfig);
+
+        try {
+            // calculate location level
+            int level = 0;
+            UnitConfig locationUnitConfig = unitConfig;
+
+            while (!locationUnitConfig.getLocationConfig().getRoot()) {
+                level++;
+                locationUnitConfig = Registries.getUnitRegistry(true).getUnitConfigById(locationUnitConfig.getPlacementConfig().getLocationId());
+            }
+            this.level = level;
+        } catch (CouldNotPerformException ex) {
+            ExceptionPrinter.printHistory("Could not compute location level!", ex, LOGGER);
+        }
     }
 
-    /**
-     * Getter method for the maxX value.
-     *
-     * @return maxX
-     */
-    protected double getMaxX() {
-        return maxX;
-    }
-
-    /**
-     * Getter method for the minY value.
-     *
-     * @return minY
-     */
-    protected double getMinY() {
-        return minY;
-    }
-
-    /**
-     * Getter method for the maxY value.
-     *
-     * @return maxY
-     */
-    protected double getMaxY() {
-        return maxY;
-    }
-
-    /**
-     * Getter method for the horizontal value.
-     *
-     * @return horizontal as a boolean value
-     */
-    protected boolean isHorizontal() {
-        return horizontal;
+    public int getLevel() {
+        return level;
     }
 
     /**
      * Will be called when the Polygon is constructed and can be used to apply specific styles.
      */
     protected abstract void setConnectionStyle();
+
+        @Override
+        protected void changeStyleOnSelection(boolean selected) {
+//        if (selectable) {
+//            this.getStrokeDashArray().addAll(Constants.REGION_DASH_WIDTH, Constants.REGION_DASH_WIDTH);
+//            this.setStrokeWidth(Constants.REGION_STROKE_WIDTH);
+//            this.setMouseTransparent(false);
+//        } else {
+//            this.getStrokeDashArray().clear();
+//            this.setStrokeWidth(0.0);
+//            this.setMouseTransparent(true);
+//        }
+    }
 }
