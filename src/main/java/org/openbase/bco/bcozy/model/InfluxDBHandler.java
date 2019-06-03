@@ -4,6 +4,7 @@ import org.openbase.jul.exception.CouldNotPerformException;
 import org.influxdata.client.*;
 import org.influxdata.query.FluxRecord;
 import org.influxdata.query.FluxTable;
+import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
@@ -40,6 +41,13 @@ public class InfluxDBHandler {
 
 
         List<FluxTable> tables = queryApi.query(query, INFLUXDB_ORG_ID_DEFAULT);
+        try {
+            if (influxDBClient != null) {
+                influxDBClient.close();
+            }
+        } catch (Exception ex) {
+            ExceptionPrinter.printHistory("Could not shutdown database connection!", ex, LOGGER);
+        }
         return tables;
 
 
