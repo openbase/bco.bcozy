@@ -15,12 +15,12 @@ public class InfluxDBHandler {
     private static final String INFLUXDB_BUCKET_DEFAULT = "bco-persistence";
     private static final String INFLUXDB_URL_DEFAULT = "http://localhost:9999";
     private static final String INFLUXDB_ORG_DEFAULT = "openbase";
-    private static final String INFLUXDB_ORG_ID_DEFAULT = "03d9ff2d05e4b000";
+    //get INFLUXDB_ORG_ID_DEFAULT: influx org find -t TOKEN
+    private static final String INFLUXDB_ORG_ID_DEFAULT = "03e2948bb3026000";
     private static final Integer READ_TIMEOUT = 60;
     private static final Integer WRITE_TIMEOUT = 60;
     private static final Integer CONNECT_TIMOUT = 40;
-    private static final char[] TOKEN = "L8Z1fNDp5F2dvGbDkgyUgIeqYwi5ot54sCWR5WnCNK9NC5ur-SKYjTCfNSsEIGPeVPxtAtR7quLlsZpjkGYtbA==".toCharArray();
-
+    private static final char[] TOKEN = "v1aLjos5TncLa69eMOK9gD9f8fnndkrs8UqGdTqlSSUop0F_jcaXt9R23tELnbuCg7FNgrOfiMcl1Phwfbqg-A==".toCharArray();
 
     /**
      * Sends a query to the database.

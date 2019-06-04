@@ -48,6 +48,10 @@ public class ContextMenuController {
     private final ForegroundPane foregroundPane;
     private final Map<String, TitledUnitPaneContainer> titledPaneMap;
 
+    public enum energyChart {
+        BAR, PIE, WEBVIEW;
+    }
+
     /**
      * Constructor for the ContextMenuController.
      *
@@ -77,13 +81,10 @@ public class ContextMenuController {
                 case ENERGY:
                     unitMenu.getCollapseIcon().setOnMouseClicked(event -> showHideContextMenu(unitMenu));
                     unitMenu.getCollapseBtn().setOnAction(event -> showHideContextMenu(unitMenu));
-                    unitMenu.addCollapseBtn();
+                    unitMenu.setInEnergyMode();
                     break;
                 default:
-                    if (!unitMenu.isMaximized())
-                        unitMenu.maximizeUnitMenu();
-                    else
-                        unitMenu.removeCollapseBtn();
+                    unitMenu.removeEnergyMode();
                     break;
             }
         });
@@ -96,8 +97,7 @@ public class ContextMenuController {
         if (unitMenu.isMaximized()) {
             unitMenu.minimizeUnitMenu();
         } else {
-            unitMenu.maximizeUnitMenu();
-            unitMenu.addCollapseBtn();
+            unitMenu.setInEnergyMode();
         }
     }
 

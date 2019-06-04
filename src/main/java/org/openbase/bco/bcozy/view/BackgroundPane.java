@@ -18,15 +18,25 @@
  */
 package org.openbase.bco.bcozy.view;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.util.Pair;
+import org.openbase.bco.bcozy.controller.SettingsController;
+import org.openbase.bco.bcozy.controller.powerterminal.PowerBarChartVisualizationController;
+import org.openbase.bco.bcozy.controller.powerterminal.PowerDrawVisualizationController;
+import org.openbase.bco.bcozy.model.InfluxDBHandler;
 import org.openbase.bco.bcozy.view.location.LocationMapPane;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InstantiationException;
 
 import java.io.IOException;
 
+import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.openbase.jul.visual.javafx.fxml.FXMLProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,6 +52,7 @@ public class BackgroundPane extends StackPane {
     private final SimpleUnitSymbolsPane editingLayerPane;
     private final SimpleUnitSymbolsPane maintenanceLayerPane;
     private Pane powerDrawPane;
+    private Pane barChartPane;
 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BackgroundPane.class);
@@ -74,13 +85,12 @@ public class BackgroundPane extends StackPane {
             this.editingLayerPane = new SimpleUnitSymbolsPane();
             this.editingLayerPane.setPickOnBounds(false);
 
-            // Pane layer for fast overview over power draw
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource(POWER_DRAW_PANE_FXML_LOCATION));
+
             try {
-                this.powerDrawPane = fxmlLoader.load();
-            } catch(IOException ex) {
-                LOGGER.error("Failed loading "+POWER_DRAW_PANE_FXML_LOCATION+"!", ex);
-                powerDrawPane = null;
+                this.powerDrawPane = FXMLProcessor.loadFxmlPane("PowerDrawPane.fxml",  PowerDrawVisualizationController.class);
+                //this.barChartPane = FXMLProcessor.loadFxmlPane("PowerBarChartVisualization.fxml",  PowerBarChartVisualizationController.class);
+            } catch (final CouldNotPerformException ex) {
+                ExceptionPrinter.printHistory("Content could not be loaded", ex, LOGGER);
             }
 
             // layer management

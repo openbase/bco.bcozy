@@ -20,13 +20,19 @@ package org.openbase.bco.bcozy.view;
 
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import de.jensd.fx.glyphs.materialicons.MaterialIcon;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 import org.controlsfx.control.HiddenSidesPane;
+import org.openbase.bco.bcozy.controller.CenterPaneController;
+import org.openbase.bco.bcozy.controller.ContextMenuController;
 import org.openbase.jul.visual.javafx.JFXConstants;
 import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 import org.openbase.bco.bcozy.view.pane.unit.TitledUnitPaneContainer;
@@ -40,6 +46,7 @@ public class UnitMenu extends VBox {
 
     private final ContextSortingPane contextSortingPane;
     private final Label roomInfo;
+    private final Label energyInfo;
     private final ScrollPane verticalScrollPane;
     private TitledUnitPaneContainer titledPaneContainer;
     private FloatingButton fullscreenBtn;
@@ -49,9 +56,11 @@ public class UnitMenu extends VBox {
     private HBox collapseButtons;
     private boolean maximized;
     private HBox floatingButtons;
+    public ChoiceBox graphChoice;
     private final HiddenSidesPane hiddenSidesPane;
     private final double height;
     private final double width;
+    public final ObjectProperty<ContextMenuController.energyChart> energyChartProperty;
 
 
     /**
@@ -97,6 +106,21 @@ public class UnitMenu extends VBox {
         roomInfo.getStyleClass().clear();
         roomInfo.getStyleClass().add("headline");
 
+        energyInfo = new Label("Select your Energy");
+        energyInfo.setAlignment(Pos.TOP_CENTER);
+        energyInfo.getStyleClass().clear();
+        energyInfo.getStyleClass().add("headline");
+
+        energyChartProperty = new SimpleObjectProperty<>(ContextMenuController.energyChart.BAR);
+
+        graphChoice = new ChoiceBox();
+        //TODO: Set enum and/or do not use ChoiceBox
+        //energyChartProperty.set(ContextMenuController.energyChart.BAR);
+        graphChoice.setItems(FXCollections.observableArrayList(
+                "BarChart", "PieChart", "WebView")
+        );
+        graphChoice.getStyleClass().add("hidden-sides-pane");
+
         verticalScrollPane = new ScrollPane();
         verticalScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         verticalScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
@@ -105,6 +129,7 @@ public class UnitMenu extends VBox {
         scrollBar.setOrientation(Orientation.VERTICAL);
         this.hiddenSidesPane = new HiddenSidesPane();
         hiddenSidesPane.setContent(verticalScrollPane);
+        hiddenSidesPane.setRight(scrollBar);
         hiddenSidesPane.setRight(scrollBar);
         hiddenSidesPane.setTriggerDistance(Constants.TRIGGER_DISTANCE);
         hiddenSidesPane.getStyleClass().add("hidden-sides-pane");
@@ -167,19 +192,13 @@ public class UnitMenu extends VBox {
         maximized = false;
         collapseIcon.setForegroundIcon(MaterialIcon.KEYBOARD_ARROW_LEFT);
         this.getChildren().clear();
-        this.getChildren().addAll(collapseBtn);
+        this.getChildren().addAll(collapseButtons);
         this.setAlignment(Pos.BOTTOM_CENTER);
         this.setMinWidth(Constants.SMALL_MAIN_MENU_WIDTH);
         this.setPrefWidth(Constants.SMALL_MAIN_MENU_WIDTH_PREF);
     }
 
-    /**
-     * Method to make this menu visible.
-     * Animations should be added in the future
-     */
-    public void maximizeUnitMenu() {
-        maximized = true;
-        collapseIcon.setForegroundIcon(MaterialIcon.KEYBOARD_ARROW_RIGHT);
+    public void removeEnergyMode () {
         this.getChildren().clear();
         setMinHeight(height);
         setMinWidth(width);
@@ -189,20 +208,16 @@ public class UnitMenu extends VBox {
         this.getStyleClass().addAll("detail-menu");
     }
 
-    public void removeCollapseBtn () {
-        if (this.getChildren().contains(collapseButtons))
-            this.getChildren().remove(collapseButtons);
-    }
-
-    public void addCollapseBtn () {
-        if(!this.getChildren().contains(collapseButtons)) {
-            collapseButtons = new HBox();
-            collapseButtons.getChildren().add(collapseBtn);
-            collapseButtons.setAlignment(Pos.BOTTOM_LEFT);
-            collapseButtons.translateXProperty().set(Constants.INSETS);
-            this.setVgrow(collapseButtons, Priority.ALWAYS);
-            this.getChildren().add(collapseButtons);
-        }
+    public void setInEnergyMode () {
+        maximized = true;
+        this.getChildren().clear();
+        setMinHeight(height);
+        setMinWidth(width);
+        setPrefHeight(height);
+        setPrefWidth(width);
+        collapseIcon.setForegroundIcon(MaterialIcon.KEYBOARD_ARROW_RIGHT);
+        this.getChildren().addAll(floatingButtons, roomInfo, graphChoice, collapseButtons);
+        this.getStyleClass().addAll("detail-menu");
 
     }
 
