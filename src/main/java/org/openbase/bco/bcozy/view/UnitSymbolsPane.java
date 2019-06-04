@@ -23,9 +23,11 @@ import com.google.protobuf.Message;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import javafx.beans.property.SimpleStringProperty;
+
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import org.openbase.bco.bcozy.view.location.DynamicUnitPolygon;
+import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javafx.geometry.Point2D;
@@ -54,7 +56,7 @@ public class UnitSymbolsPane extends Pane {
     // coordinates, grouped unit-level buttons
     private final Map<Point2D, UnitButtonGrouped> groupedButtons;
     private boolean putIntoGroup;
-    public final SimpleStringProperty selectedLocationId;
+    public final SimpleObjectProperty<DynamicUnitPolygon<?,?>> selectedUnit;
 
     /**
      * Constructor for the UnitSymbolsPane.
@@ -64,14 +66,8 @@ public class UnitSymbolsPane extends Pane {
         locationUnitsMap = new HashMap<>();
         unitsPerLocationMap = new HashMap<>();
         groupedButtons = new HashMap<>();
-        selectedLocationId = new SimpleStringProperty(Constants.DUMMY_LABEL);
-        selectedLocationId.addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                updateUnitsPane();
-            }
-
-        });
+        selectedUnit = new SimpleObjectProperty<>();
+        selectedUnit.addListener((ChangeListener<DynamicUnitPolygon>) (observable, oldPolygon, newPolygon) -> updateUnitsPane());
     }
 
     /**
@@ -189,28 +185,46 @@ public class UnitSymbolsPane extends Pane {
     public void updateUnitsPane() {
         this.getChildren().clear();
 
-        locationUnitsMap.forEach((unitId, button)
-                -> {
-            if (!unitId.equals(selectedLocationId.getValue())) {
-                this.getChildren().add(button);
-            }
-        });
-
-        if (unitsPerLocationMap.get(selectedLocationId.getValue()) != null) {
-            unitsPerLocationMap.get(selectedLocationId.getValue()).forEach((unitId, button)
-                    -> {
-                this.getChildren().add(button);
-            }
-            );
+        if (selectedUnit.get() == null) {
+            return;
         }
-        groupedButtons.forEach((point, button)
-                -> {
-            if (button.getLocationId() == null) {
+
+        try {
+            final String selectedUnitID = selectedUnit.get().getUnitId();
+
+            locationUnitsMap.forEach((unitId, button)
+                    -> {
+                if (!unitId.equals(selectedUnitID)) {
+                    this.getChildren().add(button);
+                }
+            });
+
+            // do not show icons in edit mode
+            if (selectedUnit.get().isEditModeEnabled()) {
                 return;
             }
-            if (button.getLocationId().equals(selectedLocationId.getValue())) {
-                this.getChildren().add(button);
+
+            if (unitsPerLocationMap.get(selectedUnitID) != null) {
+                unitsPerLocationMap.get(selectedUnitID).forEach((unitId, button)
+                                -> {
+                            this.getChildren().add(button);
+                        }
+                );
             }
-        });
+            groupedButtons.forEach((point, button)
+                    -> {
+                if (button.getLocationId() == null) {
+                    return;
+                }
+                if (button.getLocationId().equals(selectedUnitID)) {
+                    this.getChildren().add(button);
+                }
+            });
+
+        } catch (NotAvailableException ex) {
+            ExceptionPrinter.printHistory("Could not update units pane.", ex, LOGGER);
+        }
+
+
     }
 }

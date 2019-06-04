@@ -21,11 +21,12 @@ package org.openbase.bco.bcozy.view;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import org.openbase.bco.bcozy.view.location.LocationPane;
+import org.openbase.bco.bcozy.view.location.LocationMapPane;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InstantiationException;
 
 import java.io.IOException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,16 +36,15 @@ import org.slf4j.LoggerFactory;
 public class BackgroundPane extends StackPane {
 
     public static final String POWER_DRAW_PANE_FXML_LOCATION = "org/openbase/bco/bcozy/controller/powerterminal/PowerDrawPane.fxml";
-    public static final String FXML_LOAD_EXCEPTION_MESSAGE = "Failed loading PowerDrawPane.fxml!";
 
-    private final LocationPane locationPane;
+    private final LocationMapPane locationMapPane;
     private final UnitSymbolsPane unitSymbolsPane;
     private final SimpleUnitSymbolsPane editingLayerPane;
     private final SimpleUnitSymbolsPane maintenanceLayerPane;
     private Pane powerDrawPane;
 
 
-    Logger logger = LoggerFactory.getLogger(BackgroundPane.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(BackgroundPane.class);
 
     /**
      * The constructor for a BackgroundPane.
@@ -56,15 +56,15 @@ public class BackgroundPane extends StackPane {
      */
     public BackgroundPane(final ForegroundPane foregroundPane) throws InstantiationException, InterruptedException {
         try {
-            this.locationPane = new LocationPane(foregroundPane);
-            this.getChildren().add(locationPane);
+            this.locationMapPane = new LocationMapPane(foregroundPane);
+            this.getChildren().add(locationMapPane);
 
             // default layer: changing light states on the location map
             this.unitSymbolsPane = new UnitSymbolsPane();
             this.unitSymbolsPane.setPickOnBounds(false);
             this.getChildren().add(unitSymbolsPane);
 
-            this.unitSymbolsPane.selectedLocationId.bind(locationPane.selectedLocationId);
+            this.unitSymbolsPane.selectedUnit.bind(locationMapPane.selectedUnit);
 
             // layer for fast overview over maintenance-relevant units
             this.maintenanceLayerPane = new SimpleUnitSymbolsPane();
@@ -78,8 +78,8 @@ public class BackgroundPane extends StackPane {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource(POWER_DRAW_PANE_FXML_LOCATION));
             try {
                 this.powerDrawPane = fxmlLoader.load();
-            } catch(IOException e) {
-                logger.error(FXML_LOAD_EXCEPTION_MESSAGE, e);
+            } catch(IOException ex) {
+                LOGGER.error("Failed loading "+POWER_DRAW_PANE_FXML_LOCATION+"!", ex);
                 powerDrawPane = null;
             }
 
@@ -88,17 +88,17 @@ public class BackgroundPane extends StackPane {
                 switch (newValue) {
                     case SETTINGS:
                         getChildren().clear();
-                        getChildren().add(locationPane);
+                        getChildren().add(locationMapPane);
                         getChildren().add(editingLayerPane);
                         break;
                     case TEMPERATURE:
                         getChildren().clear();
-                        getChildren().add(locationPane);
+                        getChildren().add(locationMapPane);
                         getChildren().add(maintenanceLayerPane);
                         break;
                     case MOVEMENT:
                         getChildren().clear();
-                        getChildren().add(locationPane);
+                        getChildren().add(locationMapPane);
                         getChildren().add(unitSymbolsPane);
                         break;
                     case ENERGY:
@@ -109,11 +109,12 @@ public class BackgroundPane extends StackPane {
             });
 
             this.getStyleClass().add("background-pane");
+
             // init touch
-            this.locationPane.initMultiTouch();
-            this.onMouseClickedProperty().bindBidirectional(locationPane.onMouseClickedProperty());
-            this.onMouseEnteredProperty().bindBidirectional(locationPane.onMouseEnteredProperty());
-            this.onMouseExitedProperty().bindBidirectional(locationPane.onMouseExitedProperty());
+            this.locationMapPane.initMultiTouch();
+            this.onMouseClickedProperty().bindBidirectional(locationMapPane.onMouseClickedProperty());
+            this.onMouseEnteredProperty().bindBidirectional(locationMapPane.onMouseEnteredProperty());
+            this.onMouseExitedProperty().bindBidirectional(locationMapPane.onMouseExitedProperty());
 
         } catch (CouldNotPerformException ex) {
             throw new InstantiationException(this, ex);
@@ -144,7 +145,7 @@ public class BackgroundPane extends StackPane {
     /**
      * @return The Location Pane.
      */
-    public LocationPane getLocationPane() {
-        return locationPane;
+    public LocationMapPane getLocationMapPane() {
+        return locationMapPane;
     }
 }
