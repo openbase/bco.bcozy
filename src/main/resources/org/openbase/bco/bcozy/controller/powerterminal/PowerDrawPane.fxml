@@ -3,23 +3,11 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.web.WebView?>
 
-<?import javafx.scene.chart.BarChart?>
-<?import javafx.scene.chart.CategoryAxis?>
-<?import javafx.scene.chart.NumberAxis?>
-
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="org.openbase.bco.bcozy.controller.powerterminal.PowerDrawVisualizationController"
             prefWidth="500" prefHeight="400">
     <StackPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="300.0" AnchorPane.rightAnchor="300.0" AnchorPane.topAnchor="0.0">
         <WebView fx:id="webView"/>
-        <BarChart fx:id="barChart" layoutX="-40.0" layoutY="-3.0" prefHeight="205.0" prefWidth="409.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
-            <xAxis>
-                <CategoryAxis fx:id="yAxis" side="BOTTOM" />
-            </xAxis>
-            <yAxis>
-                <NumberAxis side="LEFT" fx:id="xAxis" />
-            </yAxis>
-        </BarChart>
     </StackPane>
  </AnchorPane>

@@ -88,7 +88,7 @@ public class BackgroundPane extends StackPane {
 
             try {
                 this.powerDrawPane = FXMLProcessor.loadFxmlPane("PowerDrawPane.fxml",  PowerDrawVisualizationController.class);
-                //this.barChartPane = FXMLProcessor.loadFxmlPane("PowerBarChartVisualization.fxml",  PowerBarChartVisualizationController.class);
+                this.barChartPane = FXMLProcessor.loadFxmlPane("PowerBarChartVisualization.fxml",  PowerBarChartVisualizationController.class);
             } catch (final CouldNotPerformException ex) {
                 ExceptionPrinter.printHistory("Content could not be loaded", ex, LOGGER);
             }
