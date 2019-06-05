@@ -8,15 +8,17 @@
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="org.openbase.bco.bcozy.controller.powerterminal.PowerBarChartVisualizationController"
-            prefWidth="500" prefHeight="400">
-    <StackPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="300.0" AnchorPane.rightAnchor="300.0" AnchorPane.topAnchor="0.0">
-        <BarChart fx:id="barChart" layoutX="-40.0" layoutY="-3.0" prefHeight="205.0" prefWidth="409.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
-            <xAxis>
-                <CategoryAxis fx:id="yAxis" side="BOTTOM" />
-            </xAxis>
-            <yAxis>
-                <NumberAxis side="LEFT" fx:id="xAxis" />
-            </yAxis>
-        </BarChart>
-    </StackPane>
+            prefWidth="500" prefHeight="500">
+    <children>
+        <StackPane AnchorPane.bottomAnchor="150.0" AnchorPane.leftAnchor="300.0" AnchorPane.rightAnchor="300.0" AnchorPane.topAnchor="150.0">
+            <BarChart fx:id="bc">
+                <xAxis>
+                    <CategoryAxis fx:id="yAxis" side="BOTTOM" />
+                </xAxis>
+                <yAxis>
+                    <NumberAxis side="LEFT" fx:id="xAxis" />
+                </yAxis>
+            </BarChart>
+        </StackPane>
+    </children>
 </AnchorPane>

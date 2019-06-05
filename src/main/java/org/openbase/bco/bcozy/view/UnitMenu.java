@@ -23,11 +23,14 @@ import de.jensd.fx.glyphs.materialicons.MaterialIcon;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
-import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.*;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 import org.controlsfx.control.HiddenSidesPane;
@@ -36,6 +39,9 @@ import org.openbase.bco.bcozy.controller.ContextMenuController;
 import org.openbase.jul.visual.javafx.JFXConstants;
 import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 import org.openbase.bco.bcozy.view.pane.unit.TitledUnitPaneContainer;
+
+import java.awt.*;
+import java.awt.Menu;
 
 /**
  * @author hoestreich
@@ -56,7 +62,7 @@ public class UnitMenu extends VBox {
     private HBox collapseButtons;
     private boolean maximized;
     private HBox floatingButtons;
-    public ChoiceBox graphChoice;
+    private MenuButton graphChoice;
     private final HiddenSidesPane hiddenSidesPane;
     private final double height;
     private final double width;
@@ -113,13 +119,25 @@ public class UnitMenu extends VBox {
 
         energyChartProperty = new SimpleObjectProperty<>(ContextMenuController.energyChart.BAR);
 
-        graphChoice = new ChoiceBox();
-        //TODO: Set enum and/or do not use ChoiceBox
-        //energyChartProperty.set(ContextMenuController.energyChart.BAR);
-        graphChoice.setItems(FXCollections.observableArrayList(
-                "BarChart", "PieChart", "WebView")
-        );
-        graphChoice.getStyleClass().add("hidden-sides-pane");
+
+        MenuItem barChart = new MenuItem("Bar Chart");
+        barChart.setOnAction(event -> {
+            energyChartProperty.set(ContextMenuController.energyChart.BAR);
+        });
+
+        MenuItem pieChart = new MenuItem("Pie Chart");
+        pieChart.setOnAction(event -> {
+           energyChartProperty.set(ContextMenuController.energyChart.PIE);
+        });
+
+        MenuItem webView = new MenuItem("WebView");
+        webView.setOnAction(event -> {
+            energyChartProperty.set(ContextMenuController.energyChart.WEBVIEW);
+        });
+
+        graphChoice = new MenuButton("Charts");
+        graphChoice.getItems().addAll(barChart, pieChart, webView);
+
 
         verticalScrollPane = new ScrollPane();
         verticalScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
@@ -247,6 +265,10 @@ public class UnitMenu extends VBox {
 
     public SVGGlyphIcon getCollapseIcon() {
         return collapseIcon;
+    }
+
+    public ObjectProperty<ContextMenuController.energyChart> getEnergyChartProperty() {
+        return this.energyChartProperty;
     }
 
     public FloatingButton getCollapseBtn() {

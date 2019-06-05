@@ -113,7 +113,21 @@ public class BackgroundPane extends StackPane {
                         break;
                     case ENERGY:
                         getChildren().clear();
-                        getChildren().add(powerDrawPane);
+                        foregroundPane.getUnitMenu().getEnergyChartProperty().addListener(((observable1, oldValue1, newValue1) -> {
+                            switch(newValue1) {
+                                case BAR:
+                                    getChildren().clear();
+                                    getChildren().add(barChartPane);
+                                    break;
+                                case PIE:
+                                    getChildren().clear();
+                                    break;
+                                case WEBVIEW:
+                                    getChildren().clear();
+                                    getChildren().add(powerDrawPane);
+                                    break;
+                            }
+                        }));
                         break;
                 }
             });
