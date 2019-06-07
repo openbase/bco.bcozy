@@ -13,14 +13,14 @@ public class InfluxDBHandler {
 
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(InfluxDBHandler.class);
     private static final String INFLUXDB_BUCKET_DEFAULT = "bco-persistence";
-    private static final String INFLUXDB_URL_DEFAULT = "http://localhost:9999";
+    private static final String INFLUXDB_URL_DEFAULT = "http://192.168.75.100:9999";
     private static final String INFLUXDB_ORG_DEFAULT = "openbase";
     //get INFLUXDB_ORG_ID_DEFAULT: influx org find -t TOKEN
-    private static final String INFLUXDB_ORG_ID_DEFAULT = "03e2948bb3026000";
+    private static  String INFLUXDB_ORG_ID_DEFAULT = "03e2c6b79272c000";
     private static final Integer READ_TIMEOUT = 60;
     private static final Integer WRITE_TIMEOUT = 60;
     private static final Integer CONNECT_TIMOUT = 40;
-    private static final char[] TOKEN = "v1aLjos5TncLa69eMOK9gD9f8fnndkrs8UqGdTqlSSUop0F_jcaXt9R23tELnbuCg7FNgrOfiMcl1Phwfbqg-A==".toCharArray();
+    private static final char[] TOKEN = "JwXkUyMvJIUVQU-itwGljVALbbliYnAsjitO1HUeHaOXi6f0KHenVQyGGbH8pWMgQ1RG8mqJJRZu_PfnIS-p4w==".toCharArray();
 
     /**
      * Sends a query to the database.
@@ -30,6 +30,7 @@ public class InfluxDBHandler {
      * @throws CouldNotPerformException
      */
     private static List<FluxTable> sendQuery(String query) throws CouldNotPerformException {
+        LOGGER.info(query);
         InfluxDBClient influxDBClient = InfluxDBClientFactory
                 .create(INFLUXDB_URL_DEFAULT + "?readTimeout=" + READ_TIMEOUT + "&connectTimeout=" + CONNECT_TIMOUT + "&writeTimeout=" + WRITE_TIMEOUT + "&logLevel=BASIC", TOKEN);
 
@@ -48,6 +49,8 @@ public class InfluxDBHandler {
         } catch (Exception ex) {
             ExceptionPrinter.printHistory("Could not shutdown database connection!", ex, LOGGER);
         }
+
+        LOGGER.info(tables.toString());
         return tables;
 
 
@@ -66,6 +69,7 @@ public class InfluxDBHandler {
             List<FluxRecord> records = fluxTable.getRecords();
             for (FluxRecord fluxRecord : records) {
                 // just one entry:
+                LOGGER.info( fluxRecord.getValueByKey("_value").toString());
 
                 return (Double) fluxRecord.getValueByKey("_value");
 
@@ -98,6 +102,31 @@ public class InfluxDBHandler {
 
         List<FluxTable> tables = sendQuery(query);
         return getSingleValueFromTables(tables);
+    }
+
+    /**
+     * Returns the average value of specific field from the power_consumption_state_service in a time window.
+     *
+     * @param window    Time interval in which the measurement is carried out (e.g every 1m, 1s, 1d ...)
+     * @param field     Name of the field which should be checked (e.g consumption, current, voltage)
+     * @param timeStart Timestamp when the measurement should start
+     * @param timeStop  Timestamp when the measurement should stop
+     * @return average value
+     * @throws CouldNotPerformException
+     */
+    public static List<FluxTable> getAveragePowerConsumptionTables(String window, Long timeStart, Long timeStop, String field) throws CouldNotPerformException {
+        String query = "from(bucket: \"" + INFLUXDB_BUCKET_DEFAULT + "\")" +
+                " |> range(start: " + timeStart + ", stop: " + timeStop + ")" +
+                " |> filter(fn: (r) => r._measurement == \"power_consumption_state_service\")" +
+                " |> filter(fn: (r) => r._field == \"" + field + "\")" +
+                " |> aggregateWindow(every:" + window + " , fn: mean)" +
+                " |> group(columns: [\"_time\"], mode:\"by\")" +
+                "|> mean(column: \"_value\")";
+
+        List<FluxTable> tables = sendQuery(query);
+        LOGGER.info(tables.toString());
+
+        return tables;
 
 
     }

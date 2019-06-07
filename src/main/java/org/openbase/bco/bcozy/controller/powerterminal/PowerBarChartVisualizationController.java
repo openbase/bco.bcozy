@@ -6,16 +6,23 @@ import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
+import org.influxdata.query.FluxRecord;
+import org.influxdata.query.FluxTable;
 import org.openbase.bco.bcozy.model.InfluxDBHandler;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.visual.javafx.control.AbstractFXController;
+import org.slf4j.LoggerFactory;
 
+import javax.swing.text.html.CSS;
+import java.sql.Date;
 import java.util.Calendar;
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Set;
+import java.util.TimerTask;
 
-public class PowerBarChartVisualizationController extends AbstractFXController  {
+public class PowerBarChartVisualizationController extends AbstractFXController {
 
     @FXML
     NumberAxis xAxis;
@@ -25,13 +32,17 @@ public class PowerBarChartVisualizationController extends AbstractFXController  
     @FXML
     BarChart<String, Number> bc;
 
+    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(PowerBarChartVisualizationController.class);
+
+
     public static final String CSS_FOLDER = "css";
+    public static final String name = "Verbrauch";
 
     String duration;
     String unit;
 
     public PowerBarChartVisualizationController() {
-        this.duration = "Minute";
+        this.duration = "Hour";
         this.unit = "?";
         //TODO add new Buttons in Unit Menu so the duration and unit can be choosen by the user
 
@@ -44,14 +55,13 @@ public class PowerBarChartVisualizationController extends AbstractFXController  
 
     @Override
     public void initContent() throws InitializationException {
-        bc.getStylesheets().add("css/powerTerminal/barChartStyle.css");
+        bc.getStylesheets().add(CSS_FOLDER + "/powerTerminal/barChartStyle.css");
 
-        xAxis.setLabel(duration);
-        yAxis.setLabel(unit);
+        xAxis.setLabel(unit);
 
 
         XYChart.Series<String, Number> series1 = new XYChart.Series();
-        series1.setName("Verbrauch");
+        series1.setName(name + " pro " + duration);
 
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
@@ -60,73 +70,54 @@ public class PowerBarChartVisualizationController extends AbstractFXController  
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int minute = 0;
 
-        int month_next = 0;
-        int day_next = 0;
-        int hour_next = 0;
-        int minute_next = 0;
+        int change = 0;
+        String interval = "1h";
 
-        int change = 1;
-
-        if (duration.equals("Month")) {
-            month_next = 1;
-            month = 0;
-            hour = 0;
+        switch (duration) {
+            case "Month":
+                yAxis.setLabel("Woche");
+                day = 1;
+                hour = 0;
+                interval = "1w";
+                break;
+            case "Week":
+                yAxis.setLabel("Tag");
+                interval = "1d";
+                day = 0;
+                break;
+            case "Day":
+                yAxis.setLabel("Stunde");
+                interval = "1h";
+                hour = 0;
+                break;
+            case "Hour":
+                yAxis.setLabel("Minute");
+                interval = "1m";
+                break;
         }
-        else if (duration.equals("Week")) {
-            day_next = 7;
-            day = 0;
-            hour = 0;
-
-        }
-        else if (duration.equals("Day")) {
-            day_next = 1;
-            day = 0;
-            hour = 0;
-        }
-
-        else if (duration.equals("Hour")) {
-            hour_next = 1;
-            hour = 0;
-        }
-        else if (duration.equals("Minute")) {
-            minute_next = 1;
-        }
-
 
         calendar.set(year, month, day, hour, minute, 0);
-        Timestamp time_first = new Timestamp(calendar.getTimeInMillis());
+        System.out.println(calendar.getTime());
 
-        calendar.set(year, month+month_next, day+day_next, hour+hour_next, minute+minute_next, 0);
-        Timestamp time_second = new Timestamp(calendar.getTimeInMillis());
+        try {
+            List<FluxTable> energy = InfluxDBHandler.getAveragePowerConsumptionTables(
+                    interval, new Timestamp(calendar.getTimeInMillis()/1000).getTime(), new Timestamp(System.currentTimeMillis()/1000).getTime(), "consumption");
 
-        double energy = 0;
-
-        while (time_first.getTime() < new Timestamp(System.currentTimeMillis()).getTime()) {
-            try {
-                energy = InfluxDBHandler.getAveragePowerConsumption
-                        ("1m", time_first.getTime(), time_second.getTime(), "consumption");
-            } catch (CouldNotPerformException e) {
-                e.printStackTrace();
+            for (FluxTable fluxTable : energy) {
+                List<FluxRecord> records = fluxTable.getRecords();
+                for (FluxRecord fluxRecord : records) {
+                    if (fluxRecord.getValueByKey("_value") == null) {
+                        series1.getData().add(new XYChart.Data(String.valueOf(change), 0));
+                    }
+                    else
+                        series1.getData().add(new XYChart.Data(String.valueOf(change), fluxRecord.getValueByKey("_value")));
+                }
+                change++;
             }
-
-            energy = minute;
-
-            series1.getData().add(new XYChart.Data(String.valueOf(change), energy));
-
-            change++;
-            month += month_next;
-            day += day_next;
-            hour += hour_next;
-            minute += minute_next;
-
-            calendar.set(year, month, day, hour, minute, 0);
-            time_first = new Timestamp(calendar.getTimeInMillis());
-
-            calendar.set(year, month+month_next, day+day_next, hour+hour_next, minute+minute_next, 0);
-            time_second = new Timestamp(calendar.getTimeInMillis());
+        } catch (CouldNotPerformException e) {
+            e.printStackTrace();
         }
 
-        bc.setAlternativeRowFillVisible(false);
-        bc.getData().addAll(series1);
+        bc.getData().add(series1);
     }
 }

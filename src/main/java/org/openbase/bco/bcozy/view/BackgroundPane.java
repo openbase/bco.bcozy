@@ -34,6 +34,9 @@ import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InstantiationException;
 
 import java.io.IOException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.visual.javafx.fxml.FXMLProcessor;
@@ -86,6 +89,7 @@ public class BackgroundPane extends StackPane {
             this.editingLayerPane.setPickOnBounds(false);
 
 
+            //TODO: Load bar Chart pane new every 10 seconds or so -> if bar Chart is selected as graph
             try {
                 this.powerDrawPane = FXMLProcessor.loadFxmlPane("PowerDrawPane.fxml",  PowerDrawVisualizationController.class);
                 this.barChartPane = FXMLProcessor.loadFxmlPane("PowerBarChartVisualization.fxml",  PowerBarChartVisualizationController.class);

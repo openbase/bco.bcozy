@@ -57,6 +57,7 @@ public class PowerDrawVisualizationController extends AbstractFXController {
             ExceptionPrinter.printHistory(new InvalidStateException(WEBENGINE_ERROR_MESSAGE, new CouldNotPerformException(event.toString())), logger);
         });
 
+        //TODO: own Thread -> ask David
         HttpURLConnection connection = null;
         try{
             URL myurl = new URL(CHRONOGRAPH_URL);
