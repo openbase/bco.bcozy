@@ -1,6 +1,7 @@
 package org.openbase.bco.bcozy.controller.powerterminal;
 
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
@@ -12,6 +13,7 @@ import org.openbase.jul.visual.javafx.control.AbstractFXController;
 
 import java.util.Calendar;
 import java.sql.Timestamp;
+import java.util.Set;
 
 public class PowerBarChartVisualizationController extends AbstractFXController  {
 
@@ -23,11 +25,13 @@ public class PowerBarChartVisualizationController extends AbstractFXController  
     @FXML
     BarChart<String, Number> bc;
 
+    public static final String CSS_FOLDER = "css";
+
     String duration;
     String unit;
 
     public PowerBarChartVisualizationController() {
-        this.duration = "Hour";
+        this.duration = "Minute";
         this.unit = "?";
         //TODO add new Buttons in Unit Menu so the duration and unit can be choosen by the user
 
@@ -40,6 +44,8 @@ public class PowerBarChartVisualizationController extends AbstractFXController  
 
     @Override
     public void initContent() throws InitializationException {
+        bc.getStylesheets().add("css/powerTerminal/barChartStyle.css");
+
         xAxis.setLabel(duration);
         yAxis.setLabel(unit);
 
@@ -61,27 +67,28 @@ public class PowerBarChartVisualizationController extends AbstractFXController  
 
         int change = 1;
 
-        if (duration.equals("Year")) {
+        if (duration.equals("Month")) {
             month_next = 1;
             month = 0;
             hour = 0;
         }
-        else if (duration.equals("Month")) {
+        else if (duration.equals("Week")) {
             day_next = 7;
             day = 0;
             hour = 0;
+
         }
-        else if (duration.equals("Week")) {
+        else if (duration.equals("Day")) {
             day_next = 1;
             day = 0;
             hour = 0;
         }
-        else if (duration.equals("Day")) {
+
+        else if (duration.equals("Hour")) {
             hour_next = 1;
             hour = 0;
         }
-
-        else if (duration.equals("Hour")) {
+        else if (duration.equals("Minute")) {
             minute_next = 1;
         }
 
@@ -102,9 +109,6 @@ public class PowerBarChartVisualizationController extends AbstractFXController  
                 e.printStackTrace();
             }
 
-            System.out.println(time_first);
-            System.out.println(time_second);
-
             energy = minute;
 
             series1.getData().add(new XYChart.Data(String.valueOf(change), energy));
@@ -121,6 +125,8 @@ public class PowerBarChartVisualizationController extends AbstractFXController  
             calendar.set(year, month+month_next, day+day_next, hour+hour_next, minute+minute_next, 0);
             time_second = new Timestamp(calendar.getTimeInMillis());
         }
+
+        bc.setAlternativeRowFillVisible(false);
         bc.getData().addAll(series1);
     }
 }

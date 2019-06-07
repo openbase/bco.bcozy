@@ -113,6 +113,7 @@ public class BackgroundPane extends StackPane {
                         break;
                     case ENERGY:
                         getChildren().clear();
+                        getChildren().add(barChartPane);
                         foregroundPane.getUnitMenu().getEnergyChartProperty().addListener(((observable1, oldValue1, newValue1) -> {
                             switch(newValue1) {
                                 case BAR:
