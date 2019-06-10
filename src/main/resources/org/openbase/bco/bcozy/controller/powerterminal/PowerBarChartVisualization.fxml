@@ -1,24 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.layout.*?>
+<?import eu.hansolo.tilesfx.Tile?>
 
-<?import javafx.scene.chart.BarChart?>
-<?import javafx.scene.chart.NumberAxis?>
-<?import javafx.scene.chart.CategoryAxis?>
-
+<?import eu.hansolo.tilesfx.Tile?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="org.openbase.bco.bcozy.controller.powerterminal.PowerBarChartVisualizationController"
             prefWidth="500" prefHeight="500">
     <children>
         <StackPane AnchorPane.bottomAnchor="150.0" AnchorPane.leftAnchor="300.0" AnchorPane.rightAnchor="300.0" AnchorPane.topAnchor="150.0">
-            <BarChart fx:id="bc">
-                <xAxis>
-                    <CategoryAxis fx:id="yAxis" side="BOTTOM" />
-                </xAxis>
-                <yAxis>
-                    <NumberAxis side="LEFT" fx:id="xAxis" />
-                </yAxis>
-            </BarChart>
+            <Tile fx:id="barChart" skinType="BAR_CHART">
+            </Tile>
         </StackPane>
     </children>
 </AnchorPane>
