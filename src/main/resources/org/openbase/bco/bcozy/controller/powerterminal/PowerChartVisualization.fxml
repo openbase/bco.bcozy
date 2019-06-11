@@ -5,11 +5,11 @@
 <?import eu.hansolo.tilesfx.Tile?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="org.openbase.bco.bcozy.controller.powerterminal.PowerBarChartVisualizationController"
+            fx:controller="org.openbase.bco.bcozy.controller.powerterminal.PowerChartVisualizationController"
             prefWidth="500" prefHeight="500">
     <children>
         <StackPane AnchorPane.bottomAnchor="150.0" AnchorPane.leftAnchor="300.0" AnchorPane.rightAnchor="300.0" AnchorPane.topAnchor="150.0">
-            <Tile fx:id="barChart" skinType="BAR_CHART">
+            <Tile fx:id="chart" title="Bla">
             </Tile>
         </StackPane>
     </children>

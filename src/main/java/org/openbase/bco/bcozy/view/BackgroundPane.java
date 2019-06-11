@@ -20,9 +20,8 @@ package org.openbase.bco.bcozy.view;
 
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import org.openbase.bco.bcozy.controller.powerterminal.PowerBarChartVisualizationController;
+import org.openbase.bco.bcozy.controller.powerterminal.PowerChartVisualizationController;
 import org.openbase.bco.bcozy.controller.powerterminal.PowerDrawVisualizationController;
-import org.openbase.bco.bcozy.controller.powerterminal.PowerLineChartVisualizationController;
 import org.openbase.bco.bcozy.view.location.LocationMapPane;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InstantiationException;
@@ -41,8 +40,7 @@ public class BackgroundPane extends StackPane {
     private final SimpleUnitSymbolsPane editingLayerPane;
     private final SimpleUnitSymbolsPane maintenanceLayerPane;
     private Pane powerDrawPane;
-    private Pane barChartPane;
-    private Pane lineChartPane;
+    private Pane powerChartPane;
 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BackgroundPane.class);
@@ -78,9 +76,8 @@ public class BackgroundPane extends StackPane {
 
             //TODO: Load bar Chart pane new every 10 seconds or so -> if bar Chart is selected as graph
             try {
-                this.lineChartPane = FXMLProcessor.loadFxmlPane("PowerLineChartVisualization.fxml", PowerLineChartVisualizationController.class);
                 this.powerDrawPane = FXMLProcessor.loadFxmlPane("PowerDrawPane.fxml",  PowerDrawVisualizationController.class);
-                this.barChartPane = FXMLProcessor.loadFxmlPane("PowerBarChartVisualization.fxml",  PowerBarChartVisualizationController.class);
+                this.powerChartPane = FXMLProcessor.loadFxmlPane("PowerChartVisualization.fxml",  PowerChartVisualizationController.class);
             } catch (final CouldNotPerformException ex) {
                 ExceptionPrinter.printHistory("Content could not be loaded", ex, LOGGER);
             }
@@ -105,26 +102,7 @@ public class BackgroundPane extends StackPane {
                         break;
                     case ENERGY:
                         getChildren().clear();
-                        getChildren().add(barChartPane);
-                        foregroundPane.getUnitMenu().getEnergyChartProperty().addListener(((observable1, oldValue1, newValue1) -> {
-                            switch(newValue1) {
-                                case BAR:
-                                    getChildren().clear();
-                                    getChildren().add(barChartPane);
-                                    break;
-                                case PIE:
-                                    getChildren().clear();
-                                    break;
-                                case WEBVIEW:
-                                    getChildren().clear();
-                                    getChildren().add(powerDrawPane);
-                                    break;
-                                case LINECHART:
-                                    getChildren().clear();
-                                    getChildren().add(lineChartPane);
-                                    break;
-                            }
-                        }));
+                        getChildren().add(powerChartPane);
                         break;
                 }
             });

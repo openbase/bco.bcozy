@@ -1,5 +1,6 @@
 package org.openbase.bco.bcozy.controller.powerterminal;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebErrorEvent;
@@ -64,7 +65,9 @@ public class PowerDrawVisualizationController extends AbstractFXController {
                 CHRONOGRAPH_URL = "https://www.google.com/";
             }
             System.out.println("fertig1");
-            webEngine.load(CHRONOGRAPH_URL);
+            Platform.runLater(()-> {
+             webEngine.load(CHRONOGRAPH_URL);
+            });
         });
     }
 }
