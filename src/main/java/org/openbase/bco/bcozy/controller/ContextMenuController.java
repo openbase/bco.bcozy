@@ -21,6 +21,8 @@ package org.openbase.bco.bcozy.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.openbase.bco.bcozy.controller.powerterminal.PowerTerminalSidebarPaneController;
 import org.openbase.bco.bcozy.view.ForegroundPane;
 import org.openbase.bco.bcozy.view.location.DynamicUnitPolygon;
 import org.openbase.bco.bcozy.view.UnitMenu;
@@ -32,6 +34,7 @@ import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
+import org.openbase.jul.visual.javafx.fxml.FXMLProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.openbase.type.domotic.unit.UnitConfigType.UnitConfig;
@@ -76,6 +79,13 @@ public class ContextMenuController {
 
 
         final UnitMenu unitMenu = foregroundPane.getUnitMenu();
+
+        try {
+            unitMenu.setPowerTerminalSidebarPane(FXMLProcessor.loadFxmlPane("PowerTerminalSidebarPane.fxml", PowerTerminalSidebarPaneController.class));
+        } catch (final CouldNotPerformException ex) {
+            ExceptionPrinter.printHistory("Content could not be loaded", ex, LOGGER);
+        }
+
         foregroundPane.getAppState().addListener((observable, oldValue, newValue) -> {
             switch (newValue) {
                 case ENERGY:
@@ -88,6 +98,7 @@ public class ContextMenuController {
                     break;
             }
         });
+
     }
 
     /**
