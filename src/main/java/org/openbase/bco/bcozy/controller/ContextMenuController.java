@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javafx.scene.layout.Pane;
+import javafx.util.Pair;
 import org.openbase.bco.bcozy.controller.powerterminal.PowerTerminalSidebarPaneController;
 import org.openbase.bco.bcozy.view.ForegroundPane;
 import org.openbase.bco.bcozy.view.location.DynamicUnitPolygon;
@@ -34,6 +36,7 @@ import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
+import org.openbase.jul.visual.javafx.control.AbstractFXController;
 import org.openbase.jul.visual.javafx.fxml.FXMLProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +56,11 @@ public class ContextMenuController {
 
     public enum energyChart {
         BAR, PIE, WEBVIEW, LINECHART;
+
+        @Override
+        public String toString() {
+            return super.toString().substring(0, 1) + super.toString().substring(1).toLowerCase();
+        }
     }
 
     /**
@@ -81,7 +89,9 @@ public class ContextMenuController {
         final UnitMenu unitMenu = foregroundPane.getUnitMenu();
 
         try {
-            unitMenu.setPowerTerminalSidebarPane(FXMLProcessor.loadFxmlPane("PowerTerminalSidebarPane.fxml", PowerTerminalSidebarPaneController.class));
+            Pair< Pane, ? extends AbstractFXController> pair = FXMLProcessor.loadFxmlPaneAndControllerPair("PowerTerminalSidebarPane.fxml", PowerTerminalSidebarPaneController.class);
+            ((PowerTerminalSidebarPaneController) pair.getValue()).init(unitMenu);
+            unitMenu.setPowerTerminalSidebarPane(pair.getKey());
         } catch (final CouldNotPerformException ex) {
             ExceptionPrinter.printHistory("Content could not be loaded", ex, LOGGER);
         }
@@ -193,4 +203,5 @@ public class ContextMenuController {
             ExceptionPrinter.printHistory(new CouldNotPerformException("Could not init initTitledPaneMap!", ex), LOGGER);
         }
     }
+
 }

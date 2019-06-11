@@ -118,31 +118,6 @@ public class UnitMenu extends VBox {
 
         energyChartProperty = new SimpleObjectProperty<>(ContextMenuController.energyChart.BAR);
 
-
-        MenuItem barChart = new MenuItem("Bar Chart");
-        barChart.setOnAction(event -> {
-            energyChartProperty.set(ContextMenuController.energyChart.BAR);
-        });
-
-        MenuItem pieChart = new MenuItem("Pie Chart");
-        pieChart.setOnAction(event -> {
-            energyChartProperty.set(ContextMenuController.energyChart.PIE);
-        });
-
-        MenuItem webView = new MenuItem("WebView");
-        webView.setOnAction(event -> {
-            energyChartProperty.set(ContextMenuController.energyChart.WEBVIEW);
-        });
-
-        MenuItem lineChart = new MenuItem("Line Chart");
-        lineChart.setOnAction(event -> {
-            energyChartProperty.set(ContextMenuController.energyChart.LINECHART);
-        });
-
-        graphChoice = new MenuButton("Charts");
-        graphChoice.getItems().addAll(barChart, pieChart, webView, lineChart);
-
-
         verticalScrollPane = new ScrollPane();
         verticalScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         verticalScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
@@ -238,7 +213,7 @@ public class UnitMenu extends VBox {
         setPrefHeight(height);
         setPrefWidth(width);
         collapseIcon.setForegroundIcon(MaterialIcon.KEYBOARD_ARROW_RIGHT);
-        this.getChildren().addAll(floatingButtons, roomInfo, graphChoice, collapseButtons, powerTerminalSidebarPane);
+        this.getChildren().addAll(floatingButtons, roomInfo, powerTerminalSidebarPane, collapseButtons);
         this.getStyleClass().addAll("detail-menu");
 
     }
