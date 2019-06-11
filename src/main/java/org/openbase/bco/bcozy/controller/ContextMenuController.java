@@ -54,15 +54,6 @@ public class ContextMenuController {
     private final ForegroundPane foregroundPane;
     private final Map<String, TitledUnitPaneContainer> titledPaneMap;
 
-    public enum energyChart {
-        BAR, PIE, WEBVIEW, LINECHART;
-
-        @Override
-        public String toString() {
-            return super.toString().substring(0, 1) + super.toString().substring(1).toLowerCase();
-        }
-    }
-
     /**
      * Constructor for the ContextMenuController.
      *
