@@ -22,26 +22,17 @@ import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import de.jensd.fx.glyphs.materialicons.MaterialIcon;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import org.controlsfx.control.HiddenSidesPane;
-import org.openbase.bco.bcozy.controller.CenterPaneController;
 import org.openbase.bco.bcozy.controller.ContextMenuController;
+import org.openbase.bco.bcozy.view.pane.unit.TitledUnitPaneContainer;
 import org.openbase.jul.visual.javafx.JFXConstants;
 import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
-import org.openbase.bco.bcozy.view.pane.unit.TitledUnitPaneContainer;
-
-import java.awt.*;
-import java.awt.Menu;
 
 /**
  * @author hoestreich
@@ -135,8 +126,13 @@ public class UnitMenu extends VBox {
             energyChartProperty.set(ContextMenuController.energyChart.WEBVIEW);
         });
 
+        MenuItem lineChart = new MenuItem("Line Chart");
+        lineChart.setOnAction(event -> {
+            energyChartProperty.set(ContextMenuController.energyChart.LINECHART);
+        });
+
         graphChoice = new MenuButton("Charts");
-        graphChoice.getItems().addAll(barChart, pieChart, webView);
+        graphChoice.getItems().addAll(barChart, pieChart, webView, lineChart);
 
 
         verticalScrollPane = new ScrollPane();

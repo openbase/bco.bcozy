@@ -18,26 +18,13 @@
  */
 package org.openbase.bco.bcozy.view;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.util.Pair;
-import org.openbase.bco.bcozy.controller.SettingsController;
 import org.openbase.bco.bcozy.controller.powerterminal.PowerBarChartVisualizationController;
 import org.openbase.bco.bcozy.controller.powerterminal.PowerDrawVisualizationController;
-import org.openbase.bco.bcozy.model.InfluxDBHandler;
 import org.openbase.bco.bcozy.view.location.LocationMapPane;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InstantiationException;
-
-import java.io.IOException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.visual.javafx.fxml.FXMLProcessor;
 import org.slf4j.Logger;
@@ -47,8 +34,6 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class BackgroundPane extends StackPane {
-
-    public static final String POWER_DRAW_PANE_FXML_LOCATION = "org/openbase/bco/bcozy/controller/powerterminal/PowerDrawPane.fxml";
 
     private final LocationMapPane locationMapPane;
     private final UnitSymbolsPane unitSymbolsPane;
@@ -130,6 +115,9 @@ public class BackgroundPane extends StackPane {
                                 case WEBVIEW:
                                     getChildren().clear();
                                     getChildren().add(powerDrawPane);
+                                    break;
+                                case LINECHART:
+                                    getChildren().clear();
                                     break;
                             }
                         }));

@@ -49,7 +49,7 @@ public class ContextMenuController {
     private final Map<String, TitledUnitPaneContainer> titledPaneMap;
 
     public enum energyChart {
-        BAR, PIE, WEBVIEW;
+        BAR, PIE, WEBVIEW, LINECHART;
     }
 
     /**
