@@ -1,7 +1,8 @@
-package org.openbase.bco.bcozy.controller.powerterminal;
+package org.openbase.bco.bcozy.controller.powerterminal.chartattributes;
 
-public enum VisualizationType {
-    BAR, PIE, WEBVIEW, LINECHART;
+public enum Granularity {
+    CONSUMER, ROOM, OVERALL;
+
 
     @Override
     public String toString() {

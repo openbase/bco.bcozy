@@ -1,7 +1,7 @@
-package org.openbase.bco.bcozy.controller.powerterminal;
+package org.openbase.bco.bcozy.controller.powerterminal.chartattributes;
 
-public enum TimeSpan {
-    NOW, HOURLY, DAILY, WEEKLY, MONTHLY, YEARLY, OVERALL;
+public enum Unit {
+    ENERGY, LIGHTBULB, MONEY;
 
     @Override
     public String toString() {

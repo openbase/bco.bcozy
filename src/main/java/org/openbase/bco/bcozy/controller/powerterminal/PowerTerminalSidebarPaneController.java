@@ -2,6 +2,10 @@ package org.openbase.bco.bcozy.controller.powerterminal;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
+import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.Granularity;
+import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.TimeSpan;
+import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.Unit;
+import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.VisualizationType;
 import org.openbase.bco.bcozy.view.UnitMenu;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InitializationException;
