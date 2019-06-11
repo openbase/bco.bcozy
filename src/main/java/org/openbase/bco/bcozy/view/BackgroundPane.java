@@ -74,7 +74,6 @@ public class BackgroundPane extends StackPane {
             this.editingLayerPane.setPickOnBounds(false);
 
 
-            //TODO: Load bar Chart pane new every 10 seconds or so -> if bar Chart is selected as graph
             try {
                 this.powerDrawPane = FXMLProcessor.loadFxmlPane("PowerDrawPane.fxml",  PowerDrawVisualizationController.class);
                 this.powerChartPane = FXMLProcessor.loadFxmlPane("PowerChartVisualization.fxml",  PowerChartVisualizationController.class);
