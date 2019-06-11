@@ -30,16 +30,10 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.HiddenSidesPane;
-import org.openbase.bco.bcozy.controller.ContextMenuController;
-import org.openbase.bco.bcozy.controller.powerterminal.PowerTerminalSidebarPaneController;
+import org.openbase.bco.bcozy.controller.powerterminal.VisualizationType;
 import org.openbase.bco.bcozy.view.pane.unit.TitledUnitPaneContainer;
-import org.openbase.jul.exception.CouldNotPerformException;
-import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.visual.javafx.JFXConstants;
-import org.openbase.jul.visual.javafx.fxml.FXMLProcessor;
 import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author hoestreich
@@ -65,7 +59,7 @@ public class UnitMenu extends VBox {
     private final HiddenSidesPane hiddenSidesPane;
     private final double height;
     private final double width;
-    public final ObjectProperty<ContextMenuController.energyChart> energyChartProperty;
+    public final ObjectProperty<VisualizationType> energyChartProperty;
 
 
     /**
@@ -116,7 +110,7 @@ public class UnitMenu extends VBox {
         energyInfo.getStyleClass().clear();
         energyInfo.getStyleClass().add("headline");
 
-        energyChartProperty = new SimpleObjectProperty<>(ContextMenuController.energyChart.BAR);
+        energyChartProperty = new SimpleObjectProperty<>(VisualizationType.BAR);
 
         verticalScrollPane = new ScrollPane();
         verticalScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
@@ -246,7 +240,7 @@ public class UnitMenu extends VBox {
         return collapseIcon;
     }
 
-    public ObjectProperty<ContextMenuController.energyChart> getEnergyChartProperty() {
+    public ObjectProperty<VisualizationType> getEnergyChartProperty() {
         return this.energyChartProperty;
     }
 
