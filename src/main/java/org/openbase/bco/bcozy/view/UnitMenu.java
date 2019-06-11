@@ -1,17 +1,17 @@
 /**
  * ==================================================================
- *
+ * <p>
  * This file is part of org.openbase.bco.bcozy.
- *
+ * <p>
  * org.openbase.bco.bcozy is free software: you can redistribute it and modify
  * it under the terms of the GNU General Public License (Version 3)
  * as published by the Free Software Foundation.
- *
+ * <p>
  * org.openbase.bco.bcozy is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
@@ -26,10 +26,11 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.HiddenSidesPane;
-import org.openbase.bco.bcozy.controller.ContextMenuController;
+import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.VisualizationType;
 import org.openbase.bco.bcozy.view.pane.unit.TitledUnitPaneContainer;
 import org.openbase.jul.visual.javafx.JFXConstants;
 import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
@@ -42,6 +43,7 @@ import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 public class UnitMenu extends VBox {
 
     private final ContextSortingPane contextSortingPane;
+    private Pane powerTerminalSidebarPane;
     private final Label roomInfo;
     private final Label energyInfo;
     private final ScrollPane verticalScrollPane;
@@ -57,7 +59,7 @@ public class UnitMenu extends VBox {
     private final HiddenSidesPane hiddenSidesPane;
     private final double height;
     private final double width;
-    public final ObjectProperty<ContextMenuController.energyChart> energyChartProperty;
+    public final ObjectProperty<VisualizationType> energyChartProperty;
 
 
     /**
@@ -108,32 +110,7 @@ public class UnitMenu extends VBox {
         energyInfo.getStyleClass().clear();
         energyInfo.getStyleClass().add("headline");
 
-        energyChartProperty = new SimpleObjectProperty<>(ContextMenuController.energyChart.BAR);
-
-
-        MenuItem barChart = new MenuItem("Bar Chart");
-        barChart.setOnAction(event -> {
-            energyChartProperty.set(ContextMenuController.energyChart.BAR);
-        });
-
-        MenuItem pieChart = new MenuItem("Pie Chart");
-        pieChart.setOnAction(event -> {
-           energyChartProperty.set(ContextMenuController.energyChart.PIE);
-        });
-
-        MenuItem webView = new MenuItem("WebView");
-        webView.setOnAction(event -> {
-            energyChartProperty.set(ContextMenuController.energyChart.WEBVIEW);
-        });
-
-        MenuItem lineChart = new MenuItem("Line Chart");
-        lineChart.setOnAction(event -> {
-            energyChartProperty.set(ContextMenuController.energyChart.LINECHART);
-        });
-
-        graphChoice = new MenuButton("Charts");
-        graphChoice.getItems().addAll(barChart, pieChart, webView, lineChart);
-
+        energyChartProperty = new SimpleObjectProperty<>(VisualizationType.BAR);
 
         verticalScrollPane = new ScrollPane();
         verticalScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
@@ -212,7 +189,7 @@ public class UnitMenu extends VBox {
         this.setPrefWidth(Constants.SMALL_MAIN_MENU_WIDTH_PREF);
     }
 
-    public void removeEnergyMode () {
+    public void removeEnergyMode() {
         this.getChildren().clear();
         setMinHeight(height);
         setMinWidth(width);
@@ -222,7 +199,7 @@ public class UnitMenu extends VBox {
         this.getStyleClass().addAll("detail-menu");
     }
 
-    public void setInEnergyMode () {
+    public void setInEnergyMode() {
         maximized = true;
         this.getChildren().clear();
         setMinHeight(height);
@@ -230,7 +207,7 @@ public class UnitMenu extends VBox {
         setPrefHeight(height);
         setPrefWidth(width);
         collapseIcon.setForegroundIcon(MaterialIcon.KEYBOARD_ARROW_RIGHT);
-        this.getChildren().addAll(floatingButtons, roomInfo, graphChoice, collapseButtons);
+        this.getChildren().addAll(floatingButtons, roomInfo, powerTerminalSidebarPane, collapseButtons);
         this.getStyleClass().addAll("detail-menu");
 
     }
@@ -263,11 +240,16 @@ public class UnitMenu extends VBox {
         return collapseIcon;
     }
 
-    public ObjectProperty<ContextMenuController.energyChart> getEnergyChartProperty() {
+    public ObjectProperty<VisualizationType> getEnergyChartProperty() {
         return this.energyChartProperty;
     }
 
     public FloatingButton getCollapseBtn() {
         return collapseBtn;
     }
+
+    public void setPowerTerminalSidebarPane(Pane powerTerminalSidebarPane) {
+        this.powerTerminalSidebarPane = powerTerminalSidebarPane;
+    }
+
 }

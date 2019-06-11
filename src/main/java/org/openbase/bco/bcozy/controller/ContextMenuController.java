@@ -21,6 +21,10 @@ package org.openbase.bco.bcozy.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javafx.scene.layout.Pane;
+import javafx.util.Pair;
+import org.openbase.bco.bcozy.controller.powerterminal.PowerTerminalSidebarPaneController;
 import org.openbase.bco.bcozy.view.ForegroundPane;
 import org.openbase.bco.bcozy.view.location.DynamicUnitPolygon;
 import org.openbase.bco.bcozy.view.UnitMenu;
@@ -32,6 +36,8 @@ import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
+import org.openbase.jul.visual.javafx.control.AbstractFXController;
+import org.openbase.jul.visual.javafx.fxml.FXMLProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.openbase.type.domotic.unit.UnitConfigType.UnitConfig;
@@ -47,10 +53,6 @@ public class ContextMenuController {
 
     private final ForegroundPane foregroundPane;
     private final Map<String, TitledUnitPaneContainer> titledPaneMap;
-
-    public enum energyChart {
-        BAR, PIE, WEBVIEW, LINECHART;
-    }
 
     /**
      * Constructor for the ContextMenuController.
@@ -76,6 +78,15 @@ public class ContextMenuController {
 
 
         final UnitMenu unitMenu = foregroundPane.getUnitMenu();
+
+        try {
+            Pair< Pane, ? extends AbstractFXController> pair = FXMLProcessor.loadFxmlPaneAndControllerPair("PowerTerminalSidebarPane.fxml", PowerTerminalSidebarPaneController.class);
+            ((PowerTerminalSidebarPaneController) pair.getValue()).init(unitMenu);
+            unitMenu.setPowerTerminalSidebarPane(pair.getKey());
+        } catch (final CouldNotPerformException ex) {
+            ExceptionPrinter.printHistory("Content could not be loaded", ex, LOGGER);
+        }
+
         foregroundPane.getAppState().addListener((observable, oldValue, newValue) -> {
             switch (newValue) {
                 case ENERGY:
@@ -88,6 +99,7 @@ public class ContextMenuController {
                     break;
             }
         });
+
     }
 
     /**
@@ -182,4 +194,5 @@ public class ContextMenuController {
             ExceptionPrinter.printHistory(new CouldNotPerformException("Could not init initTitledPaneMap!", ex), LOGGER);
         }
     }
+
 }
