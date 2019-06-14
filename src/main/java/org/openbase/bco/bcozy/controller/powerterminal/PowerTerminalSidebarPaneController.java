@@ -1,7 +1,7 @@
 package org.openbase.bco.bcozy.controller.powerterminal;
 
+import com.jfoenix.controls.JFXComboBox;
 import javafx.fxml.FXML;
-import javafx.scene.control.ComboBox;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.Granularity;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.TimeSpan;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.Unit;
@@ -14,13 +14,13 @@ import org.openbase.jul.visual.javafx.control.AbstractFXController;
 public class PowerTerminalSidebarPaneController extends AbstractFXController {
 
     @FXML
-    private ComboBox<VisualizationType> selectVisualizationTypeBox;
+    private JFXComboBox<VisualizationType> selectVisualizationTypeBox;
     @FXML
-    private ComboBox<Unit> selectUnitBox;
+    private JFXComboBox<Unit> selectUnitBox;
     @FXML
-    private ComboBox<Granularity> selectGranularityBox;
+    private JFXComboBox<Granularity> selectGranularityBox;
     @FXML
-    private ComboBox<TimeSpan> selectTimeSpanBox;
+    private JFXComboBox<TimeSpan> selectTimeSpanBox;
 
 
     @Override

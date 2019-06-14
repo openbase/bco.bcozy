@@ -3,15 +3,16 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
+<?import com.jfoenix.controls.JFXComboBox?>
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="org.openbase.bco.bcozy.controller.powerterminal.PowerTerminalSidebarPaneController"
       alignment="TOP_CENTER"
       spacing="20">
 
-    <ComboBox fx:id="selectVisualizationTypeBox" promptText="Visualization" prefWidth="200"/>
-    <ComboBox fx:id="selectUnitBox" promptText="Unit" prefWidth="200"/>
-    <ComboBox fx:id="selectGranularityBox" promptText="Granularity" prefWidth="200"/>
-    <ComboBox fx:id="selectTimeSpanBox" promptText="Time Span" prefWidth="200"/>
+    <JFXComboBox fx:id="selectVisualizationTypeBox" promptText="Visualization" prefWidth="200"/>
+    <JFXComboBox fx:id="selectUnitBox" promptText="Unit" prefWidth="200"/>
+    <JFXComboBox fx:id="selectGranularityBox" promptText="Granularity" prefWidth="200"/>
+    <JFXComboBox fx:id="selectTimeSpanBox" promptText="Time Span" prefWidth="200"/>
 
 </VBox>
