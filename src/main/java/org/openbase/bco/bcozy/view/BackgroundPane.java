@@ -153,6 +153,6 @@ public class BackgroundPane extends StackPane {
     }
 
     public void setChartProperties(ObjectProperty<VisualizationType> visualizationTypeObjectProperty) {
-        ((PowerChartVisualizationController)powerChartPaneAndController.getValue()).initChartPropertiesAndListeners(visualizationTypeObjectProperty);
+        ((PowerChartVisualizationController)powerChartPaneAndController.getValue()).initChartPropertyListeners(visualizationTypeObjectProperty);
     }
 }
