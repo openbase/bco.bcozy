@@ -46,6 +46,8 @@ public class PowerChartVisualizationController extends AbstractFXController {
     @FXML
     FlowGridPane pane;
 
+    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(PowerChartVisualizationController.class);
+
     public static final String WEBENGINE_ALERT_MESSAGE = "Webengine alert detected!";
     public static final String WEBENGINE_ERROR_MESSAGE = "Webengine error detected!";
     public static String CHRONOGRAPH_URL = "http://192.168.75.100:9999/orgs/03e2c6b79272c000/dashboards/03e529b61ff2c000?lower=now%28%29%20-%2024h";
@@ -87,13 +89,13 @@ public class PowerChartVisualizationController extends AbstractFXController {
         this.duration = "Hour";
         this.unit = "?";
         //SkinTypes can be MATRIX and SMOOTHED_CHART
-        this.chartType = "LineChart";
+        this.chartType = "BarChart";
         this.dataStep = 100;
         this.period = 5;
         title = "Average Consumption in " + unit + " per " + duration;
         this.tileWidth = 1000;
         this.tileHeight = 1000;
-        //TODO Set chartType, duration, unit from Unit Menu
+        //TODO Set chartType, duration, unit from Unit Menu over properties
 
     }
 
@@ -165,15 +167,26 @@ public class PowerChartVisualizationController extends AbstractFXController {
         XYChart.Series<String, Number> series = new XYChart.Series();
         List<ChartData> datas = initializePreviousEntries();
 
+        this.chart.setText("test");
+        this.chart.setTextVisible(true);
+
         addCorrectDataType(datas, series);
 
         try {GlobalScheduledExecutorService.scheduleAtFixedRate(()->{
+            System.out.println("testetset");
+            if (running)
+                return;
+            running = true;
             refreshData(datas);
+            running = false;
+            System.out.println("Done");
         }, 1, period, TimeUnit.SECONDS);
-        } catch (NotAvailableException e) {
-            e.printStackTrace();
+        } catch (NotAvailableException ex) {
+            ExceptionPrinter.printHistory("Could not refresh power chart data", ex, LOGGER);
         }
     }
+
+    public transient boolean running;
 
 
     /**
@@ -252,6 +265,8 @@ public class PowerChartVisualizationController extends AbstractFXController {
      */
     //TODO: A new ChartData has to be added if a new duration (Example: new Minute) has started
     //TODO: Are the DataPoints right?
+    //TODO TimeUnit.Seconds.TOMilli
+    //TODO: Issue Davids Problem
     private void refreshData(List<ChartData> datas) {
         try {
             double tempEnergy = InfluxDBHandler.getAveragePowerConsumption(
@@ -263,6 +278,7 @@ public class PowerChartVisualizationController extends AbstractFXController {
             e.printStackTrace();
         }
     }
+
 
 
     /**

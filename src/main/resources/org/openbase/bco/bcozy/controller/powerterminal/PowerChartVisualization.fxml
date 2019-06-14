@@ -9,7 +9,7 @@
             fx:controller="org.openbase.bco.bcozy.controller.powerterminal.PowerChartVisualizationController"
             prefWidth="500" prefHeight="500">
     <children>
-        <FlowGridPane fx:id="pane" AnchorPane.topAnchor="50" AnchorPane.bottomAnchor="50" AnchorPane.leftAnchor="300.0" AnchorPane.rightAnchor="300.0" alignment="CENTER">
+        <FlowGridPane fx:id="pane" noOfCols="1" AnchorPane.topAnchor="50" AnchorPane.bottomAnchor="50" AnchorPane.leftAnchor="300.0" AnchorPane.rightAnchor="300.0" alignment="CENTER">
         </FlowGridPane>
     </children>
 </AnchorPane>

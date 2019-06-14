@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-public class InfluxDBHandler {
+public class    InfluxDBHandler {
 
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(InfluxDBHandler.class);
     private static final String INFLUXDB_BUCKET_DEFAULT = "bco-persistence";
