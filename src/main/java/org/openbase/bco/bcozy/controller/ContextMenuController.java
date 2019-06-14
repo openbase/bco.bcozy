@@ -53,6 +53,7 @@ public class ContextMenuController {
 
     private final ForegroundPane foregroundPane;
     private final Map<String, TitledUnitPaneContainer> titledPaneMap;
+    private Pair< Pane, AbstractFXController> powerTerminalSidebarPaneAndController;
 
     /**
      * Constructor for the ContextMenuController.
@@ -80,9 +81,9 @@ public class ContextMenuController {
         final UnitMenu unitMenu = foregroundPane.getUnitMenu();
 
         try {
-            Pair< Pane, ? extends AbstractFXController> pair = FXMLProcessor.loadFxmlPaneAndControllerPair("PowerTerminalSidebarPane.fxml", PowerTerminalSidebarPaneController.class);
-            ((PowerTerminalSidebarPaneController) pair.getValue()).init(unitMenu);
-            unitMenu.setPowerTerminalSidebarPane(pair.getKey());
+             powerTerminalSidebarPaneAndController = FXMLProcessor.loadFxmlPaneAndControllerPair("PowerTerminalSidebarPane.fxml", PowerTerminalSidebarPaneController.class);
+//            ((PowerTerminalSidebarPaneController) powerTerminalSidebarPaneAndController.getValue()).init(unitMenu);
+            unitMenu.setPowerTerminalSidebarPane(powerTerminalSidebarPaneAndController.getKey());
         } catch (final CouldNotPerformException ex) {
             ExceptionPrinter.printHistory("Content could not be loaded", ex, LOGGER);
         }
@@ -193,6 +194,11 @@ public class ContextMenuController {
         } catch (CouldNotPerformException | NullPointerException ex) {
             ExceptionPrinter.printHistory(new CouldNotPerformException("Could not init initTitledPaneMap!", ex), LOGGER);
         }
+    }
+
+
+    public PowerTerminalSidebarPaneController getPowerTerminalSidebarPaneController() {
+        return (PowerTerminalSidebarPaneController) powerTerminalSidebarPaneAndController.getValue();
     }
 
 }

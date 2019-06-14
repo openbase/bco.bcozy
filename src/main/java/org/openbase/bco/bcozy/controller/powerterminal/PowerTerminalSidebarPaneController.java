@@ -1,12 +1,12 @@
 package org.openbase.bco.bcozy.controller.powerterminal;
 
 import com.jfoenix.controls.JFXComboBox;
+import javafx.beans.property.ObjectProperty;
 import javafx.fxml.FXML;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.Granularity;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.TimeSpan;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.Unit;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.VisualizationType;
-import org.openbase.bco.bcozy.view.UnitMenu;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.visual.javafx.control.AbstractFXController;
@@ -36,8 +36,12 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
         selectUnitBox.getItems().addAll(Unit.values());
     }
 
-    public void init(UnitMenu parentView) {
-        selectVisualizationTypeBox.valueProperty().bindBidirectional(parentView.getEnergyChartProperty());
+    public void init() {
+
+    }
+
+    public ObjectProperty<VisualizationType> getVisualizationTypeProperty() {
+        return selectVisualizationTypeBox.valueProperty();
     }
 
 }

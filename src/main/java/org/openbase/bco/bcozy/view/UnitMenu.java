@@ -59,7 +59,6 @@ public class UnitMenu extends VBox {
     private final HiddenSidesPane hiddenSidesPane;
     private final double height;
     private final double width;
-    public final ObjectProperty<VisualizationType> energyChartProperty;
 
 
     /**
@@ -109,8 +108,6 @@ public class UnitMenu extends VBox {
         energyInfo.setAlignment(Pos.TOP_CENTER);
         energyInfo.getStyleClass().clear();
         energyInfo.getStyleClass().add("headline");
-
-        energyChartProperty = new SimpleObjectProperty<>(VisualizationType.BAR);
 
         verticalScrollPane = new ScrollPane();
         verticalScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
@@ -238,10 +235,6 @@ public class UnitMenu extends VBox {
 
     public SVGGlyphIcon getCollapseIcon() {
         return collapseIcon;
-    }
-
-    public ObjectProperty<VisualizationType> getEnergyChartProperty() {
-        return this.energyChartProperty;
     }
 
     public FloatingButton getCollapseBtn() {

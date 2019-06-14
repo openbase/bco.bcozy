@@ -1,23 +1,21 @@
 package org.openbase.bco.bcozy.controller.powerterminal;
 
 import eu.hansolo.tilesfx.Tile;
-import eu.hansolo.tilesfx.TileBuilder;
 import eu.hansolo.tilesfx.chart.ChartData;
 import eu.hansolo.tilesfx.tools.FlowGridPane;
 import javafx.application.Platform;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
-import javafx.scene.chart.Chart;
 import javafx.scene.chart.XYChart;
-import javafx.scene.layout.StackPane;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebErrorEvent;
 import javafx.scene.web.WebEvent;
 import javafx.scene.web.WebView;
-import jdk.jshell.Snippet;
 import org.influxdata.query.FluxRecord;
 import org.influxdata.query.FluxTable;
+import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.VisualizationType;
 import org.openbase.bco.bcozy.model.InfluxDBHandler;
-import org.openbase.bco.dal.lib.layer.unit.Switch;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.exception.InvalidStateException;
@@ -36,13 +34,13 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 
 public class PowerChartVisualizationController extends AbstractFXController {
 
+    public static final VisualizationType DEFAULT_VISUALISATION_TYPE = VisualizationType.BAR;
     @FXML
     FlowGridPane pane;
 
@@ -83,13 +81,13 @@ public class PowerChartVisualizationController extends AbstractFXController {
 
     //Time in seconds how often the Chart is updated
     private int period;
+    private ObjectProperty<VisualizationType> visualizationTypeProperty;
 
 
     public PowerChartVisualizationController() {
         this.duration = "Hour";
         this.unit = "?";
         //SkinTypes can be MATRIX and SMOOTHED_CHART
-        this.chartType = "BarChart";
         this.dataStep = 100;
         this.period = 5;
         title = "Average Consumption in " + unit + " per " + duration;
@@ -107,28 +105,7 @@ public class PowerChartVisualizationController extends AbstractFXController {
     //TODO: Functions load... return a Tile
     @Override
     public void initContent() throws InitializationException {
-        switch (chartType) {
-            case "BarChart":
-                this.chart = new Tile();
-                this.chart.setPrefSize(tileWidth, tileHeight);
-                this.skinType = Tile.SkinType.MATRIX;
-                loadBarLineChart();
-                pane.getChildren().add(chart);
-                break;
-            case "LineChart":
-                this.chart = new Tile();
-                this.chart.setPrefSize(tileWidth, tileHeight);
-                this.skinType = Tile.SkinType.SMOOTHED_CHART;
-                loadBarLineChart();
-                pane.getChildren().add(chart);
-                break;
-            case "WebView":
-                webView = new WebView();
-                pane.getChildren().add(webView);
-                loadWebView();
-                break;
-        }
-
+        setChart(DEFAULT_VISUALISATION_TYPE);
     }
 
     private void loadWebView() {
@@ -142,19 +119,18 @@ public class PowerChartVisualizationController extends AbstractFXController {
         //TODO: loading Screen till this Thread is ready
         task = GlobalCachedExecutorService.submit(() -> {
             HttpURLConnection connection = null;
-            try{
+            try {
                 URL myurl = new URL(CHRONOGRAPH_URL);
                 connection = (HttpURLConnection) myurl.openConnection();
                 connection.setRequestMethod("HEAD");
                 int code = connection.getResponseCode();
             } catch (MalformedURLException e) {
                 CHRONOGRAPH_URL = "https://www.google.com/";
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 CHRONOGRAPH_URL = "https://www.google.com/";
             }
             System.out.println("fertig1");
-            Platform.runLater(()-> {
+            Platform.runLater(() -> {
                 webEngine.load(CHRONOGRAPH_URL);
             });
         });
@@ -172,15 +148,16 @@ public class PowerChartVisualizationController extends AbstractFXController {
 
         addCorrectDataType(datas, series);
 
-        try {GlobalScheduledExecutorService.scheduleAtFixedRate(()->{
-            System.out.println("testetset");
-            if (running)
-                return;
-            running = true;
-            refreshData(datas);
-            running = false;
-            System.out.println("Done");
-        }, 1, period, TimeUnit.SECONDS);
+        try {
+            GlobalScheduledExecutorService.scheduleAtFixedRate(() -> {
+                System.out.println("testetset");
+                if (running)
+                    return;
+                running = true;
+                refreshData(datas);
+                running = false;
+                System.out.println("Done");
+            }, 1, period, TimeUnit.SECONDS);
         } catch (NotAvailableException ex) {
             ExceptionPrinter.printHistory("Could not refresh power chart data", ex, LOGGER);
         }
@@ -192,7 +169,7 @@ public class PowerChartVisualizationController extends AbstractFXController {
     /**
      * Depending on the skinType the correct DataType is added to the Chart
      *
-     * @param datas List of ChartData
+     * @param datas  List of ChartData
      * @param series empty XYChart
      */
     private void addCorrectDataType(List<ChartData> datas, XYChart.Series<String, Number> series) {
@@ -203,14 +180,14 @@ public class PowerChartVisualizationController extends AbstractFXController {
                 //The Matrix skinType does not show any data if they are not updated (Error in tilesfx)
                 if (skinType.equals(Tile.SkinType.MATRIX)) {
                     GlobalScheduledExecutorService.execute(() -> {
-                        for (ChartData data: datas) {
+                        for (ChartData data : datas) {
                             data.setValue(data.getValue());
                         }
                     });
                 }
                 break;
             case SMOOTHED_CHART:
-                for (ChartData data: datas) {
+                for (ChartData data : datas) {
                     series.getData().add(new XYChart.Data(data.getName(), data.getValue()));
                 }
                 chart.addSeries(series);
@@ -224,9 +201,9 @@ public class PowerChartVisualizationController extends AbstractFXController {
     /**
      * Sets a Calender to start Date of energy overview
      *
-     * @return  Calender set so start Date
+     * @return Calender set so start Date
      */
-    private Calendar getCalendar () {
+    private Calendar getCalendar() {
         Calendar calendar = Calendar.getInstance();
         this.year = calendar.get(Calendar.YEAR);
         this.month = calendar.get(Calendar.MONTH);
@@ -270,15 +247,14 @@ public class PowerChartVisualizationController extends AbstractFXController {
     private void refreshData(List<ChartData> datas) {
         try {
             double tempEnergy = InfluxDBHandler.getAveragePowerConsumption(
-                    "1m", new Timestamp(System.currentTimeMillis()/1000).getTime() - period, new Timestamp(System.currentTimeMillis()/1000).getTime(), "consumption");
+                    "1m", new Timestamp(System.currentTimeMillis() / 1000).getTime() - period, new Timestamp(System.currentTimeMillis() / 1000).getTime(), "consumption");
             System.out.println("Neue Energie der letzten 5 sekunden" + tempEnergy);
-            tempEnergy = datas.get(datas.size()-1).getValue() + tempEnergy/dataStep;
-            datas.get(datas.size()-1).setValue(tempEnergy);
+            tempEnergy = datas.get(datas.size() - 1).getValue() + tempEnergy / dataStep;
+            datas.get(datas.size() - 1).setValue(tempEnergy);
         } catch (CouldNotPerformException e) {
             e.printStackTrace();
         }
     }
-
 
 
     /**
@@ -292,17 +268,16 @@ public class PowerChartVisualizationController extends AbstractFXController {
         int change = 0;
         try {
             List<FluxTable> energy = InfluxDBHandler.getAveragePowerConsumptionTables(
-                    interval, new Timestamp(calendar.getTimeInMillis()/1000).getTime(), new Timestamp(System.currentTimeMillis()/1000).getTime(), "consumption");
+                    interval, new Timestamp(calendar.getTimeInMillis() / 1000).getTime(), new Timestamp(System.currentTimeMillis() / 1000).getTime(), "consumption");
             for (FluxTable fluxTable : energy) {
                 List<FluxRecord> records = fluxTable.getRecords();
                 for (FluxRecord fluxRecord : records) {
                     if (fluxRecord.getValueByKey("_value") == null) {
-                        ChartData temp = new ChartData(String.valueOf(change), 0,  Tile.ORANGE);
+                        ChartData temp = new ChartData(String.valueOf(change), 0, Tile.ORANGE);
                         temp.setName(String.valueOf(change));
                         datas.add(temp);
-                    }
-                    else {
-                        ChartData temp = new ChartData(String.valueOf(change), (double) fluxRecord.getValueByKey("_value")/dataStep, Tile.ORANGE);
+                    } else {
+                        ChartData temp = new ChartData(String.valueOf(change), (double) fluxRecord.getValueByKey("_value") / dataStep, Tile.ORANGE);
                         temp.setName(String.valueOf(change));
                         datas.add(temp);
                     }
@@ -314,5 +289,41 @@ public class PowerChartVisualizationController extends AbstractFXController {
             e.printStackTrace();
         }
         return datas;
+    }
+
+    public void initChartPropertiesAndListeners(ObjectProperty<VisualizationType> visualizationTypeProperty) {
+        this.visualizationTypeProperty = visualizationTypeProperty;
+
+        visualizationTypeProperty.addListener(
+                (ChangeListener<? super VisualizationType>) (dont, care, newVisualizationType) -> {
+                    setChart(newVisualizationType);
+                });
+    }
+
+    private void setChart(VisualizationType newVisualizationType) {
+        pane.getChildren().clear();
+        switch (newVisualizationType) {
+            case BAR:
+                this.chart = new Tile();
+                this.chart.setPrefSize(tileWidth, tileHeight);
+                this.skinType = Tile.SkinType.MATRIX;
+                loadBarLineChart();
+                pane.getChildren().add(chart);
+                break;
+            case PIE:
+                break;
+            case WEBVIEW:
+                webView = new WebView();
+                loadWebView();
+                pane.getChildren().add(webView);
+                break;
+            case LINECHART:
+                this.chart = new Tile();
+                this.chart.setPrefSize(tileWidth, tileHeight);
+                this.skinType = Tile.SkinType.SMOOTHED_CHART;
+                loadBarLineChart();
+                pane.getChildren().add(chart);
+                break;
+        }
     }
 }

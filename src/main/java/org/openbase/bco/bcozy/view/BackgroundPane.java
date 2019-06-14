@@ -18,14 +18,18 @@
  */
 package org.openbase.bco.bcozy.view;
 
+import javafx.beans.property.ObjectProperty;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.util.Pair;
 import org.openbase.bco.bcozy.controller.powerterminal.PowerChartVisualizationController;
 import org.openbase.bco.bcozy.controller.powerterminal.PowerDrawVisualizationController;
+import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.VisualizationType;
 import org.openbase.bco.bcozy.view.location.LocationMapPane;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InstantiationException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.openbase.jul.visual.javafx.control.AbstractFXController;
 import org.openbase.jul.visual.javafx.fxml.FXMLProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +44,7 @@ public class BackgroundPane extends StackPane {
     private final SimpleUnitSymbolsPane editingLayerPane;
     private final SimpleUnitSymbolsPane maintenanceLayerPane;
     private Pane powerDrawPane;
-    private Pane powerChartPane;
+    private Pair<Pane, AbstractFXController> powerChartPaneAndController;
 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BackgroundPane.class);
@@ -76,10 +80,11 @@ public class BackgroundPane extends StackPane {
 
             try {
                 this.powerDrawPane = FXMLProcessor.loadFxmlPane("PowerDrawPane.fxml",  PowerDrawVisualizationController.class);
-                this.powerChartPane = FXMLProcessor.loadFxmlPane("PowerChartVisualization.fxml",  PowerChartVisualizationController.class);
+                this.powerChartPaneAndController = FXMLProcessor.loadFxmlPaneAndControllerPair("PowerChartVisualization.fxml",  PowerChartVisualizationController.class);
             } catch (final CouldNotPerformException ex) {
                 ExceptionPrinter.printHistory("Content could not be loaded", ex, LOGGER);
             }
+
 
             // layer management
             foregroundPane.getAppState().addListener((observable, oldValue, newValue) -> {
@@ -101,7 +106,7 @@ public class BackgroundPane extends StackPane {
                         break;
                     case ENERGY:
                         getChildren().clear();
-                        getChildren().add(powerChartPane);
+                        getChildren().add(powerChartPaneAndController.getKey());
                         break;
                 }
             });
@@ -145,5 +150,9 @@ public class BackgroundPane extends StackPane {
      */
     public LocationMapPane getLocationMapPane() {
         return locationMapPane;
+    }
+
+    public void setChartProperties(ObjectProperty<VisualizationType> visualizationTypeObjectProperty) {
+        ((PowerChartVisualizationController)powerChartPaneAndController.getValue()).initChartPropertiesAndListeners(visualizationTypeObjectProperty);
     }
 }
