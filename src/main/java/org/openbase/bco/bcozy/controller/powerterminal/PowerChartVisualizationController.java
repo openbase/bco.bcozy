@@ -52,10 +52,14 @@ public class PowerChartVisualizationController extends AbstractFXController {
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(PowerChartVisualizationController.class);
 
+
     String duration;
     String unit;
     String chartType;
     Tile.SkinType skinType;
+
+    public int tileWidth;
+    public int tileHeight;
 
 
     private String title;
@@ -87,6 +91,8 @@ public class PowerChartVisualizationController extends AbstractFXController {
         this.dataStep = 100;
         this.period = 5;
         title = "Average Consumption in " + unit + " per " + duration;
+        this.tileWidth = 1000;
+        this.tileHeight = 1000;
         //TODO Set chartType, duration, unit from Unit Menu
 
     }
@@ -96,19 +102,20 @@ public class PowerChartVisualizationController extends AbstractFXController {
 
     }
 
+    //TODO: Functions load... return a Tile
     @Override
     public void initContent() throws InitializationException {
         switch (chartType) {
-            case "Bar":
+            case "BarChart":
                 this.chart = new Tile();
-                this.chart.setPrefSize(400, 400);
+                this.chart.setPrefSize(tileWidth, tileHeight);
                 this.skinType = Tile.SkinType.MATRIX;
                 loadBarLineChart();
                 pane.getChildren().add(chart);
                 break;
             case "LineChart":
                 this.chart = new Tile();
-                this.chart.setPrefSize(400, 400);
+                this.chart.setPrefSize(tileWidth, tileHeight);
                 this.skinType = Tile.SkinType.SMOOTHED_CHART;
                 loadBarLineChart();
                 pane.getChildren().add(chart);
