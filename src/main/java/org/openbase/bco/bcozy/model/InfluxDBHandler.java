@@ -30,27 +30,25 @@ public class InfluxDBHandler {
      * @throws CouldNotPerformException
      */
     private static List<FluxTable> sendQuery(String query) throws CouldNotPerformException {
-        InfluxDBClient influxDBClient = InfluxDBClientFactory
-                .create(INFLUXDB_URL_DEFAULT + "?readTimeout=" + READ_TIMEOUT + "&connectTimeout=" + CONNECT_TIMOUT + "&writeTimeout=" + WRITE_TIMEOUT + "&logLevel=BASIC", TOKEN);
 
-        if (influxDBClient.health().getStatus().getValue() != "pass") {
-            throw new CouldNotPerformException("Could not connect to database server at " + INFLUXDB_URL_DEFAULT + "!");
+        try (
+                InfluxDBClient influxDBClient = InfluxDBClientFactory
+                        .create(INFLUXDB_URL_DEFAULT + "?readTimeout=" + READ_TIMEOUT + "&connectTimeout=" + CONNECT_TIMOUT + "&writeTimeout=" + WRITE_TIMEOUT + "&logLevel=BASIC", TOKEN);) {
 
-        }
-        QueryApi queryApi = influxDBClient.getQueryApi();
+            if (influxDBClient.health().getStatus().getValue() != "pass") {
+                throw new CouldNotPerformException("Could not connect to database server at " + INFLUXDB_URL_DEFAULT + "!");
 
-
-        List<FluxTable> tables = queryApi.query(query, INFLUXDB_ORG_ID_DEFAULT);
-        try {
-            if (influxDBClient != null) {
-                influxDBClient.close();
             }
+            QueryApi queryApi = influxDBClient.getQueryApi();
+
+
+            List<FluxTable> tables = queryApi.query(query, INFLUXDB_ORG_ID_DEFAULT);
+            return tables;
+
         } catch (Exception ex) {
-            ExceptionPrinter.printHistory("Could not shutdown database connection!", ex, LOGGER);
+            throw new CouldNotPerformException("Could not send query to database!", ex);
+
         }
-
-        return tables;
-
 
     }
 
