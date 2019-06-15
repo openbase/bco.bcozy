@@ -356,6 +356,7 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <!-- required for scenic view debugging -->
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-swing</artifactId>
             <version>11.0.2</version>
