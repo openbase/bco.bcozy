@@ -165,7 +165,7 @@ public class PowerChartVisualizationController extends AbstractFXController {
             case MATRIX:
                 chart.setAnimated(true);
                 chart.setChartData(data);
-                //The Matrix skinType does not show any data if they are not updated (Error in tilesfx)
+                //The Matrix skinType does not show any data if they are not updated (Bug in tilesfx)
                 if (skinType.equals(Tile.SkinType.MATRIX)) {
                     GlobalScheduledExecutorService.execute(() -> {
                         for (ChartData datum : data) {

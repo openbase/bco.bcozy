@@ -1,10 +1,11 @@
 package org.openbase.bco.bcozy.controller.powerterminal;
 
+import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXComboBox;
+import com.jfoenix.controls.JFXDatePicker;
 import javafx.beans.property.ObjectProperty;
 import javafx.fxml.FXML;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.Granularity;
-import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.TimeSpan;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.Unit;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.VisualizationType;
 import org.openbase.jul.exception.CouldNotPerformException;
@@ -20,7 +21,11 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
     @FXML
     private JFXComboBox<Granularity> selectGranularityBox;
     @FXML
-    private JFXComboBox<TimeSpan> selectTimeSpanBox;
+    private JFXCheckBox selectNowCheckBox;
+    @FXML
+    private JFXDatePicker selectStartDatePicker;
+    @FXML
+    private JFXDatePicker selectEndDatePicker;
 
 
     @Override
@@ -32,8 +37,9 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
     public void initContent() throws InitializationException {
         selectVisualizationTypeBox.getItems().addAll(VisualizationType.values());
         selectGranularityBox.getItems().addAll(Granularity.values());
-        selectTimeSpanBox.getItems().addAll(TimeSpan.values());
         selectUnitBox.getItems().addAll(Unit.values());
+        selectStartDatePicker.disableProperty().bind(selectNowCheckBox.selectedProperty());
+        selectEndDatePicker.disableProperty().bind(selectNowCheckBox.selectedProperty());
     }
 
     public void init() {
