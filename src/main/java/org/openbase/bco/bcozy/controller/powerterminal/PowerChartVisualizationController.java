@@ -84,11 +84,9 @@ public class PowerChartVisualizationController extends AbstractFXController {
 
     public PowerChartVisualizationController() {
         this.duration = "Hour";
-        this.unit = "?";
-        //SkinTypes can be MATRIX and SMOOTHED_CHART
+        this.unit = "Watt";
         this.dataStep = 10;
-        title = "Average Consumption in " + unit + " per " + duration;
-        //TODO Set chartType, duration, unit from Unit Menu over properties
+        title = "Average Consumption in " + unit + "/" + dataStep + " per " + duration;
 
     }
 
