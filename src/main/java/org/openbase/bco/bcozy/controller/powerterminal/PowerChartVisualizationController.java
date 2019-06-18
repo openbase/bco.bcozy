@@ -8,6 +8,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.chart.XYChart;
+import javafx.scene.text.TextAlignment;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebErrorEvent;
 import javafx.scene.web.WebEvent;
@@ -109,7 +110,6 @@ public class PowerChartVisualizationController extends AbstractFXController {
         webEngine.setOnError((WebErrorEvent event) -> {
             ExceptionPrinter.printHistory(new InvalidStateException(WEBENGINE_ERROR_MESSAGE, new CouldNotPerformException(event.toString())), logger);
         });
-        //TODO: loading Screen till this Thread is ready
         task = GlobalCachedExecutorService.submit(() -> {
             HttpURLConnection connection = null;
             try {
@@ -228,13 +228,10 @@ public class PowerChartVisualizationController extends AbstractFXController {
      * @param datas List of ChartData
      */
     //TODO: A new ChartData has to be added if a new duration (Example: new Minute) has started
-    //TODO: Are the DataPoints right?
-    //TODO TimeUnit.Seconds.TOMilli
-    //TODO: Issue Davids Problem
     private void refreshData(List<ChartData> datas) {
         try {
             double tempEnergy = InfluxDBHandler.getAveragePowerConsumption(
-                    "1m", new Timestamp(System.currentTimeMillis() / 1000).getTime() - REFRESH_TIMEOUT_SECONDS, new Timestamp(System.currentTimeMillis() / 1000).getTime(), "consumption");
+                    "1m", new Timestamp(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())).getTime() - REFRESH_TIMEOUT_SECONDS, new Timestamp(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())).getTime(), "consumption");
             System.out.println("Neue Energie der letzten 5 sekunden" + tempEnergy);
             tempEnergy = datas.get(datas.size() - 1).getValue() + tempEnergy / dataStep;
             datas.get(datas.size() - 1).setValue(tempEnergy);
@@ -255,7 +252,7 @@ public class PowerChartVisualizationController extends AbstractFXController {
         int change = 0;
         try {
             List<FluxTable> energy = InfluxDBHandler.getAveragePowerConsumptionTables(
-                    interval, new Timestamp(calendar.getTimeInMillis() / 1000).getTime(), new Timestamp(System.currentTimeMillis() / 1000).getTime(), "consumption");
+                    interval, new Timestamp(TimeUnit.MILLISECONDS.toSeconds(calendar.getTimeInMillis())).getTime(), new Timestamp(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())).getTime(), "consumption");
             for (FluxTable fluxTable : energy) {
                 List<FluxRecord> records = fluxTable.getRecords();
                 for (FluxRecord fluxRecord : records) {
@@ -305,8 +302,10 @@ public class PowerChartVisualizationController extends AbstractFXController {
         Tile chart = new Tile();
         chart.setPrefSize(TILE_WIDTH, TILE_HEIGHT);
         Tile.SkinType skinType = visualizationType == VisualizationType.BAR ?
-                Tile.SkinType.MATRIX : Tile.SkinType.SMOOTHED_CHART;//TODO es gibt noch andere chart typen!
-        chart.setText("test");
+                Tile.SkinType.MATRIX : Tile.SkinType.SMOOTHED_CHART;//TODO there are also other chart types!
+        chart.setLeftText(duration);
+        chart.setTextAlignment(TextAlignment.RIGHT);
+        chart.setText(unit);
         chart.setTextVisible(true);
 
         List<ChartData> data = initializePreviousEntries();
