@@ -34,6 +34,8 @@ import org.openbase.jul.visual.javafx.fxml.FXMLProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDate;
+
 /**
  *
  */
@@ -152,7 +154,11 @@ public class BackgroundPane extends StackPane {
         return locationMapPane;
     }
 
-    public void setChartProperties(ObjectProperty<VisualizationType> visualizationTypeObjectProperty) {
-        ((PowerChartVisualizationController)powerChartPaneAndController.getValue()).initChartPropertyListeners(visualizationTypeObjectProperty);
+    public void setChartProperties(ObjectProperty<VisualizationType> visualizationTypeObjectProperty,
+                                   ObjectProperty<LocalDate> startDateObjectProperty,
+                                   ObjectProperty<LocalDate> endDateObjectProperty) {
+
+        PowerChartVisualizationController chartController = (PowerChartVisualizationController)powerChartPaneAndController.getValue();
+        chartController.initChartPropertyListeners(visualizationTypeObjectProperty, startDateObjectProperty, endDateObjectProperty);
     }
 }

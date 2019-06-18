@@ -27,6 +27,7 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.openbase.bco.bcozy.controller.*;
+import org.openbase.bco.bcozy.controller.powerterminal.PowerTerminalSidebarPaneController;
 import org.openbase.bco.bcozy.util.ThemeManager;
 import org.openbase.bco.bcozy.view.BackgroundPane;
 import org.openbase.bco.bcozy.view.ForegroundPane;
@@ -193,7 +194,9 @@ public class BCozy extends Application {
             maintenanceLayerController = new MaintenanceLayerController(backgroundPane.getMaintenancePane(), backgroundPane.getLocationMapPane());
             editingLayerController = new EditingLayerController(backgroundPane.getEditingPane(), backgroundPane.getLocationMapPane());
 
-            backgroundPane.setChartProperties(contextMenuController.getPowerTerminalSidebarPaneController().getVisualizationTypeProperty());
+            PowerTerminalSidebarPaneController sidebarPaneController = contextMenuController.getPowerTerminalSidebarPaneController();
+            backgroundPane.setChartProperties(sidebarPaneController.getVisualizationTypeProperty(),
+                    sidebarPaneController.getStartDateProperty(), sidebarPaneController.getEndDateProperty());
 
             ResponsiveHandler.addResponsiveToWindow(primaryStage);
             primaryStage.show();

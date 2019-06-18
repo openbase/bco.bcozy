@@ -7,6 +7,7 @@ import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.chart.XYChart;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.web.WebEngine;
@@ -15,6 +16,7 @@ import javafx.scene.web.WebEvent;
 import javafx.scene.web.WebView;
 import org.influxdata.query.FluxRecord;
 import org.influxdata.query.FluxTable;
+import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.Interval;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.VisualizationType;
 import org.openbase.bco.bcozy.model.InfluxDBHandler;
 import org.openbase.jul.exception.*;
@@ -31,16 +33,27 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.SQLOutput;
 import java.sql.Timestamp;
+import java.time.*;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+
+import static java.time.temporal.ChronoUnit.DAYS;
+import static java.time.temporal.ChronoUnit.HOURS;
 
 
 public class PowerChartVisualizationController extends AbstractFXController {
 
     public static final VisualizationType DEFAULT_VISUALISATION_TYPE = VisualizationType.BAR;
+    public static final String INFLUX_HOURLY_INTERVAL = "1h";
+    public static final String INFLUX_DAILY_INTERVAL = "1d";
+    public static final String INFLUX_WEEKLY_INTERVAL = "1w";
+    public static final String INFLUX_MONTHLY_INTERVAL = "30d";
+    public static final String INFLUX_YEARLY_INTERVAL = "365d";
     @FXML
     FlowGridPane pane;
 
@@ -80,6 +93,8 @@ public class PowerChartVisualizationController extends AbstractFXController {
 
     //Time in seconds how often the Chart is updated
     private ObjectProperty<VisualizationType> visualizationTypeProperty;
+    private ObjectProperty<LocalDate> startDateObjectProperty;
+    private ObjectProperty<LocalDate> endDateObjectProperty;
 
 
     public PowerChartVisualizationController() {
@@ -229,14 +244,14 @@ public class PowerChartVisualizationController extends AbstractFXController {
      *
      * @return List of ChartData with previous Energy Consumption
      */
-    private List<ChartData> initializePreviousEntries() {
+    private List<ChartData> initializePreviousEntries(String interval, long startTime, long endTime) {
         Calendar calendar = getCalendar();
         List<ChartData> datas = new ArrayList<ChartData>();
         int change = 0;
         olddataTime = new Timestamp(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()));
         try {
             List<FluxTable> energy = InfluxDBHandler.getAveragePowerConsumptionTables(
-                    interval, new Timestamp(TimeUnit.MILLISECONDS.toSeconds(calendar.getTimeInMillis())).getTime(), olddataTime.getTime(), "consumption");
+                    interval, startTime, endTime, "consumption");
             for (FluxTable fluxTable : energy) {
                 List<FluxRecord> records = fluxTable.getRecords();
                 for (FluxRecord fluxRecord : records) {
@@ -263,9 +278,16 @@ public class PowerChartVisualizationController extends AbstractFXController {
      * Connects the given chart attribute properties to the chart by creating listeners incorporating the changes
      * into the chart
      * @param visualizationTypeProperty Property describing the type of chart that is shown
+     * @param startDateObjectProperty
+     * @param endDateObjectProperty
      */
-    public void initChartPropertyListeners(ObjectProperty<VisualizationType> visualizationTypeProperty) {
+    public void initChartPropertyListeners(ObjectProperty<VisualizationType> visualizationTypeProperty,
+                                           ObjectProperty<LocalDate> startDateObjectProperty,
+                                           ObjectProperty<LocalDate> endDateObjectProperty) {
+
         this.visualizationTypeProperty = visualizationTypeProperty;
+        this.startDateObjectProperty = startDateObjectProperty;
+        this.endDateObjectProperty = endDateObjectProperty;
 
         visualizationTypeProperty.addListener(
                 (ChangeListener<? super VisualizationType>) (dont, care, newVisualizationType) -> {
@@ -275,13 +297,26 @@ public class PowerChartVisualizationController extends AbstractFXController {
 
     private void setChartType(VisualizationType newVisualizationType) {
         pane.getChildren().clear();
-        pane.getChildren().add(newVisualizationType
-                == VisualizationType.WEBVIEW
-                ? generateWebView()
-                : generateTilesFxChart(newVisualizationType));
+        Node node;
+        if (newVisualizationType == VisualizationType.WEBVIEW) {
+            node = generateWebView();
+        } else {
+            if (startDateObjectProperty == null || endDateObjectProperty == null) {
+                node = generateTilesFxChart(newVisualizationType);
+            } else {
+                node = generateTilesFxChart(newVisualizationType, startDateObjectProperty.getValue(), endDateObjectProperty.getValue());
+            }
+        }
+        pane.getChildren().add(node);
     }
 
-    private Tile generateTilesFxChart(VisualizationType visualizationType) {
+    private Tile generateTilesFxChart(VisualizationType newVisualizationType) {
+        LocalDate endTime = LocalDate.now();
+        LocalDate startTime = LocalDate.now().minus(Period.of(0,0,1));
+        return generateTilesFxChart(newVisualizationType, startTime, endTime);
+    }
+
+    private Tile generateTilesFxChart(VisualizationType visualizationType, LocalDate startTime, LocalDate endTime) {
         if (visualizationType == VisualizationType.WEBVIEW) return null;
         Tile chart = new Tile();
         chart.setPrefSize(TILE_WIDTH, TILE_HEIGHT);
@@ -290,10 +325,20 @@ public class PowerChartVisualizationController extends AbstractFXController {
         chart.setTextAlignment(TextAlignment.RIGHT);
         chart.setText(duration);
 
-        List<ChartData> data = initializePreviousEntries();
+        System.out.println("Interval String is: " + getDefaultIntervalSize(startTime, endTime));
+        List<ChartData> data = initializePreviousEntries(getDefaultIntervalSize(startTime, endTime), toTime(startTime), toTime(endTime));
         addCorrectDataType(skinType, chart, data);
         enableDataRefresh(REFRESH_TIMEOUT_MINUTES, data, visualizationType);
 
         return chart;
+    }
+
+    private long toTime(LocalDate localDate) {
+        return Timestamp.valueOf(localDate.atTime(LocalTime.MIDNIGHT)).getTime();
+    }
+
+    private String getDefaultIntervalSize(LocalDate earlierDate, LocalDate laterDate) {
+        int timeSpanDays = (int) DAYS.between(earlierDate, laterDate);
+        return Interval.getDefaultIntervalForTimeSpan(timeSpanDays).getInfluxIntervalString();
     }
 }

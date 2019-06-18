@@ -12,6 +12,8 @@ import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.visual.javafx.control.AbstractFXController;
 
+import java.time.LocalDate;
+
 public class PowerTerminalSidebarPaneController extends AbstractFXController {
 
     @FXML
@@ -50,4 +52,11 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
         return selectVisualizationTypeBox.valueProperty();
     }
 
+    public ObjectProperty<LocalDate> getStartDateProperty() {
+        return selectStartDatePicker.valueProperty();
+    }
+
+    public ObjectProperty<LocalDate> getEndDateProperty() {
+        return selectEndDatePicker.valueProperty();
+    }
 }
