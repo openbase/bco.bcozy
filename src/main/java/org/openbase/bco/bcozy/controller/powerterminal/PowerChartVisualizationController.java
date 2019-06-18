@@ -25,6 +25,7 @@ import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.schedule.GlobalCachedExecutorService;
 import org.openbase.jul.schedule.GlobalScheduledExecutorService;
 import org.openbase.jul.visual.javafx.control.AbstractFXController;
+import org.saxpath.Axis;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
@@ -303,10 +304,8 @@ public class PowerChartVisualizationController extends AbstractFXController {
         chart.setPrefSize(TILE_WIDTH, TILE_HEIGHT);
         Tile.SkinType skinType = visualizationType == VisualizationType.BAR ?
                 Tile.SkinType.MATRIX : Tile.SkinType.SMOOTHED_CHART;//TODO there are also other chart types!
-        chart.setLeftText(duration);
         chart.setTextAlignment(TextAlignment.RIGHT);
-        chart.setText(unit);
-        chart.setTextVisible(true);
+        chart.setText(duration);
 
         List<ChartData> data = initializePreviousEntries();
         addCorrectDataType(skinType, chart, data);
