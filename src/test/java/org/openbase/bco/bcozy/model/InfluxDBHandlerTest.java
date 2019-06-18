@@ -17,22 +17,31 @@ public class InfluxDBHandlerTest {
         int period = 5;
         try {
             System.out.println("test power consumption");
-            double tempEnergy = InfluxDBHandler.getAveragePowerConsumption(
-                    "1m", new Timestamp(System.currentTimeMillis()/1000).getTime() - period, new Timestamp(System.currentTimeMillis()/1000).getTime(), "consumption");
-            System.out.println("got result " + tempEnergy);
-
-            TimeUnit.SECONDS.wait(1);
-
-            tempEnergy = InfluxDBHandler.getAveragePowerConsumption(
-                    "1m", new Timestamp(System.currentTimeMillis()/1000).getTime() - period, new Timestamp(System.currentTimeMillis()/1000).getTime(), "consumption");
-            System.out.println("got result " + tempEnergy);
-
-            TimeUnit.SECONDS.wait(1);
+            if (InfluxDBHandler.getAveragePowerConsumption(
+                    "1m", new Timestamp(System.currentTimeMillis()/1000).getTime() - period,
+                    new Timestamp(System.currentTimeMillis()/1000).getTime(), "consumption") == null)
+                System.out.println("Energie ist null");
+            else
+                System.out.println("Energie ist "+ InfluxDBHandler.getAveragePowerConsumption(
+                        "1m", new Timestamp(System.currentTimeMillis()/1000).getTime() - period,
+                        new Timestamp(System.currentTimeMillis()/1000).getTime(), "consumption"));
 
 
-            tempEnergy = InfluxDBHandler.getAveragePowerConsumption(
-                    "1m", new Timestamp(System.currentTimeMillis()/1000).getTime() - period, new Timestamp(System.currentTimeMillis()/1000).getTime(), "consumption");
-            System.out.println("got result " + tempEnergy);
+          /*  if (InfluxDBHandler.getAveragePowerConsumption(
+                    "1m", new Timestamp(System.currentTimeMillis()/1000).getTime() - period, new Timestamp(System.currentTimeMillis()/1000).getTime(), "consumption") == null)
+                System.out.println("Energie ist null");
+            else
+                System.out.println("Energie ist "+ InfluxDBHandler.getAveragePowerConsumption(
+                        "1m", new Timestamp(System.currentTimeMillis()/1000).getTime() - period, new Timestamp(System.currentTimeMillis()/1000).getTime(), "consumption"));
+
+
+            if (InfluxDBHandler.getAveragePowerConsumption(
+                    "1m", new Timestamp(System.currentTimeMillis()/1000).getTime() - period, new Timestamp(System.currentTimeMillis()/1000).getTime(), "consumption") == null)
+                System.out.println("Energie ist null");
+            else
+                System.out.println("Energie ist "+ InfluxDBHandler.getAveragePowerConsumption(
+                        "1m", new Timestamp(System.currentTimeMillis()/1000).getTime() - period, new Timestamp(System.currentTimeMillis()/1000).getTime(), "consumption"));
+ */
 
         } catch (CouldNotPerformException e) {
             e.printStackTrace();
