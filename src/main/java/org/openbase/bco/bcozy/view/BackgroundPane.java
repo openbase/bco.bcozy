@@ -23,7 +23,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.util.Pair;
 import org.openbase.bco.bcozy.controller.powerterminal.PowerChartVisualizationController;
-import org.openbase.bco.bcozy.controller.powerterminal.PowerDrawVisualizationController;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.VisualizationType;
 import org.openbase.bco.bcozy.view.location.LocationMapPane;
 import org.openbase.jul.exception.CouldNotPerformException;
@@ -81,7 +80,6 @@ public class BackgroundPane extends StackPane {
 
 
             try {
-                this.powerDrawPane = FXMLProcessor.loadFxmlPane("PowerDrawPane.fxml",  PowerDrawVisualizationController.class);
                 this.powerChartPaneAndController = FXMLProcessor.loadFxmlPaneAndControllerPair("PowerChartVisualization.fxml",  PowerChartVisualizationController.class);
             } catch (final CouldNotPerformException ex) {
                 ExceptionPrinter.printHistory("Content could not be loaded", ex, LOGGER);

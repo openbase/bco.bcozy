@@ -9,11 +9,13 @@ import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.chart.XYChart;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebErrorEvent;
 import javafx.scene.web.WebEvent;
 import javafx.scene.web.WebView;
+import javafx.stage.Screen;
 import org.influxdata.query.FluxRecord;
 import org.influxdata.query.FluxTable;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.Interval;
@@ -27,6 +29,7 @@ import org.openbase.jul.visual.javafx.control.AbstractFXController;
 import org.saxpath.Axis;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -62,9 +65,8 @@ public class PowerChartVisualizationController extends AbstractFXController {
     public static final String WEBENGINE_ALERT_MESSAGE = "Webengine alert detected!";
     public static final String WEBENGINE_ERROR_MESSAGE = "Webengine error detected!";
     public static String CHRONOGRAPH_URL = "http://192.168.75.100:9999/orgs/03e2c6b79272c000/dashboards/03e529b61ff2c000?lower=now%28%29%20-%2024h";
-//    public static String CHRONOGRAPH_URL = "http://localhost:9999";
-    public static final int TILE_WIDTH = 1000;
-    public static final int TILE_HEIGHT = 1000;
+    public static final int TILE_WIDTH = (int) Screen.getPrimary().getVisualBounds().getWidth();
+    public static final int TILE_HEIGHT = (int) Screen.getPrimary().getVisualBounds().getHeight();
     private static final int REFRESH_TIMEOUT_MINUTES = 1;
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(PowerChartVisualizationController.class);
@@ -91,7 +93,6 @@ public class PowerChartVisualizationController extends AbstractFXController {
     Timestamp olddataTime;
     private int timeStampDuration;
 
-    //Time in seconds how often the Chart is updated
     private ObjectProperty<VisualizationType> visualizationTypeProperty;
     private ObjectProperty<LocalDate> startDateObjectProperty;
     private ObjectProperty<LocalDate> endDateObjectProperty;
@@ -112,6 +113,7 @@ public class PowerChartVisualizationController extends AbstractFXController {
 
     @Override
     public void initContent() throws InitializationException {
+        pane.setMinSize(Screen.getPrimary().getVisualBounds().getWidth(),Screen.getPrimary().getVisualBounds().getHeight() - 600);
         setChartType(DEFAULT_VISUALISATION_TYPE);
     }
 
@@ -140,6 +142,10 @@ public class PowerChartVisualizationController extends AbstractFXController {
                 webEngine.load(CHRONOGRAPH_URL);
             });
         });
+        webView.setMaxHeight(TILE_HEIGHT);
+        webView.setMaxWidth(TILE_WIDTH/2);
+        webView.setMinHeight(TILE_HEIGHT/2 + TILE_HEIGHT/4);
+        webView.setMinWidth(TILE_WIDTH/2 );
         return webView;
     }
 
