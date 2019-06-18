@@ -1,18 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
 <?import com.jfoenix.controls.JFXComboBox?>
+<?import com.jfoenix.controls.JFXCheckBox?>
+<?import javafx.scene.text.Text?>
+<?import com.jfoenix.controls.JFXDatePicker?>
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="org.openbase.bco.bcozy.controller.powerterminal.PowerTerminalSidebarPaneController"
       alignment="TOP_CENTER"
-      spacing="20">
+      spacing="40">
 
     <JFXComboBox fx:id="selectVisualizationTypeBox" promptText="Visualization" prefWidth="200"/>
     <JFXComboBox fx:id="selectUnitBox" promptText="Unit" prefWidth="200"/>
     <JFXComboBox fx:id="selectGranularityBox" promptText="Granularity" prefWidth="200"/>
-    <JFXComboBox fx:id="selectTimeSpanBox" promptText="Time Span" prefWidth="200"/>
-
+    <VBox spacing="5" alignment="TOP_CENTER">
+        <HBox alignment="TOP_CENTER">
+            <JFXCheckBox fx:id="selectNowCheckBox"/>
+            <Text text="Current Draw"/>
+        </HBox>
+        <JFXDatePicker fx:id="selectStartDatePicker"/>
+        <JFXDatePicker fx:id="selectEndDatePicker"/>
+    </VBox>
 </VBox>
