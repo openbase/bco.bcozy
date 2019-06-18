@@ -17,10 +17,7 @@ import org.influxdata.query.FluxRecord;
 import org.influxdata.query.FluxTable;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.VisualizationType;
 import org.openbase.bco.bcozy.model.InfluxDBHandler;
-import org.openbase.jul.exception.CouldNotPerformException;
-import org.openbase.jul.exception.InitializationException;
-import org.openbase.jul.exception.InvalidStateException;
-import org.openbase.jul.exception.NotAvailableException;
+import org.openbase.jul.exception.*;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.schedule.GlobalCachedExecutorService;
 import org.openbase.jul.schedule.GlobalScheduledExecutorService;
@@ -32,6 +29,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.SQLOutput;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -54,7 +52,7 @@ public class PowerChartVisualizationController extends AbstractFXController {
 //    public static String CHRONOGRAPH_URL = "http://localhost:9999";
     public static final int TILE_WIDTH = 1000;
     public static final int TILE_HEIGHT = 1000;
-    private static final int REFRESH_TIMEOUT_SECONDS = 5;
+    private static final int REFRESH_TIMEOUT_MINUTES = 1;
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(PowerChartVisualizationController.class);
 
@@ -77,6 +75,9 @@ public class PowerChartVisualizationController extends AbstractFXController {
     private WebEngine webEngine;
     private Future task;
 
+    Timestamp olddataTime;
+    private int timeStampDuration;
+
     //Time in seconds how often the Chart is updated
     private ObjectProperty<VisualizationType> visualizationTypeProperty;
 
@@ -85,7 +86,7 @@ public class PowerChartVisualizationController extends AbstractFXController {
         this.duration = "Hour";
         this.unit = "?";
         //SkinTypes can be MATRIX and SMOOTHED_CHART
-        this.dataStep = 100;
+        this.dataStep = 10;
         title = "Average Consumption in " + unit + " per " + duration;
         //TODO Set chartType, duration, unit from Unit Menu over properties
 
@@ -96,7 +97,6 @@ public class PowerChartVisualizationController extends AbstractFXController {
 
     }
 
-    //TODO: Functions load... return a Tile
     @Override
     public void initContent() throws InitializationException {
         setChartType(DEFAULT_VISUALISATION_TYPE);
@@ -123,36 +123,12 @@ public class PowerChartVisualizationController extends AbstractFXController {
             } catch (IOException e) {
                 CHRONOGRAPH_URL = "https://www.google.com/";
             }
-            System.out.println("fertig1");
             Platform.runLater(() -> {
                 webEngine.load(CHRONOGRAPH_URL);
             });
         });
         return webView;
     }
-
-    /**
-     * Loads the BarChart or the LineChart
-     * @param refreshTimeout
-     * @param data
-     */
-    private void enableDataRefresh(int refreshTimeout, List<ChartData> data) {
-        try {
-            GlobalScheduledExecutorService.scheduleAtFixedRate(() -> {
-                System.out.println("testetset");
-                if (running)
-                    return;
-                running = true;
-                refreshData(data);
-                running = false;
-                System.out.println("Done");
-            }, 1, refreshTimeout, TimeUnit.SECONDS);
-        } catch (NotAvailableException ex) {
-            ExceptionPrinter.printHistory("Could not refresh power chart data", ex, LOGGER);
-        }
-    }
-
-    public transient boolean running;
 
 
     /**
@@ -191,6 +167,7 @@ public class PowerChartVisualizationController extends AbstractFXController {
      *
      * @return Calender set so start Date
      */
+    //TODO: Has to be GMT Time, but in future release a date picker is used to get the date
     private Calendar getCalendar() {
         Calendar calendar = Calendar.getInstance();
         this.year = calendar.get(Calendar.YEAR);
@@ -203,18 +180,27 @@ public class PowerChartVisualizationController extends AbstractFXController {
             case "Month":
                 day = 1;
                 hour = 0;
-                interval = "1w";
+                interval = "30d";
+                timeStampDuration = 0;
                 break;
             case "Week":
                 day = 0;
-                interval = "1d";
+                interval = "1w";
+                timeStampDuration = 604800;
                 break;
             case "Day":
-                hour = 0;
-                interval = "1h";
+                day = 0;
+                interval = "1d";
+                timeStampDuration = 86400;
                 break;
             case "Hour":
+                interval = "1h";
+                hour = 10;
+                timeStampDuration = 3600;
+                break;
+            case "Minute":
                 interval = "1m";
+                timeStampDuration = 60;
                 break;
         }
 
@@ -222,22 +208,20 @@ public class PowerChartVisualizationController extends AbstractFXController {
         return calendar;
     }
 
-
     /**
-     * Refreshes the last datapoint
-     *
-     * @param datas List of ChartData
+     * Refreshes all data every Minute
+     * @param refreshTimeout
+     * @param data
      */
-    //TODO: A new ChartData has to be added if a new duration (Example: new Minute) has started
-    private void refreshData(List<ChartData> datas) {
+    private void enableDataRefresh(int refreshTimeout, List<ChartData> data, VisualizationType visualizationType) {
         try {
-            double tempEnergy = InfluxDBHandler.getAveragePowerConsumption(
-                    "1m", new Timestamp(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())).getTime() - REFRESH_TIMEOUT_SECONDS, new Timestamp(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())).getTime(), "consumption");
-            System.out.println("Neue Energie der letzten 5 sekunden" + tempEnergy);
-            tempEnergy = datas.get(datas.size() - 1).getValue() + tempEnergy / dataStep;
-            datas.get(datas.size() - 1).setValue(tempEnergy);
-        } catch (CouldNotPerformException e) {
-            e.printStackTrace();
+            GlobalScheduledExecutorService.scheduleAtFixedRate(() -> {
+                Platform.runLater(() -> {
+                    setChartType(visualizationType);
+                });
+            }, 1, refreshTimeout, TimeUnit.MINUTES);
+        } catch (NotAvailableException ex) {
+            ExceptionPrinter.printHistory("Could not refresh power chart data", ex, LOGGER);
         }
     }
 
@@ -251,9 +235,10 @@ public class PowerChartVisualizationController extends AbstractFXController {
         Calendar calendar = getCalendar();
         List<ChartData> datas = new ArrayList<ChartData>();
         int change = 0;
+        olddataTime = new Timestamp(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()));
         try {
             List<FluxTable> energy = InfluxDBHandler.getAveragePowerConsumptionTables(
-                    interval, new Timestamp(TimeUnit.MILLISECONDS.toSeconds(calendar.getTimeInMillis())).getTime(), new Timestamp(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())).getTime(), "consumption");
+                    interval, new Timestamp(TimeUnit.MILLISECONDS.toSeconds(calendar.getTimeInMillis())).getTime(), olddataTime.getTime(), "consumption");
             for (FluxTable fluxTable : energy) {
                 List<FluxRecord> records = fluxTable.getRecords();
                 for (FluxRecord fluxRecord : records) {
@@ -309,7 +294,7 @@ public class PowerChartVisualizationController extends AbstractFXController {
 
         List<ChartData> data = initializePreviousEntries();
         addCorrectDataType(skinType, chart, data);
-        enableDataRefresh(REFRESH_TIMEOUT_SECONDS, data);
+        enableDataRefresh(REFRESH_TIMEOUT_MINUTES, data, visualizationType);
 
         return chart;
     }
