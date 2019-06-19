@@ -18,12 +18,11 @@
  */
 package org.openbase.bco.bcozy.view;
 
-import javafx.beans.property.ObjectProperty;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.util.Pair;
 import org.openbase.bco.bcozy.controller.powerterminal.PowerChartVisualizationController;
-import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.VisualizationType;
+import org.openbase.bco.bcozy.model.powerterminal.ChartStateModel;
 import org.openbase.bco.bcozy.view.location.LocationMapPane;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InstantiationException;
@@ -32,8 +31,6 @@ import org.openbase.jul.visual.javafx.control.AbstractFXController;
 import org.openbase.jul.visual.javafx.fxml.FXMLProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.time.LocalDate;
 
 /**
  *
@@ -152,11 +149,9 @@ public class BackgroundPane extends StackPane {
         return locationMapPane;
     }
 
-    public void setChartProperties(ObjectProperty<VisualizationType> visualizationTypeObjectProperty,
-                                   ObjectProperty<LocalDate> startDateObjectProperty,
-                                   ObjectProperty<LocalDate> endDateObjectProperty) {
+    public void setChartStateModel(ChartStateModel chartStateModel) {
 
         PowerChartVisualizationController chartController = (PowerChartVisualizationController)powerChartPaneAndController.getValue();
-        chartController.initChartPropertyListeners(visualizationTypeObjectProperty, startDateObjectProperty, endDateObjectProperty);
+        chartController.initChartState(chartStateModel);
     }
 }

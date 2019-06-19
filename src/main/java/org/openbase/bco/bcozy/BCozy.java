@@ -195,8 +195,7 @@ public class BCozy extends Application {
             editingLayerController = new EditingLayerController(backgroundPane.getEditingPane(), backgroundPane.getLocationMapPane());
 
             PowerTerminalSidebarPaneController sidebarPaneController = contextMenuController.getPowerTerminalSidebarPaneController();
-            backgroundPane.setChartProperties(sidebarPaneController.getVisualizationTypeProperty(),
-                    sidebarPaneController.getStartDateProperty(), sidebarPaneController.getEndDateProperty());
+            backgroundPane.setChartStateModel(sidebarPaneController.getChartStateModel());
 
             ResponsiveHandler.addResponsiveToWindow(primaryStage);
             primaryStage.show();

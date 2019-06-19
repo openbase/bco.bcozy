@@ -18,9 +18,11 @@ import javafx.scene.web.WebView;
 import javafx.stage.Screen;
 import org.influxdata.query.FluxRecord;
 import org.influxdata.query.FluxTable;
+import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.DateRange;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.Interval;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.VisualizationType;
 import org.openbase.bco.bcozy.model.InfluxDBHandler;
+import org.openbase.bco.bcozy.model.powerterminal.ChartStateModel;
 import org.openbase.jul.exception.*;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.schedule.GlobalCachedExecutorService;
@@ -45,18 +47,11 @@ import java.util.List;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import static java.time.temporal.ChronoUnit.DAYS;
-import static java.time.temporal.ChronoUnit.HOURS;
-
 
 public class PowerChartVisualizationController extends AbstractFXController {
 
     public static final VisualizationType DEFAULT_VISUALISATION_TYPE = VisualizationType.BAR;
-    public static final String INFLUX_HOURLY_INTERVAL = "1h";
-    public static final String INFLUX_DAILY_INTERVAL = "1d";
-    public static final String INFLUX_WEEKLY_INTERVAL = "1w";
-    public static final String INFLUX_MONTHLY_INTERVAL = "30d";
-    public static final String INFLUX_YEARLY_INTERVAL = "365d";
+
     @FXML
     FlowGridPane pane;
 
@@ -64,7 +59,8 @@ public class PowerChartVisualizationController extends AbstractFXController {
 
     public static final String WEBENGINE_ALERT_MESSAGE = "Webengine alert detected!";
     public static final String WEBENGINE_ERROR_MESSAGE = "Webengine error detected!";
-    public static String CHRONOGRAPH_URL = "http://192.168.75.100:9999/orgs/03e2c6b79272c000/dashboards/03e529b61ff2c000?lower=now%28%29%20-%2024h";
+//    public static String CHRONOGRAPH_URL = "http://192.168.75.100:9999/orgs/03e2c6b79272c000/dashboards/03e529b61ff2c000?lower=now%28%29%20-%2024h";
+    public static String CHRONOGRAPH_URL = "http://localhost:9999";
     public static final int TILE_WIDTH = (int) Screen.getPrimary().getVisualBounds().getWidth();
     public static final int TILE_HEIGHT = (int) Screen.getPrimary().getVisualBounds().getHeight();
     private static final int REFRESH_TIMEOUT_MINUTES = 1;
@@ -92,10 +88,7 @@ public class PowerChartVisualizationController extends AbstractFXController {
 
     Timestamp olddataTime;
     private int timeStampDuration;
-
-    private ObjectProperty<VisualizationType> visualizationTypeProperty;
-    private ObjectProperty<LocalDate> startDateObjectProperty;
-    private ObjectProperty<LocalDate> endDateObjectProperty;
+    private ChartStateModel chartStateModel;
 
 
     public PowerChartVisualizationController() {
@@ -182,52 +175,6 @@ public class PowerChartVisualizationController extends AbstractFXController {
 
 
     /**
-     * Sets a Calender to start Date of energy overview
-     *
-     * @return Calender set so start Date
-     */
-    //TODO: Has to be GMT Time, but in future release a date picker is used to get the date
-    private Calendar getCalendar() {
-        Calendar calendar = Calendar.getInstance();
-        this.year = calendar.get(Calendar.YEAR);
-        this.month = calendar.get(Calendar.MONTH);
-        this.day = calendar.get(Calendar.DATE);
-        this.hour = calendar.get(Calendar.HOUR_OF_DAY);
-        this.minute = 0;
-
-        switch (duration) {
-            case "Month":
-                day = 1;
-                hour = 0;
-                interval = "30d";
-                timeStampDuration = 0;
-                break;
-            case "Week":
-                day = 0;
-                interval = "1w";
-                timeStampDuration = 604800;
-                break;
-            case "Day":
-                day = 0;
-                interval = "1d";
-                timeStampDuration = 86400;
-                break;
-            case "Hour":
-                interval = "1h";
-                hour = 10;
-                timeStampDuration = 3600;
-                break;
-            case "Minute":
-                interval = "1m";
-                timeStampDuration = 60;
-                break;
-        }
-
-        calendar.set(year, month, day, hour, minute, 0);
-        return calendar;
-    }
-
-    /**
      * Refreshes all data every Minute
      * @param refreshTimeout
      * @param data
@@ -251,7 +198,6 @@ public class PowerChartVisualizationController extends AbstractFXController {
      * @return List of ChartData with previous Energy Consumption
      */
     private List<ChartData> initializePreviousEntries(String interval, long startTime, long endTime) {
-        Calendar calendar = getCalendar();
         List<ChartData> datas = new ArrayList<ChartData>();
         int change = 0;
         olddataTime = new Timestamp(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()));
@@ -283,22 +229,22 @@ public class PowerChartVisualizationController extends AbstractFXController {
     /**
      * Connects the given chart attribute properties to the chart by creating listeners incorporating the changes
      * into the chart
-     * @param visualizationTypeProperty Property describing the type of chart that is shown
-     * @param startDateObjectProperty
-     * @param endDateObjectProperty
+     * @param chartStateModel StateModel that describes the state of the chart as configured by other panes
      */
-    public void initChartPropertyListeners(ObjectProperty<VisualizationType> visualizationTypeProperty,
-                                           ObjectProperty<LocalDate> startDateObjectProperty,
-                                           ObjectProperty<LocalDate> endDateObjectProperty) {
+    public void initChartState(ChartStateModel chartStateModel) {
 
-        this.visualizationTypeProperty = visualizationTypeProperty;
-        this.startDateObjectProperty = startDateObjectProperty;
-        this.endDateObjectProperty = endDateObjectProperty;
+        this.chartStateModel = chartStateModel;
 
-        visualizationTypeProperty.addListener(
+        chartStateModel.visualizationTypeProperty().addListener(
                 (ChangeListener<? super VisualizationType>) (dont, care, newVisualizationType) -> {
                     setChartType(newVisualizationType);
                 });
+
+        chartStateModel.dateRangeProperty().addListener((ChangeListener<? super DateRange>) (dont, care, newDateRange) -> {
+            System.out.println("===========> Date Picked!");
+            generateTilesFxChart(chartStateModel.getVisualizationType(), newDateRange);
+        });
+
     }
 
     private void setChartType(VisualizationType newVisualizationType) {
@@ -307,10 +253,10 @@ public class PowerChartVisualizationController extends AbstractFXController {
         if (newVisualizationType == VisualizationType.WEBVIEW) {
             node = generateWebView();
         } else {
-            if (startDateObjectProperty == null || endDateObjectProperty == null) {
+            if (chartStateModel == null) {
                 node = generateTilesFxChart(newVisualizationType);
             } else {
-                node = generateTilesFxChart(newVisualizationType, startDateObjectProperty.getValue(), endDateObjectProperty.getValue());
+                node = generateTilesFxChart(newVisualizationType, chartStateModel.getDateRange());
             }
         }
         pane.getChildren().add(node);
@@ -319,10 +265,11 @@ public class PowerChartVisualizationController extends AbstractFXController {
     private Tile generateTilesFxChart(VisualizationType newVisualizationType) {
         LocalDate endTime = LocalDate.now();
         LocalDate startTime = LocalDate.now().minus(Period.of(0,0,1));
-        return generateTilesFxChart(newVisualizationType, startTime, endTime);
+        DateRange defaultDateRange = new DateRange(startTime, endTime);
+        return generateTilesFxChart(newVisualizationType, defaultDateRange);
     }
 
-    private Tile generateTilesFxChart(VisualizationType visualizationType, LocalDate startTime, LocalDate endTime) {
+    private Tile generateTilesFxChart(VisualizationType visualizationType, DateRange dateRange) {
         if (visualizationType == VisualizationType.WEBVIEW) return null;
         Tile chart = new Tile();
         chart.setPrefSize(TILE_WIDTH, TILE_HEIGHT);
@@ -331,20 +278,14 @@ public class PowerChartVisualizationController extends AbstractFXController {
         chart.setTextAlignment(TextAlignment.RIGHT);
         chart.setText(duration);
 
-        System.out.println("Interval String is: " + getDefaultIntervalSize(startTime, endTime));
-        List<ChartData> data = initializePreviousEntries(getDefaultIntervalSize(startTime, endTime), toTime(startTime), toTime(endTime));
+        System.out.println("Interval String is: " + dateRange.getDefaultIntervalSize());
+        System.out.println("Start time is " + dateRange.getStartDate().toString() + ", as Timestamp it is " + dateRange.getStartDateAtCurrentTime().getTime());
+        System.out.println("End time is " + dateRange.getEndDate().toString() + ", as Timestamp it is " + dateRange.getEndDateAtCurrentTime().getTime());
+        List<ChartData> data = initializePreviousEntries(dateRange.getDefaultIntervalSize(), dateRange.getStartDateAtCurrentTime().getTime(), dateRange.getEndDateAtCurrentTime().getTime());
         addCorrectDataType(skinType, chart, data);
         enableDataRefresh(REFRESH_TIMEOUT_MINUTES, data, visualizationType);
 
         return chart;
     }
 
-    private long toTime(LocalDate localDate) {
-        return Timestamp.valueOf(localDate.atTime(LocalTime.MIDNIGHT)).getTime();
-    }
-
-    private String getDefaultIntervalSize(LocalDate earlierDate, LocalDate laterDate) {
-        int timeSpanDays = (int) DAYS.between(earlierDate, laterDate);
-        return Interval.getDefaultIntervalForTimeSpan(timeSpanDays).getInfluxIntervalString();
-    }
 }
