@@ -59,7 +59,6 @@ public class PowerChartVisualizationController extends AbstractFXController {
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(PowerChartVisualizationController.class);
 
 
-    String duration;
     String unit;
 
     private String title;
@@ -77,11 +76,8 @@ public class PowerChartVisualizationController extends AbstractFXController {
 
 
     public PowerChartVisualizationController() {
-        this.duration = "Hour";
         this.unit = "Watt";
         this.dataStep = 10;
-        title = "Average Consumption in " + unit + "/" + dataStep + " per " + duration;
-
     }
 
     @Override
@@ -154,7 +150,6 @@ public class PowerChartVisualizationController extends AbstractFXController {
                 chart.addSeries(series);
                 break;
         }
-        chart.setTitle(title);
         chart.setSkinType(skinType);
     }
 
@@ -220,15 +215,15 @@ public class PowerChartVisualizationController extends AbstractFXController {
 
         this.chartStateModel = chartStateModel;
 
-        chartStateModel.visualizationTypeProperty().addListener(
-                (ChangeListener<? super VisualizationType>) (dont, care, newVisualizationType) -> {
-                    setChartType(newVisualizationType);
-                });
-
         chartStateModel.dateRangeProperty().addListener((ChangeListener<? super DateRange>) (dont, care, newDateRange) -> {
             System.out.println("===========> Date Picked!");
             generateTilesFxChart(chartStateModel.getVisualizationType(), newDateRange);
         });
+
+        chartStateModel.visualizationTypeProperty().addListener(
+                (ChangeListener<? super VisualizationType>) (dont, care, newVisualizationType) -> {
+                    setChartType(newVisualizationType);
+                });
 
     }
 
@@ -261,12 +256,35 @@ public class PowerChartVisualizationController extends AbstractFXController {
         Tile.SkinType skinType = visualizationType == VisualizationType.BAR ?
                 Tile.SkinType.MATRIX : Tile.SkinType.SMOOTHED_CHART;//TODO there are also other chart types!
         chart.setTextAlignment(TextAlignment.RIGHT);
+
+        String interval = dateRange.getDefaultIntervalSize();
+
+        String duration = "?";
+        switch (interval) {
+            case "30d":
+                duration = "month";
+                break;
+            case "1w":
+                duration = "week";
+                break;
+            case "1d":
+                duration = "day";
+                break;
+            case "1h":
+                duration = "hour";
+                break;
+            case "1m":
+                duration = "minute";
+                break;
+
+        }
+        chart.setTitle("Average Consumption in " + unit + "/" + dataStep + " per " + duration);
         chart.setText(duration);
 
-        System.out.println("Interval String is: " + dateRange.getDefaultIntervalSize());
+        System.out.println("Interval String is: " + interval);
         System.out.println("Start time is " + dateRange.getStartDate().toString() + ", as Timestamp it is " + dateRange.getStartDateAtCurrentTime().getTime());
         System.out.println("End time is " + dateRange.getEndDate().toString() + ", as Timestamp it is " + dateRange.getEndDateAtCurrentTime().getTime());
-        List<ChartData> data = initializePreviousEntries(dateRange.getDefaultIntervalSize(), dateRange.getStartDateAtCurrentTime().getTime(), dateRange.getEndDateAtCurrentTime().getTime());
+        List<ChartData> data = initializePreviousEntries(interval, dateRange.getStartDateAtCurrentTime().getTime(), dateRange.getEndDateAtCurrentTime().getTime());
         addCorrectDataType(skinType, chart, data);
         if(firstRun) {//TODO: Replace quick workaround with more beautiful solution
             enableDataRefresh(REFRESH_TIMEOUT_MINUTES, data, visualizationType);
