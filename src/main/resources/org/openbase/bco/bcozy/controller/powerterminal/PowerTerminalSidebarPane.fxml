@@ -15,7 +15,7 @@
     <JFXComboBox fx:id="selectUnitBox" promptText="Unit" prefWidth="200"/>
     <JFXComboBox fx:id="selectGranularityBox" promptText="Granularity" prefWidth="200"/>
     <VBox spacing="5" prefWidth="200" alignment="TOP_CENTER">
-        <HBox alignment="TOP_CENTER">
+        <HBox spacing="5" alignment="TOP_CENTER">
             <JFXCheckBox fx:id="selectDateNowCheckBox"/>
             <Text text="Current Consumption"/>
         </HBox>

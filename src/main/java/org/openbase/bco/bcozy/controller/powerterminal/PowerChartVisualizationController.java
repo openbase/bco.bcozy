@@ -4,12 +4,10 @@ import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.chart.ChartData;
 import eu.hansolo.tilesfx.tools.FlowGridPane;
 import javafx.application.Platform;
-import javafx.beans.property.ObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.chart.XYChart;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebErrorEvent;
@@ -19,7 +17,6 @@ import javafx.stage.Screen;
 import org.influxdata.query.FluxRecord;
 import org.influxdata.query.FluxTable;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.DateRange;
-import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.Interval;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.VisualizationType;
 import org.openbase.bco.bcozy.model.InfluxDBHandler;
 import org.openbase.bco.bcozy.model.powerterminal.ChartStateModel;
@@ -28,21 +25,15 @@ import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.schedule.GlobalCachedExecutorService;
 import org.openbase.jul.schedule.GlobalScheduledExecutorService;
 import org.openbase.jul.visual.javafx.control.AbstractFXController;
-import org.saxpath.Axis;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.sql.SQLOutput;
 import java.sql.Timestamp;
 import java.time.*;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -75,13 +66,7 @@ public class PowerChartVisualizationController extends AbstractFXController {
 
     private int dataStep;
 
-    private int year;
-    private int month;
-    private int day;
-    private int hour;
-    private int minute;
-
-    private String interval;
+    private boolean firstRun = true;
 
     private WebEngine webEngine;
     private Future task;
@@ -283,8 +268,10 @@ public class PowerChartVisualizationController extends AbstractFXController {
         System.out.println("End time is " + dateRange.getEndDate().toString() + ", as Timestamp it is " + dateRange.getEndDateAtCurrentTime().getTime());
         List<ChartData> data = initializePreviousEntries(dateRange.getDefaultIntervalSize(), dateRange.getStartDateAtCurrentTime().getTime(), dateRange.getEndDateAtCurrentTime().getTime());
         addCorrectDataType(skinType, chart, data);
-        enableDataRefresh(REFRESH_TIMEOUT_MINUTES, data, visualizationType);
-
+        if(firstRun) {//TODO: Replace quick workaround with more beautiful solution
+            enableDataRefresh(REFRESH_TIMEOUT_MINUTES, data, visualizationType);
+            firstRun = false;
+        }
         return chart;
     }
 

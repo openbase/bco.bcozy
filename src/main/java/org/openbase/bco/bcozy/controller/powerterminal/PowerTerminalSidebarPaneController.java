@@ -53,8 +53,11 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
     @Override
     public void initContent() throws InitializationException {
         selectVisualizationTypeBox.getItems().addAll(VisualizationType.values());
+        selectVisualizationTypeBox.getSelectionModel().select(0);
         selectGranularityBox.getItems().addAll(Granularity.values());
+        selectGranularityBox.getSelectionModel().select(0);
         selectUnitBox.getItems().addAll(Unit.values());
+        selectUnitBox.getSelectionModel().select(0);
         selectStartDatePicker.disableProperty().bind(selectDateNowCheckBox.selectedProperty());
         selectEndDatePicker.disableProperty().bind(selectDateNowCheckBox.selectedProperty());
         selectStartDatePicker.setValue(LocalDate.now(TIME_ZONE_ID).minusDays(1));
