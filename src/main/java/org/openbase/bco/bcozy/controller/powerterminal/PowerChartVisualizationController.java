@@ -223,7 +223,7 @@ public class PowerChartVisualizationController extends AbstractFXController {
 
         chartStateModel.dateRangeProperty().addListener((ChangeListener<? super DateRange>) (dont, care, newDateRange) -> {
             System.out.println("===========> Date Picked!");
-            generateTilesFxChart(chartStateModel.getVisualizationType(), newDateRange);
+            setChartType(this.visualizationType);
         });
 
     }
@@ -287,7 +287,6 @@ public class PowerChartVisualizationController extends AbstractFXController {
         System.out.println("End time is " + dateRange.getEndDate().toString() + ", as Timestamp it is " + dateRange.getEndDateAtCurrentTime().getTime());
         List<ChartData> data = initializePreviousEntries(interval, dateRange.getStartDateAtCurrentTime().getTime(), dateRange.getEndDateAtCurrentTime().getTime());
         addCorrectDataType(skinType, chart, data);
-        System.out.println("Visualisierung" + visualizationType);
         if(firstRun) {//TODO: Replace quick workaround with more beautiful solution
             enableDataRefresh(REFRESH_TIMEOUT_MINUTES, data);
             firstRun = false;
