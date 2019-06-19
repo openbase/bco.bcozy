@@ -61,8 +61,6 @@ public class PowerChartVisualizationController extends AbstractFXController {
 
     String unit;
 
-    private String title;
-
     private int dataStep;
 
     private boolean firstRun = true;
@@ -71,8 +69,9 @@ public class PowerChartVisualizationController extends AbstractFXController {
     private Future task;
 
     Timestamp olddataTime;
-    private int timeStampDuration;
     private ChartStateModel chartStateModel;
+
+    VisualizationType visualizationType;
 
 
     public PowerChartVisualizationController() {
@@ -89,6 +88,7 @@ public class PowerChartVisualizationController extends AbstractFXController {
     public void initContent() throws InitializationException {
         pane.setMinSize(Screen.getPrimary().getVisualBounds().getWidth(),Screen.getPrimary().getVisualBounds().getHeight() - 600);
         setChartType(DEFAULT_VISUALISATION_TYPE);
+        this.visualizationType = DEFAULT_VISUALISATION_TYPE;
     }
 
     private WebView generateWebView() {
@@ -159,11 +159,11 @@ public class PowerChartVisualizationController extends AbstractFXController {
      * @param refreshTimeout
      * @param data
      */
-    private void enableDataRefresh(int refreshTimeout, List<ChartData> data, VisualizationType visualizationType) {
+    private void enableDataRefresh(int refreshTimeout, List<ChartData> data) {
         try {
             GlobalScheduledExecutorService.scheduleAtFixedRate(() -> {
                 Platform.runLater(() -> {
-                    setChartType(visualizationType);
+                    setChartType(this.visualizationType);
                 });
             }, 1, refreshTimeout, TimeUnit.MINUTES);
         } catch (NotAvailableException ex) {
@@ -215,15 +215,16 @@ public class PowerChartVisualizationController extends AbstractFXController {
 
         this.chartStateModel = chartStateModel;
 
+        chartStateModel.visualizationTypeProperty().addListener(
+                (ChangeListener<? super VisualizationType>) (dont, care, newVisualizationType) -> {
+                    this.visualizationType = newVisualizationType;
+                    setChartType(newVisualizationType);
+                });
+
         chartStateModel.dateRangeProperty().addListener((ChangeListener<? super DateRange>) (dont, care, newDateRange) -> {
             System.out.println("===========> Date Picked!");
             generateTilesFxChart(chartStateModel.getVisualizationType(), newDateRange);
         });
-
-        chartStateModel.visualizationTypeProperty().addListener(
-                (ChangeListener<? super VisualizationType>) (dont, care, newVisualizationType) -> {
-                    setChartType(newVisualizationType);
-                });
 
     }
 
@@ -286,8 +287,9 @@ public class PowerChartVisualizationController extends AbstractFXController {
         System.out.println("End time is " + dateRange.getEndDate().toString() + ", as Timestamp it is " + dateRange.getEndDateAtCurrentTime().getTime());
         List<ChartData> data = initializePreviousEntries(interval, dateRange.getStartDateAtCurrentTime().getTime(), dateRange.getEndDateAtCurrentTime().getTime());
         addCorrectDataType(skinType, chart, data);
+        System.out.println("Visualisierung" + visualizationType);
         if(firstRun) {//TODO: Replace quick workaround with more beautiful solution
-            enableDataRefresh(REFRESH_TIMEOUT_MINUTES, data, visualizationType);
+            enableDataRefresh(REFRESH_TIMEOUT_MINUTES, data);
             firstRun = false;
         }
         return chart;
