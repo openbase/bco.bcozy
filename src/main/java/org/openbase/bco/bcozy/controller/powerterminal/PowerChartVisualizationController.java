@@ -188,7 +188,7 @@ public class PowerChartVisualizationController extends AbstractFXController {
         olddataTime = new Timestamp(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()));
         try {
             List<FluxTable> energy = InfluxDBHandler.getAveragePowerConsumptionTables(
-                    interval, startTime, endTime, "consumption");
+                    interval, TimeUnit.MILLISECONDS.toSeconds(startTime), TimeUnit.MILLISECONDS.toSeconds(endTime), "consumption");
             for (FluxTable fluxTable : energy) {
                 List<FluxRecord> records = fluxTable.getRecords();
                 for (FluxRecord fluxRecord : records) {
