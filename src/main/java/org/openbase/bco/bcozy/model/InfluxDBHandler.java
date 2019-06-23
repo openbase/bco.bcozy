@@ -17,14 +17,14 @@ public class    InfluxDBHandler {
 //    private static final String INFLUXDB_URL_DEFAULT = "http://192.168.75.100:9999";
     private static final String INFLUXDB_ORG_DEFAULT = "openbase";
     //get INFLUXDB_ORG_ID_DEFAULT: influx org find -t TOKEN
-    //private static  String INFLUXDB_ORG_ID_DEFAULT = "03e2948bb3026000";
-    private static String INFLUXDB_ORG_ID_DEFAULT = "03e276e2b1339000"; //id ruben
+    private static  String INFLUXDB_ORG_ID_DEFAULT = "03e2948bb3026000"; //id svenja
+ //   private static String INFLUXDB_ORG_ID_DEFAULT = "03e276e2b1339000"; //id ruben
 //    private static  String INFLUXDB_ORG_ID_DEFAULT = "03e2c6b79272c000";
     private static final Integer READ_TIMEOUT = 60;
     private static final Integer WRITE_TIMEOUT = 60;
     private static final Integer CONNECT_TIMOUT = 40;
-    //private static final char[] TOKEN = "v1aLjos5TncLa69eMOK9gD9f8fnndkrs8UqGdTqlSSUop0F_jcaXt9R23tELnbuCg7FNgrOfiMcl1Phwfbqg-A==".toCharArray();
-    private static final char[] TOKEN = "BS_n1DYHwRIanDtYuEqvUueVNfFYilTEVxrDWGVEFTr1wq2YCkQb_BOt43inwRLTaj8Ba0_VuXDz-Q1eppAQkg==".toCharArray(); //local token ruben
+    private static final char[] TOKEN = "v1aLjos5TncLa69eMOK9gD9f8fnndkrs8UqGdTqlSSUop0F_jcaXt9R23tELnbuCg7FNgrOfiMcl1Phwfbqg-A==".toCharArray(); //local token svenja
+    //private static final char[] TOKEN = "BS_n1DYHwRIanDtYuEqvUueVNfFYilTEVxrDWGVEFTr1wq2YCkQb_BOt43inwRLTaj8Ba0_VuXDz-Q1eppAQkg==".toCharArray(); //local token ruben
 //    private static final char[] TOKEN = "JwXkUyMvJIUVQU-itwGljVALbbliYnAsjitO1HUeHaOXi6f0KHenVQyGGbH8pWMgQ1RG8mqJJRZu_PfnIS-p4w==".toCharArray();
 
     /**

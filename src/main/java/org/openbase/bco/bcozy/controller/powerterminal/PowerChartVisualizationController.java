@@ -1,13 +1,25 @@
 package org.openbase.bco.bcozy.controller.powerterminal;
 
+import eu.hansolo.fx.charts.ChartType;
+import eu.hansolo.fx.charts.MatrixPane;
+import eu.hansolo.fx.charts.PixelMatrix;
+import eu.hansolo.fx.charts.series.MatrixItemSeries;
+import eu.hansolo.fx.charts.tools.ColorMapping;
+import eu.hansolo.fx.charts.tools.Helper;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.chart.ChartData;
+import eu.hansolo.tilesfx.chart.MatrixFont;
+import eu.hansolo.tilesfx.skins.MatrixTileSkin;
 import eu.hansolo.tilesfx.tools.FlowGridPane;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.chart.XYChart;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebErrorEvent;
@@ -35,8 +47,11 @@ import java.sql.Timestamp;
 import java.time.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+
+import eu.hansolo.fx.charts.data.MatrixChartItem;
 
 
 public class PowerChartVisualizationController extends AbstractFXController {
@@ -89,6 +104,40 @@ public class PowerChartVisualizationController extends AbstractFXController {
         pane.setMinSize(Screen.getPrimary().getVisualBounds().getWidth(),Screen.getPrimary().getVisualBounds().getHeight() - 600);
         setChartType(DEFAULT_VISUALISATION_TYPE);
         this.visualizationType = DEFAULT_VISUALISATION_TYPE;
+    }
+
+    private MatrixPane<MatrixChartItem> generateHeatmap(double[][] u) {
+        //h = Gitteraufloesung
+        //CFL Bedingung: delta_t/h^2 <= 1/4
+        double h = 0.5;
+        double delta_t = 0.06;
+        double[][] v = new double[u.length][u[0].length];
+        List<MatrixChartItem> matrixData = new ArrayList<>();
+        for (int runnings = 0; runnings < 1; runnings ++) {
+            for (int col = 1; col < u.length - 1; col++) {
+                for (int row = 1; row < u[col].length - 1; row++) {
+                    v[col][row] = (u[col - 1][row] + u[col + 1][row] + u[col][row - 1] + u[col][row + 1] - 4*u[col][row]) / (h * h);
+                }
+            }
+
+            for (int col = 0; col < u.length; col++) {
+                for (int row = 0; row < u[col].length; row++) {
+                    u[col][row] = u[col][row] + delta_t * v[col][row];
+                    System.out.println("wert" + u[col][row]);
+                    matrixData.add(new MatrixChartItem(col, row, u[col][row]));
+                }
+            }
+        }
+
+        MatrixPane<MatrixChartItem> matrixHeatMap =
+                new MatrixPane(new MatrixItemSeries(matrixData, ChartType.MATRIX_HEATMAP));
+        matrixHeatMap.setColorMapping(ColorMapping.LIME_YELLOW_RED);
+        matrixHeatMap.getMatrix().setPixelShape(PixelMatrix.PixelShape.ROUND);
+        matrixHeatMap.getMatrix().setColsAndRows(u.length,u[0].length);
+        matrixHeatMap.setPrefSize(TILE_WIDTH/2, TILE_HEIGHT);
+        matrixHeatMap.setMaxSize(TILE_WIDTH/2, TILE_HEIGHT);
+
+        return matrixHeatMap;
     }
 
     private WebView generateWebView() {
@@ -232,7 +281,16 @@ public class PowerChartVisualizationController extends AbstractFXController {
         pane.getChildren().clear();
         Node node;
         if (newVisualizationType == VisualizationType.WEBVIEW) {
-            node = generateWebView();
+            double[][] datas = new double[100][100];
+            for (int i = 0; i < 100; i++)
+                for (int j = 0; j < 100; j++) {
+                    if (i == 5 && j == 5)
+                        datas[i][j] = 10;
+                    else if (i == 20 && j == 25)
+                        datas[i][j] = 5;
+                }
+            node = generateHeatmap(datas);
+            //node = generateWebView();
         } else {
             if (chartStateModel == null) {
                 node = generateTilesFxChart(newVisualizationType);
