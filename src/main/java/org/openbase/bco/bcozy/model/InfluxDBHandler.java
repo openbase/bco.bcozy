@@ -9,17 +9,17 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-public class    InfluxDBHandler {
+public class InfluxDBHandler {
 
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(InfluxDBHandler.class);
     private static final String INFLUXDB_BUCKET_DEFAULT = "bco-persistence";
     private static final String INFLUXDB_URL_DEFAULT = "http://localhost:9999";
-//    private static final String INFLUXDB_URL_DEFAULT = "http://192.168.75.100:9999";
+    //    private static final String INFLUXDB_URL_DEFAULT = "http://192.168.75.100:9999";
     private static final String INFLUXDB_ORG_DEFAULT = "openbase";
     //get INFLUXDB_ORG_ID_DEFAULT: influx org find -t TOKEN
     //private static  String INFLUXDB_ORG_ID_DEFAULT = "03e2948bb3026000";
     private static String INFLUXDB_ORG_ID_DEFAULT = "03e276e2b1339000"; //id ruben
-//    private static  String INFLUXDB_ORG_ID_DEFAULT = "03e2c6b79272c000";
+    //    private static  String INFLUXDB_ORG_ID_DEFAULT = "03e2c6b79272c000";
     private static final Integer READ_TIMEOUT = 60;
     private static final Integer WRITE_TIMEOUT = 60;
     private static final Integer CONNECT_TIMOUT = 40;
@@ -44,8 +44,6 @@ public class    InfluxDBHandler {
 
         }
         QueryApi queryApi = influxDBClient.getQueryApi();
-
-
         List<FluxTable> tables = queryApi.query(query, INFLUXDB_ORG_ID_DEFAULT);
         try {
             if (influxDBClient != null) {
@@ -54,7 +52,6 @@ public class    InfluxDBHandler {
         } catch (Exception ex) {
             ExceptionPrinter.printHistory("Could not shutdown database connection!", ex, LOGGER);
         }
-
         LOGGER.info(tables.toString());
         return tables;
 
@@ -74,8 +71,7 @@ public class    InfluxDBHandler {
             List<FluxRecord> records = fluxTable.getRecords();
             for (FluxRecord fluxRecord : records) {
                 // just one entry:
-                LOGGER.info( fluxRecord.getValueByKey("_value").toString());
-
+                LOGGER.info(fluxRecord.getValueByKey("_value").toString());
                 return (Double) fluxRecord.getValueByKey("_value");
 
             }
