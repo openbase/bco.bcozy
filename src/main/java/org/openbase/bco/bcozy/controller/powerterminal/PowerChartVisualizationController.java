@@ -50,7 +50,7 @@ public class PowerChartVisualizationController extends AbstractFXController {
 
     public static final String WEBENGINE_ALERT_MESSAGE = "Webengine alert detected!";
     public static final String WEBENGINE_ERROR_MESSAGE = "Webengine error detected!";
-//    public static String CHRONOGRAPH_URL = "http://192.168.75.100:9999/orgs/03e2c6b79272c000/dashboards/03e529b61ff2c000?lower=now%28%29%20-%2024h";
+    //    public static String CHRONOGRAPH_URL = "http://192.168.75.100:9999/orgs/03e2c6b79272c000/dashboards/03e529b61ff2c000?lower=now%28%29%20-%2024h";
     public static String CHRONOGRAPH_URL = "http://localhost:9999";
     public static final int TILE_WIDTH = (int) Screen.getPrimary().getVisualBounds().getWidth();
     public static final int TILE_HEIGHT = (int) Screen.getPrimary().getVisualBounds().getHeight();
@@ -71,8 +71,6 @@ public class PowerChartVisualizationController extends AbstractFXController {
     Timestamp olddataTime;
     private ChartStateModel chartStateModel;
 
-    VisualizationType visualizationType;
-
 
     public PowerChartVisualizationController() {
         this.unit = "Watt";
@@ -86,9 +84,8 @@ public class PowerChartVisualizationController extends AbstractFXController {
 
     @Override
     public void initContent() throws InitializationException {
-        pane.setMinSize(Screen.getPrimary().getVisualBounds().getWidth(),Screen.getPrimary().getVisualBounds().getHeight() - 600);
+        pane.setMinSize(Screen.getPrimary().getVisualBounds().getWidth(), Screen.getPrimary().getVisualBounds().getHeight() - 600);
         setChartType(DEFAULT_VISUALISATION_TYPE);
-        this.visualizationType = DEFAULT_VISUALISATION_TYPE;
     }
 
     private WebView generateWebView() {
@@ -117,9 +114,9 @@ public class PowerChartVisualizationController extends AbstractFXController {
             });
         });
         webView.setMaxHeight(TILE_HEIGHT);
-        webView.setMaxWidth(TILE_WIDTH/2);
-        webView.setMinHeight(TILE_HEIGHT/2 + TILE_HEIGHT/4);
-        webView.setMinWidth(TILE_WIDTH/2 );
+        webView.setMaxWidth(TILE_WIDTH / 2);
+        webView.setMinHeight(TILE_HEIGHT / 2 + TILE_HEIGHT / 4);
+        webView.setMinWidth(TILE_WIDTH / 2);
         return webView;
     }
 
@@ -156,6 +153,7 @@ public class PowerChartVisualizationController extends AbstractFXController {
 
     /**
      * Refreshes all data every Minute
+     *
      * @param refreshTimeout
      * @param data
      */
@@ -163,7 +161,7 @@ public class PowerChartVisualizationController extends AbstractFXController {
         try {
             GlobalScheduledExecutorService.scheduleAtFixedRate(() -> {
                 Platform.runLater(() -> {
-                    setChartType(this.visualizationType);
+                    setChartType(this.chartStateModel.getVisualizationType());
                 });
             }, 1, refreshTimeout, TimeUnit.MINUTES);
         } catch (NotAvailableException ex) {
@@ -209,6 +207,7 @@ public class PowerChartVisualizationController extends AbstractFXController {
     /**
      * Connects the given chart attribute properties to the chart by creating listeners incorporating the changes
      * into the chart
+     *
      * @param chartStateModel StateModel that describes the state of the chart as configured by other panes
      */
     public void initChartState(ChartStateModel chartStateModel) {
@@ -217,35 +216,40 @@ public class PowerChartVisualizationController extends AbstractFXController {
 
         chartStateModel.visualizationTypeProperty().addListener(
                 (ChangeListener<? super VisualizationType>) (dont, care, newVisualizationType) -> {
-                    this.visualizationType = newVisualizationType;
                     setChartType(newVisualizationType);
                 });
 
         chartStateModel.dateRangeProperty().addListener((ChangeListener<? super DateRange>) (dont, care, newDateRange) -> {
             System.out.println("===========> Date Picked!");
-            setChartType(this.visualizationType);
+            setChartType(this.chartStateModel.getVisualizationType());
         });
 
     }
 
     private void setChartType(VisualizationType newVisualizationType) {
-        pane.getChildren().clear();
+        if (newVisualizationType==null)
+            newVisualizationType = DEFAULT_VISUALISATION_TYPE;
+
         Node node;
-        if (newVisualizationType == VisualizationType.WEBVIEW) {
-            node = generateWebView();
-        } else {
-            if (chartStateModel == null) {
-                node = generateTilesFxChart(newVisualizationType);
-            } else {
-                node = generateTilesFxChart(newVisualizationType, chartStateModel.getDateRange());
-            }
+        switch (newVisualizationType) {
+            case WEBVIEW:
+                node = generateWebView();
+                break;
+            default:
+                if (chartStateModel == null) {
+                    node = generateTilesFxChart(newVisualizationType);
+                } else {
+                    node = generateTilesFxChart(newVisualizationType, chartStateModel.getDateRange());
+                }
+                break;
         }
+        pane.getChildren().clear();
         pane.getChildren().add(node);
     }
 
     private Tile generateTilesFxChart(VisualizationType newVisualizationType) {
         LocalDate endTime = LocalDate.now();
-        LocalDate startTime = LocalDate.now().minus(Period.of(0,0,1));
+        LocalDate startTime = LocalDate.now().minus(Period.of(0, 0, 1));
         DateRange defaultDateRange = new DateRange(startTime, endTime);
         return generateTilesFxChart(newVisualizationType, defaultDateRange);
     }
@@ -287,7 +291,7 @@ public class PowerChartVisualizationController extends AbstractFXController {
         System.out.println("End time is " + dateRange.getEndDate().toString() + ", as Timestamp it is " + dateRange.getEndDateAtCurrentTime().getTime());
         List<ChartData> data = initializePreviousEntries(interval, dateRange.getStartDateAtCurrentTime().getTime(), dateRange.getEndDateAtCurrentTime().getTime());
         addCorrectDataType(skinType, chart, data);
-        if(firstRun) {//TODO: Replace quick workaround with more beautiful solution
+        if (firstRun) {//TODO: Replace quick workaround with more beautiful solution
             enableDataRefresh(REFRESH_TIMEOUT_MINUTES, data);
             firstRun = false;
         }
