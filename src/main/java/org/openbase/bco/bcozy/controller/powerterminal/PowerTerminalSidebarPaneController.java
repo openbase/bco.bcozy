@@ -52,7 +52,7 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
 
     @Override
     public void initContent() throws InitializationException {
-        selectVisualizationTypeBox.getItems().addAll(VisualizationType.values());
+        selectVisualizationTypeBox.getItems().addAll(VisualizationType.getSelectableTypes());
         selectVisualizationTypeBox.getSelectionModel().select(0);
         selectGranularityBox.getItems().addAll(Granularity.values());
         selectGranularityBox.getSelectionModel().select(0);
