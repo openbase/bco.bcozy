@@ -8,11 +8,19 @@ import javafx.util.Callback;
 import java.util.Objects;
 import java.util.function.Function;
 
+/**
+ * CellFactory that binds the textproperty of created cells to a localized enum representation
+ * @param <T> Enum contained in the Cells
+ */
 public class LocalizedEnumCellFactory<T extends Enum> implements Callback<ListView<T>, ListCell<T>> {
 
 
     private final Function<String, ReadOnlyStringProperty> localization;
 
+    /**
+     * Constructor
+     * @param localization Function that returns a string property describing the localized enum
+     */
     public LocalizedEnumCellFactory(final Function<String, ReadOnlyStringProperty> localization) {
         this.localization = Objects.requireNonNull(localization);
     }

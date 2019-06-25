@@ -23,6 +23,9 @@ import org.openbase.jul.visual.javafx.control.AbstractFXController;
 import java.time.LocalDate;
 import java.time.ZoneId;
 
+/**
+ * Controller that controls the right sidebar of the power terminal
+ */
 public class PowerTerminalSidebarPaneController extends AbstractFXController {
 
     public static final ZoneId TIME_ZONE_ID = ZoneId.of("GMT+2");

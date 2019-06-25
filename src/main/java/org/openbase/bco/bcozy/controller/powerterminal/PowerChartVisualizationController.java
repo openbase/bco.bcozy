@@ -283,7 +283,7 @@ public class PowerChartVisualizationController extends AbstractFXController {
                 break;
 
         }
-        chart.setTitle("Average Consumption in " + unit + "/" + dataStep + " per " + duration);
+        chart.setTitle("Average Consumption in " + unit + "/" + dataStep + " per " + interval);
         chart.setText(duration);
 
         System.out.println("Interval String is: " + interval);
