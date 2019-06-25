@@ -19,8 +19,8 @@
             <JFXCheckBox fx:id="selectDateNowCheckBox"/>
             <Text text="Current Consumption"/>
         </HBox>
-        <JFXDatePicker fx:id="selectStartDatePicker" defaultColor="#303034" promptText="Start Date" prefWidth="200"/>
-        <JFXDatePicker fx:id="selectEndDatePicker" defaultColor="#303034" promptText="End Date" prefWidth="200"/>
+        <JFXDatePicker fx:id="selectStartDatePicker" defaultColor="#303034" prefWidth="200"/>
+        <JFXDatePicker fx:id="selectEndDatePicker" defaultColor="#303034" prefWidth="200"/>
         <Text fx:id="dateErrorMessage" fill="red" text="Error: Date invalid!"/>
     </VBox>
 </VBox>

@@ -5,15 +5,16 @@ import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXDatePicker;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
-import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
+import javafx.scene.control.ComboBox;
 import javafx.scene.text.Text;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.DateRange;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.Granularity;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.Unit;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.VisualizationType;
+import org.openbase.bco.bcozy.model.LanguageSelection;
 import org.openbase.bco.bcozy.model.powerterminal.ChartStateModel;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InitializationException;
@@ -52,12 +53,10 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
 
     @Override
     public void initContent() throws InitializationException {
-        selectVisualizationTypeBox.getItems().addAll(VisualizationType.getSelectableTypes());
-        selectVisualizationTypeBox.getSelectionModel().select(0);
-        selectGranularityBox.getItems().addAll(Granularity.values());
-        selectGranularityBox.getSelectionModel().select(0);
-        selectUnitBox.getItems().addAll(Unit.values());
-        selectUnitBox.getSelectionModel().select(0);
+        setupComboBox(selectVisualizationTypeBox, VisualizationType.getSelectableTypes());
+        setupComboBox(selectGranularityBox, Granularity.values());
+        setupComboBox(selectUnitBox, Unit.values());
+
         selectStartDatePicker.disableProperty().bind(selectDateNowCheckBox.selectedProperty());
         selectEndDatePicker.disableProperty().bind(selectDateNowCheckBox.selectedProperty());
         selectStartDatePicker.setValue(LocalDate.now(TIME_ZONE_ID).minusDays(1));
@@ -67,14 +66,14 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
         chartStateModel = new ChartStateModel(selectVisualizationTypeBox.valueProperty(), selectUnitBox.valueProperty(),
                 selectGranularityBox.valueProperty(), dateRange);
 
-        selectStartDatePicker.valueProperty().addListener((dont, care, newStartDate) -> {
+        selectStartDatePicker.valueProperty().addListener((source, old, newStartDate) -> {
             DateRange dateRange = new DateRange(newStartDate, this.dateRange.get().getEndDate());
-            if(dateRange.isValid())
+            if (dateRange.isValid())
                 this.dateRange.set(dateRange);
         });
-        selectEndDatePicker.valueProperty().addListener((dont, care, newEndDate) -> {
+        selectEndDatePicker.valueProperty().addListener((source, old, newEndDate) -> {
             DateRange dateRange = new DateRange(this.dateRange.get().getStartDate(), newEndDate);
-            if(dateRange.isValid())
+            if (dateRange.isValid())
                 this.dateRange.set(dateRange);
         });
         dateValid = Bindings.createBooleanBinding(this::isDateValid,
@@ -85,6 +84,14 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
     private boolean isDateValid() {//TODO: Replace with function from dateRange
         return selectStartDatePicker.getValue().isBefore(selectEndDatePicker.getValue())
                 && selectEndDatePicker.getValue().isBefore(LocalDate.now(TIME_ZONE_ID).plusDays(1));
+    }
+
+    private <T extends Enum> void setupComboBox(ComboBox<T> comboBox, T[] items) {
+        LocalizedEnumCellFactory<T> cellFactory = new LocalizedEnumCellFactory<>(LanguageSelection::getProperty);
+        comboBox.setButtonCell(cellFactory.call(null));
+        comboBox.setCellFactory(cellFactory);
+        comboBox.getItems().addAll(items);
+        comboBox.getSelectionModel().select(0);
     }
 
     public ChartStateModel getChartStateModel() {

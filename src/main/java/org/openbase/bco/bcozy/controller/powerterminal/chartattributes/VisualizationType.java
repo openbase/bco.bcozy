@@ -1,14 +1,16 @@
 package org.openbase.bco.bcozy.controller.powerterminal.chartattributes;
 
+import org.openbase.bco.bcozy.model.LanguageSelection;
+
 public enum VisualizationType {
-    BAR, PIE, WEBVIEW, LINECHART;
+    BARCHART, PIECHART, WEBVIEW, LINECHART;
 
     public static VisualizationType[] getSelectableTypes() {
-        return new VisualizationType[]{BAR, PIE, LINECHART};
+        return new VisualizationType[]{BARCHART, PIECHART, LINECHART};
     }
 
     @Override
     public String toString() {
-        return super.toString().substring(0, 1) + super.toString().substring(1).toLowerCase();
+        return LanguageSelection.getLocalized(super.name());
     }
 }

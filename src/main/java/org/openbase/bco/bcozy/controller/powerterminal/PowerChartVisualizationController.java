@@ -41,7 +41,7 @@ import java.util.concurrent.TimeUnit;
 
 public class PowerChartVisualizationController extends AbstractFXController {
 
-    public static final VisualizationType DEFAULT_VISUALISATION_TYPE = VisualizationType.BAR;
+    public static final VisualizationType DEFAULT_VISUALISATION_TYPE = VisualizationType.BARCHART;
 
     @FXML
     FlowGridPane pane;
@@ -258,7 +258,7 @@ public class PowerChartVisualizationController extends AbstractFXController {
         if (visualizationType == VisualizationType.WEBVIEW) return null;
         Tile chart = new Tile();
         chart.setPrefSize(TILE_WIDTH, TILE_HEIGHT);
-        Tile.SkinType skinType = visualizationType == VisualizationType.BAR ?
+        Tile.SkinType skinType = visualizationType == VisualizationType.BARCHART ?
                 Tile.SkinType.MATRIX : Tile.SkinType.SMOOTHED_CHART;//TODO there are also other chart types!
         chart.setTextAlignment(TextAlignment.RIGHT);
 
