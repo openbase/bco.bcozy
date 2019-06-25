@@ -4,12 +4,8 @@ import eu.hansolo.fx.charts.ChartType;
 import eu.hansolo.fx.charts.MatrixPane;
 import eu.hansolo.fx.charts.PixelMatrix;
 import eu.hansolo.fx.charts.series.MatrixItemSeries;
-import eu.hansolo.fx.charts.tools.ColorMapping;
-import eu.hansolo.fx.charts.tools.Helper;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.chart.ChartData;
-import eu.hansolo.tilesfx.chart.MatrixFont;
-import eu.hansolo.tilesfx.skins.MatrixTileSkin;
 import eu.hansolo.tilesfx.tools.FlowGridPane;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -18,8 +14,9 @@ import javafx.scene.Node;
 import javafx.scene.chart.XYChart;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
-import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.RadialGradient;
 import javafx.scene.paint.Stop;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebErrorEvent;
@@ -47,9 +44,9 @@ import java.sql.Timestamp;
 import java.time.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+
 
 import eu.hansolo.fx.charts.data.MatrixChartItem;
 
@@ -106,38 +103,61 @@ public class PowerChartVisualizationController extends AbstractFXController {
         this.visualizationType = DEFAULT_VISUALISATION_TYPE;
     }
 
-    private MatrixPane<MatrixChartItem> generateHeatmap(double[][] u) {
+    private MatrixPane<MatrixChartItem> generateHeatmapWithLibrary(double[][] u, int runnings) {
+        List<MatrixChartItem> matrixData = new ArrayList<>();
+
+        calculateHeatMap(u, runnings);
+
+        for (int col = 0; col < u.length; col++) {
+            for (int row = 0; row < u[col].length; row++) {
+                matrixData.add(new MatrixChartItem(col, row, u[col][row]));
+            }
+        }
+
+        MatrixPane<MatrixChartItem> matrixHeatMap =
+                new MatrixPane(new MatrixItemSeries(matrixData, ChartType.MATRIX_HEATMAP));
+        matrixHeatMap.getMatrix().setPixelShape(PixelMatrix.PixelShape.SQUARE);
+        matrixHeatMap.getMatrix().setUseSpacer(false);
+        matrixHeatMap.getMatrix().setColsAndRows(u.length,u[0].length);
+        matrixHeatMap.setPrefSize(TILE_WIDTH/2, TILE_HEIGHT);
+        matrixHeatMap.setMaxSize(TILE_WIDTH/2, TILE_HEIGHT);
+
+        return matrixHeatMap;
+    }
+
+    private void calculateHeatMap (double[][] u, int runnings) {
         //h = Gitteraufloesung
         //CFL Bedingung: delta_t/h^2 <= 1/4
-        double h = 0.5;
-        double delta_t = 0.06;
+        double h = 1;
+        double delta_t = 0.1;
         double[][] v = new double[u.length][u[0].length];
-        List<MatrixChartItem> matrixData = new ArrayList<>();
-        for (int runnings = 0; runnings < 1; runnings ++) {
+        for (int runs = 0; runs < runnings; runs ++) {
+            double biggestData = 0;
             for (int col = 1; col < u.length - 1; col++) {
                 for (int row = 1; row < u[col].length - 1; row++) {
                     v[col][row] = (u[col - 1][row] + u[col + 1][row] + u[col][row - 1] + u[col][row + 1] - 4*u[col][row]) / (h * h);
+                    if (v[col][row] > biggestData)
+                        biggestData = v[col][row];
                 }
             }
 
             for (int col = 0; col < u.length; col++) {
                 for (int row = 0; row < u[col].length; row++) {
                     u[col][row] = u[col][row] + delta_t * v[col][row];
-                    System.out.println("wert" + u[col][row]);
-                    matrixData.add(new MatrixChartItem(col, row, u[col][row]));
                 }
             }
         }
+    }
 
-        MatrixPane<MatrixChartItem> matrixHeatMap =
-                new MatrixPane(new MatrixItemSeries(matrixData, ChartType.MATRIX_HEATMAP));
-        matrixHeatMap.setColorMapping(ColorMapping.LIME_YELLOW_RED);
-        matrixHeatMap.getMatrix().setPixelShape(PixelMatrix.PixelShape.ROUND);
-        matrixHeatMap.getMatrix().setColsAndRows(u.length,u[0].length);
-        matrixHeatMap.setPrefSize(TILE_WIDTH/2, TILE_HEIGHT);
-        matrixHeatMap.setMaxSize(TILE_WIDTH/2, TILE_HEIGHT);
-
-        return matrixHeatMap;
+    //TODO: Try HSB color model instead of library
+    private Rectangle generateHeatmapSelf (double[][] u, int runnings) {
+        Rectangle rect = new Rectangle(80,80,new RadialGradient(0, 0, 0.5, 0.5, 1, true, CycleMethod.NO_CYCLE, new Stop[] {
+                new Stop(0, Color.rgb(200,0,255)),
+                new Stop(1, Color.rgb(0,70,140))
+        }));
+        rect.setArcWidth(20);
+        rect.setArcHeight(20);
+        return rect;
     }
 
     private WebView generateWebView() {
@@ -281,15 +301,15 @@ public class PowerChartVisualizationController extends AbstractFXController {
         pane.getChildren().clear();
         Node node;
         if (newVisualizationType == VisualizationType.WEBVIEW) {
-            double[][] datas = new double[100][100];
-            for (int i = 0; i < 100; i++)
-                for (int j = 0; j < 100; j++) {
+            double[][] datas = new double[30][30];
+            for (int i = 0; i < 30; i++)
+                for (int j = 0; j < 30; j++) {
                     if (i == 5 && j == 5)
-                        datas[i][j] = 10;
+                        datas[i][j] = 255;
                     else if (i == 20 && j == 25)
-                        datas[i][j] = 5;
+                        datas[i][j] = 150;
                 }
-            node = generateHeatmap(datas);
+            node = generateHeatmapSelf(datas, 3);
             //node = generateWebView();
         } else {
             if (chartStateModel == null) {
