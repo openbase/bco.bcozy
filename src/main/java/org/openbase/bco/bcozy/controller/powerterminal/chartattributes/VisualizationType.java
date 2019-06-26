@@ -9,8 +9,4 @@ public enum VisualizationType {
         return new VisualizationType[]{BARCHART, PIECHART, LINECHART};
     }
 
-    @Override
-    public String toString() {
-        return LanguageSelection.getLocalized(super.name());
-    }
 }
