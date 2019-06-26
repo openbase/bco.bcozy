@@ -45,7 +45,6 @@ public class UnitMenu extends VBox {
     private final ContextSortingPane contextSortingPane;
     private Pane powerTerminalSidebarPane;
     private final Label roomInfo;
-    private final Label energyInfo;
     private final ScrollPane verticalScrollPane;
     private TitledUnitPaneContainer titledPaneContainer;
     private FloatingButton fullscreenBtn;
@@ -55,7 +54,6 @@ public class UnitMenu extends VBox {
     private HBox collapseButtons;
     private boolean maximized;
     private HBox floatingButtons;
-    private MenuButton graphChoice;
     private final HiddenSidesPane hiddenSidesPane;
     private final double height;
     private final double width;
@@ -76,7 +74,6 @@ public class UnitMenu extends VBox {
         this.height = height;
         this.width = width;
         this.maximized = true;
-
 
         fullscreenBtn = new FloatingButton(new SVGGlyphIcon(MaterialIcon.FULLSCREEN, JFXConstants.ICON_SIZE_MIDDLE, true));
 
@@ -104,11 +101,6 @@ public class UnitMenu extends VBox {
         roomInfo.getStyleClass().clear();
         roomInfo.getStyleClass().add("headline");
 
-        energyInfo = new Label("Select your Energy");
-        energyInfo.setAlignment(Pos.TOP_CENTER);
-        energyInfo.getStyleClass().clear();
-        energyInfo.getStyleClass().add("headline");
-
         verticalScrollPane = new ScrollPane();
         verticalScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         verticalScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
@@ -117,7 +109,6 @@ public class UnitMenu extends VBox {
         scrollBar.setOrientation(Orientation.VERTICAL);
         this.hiddenSidesPane = new HiddenSidesPane();
         hiddenSidesPane.setContent(verticalScrollPane);
-        hiddenSidesPane.setRight(scrollBar);
         hiddenSidesPane.setRight(scrollBar);
         hiddenSidesPane.setTriggerDistance(Constants.TRIGGER_DISTANCE);
         hiddenSidesPane.getStyleClass().add("hidden-sides-pane");
