@@ -43,7 +43,7 @@ import java.util.concurrent.TimeUnit;
 public class PowerChartVisualizationController extends AbstractFXController {
 
     public static final VisualizationType DEFAULT_VISUALISATION_TYPE = VisualizationType.BARCHART;
-    public static final String CHART_HEADER_IDENTIFIER = "chartHeader";
+    public static final String CHART_HEADER_IDENTIFIER = "powerterminal.chartHeader";
 
     @FXML
     FlowGridPane pane;

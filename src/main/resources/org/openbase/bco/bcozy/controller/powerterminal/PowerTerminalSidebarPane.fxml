@@ -16,11 +16,11 @@
     <JFXComboBox fx:id="selectGranularityBox" promptText="Granularity" prefWidth="200"/>
     <VBox spacing="5" prefWidth="200" alignment="TOP_CENTER">
         <HBox spacing="5" alignment="TOP_CENTER">
-            <JFXCheckBox fx:id="selectDateNowCheckBox"/>
-            <Text text="Current Consumption"/>
+            <JFXCheckBox fx:id="dateNowCheckBox"/>
+            <Text fx:id="dateNowCheckboxDescription"/>
         </HBox>
         <JFXDatePicker fx:id="selectStartDatePicker" defaultColor="#303034" prefWidth="200"/>
         <JFXDatePicker fx:id="selectEndDatePicker" defaultColor="#303034" prefWidth="200"/>
-        <Text fx:id="dateErrorMessage" fill="red" text="Error: Date invalid!"/>
+        <Text fx:id="dateErrorMessage" fill="red"/>
     </VBox>
 </VBox>

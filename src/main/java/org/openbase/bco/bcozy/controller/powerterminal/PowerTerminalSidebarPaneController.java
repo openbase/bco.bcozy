@@ -29,6 +29,8 @@ import java.time.ZoneId;
 public class PowerTerminalSidebarPaneController extends AbstractFXController {
 
     public static final ZoneId TIME_ZONE_ID = ZoneId.of("GMT+2");
+    public static final String DATE_ERROR_MESSAGE_IDENTIFIER = "powerterminal.dateErrorMessage";
+    public static final String DATE_NOW_CHECKBOX_DESCRIPTION_IDENTIFIER = "powerterminal.dateNowCheckboxDescription";
     @FXML
     private JFXComboBox<VisualizationType> selectVisualizationTypeBox;
     @FXML
@@ -36,13 +38,15 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
     @FXML
     private JFXComboBox<Granularity> selectGranularityBox;
     @FXML
-    private JFXCheckBox selectDateNowCheckBox;
+    private JFXCheckBox dateNowCheckBox;
     @FXML
     private JFXDatePicker selectStartDatePicker;
     @FXML
     private JFXDatePicker selectEndDatePicker;
     @FXML
     private Text dateErrorMessage;
+    @FXML
+    private Text dateNowCheckboxDescription;
 
     private BooleanBinding dateValid;
     private ObjectProperty<DateRange> dateRange = new SimpleObjectProperty<>();
@@ -60,8 +64,8 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
         setupComboBox(selectGranularityBox, Granularity.values());
         setupComboBox(selectUnitBox, Unit.values());
 
-        selectStartDatePicker.disableProperty().bind(selectDateNowCheckBox.selectedProperty());
-        selectEndDatePicker.disableProperty().bind(selectDateNowCheckBox.selectedProperty());
+        selectStartDatePicker.disableProperty().bind(dateNowCheckBox.selectedProperty());
+        selectEndDatePicker.disableProperty().bind(dateNowCheckBox.selectedProperty());
         selectStartDatePicker.setValue(LocalDate.now(TIME_ZONE_ID).minusDays(1));
         selectEndDatePicker.setValue(LocalDate.now(TIME_ZONE_ID));
         dateRange.set(new DateRange(selectStartDatePicker.getValue(), selectEndDatePicker.getValue()));
@@ -81,7 +85,10 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
         });
         dateValid = Bindings.createBooleanBinding(this::isDateValid,
                 selectStartDatePicker.valueProperty(), selectEndDatePicker.valueProperty());
+        dateErrorMessage.textProperty().bind(LanguageSelection.getProperty(DATE_ERROR_MESSAGE_IDENTIFIER));
         dateErrorMessage.visibleProperty().bind(dateValid.not());
+
+        dateNowCheckboxDescription.textProperty().bind(LanguageSelection.getProperty(DATE_NOW_CHECKBOX_DESCRIPTION_IDENTIFIER));
     }
 
     private boolean isDateValid() {//TODO: Replace with function from dateRange
