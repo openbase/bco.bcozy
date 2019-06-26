@@ -58,13 +58,14 @@ public class DateRange {
         return toTimeStamp(to);
     }
 
+
     /**
      * Generates a sensible interval size for charts using the DateRange
-     * @return String describing the interval size in influx syntax
+     * @return Interval describing the interval size
      */
-    public String getDefaultIntervalSize() {//TODO This Belongs into the DB Handler
+    public Interval getDefaultIntervalSize() {
         int timeSpanDays = (int) DAYS.between(from, to);
-        return Interval.getDefaultIntervalForTimeSpan(timeSpanDays).getInfluxIntervalString();
+        return Interval.getDefaultIntervalForTimeSpan(timeSpanDays);
     }
 
     /**

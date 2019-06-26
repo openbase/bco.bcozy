@@ -4,6 +4,7 @@ import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.chart.ChartData;
 import eu.hansolo.tilesfx.tools.FlowGridPane;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -19,6 +20,7 @@ import org.influxdata.query.FluxTable;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.DateRange;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.VisualizationType;
 import org.openbase.bco.bcozy.model.InfluxDBHandler;
+import org.openbase.bco.bcozy.model.LanguageSelection;
 import org.openbase.bco.bcozy.model.powerterminal.ChartStateModel;
 import org.openbase.jul.exception.*;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
@@ -42,6 +44,7 @@ import java.util.concurrent.TimeUnit;
 public class PowerChartVisualizationController extends AbstractFXController {
 
     public static final VisualizationType DEFAULT_VISUALISATION_TYPE = VisualizationType.BARCHART;
+    public static final String CHART_HEADER_IDENTIFIER = "chartHeader";
 
     @FXML
     FlowGridPane pane;
@@ -86,6 +89,7 @@ public class PowerChartVisualizationController extends AbstractFXController {
     public void initContent() throws InitializationException {
         pane.setMinSize(Screen.getPrimary().getVisualBounds().getWidth(), Screen.getPrimary().getVisualBounds().getHeight() - 600);
         setChartType(DEFAULT_VISUALISATION_TYPE);
+        enableDataRefresh(REFRESH_TIMEOUT_MINUTES);
     }
 
     private WebView generateWebView() {
@@ -155,9 +159,8 @@ public class PowerChartVisualizationController extends AbstractFXController {
      * Refreshes all data every Minute
      *
      * @param refreshTimeout
-     * @param data
      */
-    private void enableDataRefresh(int refreshTimeout, List<ChartData> data) {
+    private void enableDataRefresh(int refreshTimeout) {
         try {
             GlobalScheduledExecutorService.scheduleAtFixedRate(() -> {
                 Platform.runLater(() -> {
@@ -259,42 +262,21 @@ public class PowerChartVisualizationController extends AbstractFXController {
         Tile chart = new Tile();
         chart.setPrefSize(TILE_WIDTH, TILE_HEIGHT);
         Tile.SkinType skinType = visualizationType == VisualizationType.BARCHART ?
-                Tile.SkinType.MATRIX : Tile.SkinType.SMOOTHED_CHART;//TODO there are also other chart types!
+                Tile.SkinType.MATRIX : Tile.SkinType.SMOOTHED_CHART;
         chart.setTextAlignment(TextAlignment.RIGHT);
 
-        String interval = dateRange.getDefaultIntervalSize();
+        String interval = dateRange.getDefaultIntervalSize().getInfluxIntervalString();
 
-        String duration = "?";
-        switch (interval) {
-            case "30d":
-                duration = "month";
-                break;
-            case "1w":
-                duration = "week";
-                break;
-            case "1d":
-                duration = "day";
-                break;
-            case "1h":
-                duration = "hour";
-                break;
-            case "1m":
-                duration = "minute";
-                break;
 
-        }
-        chart.setTitle("Average Consumption in " + unit + "/" + dataStep + " per " + interval);
-        chart.setText(duration);
+        //TODO bind chartstatemodel properties to listeners so this functions are not needed
+        chart.setTitle(LanguageSelection.getLocalized(CHART_HEADER_IDENTIFIER));
+        chart.setText(LanguageSelection.getLocalized(dateRange.getDefaultIntervalSize().name()));
 
         System.out.println("Interval String is: " + interval);
         System.out.println("Start time is " + dateRange.getStartDate().toString() + ", as Timestamp it is " + dateRange.getStartDateAtCurrentTime().getTime());
         System.out.println("End time is " + dateRange.getEndDate().toString() + ", as Timestamp it is " + dateRange.getEndDateAtCurrentTime().getTime());
         List<ChartData> data = initializePreviousEntries(interval, dateRange.getStartDateAtCurrentTime().getTime(), dateRange.getEndDateAtCurrentTime().getTime());
         addCorrectDataType(skinType, chart, data);
-        if (firstRun) {//TODO: Replace quick workaround with more beautiful solution
-            enableDataRefresh(REFRESH_TIMEOUT_MINUTES, data);
-            firstRun = false;
-        }
         return chart;
     }
 
