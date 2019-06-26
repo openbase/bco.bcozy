@@ -11,6 +11,7 @@ import java.util.List;
 
 public class InfluxDBHandler {
 
+    //todo: move to module dal, see issue that i cannot find right now
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(InfluxDBHandler.class);
     private static final String INFLUXDB_BUCKET_DEFAULT = "bco-persistence";
     private static final String INFLUXDB_URL_DEFAULT = "http://localhost:9999";
