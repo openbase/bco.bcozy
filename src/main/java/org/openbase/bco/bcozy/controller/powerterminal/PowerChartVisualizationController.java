@@ -4,7 +4,6 @@ import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.chart.ChartData;
 import eu.hansolo.tilesfx.tools.FlowGridPane;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -178,7 +177,7 @@ public class PowerChartVisualizationController extends AbstractFXController {
      *
      * @return List of ChartData with previous Energy Consumption
      */
-    private List<ChartData> initializePreviousEntries(String interval, long startTime, long endTime) {
+    private List<ChartData> loadChartData(String interval, long startTime, long endTime) {
         List<ChartData> datas = new ArrayList<ChartData>();
         int change = 0;
         olddataTime = new Timestamp(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()));
@@ -257,6 +256,7 @@ public class PowerChartVisualizationController extends AbstractFXController {
         return generateTilesFxChart(newVisualizationType, defaultDateRange);
     }
 
+    //TODO bind chartstatemodel properties to listeners so this functions are not needed, see #
     private Tile generateTilesFxChart(VisualizationType visualizationType, DateRange dateRange) {
         if (visualizationType == VisualizationType.WEBVIEW) return null;
         Tile chart = new Tile();
@@ -266,16 +266,13 @@ public class PowerChartVisualizationController extends AbstractFXController {
         chart.setTextAlignment(TextAlignment.RIGHT);
 
         String interval = dateRange.getDefaultIntervalSize().getInfluxIntervalString();
-
-
-        //TODO bind chartstatemodel properties to listeners so this functions are not needed
         chart.setTitle(LanguageSelection.getLocalized(CHART_HEADER_IDENTIFIER));
         chart.setText(LanguageSelection.getLocalized(dateRange.getDefaultIntervalSize().name()));
 
         System.out.println("Interval String is: " + interval);
         System.out.println("Start time is " + dateRange.getStartDate().toString() + ", as Timestamp it is " + dateRange.getStartDateAtCurrentTime().getTime());
         System.out.println("End time is " + dateRange.getEndDate().toString() + ", as Timestamp it is " + dateRange.getEndDateAtCurrentTime().getTime());
-        List<ChartData> data = initializePreviousEntries(interval, dateRange.getStartDateAtCurrentTime().getTime(), dateRange.getEndDateAtCurrentTime().getTime());
+        List<ChartData> data = loadChartData(interval, dateRange.getStartDateAtCurrentTime().getTime(), dateRange.getEndDateAtCurrentTime().getTime());
         addCorrectDataType(skinType, chart, data);
         return chart;
     }
