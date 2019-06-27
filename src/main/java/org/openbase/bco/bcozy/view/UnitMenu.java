@@ -55,8 +55,8 @@ public class UnitMenu extends VBox {
     private boolean maximized;
     private HBox floatingButtons;
     private final HiddenSidesPane hiddenSidesPane;
-    private final double height;
-    private final double width;
+    private final double unitMenuMaxHeight;
+    private final double unitMenuMaxWidth;
 
 
     /**
@@ -71,8 +71,8 @@ public class UnitMenu extends VBox {
         this.setMinWidth(width);
         this.setPrefHeight(height);
         this.setPrefWidth(width);
-        this.height = height;
-        this.width = width;
+        this.unitMenuMaxHeight = height;
+        this.unitMenuMaxWidth = width;
         this.maximized = true;
 
         fullscreenBtn = new FloatingButton(new SVGGlyphIcon(MaterialIcon.FULLSCREEN, JFXConstants.ICON_SIZE_MIDDLE, true));
@@ -179,10 +179,10 @@ public class UnitMenu extends VBox {
 
     public void removeEnergyMode() {
         this.getChildren().clear();
-        setMinHeight(height);
-        setMinWidth(width);
-        setPrefHeight(height);
-        setPrefWidth(width);
+        setMinHeight(unitMenuMaxHeight);
+        setMinWidth(unitMenuMaxWidth);
+        setPrefHeight(unitMenuMaxHeight);
+        setPrefWidth(unitMenuMaxWidth);
         this.getChildren().addAll(floatingButtons, roomInfo, hiddenSidesPane);
         this.getStyleClass().addAll("detail-menu");
     }
@@ -190,10 +190,10 @@ public class UnitMenu extends VBox {
     public void setInEnergyMode() {
         maximized = true;
         this.getChildren().clear();
-        setMinHeight(height);
-        setMinWidth(width);
-        setPrefHeight(height);
-        setPrefWidth(width);
+        setMinHeight(unitMenuMaxHeight);
+        setMinWidth(unitMenuMaxWidth);
+        setPrefHeight(unitMenuMaxHeight);
+        setPrefWidth(unitMenuMaxWidth);
         collapseIcon.setForegroundIcon(MaterialIcon.KEYBOARD_ARROW_RIGHT);
         this.getChildren().addAll(floatingButtons, roomInfo, powerTerminalSidebarPane, collapseButtons);
         this.getStyleClass().addAll("detail-menu");
