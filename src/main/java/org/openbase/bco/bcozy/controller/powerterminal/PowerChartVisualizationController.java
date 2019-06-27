@@ -114,7 +114,7 @@ public class PowerChartVisualizationController extends AbstractFXController {
     /**
      * Depending on the skinType the correct DataType is added to the Chart
      */
-    private void addCorrectDataType(Tile.SkinType skinType, Tile chart, List<ChartData> data) {
+    private void addCorrectDataType(Tile.SkinType skinType, Tile chart, List<ChartData> data) throws NotSupportedException {
         XYChart.Series<String, Number> series = new XYChart.Series();
 
         switch (skinType) {
@@ -136,6 +136,8 @@ public class PowerChartVisualizationController extends AbstractFXController {
                 }
                 chart.addSeries(series);
                 break;
+            default:
+                throw new NotSupportedException(skinType, this.getClass(), "Unsupported chart skintype!");
         }
         chart.setSkinType(skinType);
     }
@@ -257,7 +259,11 @@ public class PowerChartVisualizationController extends AbstractFXController {
         LOGGER.debug("Start time is " + dateRange.getStartDate().toString() + ", as Timestamp it is " + dateRange.getStartDateAtCurrentTime().getTime());
         LOGGER.debug("End time is " + dateRange.getEndDate().toString() + ", as Timestamp it is " + dateRange.getEndDateAtCurrentTime().getTime());
         List<ChartData> data = loadChartData(interval, dateRange.getStartDateAtCurrentTime().getTime(), dateRange.getEndDateAtCurrentTime().getTime());
-        addCorrectDataType(skinType, chart, data);
+        try {
+            addCorrectDataType(skinType, chart, data);
+        } catch (NotSupportedException e) {
+            ExceptionPrinter.printHistory(e, LOGGER);
+        }
         return chart;
     }
 
