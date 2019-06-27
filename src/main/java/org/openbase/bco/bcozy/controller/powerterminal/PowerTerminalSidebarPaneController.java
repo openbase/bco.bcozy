@@ -7,6 +7,8 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.text.Text;
@@ -83,17 +85,12 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
             if (dateRange.isValid())
                 this.dateRange.set(dateRange);
         });
-        dateValid = Bindings.createBooleanBinding(this::isDateValid,
+        dateValid = Bindings.createBooleanBinding(() -> new DateRange(selectStartDatePicker.getValue(), selectEndDatePicker.getValue()).isValid(),
                 selectStartDatePicker.valueProperty(), selectEndDatePicker.valueProperty());
         dateErrorMessage.textProperty().bind(LanguageSelection.getProperty(DATE_ERROR_MESSAGE_IDENTIFIER));
         dateErrorMessage.visibleProperty().bind(dateValid.not());
 
         dateNowCheckboxDescription.textProperty().bind(LanguageSelection.getProperty(DATE_NOW_CHECKBOX_DESCRIPTION_IDENTIFIER));
-    }
-
-    private boolean isDateValid() {//TODO: Replace with function from dateRange
-        return selectStartDatePicker.getValue().isBefore(selectEndDatePicker.getValue())
-                && selectEndDatePicker.getValue().isBefore(LocalDate.now(TIME_ZONE_ID).plusDays(1));
     }
 
     private <T extends Enum> void setupComboBox(ComboBox<T> comboBox, T[] items) {
