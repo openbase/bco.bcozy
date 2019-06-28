@@ -54,8 +54,8 @@ public class PowerChartVisualizationController extends AbstractFXController {
     public static final String WEBENGINE_ALERT_MESSAGE = "Webengine alert detected!";
     public static final String WEBENGINE_ERROR_MESSAGE = "Webengine error detected!";
     //todo: make configurable via bcozy settings, see #89
-    //public static String CHRONOGRAPH_URL = "http://192.168.75.100:9999/orgs/03e2c6b79272c000/dashboards/03e529b61ff2c000?lower=now%28%29%20-%2024h";
-    public static String CHRONOGRAPH_URL = "http://localhost:9999";
+    public static String CHRONOGRAPH_URL = "http://192.168.75.100:9999/orgs/03e2c6b79272c000/dashboards/03e529b61ff2c000?lower=now%28%29%20-%2024h";
+//    public static String CHRONOGRAPH_URL = "http://localhost:9999";
     public static final int TILE_WIDTH = (int) Screen.getPrimary().getVisualBounds().getWidth();
     public static final int TILE_HEIGHT = (int) Screen.getPrimary().getVisualBounds().getHeight();
     private static final long REFRESH_INTERVAL_MILLISECONDS = 30000;
