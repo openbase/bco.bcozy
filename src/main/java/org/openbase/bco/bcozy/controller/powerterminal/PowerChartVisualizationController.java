@@ -109,13 +109,13 @@ public class PowerChartVisualizationController extends AbstractFXController {
         this.visualizationType = DEFAULT_VISUALISATION_TYPE;
     }
 
-    private MatrixPane<MatrixChartItem> generateHeatMapOld (double[][] u, int runnings) {
+    private MatrixPane<MatrixChartItem> generateHeatmapOld (double[][] u, int runnings) {
         calculateHeatMap(u, runnings);
 
-       List<MatrixChartItem> matrixData = new ArrayList<>();
-       for (int col = 0; col < u.length; col++) {
+        List<MatrixChartItem> matrixData = new ArrayList<>();
+        for (int col = 0; col < u.length; col++) {
             for (int row = 0; row < u[col].length; row++) {
-                        matrixData.add(new MatrixChartItem(col, row, u[col][row]));
+                matrixData.add(new MatrixChartItem(col, row, u[col][row]));
             }
         }
 
@@ -130,11 +130,12 @@ public class PowerChartVisualizationController extends AbstractFXController {
         return matrixHeatMap;
     }
 
-    private HeatMap generateHeatmapNew(double[][] u, int runnings) {
-        calculateHeatMap(u, runnings);
-        double value = u[5][5];
 
-        Image bla = createEventImage(value);
+    private HeatMap generateHeatmapWithLibrary(double[][] u, int runnings) {
+        calculateHeatMap(u, runnings);
+        double value = 1;
+
+        Image bla = createEventImage(40, value);
 
         HeatMap heatMap = new HeatMap();
         heatMap.setSize(TILE_WIDTH/2, TILE_HEIGHT);
@@ -143,14 +144,15 @@ public class PowerChartVisualizationController extends AbstractFXController {
         return heatMap;
     }
 
-    public Image createEventImage(double value) {
-        int radius = 40;
+    public Image createEventImage(final double RADIUS, double value) {
+        Double radius = RADIUS < 1 ? 1 : RADIUS;
 
         Stop[] stops = new Stop[11];
         for (int i = 0; i < 11; i++) {
             double opacity = value - (double) i/10;
             if (opacity < 0)
                 opacity = 0;
+            System.out.println(opacity);
             stops[i] = new Stop(i * 0.1, Color.rgb(255, 255, 255, opacity));
         }
 
@@ -349,7 +351,7 @@ public class PowerChartVisualizationController extends AbstractFXController {
                     else if (i == 20 && j == 25)
                         datas[i][j] = 0.8;
                 }
-            node = generateHeatmapNew(datas, 3);
+            node = generateHeatmapWithLibrary(datas, 3);
             //node = generateWebView();
         } else {
             if (chartStateModel == null) {
