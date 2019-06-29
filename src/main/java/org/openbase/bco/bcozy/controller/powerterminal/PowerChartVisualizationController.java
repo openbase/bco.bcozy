@@ -17,6 +17,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.chart.XYChart;
+import javafx.scene.effect.Light;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
@@ -36,6 +37,7 @@ import org.openbase.bco.bcozy.model.InfluxDBHandler;
 import org.openbase.bco.bcozy.model.powerterminal.ChartStateModel;
 import org.openbase.jul.exception.*;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.openbase.jul.pattern.Pair;
 import org.openbase.jul.schedule.GlobalCachedExecutorService;
 import org.openbase.jul.schedule.GlobalScheduledExecutorService;
 import org.openbase.jul.visual.javafx.control.AbstractFXController;
@@ -131,28 +133,31 @@ public class PowerChartVisualizationController extends AbstractFXController {
     }
 
 
-    private HeatMap generateHeatmapWithLibrary(double[][] u, int runnings) {
+    private HeatMap generateHeatmapWithLibrary(double[][] u, List<SpotsPosition> spots, int runnings) {
         calculateHeatMap(u, runnings);
-        double value = 1;
-
-        Image bla = createEventImage(40, value);
 
         HeatMap heatMap = new HeatMap();
         heatMap.setSize(TILE_WIDTH/2, TILE_HEIGHT);
-        heatMap.addSpot(50,60, bla, 0, 0);
 
+        for (int j = 0; j < spots.size(); j++) {
+            System.out.println(spots.size());
+            System.out.println(spots.get(j));
+            SpotsPosition spot = spots.get(j);
+            heatMap.addSpot(spot.spotsPositionx, spot.spotsPositiony, createEventImage(runnings, u, spot), 0, 0);
+        }
         return heatMap;
     }
 
-    public Image createEventImage(final double RADIUS, double value) {
-        Double radius = RADIUS < 1 ? 1 : RADIUS;
+    public Image createEventImage(int runnings, double[][] u, SpotsPosition spot) {
+        Double radius = (double) runnings*100;
 
-        Stop[] stops = new Stop[11];
-        for (int i = 0; i < 11; i++) {
-            double opacity = value - (double) i/10;
+        Stop[] stops = new Stop[runnings+1];
+        for (int i = 0; i < runnings + 1; i++) {
+            double opacity = 0;
+            if (i != runnings)
+                opacity = u[spot.spotsPositionx+i][spot.spotsPositiony];
             if (opacity < 0)
                 opacity = 0;
-            System.out.println(opacity);
             stops[i] = new Stop(i * 0.1, Color.rgb(255, 255, 255, opacity));
         }
 
@@ -167,7 +172,7 @@ public class PowerChartVisualizationController extends AbstractFXController {
                 double deltaY   = radius - y;
                 double distance = Math.sqrt((deltaX * deltaX) + (deltaY * deltaY));
                 double fraction = maxDistFactor * distance;
-                for (int i = 0; i < 10; i++) {
+                for (int i = 0; i < stops.length-1; i++) {
                     if (Double.compare(fraction, stops[i].getOffset()) >= 0 && Double.compare(fraction, stops[i + 1].getOffset()) <= 0) {
                         pixelColor = (Color) Interpolator.LINEAR.interpolate(stops[i].getColor(), stops[i + 1].getColor(), (fraction - stops[i].getOffset()) / 0.1);
                         pixelWriter.setColor(x, y, pixelColor);
@@ -336,22 +341,36 @@ public class PowerChartVisualizationController extends AbstractFXController {
             System.out.println("===========> Date Picked!");
             setChartType(this.visualizationType);
         });
+    }
 
+    class SpotsPosition {
+        int spotsPositionx;
+        int spotsPositiony;
+
+        SpotsPosition(int x, int y) {
+            spotsPositionx = x;
+            spotsPositiony = y;
+        }
     }
 
     private void setChartType(VisualizationType newVisualizationType) {
         pane.getChildren().clear();
         Node node;
         if (newVisualizationType == VisualizationType.WEBVIEW) {
-            double[][] datas = new double[30][30];
-            for (int i = 0; i < 30; i++)
-                for (int j = 0; j < 30; j++) {
-                    if (i == 5 && j == 5)
+            double[][] datas = new double[300][300];
+            List<SpotsPosition> spots = new ArrayList<>();
+            for (int i = 0; i < TILE_WIDTH/2; i++)
+                for (int j = 0; j < TILE_WIDTH/2; j++) {
+                    if (i == 5 && j == 5) {
                         datas[i][j] = 1;
-                    else if (i == 20 && j == 25)
+                        spots.add(new SpotsPosition(i,j));
+                    }
+                    else if (i == 30 && j == 30) {
                         datas[i][j] = 0.8;
+                        spots.add(new SpotsPosition(i,j));
+                    }
                 }
-            node = generateHeatmapWithLibrary(datas, 3);
+            node = generateHeatmapWithLibrary(datas, spots, 3);
             //node = generateWebView();
         } else {
             if (chartStateModel == null) {
