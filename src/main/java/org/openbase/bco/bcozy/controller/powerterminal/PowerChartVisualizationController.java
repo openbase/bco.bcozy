@@ -3,20 +3,25 @@ package org.openbase.bco.bcozy.controller.powerterminal;
 import eu.hansolo.fx.charts.ChartType;
 import eu.hansolo.fx.charts.MatrixPane;
 import eu.hansolo.fx.charts.PixelMatrix;
+import eu.hansolo.fx.charts.heatmap.HeatMap;
+import eu.hansolo.fx.charts.heatmap.OpacityDistribution;
 import eu.hansolo.fx.charts.series.MatrixItemSeries;
+import eu.hansolo.fx.charts.tools.ColorMapping;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.chart.ChartData;
 import eu.hansolo.tilesfx.tools.FlowGridPane;
+import javafx.animation.Interpolator;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.chart.XYChart;
+import javafx.scene.image.Image;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.CycleMethod;
-import javafx.scene.paint.RadialGradient;
 import javafx.scene.paint.Stop;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebErrorEvent;
@@ -36,6 +41,7 @@ import org.openbase.jul.schedule.GlobalScheduledExecutorService;
 import org.openbase.jul.visual.javafx.control.AbstractFXController;
 import org.slf4j.LoggerFactory;
 
+import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -103,26 +109,72 @@ public class PowerChartVisualizationController extends AbstractFXController {
         this.visualizationType = DEFAULT_VISUALISATION_TYPE;
     }
 
-    private MatrixPane<MatrixChartItem> generateHeatmapWithLibrary(double[][] u, int runnings) {
-        List<MatrixChartItem> matrixData = new ArrayList<>();
-
+    private MatrixPane<MatrixChartItem> generateHeatMapOld (double[][] u, int runnings) {
         calculateHeatMap(u, runnings);
 
-        for (int col = 0; col < u.length; col++) {
+       List<MatrixChartItem> matrixData = new ArrayList<>();
+       for (int col = 0; col < u.length; col++) {
             for (int row = 0; row < u[col].length; row++) {
-                matrixData.add(new MatrixChartItem(col, row, u[col][row]));
+                        matrixData.add(new MatrixChartItem(col, row, u[col][row]));
             }
         }
 
         MatrixPane<MatrixChartItem> matrixHeatMap =
                 new MatrixPane(new MatrixItemSeries(matrixData, ChartType.MATRIX_HEATMAP));
         matrixHeatMap.getMatrix().setPixelShape(PixelMatrix.PixelShape.SQUARE);
-        matrixHeatMap.getMatrix().setUseSpacer(false);
+
         matrixHeatMap.getMatrix().setColsAndRows(u.length,u[0].length);
         matrixHeatMap.setPrefSize(TILE_WIDTH/2, TILE_HEIGHT);
         matrixHeatMap.setMaxSize(TILE_WIDTH/2, TILE_HEIGHT);
 
         return matrixHeatMap;
+    }
+
+    private HeatMap generateHeatmapNew(double[][] u, int runnings) {
+        calculateHeatMap(u, runnings);
+        double value = u[5][5];
+
+        Image bla = createEventImage(value);
+
+        HeatMap heatMap = new HeatMap();
+        heatMap.setSize(TILE_WIDTH/2, TILE_HEIGHT);
+        heatMap.addSpot(50,60, bla, 0, 0);
+
+        return heatMap;
+    }
+
+    public Image createEventImage(double value) {
+        int radius = 40;
+
+        Stop[] stops = new Stop[11];
+        for (int i = 0; i < 11; i++) {
+            double opacity = value - (double) i/10;
+            if (opacity < 0)
+                opacity = 0;
+            stops[i] = new Stop(i * 0.1, Color.rgb(255, 255, 255, opacity));
+        }
+
+        int size = (int) (radius * 2);
+        WritableImage raster        = new WritableImage(size, size);
+        PixelWriter pixelWriter   = raster.getPixelWriter();
+        double        maxDistFactor = 1 / radius;
+        Color pixelColor;
+        for (int y = 0; y < size; y++) {
+            for (int x = 0; x < size; x++) {
+                double deltaX   = radius - x;
+                double deltaY   = radius - y;
+                double distance = Math.sqrt((deltaX * deltaX) + (deltaY * deltaY));
+                double fraction = maxDistFactor * distance;
+                for (int i = 0; i < 10; i++) {
+                    if (Double.compare(fraction, stops[i].getOffset()) >= 0 && Double.compare(fraction, stops[i + 1].getOffset()) <= 0) {
+                        pixelColor = (Color) Interpolator.LINEAR.interpolate(stops[i].getColor(), stops[i + 1].getColor(), (fraction - stops[i].getOffset()) / 0.1);
+                        pixelWriter.setColor(x, y, pixelColor);
+                        break;
+                    }
+                }
+            }
+        }
+        return raster;
     }
 
     private void calculateHeatMap (double[][] u, int runnings) {
@@ -140,24 +192,12 @@ public class PowerChartVisualizationController extends AbstractFXController {
                         biggestData = v[col][row];
                 }
             }
-
             for (int col = 0; col < u.length; col++) {
                 for (int row = 0; row < u[col].length; row++) {
                     u[col][row] = u[col][row] + delta_t * v[col][row];
                 }
             }
         }
-    }
-
-    //TODO: Try HSB color model instead of library
-    private Rectangle generateHeatmapSelf (double[][] u, int runnings) {
-        Rectangle rect = new Rectangle(80,80,new RadialGradient(0, 0, 0.5, 0.5, 1, true, CycleMethod.NO_CYCLE, new Stop[] {
-                new Stop(0, Color.rgb(200,0,255)),
-                new Stop(1, Color.rgb(0,70,140))
-        }));
-        rect.setArcWidth(20);
-        rect.setArcHeight(20);
-        return rect;
     }
 
     private WebView generateWebView() {
@@ -305,11 +345,11 @@ public class PowerChartVisualizationController extends AbstractFXController {
             for (int i = 0; i < 30; i++)
                 for (int j = 0; j < 30; j++) {
                     if (i == 5 && j == 5)
-                        datas[i][j] = 255;
+                        datas[i][j] = 1;
                     else if (i == 20 && j == 25)
-                        datas[i][j] = 150;
+                        datas[i][j] = 0.8;
                 }
-            node = generateHeatmapSelf(datas, 3);
+            node = generateHeatmapNew(datas, 3);
             //node = generateWebView();
         } else {
             if (chartStateModel == null) {
