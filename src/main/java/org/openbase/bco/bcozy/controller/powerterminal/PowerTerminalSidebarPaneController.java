@@ -59,9 +59,9 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
 
     @Override
     public void initContent() throws InitializationException {
-        setupComboBox(selectVisualizationTypeBox, VisualizationType.getSelectableTypes());
-        setupComboBox(selectGranularityBox, Granularity.values());
-        setupComboBox(selectUnitBox, Unit.values());
+        setupComboBox(selectVisualizationTypeBox, VisualizationType.getSelectableTypes(), 2);
+        setupComboBox(selectGranularityBox, Granularity.values(), 0);
+        setupComboBox(selectUnitBox, Unit.values(), 0);
 
         selectStartDatePicker.disableProperty().bind(dateNowCheckBox.selectedProperty());
         selectEndDatePicker.disableProperty().bind(dateNowCheckBox.selectedProperty());
@@ -82,20 +82,44 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
             if (dateRange.isValid())
                 this.dateRange.set(dateRange);
         });
-        BooleanBinding dateValid = Bindings.createBooleanBinding(() -> new DateRange(selectStartDatePicker.getValue(), selectEndDatePicker.getValue()).isValid(),
-                selectStartDatePicker.valueProperty(), selectEndDatePicker.valueProperty());
+
+        dateNowCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                dateRange.set(new DateRange());
+            } else {
+                DateRange dateRange = new DateRange(selectStartDatePicker.getValue(), selectEndDatePicker.getValue());
+                if (dateRange.isValid()) {
+                    this.dateRange.set(dateRange);
+                }
+            }
+        });
+
+        BooleanBinding dateValid = Bindings.createBooleanBinding(
+                () -> {DateRange dateRange = new DateRange(selectStartDatePicker.getValue(), selectEndDatePicker.getValue());
+                    return dateRange.isValid() && !dateRange.isEmpty(); }
+                , selectStartDatePicker.valueProperty(), selectEndDatePicker.valueProperty());
+        BooleanBinding multipleDataNotOk = Bindings.createBooleanBinding(
+                () -> !VisualizationType.canDisplayMultipleData(selectVisualizationTypeBox.getSelectionModel().getSelectedItem()),
+                selectVisualizationTypeBox.valueProperty());
+        BooleanBinding singleDataNotOk = Bindings.createBooleanBinding(
+                () -> !VisualizationType.canDisplaySingleton(selectVisualizationTypeBox.getSelectionModel().getSelectedItem()),
+                selectVisualizationTypeBox.valueProperty());
+
         dateErrorMessage.textProperty().bind(LanguageSelection.getProperty(DATE_ERROR_MESSAGE_IDENTIFIER));
         dateErrorMessage.visibleProperty().bind(dateValid.not());
-
         dateNowCheckboxDescription.textProperty().bind(LanguageSelection.getProperty(DATE_NOW_CHECKBOX_DESCRIPTION_IDENTIFIER));
+        dateNowCheckBox.disableProperty().bind(singleDataNotOk);
+        dateNowCheckBox.selectedProperty().bind(Bindings.createBooleanBinding(() -> multipleDataNotOk.get() && !singleDataNotOk.get(), selectVisualizationTypeBox.valueProperty()));
+        selectStartDatePicker.disableProperty().bind(multipleDataNotOk);
+        selectEndDatePicker.disableProperty().bind(multipleDataNotOk);
     }
 
-    private <T extends Enum> void setupComboBox(ComboBox<T> comboBox, T[] items) {
+    private <T extends Enum> void setupComboBox(ComboBox<T> comboBox, T[] items, int index) {
         LocalizedEnumCellFactory<T> cellFactory = new LocalizedEnumCellFactory<>(LanguageSelection::getProperty);
         comboBox.setButtonCell(cellFactory.call(null));
         comboBox.setCellFactory(cellFactory);
         comboBox.getItems().addAll(items);
-        comboBox.getSelectionModel().select(0);
+        comboBox.getSelectionModel().select(index);
     }
 
     public ChartStateModel getChartStateModel() {
