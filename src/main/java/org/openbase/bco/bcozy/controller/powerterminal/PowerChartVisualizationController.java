@@ -54,8 +54,8 @@ public class PowerChartVisualizationController extends AbstractFXController {
     public static final String WEBENGINE_ALERT_MESSAGE = "Webengine alert detected!";
     public static final String WEBENGINE_ERROR_MESSAGE = "Webengine error detected!";
     //todo: make configurable via bcozy settings, see #89
-    //public static String CHRONOGRAPH_URL = "http://192.168.75.100:9999/orgs/03e2c6b79272c000/dashboards/03e529b61ff2c000?lower=now%28%29%20-%2024h";
-    public static String CHRONOGRAPH_URL = "http://localhost:9999";
+    public static String CHRONOGRAPH_URL = "http://192.168.75.100:9999/orgs/03e2c6b79272c000/dashboards/03e529b61ff2c000?lower=now%28%29%20-%2024h";
+//    public static String CHRONOGRAPH_URL = "http://localhost:9999";
     public static final int TILE_WIDTH = (int) Screen.getPrimary().getVisualBounds().getWidth();
     public static final int TILE_HEIGHT = (int) Screen.getPrimary().getVisualBounds().getHeight();
     private static final long REFRESH_INTERVAL_MILLISECONDS = 30000;
@@ -76,38 +76,6 @@ public class PowerChartVisualizationController extends AbstractFXController {
         pane.setMinSize(Screen.getPrimary().getVisualBounds().getWidth(), Screen.getPrimary().getVisualBounds().getHeight() - 600);
         setChartType(DEFAULT_VISUALISATION_TYPE);
         enableDataRefresh(REFRESH_INTERVAL_MILLISECONDS);
-    }
-
-    private WebView generateWebView() {
-        WebView webView = new WebView();
-        webEngine = webView.getEngine();
-        webEngine.setOnAlert((WebEvent<String> event) -> {
-            ExceptionPrinter.printHistory(new InvalidStateException(WEBENGINE_ALERT_MESSAGE, new CouldNotPerformException(event.toString())), logger);
-        });
-        webEngine.setOnError((WebErrorEvent event) -> {
-            ExceptionPrinter.printHistory(new InvalidStateException(WEBENGINE_ERROR_MESSAGE, new CouldNotPerformException(event.toString())), logger);
-        });
-        Future task = GlobalCachedExecutorService.submit(() -> {
-            HttpURLConnection connection = null;
-            try {
-                URL myurl = new URL(CHRONOGRAPH_URL);
-                connection = (HttpURLConnection) myurl.openConnection();
-                connection.setRequestMethod("HEAD");
-                int code = connection.getResponseCode();
-            } catch (MalformedURLException e) {
-                CHRONOGRAPH_URL = "https://www.google.com/";
-            } catch (IOException e) {
-                CHRONOGRAPH_URL = "https://www.google.com/";
-            }
-            Platform.runLater(() -> {
-                webEngine.load(CHRONOGRAPH_URL);
-            });
-        });
-        webView.setMaxHeight(TILE_HEIGHT);
-        webView.setMaxWidth(TILE_WIDTH / 2);
-        webView.setMinHeight(TILE_HEIGHT / 2 + TILE_HEIGHT / 4);
-        webView.setMinWidth(TILE_WIDTH / 2);
-        return webView;
     }
 
 
@@ -221,9 +189,7 @@ public class PowerChartVisualizationController extends AbstractFXController {
 
         Node node;
         switch (newVisualizationType) {
-            case WEBVIEW:
-                node = generateWebView();
-                break;
+            //Add possible non-tilesfx-charttypes here
             default:
                 if (chartStateModel == null) {
                     node = generateTilesFxChart(newVisualizationType);
@@ -243,7 +209,6 @@ public class PowerChartVisualizationController extends AbstractFXController {
         return generateTilesFxChart(newVisualizationType, defaultDateRange);
     }
 
-    //TODO bind chartstatemodel properties to listeners so this functions are not needed, see #
     private Tile generateTilesFxChart(VisualizationType visualizationType, DateRange dateRange) {
         Tile chart = new Tile();
         chart.setPrefSize(TILE_WIDTH, TILE_HEIGHT);
