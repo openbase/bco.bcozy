@@ -140,8 +140,6 @@ public class PowerChartVisualizationController extends AbstractFXController {
         heatMap.setSize(TILE_WIDTH/2, TILE_HEIGHT);
 
         for (int j = 0; j < spots.size(); j++) {
-            System.out.println(spots.size());
-            System.out.println(spots.get(j));
             SpotsPosition spot = spots.get(j);
             heatMap.addSpot(spot.spotsPositionx, spot.spotsPositiony, createEventImage(runnings, u, spot), 0, 0);
         }
@@ -185,24 +183,29 @@ public class PowerChartVisualizationController extends AbstractFXController {
     }
 
     private void calculateHeatMap (double[][] u, int runnings) {
-        //h = Gitteraufloesung
         //CFL Bedingung: delta_t/h^2 <= 1/4
         double h = 1;
         double delta_t = 0.1;
+        double biggestData = 0;
         double[][] v = new double[u.length][u[0].length];
         for (int runs = 0; runs < runnings; runs ++) {
-            double biggestData = 0;
             for (int col = 1; col < u.length - 1; col++) {
                 for (int row = 1; row < u[col].length - 1; row++) {
                     v[col][row] = (u[col - 1][row] + u[col + 1][row] + u[col][row - 1] + u[col][row + 1] - 4*u[col][row]) / (h * h);
-                    if (v[col][row] > biggestData)
-                        biggestData = v[col][row];
                 }
             }
             for (int col = 0; col < u.length; col++) {
                 for (int row = 0; row < u[col].length; row++) {
                     u[col][row] = u[col][row] + delta_t * v[col][row];
+                    if (u[col][row] > biggestData && runs == runnings-1)
+                        biggestData = u[col][row];
                 }
+            }
+        }
+        //Map all values to one
+        for (int col = 0; col < u.length; col++) {
+            for (int row = 0; row < u[col].length; row++) {
+                u[col][row]  = u[col][row] / biggestData;
             }
         }
     }
@@ -356,22 +359,21 @@ public class PowerChartVisualizationController extends AbstractFXController {
     private void setChartType(VisualizationType newVisualizationType) {
         pane.getChildren().clear();
         Node node;
-        if (newVisualizationType == VisualizationType.WEBVIEW) {
-            double[][] datas = new double[300][300];
+        if (newVisualizationType == VisualizationType.HEATMAP) {
+            double[][] datas = new double[TILE_WIDTH/2][TILE_HEIGHT];
             List<SpotsPosition> spots = new ArrayList<>();
             for (int i = 0; i < TILE_WIDTH/2; i++)
-                for (int j = 0; j < TILE_WIDTH/2; j++) {
-                    if (i == 5 && j == 5) {
-                        datas[i][j] = 1;
+                for (int j = 0; j < TILE_HEIGHT; j++) {
+                    if (i == 100 && j == 100) {
+                        datas[i][j] = 1000;
                         spots.add(new SpotsPosition(i,j));
                     }
-                    else if (i == 30 && j == 30) {
-                        datas[i][j] = 0.8;
+                    else if (i ==  3 && j == 3) {
+                        datas[i][j] = 900;
                         spots.add(new SpotsPosition(i,j));
                     }
                 }
-            node = generateHeatmapWithLibrary(datas, spots, 3);
-            //node = generateWebView();
+            node = generateHeatmapWithLibrary(datas, spots, 5);
         } else {
             if (chartStateModel == null) {
                 node = generateTilesFxChart(newVisualizationType);
@@ -390,7 +392,7 @@ public class PowerChartVisualizationController extends AbstractFXController {
     }
 
     private Tile generateTilesFxChart(VisualizationType visualizationType, DateRange dateRange) {
-        if (visualizationType == VisualizationType.WEBVIEW) return null;
+        if (visualizationType == VisualizationType.HEATMAP) return null;
         Tile chart = new Tile();
         chart.setPrefSize(TILE_WIDTH, TILE_HEIGHT);
         Tile.SkinType skinType = visualizationType == VisualizationType.BAR ?
