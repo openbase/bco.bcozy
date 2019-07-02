@@ -11,7 +11,7 @@ import java.util.List;
 
 public class InfluxDBHandler {
 
-    //todo: move to module dal, see issue that i cannot find right now
+    //todo: move to module dal, see openbase/bco.dal#151
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(InfluxDBHandler.class);
     private static final String INFLUXDB_BUCKET_DEFAULT = "bco-persistence";
 //    private static final String INFLUXDB_URL_DEFAULT = "http://localhost:9999";
@@ -42,7 +42,6 @@ public class InfluxDBHandler {
 
         if (influxDBClient.health().getStatus().getValue() != "pass") {
             throw new CouldNotPerformException("Could not connect to database server at " + INFLUXDB_URL_DEFAULT + "!");
-
         }
         QueryApi queryApi = influxDBClient.getQueryApi();
         List<FluxTable> tables = queryApi.query(query, INFLUXDB_ORG_ID_DEFAULT);
@@ -55,10 +54,7 @@ public class InfluxDBHandler {
         }
         LOGGER.info(tables.toString());
         return tables;
-
-
     }
-
 
     /**
      * Some query return just a single value.
@@ -74,12 +70,9 @@ public class InfluxDBHandler {
                 // just one entry:
                 LOGGER.info(fluxRecord.getValueByKey("_value").toString());
                 return (Double) fluxRecord.getValueByKey("_value");
-
             }
         }
-
         return Double.valueOf(0);
-
     }
 
     /**
@@ -127,12 +120,8 @@ public class InfluxDBHandler {
 
         List<FluxTable> tables = sendQuery(query);
         LOGGER.info(tables.toString());
-
         return tables;
-
-
     }
-
 
     /**
      * Returns the average value of specific field and location from the power_consumption_state_service in a time window.
@@ -155,10 +144,9 @@ public class InfluxDBHandler {
                 " |> aggregateWindow(every:" + window + " , fn: mean)" +
                 " |> group(columns: [\"_field\"], mode:\"by\")" +
                 " |> mean(column: \"_value\")";
+
         List<FluxTable> tables = sendQuery(query);
         return getSingleValueFromTables(tables);
-
-
     }
 
     /**
@@ -182,12 +170,10 @@ public class InfluxDBHandler {
                 " |> aggregateWindow(every:" + window + " , fn: mean)" +
                 " |> group(columns: [\"_field\"], mode:\"by\")" +
                 " |> mean(column: \"_value\")";
+
         List<FluxTable> tables = sendQuery(query);
         return getSingleValueFromTables(tables);
-
-
     }
-
 
     /**
      * Get the full data from a field from the power_consumption_state_service in a specific time window.
@@ -204,10 +190,9 @@ public class InfluxDBHandler {
                 " |> filter(fn: (r) => r._measurement == \"power_consumption_state_service\")" +
                 " |> filter(fn: (r) => r._field == \"" + field + "\")" +
                 " |> group(columns: [\"_field\"], mode:\"by\")";
+
         List<FluxTable> tables = sendQuery(query);
         return tables;
-
-
     }
 
     /**
@@ -227,12 +212,10 @@ public class InfluxDBHandler {
                 " |> filter(fn: (r) => r._field == \"" + field + "\")" +
                 " |> filter(fn: (r) => r.location_alias == \"" + location_alias + "\")" +
                 " |> group(columns: [\"_field\"], mode:\"by\")";
+
         List<FluxTable> tables = sendQuery(query);
         return tables;
-
-
     }
-
 
     /**
      * Get the full data of a field and location_alias from the power_consumption_state_service in a specific time window.
@@ -251,10 +234,9 @@ public class InfluxDBHandler {
                 " |> filter(fn: (r) => r._field == \"" + field + "\")" +
                 " |> filter(fn: (r) => r.unit_id == \"" + unit_id + "\")" +
                 " |> group(columns: [\"_field\"], mode:\"by\")";
+
         List<FluxTable> tables = sendQuery(query);
         return tables;
-
-
     }
 
     /**
@@ -276,8 +258,6 @@ public class InfluxDBHandler {
 
         List<FluxTable> tables = sendQuery(query);
         return getSingleValueFromTables(tables);
-
-
     }
 
     /**
@@ -301,8 +281,6 @@ public class InfluxDBHandler {
 
         List<FluxTable> tables = sendQuery(query);
         return getSingleValueFromTables(tables);
-
-
     }
 
     /**
@@ -326,9 +304,5 @@ public class InfluxDBHandler {
 
         List<FluxTable> tables = sendQuery(query);
         return getSingleValueFromTables(tables);
-
-
     }
-
-
 }
