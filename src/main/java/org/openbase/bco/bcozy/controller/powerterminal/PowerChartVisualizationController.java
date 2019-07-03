@@ -21,6 +21,8 @@ import javafx.scene.effect.Light;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Stop;
 import javafx.scene.text.TextAlignment;
@@ -29,18 +31,20 @@ import javafx.scene.web.WebErrorEvent;
 import javafx.scene.web.WebEvent;
 import javafx.scene.web.WebView;
 import javafx.stage.Screen;
+import javafx.util.Pair;
 import org.influxdata.query.FluxRecord;
 import org.influxdata.query.FluxTable;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.DateRange;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.VisualizationType;
 import org.openbase.bco.bcozy.model.InfluxDBHandler;
 import org.openbase.bco.bcozy.model.powerterminal.ChartStateModel;
+import org.openbase.bco.dal.remote.trigger.preset.NeighborConnectionPresenceTrigger;
 import org.openbase.jul.exception.*;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
-import org.openbase.jul.pattern.Pair;
 import org.openbase.jul.schedule.GlobalCachedExecutorService;
 import org.openbase.jul.schedule.GlobalScheduledExecutorService;
 import org.openbase.jul.visual.javafx.control.AbstractFXController;
+import org.openbase.jul.visual.javafx.fxml.FXMLProcessor;
 import org.slf4j.LoggerFactory;
 
 import java.awt.geom.Point2D;
@@ -109,105 +113,6 @@ public class PowerChartVisualizationController extends AbstractFXController {
         pane.setMinSize(Screen.getPrimary().getVisualBounds().getWidth(),Screen.getPrimary().getVisualBounds().getHeight() - 600);
         setChartType(DEFAULT_VISUALISATION_TYPE);
         this.visualizationType = DEFAULT_VISUALISATION_TYPE;
-    }
-
-    private MatrixPane<MatrixChartItem> generateHeatmapOld (double[][] u, int runnings) {
-        calculateHeatMap(u, runnings);
-
-        List<MatrixChartItem> matrixData = new ArrayList<>();
-        for (int col = 0; col < u.length; col++) {
-            for (int row = 0; row < u[col].length; row++) {
-                matrixData.add(new MatrixChartItem(col, row, u[col][row]));
-            }
-        }
-
-        MatrixPane<MatrixChartItem> matrixHeatMap =
-                new MatrixPane(new MatrixItemSeries(matrixData, ChartType.MATRIX_HEATMAP));
-        matrixHeatMap.getMatrix().setPixelShape(PixelMatrix.PixelShape.SQUARE);
-
-        matrixHeatMap.getMatrix().setColsAndRows(u.length,u[0].length);
-        matrixHeatMap.setPrefSize(TILE_WIDTH/2, TILE_HEIGHT);
-        matrixHeatMap.setMaxSize(TILE_WIDTH/2, TILE_HEIGHT);
-
-        return matrixHeatMap;
-    }
-
-
-    private HeatMap generateHeatmapWithLibrary(double[][] u, List<SpotsPosition> spots, int runnings) {
-        calculateHeatMap(u, runnings);
-
-        HeatMap heatMap = new HeatMap();
-        heatMap.setSize(TILE_WIDTH/2, TILE_HEIGHT);
-
-        for (int j = 0; j < spots.size(); j++) {
-            SpotsPosition spot = spots.get(j);
-            heatMap.addSpot(spot.spotsPositionx, spot.spotsPositiony, createEventImage(runnings, u, spot), 0, 0);
-        }
-        return heatMap;
-    }
-
-    public Image createEventImage(int runnings, double[][] u, SpotsPosition spot) {
-        Double radius = (double) runnings*100;
-
-        Stop[] stops = new Stop[runnings+1];
-        for (int i = 0; i < runnings + 1; i++) {
-            double opacity = 0;
-            if (i != runnings)
-                opacity = u[spot.spotsPositionx+i][spot.spotsPositiony];
-            if (opacity < 0)
-                opacity = 0;
-            stops[i] = new Stop(i * 0.1, Color.rgb(255, 255, 255, opacity));
-        }
-
-        int size = (int) (radius * 2);
-        WritableImage raster        = new WritableImage(size, size);
-        PixelWriter pixelWriter   = raster.getPixelWriter();
-        double        maxDistFactor = 1 / radius;
-        Color pixelColor;
-        for (int y = 0; y < size; y++) {
-            for (int x = 0; x < size; x++) {
-                double deltaX   = radius - x;
-                double deltaY   = radius - y;
-                double distance = Math.sqrt((deltaX * deltaX) + (deltaY * deltaY));
-                double fraction = maxDistFactor * distance;
-                for (int i = 0; i < stops.length-1; i++) {
-                    if (Double.compare(fraction, stops[i].getOffset()) >= 0 && Double.compare(fraction, stops[i + 1].getOffset()) <= 0) {
-                        pixelColor = (Color) Interpolator.LINEAR.interpolate(stops[i].getColor(), stops[i + 1].getColor(), (fraction - stops[i].getOffset()) / 0.1);
-                        pixelWriter.setColor(x, y, pixelColor);
-                        break;
-                    }
-                }
-            }
-        }
-        return raster;
-    }
-
-    private void calculateHeatMap (double[][] u, int runnings) {
-        //CFL Bedingung: delta_t/h^2 <= 1/4
-        double h = 1;
-        double delta_t = 0.1;
-        double biggestData = 0;
-        double[][] v = new double[u.length][u[0].length];
-        for (int runs = 0; runs < runnings; runs ++) {
-            for (int col = 1; col < u.length - 1; col++) {
-                for (int row = 1; row < u[col].length - 1; row++) {
-                    v[col][row] = (u[col - 1][row] + u[col + 1][row] + u[col][row - 1] + u[col][row + 1] - 4*u[col][row]) / (h * h);
-                }
-            }
-            for (int col = 0; col < u.length; col++) {
-                for (int row = 0; row < u[col].length; row++) {
-                    u[col][row] = u[col][row] + delta_t * v[col][row];
-                    if (u[col][row] > biggestData && runs == runnings-1)
-                        biggestData = u[col][row];
-                }
-            }
-        }
-        //Map all values to one
-        for (int col = 0; col < u.length; col++) {
-            for (int row = 0; row < u[col].length; row++) {
-                u[col][row]  = u[col][row] / biggestData;
-            }
-        }
     }
 
     private WebView generateWebView() {
@@ -346,34 +251,12 @@ public class PowerChartVisualizationController extends AbstractFXController {
         });
     }
 
-    class SpotsPosition {
-        int spotsPositionx;
-        int spotsPositiony;
-
-        SpotsPosition(int x, int y) {
-            spotsPositionx = x;
-            spotsPositiony = y;
-        }
-    }
-
     private void setChartType(VisualizationType newVisualizationType) {
         pane.getChildren().clear();
         Node node;
         if (newVisualizationType == VisualizationType.HEATMAP) {
-            double[][] datas = new double[TILE_WIDTH/2][TILE_HEIGHT];
-            List<SpotsPosition> spots = new ArrayList<>();
-            for (int i = 0; i < TILE_WIDTH/2; i++)
-                for (int j = 0; j < TILE_HEIGHT; j++) {
-                    if (i == 100 && j == 100) {
-                        datas[i][j] = 1000;
-                        spots.add(new SpotsPosition(i,j));
-                    }
-                    else if (i ==  3 && j == 3) {
-                        datas[i][j] = 900;
-                        spots.add(new SpotsPosition(i,j));
-                    }
-                }
-            node = generateHeatmapWithLibrary(datas, spots, 5);
+            Heatmap heatmap = new Heatmap();
+            node = new HBox();
         } else {
             if (chartStateModel == null) {
                 node = generateTilesFxChart(newVisualizationType);
