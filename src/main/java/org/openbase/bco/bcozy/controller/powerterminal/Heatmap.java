@@ -9,16 +9,19 @@ import eu.hansolo.fx.charts.heatmap.HeatMap;
 import eu.hansolo.fx.charts.series.MatrixItemSeries;
 import javafx.animation.Interpolator;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Stop;
 import javafx.stage.Screen;
 import org.openbase.bco.bcozy.controller.powerterminal.heatmapattributes.SpotsPosition;
 import org.openbase.bco.dal.lib.layer.service.ServiceStateProvider;
 import org.openbase.bco.dal.lib.layer.unit.PowerConsumptionSensor;
+import org.openbase.bco.dal.lib.layer.unit.TemperatureSensor;
 import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
 import org.openbase.bco.dal.remote.layer.unit.CustomUnitPool;
 import org.openbase.bco.registry.remote.Registries;
@@ -37,7 +40,7 @@ import javax.vecmath.Point3d;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Heatmap {
+public class Heatmap extends Pane {
 
     private CustomUnitPool unitPool;
 
@@ -53,6 +56,7 @@ public class Heatmap {
 
             //init in own method
             unitPool.init((Filter<UnitConfigType.UnitConfig>) unitConfig -> {
+                //return unitConfig.getUnitType() != UnitTemplateType.UnitTemplate.UnitType.TEMPERATURE_SENSOR;
                 return unitConfig.getUnitType() != UnitTemplateType.UnitTemplate.UnitType.POWER_CONSUMPTION_SENSOR;
             });
 
@@ -61,17 +65,18 @@ public class Heatmap {
             UnitConfigType.UnitConfig rootLocationConfig = Registries.getUnitRegistry().getRootLocationConfig();
             AxisAlignedBoundingBox3DFloatType.AxisAlignedBoundingBox3DFloat rootBoundingBox = rootLocationConfig.getPlacementConfig().getShape().getBoundingBox();
 
+            //Walls
+            List<Vec3DDoubleType.Vec3DDouble> floorList = rootLocationConfig.getPlacementConfig().getShape().getFloorList();
+
             double[][] u = new double[(int)(rootBoundingBox.getWidth()*100)][(int)(rootBoundingBox.getDepth()*100)];
+            this.getChildren().add(updateHeatmap(u));
 
             unitPool.addObserver(new Observer<ServiceStateProvider<Message>, Message>() {
                 @Override
                 public void update(ServiceStateProvider<Message> source, Message data) throws Exception {
-                    updateHeatmap(u);
+                    //getChildren().add(updateHeatmap(u));
                 }
             });
-
-            //Walls
-            List<Vec3DDoubleType.Vec3DDouble> floorList = rootLocationConfig.getPlacementConfig().getShape().getFloorList();
 
         } catch (CouldNotPerformException  ex) {
             ExceptionPrinter.printHistory("Could not instantiate CustomUnitPool", ex, logger);
@@ -81,25 +86,33 @@ public class Heatmap {
         }
     }
 
-     private void updateHeatmap(double[][] u) {
+     private HeatMap updateHeatmap(double[][] u) {
 
-     /*   List<SpotsPosition> spots = new ArrayList<>();
+        List<SpotsPosition> spots = new ArrayList<>();
 
         u[200][200] = 0.9;
-        u[500][500] = 0.5;
-        spots.add(new SpotsPosition(200,200));
-        spots.add(new SpotsPosition(500,500));
+        u[250][250] = 0.5;
+        spots.add(new SpotsPosition(200,200, 0.9));
+        spots.add(new SpotsPosition(250,250, 0.5));
 
         int runnings = 3;
 
-        generateHeatmapWithLibrary(u, spots, runnings); */
+        return generateHeatmapWithLibrary(u, spots, runnings);
 
-        for (UnitRemote<? extends Message> unit : unitPool.getInternalUnitList()) {
+     /*   for (UnitRemote<? extends Message> unit : unitPool.getInternalUnitList()) {
              try {
                  Point3d unitPositionGlobalPoint3d = unit.getUnitPositionGlobalPoint3d();
-                 
              } catch (NotAvailableException ex) {
-                 ExceptionPrinter.printHistory("Could not reach CustomUnitPool", ex, logger);
+                // ExceptionPrinter.printHistory("Could not reach CustomUnitPool", ex, logger);
+             }
+
+             TemperatureSensor temperatureUnit = (TemperatureSensor) unit;
+             double current = 0;
+             try {
+                 current = temperatureUnit.getTemperatureState().getTemperature();
+             }
+             catch (NotAvailableException ex) {
+                 ExceptionPrinter.printHistory("Could not reach TemperatureSensor", ex, logger);
              }
 
              PowerConsumptionSensor powerConsumptionUnit = (PowerConsumptionSensor) unit;
@@ -110,12 +123,11 @@ public class Heatmap {
                  e.printStackTrace();
              }
              current /= 16;
-         }
-
+         } */
      }
 
-    private MatrixPane<MatrixChartItem> generateHeatmapOld (double[][] u, int runnings) {
-        calculateHeatMap(u, runnings);
+    private MatrixPane<MatrixChartItem> generateHeatmapOld (double[][] u, int runnings, List<SpotsPosition> spots) {
+        calculateHeatMap(u, runnings, spots);
 
         List<MatrixChartItem> matrixData = new ArrayList<>();
         for (int col = 0; col < u.length; col++) {
@@ -136,8 +148,8 @@ public class Heatmap {
     }
 
 
-    private void generateHeatmapWithLibrary(double[][] u, List<SpotsPosition> spots, int runnings) {
-        calculateHeatMap(u, runnings);
+    private HeatMap generateHeatmapWithLibrary(double[][] u, List<SpotsPosition> spots, int runnings) {
+        calculateHeatMap(u, runnings, spots);
 
         HeatMap heatmap = new eu.hansolo.fx.charts.heatmap.HeatMap();
         heatmap.setSize(TILE_WIDTH/2, TILE_HEIGHT);
@@ -146,6 +158,8 @@ public class Heatmap {
             SpotsPosition spot = spots.get(j);
             heatmap.addSpot(spot.spotsPositionx, spot.spotsPositiony, createEventImage(runnings, u, spot), 0, 0);
         }
+
+        return heatmap;
     }
 
     public Image createEventImage(int runnings, double[][] u, SpotsPosition spot) {
@@ -156,8 +170,6 @@ public class Heatmap {
             double opacity = 0;
             if (i != runnings)
                 opacity = u[spot.spotsPositionx+i][spot.spotsPositiony];
-            if (opacity < 0)
-                opacity = 0;
             stops[i] = new Stop(i * 0.1, Color.rgb(255, 255, 255, opacity));
         }
 
@@ -184,30 +196,29 @@ public class Heatmap {
         return raster;
     }
 
-    private void calculateHeatMap (double[][] u, int runnings) {
+    private void calculateHeatMap (double[][] u, int runnings, List<SpotsPosition> spots) {
         //CFL Bedingung: delta_t/h^2 <= 1/4
         double h = 1;
         double delta_t = 0.1;
         double biggestData = 0;
         double[][] v = new double[u.length][u[0].length];
         for (int runs = 0; runs < runnings; runs ++) {
+
             for (int col = 1; col < u.length - 1; col++) {
                 for (int row = 1; row < u[col].length - 1; row++) {
-                    v[col][row] = (u[col - 1][row] + u[col + 1][row] + u[col][row - 1] + u[col][row + 1] - 4*u[col][row]) / (h * h);
+                    v[col][row] = (u[col - 1][row] + u[col + 1][row] + u[col][row - 1] + u[col][row + 1]
+                            - 4*u[col][row]) / (h * h);
                 }
             }
+
             for (int col = 0; col < u.length; col++) {
                 for (int row = 0; row < u[col].length; row++) {
                     u[col][row] = u[col][row] + delta_t * v[col][row];
-                    if (u[col][row] > biggestData && runs == runnings-1)
-                        biggestData = u[col][row];
                 }
             }
-        }
-        //Map all values to one
-        for (int col = 0; col < u.length; col++) {
-            for (int row = 0; row < u[col].length; row++) {
-                u[col][row]  = u[col][row] / biggestData;
+
+            for (SpotsPosition spot : spots) {
+                u[spot.spotsPositionx][spot.spotsPositiony] = spot.value;
             }
         }
     }

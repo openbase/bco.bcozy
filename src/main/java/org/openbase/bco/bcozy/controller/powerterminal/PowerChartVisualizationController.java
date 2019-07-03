@@ -255,8 +255,7 @@ public class PowerChartVisualizationController extends AbstractFXController {
         pane.getChildren().clear();
         Node node;
         if (newVisualizationType == VisualizationType.HEATMAP) {
-            Heatmap heatmap = new Heatmap();
-            node = new HBox();
+            node = new Heatmap();
         } else {
             if (chartStateModel == null) {
                 node = generateTilesFxChart(newVisualizationType);
