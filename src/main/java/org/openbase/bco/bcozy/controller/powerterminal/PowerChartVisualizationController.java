@@ -37,6 +37,7 @@ import org.influxdata.query.FluxTable;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.DateRange;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.VisualizationType;
 import org.openbase.bco.bcozy.model.InfluxDBHandler;
+import org.openbase.bco.bcozy.model.LanguageSelection;
 import org.openbase.bco.bcozy.model.powerterminal.ChartStateModel;
 import org.openbase.bco.dal.remote.trigger.preset.NeighborConnectionPresenceTrigger;
 import org.openbase.jul.exception.*;
@@ -65,7 +66,9 @@ import eu.hansolo.fx.charts.data.MatrixChartItem;
 
 public class PowerChartVisualizationController extends AbstractFXController {
 
-    public static final VisualizationType DEFAULT_VISUALISATION_TYPE = VisualizationType.BAR;
+    public static final VisualizationType DEFAULT_VISUALISATION_TYPE = VisualizationType.BARCHART;
+    public static final String CHART_HEADER_IDENTIFIER = "powerterminal.chartHeader";
+    public static final int AMPLITUDE_DIVIDER = 10;
 
     @FXML
     FlowGridPane pane;
@@ -74,34 +77,18 @@ public class PowerChartVisualizationController extends AbstractFXController {
 
     public static final String WEBENGINE_ALERT_MESSAGE = "Webengine alert detected!";
     public static final String WEBENGINE_ERROR_MESSAGE = "Webengine error detected!";
-//    public static String CHRONOGRAPH_URL = "http://192.168.75.100:9999/orgs/03e2c6b79272c000/dashboards/03e529b61ff2c000?lower=now%28%29%20-%2024h";
-    public static String CHRONOGRAPH_URL = "http://localhost:9999";
+    //todo: make configurable via bcozy settings, see #89
+    public static String CHRONOGRAPH_URL = "http://192.168.75.100:9999/orgs/03e2c6b79272c000/dashboards/03e529b61ff2c000?lower=now%28%29%20-%2024h";
+//    public static String CHRONOGRAPH_URL = "http://localhost:9999";
     public static final int TILE_WIDTH = (int) Screen.getPrimary().getVisualBounds().getWidth();
     public static final int TILE_HEIGHT = (int) Screen.getPrimary().getVisualBounds().getHeight();
-    private static final int REFRESH_TIMEOUT_MINUTES = 1;
+    private static final long REFRESH_INTERVAL_MILLISECONDS = 30000;
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(PowerChartVisualizationController.class);
 
-
-    String unit;
-
-    private int dataStep;
-
-    private boolean firstRun = true;
-
     private WebEngine webEngine;
-    private Future task;
 
-    Timestamp olddataTime;
     private ChartStateModel chartStateModel;
-
-    VisualizationType visualizationType;
-
-
-    public PowerChartVisualizationController() {
-        this.unit = "Watt";
-        this.dataStep = 10;
-    }
 
     @Override
     public void updateDynamicContent() throws CouldNotPerformException {
@@ -110,48 +97,16 @@ public class PowerChartVisualizationController extends AbstractFXController {
 
     @Override
     public void initContent() throws InitializationException {
-        pane.setMinSize(Screen.getPrimary().getVisualBounds().getWidth(),Screen.getPrimary().getVisualBounds().getHeight() - 600);
+        pane.setMinSize(Screen.getPrimary().getVisualBounds().getWidth(), Screen.getPrimary().getVisualBounds().getHeight() - 600);
         setChartType(DEFAULT_VISUALISATION_TYPE);
-        this.visualizationType = DEFAULT_VISUALISATION_TYPE;
-    }
-
-    private WebView generateWebView() {
-        WebView webView = new WebView();
-        webEngine = webView.getEngine();
-        webEngine.setOnAlert((WebEvent<String> event) -> {
-            ExceptionPrinter.printHistory(new InvalidStateException(WEBENGINE_ALERT_MESSAGE, new CouldNotPerformException(event.toString())), logger);
-        });
-        webEngine.setOnError((WebErrorEvent event) -> {
-            ExceptionPrinter.printHistory(new InvalidStateException(WEBENGINE_ERROR_MESSAGE, new CouldNotPerformException(event.toString())), logger);
-        });
-        task = GlobalCachedExecutorService.submit(() -> {
-            HttpURLConnection connection = null;
-            try {
-                URL myurl = new URL(CHRONOGRAPH_URL);
-                connection = (HttpURLConnection) myurl.openConnection();
-                connection.setRequestMethod("HEAD");
-                int code = connection.getResponseCode();
-            } catch (MalformedURLException e) {
-                CHRONOGRAPH_URL = "https://www.google.com/";
-            } catch (IOException e) {
-                CHRONOGRAPH_URL = "https://www.google.com/";
-            }
-            Platform.runLater(() -> {
-                webEngine.load(CHRONOGRAPH_URL);
-            });
-        });
-        webView.setMaxHeight(TILE_HEIGHT);
-        webView.setMaxWidth(TILE_WIDTH/2);
-        webView.setMinHeight(TILE_HEIGHT/2 + TILE_HEIGHT/4);
-        webView.setMinWidth(TILE_WIDTH/2 );
-        return webView;
+        enableDataRefresh(REFRESH_INTERVAL_MILLISECONDS);
     }
 
 
     /**
      * Depending on the skinType the correct DataType is added to the Chart
      */
-    private void addCorrectDataType(Tile.SkinType skinType, Tile chart, List<ChartData> data) {
+    private void addCorrectDataType(Tile.SkinType skinType, Tile chart, List<ChartData> data) throws NotSupportedException {
         XYChart.Series<String, Number> series = new XYChart.Series();
 
         switch (skinType) {
@@ -173,23 +128,25 @@ public class PowerChartVisualizationController extends AbstractFXController {
                 }
                 chart.addSeries(series);
                 break;
+            default:
+                throw new NotSupportedException(skinType, this.getClass(), "Unsupported chart skintype!");
         }
         chart.setSkinType(skinType);
     }
 
 
     /**
-     * Refreshes all data every Minute
-     * @param refreshTimeout
-     * @param data
+     * Schedules repeating data refreshment
+     *
+     * @param refreshInterval interval to refresh the data
      */
-    private void enableDataRefresh(int refreshTimeout, List<ChartData> data) {
+    private void enableDataRefresh(long refreshInterval) {
         try {
             GlobalScheduledExecutorService.scheduleAtFixedRate(() -> {
                 Platform.runLater(() -> {
-                    setChartType(this.visualizationType);
+                    setChartType(this.chartStateModel.getVisualizationType());
                 });
-            }, 1, refreshTimeout, TimeUnit.MINUTES);
+            }, refreshInterval, refreshInterval, TimeUnit.MILLISECONDS);
         } catch (NotAvailableException ex) {
             ExceptionPrinter.printHistory("Could not refresh power chart data", ex, LOGGER);
         }
@@ -201,10 +158,9 @@ public class PowerChartVisualizationController extends AbstractFXController {
      *
      * @return List of ChartData with previous Energy Consumption
      */
-    private List<ChartData> initializePreviousEntries(String interval, long startTime, long endTime) {
-        List<ChartData> datas = new ArrayList<ChartData>();
+    private List<ChartData> loadChartData(String interval, long startTime, long endTime) {
+        List<ChartData> data = new ArrayList<ChartData>();
         int change = 0;
-        olddataTime = new Timestamp(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()));
         try {
             List<FluxTable> energy = InfluxDBHandler.getAveragePowerConsumptionTables(
                     interval, TimeUnit.MILLISECONDS.toSeconds(startTime), TimeUnit.MILLISECONDS.toSeconds(endTime), "consumption");
@@ -214,25 +170,26 @@ public class PowerChartVisualizationController extends AbstractFXController {
                     if (fluxRecord.getValueByKey("_value") == null) {
                         ChartData temp = new ChartData(String.valueOf(change), 0, Tile.ORANGE);
                         temp.setName(String.valueOf(change));
-                        datas.add(temp);
+                        data.add(temp);
                     } else {
-                        ChartData temp = new ChartData(String.valueOf(change), (double) fluxRecord.getValueByKey("_value") / dataStep, Tile.ORANGE);
+                        ChartData temp = new ChartData(String.valueOf(change), (double) fluxRecord.getValueByKey("_value") / AMPLITUDE_DIVIDER, Tile.ORANGE);
                         temp.setName(String.valueOf(change));
-                        datas.add(temp);
+                        data.add(temp);
                     }
 
                 }
                 change++;
             }
         } catch (CouldNotPerformException e) {
-            e.printStackTrace();
+            ExceptionPrinter.printHistory("Could not load chart data!", e, LOGGER);
         }
-        return datas;
+        return data;
     }
 
     /**
      * Connects the given chart attribute properties to the chart by creating listeners incorporating the changes
      * into the chart
+     *
      * @param chartStateModel StateModel that describes the state of the chart as configured by other panes
      */
     public void initChartState(ChartStateModel chartStateModel) {
@@ -240,79 +197,63 @@ public class PowerChartVisualizationController extends AbstractFXController {
         this.chartStateModel = chartStateModel;
 
         chartStateModel.visualizationTypeProperty().addListener(
-                (ChangeListener<? super VisualizationType>) (dont, care, newVisualizationType) -> {
-                    this.visualizationType = newVisualizationType;
+                (ChangeListener<? super VisualizationType>) (observableValue, oldVisualizationType, newVisualizationType) -> {
                     setChartType(newVisualizationType);
                 });
 
-        chartStateModel.dateRangeProperty().addListener((ChangeListener<? super DateRange>) (dont, care, newDateRange) -> {
-            System.out.println("===========> Date Picked!");
-            setChartType(this.visualizationType);
+        chartStateModel.dateRangeProperty().addListener((ChangeListener<? super DateRange>) (observableValue, oldDateRange, newDateRange) -> {
+            setChartType(this.chartStateModel.getVisualizationType());
         });
     }
 
     private void setChartType(VisualizationType newVisualizationType) {
-        pane.getChildren().clear();
+        if (newVisualizationType==null)
+            newVisualizationType = DEFAULT_VISUALISATION_TYPE;
+
         Node node;
-        if (newVisualizationType == VisualizationType.HEATMAP) {
-            node = new Heatmap();
-        } else {
-            if (chartStateModel == null) {
-                node = generateTilesFxChart(newVisualizationType);
-            } else {
-                node = generateTilesFxChart(newVisualizationType, chartStateModel.getDateRange());
-            }
+        switch (newVisualizationType) {
+            //Add possible non-tilesfx-charttypes here
+            case HEATMAP:
+                node = new Heatmap();
+                break;
+            default:
+                if (chartStateModel == null) {
+                    node = generateTilesFxChart(newVisualizationType);
+                } else {
+                    node = generateTilesFxChart(newVisualizationType, chartStateModel.getDateRange());
+                }
+                break;
         }
+        pane.getChildren().clear();
         pane.getChildren().add(node);
     }
 
     private Tile generateTilesFxChart(VisualizationType newVisualizationType) {
         LocalDate endTime = LocalDate.now();
-        LocalDate startTime = LocalDate.now().minus(Period.of(0,0,1));
+        LocalDate startTime = LocalDate.now().minus(Period.of(0, 0, 1));
         DateRange defaultDateRange = new DateRange(startTime, endTime);
         return generateTilesFxChart(newVisualizationType, defaultDateRange);
     }
 
     private Tile generateTilesFxChart(VisualizationType visualizationType, DateRange dateRange) {
-        if (visualizationType == VisualizationType.HEATMAP) return null;
         Tile chart = new Tile();
         chart.setPrefSize(TILE_WIDTH, TILE_HEIGHT);
-        Tile.SkinType skinType = visualizationType == VisualizationType.BAR ?
-                Tile.SkinType.MATRIX : Tile.SkinType.SMOOTHED_CHART;//TODO there are also other chart types!
+        Tile.SkinType skinType = visualizationType == VisualizationType.BARCHART ?
+                Tile.SkinType.MATRIX : Tile.SkinType.SMOOTHED_CHART;
         chart.setTextAlignment(TextAlignment.RIGHT);
 
-        String interval = dateRange.getDefaultIntervalSize();
+        String interval = dateRange.getDefaultIntervalSize().getInfluxIntervalString();
+        chart.setTitle(LanguageSelection.getLocalized(CHART_HEADER_IDENTIFIER));
+        chart.setText(LanguageSelection.getLocalized(dateRange.getDefaultIntervalSize().name()));
 
-        String duration = "?";
-        switch (interval) {
-            case "30d":
-                duration = "month";
-                break;
-            case "1w":
-                duration = "week";
-                break;
-            case "1d":
-                duration = "day";
-                break;
-            case "1h":
-                duration = "hour";
-                break;
-            case "1m":
-                duration = "minute";
-                break;
-
-        }
-        chart.setTitle("Average Consumption in " + unit + "/" + dataStep + " per " + duration);
-        chart.setText(duration);
-
-        System.out.println("Interval String is: " + interval);
-        System.out.println("Start time is " + dateRange.getStartDate().toString() + ", as Timestamp it is " + dateRange.getStartDateAtCurrentTime().getTime());
-        System.out.println("End time is " + dateRange.getEndDate().toString() + ", as Timestamp it is " + dateRange.getEndDateAtCurrentTime().getTime());
-        List<ChartData> data = initializePreviousEntries(interval, dateRange.getStartDateAtCurrentTime().getTime(), dateRange.getEndDateAtCurrentTime().getTime());
-        addCorrectDataType(skinType, chart, data);
-        if(firstRun) {//TODO: Replace quick workaround with more beautiful solution
-            enableDataRefresh(REFRESH_TIMEOUT_MINUTES, data);
-            firstRun = false;
+        LOGGER.debug("Interval String is: " + interval);
+        LOGGER.debug("Start time is " + dateRange.getStartDate().toString() + ", as Timestamp it is " + dateRange.getStartDateAtCurrentTime().getTime());
+        LOGGER.debug("End time is " + dateRange.getEndDate().toString() + ", as Timestamp it is " + dateRange.getEndDateAtCurrentTime().getTime());
+        List<ChartData> data = loadChartData(interval, dateRange.getStartDateAtCurrentTime().getTime(), dateRange.getEndDateAtCurrentTime().getTime());
+        try {
+            addCorrectDataType(skinType, chart, data);
+        } catch (NotSupportedException e) {
+            ExceptionPrinter.printHistory(e, LOGGER);
         }
         return chart;
     }

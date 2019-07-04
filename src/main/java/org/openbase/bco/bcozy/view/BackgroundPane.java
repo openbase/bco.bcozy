@@ -27,7 +27,6 @@ import org.openbase.bco.bcozy.view.location.LocationMapPane;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InstantiationException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
-import org.openbase.jul.visual.javafx.control.AbstractFXController;
 import org.openbase.jul.visual.javafx.fxml.FXMLProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,8 +40,7 @@ public class BackgroundPane extends StackPane {
     private final UnitSymbolsPane unitSymbolsPane;
     private final SimpleUnitSymbolsPane editingLayerPane;
     private final SimpleUnitSymbolsPane maintenanceLayerPane;
-    private Pane powerDrawPane;
-    private Pair<Pane, AbstractFXController> powerChartPaneAndController;
+    private Pair<Pane, PowerChartVisualizationController> powerChartPaneAndController;
 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BackgroundPane.class);
@@ -77,7 +75,7 @@ public class BackgroundPane extends StackPane {
 
 
             try {
-                this.powerChartPaneAndController = FXMLProcessor.loadFxmlPaneAndControllerPair("PowerChartVisualization.fxml",  PowerChartVisualizationController.class);
+                this.powerChartPaneAndController = FXMLProcessor.loadFxmlPaneAndControllerPair(PowerChartVisualizationController.class);
             } catch (final CouldNotPerformException ex) {
                 ExceptionPrinter.printHistory("Content could not be loaded", ex, LOGGER);
             }
@@ -151,7 +149,7 @@ public class BackgroundPane extends StackPane {
 
     public void setChartStateModel(ChartStateModel chartStateModel) {
 
-        PowerChartVisualizationController chartController = (PowerChartVisualizationController)powerChartPaneAndController.getValue();
+        PowerChartVisualizationController chartController = powerChartPaneAndController.getValue();
         chartController.initChartState(chartStateModel);
     }
 }

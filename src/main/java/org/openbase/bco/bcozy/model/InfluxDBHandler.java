@@ -9,12 +9,13 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-public class    InfluxDBHandler {
+public class InfluxDBHandler {
 
+    //todo: move to module dal, see openbase/bco.dal#151
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(InfluxDBHandler.class);
     private static final String INFLUXDB_BUCKET_DEFAULT = "bco-persistence";
-    private static final String INFLUXDB_URL_DEFAULT = "http://localhost:9999";
-//    private static final String INFLUXDB_URL_DEFAULT = "http://192.168.75.100:9999";
+    //    private static final String INFLUXDB_URL_DEFAULT = "http://localhost:9999";
+    private static final String INFLUXDB_URL_DEFAULT = "http://192.168.75.100:9999";
     private static final String INFLUXDB_ORG_DEFAULT = "openbase";
     //get INFLUXDB_ORG_ID_DEFAULT: influx org find -t TOKEN
     private static  String INFLUXDB_ORG_ID_DEFAULT = "03e2948bb3026000"; //id svenja
@@ -41,11 +42,8 @@ public class    InfluxDBHandler {
 
         if (influxDBClient.health().getStatus().getValue() != "pass") {
             throw new CouldNotPerformException("Could not connect to database server at " + INFLUXDB_URL_DEFAULT + "!");
-
         }
         QueryApi queryApi = influxDBClient.getQueryApi();
-
-
         List<FluxTable> tables = queryApi.query(query, INFLUXDB_ORG_ID_DEFAULT);
         try {
             if (influxDBClient != null) {
@@ -54,13 +52,9 @@ public class    InfluxDBHandler {
         } catch (Exception ex) {
             ExceptionPrinter.printHistory("Could not shutdown database connection!", ex, LOGGER);
         }
-
         LOGGER.info(tables.toString());
         return tables;
-
-
     }
-
 
     /**
      * Some query return just a single value.
@@ -74,15 +68,35 @@ public class    InfluxDBHandler {
             List<FluxRecord> records = fluxTable.getRecords();
             for (FluxRecord fluxRecord : records) {
                 // just one entry:
-                LOGGER.info( fluxRecord.getValueByKey("_value").toString());
-
+                LOGGER.info(fluxRecord.getValueByKey("_value").toString());
                 return (Double) fluxRecord.getValueByKey("_value");
-
             }
         }
-
         return Double.valueOf(0);
+    }
 
+    /**
+     * Returns the average value of specific field from the power_consumption_state_service in a time window.
+     *
+     * @param window    Time interval in which the measurement is carried out (e.g every 1m, 1s, 1d ...)
+     * @param field     Name of the field which should be checked (e.g consumption, current, voltage)
+     * @param timeStart Timestamp when the measurement should start
+     * @param timeStop  Timestamp when the measurement should stop
+     * @return average value
+     * @throws CouldNotPerformException
+     */
+    public static List<FluxTable> getAveragePowerConsumptionTables(String window, Long timeStart, Long timeStop, String field) throws CouldNotPerformException {
+        String query = "from(bucket: \"" + INFLUXDB_BUCKET_DEFAULT + "\")" +
+                " |> range(start: " + timeStart + ", stop: " + timeStop + ")" +
+                " |> filter(fn: (r) => r._measurement == \"power_consumption_state_service\")" +
+                " |> filter(fn: (r) => r._field == \"" + field + "\")" +
+                " |> aggregateWindow(every:" + window + " , fn: mean)" +
+                " |> group(columns: [\"_time\"], mode:\"by\")" +
+                "|> mean(column: \"_value\")";
+
+        List<FluxTable> tables = sendQuery(query);
+        LOGGER.info(tables.toString());
+        return tables;
     }
 
     /**
@@ -110,34 +124,6 @@ public class    InfluxDBHandler {
     }
 
     /**
-     * Returns the average value of specific field from the power_consumption_state_service in a time window.
-     *
-     * @param window    Time interval in which the measurement is carried out (e.g every 1m, 1s, 1d ...)
-     * @param field     Name of the field which should be checked (e.g consumption, current, voltage)
-     * @param timeStart Timestamp when the measurement should start
-     * @param timeStop  Timestamp when the measurement should stop
-     * @return average value
-     * @throws CouldNotPerformException
-     */
-    public static List<FluxTable> getAveragePowerConsumptionTables(String window, Long timeStart, Long timeStop, String field) throws CouldNotPerformException {
-        String query = "from(bucket: \"" + INFLUXDB_BUCKET_DEFAULT + "\")" +
-                " |> range(start: " + timeStart + ", stop: " + timeStop + ")" +
-                " |> filter(fn: (r) => r._measurement == \"power_consumption_state_service\")" +
-                " |> filter(fn: (r) => r._field == \"" + field + "\")" +
-                " |> aggregateWindow(every:" + window + " , fn: mean)" +
-                " |> group(columns: [\"_time\"], mode:\"by\")" +
-                "|> mean(column: \"_value\")";
-
-        List<FluxTable> tables = sendQuery(query);
-        LOGGER.info(tables.toString());
-
-        return tables;
-
-
-    }
-
-
-    /**
      * Returns the average value of specific field and location from the power_consumption_state_service in a time window.
      *
      * @param window         Time interval in which the measurement is carried out (e.g every 1m, 1s, 1d ...)
@@ -158,10 +144,9 @@ public class    InfluxDBHandler {
                 " |> aggregateWindow(every:" + window + " , fn: mean)" +
                 " |> group(columns: [\"_field\"], mode:\"by\")" +
                 " |> mean(column: \"_value\")";
+
         List<FluxTable> tables = sendQuery(query);
         return getSingleValueFromTables(tables);
-
-
     }
 
     /**
@@ -185,12 +170,10 @@ public class    InfluxDBHandler {
                 " |> aggregateWindow(every:" + window + " , fn: mean)" +
                 " |> group(columns: [\"_field\"], mode:\"by\")" +
                 " |> mean(column: \"_value\")";
+
         List<FluxTable> tables = sendQuery(query);
         return getSingleValueFromTables(tables);
-
-
     }
-
 
     /**
      * Get the full data from a field from the power_consumption_state_service in a specific time window.
@@ -207,10 +190,9 @@ public class    InfluxDBHandler {
                 " |> filter(fn: (r) => r._measurement == \"power_consumption_state_service\")" +
                 " |> filter(fn: (r) => r._field == \"" + field + "\")" +
                 " |> group(columns: [\"_field\"], mode:\"by\")";
+
         List<FluxTable> tables = sendQuery(query);
         return tables;
-
-
     }
 
     /**
@@ -230,12 +212,10 @@ public class    InfluxDBHandler {
                 " |> filter(fn: (r) => r._field == \"" + field + "\")" +
                 " |> filter(fn: (r) => r.location_alias == \"" + location_alias + "\")" +
                 " |> group(columns: [\"_field\"], mode:\"by\")";
+
         List<FluxTable> tables = sendQuery(query);
         return tables;
-
-
     }
-
 
     /**
      * Get the full data of a field and location_alias from the power_consumption_state_service in a specific time window.
@@ -254,10 +234,9 @@ public class    InfluxDBHandler {
                 " |> filter(fn: (r) => r._field == \"" + field + "\")" +
                 " |> filter(fn: (r) => r.unit_id == \"" + unit_id + "\")" +
                 " |> group(columns: [\"_field\"], mode:\"by\")";
+
         List<FluxTable> tables = sendQuery(query);
         return tables;
-
-
     }
 
     /**
@@ -279,8 +258,6 @@ public class    InfluxDBHandler {
 
         List<FluxTable> tables = sendQuery(query);
         return getSingleValueFromTables(tables);
-
-
     }
 
     /**
@@ -304,8 +281,6 @@ public class    InfluxDBHandler {
 
         List<FluxTable> tables = sendQuery(query);
         return getSingleValueFromTables(tables);
-
-
     }
 
     /**
@@ -329,9 +304,5 @@ public class    InfluxDBHandler {
 
         List<FluxTable> tables = sendQuery(query);
         return getSingleValueFromTables(tables);
-
-
     }
-
-
 }

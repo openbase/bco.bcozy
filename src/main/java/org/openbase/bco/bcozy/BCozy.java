@@ -83,6 +83,7 @@ public class BCozy extends Application {
     private UnitsPaneController unitsPaneController;
     private MaintenanceLayerController maintenanceLayerController;
     private EditingLayerController editingLayerController;
+    private PowerTerminalSidebarPaneController sidebarPaneController;
     private Future initTask;
     private Scene mainScene;
 
@@ -193,8 +194,7 @@ public class BCozy extends Application {
             unitsPaneController = new UnitsPaneController(backgroundPane.getUnitsPane(), backgroundPane.getLocationMapPane());
             maintenanceLayerController = new MaintenanceLayerController(backgroundPane.getMaintenancePane(), backgroundPane.getLocationMapPane());
             editingLayerController = new EditingLayerController(backgroundPane.getEditingPane(), backgroundPane.getLocationMapPane());
-
-            PowerTerminalSidebarPaneController sidebarPaneController = contextMenuController.getPowerTerminalSidebarPaneController();
+            sidebarPaneController = contextMenuController.getPowerTerminalSidebarPaneController();
             backgroundPane.setChartStateModel(sidebarPaneController.getChartStateModel());
 
             ResponsiveHandler.addResponsiveToWindow(primaryStage);

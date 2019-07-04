@@ -1,10 +1,12 @@
 package org.openbase.bco.bcozy.controller.powerterminal.chartattributes;
 
-public enum VisualizationType {
-    BAR, PIE, HEATMAP, LINECHART;
+import org.openbase.bco.bcozy.model.LanguageSelection;
 
-    @Override
-    public String toString() {
-        return super.toString().substring(0, 1) + super.toString().substring(1).toLowerCase();
+public enum VisualizationType {
+    BARCHART, PIECHART, HEATMAP, LINECHART;
+
+    public static VisualizationType[] getSelectableTypes() {
+        return new VisualizationType[]{BARCHART, PIECHART, LINECHART};
     }
+
 }
