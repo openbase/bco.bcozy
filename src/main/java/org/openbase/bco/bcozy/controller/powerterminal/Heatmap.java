@@ -19,6 +19,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Stop;
 import javafx.stage.Screen;
 import org.openbase.bco.bcozy.controller.powerterminal.heatmapattributes.SpotsPosition;
+import org.openbase.bco.bcozy.view.BackgroundPane;
+import org.openbase.bco.bcozy.view.ForegroundPane;
+import org.openbase.bco.bcozy.view.location.LocationMapPane;
 import org.openbase.bco.dal.lib.layer.service.ServiceStateProvider;
 import org.openbase.bco.dal.lib.layer.unit.PowerConsumptionSensor;
 import org.openbase.bco.dal.lib.layer.unit.TemperatureSensor;
@@ -43,6 +46,8 @@ import java.util.List;
 public class Heatmap extends Pane {
 
     private CustomUnitPool unitPool;
+
+    //private final LocationMapPane locationMapPane;
 
     public static final int TILE_WIDTH = (int) Screen.getPrimary().getVisualBounds().getWidth();
     public static final int TILE_HEIGHT = (int) Screen.getPrimary().getVisualBounds().getHeight();
@@ -71,12 +76,12 @@ public class Heatmap extends Pane {
             double[][] u = new double[(int)(rootBoundingBox.getWidth()*100)][(int)(rootBoundingBox.getDepth()*100)];
             this.getChildren().add(updateHeatmap(u));
 
-            unitPool.addObserver(new Observer<ServiceStateProvider<Message>, Message>() {
+           /* unitPool.addObserver(new Observer<ServiceStateProvider<Message>, Message>() {
                 @Override
                 public void update(ServiceStateProvider<Message> source, Message data) throws Exception {
-                    //getChildren().add(updateHeatmap(u));
+                    getChildren().add(updateHeatmap(u));
                 }
-            });
+            }); */
 
         } catch (CouldNotPerformException  ex) {
             ExceptionPrinter.printHistory("Could not instantiate CustomUnitPool", ex, logger);
@@ -88,42 +93,29 @@ public class Heatmap extends Pane {
 
      private HeatMap updateHeatmap(double[][] u) {
 
-        List<SpotsPosition> spots = new ArrayList<>();
-
-        u[200][200] = 0.9;
-        u[250][250] = 0.5;
-        spots.add(new SpotsPosition(200,200, 0.9));
-        spots.add(new SpotsPosition(250,250, 0.5));
-
+        double current = 0;
         int runnings = 3;
-
-        return generateHeatmapWithLibrary(u, spots, runnings);
-
-     /*   for (UnitRemote<? extends Message> unit : unitPool.getInternalUnitList()) {
+        List<SpotsPosition> spots = new ArrayList<>();
+        for (UnitRemote<? extends Message> unit : unitPool.getInternalUnitList()) {
              try {
                  Point3d unitPositionGlobalPoint3d = unit.getUnitPositionGlobalPoint3d();
+                 PowerConsumptionSensor powerConsumptionUnit = (PowerConsumptionSensor) unit;
+                 //TemperatureSensor temperatureUnit = (TemperatureSensor) unit;
+                 current = powerConsumptionUnit.getPowerConsumptionState().getCurrent() / 16;
+                 //current = temperatureUnit.getTemperatureState().getTemperature();
+
+                 u[(int)unitPositionGlobalPoint3d.x][(int)unitPositionGlobalPoint3d.y] = current;
+                 spots.add(new SpotsPosition((int)unitPositionGlobalPoint3d.x, (int)unitPositionGlobalPoint3d.y, current));
              } catch (NotAvailableException ex) {
                 // ExceptionPrinter.printHistory("Could not reach CustomUnitPool", ex, logger);
              }
+        }
 
-             TemperatureSensor temperatureUnit = (TemperatureSensor) unit;
-             double current = 0;
-             try {
-                 current = temperatureUnit.getTemperatureState().getTemperature();
-             }
-             catch (NotAvailableException ex) {
-                 ExceptionPrinter.printHistory("Could not reach TemperatureSensor", ex, logger);
-             }
+         for (SpotsPosition spot : spots) {
+             System.out.println("x: " + spot.spotsPositionx + " y: " +spot.spotsPositiony + " value: " + spot.value);
+         }
 
-             PowerConsumptionSensor powerConsumptionUnit = (PowerConsumptionSensor) unit;
-             double current = 0;
-             try {
-                 current = powerConsumptionUnit.getPowerConsumptionState().getCurrent();
-             } catch (NotAvailableException e) {
-                 e.printStackTrace();
-             }
-             current /= 16;
-         } */
+        return generateHeatmapWithLibrary(u, spots, runnings);
      }
 
     private MatrixPane<MatrixChartItem> generateHeatmapOld (double[][] u, int runnings, List<SpotsPosition> spots) {
@@ -152,13 +144,12 @@ public class Heatmap extends Pane {
         calculateHeatMap(u, runnings, spots);
 
         HeatMap heatmap = new eu.hansolo.fx.charts.heatmap.HeatMap();
-        heatmap.setSize(TILE_WIDTH/2, TILE_HEIGHT);
+        heatmap.setSize(500, 500);
 
         for (int j = 0; j < spots.size(); j++) {
             SpotsPosition spot = spots.get(j);
             heatmap.addSpot(spot.spotsPositionx, spot.spotsPositiony, createEventImage(runnings, u, spot), 0, 0);
         }
-
         return heatmap;
     }
 

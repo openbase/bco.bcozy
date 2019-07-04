@@ -6,7 +6,7 @@ public enum VisualizationType {
     BARCHART, PIECHART, HEATMAP, LINECHART;
 
     public static VisualizationType[] getSelectableTypes() {
-        return new VisualizationType[]{BARCHART, PIECHART, LINECHART};
+        return new VisualizationType[]{BARCHART, PIECHART, LINECHART, HEATMAP};
     }
 
 }
