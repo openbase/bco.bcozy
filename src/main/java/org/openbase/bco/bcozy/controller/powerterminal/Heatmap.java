@@ -93,7 +93,7 @@ public class Heatmap extends Pane {
                  u[(int)(unitPositionGlobalPoint3d.x*factor)][(int)(unitPositionGlobalPoint3d.y*factor)] = current;
                  spots.add(new SpotsPosition((int)(unitPositionGlobalPoint3d.x*factor), (int)(unitPositionGlobalPoint3d.y*factor), current));
              } catch (NotAvailableException ex) {
-                // ExceptionPrinter.printHistory("Could not reach CustomUnitPool", ex, logger);
+                 ExceptionPrinter.printHistory("Could not get Position", ex, logger);
              }
         }
 
@@ -131,7 +131,7 @@ public class Heatmap extends Pane {
         calculateHeatMap(u, runnings, spots);
 
         HeatMap heatmap = new eu.hansolo.fx.charts.heatmap.HeatMap();
-        //heatmap.setSize(TILE_WIDTH/2, TILE_HEIGHT);
+        heatmap.setSize(TILE_WIDTH/2, TILE_HEIGHT);
 
         for (int j = 0; j < spots.size(); j++) {
             SpotsPosition spot = spots.get(j);
@@ -141,7 +141,7 @@ public class Heatmap extends Pane {
     }
 
     public Image createEventImage(int runnings, double[][] u, SpotsPosition spot) {
-        Double radius = (double) runnings*1000;
+        Double radius = (double) runnings*100;
 
         Stop[] stops = new Stop[runnings+1];
         for (int i = 0; i < runnings + 1; i++) {

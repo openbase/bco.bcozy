@@ -464,8 +464,13 @@ public final class LocationMapPane extends MultiTouchPane implements LocationMap
 
         getChildren().add(editOverlay);
 
-        if (backgroundPane.getheatmapActiveProperty().get())
-            getChildren().add(heatMap);
+        if (backgroundPane.getheatmapActiveProperty().get()) {
+            System.out.println("heatmap hinzufügen");
+        }
+
+        System.out.println("Groesse heatmap:" + heatMap.getHeight() + " Breite: " + heatMap.getWidth());
+        System.out.println("Groesse");
+        getChildren().add(heatMap);
 
 
 
