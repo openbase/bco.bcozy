@@ -39,6 +39,7 @@ import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.Visualiza
 import org.openbase.bco.bcozy.model.InfluxDBHandler;
 import org.openbase.bco.bcozy.model.LanguageSelection;
 import org.openbase.bco.bcozy.model.powerterminal.ChartStateModel;
+import org.openbase.bco.bcozy.view.location.LocationMapPane;
 import org.openbase.bco.dal.remote.trigger.preset.NeighborConnectionPresenceTrigger;
 import org.openbase.jul.exception.*;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
@@ -89,6 +90,7 @@ public class PowerChartVisualizationController extends AbstractFXController {
     private WebEngine webEngine;
 
     private ChartStateModel chartStateModel;
+    private LocationMapPane locationMapPane;
 
     @Override
     public void updateDynamicContent() throws CouldNotPerformException {
@@ -206,6 +208,17 @@ public class PowerChartVisualizationController extends AbstractFXController {
         });
     }
 
+
+    /**
+     * Connects the given chart attribute properties to the chart by creating listeners incorporating the changes
+     * into the chart
+     *
+     * @param locationMapPane Room Plan
+     */
+    public void initLocationMapPane(LocationMapPane locationMapPane) {
+        this.locationMapPane = locationMapPane;
+    }
+
     private void setChartType(VisualizationType newVisualizationType) {
         if (newVisualizationType==null)
             newVisualizationType = DEFAULT_VISUALISATION_TYPE;
@@ -214,7 +227,7 @@ public class PowerChartVisualizationController extends AbstractFXController {
         switch (newVisualizationType) {
             //Add possible non-tilesfx-charttypes here
             case HEATMAP:
-                node = new Heatmap();
+                node = new Heatmap(locationMapPane);
                 break;
             default:
                 if (chartStateModel == null) {

@@ -14,6 +14,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Stop;
@@ -46,6 +47,7 @@ import java.util.List;
 public class Heatmap extends Pane {
 
     private CustomUnitPool unitPool;
+    private LocationMapPane locationMapPane;
 
     //private final LocationMapPane locationMapPane;
 
@@ -55,8 +57,9 @@ public class Heatmap extends Pane {
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(eu.hansolo.fx.charts.heatmap.HeatMap.class);
 
 
-    public Heatmap() {
+    public Heatmap(LocationMapPane locationMapPane) {
         double factor = 50;
+        this.locationMapPane = locationMapPane;
         try {
             unitPool = new CustomUnitPool();
 
@@ -76,7 +79,9 @@ public class Heatmap extends Pane {
 
             double[][] u = new double[(int)(rootBoundingBox.getWidth()*factor)][(int)(rootBoundingBox.getDepth()*factor)];
 
-            this.getChildren().add(updateHeatmap(u, factor));
+            this.setPrefSize(locationMapPane.getWidth(), locationMapPane.getHeight());
+            this.setMaxSize(locationMapPane.getWidth(), locationMapPane.getHeight());
+            this.getChildren().addAll(locationMapPane, updateHeatmap(u, factor));
 
         } catch (CouldNotPerformException  ex) {
             ExceptionPrinter.printHistory("Could not instantiate CustomUnitPool", ex, logger);
@@ -142,7 +147,8 @@ public class Heatmap extends Pane {
         calculateHeatMap(u, runnings, spots);
 
         HeatMap heatmap = new eu.hansolo.fx.charts.heatmap.HeatMap();
-        heatmap.setSize(TILE_WIDTH/2, TILE_HEIGHT);
+        heatmap.setLayoutX(4.0);
+        heatmap.setSize(locationMapPane.getWidth(), locationMapPane.getHeight());
 
         for (int j = 0; j < spots.size(); j++) {
             SpotsPosition spot = spots.get(j);

@@ -152,4 +152,12 @@ public class BackgroundPane extends StackPane {
         PowerChartVisualizationController chartController = powerChartPaneAndController.getValue();
         chartController.initChartState(chartStateModel);
     }
+
+    /**
+     * Sets the LocationMapPane in the powerChartVisualizationController
+     */
+    public void setLocationMapPane () {
+        PowerChartVisualizationController chartController = powerChartPaneAndController.getValue();
+        chartController.initLocationMapPane(locationMapPane);
+    }
 }
