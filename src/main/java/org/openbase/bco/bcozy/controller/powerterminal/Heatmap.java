@@ -90,10 +90,10 @@ public class Heatmap extends Pane {
                  //current = temperatureUnit.getTemperatureState().getTemperature();
 
                  System.out.println(unit.getLabel());
-                 u[(int)(unitPositionGlobalPoint3d.x*factor)][(int)(unitPositionGlobalPoint3d.y*factor)] = current;
-                 spots.add(new SpotsPosition((int)(unitPositionGlobalPoint3d.x*factor), (int)(unitPositionGlobalPoint3d.y*factor), current));
+                 //u[(int)(unitPositionGlobalPoint3d.x*factor)][(int)(unitPositionGlobalPoint3d.y*factor)] = current;
+                 //spots.add(new SpotsPosition((int)(unitPositionGlobalPoint3d.x*factor), (int)(unitPositionGlobalPoint3d.y*factor), current));
              } catch (NotAvailableException ex) {
-                 ExceptionPrinter.printHistory("Could not get Position", ex, logger);
+                 //ExceptionPrinter.printHistory("Could not get Position", ex, logger);
              }
         }
 
@@ -101,6 +101,12 @@ public class Heatmap extends Pane {
         for (SpotsPosition spot : spots) {
             System.out.println("x: " + spot.spotsPositionx + " y: " +spot.spotsPositiony + " value: " + spot.value);
         }
+
+        u[0][0] = 1;
+        u[u.length-5][u[0].length-5] = 1;
+
+        spots.add(new SpotsPosition(0, 0, 1));
+        spots.add(new SpotsPosition(u.length-5, u[0].length-5, 1));
 
         return generateHeatmapWithLibrary(u, spots, runnings);
      }
@@ -131,7 +137,7 @@ public class Heatmap extends Pane {
         calculateHeatMap(u, runnings, spots);
 
         HeatMap heatmap = new eu.hansolo.fx.charts.heatmap.HeatMap();
-        heatmap.setSize(TILE_WIDTH/2, TILE_HEIGHT);
+        heatmap.setSize(TILE_WIDTH, TILE_HEIGHT);
 
         for (int j = 0; j < spots.size(); j++) {
             SpotsPosition spot = spots.get(j);
