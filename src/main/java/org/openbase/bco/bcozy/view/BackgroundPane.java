@@ -18,6 +18,8 @@
  */
 package org.openbase.bco.bcozy.view;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.util.Pair;
@@ -41,6 +43,7 @@ public class BackgroundPane extends StackPane {
     private final SimpleUnitSymbolsPane editingLayerPane;
     private final SimpleUnitSymbolsPane maintenanceLayerPane;
     private Pair<Pane, PowerChartVisualizationController> powerChartPaneAndController;
+    private final BooleanProperty heatmapActiveProperty;
 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BackgroundPane.class);
@@ -54,6 +57,8 @@ public class BackgroundPane extends StackPane {
      * @throws java.lang.InterruptedException
      */
     public BackgroundPane(final ForegroundPane foregroundPane) throws InstantiationException, InterruptedException {
+        heatmapActiveProperty = new SimpleBooleanProperty();
+        heatmapActiveProperty.set(false);
         try {
             this.locationMapPane = new LocationMapPane(foregroundPane);
             this.getChildren().add(locationMapPane);
@@ -147,17 +152,22 @@ public class BackgroundPane extends StackPane {
         return locationMapPane;
     }
 
-    public void setChartStateModel(ChartStateModel chartStateModel) {
-
+    public void setChartStateModelandBackgroundPane(ChartStateModel chartStateModel) {
         PowerChartVisualizationController chartController = powerChartPaneAndController.getValue();
         chartController.initChartState(chartStateModel);
+        chartController.initBackgroundPane(this);
     }
 
-    /**
-     * Sets the LocationMapPane in the powerChartVisualizationController
-     */
-    public void setLocationMapPane () {
-        PowerChartVisualizationController chartController = powerChartPaneAndController.getValue();
-        chartController.initLocationMapPane(locationMapPane);
+    public void activateHeatmap() {
+        this.getChildren().remove(locationMapPane);
+        heatmapActiveProperty.set(true);
+        this.getChildren().add(locationMapPane);
+    }
+
+    public void deactivateHeatmap() {
+        if (heatmapActiveProperty.get()) {
+            heatmapActiveProperty.set(false);
+            this.getChildren().remove(locationMapPane);
+        }
     }
 }

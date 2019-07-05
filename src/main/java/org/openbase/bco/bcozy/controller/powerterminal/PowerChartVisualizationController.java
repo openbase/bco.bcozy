@@ -1,37 +1,16 @@
 package org.openbase.bco.bcozy.controller.powerterminal;
 
-import eu.hansolo.fx.charts.ChartType;
-import eu.hansolo.fx.charts.MatrixPane;
-import eu.hansolo.fx.charts.PixelMatrix;
-import eu.hansolo.fx.charts.heatmap.HeatMap;
-import eu.hansolo.fx.charts.heatmap.OpacityDistribution;
-import eu.hansolo.fx.charts.series.MatrixItemSeries;
-import eu.hansolo.fx.charts.tools.ColorMapping;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.chart.ChartData;
 import eu.hansolo.tilesfx.tools.FlowGridPane;
-import javafx.animation.Interpolator;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.chart.XYChart;
-import javafx.scene.effect.Light;
-import javafx.scene.image.Image;
-import javafx.scene.image.PixelWriter;
-import javafx.scene.image.WritableImage;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Stop;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebErrorEvent;
-import javafx.scene.web.WebEvent;
-import javafx.scene.web.WebView;
 import javafx.stage.Screen;
-import javafx.util.Pair;
 import org.influxdata.query.FluxRecord;
 import org.influxdata.query.FluxTable;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.DateRange;
@@ -39,30 +18,21 @@ import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.Visualiza
 import org.openbase.bco.bcozy.model.InfluxDBHandler;
 import org.openbase.bco.bcozy.model.LanguageSelection;
 import org.openbase.bco.bcozy.model.powerterminal.ChartStateModel;
-import org.openbase.bco.bcozy.view.location.LocationMapPane;
-import org.openbase.bco.dal.remote.trigger.preset.NeighborConnectionPresenceTrigger;
-import org.openbase.jul.exception.*;
+import org.openbase.bco.bcozy.view.BackgroundPane;
+import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.InitializationException;
+import org.openbase.jul.exception.NotAvailableException;
+import org.openbase.jul.exception.NotSupportedException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
-import org.openbase.jul.schedule.GlobalCachedExecutorService;
 import org.openbase.jul.schedule.GlobalScheduledExecutorService;
 import org.openbase.jul.visual.javafx.control.AbstractFXController;
-import org.openbase.jul.visual.javafx.fxml.FXMLProcessor;
 import org.slf4j.LoggerFactory;
 
-import java.awt.geom.Point2D;
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.sql.Timestamp;
-import java.time.*;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-
-
-import eu.hansolo.fx.charts.data.MatrixChartItem;
 
 
 public class PowerChartVisualizationController extends AbstractFXController {
@@ -90,7 +60,7 @@ public class PowerChartVisualizationController extends AbstractFXController {
     private WebEngine webEngine;
 
     private ChartStateModel chartStateModel;
-    private LocationMapPane locationMapPane;
+    private BackgroundPane backgroundPane;
 
     @Override
     public void updateDynamicContent() throws CouldNotPerformException {
@@ -100,7 +70,7 @@ public class PowerChartVisualizationController extends AbstractFXController {
     @Override
     public void initContent() throws InitializationException {
         pane.setMinSize(Screen.getPrimary().getVisualBounds().getWidth(), Screen.getPrimary().getVisualBounds().getHeight() - 600);
-        //setChartType(DEFAULT_VISUALISATION_TYPE);
+        setChartType(DEFAULT_VISUALISATION_TYPE, true);
         enableDataRefresh(REFRESH_INTERVAL_MILLISECONDS);
     }
 
@@ -146,7 +116,7 @@ public class PowerChartVisualizationController extends AbstractFXController {
         try {
             GlobalScheduledExecutorService.scheduleAtFixedRate(() -> {
                 Platform.runLater(() -> {
-                    setChartType(this.chartStateModel.getVisualizationType());
+                    setChartType(this.chartStateModel.getVisualizationType(), false);
                 });
             }, refreshInterval, refreshInterval, TimeUnit.MILLISECONDS);
         } catch (NotAvailableException ex) {
@@ -200,34 +170,33 @@ public class PowerChartVisualizationController extends AbstractFXController {
 
         chartStateModel.visualizationTypeProperty().addListener(
                 (ChangeListener<? super VisualizationType>) (observableValue, oldVisualizationType, newVisualizationType) -> {
-                    setChartType(newVisualizationType);
+                    setChartType(newVisualizationType, false);
                 });
 
         chartStateModel.dateRangeProperty().addListener((ChangeListener<? super DateRange>) (observableValue, oldDateRange, newDateRange) -> {
-            setChartType(this.chartStateModel.getVisualizationType());
+            setChartType(this.chartStateModel.getVisualizationType(), false);
         });
     }
 
 
     /**
-     * Connects the given chart attribute properties to the chart by creating listeners incorporating the changes
-     * into the chart
+     * Gets the BackgroundPane
      *
-     * @param locationMapPane Room Plan
+     * @param backgroundPane the BackgroundPane
      */
-    public void initLocationMapPane(LocationMapPane locationMapPane) {
-        this.locationMapPane = locationMapPane;
+    public void initBackgroundPane(BackgroundPane backgroundPane) {
+        this.backgroundPane = backgroundPane;
     }
 
-    private void setChartType(VisualizationType newVisualizationType) {
+    private void setChartType(VisualizationType newVisualizationType, boolean firstRun) {
         if (newVisualizationType==null)
             newVisualizationType = DEFAULT_VISUALISATION_TYPE;
 
         Node node;
         switch (newVisualizationType) {
-            //Add possible non-tilesfx-charttypes here
             case HEATMAP:
-                node = new Heatmap(locationMapPane);
+                pane.getChildren().clear();
+                this.backgroundPane.activateHeatmap();
                 break;
             default:
                 if (chartStateModel == null) {
@@ -235,10 +204,12 @@ public class PowerChartVisualizationController extends AbstractFXController {
                 } else {
                     node = generateTilesFxChart(newVisualizationType, chartStateModel.getDateRange());
                 }
+                if (!firstRun)
+                    this.backgroundPane.deactivateHeatmap();
+                pane.getChildren().clear();
+                pane.getChildren().add(node);
                 break;
         }
-        pane.getChildren().clear();
-        pane.getChildren().add(node);
     }
 
     private Tile generateTilesFxChart(VisualizationType newVisualizationType) {

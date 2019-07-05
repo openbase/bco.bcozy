@@ -8,24 +8,15 @@ import eu.hansolo.fx.charts.data.MatrixChartItem;
 import eu.hansolo.fx.charts.heatmap.HeatMap;
 import eu.hansolo.fx.charts.series.MatrixItemSeries;
 import javafx.animation.Interpolator;
-import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
-import javafx.scene.layout.Background;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Stop;
 import javafx.stage.Screen;
 import org.openbase.bco.bcozy.controller.powerterminal.heatmapattributes.SpotsPosition;
-import org.openbase.bco.bcozy.view.BackgroundPane;
-import org.openbase.bco.bcozy.view.ForegroundPane;
-import org.openbase.bco.bcozy.view.location.LocationMapPane;
-import org.openbase.bco.dal.lib.layer.service.ServiceStateProvider;
 import org.openbase.bco.dal.lib.layer.unit.PowerConsumptionSensor;
-import org.openbase.bco.dal.lib.layer.unit.TemperatureSensor;
 import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
 import org.openbase.bco.dal.remote.layer.unit.CustomUnitPool;
 import org.openbase.bco.registry.remote.Registries;
@@ -33,7 +24,6 @@ import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.pattern.Filter;
-import org.openbase.jul.pattern.Observer;
 import org.openbase.type.domotic.unit.UnitConfigType;
 import org.openbase.type.domotic.unit.UnitTemplateType;
 import org.openbase.type.geometry.AxisAlignedBoundingBox3DFloatType;
@@ -47,9 +37,6 @@ import java.util.List;
 public class Heatmap extends Pane {
 
     private CustomUnitPool unitPool;
-    private LocationMapPane locationMapPane;
-
-    //private final LocationMapPane locationMapPane;
 
     public static final int TILE_WIDTH = (int) Screen.getPrimary().getVisualBounds().getWidth();
     public static final int TILE_HEIGHT = (int) Screen.getPrimary().getVisualBounds().getHeight();
@@ -57,9 +44,8 @@ public class Heatmap extends Pane {
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(eu.hansolo.fx.charts.heatmap.HeatMap.class);
 
 
-    public Heatmap(LocationMapPane locationMapPane) {
+    public Heatmap() {
         double factor = 50;
-        this.locationMapPane = locationMapPane;
         try {
             unitPool = new CustomUnitPool();
 
@@ -79,9 +65,7 @@ public class Heatmap extends Pane {
 
             double[][] u = new double[(int)(rootBoundingBox.getWidth()*factor)][(int)(rootBoundingBox.getDepth()*factor)];
 
-            this.setPrefSize(locationMapPane.getWidth(), locationMapPane.getHeight());
-            this.setMaxSize(locationMapPane.getWidth(), locationMapPane.getHeight());
-            this.getChildren().addAll(locationMapPane, updateHeatmap(u, factor));
+            this.getChildren().add(updateHeatmap(u, factor));
 
         } catch (CouldNotPerformException  ex) {
             ExceptionPrinter.printHistory("Could not instantiate CustomUnitPool", ex, logger);
@@ -147,8 +131,7 @@ public class Heatmap extends Pane {
         calculateHeatMap(u, runnings, spots);
 
         HeatMap heatmap = new eu.hansolo.fx.charts.heatmap.HeatMap();
-        heatmap.setLayoutX(4.0);
-        heatmap.setSize(locationMapPane.getWidth(), locationMapPane.getHeight());
+        heatmap.setSize(TILE_WIDTH/2, TILE_HEIGHT);
 
         for (int j = 0; j < spots.size(); j++) {
             SpotsPosition spot = spots.get(j);
