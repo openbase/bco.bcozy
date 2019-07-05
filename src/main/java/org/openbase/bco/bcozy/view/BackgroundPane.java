@@ -60,7 +60,7 @@ public class BackgroundPane extends StackPane {
         heatmapActiveProperty = new SimpleBooleanProperty();
         heatmapActiveProperty.set(false);
         try {
-            this.locationMapPane = new LocationMapPane(foregroundPane);
+            this.locationMapPane = new LocationMapPane(foregroundPane, this);
             this.getChildren().add(locationMapPane);
 
             // default layer: changing light states on the location map
@@ -90,16 +90,19 @@ public class BackgroundPane extends StackPane {
             foregroundPane.getAppState().addListener((observable, oldValue, newValue) -> {
                 switch (newValue) {
                     case SETTINGS:
+                        heatmapActiveProperty.set(false);
                         getChildren().clear();
                         getChildren().add(locationMapPane);
                         getChildren().add(editingLayerPane);
                         break;
                     case TEMPERATURE:
+                        heatmapActiveProperty.set(false);
                         getChildren().clear();
                         getChildren().add(locationMapPane);
                         getChildren().add(maintenanceLayerPane);
                         break;
                     case MOVEMENT:
+                        heatmapActiveProperty.set(false);
                         getChildren().clear();
                         getChildren().add(locationMapPane);
                         getChildren().add(unitSymbolsPane);
@@ -169,5 +172,9 @@ public class BackgroundPane extends StackPane {
             heatmapActiveProperty.set(false);
             this.getChildren().remove(locationMapPane);
         }
+    }
+
+    public BooleanProperty getheatmapActiveProperty() {
+        return heatmapActiveProperty;
     }
 }
