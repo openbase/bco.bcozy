@@ -45,7 +45,8 @@ public class Heatmap extends Pane {
 
 
     public Heatmap() {
-        double factor = 50;
+        double factorx = 52;
+        double factory = 43;
         try {
             unitPool = new CustomUnitPool();
 
@@ -63,9 +64,9 @@ public class Heatmap extends Pane {
             //Walls
             List<Vec3DDoubleType.Vec3DDouble> floorList = rootLocationConfig.getPlacementConfig().getShape().getFloorList();
 
-            double[][] u = new double[(int)(rootBoundingBox.getWidth()*factor)][(int)(rootBoundingBox.getDepth()*factor)];
+            double[][] u = new double[(int)(rootBoundingBox.getWidth()*factorx)][(int)(rootBoundingBox.getDepth()*factory)];
 
-            this.getChildren().add(updateHeatmap(u, factor));
+            this.getChildren().add(updateHeatmap(u, factorx, factory));
 
         } catch (CouldNotPerformException  ex) {
             ExceptionPrinter.printHistory("Could not instantiate CustomUnitPool", ex, logger);
@@ -75,7 +76,7 @@ public class Heatmap extends Pane {
         }
     }
 
-     private HeatMap updateHeatmap(double[][] u, double factor) {
+     private HeatMap updateHeatmap(double[][] u, double factorx, double factory) {
 
         double current = 0;
         int runnings = 3;
@@ -90,47 +91,30 @@ public class Heatmap extends Pane {
                  //current = temperatureUnit.getTemperatureState().getTemperature();
 
                  System.out.println(unit.getLabel());
-                 //u[(int)(unitPositionGlobalPoint3d.x*factor)][(int)(unitPositionGlobalPoint3d.y*factor)] = current;
-                 //spots.add(new SpotsPosition((int)(unitPositionGlobalPoint3d.x*factor), (int)(unitPositionGlobalPoint3d.y*factor), current));
+                 //u[(int)(unitPositionGlobalPoint3d.x*factorx)][(int)(unitPositionGlobalPoint3d.y*factory)] = current;
+                 //spots.add(new SpotsPosition((int)(unitPositionGlobalPoint3d.x*factorx), (int)(unitPositionGlobalPoint3d.y*factory), current));
              } catch (NotAvailableException ex) {
                  //ExceptionPrinter.printHistory("Could not get Position", ex, logger);
              }
         }
 
-         System.out.println("RaumGroesse: " + u.length + " " + u[0].length);
+        System.out.println("RaumGroesse: " + u.length + " " + u[0].length);
         for (SpotsPosition spot : spots) {
             System.out.println("x: " + spot.spotsPositionx + " y: " +spot.spotsPositiony + " value: " + spot.value);
         }
 
         u[0][0] = 1;
-        u[u.length-5][u[0].length-5] = 1;
+        u[u.length-4][0] = 1;
+        u[0][u[0].length-1] = 1;
+        u[u.length-4][u[0].length-1] = 1;
 
         spots.add(new SpotsPosition(0, 0, 1));
-        spots.add(new SpotsPosition(u.length-5, u[0].length-5, 1));
+        spots.add(new SpotsPosition(u.length-4, 0, 1));
+        spots.add(new SpotsPosition(0, u[0].length-1, 1));
+         spots.add(new SpotsPosition(u.length-4, u[0].length-1, 1));
 
         return generateHeatmapWithLibrary(u, spots, runnings);
      }
-
-    private MatrixPane<MatrixChartItem> generateHeatmapOld (double[][] u, int runnings, List<SpotsPosition> spots) {
-        calculateHeatMap(u, runnings, spots);
-
-        List<MatrixChartItem> matrixData = new ArrayList<>();
-        for (int col = 0; col < u.length; col++) {
-            for (int row = 0; row < u[col].length; row++) {
-                matrixData.add(new MatrixChartItem(col, row, u[col][row]));
-            }
-        }
-
-        MatrixPane<MatrixChartItem> matrixHeatMap =
-                new MatrixPane(new MatrixItemSeries(matrixData, ChartType.MATRIX_HEATMAP));
-        matrixHeatMap.getMatrix().setPixelShape(PixelMatrix.PixelShape.SQUARE);
-
-        matrixHeatMap.getMatrix().setColsAndRows(u.length,u[0].length);
-        matrixHeatMap.setPrefSize(TILE_WIDTH/2, TILE_HEIGHT);
-        matrixHeatMap.setMaxSize(TILE_WIDTH/2, TILE_HEIGHT);
-
-        return matrixHeatMap;
-    }
 
 
     private HeatMap generateHeatmapWithLibrary(double[][] u, List<SpotsPosition> spots, int runnings) {
