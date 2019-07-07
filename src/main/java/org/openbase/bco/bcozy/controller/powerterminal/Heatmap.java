@@ -93,12 +93,15 @@ public class Heatmap extends Pane {
                  PowerConsumptionSensor powerConsumptionUnit = (PowerConsumptionSensor) unit;
                  //TemperatureSensor temperatureUnit = (TemperatureSensor) unit;
                  current = powerConsumptionUnit.getPowerConsumptionState().getCurrent() / 16;
-                 current = 1;
                  //current = temperatureUnit.getTemperatureState().getTemperature();
 
                  System.out.println(unit.getLabel());
-                 //u[(int)(unitPositionGlobalPoint3d.x*factorx)][(int)(unitPositionGlobalPoint3d.y*factory)] = current;
-                 //spots.add(new SpotsPosition((int)(unitPositionGlobalPoint3d.x*factorx), (int)(unitPositionGlobalPoint3d.y*factory), current));
+                 unitPositionGlobalPoint3d.y = 10;
+                 if (unitPositionGlobalPoint3d.x >= 0 && (int)(unitPositionGlobalPoint3d.x*factorx) < u.length
+                        && unitPositionGlobalPoint3d.y >= 0 && (int)(unitPositionGlobalPoint3d.y*factory) < u[0].length) {
+                    u[(int)(unitPositionGlobalPoint3d.x*factorx)][(int)(unitPositionGlobalPoint3d.y*factory)] = current;
+                    spots.add(new SpotsPosition((int)(unitPositionGlobalPoint3d.x*factorx), (int)(unitPositionGlobalPoint3d.y*factory), current));
+                 }
              } catch (NotAvailableException ex) {
                  //ExceptionPrinter.printHistory("Could not get Position", ex, logger);
              }
@@ -117,7 +120,7 @@ public class Heatmap extends Pane {
         spots.add(new SpotsPosition(0, 0, 1));
         spots.add(new SpotsPosition(u.length-1, 0, 1));
         spots.add(new SpotsPosition(0, u[0].length-1, 1));
-         spots.add(new SpotsPosition(u.length-1, u[0].length-1, 1));
+        spots.add(new SpotsPosition(u.length-1, u[0].length-1, 1));
 
         return generateHeatmapWithLibrary(u, spots, runnings);
      }
