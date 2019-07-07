@@ -119,9 +119,6 @@ public final class LocationMapPane extends MultiTouchPane implements LocationMap
                 -> this.setTranslateX(this.getTranslateX() - ((oldValue.doubleValue() - newValue.doubleValue()) / 2)));
 
         backgroundPane.getheatmapActiveProperty().addListener((observableValue, oldValue, newValue) -> {
-            System.out.println("NewValue:" + newValue);
-            System.out.println("observable: " + observableValue);
-            System.out.println("OldValue: " + oldValue);
             if (newValue)
                 getChildren().add(heatMap);
             else if (oldValue)
