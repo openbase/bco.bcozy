@@ -118,6 +118,16 @@ public final class LocationMapPane extends MultiTouchPane implements LocationMap
         this.foregroundPane.getMainMenuWidthProperty().addListener((observable, oldValue, newValue)
                 -> this.setTranslateX(this.getTranslateX() - ((oldValue.doubleValue() - newValue.doubleValue()) / 2)));
 
+        backgroundPane.getheatmapActiveProperty().addListener((observableValue, oldValue, newValue) -> {
+            System.out.println("NewValue:" + newValue);
+            System.out.println("observable: " + observableValue);
+            System.out.println("OldValue: " + oldValue);
+            if (newValue)
+                getChildren().add(heatMap);
+            else if (oldValue)
+                getChildren().remove(heatMap);
+        });
+
         this.editOverlay.setPickOnBounds(false);
 
 
@@ -463,13 +473,6 @@ public final class LocationMapPane extends MultiTouchPane implements LocationMap
         });
 
         getChildren().add(editOverlay);
-
-        if (backgroundPane.getheatmapActiveProperty().get()) {
-            System.out.println("heatmap hinzufügen");
-        }
-        getChildren().add(heatMap);
-
-
 
         if (JPService.debugMode()) {
             // debug print

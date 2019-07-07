@@ -106,7 +106,6 @@ public class Heatmap extends Pane {
              }
         }
 
-        System.out.println("RaumGroesse: " + u.length + " " + u[0].length);
         for (SpotsPosition spot : spots) {
             System.out.println("x: " + spot.spotsPositionx + " y: " +spot.spotsPositiony + " value: " + spot.value);
         }
