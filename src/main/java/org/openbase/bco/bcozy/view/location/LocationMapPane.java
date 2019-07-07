@@ -467,11 +467,6 @@ public final class LocationMapPane extends MultiTouchPane implements LocationMap
         if (backgroundPane.getheatmapActiveProperty().get()) {
             System.out.println("heatmap hinzufügen");
         }
-
-        heatMap.setLayoutX(0);
-        heatMap.setTranslateX(-295);
-        heatMap.setLayoutY(0);
-        heatMap.setTranslateY(-295);
         getChildren().add(heatMap);
 
 

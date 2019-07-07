@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.vecmath.Point3d;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Heatmap extends Pane {
@@ -66,6 +67,11 @@ public class Heatmap extends Pane {
 
             double[][] u = new double[(int)(rootBoundingBox.getWidth()*factorx)][(int)(rootBoundingBox.getDepth()*factory)];
 
+
+            this.setLayoutX(0);
+            this.setTranslateX(-295);
+            this.setLayoutY(0);
+            this.setTranslateY(-295);
             this.getChildren().add(updateHeatmap(u, factorx, factory));
 
         } catch (CouldNotPerformException  ex) {
@@ -104,14 +110,14 @@ public class Heatmap extends Pane {
         }
 
         u[0][0] = 1;
-        u[u.length-4][0] = 1;
+        u[u.length-1][0] = 1;
         u[0][u[0].length-1] = 1;
-        u[u.length-4][u[0].length-1] = 1;
+        u[u.length-1][u[0].length-1] = 1;
 
         spots.add(new SpotsPosition(0, 0, 1));
-        spots.add(new SpotsPosition(u.length-4, 0, 1));
+        spots.add(new SpotsPosition(u.length-1, 0, 1));
         spots.add(new SpotsPosition(0, u[0].length-1, 1));
-         spots.add(new SpotsPosition(u.length-4, u[0].length-1, 1));
+         spots.add(new SpotsPosition(u.length-1, u[0].length-1, 1));
 
         return generateHeatmapWithLibrary(u, spots, runnings);
      }
@@ -135,10 +141,31 @@ public class Heatmap extends Pane {
 
         Stop[] stops = new Stop[runnings+1];
         for (int i = 0; i < runnings + 1; i++) {
-            double opacity = 0;
-            if (i != runnings)
-                opacity = u[spot.spotsPositionx+i][spot.spotsPositiony];
-            stops[i] = new Stop(i * 0.1, Color.rgb(255, 255, 255, opacity));
+            double[] opacity = new double[4];
+            if (i != runnings) {
+                if (spot.spotsPositionx+i < u.length)
+                    opacity[0] = u[spot.spotsPositionx+i][spot.spotsPositiony];
+                else
+                    opacity[0] = 1;
+
+                if (spot.spotsPositiony+i < u[spot.spotsPositiony].length)
+                    opacity[1] = u[spot.spotsPositionx][spot.spotsPositiony+i];
+                else
+                    opacity[1] = 1;
+
+                if (spot.spotsPositionx-i > 0)
+                    opacity[2] = u[spot.spotsPositionx-i][spot.spotsPositiony];
+                else
+                    opacity[2] = 1;
+
+                if (spot.spotsPositiony-i > 0)
+                    opacity[3] = u[spot.spotsPositionx][spot.spotsPositiony-i];
+                else
+                    opacity[3] = 1;
+            }
+
+            Arrays.sort(opacity);
+            stops[i] = new Stop(i * 0.1, Color.rgb(255, 255, 255, opacity[0]));
         }
 
         int size = (int) (radius * 2);
