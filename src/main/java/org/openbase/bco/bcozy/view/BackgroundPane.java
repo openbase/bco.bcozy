@@ -23,6 +23,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.util.Pair;
+import org.openbase.bco.bcozy.controller.CenterPaneController;
 import org.openbase.bco.bcozy.controller.powerterminal.PowerChartVisualizationController;
 import org.openbase.bco.bcozy.model.powerterminal.ChartStateModel;
 import org.openbase.bco.bcozy.view.location.LocationMapPane;
@@ -40,6 +41,7 @@ public class BackgroundPane extends StackPane {
 
     private final LocationMapPane locationMapPane;
     private final UnitSymbolsPane unitSymbolsPane;
+    private final ForegroundPane foregroundPane;
     private final SimpleUnitSymbolsPane editingLayerPane;
     private final SimpleUnitSymbolsPane maintenanceLayerPane;
     private Pair<Pane, PowerChartVisualizationController> powerChartPaneAndController;
@@ -57,6 +59,7 @@ public class BackgroundPane extends StackPane {
      * @throws java.lang.InterruptedException
      */
     public BackgroundPane(final ForegroundPane foregroundPane) throws InstantiationException, InterruptedException {
+        this.foregroundPane = foregroundPane;
         heatmapActiveProperty = new SimpleBooleanProperty();
         heatmapActiveProperty.set(false);
         try {
@@ -161,12 +164,19 @@ public class BackgroundPane extends StackPane {
         chartController.initBackgroundPane(this);
     }
 
+    /**
+     * Activates the heatmap, when the AppState is Energy and the heatmap is not activated yet
+     */
     public void activateHeatmap() {
-        this.getChildren().remove(locationMapPane);
-        heatmapActiveProperty.set(true);
-        this.getChildren().add(locationMapPane);
+        if (foregroundPane.getAppState().get() == CenterPaneController.State.ENERGY && !heatmapActiveProperty.get()) {
+            heatmapActiveProperty.set(true);
+            this.getChildren().add(locationMapPane);
+        }
     }
 
+    /**
+     * Deactivates the heatmap, if it has not been deactivated yet
+     */
     public void deactivateHeatmap() {
         if (heatmapActiveProperty.get()) {
             heatmapActiveProperty.set(false);
