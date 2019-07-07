@@ -46,8 +46,7 @@ public class Heatmap extends Pane {
 
 
     public Heatmap() {
-        double factorx = 52;
-        double factory = 43;
+        double conversionFactor = 47;
         try {
             unitPool = new CustomUnitPool();
 
@@ -65,14 +64,14 @@ public class Heatmap extends Pane {
             //Walls
             List<Vec3DDoubleType.Vec3DDouble> floorList = rootLocationConfig.getPlacementConfig().getShape().getFloorList();
 
-            double[][] u = new double[(int)(rootBoundingBox.getWidth()*factorx)][(int)(rootBoundingBox.getDepth()*factory)];
-
+            System.out.println("Raum Breite: " + rootBoundingBox.getWidth() + " Raum Tiefe: " + rootBoundingBox.getDepth());
+            double[][] u = new double[(int)(rootBoundingBox.getDepth()*conversionFactor)][(int)(rootBoundingBox.getWidth()*conversionFactor)];
 
             this.setLayoutX(0);
             this.setTranslateX(-295);
             this.setLayoutY(0);
             this.setTranslateY(-295);
-            this.getChildren().add(updateHeatmap(u, factorx, factory));
+            this.getChildren().add(updateHeatmap(u, conversionFactor));
 
         } catch (CouldNotPerformException  ex) {
             ExceptionPrinter.printHistory("Could not instantiate CustomUnitPool", ex, logger);
@@ -82,7 +81,7 @@ public class Heatmap extends Pane {
         }
     }
 
-     private HeatMap updateHeatmap(double[][] u, double factorx, double factory) {
+     private HeatMap updateHeatmap(double[][] u, double conversionFactor) {
 
         double current = 0;
         int runnings = 3;
@@ -93,14 +92,14 @@ public class Heatmap extends Pane {
                  PowerConsumptionSensor powerConsumptionUnit = (PowerConsumptionSensor) unit;
                  //TemperatureSensor temperatureUnit = (TemperatureSensor) unit;
                  current = powerConsumptionUnit.getPowerConsumptionState().getCurrent() / 16;
+                 current = 1;
                  //current = temperatureUnit.getTemperatureState().getTemperature();
 
                  System.out.println(unit.getLabel());
-                 unitPositionGlobalPoint3d.y = 10;
-                 if (unitPositionGlobalPoint3d.x >= 0 && (int)(unitPositionGlobalPoint3d.x*factorx) < u.length
-                        && unitPositionGlobalPoint3d.y >= 0 && (int)(unitPositionGlobalPoint3d.y*factory) < u[0].length) {
-                    u[(int)(unitPositionGlobalPoint3d.x*factorx)][(int)(unitPositionGlobalPoint3d.y*factory)] = current;
-                    spots.add(new SpotsPosition((int)(unitPositionGlobalPoint3d.x*factorx), (int)(unitPositionGlobalPoint3d.y*factory), current));
+                 if (unitPositionGlobalPoint3d.x >= 0 && (int)(unitPositionGlobalPoint3d.x*conversionFactor) < u[0].length
+                        && unitPositionGlobalPoint3d.y >= 0 && (int)(unitPositionGlobalPoint3d.y*conversionFactor) < u.length) {
+                     u[(int)(unitPositionGlobalPoint3d.y*conversionFactor)][(int)(unitPositionGlobalPoint3d.x*conversionFactor)] = current;
+                     spots.add(new SpotsPosition((int)(unitPositionGlobalPoint3d.y*conversionFactor), (int)(unitPositionGlobalPoint3d.x*conversionFactor), current));
                  }
              } catch (NotAvailableException ex) {
                  //ExceptionPrinter.printHistory("Could not get Position", ex, logger);
@@ -111,16 +110,6 @@ public class Heatmap extends Pane {
         for (SpotsPosition spot : spots) {
             System.out.println("x: " + spot.spotsPositionx + " y: " +spot.spotsPositiony + " value: " + spot.value);
         }
-
-        u[0][0] = 1;
-        u[u.length-1][0] = 1;
-        u[0][u[0].length-1] = 1;
-        u[u.length-1][u[0].length-1] = 1;
-
-        spots.add(new SpotsPosition(0, 0, 1));
-        spots.add(new SpotsPosition(u.length-1, 0, 1));
-        spots.add(new SpotsPosition(0, u[0].length-1, 1));
-        spots.add(new SpotsPosition(u.length-1, u[0].length-1, 1));
 
         return generateHeatmapWithLibrary(u, spots, runnings);
      }
