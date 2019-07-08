@@ -5,6 +5,9 @@ import org.openbase.bco.bcozy.model.powerterminal.ChartStateModel;
 
 import java.util.List;
 
+/**
+ * Controller for displaying a value by the health of a tree.
+ */
 public class TreeChartController extends TilesFxChartController {
     public TreeChartController() {
     }

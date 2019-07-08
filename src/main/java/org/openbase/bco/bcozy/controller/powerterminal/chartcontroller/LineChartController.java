@@ -17,9 +17,7 @@ public class LineChartController extends TilesFxChartController {
     @Override
     public void init(ChartStateModel chartStateModel) {
         DateRange dateRange = chartStateModel.getDateRange();
-//        setView(new TilesFxView(LanguageSelection.getLocalized("powerterminal.chartHeader"),
-//                Tile.SkinType.SMOOTHED_CHART, LanguageSelection.getProperty(dateRange.getDefaultIntervalSize().name())));
-        setupView(LanguageSelection.getLocalized("powerterminal.chartHeader"),
+        setupView(LanguageSelection.getLocalized(POWERTERMINAL_CHART_HEADER_IDENTIFIER),
                 Tile.SkinType.SMOOTHED_CHART, LanguageSelection.getProperty(dateRange.getDefaultIntervalSize().name()));
 
         List<ChartData> data = PowerTerminalDBService.getAverageConsumptionForDateRange(dateRange);
@@ -29,7 +27,6 @@ public class LineChartController extends TilesFxChartController {
     @Override
     public void setChartData(List<ChartData> data) {
         XYChart.Series<String, Number> series = new XYChart.Series();
-        System.out.println("========> Set LineChart Data");
         for (ChartData datum : data) {
             series.getData().add(new XYChart.Data(datum.getName(), datum.getValue()));
         }
@@ -37,7 +34,7 @@ public class LineChartController extends TilesFxChartController {
         Tile view = TileBuilder.create()
                 .skinType(Tile.SkinType.SMOOTHED_CHART)
                 .prefSize(TILE_WIDTH, TILE_HEIGHT)
-                .title(LanguageSelection.getLocalized("powerterminal.chartHeader"))
+                .title(LanguageSelection.getLocalized(POWERTERMINAL_CHART_HEADER_IDENTIFIER))
                 .smoothing(false)
                 .series(series)
                 .build();

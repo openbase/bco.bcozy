@@ -55,7 +55,7 @@ public class PowerChartVisualizationController extends AbstractFXController {
 
         chartStateModel.dateRangeProperty().addListener((ChangeListener<? super DateRange>) (dont, care, newDateRange) -> {
             //todo: replace global updatechart Method with single overloaded ones for the different changable values
-            if(chartStateModel.getVisualizationType() == VisualizationType.LINE_CHART) {
+            if (chartStateModel.getVisualizationType() == VisualizationType.LINE_CHART) {
                 setUpChart(VisualizationType.LINE_CHART);
             } else {
                 chartController.updateChart(chartStateModel);

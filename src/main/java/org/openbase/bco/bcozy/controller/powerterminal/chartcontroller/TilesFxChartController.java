@@ -18,11 +18,15 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Controller basics for charts from the TilesFx Library.
+ */
 public abstract class TilesFxChartController implements ChartController{
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TilesFxChartController.class);
     public static final int TILE_WIDTH = (int) Screen.getPrimary().getVisualBounds().getWidth();
     public static final int TILE_HEIGHT = (int) Screen.getPrimary().getVisualBounds().getHeight();
+    public static final String POWERTERMINAL_CHART_HEADER_IDENTIFIER = "powerterminal.chartHeader";
     private Tile view;
 
     @Override
@@ -50,6 +54,12 @@ public abstract class TilesFxChartController implements ChartController{
         return view;
     }
 
+    /**
+     * Initializes the displayed TilesFx Tile.
+     * @param header Heading text
+     * @param skinType Type of Tile that is displayed
+     * @param text Additional text that is displayed below the Tile
+     */
     public void setupView(String header, Tile.SkinType skinType, ReadOnlyStringProperty text) {
         view = new Tile();
         view.setPrefSize(TILE_WIDTH, TILE_HEIGHT);

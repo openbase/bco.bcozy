@@ -16,6 +16,7 @@ import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.Unit;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.VisualizationType;
 import org.openbase.bco.bcozy.model.LanguageSelection;
 import org.openbase.bco.bcozy.model.powerterminal.ChartStateModel;
+import org.openbase.bco.bcozy.view.powerterminal.LocalizedEnumCellFactory;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.visual.javafx.control.AbstractFXController;
@@ -24,7 +25,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 
 /**
- * Controller that controls the right sidebar of the power terminal
+ * Controller for the power terminal sidebar pane, handling and creating various bindings for the chartStateModel.
  */
 public class PowerTerminalSidebarPaneController extends AbstractFXController {
 
@@ -114,6 +115,13 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
         selectEndDatePicker.disableProperty().bind(multipleDataNotOk);
     }
 
+    /**
+     * Fills a ComboBox with custom cells.
+     * @param comboBox ComboBox that will be set up
+     * @param items Items to fill the ComboBox with
+     * @param index Per Default selected cell index
+     * @param <T> Type contained by the custom cells
+     */
     private <T extends Enum> void setupComboBox(ComboBox<T> comboBox, T[] items, int index) {
         LocalizedEnumCellFactory<T> cellFactory = new LocalizedEnumCellFactory<>(LanguageSelection::getProperty);
         comboBox.setButtonCell(cellFactory.call(null));

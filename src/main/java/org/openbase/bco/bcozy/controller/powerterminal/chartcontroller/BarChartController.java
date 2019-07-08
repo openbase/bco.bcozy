@@ -9,13 +9,16 @@ import org.openbase.bco.bcozy.model.powerterminal.PowerTerminalDBService;
 
 import java.util.List;
 
+/**
+ * Controller for displaying a BarChart.
+ */
 public class BarChartController extends TilesFxChartController {
 
     @Override
     public void init(ChartStateModel chartStateModel) {
         DateRange dateRange = chartStateModel.getDateRange();
 
-        setupView(LanguageSelection.getLocalized("powerterminal.chartHeader"),
+        setupView(LanguageSelection.getLocalized(POWERTERMINAL_CHART_HEADER_IDENTIFIER),
                 Tile.SkinType.MATRIX, LanguageSelection.getProperty(dateRange.getDefaultIntervalSize().name()));
         getView().setAnimated(true);
 
