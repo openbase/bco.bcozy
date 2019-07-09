@@ -1,9 +1,7 @@
 package org.openbase.bco.bcozy.controller.powerterminal.chartcontroller;
 
-import eu.hansolo.tilesfx.chart.ChartData;
+import org.openbase.bco.bcozy.controller.powerterminal.PowerChartVisualizationController;
 import org.openbase.bco.bcozy.model.powerterminal.ChartStateModel;
-
-import java.util.List;
 
 /**
  * Controller for displaying a value by the health of a tree.
@@ -13,12 +11,8 @@ public class TreeChartController extends TilesFxChartController {
     }
 
     @Override
-    public void init(ChartStateModel chartStateModel) {
+    public void init(ChartStateModel chartStateModel, PowerChartVisualizationController powerChartVisualizationController) {
 
     }
 
-    @Override
-    public void setChartData(List<ChartData> data) {
-
-    }
 }

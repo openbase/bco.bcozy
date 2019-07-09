@@ -1,6 +1,7 @@
 package org.openbase.bco.bcozy.controller.powerterminal.chartcontroller;
 
 import javafx.scene.Node;
+import org.openbase.bco.bcozy.controller.powerterminal.PowerChartVisualizationController;
 import org.openbase.bco.bcozy.model.powerterminal.ChartStateModel;
 
 /**
@@ -11,8 +12,9 @@ public interface ChartController {
     /**
      * Initializes the controlled visualization with data
      * @param chartStateModel ChartStateModel containing the data
+     * @param powerChartVisualizationController
      */
-    void init(ChartStateModel chartStateModel);
+    void init(ChartStateModel chartStateModel, PowerChartVisualizationController powerChartVisualizationController);
 
     /**
      * Enables automatic refreshment of the displayed data

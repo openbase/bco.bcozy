@@ -55,19 +55,19 @@ public class PowerChartVisualizationController extends AbstractFXController {
 
         chartStateModel.dateRangeProperty().addListener((ChangeListener<? super DateRange>) (dont, care, newDateRange) -> {
             //todo: replace global updatechart Method with single overloaded ones for the different changable values
-            if (chartStateModel.getVisualizationType() == VisualizationType.LINE_CHART) {
-                setUpChart(VisualizationType.LINE_CHART);
-            } else {
-                chartController.updateChart(chartStateModel);
-            }
+            chartController.updateChart(chartStateModel);
         });
 
         setUpChart(DEFAULT_VISUALISATION_TYPE);
     }
 
+    public FlowGridPane getPane() {
+        return pane;
+    }
+
     private void setUpChart(VisualizationType visualizationType) {
         chartController = ChartControllerFactory.getChartController(visualizationType);
-        chartController.init(chartStateModel);
+        chartController.init(chartStateModel, this);
         chartController.enableDataRefresh(30000, chartStateModel);
         pane.getChildren().clear();
         pane.getChildren().add(chartController.getView());

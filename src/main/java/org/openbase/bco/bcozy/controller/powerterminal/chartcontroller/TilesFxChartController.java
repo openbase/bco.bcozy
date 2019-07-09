@@ -3,7 +3,10 @@ package org.openbase.bco.bcozy.controller.powerterminal.chartcontroller;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.chart.ChartData;
 import javafx.application.Platform;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.scene.Node;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Screen;
 import org.openbase.bco.bcozy.model.LanguageSelection;
@@ -16,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -28,25 +32,27 @@ public abstract class TilesFxChartController implements ChartController{
     public static final int TILE_HEIGHT = (int) Screen.getPrimary().getVisualBounds().getHeight();
     public static final String POWERTERMINAL_CHART_HEADER_IDENTIFIER = "powerterminal.chartHeader";
     private Tile view;
+    private  ScheduledFuture refreshSchedule;
+
 
     @Override
     public void enableDataRefresh(long interval, ChartStateModel chartStateModel) {
         try {
-            GlobalScheduledExecutorService.scheduleAtFixedRate(() -> Platform.runLater(() -> updateChart(chartStateModel)),
-                    50, interval, TimeUnit.MILLISECONDS);
+            if (refreshSchedule != null) {
+                refreshSchedule.cancel(true);
+            }
+            refreshSchedule = GlobalScheduledExecutorService.scheduleAtFixedRate(() -> Platform.runLater(() -> updateChart(chartStateModel)),
+                    10, interval, TimeUnit.MILLISECONDS);
         } catch (NotAvailableException ex) {
             ExceptionPrinter.printHistory("Could not refresh power chart data", ex, LOGGER);
         }
     }
 
+
     @Override
     public void updateChart(ChartStateModel chartStateModel) {
-        view.getChartData().clear();
-        view.getChartData().setAll(PowerTerminalDBService.getAverageConsumptionForDateRange(chartStateModel.getDateRange()));
-    }
-
-    public void setChartData(List<ChartData> data) {
-        view.addChartData(data);
+        this.view.getChartData().clear();
+        this.view.getChartData().setAll(PowerTerminalDBService.getAverageConsumptionForDateRange(chartStateModel.getDateRange()));
     }
 
     @Override
