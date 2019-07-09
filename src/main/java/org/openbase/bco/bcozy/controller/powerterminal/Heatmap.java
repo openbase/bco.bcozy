@@ -6,6 +6,7 @@ import eu.hansolo.fx.charts.MatrixPane;
 import eu.hansolo.fx.charts.PixelMatrix;
 import eu.hansolo.fx.charts.data.MatrixChartItem;
 import eu.hansolo.fx.charts.heatmap.HeatMap;
+import eu.hansolo.fx.charts.heatmap.OpacityDistribution;
 import eu.hansolo.fx.charts.series.MatrixItemSeries;
 import javafx.animation.Interpolator;
 import javafx.scene.image.Image;
@@ -16,6 +17,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Stop;
 import javafx.stage.Screen;
 import org.openbase.bco.bcozy.controller.powerterminal.heatmapattributes.SpotsPosition;
+import org.openbase.bco.bcozy.controller.powerterminal.heatmapattributes.Wall;
 import org.openbase.bco.dal.lib.layer.unit.PowerConsumptionSensor;
 import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
 import org.openbase.bco.dal.remote.layer.unit.CustomUnitPool;
@@ -61,17 +63,18 @@ public class Heatmap extends Pane {
             UnitConfigType.UnitConfig rootLocationConfig = Registries.getUnitRegistry().getRootLocationConfig();
             AxisAlignedBoundingBox3DFloatType.AxisAlignedBoundingBox3DFloat rootBoundingBox = rootLocationConfig.getPlacementConfig().getShape().getBoundingBox();
 
-            //Walls
-            List<Vec3DDoubleType.Vec3DDouble> floorList = rootLocationConfig.getPlacementConfig().getShape().getFloorList();
-
             System.out.println("Raum Breite: " + rootBoundingBox.getWidth() + " Raum Tiefe: " + rootBoundingBox.getDepth());
             double[][] u = new double[(int)(rootBoundingBox.getDepth()*conversionFactor)][(int)(rootBoundingBox.getWidth()*conversionFactor)];
+
+            //Calculate wall positions
+            List<Vec3DDoubleType.Vec3DDouble> floorList = rootLocationConfig.getPlacementConfig().getShape().getFloorList();
+            Wall walls = new Wall(floorList, conversionFactor);
 
             this.setLayoutX(0);
             this.setTranslateX(-295);
             this.setLayoutY(0);
             this.setTranslateY(-295);
-            this.getChildren().add(updateHeatmap(u, conversionFactor));
+            this.getChildren().add(updateHeatmap(u, conversionFactor, walls));
 
         } catch (CouldNotPerformException  ex) {
             ExceptionPrinter.printHistory("Could not instantiate CustomUnitPool", ex, logger);
@@ -81,7 +84,7 @@ public class Heatmap extends Pane {
         }
     }
 
-     private HeatMap updateHeatmap(double[][] u, double conversionFactor) {
+     private HeatMap updateHeatmap(double[][] u, double conversionFactor, Wall walls) {
 
         double current = 0;
         int runnings = 3;
@@ -110,15 +113,15 @@ public class Heatmap extends Pane {
             System.out.println("x: " + spot.spotsPositionx + " y: " +spot.spotsPositiony + " value: " + spot.value);
         }
 
-        return generateHeatmapWithLibrary(u, spots, runnings);
+        return generateHeatmapWithLibrary(u, spots, runnings, walls);
      }
 
 
-    private HeatMap generateHeatmapWithLibrary(double[][] u, List<SpotsPosition> spots, int runnings) {
-        calculateHeatMap(u, runnings, spots);
+    private HeatMap generateHeatmapWithLibrary(double[][] u, List<SpotsPosition> spots, int runnings, Wall walls) {
+        calculateHeatMap(u, runnings, spots, walls);
 
-        HeatMap heatmap = new eu.hansolo.fx.charts.heatmap.HeatMap();
-        heatmap.setSize(TILE_WIDTH, TILE_HEIGHT);
+        HeatMap heatmap = new eu.hansolo.fx.charts.heatmap.HeatMap(TILE_WIDTH, TILE_HEIGHT);
+        heatmap.setOpacity(0.8);
 
         for (int j = 0; j < spots.size(); j++) {
             SpotsPosition spot = spots.get(j);
@@ -174,6 +177,7 @@ public class Heatmap extends Pane {
                     if (Double.compare(fraction, stops[i].getOffset()) >= 0 && Double.compare(fraction, stops[i + 1].getOffset()) <= 0) {
                         pixelColor = (Color) Interpolator.LINEAR.interpolate(stops[i].getColor(), stops[i + 1].getColor(), (fraction - stops[i].getOffset()) / 0.1);
                         pixelWriter.setColor(x, y, pixelColor);
+                        //TODO set Point to 0 if outside room
                         break;
                     }
                 }
@@ -182,7 +186,7 @@ public class Heatmap extends Pane {
         return raster;
     }
 
-    private void calculateHeatMap (double[][] u, int runnings, List<SpotsPosition> spots) {
+    private void calculateHeatMap (double[][] u, int runnings, List<SpotsPosition> spots, Wall walls) {
         //CFL Bedingung: delta_t/h^2 <= 1/4
         double h = 1;
         double delta_t = 0.1;
