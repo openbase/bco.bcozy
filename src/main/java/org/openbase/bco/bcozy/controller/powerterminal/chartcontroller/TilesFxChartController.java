@@ -32,20 +32,18 @@ public abstract class TilesFxChartController implements ChartController{
     public static final int TILE_HEIGHT = (int) Screen.getPrimary().getVisualBounds().getHeight();
     public static final String POWERTERMINAL_CHART_HEADER_IDENTIFIER = "powerterminal.chartHeader";
     private Tile view;
-    private  ScheduledFuture refreshSchedule;
 
 
     @Override
-    public void enableDataRefresh(long interval, ChartStateModel chartStateModel) {
+    public ScheduledFuture enableDataRefresh(long interval, ChartStateModel chartStateModel) {
+        ScheduledFuture refreshSchedule = null;
         try {
-            if (refreshSchedule != null) {
-                refreshSchedule.cancel(true);
-            }
             refreshSchedule = GlobalScheduledExecutorService.scheduleAtFixedRate(() -> Platform.runLater(() -> updateChart(chartStateModel)),
                     10, interval, TimeUnit.MILLISECONDS);
         } catch (NotAvailableException ex) {
             ExceptionPrinter.printHistory("Could not refresh power chart data", ex, LOGGER);
         }
+        return refreshSchedule;
     }
 
 

@@ -12,6 +12,8 @@ import org.openbase.bco.bcozy.model.powerterminal.ChartStateModel;
 import org.openbase.jul.exception.*;
 import org.openbase.jul.visual.javafx.control.AbstractFXController;
 
+import java.util.concurrent.ScheduledFuture;
+
 /**
  * Controller that manages the interaction between the PowerTerminalSidebarPane and the different charttypes by listening
  * to changes of the sidebars properties
@@ -20,6 +22,8 @@ public class PowerChartVisualizationController extends AbstractFXController {
 
     public static final VisualizationType DEFAULT_VISUALISATION_TYPE = VisualizationType.LINE_CHART;
     public static final String INFLUXDB_FIELD_CONSUMPTION = "consumption";
+
+    private ScheduledFuture refreshScheduler;
 
     @FXML
     FlowGridPane pane;
@@ -68,7 +72,10 @@ public class PowerChartVisualizationController extends AbstractFXController {
     private void setUpChart(VisualizationType visualizationType) {
         chartController = ChartControllerFactory.getChartController(visualizationType);
         chartController.init(chartStateModel, this);
-        chartController.enableDataRefresh(30000, chartStateModel);
+        if (refreshScheduler != null) {
+            refreshScheduler.cancel(true);
+        }
+        refreshScheduler = chartController.enableDataRefresh(30000, chartStateModel);
         pane.getChildren().clear();
         pane.getChildren().add(chartController.getView());
     }

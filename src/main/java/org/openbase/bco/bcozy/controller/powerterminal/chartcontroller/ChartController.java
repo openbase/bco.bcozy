@@ -4,6 +4,8 @@ import javafx.scene.Node;
 import org.openbase.bco.bcozy.controller.powerterminal.PowerChartVisualizationController;
 import org.openbase.bco.bcozy.model.powerterminal.ChartStateModel;
 
+import java.util.concurrent.ScheduledFuture;
+
 /**
  * Controller for charts
  */
@@ -21,7 +23,7 @@ public interface ChartController {
      * @param interval Interval of the refreshes
      * @param chartStateModel ChartStateModel from which to reload the data
      */
-    void enableDataRefresh(long interval, ChartStateModel chartStateModel);
+    ScheduledFuture enableDataRefresh(long interval, ChartStateModel chartStateModel);
 
     /**
      * Manual update of the displayed data
