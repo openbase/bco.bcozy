@@ -9,9 +9,11 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Screen;
+import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.Unit;
 import org.openbase.bco.bcozy.model.LanguageSelection;
 import org.openbase.bco.bcozy.model.powerterminal.ChartStateModel;
 import org.openbase.bco.bcozy.model.powerterminal.PowerTerminalDBService;
+import org.openbase.bco.bcozy.model.powerterminal.UnitConverter;
 import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.schedule.GlobalScheduledExecutorService;
@@ -50,7 +52,7 @@ public abstract class TilesFxChartController implements ChartController{
     @Override
     public void updateChart(ChartStateModel chartStateModel) {
         this.view.getChartData().clear();
-        this.view.getChartData().setAll(PowerTerminalDBService.getAverageConsumptionForDateRange(chartStateModel.getDateRange()));
+        this.view.getChartData().setAll(UnitConverter.convert(chartStateModel.getUnit(), PowerTerminalDBService.getAverageConsumptionForDateRange(chartStateModel.getDateRange())));
     }
 
     @Override

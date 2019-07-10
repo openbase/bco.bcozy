@@ -10,6 +10,7 @@ import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.DateRange
 import org.openbase.bco.bcozy.model.LanguageSelection;
 import org.openbase.bco.bcozy.model.powerterminal.ChartStateModel;
 import org.openbase.bco.bcozy.model.powerterminal.PowerTerminalDBService;
+import org.openbase.bco.bcozy.model.powerterminal.UnitConverter;
 
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class LineChartController extends TilesFxChartController {
 
     @Override
     public void updateChart(ChartStateModel chartStateModel) {
-        List<ChartData> data = PowerTerminalDBService.getAverageConsumptionForDateRange(chartStateModel.getDateRange());
+        List<ChartData> data = UnitConverter.convert(chartStateModel.getUnit(), PowerTerminalDBService.getAverageConsumptionForDateRange(chartStateModel.getDateRange()));
         XYChart.Series<String, Number> series = new XYChart.Series();
         for (ChartData datum : data) {
             series.getData().add(new XYChart.Data(datum.getName(), datum.getValue()));

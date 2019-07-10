@@ -61,8 +61,8 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
     @Override
     public void initContent() throws InitializationException {
         setupComboBox(selectVisualizationTypeBox, VisualizationType.getSelectableTypes(), 2);
-        setupComboBox(selectGranularityBox, Granularity.values(), 0);
-        setupComboBox(selectUnitBox, Unit.values(), 0);
+        setupComboBox(selectGranularityBox, Granularity.values(), 2);
+        setupComboBox(selectUnitBox, Unit.values(), 1);
 
         selectStartDatePicker.disableProperty().bind(dateNowCheckBox.selectedProperty());
         selectEndDatePicker.disableProperty().bind(dateNowCheckBox.selectedProperty());

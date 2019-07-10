@@ -16,24 +16,24 @@ public class UnitConverter {
             Unit.MONEY, UnitConverter::convertToCosts);
     public static final double EURO_PER_KILOWATTHOUR = 0.3;
     public static final double LIGHTBULB_POWER_DRAW_IN_WATT = 9.5;
-    public static final int WATT_HOURS_PER_KILOWATTHOUR = 1000;
+    public static final double WATT_HOURS_PER_KILOWATTHOUR = 1000.0;
 
     public static List<ChartData> convert (Unit targetUnit, List<ChartData> data) {
         return converterMap.get(targetUnit).apply(data);
     }
 
     private static List<ChartData> convertToEnergy (List<ChartData> data) {
-        return data.stream().map((datum) -> new ChartData(datum.getValue() / WATT_HOURS_PER_KILOWATTHOUR))
+        return data.stream().map((datum) -> new ChartData(datum.getName(), datum.getValue() / WATT_HOURS_PER_KILOWATTHOUR))
                 .collect(Collectors.toList());
     }
 
     private static List<ChartData> convertToCosts (List<ChartData> data) {
-        return data.stream().map((datum) -> new ChartData((datum.getValue() / WATT_HOURS_PER_KILOWATTHOUR) * EURO_PER_KILOWATTHOUR))
+        return data.stream().map((datum) -> new ChartData(datum.getName(), (datum.getValue() / WATT_HOURS_PER_KILOWATTHOUR) * EURO_PER_KILOWATTHOUR))
                 .collect(Collectors.toList());
     }
 
     private static List<ChartData> convertToLightBulbs (List<ChartData> data) {
-        return data.stream().map((datum) -> new ChartData(datum.getValue() / LIGHTBULB_POWER_DRAW_IN_WATT))
+        return data.stream().map((datum) -> new ChartData(datum.getName(), datum.getValue() / LIGHTBULB_POWER_DRAW_IN_WATT))
                 .collect(Collectors.toList());
     }
 

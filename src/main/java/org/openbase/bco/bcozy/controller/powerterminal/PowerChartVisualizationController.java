@@ -5,6 +5,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.stage.Screen;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.DateRange;
+import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.Unit;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.VisualizationType;
 import org.openbase.bco.bcozy.controller.powerterminal.chartcontroller.ChartController;
 import org.openbase.bco.bcozy.controller.powerterminal.chartcontroller.ChartControllerFactory;
@@ -57,10 +58,12 @@ public class PowerChartVisualizationController extends AbstractFXController {
                     setUpChart(newVisualizationType);
                 });
 
-        chartStateModel.dateRangeProperty().addListener((ChangeListener<? super DateRange>) (dont, care, newDateRange) -> {
+        chartStateModel.dateRangeProperty().addListener((ChangeListener<? super DateRange>) (dont, care, newDateRange) ->
             //todo: replace global updatechart Method with single overloaded ones for the different changable values
-            chartController.updateChart(chartStateModel);
-        });
+            chartController.updateChart(chartStateModel)
+        );
+
+        chartStateModel.unitProperty().addListener((source, oldValue, newValue) -> chartController.updateChart(chartStateModel));
 
         setUpChart(DEFAULT_VISUALISATION_TYPE);
     }
