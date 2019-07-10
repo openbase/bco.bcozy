@@ -1,13 +1,7 @@
 package org.openbase.bco.bcozy.controller.powerterminal;
 
 import com.google.protobuf.Message;
-import eu.hansolo.fx.charts.ChartType;
-import eu.hansolo.fx.charts.MatrixPane;
-import eu.hansolo.fx.charts.PixelMatrix;
-import eu.hansolo.fx.charts.data.MatrixChartItem;
 import eu.hansolo.fx.charts.heatmap.HeatMap;
-import eu.hansolo.fx.charts.heatmap.OpacityDistribution;
-import eu.hansolo.fx.charts.series.MatrixItemSeries;
 import javafx.animation.Interpolator;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelWriter;
@@ -17,12 +11,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Stop;
 import javafx.stage.Screen;
 import org.openbase.bco.bcozy.controller.powerterminal.heatmapattributes.SpotsPosition;
-import org.openbase.bco.bcozy.controller.powerterminal.heatmapattributes.Wall;
 import org.openbase.bco.dal.lib.layer.unit.PowerConsumptionSensor;
 import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
 import org.openbase.bco.dal.remote.layer.unit.CustomUnitPool;
 import org.openbase.bco.registry.remote.Registries;
-import org.openbase.bco.registry.unit.lib.UnitRegistry;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
@@ -32,7 +24,6 @@ import org.openbase.type.domotic.unit.UnitTemplateType;
 import org.openbase.type.domotic.unit.location.LocationConfigType;
 import org.openbase.type.geometry.AxisAlignedBoundingBox3DFloatType;
 import org.openbase.type.math.Vec3DDoubleType;
-import org.openbase.type.spatial.ShapeType;
 import org.slf4j.LoggerFactory;
 
 import javax.vecmath.Point3d;
@@ -44,14 +35,13 @@ public class Heatmap extends Pane {
 
     private CustomUnitPool unitPool;
 
-    public static final int TILE_WIDTH = (int) Screen.getPrimary().getVisualBounds().getWidth();
-    public static final int TILE_HEIGHT = (int) Screen.getPrimary().getVisualBounds().getHeight();
+    public final int radiusSpots = 100;
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(eu.hansolo.fx.charts.heatmap.HeatMap.class);
 
 
     public Heatmap() {
-        double conversionFactor = 47;
+        final double conversionFactor = 47;
         try {
             unitPool = new CustomUnitPool();
 
@@ -91,9 +81,12 @@ public class Heatmap extends Pane {
             if (locationType.equals(LocationConfigType.LocationConfig.LocationType.TILE))
             {
                 List<Vec3DDoubleType.Vec3DDouble> floorList = roomConfig.getPlacementConfig().getShape().getFloorList();
-                // System.out.println("nachster raum:");
+                double x = roomConfig.getPlacementConfig().getPose().getTranslation().getX();
+                double y = roomConfig.getPlacementConfig().getPose().getTranslation().getY();
+                System.out.println("x offset: " + x);
+                System.out.println("y offset: " + y);
                 for (Vec3DDoubleType.Vec3DDouble floor : floorList) {
-                    //System.out.println("X wert: " + floor.getX() + " Y wert: " + floor.getY());
+                    System.out.println("X wert: " + floor.getX() + " Y wert: " + floor.getY());
                 }
             }
         }
@@ -109,18 +102,32 @@ public class Heatmap extends Pane {
                  Point3d unitPositionGlobalPoint3d = unit.getUnitPositionGlobalPoint3d();
                  PowerConsumptionSensor powerConsumptionUnit = (PowerConsumptionSensor) unit;
                  current = powerConsumptionUnit.getPowerConsumptionState().getCurrent() / 16;
-                 current = 1;
 
                  System.out.println(unit.getLabel());
                  if (unitPositionGlobalPoint3d.x >= 0 && (int)(unitPositionGlobalPoint3d.x*conversionFactor) < u[0].length
                         && unitPositionGlobalPoint3d.y >= 0 && (int)(unitPositionGlobalPoint3d.y*conversionFactor) < u.length) {
-                     u[(int)(unitPositionGlobalPoint3d.y*conversionFactor)][(int)(unitPositionGlobalPoint3d.x*conversionFactor)] = current;
-                     spots.add(new SpotsPosition((int)(unitPositionGlobalPoint3d.y*conversionFactor), (int)(unitPositionGlobalPoint3d.x*conversionFactor), current));
+                     //u[(int)(unitPositionGlobalPoint3d.y*conversionFactor)][(int)(unitPositionGlobalPoint3d.x*conversionFactor)] = current;
+                     //spots.add(new SpotsPosition((int)(unitPositionGlobalPoint3d.y*conversionFactor), (int)(unitPositionGlobalPoint3d.x*conversionFactor), current));
                  }
              } catch (NotAvailableException ex) {
                  //ExceptionPrinter.printHistory("Could not get Position", ex, logger);
              }
         }
+
+        u[0][0] = 1;
+        spots.add(new SpotsPosition(0,0,1));
+
+         u[0][u[0].length-1] = 1;
+         spots.add(new SpotsPosition(0,u[0].length-1,1));
+
+         u[u.length/2][u[0].length/2] = 1;
+         spots.add(new SpotsPosition(u.length/2, u[0].length/2, 1));
+
+         u[u.length-1][0] = 1;
+         spots.add(new SpotsPosition(u.length-1, 0, 1));
+
+         u[u.length-1][u[0].length-1] = 1;
+         spots.add(new SpotsPosition(u.length-1,u[0].length-1,1));
 
         for (SpotsPosition spot : spots) {
             System.out.println("x: " + spot.spotsPositionx + " y: " +spot.spotsPositiony + " value: " + spot.value);
@@ -133,18 +140,19 @@ public class Heatmap extends Pane {
     private HeatMap generateHeatmapWithLibrary(double[][] u, List<SpotsPosition> spots, int runnings) {
         calculateHeatMap(u, runnings, spots);
 
-        HeatMap heatmap = new eu.hansolo.fx.charts.heatmap.HeatMap(TILE_WIDTH, TILE_HEIGHT);
-        heatmap.setOpacity(0.8);
+        //TODO: Don't hardcode width and height
+        HeatMap heatmap = new eu.hansolo.fx.charts.heatmap.HeatMap(433, 397);
+        heatmap.setOpacity(1);
 
         for (int j = 0; j < spots.size(); j++) {
             SpotsPosition spot = spots.get(j);
-            heatmap.addSpot(spot.spotsPositionx, spot.spotsPositiony, createEventImage(runnings, u, spot), 295, 295);
+            heatmap.addSpot(spot.spotsPositionx, spot.spotsPositiony, createEventImage(runnings, u, spot), radiusSpots*2.95, radiusSpots*2.95);
         }
         return heatmap;
     }
 
     public Image createEventImage(int runnings, double[][] u, SpotsPosition spot) {
-        Double radius = (double) runnings*100;
+        Double radius = (double) runnings*radiusSpots;
 
         Stop[] stops = new Stop[runnings+1];
         for (int i = 0; i < runnings + 1; i++) {
@@ -188,9 +196,16 @@ public class Heatmap extends Pane {
                 double fraction = maxDistFactor * distance;
                 for (int i = 0; i < stops.length-1; i++) {
                     if (Double.compare(fraction, stops[i].getOffset()) >= 0 && Double.compare(fraction, stops[i + 1].getOffset()) <= 0) {
-                        pixelColor = (Color) Interpolator.LINEAR.interpolate(stops[i].getColor(), stops[i + 1].getColor(), (fraction - stops[i].getOffset()) / 0.1);
+                        int xGlobal = (int) (spot.spotsPositionx + (size/2 - x));
+                        int yGlobal = (int) (spot.spotsPositiony + (size/2 - y));
+                        if (yGlobal>(u[0].length/2-2) && yGlobal<(u[0].length/2+2)) {
+                            pixelColor = new Color(0,0,0,1);
+                        }
+                        else
+                        {
+                            pixelColor = (Color) Interpolator.LINEAR.interpolate(stops[i].getColor(), stops[i + 1].getColor(), (fraction - stops[i].getOffset()) / 0.1);
+                        }
                         pixelWriter.setColor(x, y, pixelColor);
-                        //TODO set Point to 0 if outside room
                         break;
                     }
                 }
