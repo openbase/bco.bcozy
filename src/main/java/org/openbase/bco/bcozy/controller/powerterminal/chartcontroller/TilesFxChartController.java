@@ -45,6 +45,7 @@ public abstract class TilesFxChartController implements ChartController{
 
     @Override
     public void updateChart(ChartStateModel chartStateModel) {
+        //todo: Update charts from within a thread with GlobalSched,,.submit() and call update from within Platform.runLater() see #92
         this.view.getChartData().clear();
         this.view.getChartData().setAll(UnitConverter.convert(chartStateModel.getUnit(), PowerTerminalDBService.getAverageConsumptionForDateRange(chartStateModel.getDateRange())));
     }
