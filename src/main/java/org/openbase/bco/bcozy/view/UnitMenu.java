@@ -20,7 +20,9 @@ package org.openbase.bco.bcozy.view;
 
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import de.jensd.fx.glyphs.materialicons.MaterialIcon;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
@@ -52,11 +54,11 @@ public class UnitMenu extends VBox {
     private final SVGGlyphIcon collapseIcon;
     private FloatingButton collapseBtn;
     private HBox collapseButtons;
-    private boolean maximized;
     private HBox floatingButtons;
     private final HiddenSidesPane hiddenSidesPane;
-    private final double height;
-    private final double width;
+    private final double unitMenuMaxHeight;
+    private final double unitMenuMaxWidth;
+    private final BooleanProperty isMaximized;
 
 
     /**
@@ -71,9 +73,10 @@ public class UnitMenu extends VBox {
         this.setMinWidth(width);
         this.setPrefHeight(height);
         this.setPrefWidth(width);
-        this.height = height;
-        this.width = width;
-        this.maximized = true;
+        this.unitMenuMaxHeight = height;
+        this.unitMenuMaxWidth = width;
+        isMaximized = new SimpleBooleanProperty();
+        isMaximized.set(true);
 
         fullscreenBtn = new FloatingButton(new SVGGlyphIcon(MaterialIcon.FULLSCREEN, JFXConstants.ICON_SIZE_MIDDLE, true));
 
@@ -168,7 +171,7 @@ public class UnitMenu extends VBox {
      * Animations should be added in the future
      */
     public void minimizeUnitMenu() {
-        maximized = false;
+        isMaximized.set(false);
         collapseIcon.setForegroundIcon(MaterialIcon.KEYBOARD_ARROW_LEFT);
         this.getChildren().clear();
         this.getChildren().addAll(collapseButtons);
@@ -179,21 +182,21 @@ public class UnitMenu extends VBox {
 
     public void removeEnergyMode() {
         this.getChildren().clear();
-        setMinHeight(height);
-        setMinWidth(width);
-        setPrefHeight(height);
-        setPrefWidth(width);
+        setMinHeight(unitMenuMaxHeight);
+        setMinWidth(unitMenuMaxWidth);
+        setPrefHeight(unitMenuMaxHeight);
+        setPrefWidth(unitMenuMaxWidth);
         this.getChildren().addAll(floatingButtons, roomInfo, hiddenSidesPane);
         this.getStyleClass().addAll("detail-menu");
     }
 
     public void setInEnergyMode() {
-        maximized = true;
+        isMaximized.set(true);
         this.getChildren().clear();
-        setMinHeight(height);
-        setMinWidth(width);
-        setPrefHeight(height);
-        setPrefWidth(width);
+        setMinHeight(unitMenuMaxHeight);
+        setMinWidth(unitMenuMaxWidth);
+        setPrefHeight(unitMenuMaxHeight);
+        setPrefWidth(unitMenuMaxWidth);
         collapseIcon.setForegroundIcon(MaterialIcon.KEYBOARD_ARROW_RIGHT);
         this.getChildren().addAll(floatingButtons, roomInfo, powerTerminalSidebarPane, collapseButtons);
         this.getStyleClass().addAll("detail-menu");
@@ -216,12 +219,12 @@ public class UnitMenu extends VBox {
     }
 
     /**
-     * Getter for the current display state.
+     * Getter for the collapsed property
      *
-     * @return true if maximized, false if minimized
+     * @return the collapsed property
      */
-    public boolean isMaximized() {
-        return maximized;
+    public BooleanProperty getIsMaximized() {
+        return isMaximized;
     }
 
     public SVGGlyphIcon getCollapseIcon() {
