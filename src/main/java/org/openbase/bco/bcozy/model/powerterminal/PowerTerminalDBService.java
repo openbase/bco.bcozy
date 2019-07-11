@@ -6,8 +6,11 @@ import org.influxdata.query.FluxTable;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.DateRange;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.Interval;
 import org.openbase.bco.bcozy.model.InfluxDBHandler;
+import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.openbase.jul.storage.registry.Registry;
+import org.openbase.type.domotic.unit.UnitTemplateType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +28,8 @@ import static org.openbase.bco.bcozy.controller.powerterminal.PowerChartVisualiz
  * Service wrapping the InfluxDBHandler, providing a high level interface, keeping MVC model tasks where they belong.
  */
 public class PowerTerminalDBService {
-
+//        Registries.getUnitRegistry().getUnitConfigsByUnitType(UnitTemplateType.UnitTemplate.UnitType.POWER_CONSUMPTION_SENSOR); mit .getID bekommt man Unit ID die man in DB werfen kann
+//        Registries.getUnitRegistry().getUnitConfigsByUnitType(UnitTemplateType.UnitTemplate.UnitType.LOCATION);
     public static final long FIVE_MINUTES_IN_MILLISECONDS = 60000;
     private static final Logger LOGGER = LoggerFactory.getLogger(PowerTerminalDBService.class);
 
