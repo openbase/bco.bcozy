@@ -1,4 +1,4 @@
-package org.openbase.bco.bcozy.model.powerterminal;
+package org.openbase.bco.bcozy.util.powerterminal;
 
 import eu.hansolo.tilesfx.chart.ChartData;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.Unit;

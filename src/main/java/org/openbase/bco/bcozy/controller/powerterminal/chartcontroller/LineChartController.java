@@ -3,14 +3,13 @@ package org.openbase.bco.bcozy.controller.powerterminal.chartcontroller;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
 import eu.hansolo.tilesfx.chart.ChartData;
-import javafx.scene.Node;
 import javafx.scene.chart.XYChart;
 import org.openbase.bco.bcozy.controller.powerterminal.PowerChartVisualizationController;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.DateRange;
 import org.openbase.bco.bcozy.model.LanguageSelection;
 import org.openbase.bco.bcozy.model.powerterminal.ChartStateModel;
 import org.openbase.bco.bcozy.model.powerterminal.PowerTerminalDBService;
-import org.openbase.bco.bcozy.model.powerterminal.UnitConverter;
+import org.openbase.bco.bcozy.util.powerterminal.UnitConverter;
 
 import java.util.List;
 
