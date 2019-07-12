@@ -15,6 +15,7 @@ import org.openbase.bco.bcozy.controller.powerterminal.heatmapattributes.Heatmap
 import org.openbase.bco.bcozy.controller.powerterminal.heatmapattributes.SpotsPosition;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.location.DynamicUnitPolygon;
+import org.openbase.bco.dal.lib.layer.service.ServiceStateProvider;
 import org.openbase.bco.dal.lib.layer.unit.PowerConsumptionSensor;
 import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
 import org.openbase.bco.dal.remote.layer.unit.CustomUnitPool;
@@ -24,6 +25,7 @@ import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.extension.type.processing.LabelProcessor;
 import org.openbase.jul.pattern.Filter;
+import org.openbase.jul.pattern.Observer;
 import org.openbase.rct.Transform;
 import org.openbase.type.domotic.unit.UnitConfigType;
 import org.openbase.type.domotic.unit.UnitTemplateType;
@@ -66,7 +68,16 @@ public class Heatmap extends Pane {
             UnitConfigType.UnitConfig rootLocationConfig = Registries.getUnitRegistry().getRootLocationConfig();
 
             HeatmapValues heatmapValues = initHeatmap(rootLocationConfig);
-            this.getChildren().add(updateHeatmap(heatmapValues));
+
+            //TODO: thousands warnings, heatmap crashed
+            /*unitPool.addObserver(new Observer<ServiceStateProvider<Message>, Message>() {
+                @Override
+                public void update(ServiceStateProvider<Message> source, Message data) throws Exception {
+                    updateHeatmap(heatmapValues);
+                }
+            }); */
+
+            updateHeatmap(heatmapValues);
 
         } catch (CouldNotPerformException  ex) {
             ExceptionPrinter.printHistory("Could not instantiate CustomUnitPool", ex, logger);
@@ -104,7 +115,9 @@ public class Heatmap extends Pane {
         }
 
 
+       int unitListPosition = -1;
        for (UnitRemote<? extends Message> unit : unitPool.getInternalUnitList()) {
+           unitListPosition++;
            try {
                unit.waitForData(Constants.TRANSFORMATION_TIMEOUT, TimeUnit.MILLISECONDS);
                Future<Transform> transform = Registries.getUnitRegistry().getUnitTransformationFuture(unit.getConfig(), rootLocationConfig);
@@ -114,18 +127,11 @@ public class Heatmap extends Pane {
                //Wait for transformation of unitPoint but use getUnitPositionGlobalPoint3D because Position of unitPoint is wrong
                transform.get(Constants.TRANSFORMATION_TIMEOUT, TimeUnit.MILLISECONDS).getTransform().transform(unitPoint);
 
-               PowerConsumptionSensor powerConsumptionUnit = (PowerConsumptionSensor) unit;
-               double current = powerConsumptionUnit.getPowerConsumptionState().getCurrent() / 16;
-               current = 1;
-
                int unitPointGlobalX = (int) (unit.getUnitPositionGlobalPoint3d().x*Constants.METER_TO_PIXEL + xTranslation);
                int unitPointGlobalY = (int) (unit.getUnitPositionGlobalPoint3d().y*Constants.METER_TO_PIXEL + yTranslation);
-               System.out.println(unit.getLabel());
-               System.out.println("X: " + unitPointGlobalX + " Y: " + unitPointGlobalY + " Value " + current);
                if (unitPointGlobalX >= 0 && unitPointGlobalX < u[0].length
                        && unitPointGlobalY >= 0 && unitPointGlobalY < u.length) {
-                   u[unitPointGlobalY][unitPointGlobalX] = current;
-                   spots.add(new SpotsPosition(unitPointGlobalY, unitPointGlobalX, current));
+                   spots.add(new SpotsPosition(unitPointGlobalY, unitPointGlobalX, 0, unitListPosition));
                }
            } catch (CouldNotPerformException ex) {
                //ExceptionPrinter.printHistory("Could not get location units", ex, logger);
@@ -173,11 +179,26 @@ public class Heatmap extends Pane {
         return rooms;
     }
 
-     private HeatMap updateHeatmap(HeatmapValues heatmapValues) {
-
-        //TODO: Update heatmap if Value changes
+     private void updateHeatmap(HeatmapValues heatmapValues) {
         int runnings = 3;
-        return generateHeatmapWithLibrary(heatmapValues, runnings);
+        List<SpotsPosition> spots = heatmapValues.getSpots();
+        double[][] u = heatmapValues.getU();
+
+         for (SpotsPosition spot : spots) {
+             PowerConsumptionSensor powerConsumptionUnit = (PowerConsumptionSensor) unitPool.getInternalUnitList().get(spot.unitListPosition);
+             try {
+                 double current = powerConsumptionUnit.getPowerConsumptionState().getCurrent() / 16;
+                 current = 1;
+                 u[spot.spotsPositionx][spot.spotsPositiony] = current;
+                 spot.value = current;
+             } catch (NotAvailableException e) {
+                 e.printStackTrace();
+             }
+        }
+        heatmapValues.setSpots(spots);
+        heatmapValues.setU(u);
+        this.getChildren().clear();
+        this.getChildren().add(generateHeatmapWithLibrary(heatmapValues, runnings));
      }
 
 

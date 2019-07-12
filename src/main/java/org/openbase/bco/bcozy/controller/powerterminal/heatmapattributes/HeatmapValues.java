@@ -53,6 +53,8 @@ public class HeatmapValues {
         this.u = uNew;
     }
 
+    public void setSpots (List<SpotsPosition> spotsNew) {this.spots = spotsNew;}
+
     public boolean isInsideRoom (double x, double y) {
         for (Polygon room : rooms) {
             if (room.contains(y, x))
