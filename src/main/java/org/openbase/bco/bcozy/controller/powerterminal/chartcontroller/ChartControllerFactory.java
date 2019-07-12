@@ -13,7 +13,7 @@ public class ChartControllerFactory {
     /**
      * Map that connects constructors with VisualizationType Enum to avoid ugly switch cases.
      */
-    private final static Map<VisualizationType, Supplier<TilesFxChartController>> constructorMap = Map.of(
+    private final static Map<VisualizationType, Supplier<ChartController>> constructorMap = Map.of(
             VisualizationType.BAR_CHART, BarChartController::new,
             VisualizationType.LINE_CHART, LineChartController::new,
             VisualizationType.PIE_CHART, PieChartController::new,
@@ -24,7 +24,7 @@ public class ChartControllerFactory {
      * @param visualizationType Defines which type of controller is required.
      * @return Freshly created ChartController of requested type.
      */
-    public static TilesFxChartController getChartController(VisualizationType visualizationType) {
+    public static ChartController getChartController(VisualizationType visualizationType) {
         return constructorMap.get(visualizationType).get();
     }
 

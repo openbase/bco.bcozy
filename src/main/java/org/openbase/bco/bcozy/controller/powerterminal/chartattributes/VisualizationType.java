@@ -7,7 +7,7 @@ public enum VisualizationType {
     BAR_CHART, PIE_CHART, WEBVIEW, LINE_CHART, TREE_CHART;
 
     public static VisualizationType[] getSelectableTypes() {
-        return new VisualizationType[]{BAR_CHART, PIE_CHART, LINE_CHART};
+        return new VisualizationType[]{BAR_CHART, PIE_CHART, LINE_CHART, TREE_CHART};
     }
 
     /**
