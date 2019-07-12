@@ -78,6 +78,8 @@ public class Heatmap extends Pane {
 
     private HeatmapValues initHeatmap(UnitConfigType.UnitConfig rootLocationConfig) {
         List<List<Point2D>> rooms = makeRooms();
+        double xTranslation = 0;
+        double yTranslation = 0;
 
         AxisAlignedBoundingBox3DFloatType.AxisAlignedBoundingBox3DFloat rootBoundingBox = rootLocationConfig.getPlacementConfig().getShape().getBoundingBox();
 
@@ -86,63 +88,56 @@ public class Heatmap extends Pane {
 
         try {
             List<Point2D> point2DS = DynamicUnitPolygon.loadShapeVertices(rootLocationConfig);
-            double xTranslation = Math.abs(point2DS.get(0).getX());
-            double yTranslation = Math.abs(point2DS.get(0).getY());
+            xTranslation = Math.abs(point2DS.get(0).getX());
+            yTranslation = Math.abs(point2DS.get(0).getY());
             this.setTranslateY(-xTranslation);
             this.setTranslateX(-yTranslation);
-            for (Point2D point2D : point2DS) {
+          /*  for (Point2D point2D : point2DS) {
                 System.out.println("X wert :" + point2D.getX());
                 u[(int) (point2D.getY()+xTranslation)][(int) (point2D.getX()+yTranslation)] = 1;
                 spots.add(new SpotsPosition((int)(point2D.getY()+xTranslation), (int)(point2D.getX()+yTranslation), 1));
-            }
+            } */
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (CouldNotPerformException e) {
             e.printStackTrace();
         }
 
-       /*
+
        for (UnitRemote<? extends Message> unit : unitPool.getInternalUnitList()) {
-            try {
-                unit.waitForData(5, TimeUnit.SECONDS);
-                Future<Transform> unitTransformationFuture = Registries.getUnitRegistry().getUnitTransformationFuture(unit.getConfig(), rootLocationConfig);
-                TranslationType.Translation unitPosition = unit.getUnitPosition();
-                Transform transform = unitTransformationFuture.get(5, TimeUnit.SECONDS);
-                Point3d unitPoint = new Point3d(unitPosition.getX(), unitPosition.getY(), unitPosition.getZ());
-                transform.getTransform().transform(unitPoint);
+           try {
+               unit.waitForData(Constants.TRANSFORMATION_TIMEOUT, TimeUnit.MILLISECONDS);
+               Future<Transform> transform = Registries.getUnitRegistry().getUnitTransformationFuture(unit.getConfig(), rootLocationConfig);
+               TranslationType.Translation unitPosition = unit.getUnitPosition();
+               Point3d unitPoint = new Point3d(unitPosition.getX(), unitPosition.getY(), unitPosition.getZ());
 
-                PowerConsumptionSensor powerConsumptionUnit = (PowerConsumptionSensor) unit;
-                double current = powerConsumptionUnit.getPowerConsumptionState().getCurrent() / 16;
-                current = 1;
+               //Wait for transformation of unitPoint but use getUnitPositionGlobalPoint3D because Position of unitPoint is wrong
+               transform.get(Constants.TRANSFORMATION_TIMEOUT, TimeUnit.MILLISECONDS).getTransform().transform(unitPoint);
 
-                System.out.println(unit.getLabel());
-                if (unitPoint.x >= 0 && (int)(unitPoint.x*conversionFactor) < u[0].length
-                        && unitPoint.y >= 0 && (int)(unitPoint.y*conversionFactor) < u.length) {
-                    u[(int)(unitPoint.y*conversionFactor)][(int)(unitPoint.x*conversionFactor)] = current;
-                    spots.add(new SpotsPosition((int)(unitPoint.y*conversionFactor), (int)(unitPoint.x*conversionFactor), current));
-                }
-            } catch (NotAvailableException ex) {
-                try {
-                    if (unit.getId().equals("c665afeb-6409-44a2-91f0-9a39fd04e8d3"))
-                        ExceptionPrinter.printHistory("Could not get Position", ex, logger);
-                } catch (NotAvailableException e) {
-                    ExceptionPrinter.printHistory("Could not get Fridge", e, logger);
-                }
-            }
-            catch (InterruptedException ex) {
-                Thread.currentThread().interrupt();
-                ExceptionPrinter.printHistory("Could not get transformation", ex, logger);
-            } catch (ExecutionException ex) {
-                ExceptionPrinter.printHistory("Could not get transformation", ex, logger);
-            } catch (TimeoutException ex) {
-                ExceptionPrinter.printHistory("Could not get transformation", ex, logger);
-            } catch (CouldNotPerformException ex) {
-                ExceptionPrinter.printHistory("Could not wait for Data", ex, logger);
-            } */
+               PowerConsumptionSensor powerConsumptionUnit = (PowerConsumptionSensor) unit;
+               double current = powerConsumptionUnit.getPowerConsumptionState().getCurrent() / 16;
+               current = 1;
 
-        for (SpotsPosition spot : spots) {
-            System.out.println("x: " + spot.spotsPositionx + " y: " +spot.spotsPositiony + " value: " + spot.value);
-        }
+               int unitPointGlobalX = (int) (unit.getUnitPositionGlobalPoint3d().x*Constants.METER_TO_PIXEL + xTranslation);
+               int unitPointGlobalY = (int) (unit.getUnitPositionGlobalPoint3d().y*Constants.METER_TO_PIXEL + yTranslation);
+               System.out.println(unit.getLabel());
+               System.out.println("X: " + unitPointGlobalX + " Y: " + unitPointGlobalY + " Value " + current);
+               if (unitPointGlobalX >= 0 && unitPointGlobalX < u[0].length
+                       && unitPointGlobalY >= 0 && unitPointGlobalY < u.length) {
+                   u[unitPointGlobalY][unitPointGlobalX] = current;
+                   spots.add(new SpotsPosition(unitPointGlobalY, unitPointGlobalX, current));
+               }
+           } catch (CouldNotPerformException ex) {
+               //ExceptionPrinter.printHistory("Could not get location units", ex, logger);
+           } catch (InterruptedException ex) {
+               Thread.currentThread().interrupt();
+              // ExceptionPrinter.printHistory("Could not get location units", ex, logger);;
+           } catch (ExecutionException ex) {
+              // ExceptionPrinter.printHistory("Could not get location units", ex, logger);
+           } catch (TimeoutException ex) {
+              // ExceptionPrinter.printHistory("Could not get location units", ex, logger);
+           }
+       }
 
         return new HeatmapValues(rooms, spots, u);
     }
@@ -164,10 +159,10 @@ public class Heatmap extends Pane {
             try {
                 List<Point2D> roomPoints = DynamicUnitPolygon.loadShapeVertices(roomConfig);
                 rooms.add(roomPoints);
-                System.out.println(LabelProcessor.getBestMatch(roomConfig.getLabel(), "?"));
+               /* System.out.println(LabelProcessor.getBestMatch(roomConfig.getLabel(), "?"));
                 for (Point2D roomPoint : roomPoints) {
                     System.out.println("X wert: " + roomPoint.getX() + " Y " + roomPoint.getY());
-                }
+                } */
 
             } catch (InterruptedException ex) {
                 ExceptionPrinter.printHistory("Could not get location units", ex, logger);
@@ -179,8 +174,9 @@ public class Heatmap extends Pane {
     }
 
      private HeatMap updateHeatmap(HeatmapValues heatmapValues) {
-        int runnings = 3;
 
+        //TODO: Update heatmap if Value changes
+        int runnings = 3;
         return generateHeatmapWithLibrary(heatmapValues, runnings);
      }
 

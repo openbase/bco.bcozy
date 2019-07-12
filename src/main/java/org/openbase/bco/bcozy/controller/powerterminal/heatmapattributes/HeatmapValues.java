@@ -54,9 +54,7 @@ public class HeatmapValues {
     }
 
     public boolean isInsideRoom (double x, double y) {
-        System.out.println("Next room");
         for (Polygon room : rooms) {
-            System.out.println(room.getBounds().getCenterX());
             if (room.contains(y, x))
                 return true;
         }
