@@ -70,7 +70,7 @@ public class PowerChartVisualizationController extends AbstractFXController {
     @Override
     public void initContent() throws InitializationException {
         pane.setMinSize(Screen.getPrimary().getVisualBounds().getWidth(), Screen.getPrimary().getVisualBounds().getHeight() - 600);
-        setChartType(DEFAULT_VISUALISATION_TYPE, true);
+        //setChartType(DEFAULT_VISUALISATION_TYPE, true);
         enableDataRefresh(REFRESH_INTERVAL_MILLISECONDS);
     }
 
