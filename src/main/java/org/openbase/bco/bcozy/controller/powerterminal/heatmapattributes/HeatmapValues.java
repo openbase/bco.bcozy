@@ -14,8 +14,8 @@ public class HeatmapValues {
     public List<SpotsPosition> spots;
     public double[][] u;
 
-    public HeatmapValues(List<List<Point2D>> roomPoints, List<SpotsPosition> spots, double[][] u) {
-        this.rooms = generatePolygons(roomPoints, 6, 6);
+    public HeatmapValues(List<List<Point2D>> roomPoints, List<SpotsPosition> spots, double[][] u, double xTranslation, double yTranslation) {
+        this.rooms = generatePolygons(roomPoints, xTranslation, yTranslation);
         this.spots = spots;
         this.u = u;
     }
@@ -50,9 +50,17 @@ public class HeatmapValues {
 
     public void setSpots (List<SpotsPosition> spotsNew) {this.spots = spotsNew;}
 
-    public boolean isInsideRoom (double x, double y) {
+    public boolean isInsideRoom (double x, double y, double centerx, double centery) {
         for (Polygon room : rooms) {
-            if (room.contains(x, y))
+            if (room.contains(centerx, centery) && room.contains(x, y))
+                return true;
+        }
+        return false;
+    }
+
+    public boolean isInsideRoom (double centerx, double centery) {
+        for (Polygon room : rooms) {
+            if (room.contains(centerx, centery))
                 return true;
         }
         return false;

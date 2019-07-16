@@ -17,6 +17,7 @@ import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.location.DynamicUnitPolygon;
 import org.openbase.bco.dal.lib.layer.service.ServiceStateProvider;
 import org.openbase.bco.dal.lib.layer.unit.PowerConsumptionSensor;
+import org.openbase.bco.dal.lib.layer.unit.Switch;
 import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
 import org.openbase.bco.dal.remote.layer.unit.CustomUnitPool;
 import org.openbase.bco.registry.remote.Registries;
@@ -109,6 +110,8 @@ public class Heatmap extends Pane {
             e.printStackTrace();
         }
 
+        HeatmapValues heatmapValues = new HeatmapValues(rooms, spots, u, xTranslation, yTranslation);
+
 
        int unitListPosition = -1;
        for (UnitRemote<? extends Message> unit : unitPool.getInternalUnitList()) {
@@ -124,10 +127,16 @@ public class Heatmap extends Pane {
 
                int unitPointGlobalX = (int) (unit.getUnitPositionGlobalPoint3d().x*Constants.METER_TO_PIXEL + xTranslation);
                int unitPointGlobalY = (int) (unit.getUnitPositionGlobalPoint3d().y*Constants.METER_TO_PIXEL + yTranslation);
-               if (unitPointGlobalX >= 0 && unitPointGlobalX < u[0].length
-                       && unitPointGlobalY >= 0 && unitPointGlobalY < u.length) {
+               if (heatmapValues.isInsideRoom(unitPointGlobalY, unitPointGlobalX))
                    spots.add(new SpotsPosition(unitPointGlobalY, unitPointGlobalX, 0, unitListPosition));
-               }
+               else if (heatmapValues.isInsideRoom(unitPointGlobalY-1, unitPointGlobalX))
+                   spots.add(new SpotsPosition(unitPointGlobalY-1, unitPointGlobalX, 0, unitListPosition));
+               else if (heatmapValues.isInsideRoom(unitPointGlobalY+1, unitPointGlobalX))
+                   spots.add(new SpotsPosition(unitPointGlobalY+1, unitPointGlobalX, 0, unitListPosition));
+               else if (heatmapValues.isInsideRoom(unitPointGlobalY, unitPointGlobalX-1))
+                   spots.add(new SpotsPosition(unitPointGlobalY, unitPointGlobalX-1, 0, unitListPosition));
+               else if (heatmapValues.isInsideRoom(unitPointGlobalY, unitPointGlobalX+1))
+                   spots.add(new SpotsPosition(unitPointGlobalY, unitPointGlobalX+1, 0, unitListPosition));
            } catch (CouldNotPerformException ex) {
                //ExceptionPrinter.printHistory("Could not get location units", ex, logger);
            } catch (InterruptedException ex) {
@@ -139,7 +148,8 @@ public class Heatmap extends Pane {
               // ExceptionPrinter.printHistory("Could not get location units", ex, logger);
            }
        }
-       return new HeatmapValues(rooms, spots, u);
+       heatmapValues.setSpots(spots);
+       return heatmapValues;
     }
 
     private List<List<Point2D>> makeRooms() {
@@ -254,7 +264,7 @@ public class Heatmap extends Pane {
                         int yGlobal = spot.spotsPositiony + (size/2 - y);
                         int xRotated = size - x;
                         int yRotated = size - y;
-                        if (!heatmapValues.isInsideRoom(xGlobal, yGlobal))
+                        if (!heatmapValues.isInsideRoom(xGlobal, yGlobal, spot.spotsPositionx, spot.spotsPositiony))
                             pixelColor = new Color(0,0,0,0);
                         else
                             pixelColor = (Color) Interpolator.LINEAR.interpolate(stops[i].getColor(), stops[i + 1].getColor(), (fraction - stops[i].getOffset()) / 0.1);
