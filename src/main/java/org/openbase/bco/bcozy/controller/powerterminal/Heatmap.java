@@ -103,11 +103,6 @@ public class Heatmap extends Pane {
             yTranslation = Math.abs(point2DS.get(0).getY());
             this.setTranslateY(-xTranslation);
             this.setTranslateX(-yTranslation);
-          /*  for (Point2D point2D : point2DS) {
-                System.out.println("X wert :" + point2D.getX());
-                u[(int) (point2D.getY()+xTranslation)][(int) (point2D.getX()+yTranslation)] = 1;
-                spots.add(new SpotsPosition((int)(point2D.getY()+xTranslation), (int)(point2D.getX()+yTranslation), 1));
-            } */
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (CouldNotPerformException e) {
@@ -144,8 +139,7 @@ public class Heatmap extends Pane {
               // ExceptionPrinter.printHistory("Could not get location units", ex, logger);
            }
        }
-
-        return new HeatmapValues(rooms, spots, u);
+       return new HeatmapValues(rooms, spots, u);
     }
 
     private List<List<Point2D>> makeRooms() {
@@ -165,10 +159,6 @@ public class Heatmap extends Pane {
             try {
                 List<Point2D> roomPoints = DynamicUnitPolygon.loadShapeVertices(roomConfig);
                 rooms.add(roomPoints);
-               /* System.out.println(LabelProcessor.getBestMatch(roomConfig.getLabel(), "?"));
-                for (Point2D roomPoint : roomPoints) {
-                    System.out.println("X wert: " + roomPoint.getX() + " Y " + roomPoint.getY());
-                } */
 
             } catch (InterruptedException ex) {
                 ExceptionPrinter.printHistory("Could not get location units", ex, logger);
@@ -260,18 +250,15 @@ public class Heatmap extends Pane {
                 double fraction = maxDistFactor * distance;
                 for (int i = 0; i < stops.length-1; i++) {
                     if (Double.compare(fraction, stops[i].getOffset()) >= 0 && Double.compare(fraction, stops[i + 1].getOffset()) <= 0) {
-                        int xGlobal = (int) (spot.spotsPositionx + (size/2 - x));
-                        int yGlobal = (int) (spot.spotsPositiony + (size/2 - y));
-                        if (heatmapValues.isInsideRoom(xGlobal, yGlobal)) {
-                            pixelColor = (Color) Interpolator.LINEAR.interpolate(stops[i].getColor(), stops[i + 1].getColor(), (fraction - stops[i].getOffset()) / 0.1);
-
-                            //pixelColor = new Color(0,0,0,1);
-                        }
+                        int xGlobal = spot.spotsPositionx + (size/2 - x);
+                        int yGlobal = spot.spotsPositiony + (size/2 - y);
+                        int xRotated = size - x;
+                        int yRotated = size - y;
+                        if (!heatmapValues.isInsideRoom(xGlobal, yGlobal))
+                            pixelColor = new Color(0,0,0,0);
                         else
-                        {
                             pixelColor = (Color) Interpolator.LINEAR.interpolate(stops[i].getColor(), stops[i + 1].getColor(), (fraction - stops[i].getOffset()) / 0.1);
-                        }
-                        pixelWriter.setColor(x, y, pixelColor);
+                        pixelWriter.setColor(xRotated, yRotated, pixelColor);
                         break;
                     }
                 }
