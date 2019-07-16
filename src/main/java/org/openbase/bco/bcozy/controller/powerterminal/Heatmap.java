@@ -265,9 +265,9 @@ public class Heatmap extends Pane {
                         int xRotated = size - x;
                         int yRotated = size - y;
                         if (!heatmapValues.isInsideRoom(xGlobal, yGlobal, spot.spotsPositionx, spot.spotsPositiony))
-                            pixelColor = new Color(0,0,0,0);
-                        else
-                            pixelColor = (Color) Interpolator.LINEAR.interpolate(stops[i].getColor(), stops[i + 1].getColor(), (fraction - stops[i].getOffset()) / 0.1);
+                            continue;
+
+                        pixelColor = (Color) Interpolator.LINEAR.interpolate(stops[i].getColor(), stops[i + 1].getColor(), (fraction - stops[i].getOffset()) / 0.1);
                         pixelWriter.setColor(xRotated, yRotated, pixelColor);
                         break;
                     }
