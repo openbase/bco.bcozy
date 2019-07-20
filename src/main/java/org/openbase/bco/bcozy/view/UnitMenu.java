@@ -1,17 +1,17 @@
 /**
  * ==================================================================
- *
+ * <p>
  * This file is part of org.openbase.bco.bcozy.
- *
+ * <p>
  * org.openbase.bco.bcozy is free software: you can redistribute it and modify
  * it under the terms of the GNU General Public License (Version 3)
  * as published by the Free Software Foundation.
- *
+ * <p>
  * org.openbase.bco.bcozy is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
@@ -20,17 +20,19 @@ package org.openbase.bco.bcozy.view;
 
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import de.jensd.fx.glyphs.materialicons.MaterialIcon;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollBar;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.HiddenSidesPane;
+import org.openbase.bco.bcozy.view.pane.unit.TitledUnitPaneContainer;
 import org.openbase.jul.visual.javafx.JFXConstants;
 import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
-import org.openbase.bco.bcozy.view.pane.unit.TitledUnitPaneContainer;
 
 /**
  * @author hoestreich
@@ -40,12 +42,20 @@ import org.openbase.bco.bcozy.view.pane.unit.TitledUnitPaneContainer;
 public class UnitMenu extends VBox {
 
     private final ContextSortingPane contextSortingPane;
+    private Pane powerTerminalSidebarPane;
     private final Label roomInfo;
     private final ScrollPane verticalScrollPane;
     private TitledUnitPaneContainer titledPaneContainer;
     private FloatingButton fullscreenBtn;
     private final FloatingButton settingsBtn;
-
+    private final SVGGlyphIcon collapseIcon;
+    private FloatingButton collapseBtn;
+    private HBox collapseButtons;
+    private HBox floatingButtons;
+    private final HiddenSidesPane hiddenSidesPane;
+    private final double unitMenuMaxHeight;
+    private final double unitMenuMaxWidth;
+    private final BooleanProperty maximizeProperty;
 
     /**
      * Constructor for the ContextMenu.
@@ -59,34 +69,48 @@ public class UnitMenu extends VBox {
         this.setMinWidth(width);
         this.setPrefHeight(height);
         this.setPrefWidth(width);
+        this.unitMenuMaxHeight = height;
+        this.unitMenuMaxWidth = width;
+        this.maximizeProperty = new SimpleBooleanProperty();
+        this.maximizeProperty.set(true);
+
+        this.fullscreenBtn = new FloatingButton(new SVGGlyphIcon(MaterialIcon.FULLSCREEN, JFXConstants.ICON_SIZE_MIDDLE, true));
+
+        this.settingsBtn = new FloatingButton(new SVGGlyphIcon(MaterialDesignIcon.SETTINGS, JFXConstants.ICON_SIZE_MIDDLE, true));
+
+        this.collapseIcon = new SVGGlyphIcon(MaterialIcon.KEYBOARD_ARROW_RIGHT, JFXConstants.ICON_SIZE_MIDDLE, true);
+        this.collapseBtn = new FloatingButton(collapseIcon);
+        this.collapseBtn.translateYProperty().set(-(Constants.FLOATING_BUTTON_OFFSET));
+
+        this.collapseButtons = new HBox();
+        this.collapseButtons.getChildren().add(collapseBtn);
+        this.collapseButtons.setAlignment(Pos.BOTTOM_LEFT);
+        this.collapseButtons.translateXProperty().set(Constants.INSETS);
+        this.setVgrow(collapseButtons, Priority.ALWAYS);
 
 
-        fullscreenBtn = new FloatingButton(new SVGGlyphIcon(MaterialIcon.FULLSCREEN, JFXConstants.ICON_SIZE_MIDDLE, true));
-
-        settingsBtn = new FloatingButton(new SVGGlyphIcon(MaterialDesignIcon.SETTINGS, JFXConstants.ICON_SIZE_MIDDLE, true));
-
-        HBox floatingButtons = new HBox(20.0, settingsBtn, fullscreenBtn);
-        floatingButtons.setAlignment(Pos.TOP_LEFT);
-        floatingButtons.translateYProperty().set(Constants.FLOATING_BUTTON_OFFSET_Y);
-        floatingButtons.translateXProperty().set(Constants.FLOATING_BUTTON_OFFSET_X);
+        this.floatingButtons = new HBox(20.0, settingsBtn, fullscreenBtn);
+        this.floatingButtons.setAlignment(Pos.TOP_LEFT);
+        this.floatingButtons.translateYProperty().set(Constants.FLOATING_BUTTON_OFFSET_Y);
+        this.floatingButtons.translateXProperty().set(Constants.FLOATING_BUTTON_OFFSET_X);
 
 
-        roomInfo = new Label("Select a Room");
-        roomInfo.setAlignment(Pos.TOP_CENTER);
-        roomInfo.getStyleClass().clear();
-        roomInfo.getStyleClass().add("headline");
+        this.roomInfo = new Label("Select a Room");
+        this.roomInfo.setAlignment(Pos.TOP_CENTER);
+        this.roomInfo.getStyleClass().clear();
+        this.roomInfo.getStyleClass().add("headline");
 
-        verticalScrollPane = new ScrollPane();
-        verticalScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        verticalScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        this.verticalScrollPane = new ScrollPane();
+        this.verticalScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        this.verticalScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
         final ScrollBar scrollBar = new ScrollBar();
         scrollBar.setOrientation(Orientation.VERTICAL);
-        final HiddenSidesPane hiddenSidesPane = new HiddenSidesPane();
-        hiddenSidesPane.setContent(verticalScrollPane);
-        hiddenSidesPane.setRight(scrollBar);
-        hiddenSidesPane.setTriggerDistance(Constants.TRIGGER_DISTANCE);
-        hiddenSidesPane.getStyleClass().add("hidden-sides-pane");
+        this.hiddenSidesPane = new HiddenSidesPane();
+        this.hiddenSidesPane.setContent(verticalScrollPane);
+        this.hiddenSidesPane.setRight(scrollBar);
+        this.hiddenSidesPane.setTriggerDistance(Constants.TRIGGER_DISTANCE);
+        this.hiddenSidesPane.getStyleClass().add("hidden-sides-pane");
 
         scrollBar.maxProperty().bind(verticalScrollPane.vmaxProperty());
         scrollBar.minProperty().bind(verticalScrollPane.vminProperty());
@@ -139,6 +163,43 @@ public class UnitMenu extends VBox {
     }
 
     /**
+     * Method to make this menu invisible.
+     * Animations should be added in the future
+     */
+    public void minimizeUnitMenu() {
+        maximizeProperty.set(false);
+        collapseIcon.setForegroundIcon(MaterialIcon.KEYBOARD_ARROW_LEFT);
+        this.getChildren().clear();
+        this.getChildren().addAll(collapseButtons);
+        this.setAlignment(Pos.BOTTOM_CENTER);
+        this.setMinWidth(Constants.SMALL_MAIN_MENU_WIDTH);
+        this.setPrefWidth(Constants.SMALL_MAIN_MENU_WIDTH_PREF);
+    }
+
+    public void removeEnergyMode() {
+        this.getChildren().clear();
+        setMinHeight(unitMenuMaxHeight);
+        setMinWidth(unitMenuMaxWidth);
+        setPrefHeight(unitMenuMaxHeight);
+        setPrefWidth(unitMenuMaxWidth);
+        this.getChildren().addAll(floatingButtons, roomInfo, hiddenSidesPane);
+        this.getStyleClass().addAll("detail-menu");
+    }
+
+    public void setInEnergyMode() {
+        maximizeProperty.set(true);
+        this.getChildren().clear();
+        setMinHeight(unitMenuMaxHeight);
+        setMinWidth(unitMenuMaxWidth);
+        setPrefHeight(unitMenuMaxHeight);
+        setPrefWidth(unitMenuMaxWidth);
+        collapseIcon.setForegroundIcon(MaterialIcon.KEYBOARD_ARROW_RIGHT);
+        this.getChildren().addAll(floatingButtons, roomInfo, powerTerminalSidebarPane, collapseButtons);
+        this.getStyleClass().addAll("detail-menu");
+
+    }
+
+    /**
      * Clears the vertical ScrollPane of the ContextMenu.
      */
     public void clearVerticalScrollPane() {
@@ -152,4 +213,26 @@ public class UnitMenu extends VBox {
     public FloatingButton getSettingsBtn() {
         return settingsBtn;
     }
+
+    /**
+     * Getter for the collapsed property
+     *
+     * @return the collapsed property
+     */
+    public BooleanProperty getMaximizeProperty() {
+        return maximizeProperty;
+    }
+
+    public SVGGlyphIcon getCollapseIcon() {
+        return collapseIcon;
+    }
+
+    public FloatingButton getCollapseBtn() {
+        return collapseBtn;
+    }
+
+    public void setPowerTerminalSidebarPane(Pane powerTerminalSidebarPane) {
+        this.powerTerminalSidebarPane = powerTerminalSidebarPane;
+    }
+
 }

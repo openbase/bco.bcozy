@@ -18,10 +18,18 @@
  */
 package org.openbase.bco.bcozy.view;
 
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.util.Pair;
+import org.openbase.bco.bcozy.controller.powerterminal.PowerChartVisualizationController;
+import org.openbase.bco.bcozy.model.powerterminal.ChartStateModel;
 import org.openbase.bco.bcozy.view.location.LocationMapPane;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InstantiationException;
+import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.openbase.jul.visual.javafx.fxml.FXMLProcessor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -32,6 +40,10 @@ public class BackgroundPane extends StackPane {
     private final UnitSymbolsPane unitSymbolsPane;
     private final SimpleUnitSymbolsPane editingLayerPane;
     private final SimpleUnitSymbolsPane maintenanceLayerPane;
+    private Pair<Pane, PowerChartVisualizationController> powerChartPaneAndController;
+
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(BackgroundPane.class);
 
     /**
      * The constructor for a BackgroundPane.
@@ -61,6 +73,14 @@ public class BackgroundPane extends StackPane {
             this.editingLayerPane = new SimpleUnitSymbolsPane();
             this.editingLayerPane.setPickOnBounds(false);
 
+
+            try {
+                this.powerChartPaneAndController = FXMLProcessor.loadFxmlPaneAndControllerPair(PowerChartVisualizationController.class);
+            } catch (final CouldNotPerformException ex) {
+                ExceptionPrinter.printHistory("Content could not be loaded", ex, LOGGER);
+            }
+
+
             // layer management
             foregroundPane.getAppState().addListener((observable, oldValue, newValue) -> {
                 switch (newValue) {
@@ -79,10 +99,15 @@ public class BackgroundPane extends StackPane {
                         getChildren().add(locationMapPane);
                         getChildren().add(unitSymbolsPane);
                         break;
+                    case ENERGY:
+                        getChildren().clear();
+                        getChildren().add(powerChartPaneAndController.getKey());
+                        break;
                 }
-
             });
+
             this.getStyleClass().add("background-pane");
+
             // init touch
             this.locationMapPane.initMultiTouch();
             this.onMouseClickedProperty().bindBidirectional(locationMapPane.onMouseClickedProperty());
@@ -120,5 +145,11 @@ public class BackgroundPane extends StackPane {
      */
     public LocationMapPane getLocationMapPane() {
         return locationMapPane;
+    }
+
+    public void setChartStateModel(ChartStateModel chartStateModel) {
+
+        PowerChartVisualizationController chartController = powerChartPaneAndController.getValue();
+        chartController.initChartState(chartStateModel);
     }
 }
