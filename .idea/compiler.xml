@@ -10,7 +10,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="bco.bcozy" target="1.8" />
+      <module name="bco.bcozy" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>
