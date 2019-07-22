@@ -52,6 +52,7 @@ public class TreeChartController implements ChartController {
     @Override
     public void updateChart(ChartStateModel chartStateModel) {
         view.setImage(getImageByPowerDraw(PowerTerminalDBService.getAverageConsumptionForDateRange(chartStateModel.getDateRange()).get(0)));
+
     }
 
     @Override
