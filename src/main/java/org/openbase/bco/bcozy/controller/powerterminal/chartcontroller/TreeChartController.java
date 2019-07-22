@@ -5,6 +5,7 @@ import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.stage.Screen;
 import org.openbase.bco.bcozy.controller.powerterminal.PowerChartVisualizationController;
 import org.openbase.bco.bcozy.model.powerterminal.ChartStateModel;
 import org.openbase.bco.bcozy.model.powerterminal.PowerTerminalDBService;
@@ -35,6 +36,8 @@ public class TreeChartController implements ChartController {
     @Override
     public void init(ChartStateModel chartStateModel, PowerChartVisualizationController powerChartVisualizationController) {
         view = new ImageView();
+        view.setPreserveRatio(true);
+        view.setFitHeight(Screen.getPrimary().getVisualBounds().getHeight()/1.2);
     }
 
     @Override
@@ -62,22 +65,21 @@ public class TreeChartController implements ChartController {
 
     private Image getImageByPowerDraw(ChartData datum) {
         if (datum.getValue() > 2000) {
-            return new Image(getClass().getResource("/images/tree0.png").getPath());
+            return new Image("/images/tree0.png");
         } else if (datum.getValue() > 1500) {
-            return new Image(getClass().getResource("/images/tree1.png").getPath());
+            return new Image("/images/tree1.png");
         } else if (datum.getValue() > 900) {
-            return new Image(getClass().getResource("/images/tree2.png").getPath());
+            return new Image("/images/tree2.png");
         } else if (datum.getValue() > 600) {
-            System.out.println(getClass().getResource("/images/tree3.png"));
-            return new Image(getClass().getResource("/images/tree3.png").getPath());
+            return new Image("/images/tree3.png");
         } else if (datum.getValue() > 400) {
-            return new Image(getClass().getResource("/images/tree4.png").getPath());
+            return new Image("/images/tree4.png");
         } else if (datum.getValue() > 200) {
-            return new Image(getClass().getResource("/images/tree5.png").getPath());
+            return new Image("/images/tree5.png");
         } else if (datum.getValue() > 0) {
-            return new Image(getClass().getResource("/images/tree6.png").getPath());
+            return new Image("/images/tree6.png");
         } else {
-            return new Image(getClass().getResource("/images/tree7.png").getPath());
+            return new Image("/images/tree7.png");
         }
     }
 }
