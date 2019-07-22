@@ -107,7 +107,7 @@ public class ContextMenuController {
      * Maximizes oder minimizes the Unit Menu
      */
     private void showHideContextMenu(final UnitMenu unitMenu) {
-        if (unitMenu.getIsMaximized().get()) {
+        if (unitMenu.getMaximizeProperty().get()) {
             unitMenu.minimizeUnitMenu();
         } else {
             unitMenu.setInEnergyMode();
