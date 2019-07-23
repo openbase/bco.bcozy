@@ -158,10 +158,10 @@ public class BackgroundPane extends StackPane {
         return locationMapPane;
     }
 
-    public void setChartStateModelandBackgroundPane(ChartStateModel chartStateModel) {
+    public void setChartStateModelAndBackgroundPane(ChartStateModel chartStateModel, BackgroundPane backgroundPane) {
         PowerChartVisualizationController chartController = powerChartPaneAndController.getValue();
+        chartController.setBackgroundPane(backgroundPane);
         chartController.initChartState(chartStateModel);
-        chartController.initBackgroundPane(this);
     }
 
     /**
