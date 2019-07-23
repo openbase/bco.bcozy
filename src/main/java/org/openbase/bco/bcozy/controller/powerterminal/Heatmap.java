@@ -3,49 +3,39 @@ package org.openbase.bco.bcozy.controller.powerterminal;
 import com.google.protobuf.Message;
 import eu.hansolo.fx.charts.heatmap.HeatMap;
 import javafx.animation.Interpolator;
+import javafx.application.Platform;
 import javafx.geometry.Point2D;
-import javafx.scene.Node;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Stop;
-import javafx.stage.Screen;
-import org.openbase.bco.bcozy.controller.powerterminal.chartcontroller.ChartController;
 import org.openbase.bco.bcozy.controller.powerterminal.heatmapattributes.HeatmapValues;
 import org.openbase.bco.bcozy.controller.powerterminal.heatmapattributes.SpotsPosition;
-import org.openbase.bco.bcozy.model.powerterminal.ChartStateModel;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.location.DynamicUnitPolygon;
 import org.openbase.bco.dal.lib.layer.service.ServiceStateProvider;
 import org.openbase.bco.dal.lib.layer.unit.PowerConsumptionSensor;
-import org.openbase.bco.dal.lib.layer.unit.Switch;
 import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
 import org.openbase.bco.dal.remote.layer.unit.CustomUnitPool;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
-import org.openbase.jul.extension.type.processing.LabelProcessor;
 import org.openbase.jul.pattern.Filter;
 import org.openbase.jul.pattern.Observer;
+import org.openbase.jul.schedule.GlobalScheduledExecutorService;
 import org.openbase.rct.Transform;
 import org.openbase.type.domotic.unit.UnitConfigType;
 import org.openbase.type.domotic.unit.UnitTemplateType;
 import org.openbase.type.domotic.unit.location.LocationConfigType;
 import org.openbase.type.geometry.AxisAlignedBoundingBox3DFloatType;
 import org.openbase.type.geometry.TranslationType;
-import org.openbase.type.math.Vec3DDoubleType;
-import org.openbase.type.spatial.ShapeType;
 import org.slf4j.LoggerFactory;
 
 import javax.vecmath.Point3d;
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.*;
 
 public class Heatmap extends Pane {
@@ -71,15 +61,16 @@ public class Heatmap extends Pane {
 
             HeatmapValues heatmapValues = initHeatmap(rootLocationConfig);
 
-            //TODO: thousands warnings, heatmap crashed
-            /*unitPool.addObserver(new Observer<ServiceStateProvider<Message>, Message>() {
+            //thousands warnings, heatmap crashed
+           /* unitPool.addObserver(new Observer<ServiceStateProvider<Message>, Message>() {
                 @Override
                 public void update(ServiceStateProvider<Message> source, Message data) throws Exception {
                     updateHeatmap(heatmapValues);
                 }
             }); */
 
-            updateHeatmap(heatmapValues);
+            ScheduledFuture refreshSchedule = GlobalScheduledExecutorService.scheduleAtFixedRate(() -> Platform.runLater(() ->  updateHeatmap(heatmapValues)),
+                    10, 10, TimeUnit.SECONDS);
 
         } catch (CouldNotPerformException  ex) {
             ExceptionPrinter.printHistory("Could not instantiate CustomUnitPool", ex, logger);
@@ -189,9 +180,9 @@ public class Heatmap extends Pane {
              PowerConsumptionSensor powerConsumptionUnit = (PowerConsumptionSensor) unitPool.getInternalUnitList().get(spot.unitListPosition);
              try {
                  double current = powerConsumptionUnit.getPowerConsumptionState().getCurrent() / 16;
-                 current = 1;
                  u[spot.spotsPositionx][spot.spotsPositiony] = current;
                  spot.value = current;
+                 System.out.println("Aktueller Verbrauch: " + current + " vom " + powerConsumptionUnit.getLabel());
              } catch (NotAvailableException e) {
                  e.printStackTrace();
              }
