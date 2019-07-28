@@ -182,7 +182,6 @@ public class Heatmap extends Pane {
                  double current = powerConsumptionUnit.getPowerConsumptionState().getCurrent() / 16;
                  u[spot.spotsPositionx][spot.spotsPositiony] = current;
                  spot.value = current;
-                 System.out.println("Aktueller Verbrauch: " + current + " vom " + powerConsumptionUnit.getLabel());
              } catch (NotAvailableException e) {
                  e.printStackTrace();
              }

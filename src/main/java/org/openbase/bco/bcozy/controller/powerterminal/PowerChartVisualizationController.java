@@ -1,6 +1,8 @@
 package org.openbase.bco.bcozy.controller.powerterminal;
 
 import eu.hansolo.tilesfx.tools.FlowGridPane;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.stage.Screen;
@@ -27,6 +29,8 @@ public class PowerChartVisualizationController extends AbstractFXController {
 
     private ScheduledFuture refreshScheduler;
 
+    private BooleanProperty heatmapSelectedProperty;
+
     @FXML
     FlowGridPane pane;
 
@@ -42,6 +46,8 @@ public class PowerChartVisualizationController extends AbstractFXController {
     @Override
     public void initContent() throws InitializationException {
         pane.setMinSize(Screen.getPrimary().getVisualBounds().getWidth(), Screen.getPrimary().getVisualBounds().getHeight() - 600);
+        heatmapSelectedProperty = new SimpleBooleanProperty();
+        heatmapSelectedProperty.set(false);
     }
 
 
@@ -81,10 +87,10 @@ public class PowerChartVisualizationController extends AbstractFXController {
     private void setUpChart(VisualizationType visualizationType) {
         if (visualizationType == VisualizationType.HEATMAP) {
             pane.getChildren().clear();
-            this.backgroundPane.activateHeatmap();
+            heatmapSelectedProperty.set(true);
         }
         else {
-            this.backgroundPane.deactivateHeatmap();
+            heatmapSelectedProperty.set(false);
             chartController = ChartControllerFactory.getChartController(visualizationType);
             chartController.init(chartStateModel, this);
             if (refreshScheduler != null) {
@@ -95,4 +101,6 @@ public class PowerChartVisualizationController extends AbstractFXController {
             pane.getChildren().add(chartController.getView());
         }
     }
+
+    public BooleanProperty getHeatmapSelectedProperty () { return heatmapSelectedProperty; }
 }
