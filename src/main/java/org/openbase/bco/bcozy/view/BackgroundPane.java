@@ -119,7 +119,6 @@ public class BackgroundPane extends StackPane {
                             else if (oldBoolean)
                                 deactivateHeatmap();
                         });
-                        System.out.println("wert heatmap" + powerChartPaneAndController.getValue().getHeatmapSelectedProperty().get());
                         if (powerChartPaneAndController.getValue().getHeatmapSelectedProperty().get())
                             activateHeatmap();
                         break;
