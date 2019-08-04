@@ -8,6 +8,7 @@ import javafx.scene.chart.XYChart;
 import org.openbase.bco.bcozy.controller.powerterminal.PowerChartVisualizationController;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.DateRange;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.Granularity;
+import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.VisualizationType;
 import org.openbase.bco.bcozy.model.LanguageSelection;
 import org.openbase.bco.bcozy.model.powerterminal.ChartStateModel;
 import org.openbase.bco.bcozy.model.powerterminal.PowerTerminalDBService;
@@ -29,27 +30,23 @@ public class LineChartController extends TilesFxChartController {
     }
 
     @Override
-    public void updateChart(ChartStateModel chartStateModel) {
-        GlobalScheduledExecutorService.submit(() -> {
-            List<ChartData> data = UnitConverter.convert(chartStateModel.getUnit(), PowerTerminalDBService.getAverageConsumptionForDateRangeAndGranularity(chartStateModel.getDateRange(), Granularity.OVERALL));
-            Platform.runLater(() -> {
-                XYChart.Series<String, Number> series = new XYChart.Series();
-                for (ChartData datum : data) {
-                    series.getData().add(new XYChart.Data(datum.getName(), datum.getValue()));
-                }
+    public void updateChart(List<ChartData> data) {
+        if (parentController.getChartStateModel().getVisualizationType() != VisualizationType.LINE_CHART) {//Preventing race conditions
+            return;
+        }
+        XYChart.Series<String, Number> series = new XYChart.Series();
+        for (ChartData datum : data) {
+            series.getData().add(new XYChart.Data(datum.getName(), datum.getValue()));
+        }
 
-                parentController.getPane().getChildren().clear();
-                parentController.getPane().getChildren().add(
-                        TileBuilder.create()
-                                .skinType(Tile.SkinType.SMOOTHED_CHART)
-                                .prefSize(TILE_WIDTH, TILE_HEIGHT)
-                                .title(LanguageSelection.getLocalized(POWERTERMINAL_CHART_HEADER_IDENTIFIER))
-                                .smoothing(false)
-                                .series(series)
-                                .build());
-            });
-        });
-
-
+        parentController.getPane().getChildren().clear();
+        parentController.getPane().getChildren().add(
+                TileBuilder.create()
+                        .skinType(Tile.SkinType.SMOOTHED_CHART)
+                        .prefSize(TILE_WIDTH, TILE_HEIGHT)
+                        .title(LanguageSelection.getLocalized(POWERTERMINAL_CHART_HEADER_IDENTIFIER))
+                        .smoothing(false)
+                        .series(series)
+                        .build());
     }
 }

@@ -54,12 +54,11 @@ public class PowerChartVisualizationController extends AbstractFXController {
         this.chartStateModel = chartStateModel;
 
         chartStateModel.visualizationTypeProperty().addListener(
-                (ChangeListener<? super VisualizationType>) (dont, care, newVisualizationType) -> {
+                (ChangeListener<? super VisualizationType>) (source, old, newVisualizationType) -> {
                     setUpChart(newVisualizationType);
                 });
 
-        chartStateModel.dateRangeProperty().addListener((ChangeListener<? super DateRange>) (dont, care, newDateRange) ->
-            //todo: replace global updatechart Method with single overloaded ones for the different changable values
+        chartStateModel.dateRangeProperty().addListener((ChangeListener<? super DateRange>) (source, old, newDateRange) ->
             chartController.updateChart(chartStateModel)
         );
 
@@ -72,14 +71,18 @@ public class PowerChartVisualizationController extends AbstractFXController {
         return pane;
     }
 
+    public ChartStateModel getChartStateModel() {
+        return chartStateModel;
+    }
+
     private void setUpChart(VisualizationType visualizationType) {
-        chartController = ChartControllerFactory.getChartController(visualizationType);
-        chartController.init(chartStateModel, this);
         if (refreshScheduler != null) {
             refreshScheduler.cancel(true);
         }
-        refreshScheduler = chartController.enableDataRefresh(30000, chartStateModel);
         pane.getChildren().clear();
+        chartController = ChartControllerFactory.getChartController(visualizationType);
+        chartController.init(chartStateModel, this);
         pane.getChildren().add(chartController.getView());
+        refreshScheduler = chartController.enableDataRefresh(30000, chartStateModel);
     }
 }

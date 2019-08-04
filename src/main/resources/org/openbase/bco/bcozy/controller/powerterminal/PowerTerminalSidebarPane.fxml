@@ -5,22 +5,38 @@
 <?import com.jfoenix.controls.JFXCheckBox?>
 <?import javafx.scene.text.Text?>
 <?import com.jfoenix.controls.JFXDatePicker?>
+<?import javafx.geometry.Insets?>
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="org.openbase.bco.bcozy.controller.powerterminal.PowerTerminalSidebarPaneController"
-      alignment="TOP_CENTER"
-      spacing="40">
+      spacing="30">
 
-    <JFXComboBox fx:id="selectVisualizationTypeBox" promptText="Visualization" prefWidth="200"/>
-    <JFXComboBox fx:id="selectUnitBox" promptText="Unit" prefWidth="200"/>
-    <JFXComboBox fx:id="selectGranularityBox" promptText="Granularity" prefWidth="200"/>
-    <VBox spacing="5" prefWidth="200" alignment="TOP_CENTER">
-        <HBox spacing="5" alignment="TOP_CENTER">
+    <padding>
+        <Insets bottom="30.0" left="30.0" right="30.0" top="30.0"/>
+    </padding>
+
+    <JFXComboBox fx:id="selectVisualizationTypeBox" prefWidth="200"/>
+    <JFXComboBox fx:id="selectUnitBox" prefWidth="200"/>
+    <VBox fx:id="globalConsumptionGroupHbox" spacing="5" prefWidth="200">
+        <HBox spacing="5">
+            <JFXCheckBox fx:id="globalConsumptionCheckBox"/>
+            <Text fx:id="globalConsumptionCheckboxDescription"/>
+        </HBox>
+        <VBox fx:id="granularSelectionGroupVbox" spacing="5" prefWidth="200">
+            <JFXComboBox fx:id="selectRoomBox" prefWidth="200"/>
+            <JFXComboBox fx:id="selectConsumerBox" prefWidth="200"/>
+            <Text fx:id="consumerErrorMessage" wrappingWidth="200" fill="red"/>
+        </VBox>
+    </VBox>
+    <VBox spacing="5" prefWidth="200">
+        <HBox fx:id="dateNowGroupHbox" spacing="5">
             <JFXCheckBox fx:id="dateNowCheckBox"/>
             <Text fx:id="dateNowCheckboxDescription"/>
         </HBox>
-        <JFXDatePicker fx:id="selectStartDatePicker" defaultColor="#303034" prefWidth="200"/>
-        <JFXDatePicker fx:id="selectEndDatePicker" defaultColor="#303034" prefWidth="200"/>
-        <Text fx:id="dateErrorMessage" fill="red"/>
+        <VBox fx:id="dateSelectionGroupVbox" spacing="5" prefWidth="200">
+            <JFXDatePicker fx:id="selectStartDatePicker" defaultColor="#303034" prefWidth="200"/>
+            <JFXDatePicker fx:id="selectEndDatePicker" defaultColor="#303034" prefWidth="200"/>
+            <Text fx:id="dateErrorMessage" wrappingWidth="200" fill="red"/>
+        </VBox>
     </VBox>
 </VBox>

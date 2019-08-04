@@ -7,6 +7,7 @@ import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Screen;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.Granularity;
+import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.Unit;
 import org.openbase.bco.bcozy.model.LanguageSelection;
 import org.openbase.bco.bcozy.model.powerterminal.ChartStateModel;
 import org.openbase.bco.bcozy.model.powerterminal.PowerTerminalDBService;
@@ -37,8 +38,10 @@ public abstract class TilesFxChartController implements ChartController{
     public ScheduledFuture enableDataRefresh(long interval, ChartStateModel chartStateModel) {
         ScheduledFuture refreshSchedule = null;
         try {
-            refreshSchedule = GlobalScheduledExecutorService.scheduleAtFixedRate(() -> Platform.runLater(() -> updateChart(chartStateModel)),
-                    10, interval, TimeUnit.MILLISECONDS);
+            refreshSchedule = GlobalScheduledExecutorService.scheduleAtFixedRate(() -> {
+                List<ChartData> data = PowerTerminalDBService.getAverageConsumptionForDateRangeAndGranularity(chartStateModel.getDateRange(), Granularity.OVERALL);
+                Platform.runLater(() -> updateChart(UnitConverter.convert(chartStateModel.getUnit(), data)));
+                    }, 50, interval, TimeUnit.MILLISECONDS);
         } catch (NotAvailableException ex) {
             ExceptionPrinter.printHistory("Could not refresh power chart data", ex, LOGGER);
         }
@@ -50,11 +53,14 @@ public abstract class TilesFxChartController implements ChartController{
     public void updateChart(ChartStateModel chartStateModel) {
         GlobalScheduledExecutorService.submit(() -> {
             List<ChartData> data = PowerTerminalDBService.getAverageConsumptionForDateRangeAndGranularity(chartStateModel.getDateRange(), Granularity.OVERALL);
-            Platform.runLater(() -> {
-                this.view.getChartData().clear();
-                this.view.getChartData().setAll(UnitConverter.convert(chartStateModel.getUnit(), data));
-            });
+            System.out.println("Updating Chart from abstract controller");
+            Platform.runLater(() -> updateChart(UnitConverter.convert(chartStateModel.getUnit(), data)));
         });
+    }
+
+    public void updateChart(List<ChartData> data) {
+                this.view.getChartData().clear();
+                this.view.getChartData().setAll(data);
     }
 
     @Override

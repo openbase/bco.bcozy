@@ -24,8 +24,6 @@ import static org.openbase.bco.bcozy.controller.powerterminal.PowerChartVisualiz
  * Service wrapping the InfluxDBHandler, providing a high level interface, keeping MVC model tasks where they belong.
  */
 public class PowerTerminalDBService {
-//        Registries.getUnitRegistry().getUnitConfigsByUnitType(UnitTemplateType.UnitTemplate.UnitType.POWER_CONSUMPTION_SENSOR); mit .getID bekommt man Unit ID die man in DB werfen kann
-//        Registries.getUnitRegistry().getUnitConfigsByUnitType(UnitTemplateType.UnitTemplate.UnitType.LOCATION);
     public static final long FIVE_MINUTES_IN_MILLISECONDS = 60000;
     private static final Logger LOGGER = LoggerFactory.getLogger(PowerTerminalDBService.class);
 
