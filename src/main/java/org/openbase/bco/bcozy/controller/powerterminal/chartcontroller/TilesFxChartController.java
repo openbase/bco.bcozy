@@ -1,6 +1,7 @@
 package org.openbase.bco.bcozy.controller.powerterminal.chartcontroller;
 
 import eu.hansolo.tilesfx.Tile;
+import eu.hansolo.tilesfx.chart.ChartData;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.scene.text.TextAlignment;
@@ -16,6 +17,7 @@ import org.openbase.jul.schedule.GlobalScheduledExecutorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -46,9 +48,13 @@ public abstract class TilesFxChartController implements ChartController{
 
     @Override
     public void updateChart(ChartStateModel chartStateModel) {
-        //todo: Update charts from within a thread with GlobalSched,,.submit() and call update from within Platform.runLater() see #92
-        this.view.getChartData().clear();
-        this.view.getChartData().setAll(UnitConverter.convert(chartStateModel.getUnit(), PowerTerminalDBService.getAverageConsumptionForDateRangeAndGranularity(chartStateModel.getDateRange(), Granularity.OVERALL)));
+        GlobalScheduledExecutorService.submit(() -> {
+            List<ChartData> data = PowerTerminalDBService.getAverageConsumptionForDateRangeAndGranularity(chartStateModel.getDateRange(), Granularity.OVERALL);
+            Platform.runLater(() -> {
+                this.view.getChartData().clear();
+                this.view.getChartData().setAll(UnitConverter.convert(chartStateModel.getUnit(), data));
+            });
+        });
     }
 
     @Override

@@ -16,6 +16,7 @@ import org.openbase.jul.schedule.GlobalScheduledExecutorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -36,7 +37,7 @@ public class TreeChartController implements ChartController {
     public void init(ChartStateModel chartStateModel, PowerChartVisualizationController powerChartVisualizationController) {
         view = new ImageView();
         view.setPreserveRatio(true);
-        view.setFitHeight(Screen.getPrimary().getVisualBounds().getHeight()/1.2);
+        view.setFitHeight(Screen.getPrimary().getVisualBounds().getHeight() / 1.2);
     }
 
     @Override
@@ -53,7 +54,10 @@ public class TreeChartController implements ChartController {
 
     @Override
     public void updateChart(ChartStateModel chartStateModel) {
-        view.setImage(getImageByPowerDraw(PowerTerminalDBService.getAverageConsumptionForDateRangeAndGranularity(chartStateModel.getDateRange(), Granularity.OVERALL).get(0)));
+        GlobalScheduledExecutorService.submit(() -> {
+                List<ChartData> data = PowerTerminalDBService.getAverageConsumptionForDateRangeAndGranularity(chartStateModel.getDateRange(), Granularity.OVERALL);
+                Platform.runLater(() -> view.setImage(getImageByPowerDraw(data.get(0))));
+        });
     }
 
     @Override
