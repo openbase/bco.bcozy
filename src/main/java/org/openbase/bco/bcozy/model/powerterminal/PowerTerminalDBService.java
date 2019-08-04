@@ -4,21 +4,16 @@ import eu.hansolo.tilesfx.chart.ChartData;
 import org.influxdata.query.FluxRecord;
 import org.influxdata.query.FluxTable;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.DateRange;
+import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.Granularity;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.Interval;
 import org.openbase.bco.bcozy.model.InfluxDBHandler;
 import org.openbase.bco.bcozy.util.powerterminal.TimeLabelFormatter;
-import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
-import org.openbase.jul.storage.registry.Registry;
-import org.openbase.type.domotic.unit.UnitTemplateType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.Timestamp;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -37,9 +32,10 @@ public class PowerTerminalDBService {
     /**
      * Returns TilesFX Chartdata of the average power consumption during the given DateRange
      * @param dateRange DateRange in about which the database will be queried
+     * @param granularity
      * @return Data about the average power consumption
      */
-    public static List<ChartData> getAverageConsumptionForDateRange(DateRange dateRange) {
+    public static List<ChartData> getAverageConsumptionForDateRangeAndGranularity(DateRange dateRange, Granularity granularity) {
         Timestamp startTime = dateRange.getStartDateAtCurrentTime();
         Timestamp endTime = dateRange.getEndDateAtCurrentTime();
         if (dateRange.isEmpty()) {
