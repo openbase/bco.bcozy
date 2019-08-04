@@ -5,6 +5,7 @@ import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Screen;
+import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.Granularity;
 import org.openbase.bco.bcozy.model.LanguageSelection;
 import org.openbase.bco.bcozy.model.powerterminal.ChartStateModel;
 import org.openbase.bco.bcozy.model.powerterminal.PowerTerminalDBService;
@@ -47,7 +48,7 @@ public abstract class TilesFxChartController implements ChartController{
     public void updateChart(ChartStateModel chartStateModel) {
         //todo: Update charts from within a thread with GlobalSched,,.submit() and call update from within Platform.runLater() see #92
         this.view.getChartData().clear();
-        this.view.getChartData().setAll(UnitConverter.convert(chartStateModel.getUnit(), PowerTerminalDBService.getAverageConsumptionForDateRange(chartStateModel.getDateRange())));
+        this.view.getChartData().setAll(UnitConverter.convert(chartStateModel.getUnit(), PowerTerminalDBService.getAverageConsumptionForDateRangeAndGranularity(chartStateModel.getDateRange(), Granularity.OVERALL)));
     }
 
     @Override

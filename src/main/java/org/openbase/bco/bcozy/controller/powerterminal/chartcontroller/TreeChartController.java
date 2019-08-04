@@ -7,6 +7,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Screen;
 import org.openbase.bco.bcozy.controller.powerterminal.PowerChartVisualizationController;
+import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.Granularity;
 import org.openbase.bco.bcozy.model.powerterminal.ChartStateModel;
 import org.openbase.bco.bcozy.model.powerterminal.PowerTerminalDBService;
 import org.openbase.jul.exception.NotAvailableException;
@@ -52,8 +53,7 @@ public class TreeChartController implements ChartController {
 
     @Override
     public void updateChart(ChartStateModel chartStateModel) {
-        view.setImage(getImageByPowerDraw(PowerTerminalDBService.getAverageConsumptionForDateRange(chartStateModel.getDateRange()).get(0)));
-
+        view.setImage(getImageByPowerDraw(PowerTerminalDBService.getAverageConsumptionForDateRangeAndGranularity(chartStateModel.getDateRange(), Granularity.OVERALL).get(0)));
     }
 
     @Override

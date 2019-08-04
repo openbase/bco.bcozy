@@ -6,6 +6,7 @@ import eu.hansolo.tilesfx.chart.ChartData;
 import javafx.scene.chart.XYChart;
 import org.openbase.bco.bcozy.controller.powerterminal.PowerChartVisualizationController;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.DateRange;
+import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.Granularity;
 import org.openbase.bco.bcozy.model.LanguageSelection;
 import org.openbase.bco.bcozy.model.powerterminal.ChartStateModel;
 import org.openbase.bco.bcozy.model.powerterminal.PowerTerminalDBService;
@@ -27,7 +28,7 @@ public class LineChartController extends TilesFxChartController {
 
     @Override
     public void updateChart(ChartStateModel chartStateModel) {
-        List<ChartData> data = UnitConverter.convert(chartStateModel.getUnit(), PowerTerminalDBService.getAverageConsumptionForDateRange(chartStateModel.getDateRange()));
+        List<ChartData> data = UnitConverter.convert(chartStateModel.getUnit(), PowerTerminalDBService.getAverageConsumptionForDateRangeAndGranularity(chartStateModel.getDateRange(), Granularity.OVERALL));
         XYChart.Series<String, Number> series = new XYChart.Series();
         for (ChartData datum : data) {
             series.getData().add(new XYChart.Data(datum.getName(), datum.getValue()));
@@ -46,6 +47,6 @@ public class LineChartController extends TilesFxChartController {
 //        ((Tile) view).getSeries().clear();
 //        ((Tile) view).getSeries().add(series);
 
-//        setChartData(PowerTerminalDBService.getAverageConsumptionForDateRange(chartStateModel.getDateRange()));
+//        setChartData(PowerTerminalDBService.getAverageConsumptionForDateRangeAndGranularity(chartStateModel.getDateRange()));
     }
 }
