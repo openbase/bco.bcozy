@@ -21,21 +21,20 @@ import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.Unit;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.VisualizationType;
 import org.openbase.bco.bcozy.model.LanguageSelection;
 import org.openbase.bco.bcozy.model.powerterminal.ChartStateModel;
-import org.openbase.bco.bcozy.view.powerterminal.LocalizedEnumCellFactory;
-import org.openbase.bco.bcozy.view.powerterminal.LocalizedUnitCellFactory;
+import org.openbase.bco.bcozy.view.powerterminal.LocalizedCellFactory;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InitializationException;
-import org.openbase.jul.schedule.GlobalScheduledExecutorService;
+import org.openbase.jul.extension.type.processing.LabelProcessor;
 import org.openbase.jul.visual.javafx.control.AbstractFXController;
 import org.openbase.type.domotic.unit.UnitConfigType;
 import org.openbase.type.domotic.unit.UnitTemplateType;
+import org.openbase.type.domotic.unit.location.LocationConfigType;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Controller for the power terminal sidebar pane, handling and creating various bindings for the chartStateModel.
@@ -92,7 +91,7 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
 
     @Override
     public void initContent() throws InitializationException {
-        LocalizedEnumCellFactory cellFactory = new LocalizedEnumCellFactory<>(LanguageSelection::getProperty);
+        LocalizedCellFactory cellFactory = new LocalizedCellFactory<>(item -> LanguageSelection.getProperty(item.toString()));
         setupComboBox(cellFactory, selectVisualizationTypeBox, VisualizationType.getSelectableTypes(), 2);
         setupComboBox(cellFactory, selectUnitBox, Unit.values(), 1);
 
@@ -121,26 +120,29 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
         } catch (CouldNotPerformException e) {
             e.printStackTrace();
         }
-        rooms.removeIf(unit -> !LocalizedUnitCellFactory.LOCATION_ALIAS_LOCALIZATION_IDENTIFIER_MAP.containsKey(unit.getAlias(0)));
-        LocalizedUnitCellFactory<UnitConfigType.UnitConfig> unitCellFactory = new LocalizedUnitCellFactory();
-        setupComboBox(unitCellFactory, selectRoomBox, rooms.toArray(new UnitConfigType.UnitConfig[]{}), 0);
+        rooms.removeIf(unit -> unit.getLocationConfig().getLocationType() != LocationConfigType.LocationConfig.LocationType.TILE);
+        LocalizedCellFactory<UnitConfigType.UnitConfig> cellFactory
+                = new LocalizedCellFactory<UnitConfigType.UnitConfig>(unit
+                -> LanguageSelection.getProperty(unit.getLabel(), translatable
+                -> LabelProcessor.getBestMatchOptional(translatable).orElse("Label not Found!")));
+        setupComboBox(cellFactory, selectRoomBox, rooms.toArray(new UnitConfigType.UnitConfig[]{}), 0);
 
-        selectRoomBox.selectionModelProperty().addListener((source, old, newValue) -> {
-            List<UnitConfigType.UnitConfig> consumers = new ArrayList<>();
-            try {
-                consumers =
-                        Registries.getUnitRegistry()
-                                .getUnitConfigs(UnitTemplateType.UnitTemplate.UnitType.POWER_CONSUMPTION_SENSOR);
-                List<UnitConfigType.UnitConfig> locationUnits =
-                        Registries.getUnitRegistry()
-                                .getUnitConfigsByLocation(((UnitConfigType.UnitConfig) newValue).getId());
-                consumers.retainAll(locationUnits);
-            } catch (CouldNotPerformException e) {
-                e.printStackTrace();
-            }
-            LocalizedUnitCellFactory<UnitConfigType.UnitConfig> consumerUnitCellFactory = new LocalizedUnitCellFactory<>();
-            setupComboBox(consumerUnitCellFactory, selectConsumerBox, consumers.toArray(new UnitConfigType.UnitConfig[]{}), 0);
-        });
+//        selectRoomBox.selectionModelProperty().addListener((source, old, newValue) -> {
+//            List<UnitConfigType.UnitConfig> consumers = new ArrayList<>();
+//            try {
+//                consumers =
+//                        Registries.getUnitRegistry()
+//                                .getUnitConfigs(UnitTemplateType.UnitTemplate.UnitType.POWER_CONSUMPTION_SENSOR);
+//                List<UnitConfigType.UnitConfig> locationUnits =
+//                        Registries.getUnitRegistry()
+//                                .getUnitConfigsByLocation(((UnitConfigType.UnitConfig) newValue).getId());
+//                consumers.retainAll(locationUnits);
+//            } catch (CouldNotPerformException e) {
+//                e.printStackTrace();
+//            }
+//            LocalizedUnitCellFactory<UnitConfigType.UnitConfig> consumerUnitCellFactory = new LocalizedUnitCellFactory<>();
+//            setupComboBox(consumerUnitCellFactory, selectConsumerBox, consumers.toArray(new UnitConfigType.UnitConfig[]{}), 0);
+//        });
 
 
         consumerErrorMessage.textProperty().bind(LanguageSelection.getProperty("powerterminal.consumerErrorMessage"));
