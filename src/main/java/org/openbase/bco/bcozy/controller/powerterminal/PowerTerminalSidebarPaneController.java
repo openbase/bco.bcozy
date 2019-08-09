@@ -124,7 +124,7 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
         LocalizedCellFactory<UnitConfigType.UnitConfig> cellFactory
                 = new LocalizedCellFactory<UnitConfigType.UnitConfig>(unit
                 -> LanguageSelection.getProperty(unit.getLabel(), translatable
-                -> LabelProcessor.getBestMatchOptional(translatable).orElse("Label not Found!")));
+                -> LabelProcessor.getBestMatch(translatable, "Label not Found!")));
         setupComboBox(cellFactory, selectRoomBox, rooms.toArray(new UnitConfigType.UnitConfig[]{}), 0);
 
 //        selectRoomBox.selectionModelProperty().addListener((source, old, newValue) -> {
