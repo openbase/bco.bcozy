@@ -25,11 +25,15 @@ import org.openbase.bco.bcozy.view.powerterminal.LocalizedCellFactory;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InitializationException;
+import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.extension.type.processing.LabelProcessor;
 import org.openbase.jul.visual.javafx.control.AbstractFXController;
 import org.openbase.type.domotic.unit.UnitConfigType;
 import org.openbase.type.domotic.unit.UnitTemplateType;
+import org.openbase.type.domotic.unit.UnitTemplateType.UnitTemplate;
 import org.openbase.type.domotic.unit.location.LocationConfigType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -40,6 +44,8 @@ import java.util.List;
  * Controller for the power terminal sidebar pane, handling and creating various bindings for the chartStateModel.
  */
 public class PowerTerminalSidebarPaneController extends AbstractFXController {
+
+    private static Logger LOGGER = LoggerFactory.getLogger(PowerTerminalSidebarPaneController.class);
 
     public static final ZoneId TIME_ZONE_ID = ZoneId.of("GMT+2");
     public static final String DATE_ERROR_MESSAGE_IDENTIFIER = "powerterminal.dateErrorMessage";
@@ -116,9 +122,9 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
         granularSelectionGroupVbox.visibleProperty().bind(globalConsumptionCheckBox.selectedProperty().not());
         List<UnitConfigType.UnitConfig> rooms = new ArrayList<>();
         try {
-            rooms = Registries.getUnitRegistry().getUnitConfigs(UnitTemplateType.UnitTemplate.UnitType.LOCATION);
-        } catch (CouldNotPerformException e) {
-            e.printStackTrace();
+            rooms = Registries.getUnitRegistry().getUnitConfigsByUnitType(UnitTemplate.UnitType.LOCATION);
+        } catch (CouldNotPerformException ex) {
+            ExceptionPrinter.printHistory(ex, LOGGER);
         }
         rooms.removeIf(unit -> unit.getLocationConfig().getLocationType() != LocationConfigType.LocationConfig.LocationType.TILE);
         LocalizedCellFactory<UnitConfigType.UnitConfig> cellFactory
