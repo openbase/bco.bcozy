@@ -42,6 +42,7 @@ import java.util.List;
  */
 public class PowerTerminalSidebarPaneController extends AbstractFXController {
 
+
     public static final ZoneId TIME_ZONE_ID = ZoneId.of("GMT+2");
     public static final String DATE_ERROR_MESSAGE_IDENTIFIER = "powerterminal.dateErrorMessage";
     public static final String DATE_NOW_CHECKBOX_DESCRIPTION_IDENTIFIER = "powerterminal.dateNowCheckboxDescription";
@@ -112,7 +113,7 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
             LocalizedCellFactory<UnitConfig> consumerUnitCellFactory
                     = new LocalizedCellFactory<>(unit
                     -> LanguageSelection.getProperty(unit.getLabel(), translatable
-                    -> LabelProcessor.getBestMatchOptional(translatable).orElse("Label not Found!")));
+                    -> LabelProcessor.getBestMatch(translatable, "Label not Found!")));
             setupComboBox(consumerUnitCellFactory, selectConsumerBox, consumers, 0);
             selectConsumerBox.getItems().add(0, generateDummyUnitConfig(PowerTerminalDBService.UNIT_ID_GLOBAL_CONSUMPTION,
                     "-No Selection-", "-Keine Auswahl-"));
@@ -125,7 +126,7 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
         LocalizedCellFactory<UnitConfig> cellFactory
                 = new LocalizedCellFactory<>(unit
                 -> LanguageSelection.getProperty(unit.getLabel(), translatable
-                -> LabelProcessor.getBestMatchOptional(translatable).orElse("Label not Found!")));
+                -> LabelProcessor.getBestMatch(translatable, "Label not Found!")));
         setupComboBox(cellFactory, selectLocationBox, locations, 0);
 
         globalConsumptionCheckBox.selectedProperty().set(true);
