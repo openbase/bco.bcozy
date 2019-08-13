@@ -5,9 +5,11 @@ import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXDatePicker;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.*;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -16,24 +18,23 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.DateRange;
-import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.Granularity;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.Unit;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.VisualizationType;
 import org.openbase.bco.bcozy.model.LanguageSelection;
 import org.openbase.bco.bcozy.model.powerterminal.ChartStateModel;
+import org.openbase.bco.bcozy.model.powerterminal.PowerTerminalDBService;
+import org.openbase.bco.bcozy.model.powerterminal.PowerTerminalRegistryService;
 import org.openbase.bco.bcozy.view.powerterminal.LocalizedCellFactory;
-import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.extension.type.processing.LabelProcessor;
 import org.openbase.jul.visual.javafx.control.AbstractFXController;
-import org.openbase.type.domotic.unit.UnitConfigType;
-import org.openbase.type.domotic.unit.UnitTemplateType;
-import org.openbase.type.domotic.unit.location.LocationConfigType;
+import org.openbase.type.domotic.unit.UnitConfigType.UnitConfig;
+import org.openbase.type.language.LabelType;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -59,11 +60,9 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
     @FXML
     public VBox globalConsumptionGroupHbox;
     @FXML
-    public JFXComboBox selectRoomBox;
+    public JFXComboBox selectLocationBox;
     @FXML
     public JFXComboBox selectConsumerBox;
-    @FXML
-    public Text consumerErrorMessage;
     @FXML
     public VBox dateSelectionGroupVbox;
     @FXML
@@ -80,7 +79,7 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
     private Text dateNowCheckboxDescription;
 
     private ObjectProperty<DateRange> dateRange = new SimpleObjectProperty<>();
-    private ObjectProperty<Granularity> granularity = new SimpleObjectProperty<>();
+    private ReadOnlyStringWrapper selectedUnitId = new ReadOnlyStringWrapper();
     private ChartStateModel chartStateModel;
 
 
@@ -92,18 +91,11 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
     @Override
     public void initContent() throws InitializationException {
         LocalizedCellFactory cellFactory = new LocalizedCellFactory<>(item -> LanguageSelection.getProperty(item.toString()));
-        setupComboBox(cellFactory, selectVisualizationTypeBox, VisualizationType.getSelectableTypes(), 2);
-        setupComboBox(cellFactory, selectUnitBox, Unit.values(), 1);
-
-
-        selectStartDatePicker.disableProperty().bind(dateNowCheckBox.selectedProperty());
-        selectEndDatePicker.disableProperty().bind(dateNowCheckBox.selectedProperty());
-        selectStartDatePicker.setValue(LocalDate.now(TIME_ZONE_ID).minusDays(1));
-        selectEndDatePicker.setValue(LocalDate.now(TIME_ZONE_ID));
-        dateRange.set(new DateRange(selectStartDatePicker.getValue(), selectEndDatePicker.getValue()));
+        setupComboBox(cellFactory, selectVisualizationTypeBox, List.of(VisualizationType.getSelectableTypes()), 2);
+        setupComboBox(cellFactory, selectUnitBox, List.of(Unit.values()), 1);
 
         chartStateModel = new ChartStateModel(selectVisualizationTypeBox.valueProperty(), selectUnitBox.valueProperty(),
-                granularity, dateRange);
+                selectedUnitId.getReadOnlyProperty(), dateRange);
 
         setupGranularitySelection();
         setupDateSelection();
@@ -112,54 +104,59 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
     private void setupGranularitySelection() {
         globalConsumptionCheckboxDescription.textProperty().bind(LanguageSelection.getProperty(GLOBAL_CONSUMPTION_CHECKBOX_DESCRIPTION_IDENTIFIER));
 
+        globalConsumptionCheckBox.selectedProperty().addListener((source, old, newValue) -> selectedUnitId.set(getSelectedConsumerId()));
+        selectLocationBox.valueProperty().addListener((source, old, newValue) -> selectedUnitId.set(getSelectedConsumerId()));
+        selectConsumerBox.valueProperty().addListener((source, old, newValue) -> selectedUnitId.set(getSelectedConsumerId()));
+        selectLocationBox.valueProperty().addListener((source, old, newValue) -> {
+            List<UnitConfig> consumers = PowerTerminalRegistryService.getConsumers(((UnitConfig) newValue).getId());
+            LocalizedCellFactory<UnitConfig> consumerUnitCellFactory
+                    = new LocalizedCellFactory<>(unit
+                    -> LanguageSelection.getProperty(unit.getLabel(), translatable
+                    -> LabelProcessor.getBestMatchOptional(translatable).orElse("Label not Found!")));
+            setupComboBox(consumerUnitCellFactory, selectConsumerBox, consumers, 0);
+            selectConsumerBox.getItems().add(0, generateDummyUnitConfig(PowerTerminalDBService.UNIT_ID_GLOBAL_CONSUMPTION,
+                    "-No Selection-", "-Keine Auswahl-"));
+            selectConsumerBox.getSelectionModel().select(0);
+        });
+
         granularSelectionGroupVbox.managedProperty().bind(granularSelectionGroupVbox.visibleProperty());
         granularSelectionGroupVbox.visibleProperty().bind(globalConsumptionCheckBox.selectedProperty().not());
-        List<UnitConfigType.UnitConfig> rooms = new ArrayList<>();
-        try {
-            rooms = Registries.getUnitRegistry().getUnitConfigs(UnitTemplateType.UnitTemplate.UnitType.LOCATION);
-        } catch (CouldNotPerformException e) {
-            e.printStackTrace();
-        }
-        rooms.removeIf(unit -> unit.getLocationConfig().getLocationType() != LocationConfigType.LocationConfig.LocationType.TILE);
-        LocalizedCellFactory<UnitConfigType.UnitConfig> cellFactory
-                = new LocalizedCellFactory<UnitConfigType.UnitConfig>(unit
+        List<UnitConfig> locations = PowerTerminalRegistryService.getTileLocations();
+        LocalizedCellFactory<UnitConfig> cellFactory
+                = new LocalizedCellFactory<>(unit
                 -> LanguageSelection.getProperty(unit.getLabel(), translatable
                 -> LabelProcessor.getBestMatchOptional(translatable).orElse("Label not Found!")));
-        setupComboBox(cellFactory, selectRoomBox, rooms.toArray(new UnitConfigType.UnitConfig[]{}), 0);
-
-//        selectRoomBox.selectionModelProperty().addListener((source, old, newValue) -> {
-//            List<UnitConfigType.UnitConfig> consumers = new ArrayList<>();
-//            try {
-//                consumers =
-//                        Registries.getUnitRegistry()
-//                                .getUnitConfigs(UnitTemplateType.UnitTemplate.UnitType.POWER_CONSUMPTION_SENSOR);
-//                List<UnitConfigType.UnitConfig> locationUnits =
-//                        Registries.getUnitRegistry()
-//                                .getUnitConfigsByLocation(((UnitConfigType.UnitConfig) newValue).getId());
-//                consumers.retainAll(locationUnits);
-//            } catch (CouldNotPerformException e) {
-//                e.printStackTrace();
-//            }
-//            LocalizedUnitCellFactory<UnitConfigType.UnitConfig> consumerUnitCellFactory = new LocalizedUnitCellFactory<>();
-//            setupComboBox(consumerUnitCellFactory, selectConsumerBox, consumers.toArray(new UnitConfigType.UnitConfig[]{}), 0);
-//        });
-
-
-        consumerErrorMessage.textProperty().bind(LanguageSelection.getProperty("powerterminal.consumerErrorMessage"));
+        setupComboBox(cellFactory, selectLocationBox, locations, 0);
 
         globalConsumptionCheckBox.selectedProperty().set(true);
     }
 
+    private UnitConfig generateDummyUnitConfig(String id, String labelEn, String labelDe) {
+        return UnitConfig.newBuilder()
+                .setId(id)
+                .setLabel(LabelType.Label.newBuilder()
+                        .addEntry(0, LabelType.Label.MapFieldEntry.newBuilder().setKey("en").addValue(labelEn).build())
+                        .addEntry(1, LabelType.Label.MapFieldEntry.newBuilder().setKey("de").addValue(labelDe).build())
+                        .build())
+                .build();
+    }
+
     private void setupDateSelection() {
+        selectStartDatePicker.setValue(LocalDate.now(TIME_ZONE_ID).minusDays(1));
+        selectEndDatePicker.setValue(LocalDate.now(TIME_ZONE_ID));
+        dateRange.set(new DateRange(selectStartDatePicker.getValue(), selectEndDatePicker.getValue()));
+
         selectStartDatePicker.valueProperty().addListener((source, old, newStartDate) -> {
             DateRange dateRange = new DateRange(newStartDate, this.dateRange.get().getEndDate());
-            if (dateRange.isValid())
+            if (dateRange.isValid()) {
                 this.dateRange.set(dateRange);
+            }
         });
         selectEndDatePicker.valueProperty().addListener((source, old, newEndDate) -> {
             DateRange dateRange = new DateRange(this.dateRange.get().getStartDate(), newEndDate);
-            if (dateRange.isValid())
+            if (dateRange.isValid()) {
                 this.dateRange.set(dateRange);
+            }
         });
 
         dateNowCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
@@ -187,7 +184,6 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
                 selectVisualizationTypeBox.valueProperty());
 
         dateErrorMessage.textProperty().bind(LanguageSelection.getProperty(DATE_ERROR_MESSAGE_IDENTIFIER));
-        dateErrorMessage.visibleProperty().bind(dateValid.not());
 
         dateNowCheckboxDescription.textProperty().bind(LanguageSelection.getProperty(DATE_NOW_CHECKBOX_DESCRIPTION_IDENTIFIER));
         dateNowGroupHbox.managedProperty().bind(dateNowGroupHbox.visibleProperty());
@@ -202,15 +198,18 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
                     }
                 });
 
-        selectStartDatePicker.managedProperty().bind(selectStartDatePicker.visibleProperty());
-        selectEndDatePicker.managedProperty().bind(selectEndDatePicker.visibleProperty());
-        selectStartDatePicker.visibleProperty().bind(multipleDataOk);
-        selectEndDatePicker.visibleProperty().bind(multipleDataOk);
 
+        hideNodeIf(dateNowCheckBox.selectedProperty(), selectStartDatePicker);
+        hideNodeIf(dateNowCheckBox.selectedProperty(), selectEndDatePicker);
+        hideNodeIf(dateValid.not(), dateErrorMessage);
+        hideNodeIf(multipleDataOk, selectStartDatePicker);
+        hideNodeIf(multipleDataOk, selectEndDatePicker);
     }
 
-//        Registries.getUnitRegistry().getUnitConfigsByUnitType(UnitTemplateType.UnitTemplate.UnitType.POWER_CONSUMPTION_SENSOR); mit .getID bekommt man Unit ID die man in DB werfen kann
-//        Registries.getUnitRegistry().getUnitConfigsByUnitType(UnitTemplateType.UnitTemplate.UnitType.LOCATION);
+    private void hideNodeIf(ObservableValue<Boolean> booleanObservableValue, Node node) {
+        node.managedProperty().bind(node.visibleProperty());
+        node.visibleProperty().bind(booleanObservableValue);
+    }
 
     /**
      * Fills a ComboBox with custom cells.
@@ -221,12 +220,31 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
      * @param items       Items to fill the ComboBox with
      * @param index       Per Default selected cell index
      */
-    private <T> void setupComboBox(Callback<ListView<T>, ListCell<T>> cellFactory, ComboBox<T> comboBox, T[] items, int index) {
+    private <T> void setupComboBox(Callback<ListView<T>, ListCell<T>> cellFactory, ComboBox<T> comboBox, Collection<T> items, int index) {
         comboBox.setButtonCell(cellFactory.call(null));
         comboBox.setCellFactory(cellFactory);
-        comboBox.getItems().addAll(items);
+        comboBox.getItems().setAll(items);
         comboBox.getSelectionModel().select(index);
     }
+
+    private String getSelectedConsumerId() {
+        String selectedLocationUnitId = ((UnitConfig) selectLocationBox.valueProperty().get()).getId();
+        if(globalConsumptionCheckBox.selectedProperty().get()) {
+            return PowerTerminalDBService.UNIT_ID_GLOBAL_CONSUMPTION;
+        }
+
+        UnitConfig selectedConsumerUnitConfig = ((UnitConfig) selectConsumerBox.valueProperty().get());
+        if (selectedConsumerUnitConfig == null) {
+            return selectedLocationUnitId;
+        }
+
+        String selectedConsumerUnitId = selectedConsumerUnitConfig.getId();
+        if (selectedConsumerUnitId.equals(PowerTerminalDBService.UNIT_ID_GLOBAL_CONSUMPTION)) {
+            return selectedLocationUnitId;
+        }
+        return selectedConsumerUnitId;
+    }
+
 
     public ChartStateModel getChartStateModel() {
         return chartStateModel;

@@ -45,7 +45,7 @@ public class TreeChartController implements ChartController {
         ScheduledFuture refreshSchedule = null;
         try {
             refreshSchedule = GlobalScheduledExecutorService.scheduleAtFixedRate(() -> {
-                        List<ChartData> data = PowerTerminalDBService.getAverageConsumptionForDateRangeAndGranularity(chartStateModel.getDateRange(), Granularity.OVERALL);
+                        List<ChartData> data = PowerTerminalDBService.getAverageConsumption(chartStateModel.getDateRange(), chartStateModel.getSelectedConsumer());
                         Platform.runLater(() -> updateChart(data));
                     },
                     10, interval, TimeUnit.MILLISECONDS);
@@ -58,7 +58,7 @@ public class TreeChartController implements ChartController {
     @Override
     public void updateChart(ChartStateModel chartStateModel) {
         GlobalScheduledExecutorService.submit(() -> {
-                List<ChartData> data = PowerTerminalDBService.getAverageConsumptionForDateRangeAndGranularity(chartStateModel.getDateRange(), Granularity.OVERALL);
+                List<ChartData> data = PowerTerminalDBService.getAverageConsumption(chartStateModel.getDateRange(), chartStateModel.getSelectedConsumer());
                 Platform.runLater(() -> updateChart(data));
         });
     }

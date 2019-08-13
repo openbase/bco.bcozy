@@ -42,6 +42,7 @@ import java.util.function.Function;
 public final class LanguageSelection extends Observable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LanguageSelection.class);
+    private static final Map<String, ReadOnlyStringProperty> properties = new HashMap<>();
 
     /**
      * Singleton instance.
@@ -166,11 +167,14 @@ public final class LanguageSelection extends Observable {
      * @return a property with the localized string
      */
     public static ReadOnlyStringProperty getProperty(final String identifier) {
-        ReadOnlyStringWrapper localizedProperty = new ReadOnlyStringWrapper();
-        System.out.println("Add Observer for " + identifier);
-        addObserverFor(identifier, (locale, text) -> localizedProperty.set(text));
-
-        return localizedProperty.getReadOnlyProperty();
+        if(properties.containsKey(identifier)) {
+            return properties.get(identifier);
+        } else {
+            ReadOnlyStringWrapper localizedProperty = new ReadOnlyStringWrapper();
+            properties.put(identifier, localizedProperty.getReadOnlyProperty());
+            addObserverFor(identifier, (locale, text) -> localizedProperty.set(text));
+            return localizedProperty.getReadOnlyProperty();
+        }
     }
 
     /**
@@ -182,14 +186,18 @@ public final class LanguageSelection extends Observable {
      * @return a property with the localized string
      */
     public static <T> ReadOnlyStringProperty getProperty(final T translatable, Function<T, String> translator) {
-        ReadOnlyStringWrapper localizedProperty = new ReadOnlyStringWrapper();
-        System.out.println("Add Observer for " + translatable.toString());
-        addObserver(() -> {
-            System.out.println("Observer called!");
+        String identifier = translatable.toString();
+        if(properties.containsKey(identifier)) {
+            return properties.get(identifier);
+        } else {
+            ReadOnlyStringWrapper localizedProperty = new ReadOnlyStringWrapper();
+            properties.put(identifier, localizedProperty.getReadOnlyProperty());
+            addObserver(() -> {
+                localizedProperty.set(translator.apply(translatable));
+            });
             localizedProperty.set(translator.apply(translatable));
-        });
-        localizedProperty.set(translator.apply(translatable));
-        return localizedProperty.getReadOnlyProperty();
+            return localizedProperty.getReadOnlyProperty();
+        }
     }
 
     /**

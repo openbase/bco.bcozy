@@ -23,9 +23,8 @@
             <Text fx:id="globalConsumptionCheckboxDescription"/>
         </HBox>
         <VBox fx:id="granularSelectionGroupVbox" spacing="5" prefWidth="200">
-            <JFXComboBox fx:id="selectRoomBox" prefWidth="200"/>
+            <JFXComboBox fx:id="selectLocationBox" prefWidth="200"/>
             <JFXComboBox fx:id="selectConsumerBox" prefWidth="200"/>
-            <Text fx:id="consumerErrorMessage" wrappingWidth="200" fill="red"/>
         </VBox>
     </VBox>
     <VBox spacing="5" prefWidth="200">

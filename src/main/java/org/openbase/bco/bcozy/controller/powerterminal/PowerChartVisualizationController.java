@@ -53,17 +53,18 @@ public class PowerChartVisualizationController extends AbstractFXController {
 
         this.chartStateModel = chartStateModel;
 
-        chartStateModel.visualizationTypeProperty().addListener(
-                (ChangeListener<? super VisualizationType>) (source, old, newVisualizationType) -> {
-                    setUpChart(newVisualizationType);
-                });
-
-        chartStateModel.dateRangeProperty().addListener((ChangeListener<? super DateRange>) (source, old, newDateRange) ->
-            chartController.updateChart(chartStateModel)
+        chartStateModel.visualizationTypeProperty().addListener((source, old, newVisualizationType) ->
+                setUpChart(newVisualizationType)
         );
-
-        chartStateModel.unitProperty().addListener((source, oldValue, newValue) -> chartController.updateChart(chartStateModel));
-
+        chartStateModel.dateRangeProperty().addListener((source, old, newDateRange) ->
+                chartController.updateChart(chartStateModel)
+        );
+        chartStateModel.selectedConsumerProperty().addListener((source, old, newConsumer) ->
+                chartController.updateChart(chartStateModel)
+        );
+        chartStateModel.unitProperty().addListener((source, oldValue, newValue) ->
+                chartController.updateChart(chartStateModel)
+        );
         setUpChart(DEFAULT_VISUALISATION_TYPE);
     }
 

@@ -7,7 +7,6 @@ import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Screen;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.Granularity;
-import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.Unit;
 import org.openbase.bco.bcozy.model.LanguageSelection;
 import org.openbase.bco.bcozy.model.powerterminal.ChartStateModel;
 import org.openbase.bco.bcozy.model.powerterminal.PowerTerminalDBService;
@@ -39,7 +38,7 @@ public abstract class TilesFxChartController implements ChartController{
         ScheduledFuture refreshSchedule = null;
         try {
             refreshSchedule = GlobalScheduledExecutorService.scheduleAtFixedRate(() -> {
-                List<ChartData> data = PowerTerminalDBService.getAverageConsumptionForDateRangeAndGranularity(chartStateModel.getDateRange(), Granularity.OVERALL);
+                List<ChartData> data = PowerTerminalDBService.getAverageConsumption(chartStateModel.getDateRange(), chartStateModel.getSelectedConsumer());
                 Platform.runLater(() -> updateChart(UnitConverter.convert(chartStateModel.getUnit(), data)));
                     }, 50, interval, TimeUnit.MILLISECONDS);
         } catch (NotAvailableException ex) {
@@ -52,8 +51,7 @@ public abstract class TilesFxChartController implements ChartController{
     @Override
     public void updateChart(ChartStateModel chartStateModel) {
         GlobalScheduledExecutorService.submit(() -> {
-            List<ChartData> data = PowerTerminalDBService.getAverageConsumptionForDateRangeAndGranularity(chartStateModel.getDateRange(), Granularity.OVERALL);
-            System.out.println("Updating Chart from abstract controller");
+            List<ChartData> data = PowerTerminalDBService.getAverageConsumption(chartStateModel.getDateRange(), chartStateModel.getSelectedConsumer());
             Platform.runLater(() -> updateChart(UnitConverter.convert(chartStateModel.getUnit(), data)));
         });
     }
