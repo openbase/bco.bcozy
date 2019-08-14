@@ -61,18 +61,18 @@ public class PowerChartVisualizationController extends AbstractFXController {
 
         this.chartStateModel = chartStateModel;
 
-        chartStateModel.visualizationTypeProperty().addListener(
-                (ChangeListener<? super VisualizationType>) (dont, care, newVisualizationType) -> {
-                    setUpChart(newVisualizationType);
-                });
-
-        chartStateModel.dateRangeProperty().addListener((ChangeListener<? super DateRange>) (dont, care, newDateRange) ->
-            //todo: replace global updatechart Method with single overloaded ones for the different changable values
-            chartController.updateChart(chartStateModel)
+        chartStateModel.visualizationTypeProperty().addListener((source, old, newVisualizationType) ->
+                setUpChart(newVisualizationType)
         );
-
-        chartStateModel.unitProperty().addListener((source, oldValue, newValue) -> chartController.updateChart(chartStateModel));
-
+        chartStateModel.dateRangeProperty().addListener((source, old, newDateRange) ->
+                chartController.updateChart(chartStateModel)
+        );
+        chartStateModel.selectedConsumerProperty().addListener((source, old, newConsumer) ->
+                chartController.updateChart(chartStateModel)
+        );
+        chartStateModel.unitProperty().addListener((source, oldValue, newValue) ->
+                chartController.updateChart(chartStateModel)
+        );
         setUpChart(DEFAULT_VISUALISATION_TYPE);
     }
 
@@ -84,6 +84,10 @@ public class PowerChartVisualizationController extends AbstractFXController {
         return pane;
     }
 
+    public ChartStateModel getChartStateModel() {
+        return chartStateModel;
+    }
+
     private void setUpChart(VisualizationType visualizationType) {
         if (visualizationType == VisualizationType.HEATMAP) {
             pane.getChildren().clear();
@@ -91,14 +95,14 @@ public class PowerChartVisualizationController extends AbstractFXController {
         }
         else {
             heatmapSelectedProperty.set(false);
-            chartController = ChartControllerFactory.getChartController(visualizationType);
-            chartController.init(chartStateModel, this);
             if (refreshScheduler != null) {
                 refreshScheduler.cancel(true);
             }
-            refreshScheduler = chartController.enableDataRefresh(30000, chartStateModel);
             pane.getChildren().clear();
+            chartController = ChartControllerFactory.getChartController(visualizationType);
+            chartController.init(chartStateModel, this);
             pane.getChildren().add(chartController.getView());
+            refreshScheduler = chartController.enableDataRefresh(30000, chartStateModel);
         }
     }
 

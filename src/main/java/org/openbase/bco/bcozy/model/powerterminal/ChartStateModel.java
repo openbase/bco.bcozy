@@ -1,6 +1,7 @@
 package org.openbase.bco.bcozy.model.powerterminal;
 
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyStringProperty;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.*;
 
 /**
@@ -9,14 +10,14 @@ import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.*;
 public class ChartStateModel {
     private ObjectProperty<VisualizationType> visualizationTypeProperty;
     private ObjectProperty<Unit> unitProperty;
-    private ObjectProperty<Granularity> granularityProperty;
+    private ReadOnlyStringProperty selectedConsumerProperty;
     private ObjectProperty<DateRange> dateRangeProperty;
 
     public ChartStateModel(ObjectProperty<VisualizationType> visualizationTypeProperty, ObjectProperty<Unit> unitProperty,
-                           ObjectProperty<Granularity> granularityProperty, ObjectProperty<DateRange> dateRangeProperty) {
+                           ReadOnlyStringProperty selectedConsumerProperty, ObjectProperty<DateRange> dateRangeProperty) {
         this.visualizationTypeProperty = visualizationTypeProperty;
         this.unitProperty = unitProperty;
-        this.granularityProperty = granularityProperty;
+        this.selectedConsumerProperty = selectedConsumerProperty;
         this.dateRangeProperty = dateRangeProperty;
     }
 
@@ -36,12 +37,12 @@ public class ChartStateModel {
         return unitProperty;
     }
 
-    public Granularity getGranularity() {
-        return granularityProperty.get();
+    public String getSelectedConsumer() {
+        return selectedConsumerProperty.get();
     }
 
-    public ObjectProperty<Granularity> granularityProperty() {
-        return granularityProperty;
+    public ReadOnlyStringProperty selectedConsumerProperty() {
+        return selectedConsumerProperty;
     }
 
     public DateRange getDateRange() {

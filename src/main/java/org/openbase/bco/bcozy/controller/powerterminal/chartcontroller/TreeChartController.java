@@ -44,7 +44,10 @@ public class TreeChartController implements ChartController {
     public ScheduledFuture enableDataRefresh(long interval, ChartStateModel chartStateModel) {
         ScheduledFuture refreshSchedule = null;
         try {
-            refreshSchedule = GlobalScheduledExecutorService.scheduleAtFixedRate(() -> Platform.runLater(() -> updateChart(chartStateModel)),
+            refreshSchedule = GlobalScheduledExecutorService.scheduleAtFixedRate(() -> {
+                        List<ChartData> data = PowerTerminalDBService.getAverageConsumption(chartStateModel.getDateRange(), chartStateModel.getSelectedConsumer());
+                        Platform.runLater(() -> updateChart(data));
+                    },
                     10, interval, TimeUnit.MILLISECONDS);
         } catch (NotAvailableException ex) {
             ExceptionPrinter.printHistory("Could not refresh power chart data", ex, LOGGER);
@@ -55,9 +58,13 @@ public class TreeChartController implements ChartController {
     @Override
     public void updateChart(ChartStateModel chartStateModel) {
         GlobalScheduledExecutorService.submit(() -> {
-                List<ChartData> data = PowerTerminalDBService.getAverageConsumptionForDateRangeAndGranularity(chartStateModel.getDateRange(), Granularity.OVERALL);
-                Platform.runLater(() -> view.setImage(getImageByPowerDraw(data.get(0))));
+                List<ChartData> data = PowerTerminalDBService.getAverageConsumption(chartStateModel.getDateRange(), chartStateModel.getSelectedConsumer());
+                Platform.runLater(() -> updateChart(data));
         });
+    }
+
+    private void updateChart(List<ChartData> data) {
+        view.setImage(getImageByPowerDraw(data.get(0)));
     }
 
     @Override

@@ -10,18 +10,20 @@ import java.util.function.Function;
 
 /**
  * CellFactory that binds the textproperty of created cells to a localized enum representation
+ *
  * @param <T> Enum contained in the Cells
  */
-public class LocalizedEnumCellFactory<T extends Enum> implements Callback<ListView<T>, ListCell<T>> {
+public class LocalizedCellFactory<T> implements Callback<ListView<T>, ListCell<T>> {
 
 
-    private final Function<String, ReadOnlyStringProperty> localization;
+    private final Function<T, ReadOnlyStringProperty> localization;
 
     /**
      * Constructor
+     *
      * @param localization Function that returns a string property describing the localized enum
      */
-    public LocalizedEnumCellFactory(final Function<String, ReadOnlyStringProperty> localization) {
+    public LocalizedCellFactory(final Function<T, ReadOnlyStringProperty> localization) {
         this.localization = Objects.requireNonNull(localization);
     }
 
@@ -32,8 +34,8 @@ public class LocalizedEnumCellFactory<T extends Enum> implements Callback<ListVi
             @Override
             protected void updateItem(final T item, final boolean empty) {
                 super.updateItem(item, empty);
-                if (!empty) {
-                    this.textProperty().bind(localization.apply(item.name()));
+                if (!empty && item != null) {
+                    this.textProperty().bind(localization.apply(item));
                 } else {
                     this.textProperty().unbind();
                 }

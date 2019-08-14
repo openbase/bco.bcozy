@@ -37,8 +37,10 @@ public abstract class TilesFxChartController implements ChartController{
     public ScheduledFuture enableDataRefresh(long interval, ChartStateModel chartStateModel) {
         ScheduledFuture refreshSchedule = null;
         try {
-            refreshSchedule = GlobalScheduledExecutorService.scheduleAtFixedRate(() -> Platform.runLater(() -> updateChart(chartStateModel)),
-                    10, interval, TimeUnit.MILLISECONDS);
+            refreshSchedule = GlobalScheduledExecutorService.scheduleAtFixedRate(() -> {
+                List<ChartData> data = PowerTerminalDBService.getAverageConsumption(chartStateModel.getDateRange(), chartStateModel.getSelectedConsumer());
+                Platform.runLater(() -> updateChart(UnitConverter.convert(chartStateModel.getUnit(), data)));
+                    }, 50, interval, TimeUnit.MILLISECONDS);
         } catch (NotAvailableException ex) {
             ExceptionPrinter.printHistory("Could not refresh power chart data", ex, LOGGER);
         }
@@ -49,12 +51,14 @@ public abstract class TilesFxChartController implements ChartController{
     @Override
     public void updateChart(ChartStateModel chartStateModel) {
         GlobalScheduledExecutorService.submit(() -> {
-            List<ChartData> data = PowerTerminalDBService.getAverageConsumptionForDateRangeAndGranularity(chartStateModel.getDateRange(), Granularity.OVERALL);
-            Platform.runLater(() -> {
-                this.view.getChartData().clear();
-                this.view.getChartData().setAll(UnitConverter.convert(chartStateModel.getUnit(), data));
-            });
+            List<ChartData> data = PowerTerminalDBService.getAverageConsumption(chartStateModel.getDateRange(), chartStateModel.getSelectedConsumer());
+            Platform.runLater(() -> updateChart(UnitConverter.convert(chartStateModel.getUnit(), data)));
         });
+    }
+
+    public void updateChart(List<ChartData> data) {
+                this.view.getChartData().clear();
+                this.view.getChartData().setAll(data);
     }
 
     @Override
