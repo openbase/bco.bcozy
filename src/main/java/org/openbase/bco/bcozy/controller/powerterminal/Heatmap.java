@@ -12,10 +12,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Stop;
 import org.openbase.bco.bcozy.controller.powerterminal.heatmapattributes.HeatmapValues;
-import org.openbase.bco.bcozy.controller.powerterminal.heatmapattributes.SpotsPosition;
+import org.openbase.bco.bcozy.controller.powerterminal.heatmapattributes.HeatmapSpot;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.location.DynamicUnitPolygon;
-import org.openbase.bco.dal.lib.layer.service.ServiceStateProvider;
 import org.openbase.bco.dal.lib.layer.unit.PowerConsumptionSensor;
 import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
 import org.openbase.bco.dal.remote.layer.unit.CustomUnitPool;
@@ -23,14 +22,12 @@ import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
-import org.openbase.jul.pattern.Filter;
-import org.openbase.jul.pattern.Observer;
 import org.openbase.jul.schedule.GlobalScheduledExecutorService;
 import org.openbase.rct.Transform;
 import org.openbase.type.domotic.unit.UnitConfigType;
-import org.openbase.type.domotic.unit.UnitTemplateType;
+import org.openbase.type.domotic.unit.UnitTemplateType.UnitTemplate.UnitType;
 import org.openbase.type.domotic.unit.location.LocationConfigType;
-import org.openbase.type.geometry.AxisAlignedBoundingBox3DFloatType;
+import org.openbase.type.geometry.AxisAlignedBoundingBox3DFloatType.AxisAlignedBoundingBox3DFloat;
 import org.openbase.type.geometry.TranslationType;
 import org.slf4j.LoggerFactory;
 
@@ -42,18 +39,17 @@ public class Heatmap extends Pane {
 
     private CustomUnitPool unitPool;
 
+    // todo declare as global constant in org.openbase.bco.bcozy.view.Constants and use it from there.
     public final int radiusSpots = 100;
 
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(eu.hansolo.fx.charts.heatmap.HeatMap.class);
-
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(HeatMap.class);
 
     public Heatmap() {
         try {
             unitPool = new CustomUnitPool();
 
-            unitPool.init((Filter<UnitConfigType.UnitConfig>) unitConfig -> {
-                return unitConfig.getUnitType() != UnitTemplateType.UnitTemplate.UnitType.POWER_CONSUMPTION_SENSOR;
-            });
+            unitPool.init(unitConfig ->
+                    unitConfig.getUnitType() != UnitType.POWER_CONSUMPTION_SENSOR);
 
             unitPool.activate();
 
@@ -61,6 +57,7 @@ public class Heatmap extends Pane {
 
             HeatmapValues heatmapValues = initHeatmap(rootLocationConfig);
 
+            // todo: make sure the heatmap is only updated when displayed. Otherwise this needs a lot of unused computation time.
             ScheduledFuture refreshSchedule = GlobalScheduledExecutorService.scheduleAtFixedRate(() -> Platform.runLater(() -> updateHeatmap(heatmapValues)),
                     10, 10, TimeUnit.SECONDS);
 
@@ -81,14 +78,15 @@ public class Heatmap extends Pane {
      * @return HeatmapValues
      */
     private HeatmapValues initHeatmap(UnitConfigType.UnitConfig rootLocationConfig) {
-        List<List<Point2D>> rooms = makeRooms();
+        List<List<Point2D>> rooms = loadTiles();
         double xTranslation = 0;
         double yTranslation = 0;
 
-        AxisAlignedBoundingBox3DFloatType.AxisAlignedBoundingBox3DFloat rootBoundingBox = rootLocationConfig.getPlacementConfig().getShape().getBoundingBox();
+        AxisAlignedBoundingBox3DFloat rootBoundingBox = rootLocationConfig.getPlacementConfig().getShape().getBoundingBox();
 
+        // todo: where is this "+1" coming from?
         double[][] u = new double[(int) (rootBoundingBox.getDepth() * Constants.METER_TO_PIXEL + 1)][(int) (rootBoundingBox.getWidth() * Constants.METER_TO_PIXEL + 1)];
-        List<SpotsPosition> spots = new ArrayList<>();
+        List<HeatmapSpot> spots = new ArrayList<>();
 
         try {
             List<Point2D> point2DS = DynamicUnitPolygon.loadShapeVertices(rootLocationConfig);
@@ -97,13 +95,14 @@ public class Heatmap extends Pane {
             this.setTranslateY(-xTranslation);
             this.setTranslateX(-yTranslation);
         } catch (InterruptedException e) {
+            // todo: please recover
             e.printStackTrace();
         } catch (CouldNotPerformException e) {
+            // todo: print at least on debug channel
             e.printStackTrace();
         }
 
         HeatmapValues heatmapValues = new HeatmapValues(rooms, spots, u, xTranslation, yTranslation);
-
 
         int unitListPosition = -1;
         for (UnitRemote<? extends Message> unit : unitPool.getInternalUnitList()) {
@@ -115,21 +114,26 @@ public class Heatmap extends Pane {
                 Point3d unitPoint = new Point3d(unitPosition.getX(), unitPosition.getY(), unitPosition.getZ());
 
                 //Wait for transformation of unitPoint but use getUnitPositionGlobalPoint3D because Position of unitPoint is wrong
+                // todo: what do you mean with "wrong"? Could you please create a bug report for this issue?
                 transform.get(Constants.TRANSFORMATION_TIMEOUT, TimeUnit.MILLISECONDS).getTransform().transform(unitPoint);
 
                 int unitPointGlobalX = (int) (unit.getUnitPositionGlobalPoint3d().x * Constants.METER_TO_PIXEL + xTranslation);
                 int unitPointGlobalY = (int) (unit.getUnitPositionGlobalPoint3d().y * Constants.METER_TO_PIXEL + yTranslation);
+
+                // todo: where is this "+1" and "-1" coming from? At least use a global const if there is a good reason for it.
+
                 if (heatmapValues.isInsideRoom(unitPointGlobalY, unitPointGlobalX))
-                    spots.add(new SpotsPosition(unitPointGlobalY, unitPointGlobalX, 0, unitListPosition));
+                    spots.add(new HeatmapSpot(unitPointGlobalY, unitPointGlobalX, 0, unitListPosition));
                 else if (heatmapValues.isInsideRoom(unitPointGlobalY - 1, unitPointGlobalX))
-                    spots.add(new SpotsPosition(unitPointGlobalY - 1, unitPointGlobalX, 0, unitListPosition));
+                    spots.add(new HeatmapSpot(unitPointGlobalY - 1, unitPointGlobalX, 0, unitListPosition));
                 else if (heatmapValues.isInsideRoom(unitPointGlobalY + 1, unitPointGlobalX))
-                    spots.add(new SpotsPosition(unitPointGlobalY + 1, unitPointGlobalX, 0, unitListPosition));
+                    spots.add(new HeatmapSpot(unitPointGlobalY + 1, unitPointGlobalX, 0, unitListPosition));
                 else if (heatmapValues.isInsideRoom(unitPointGlobalY, unitPointGlobalX - 1))
-                    spots.add(new SpotsPosition(unitPointGlobalY, unitPointGlobalX - 1, 0, unitListPosition));
+                    spots.add(new HeatmapSpot(unitPointGlobalY, unitPointGlobalX - 1, 0, unitListPosition));
                 else if (heatmapValues.isInsideRoom(unitPointGlobalY, unitPointGlobalX + 1))
-                    spots.add(new SpotsPosition(unitPointGlobalY, unitPointGlobalX + 1, 0, unitListPosition));
+                    spots.add(new HeatmapSpot(unitPointGlobalY, unitPointGlobalX + 1, 0, unitListPosition));
             } catch (CouldNotPerformException ex) {
+                //todo: always handle an exception or print it (at least on debug channel)
                 //ExceptionPrinter.printHistory("Could not get location units", ex, logger);
             } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
@@ -145,29 +149,32 @@ public class Heatmap extends Pane {
     }
 
     /**
-     * Gets the rooms out of the UnitRegistry
+     * Loads the tiles and their shape out of the UnitRegistry
      *
-     * @return List<List < Point2D>> List of rooms with the vertices of the room
+     * @return List<List < Point2D>> List of tiles with the vertices of the tile
      */
-    private List<List<Point2D>> makeRooms() {
+    private List<List<Point2D>> loadTiles() {
         List<UnitConfigType.UnitConfig> roomConfigs = null;
         List<List<Point2D>> rooms = new ArrayList<>();
+
         try {
-            roomConfigs = Registries.getUnitRegistry().getUnitConfigsByUnitType(UnitTemplateType.UnitTemplate.UnitType.LOCATION);
+            roomConfigs = Registries.getUnitRegistry().getUnitConfigsByUnitType(UnitType.LOCATION);
         } catch (CouldNotPerformException ex) {
             ExceptionPrinter.printHistory("Could not get location units", ex, logger);
+            // todo: forward exception instead printing it, otherwise this causes a nullpointer in the next code line since roomConfigs is null.
         }
         for (UnitConfigType.UnitConfig roomConfig : roomConfigs) {
             LocationConfigType.LocationConfig.LocationType locationType = roomConfig.getLocationConfig().getLocationType();
+
+            // filter non tiles
             if (!locationType.equals(LocationConfigType.LocationConfig.LocationType.TILE)) {
                 continue;
             }
 
             try {
-                List<Point2D> roomPoints = DynamicUnitPolygon.loadShapeVertices(roomConfig);
-                rooms.add(roomPoints);
-
+                rooms.add(DynamicUnitPolygon.loadShapeVertices(roomConfig));
             } catch (InterruptedException ex) {
+                // todo: interruption not handled.
                 ExceptionPrinter.printHistory("Could not get location units", ex, logger);
             } catch (CouldNotPerformException ex) {
                 ExceptionPrinter.printHistory("Could not get location units", ex, logger);
@@ -182,18 +189,19 @@ public class Heatmap extends Pane {
      *
      * @param heatmapValues Class with relevant data (position, energy consumption) of the consumers
      */
-    private void updateHeatmap(HeatmapValues heatmapValues) {
-        int runnings = 3;
-        List<SpotsPosition> spots = heatmapValues.getSpots();
-        double[][] u = heatmapValues.getU();
+    private void updateHeatmap(final HeatmapValues heatmapValues) {
+        final int runnings = 3;
+        final List<HeatmapSpot> spots = heatmapValues.getSpots();
+        final double[][] u = heatmapValues.getU();
 
-        for (SpotsPosition spot : spots) {
+        for (HeatmapSpot spot : spots) {
             PowerConsumptionSensor powerConsumptionUnit = (PowerConsumptionSensor) unitPool.getInternalUnitList().get(spot.unitListPosition);
             try {
                 double current = powerConsumptionUnit.getPowerConsumptionState().getCurrent() / 16;
-                u[spot.spotsPositionx][spot.spotsPositiony] = current;
+                u[spot.x][spot.y] = current;
                 spot.value = current;
             } catch (NotAvailableException e) {
+                // todo: please use exception printer.
                 e.printStackTrace();
             }
         }
@@ -203,67 +211,66 @@ public class Heatmap extends Pane {
         this.getChildren().add(generateHeatmapWithLibrary(heatmapValues, runnings));
     }
 
-
     /**
      * Generates the heatmap with the hansolo library
      *
      * @param heatmapValues Class with relevant data (position, energy consumption) of the consumers
-     * @param runnings      parameter how often the heat spreads
+     * @param spreadingIteration      parameter how often the heat spreads
      *
      * @return HeatMap from the library generated heatmap
      */
-    private HeatMap generateHeatmapWithLibrary(HeatmapValues heatmapValues, int runnings) {
-        calculateHeatMap(heatmapValues, runnings);
+    private HeatMap generateHeatmapWithLibrary(final HeatmapValues heatmapValues, final int spreadingIteration) {
+        calculateHeatMap(heatmapValues, spreadingIteration);
 
-        HeatMap heatmap = new eu.hansolo.fx.charts.heatmap.HeatMap(heatmapValues.getU().length, heatmapValues.getU()[0].length);
+        final HeatMap heatmap = new eu.hansolo.fx.charts.heatmap.HeatMap(heatmapValues.getU().length, heatmapValues.getU()[0].length);
         heatmap.setOpacity(0.8);
 
-        for (SpotsPosition spot : heatmapValues.getSpots()) {
-            heatmap.addSpot(spot.spotsPositionx, spot.spotsPositiony, createEventImage(heatmapValues, spot, runnings), radiusSpots * runnings, radiusSpots * runnings);
+        for (HeatmapSpot spot : heatmapValues.getSpots()) {
+            heatmap.addSpot(spot.x, spot.y, createEventImage(heatmapValues, spot, spreadingIteration), radiusSpots * spreadingIteration, radiusSpots * spreadingIteration);
         }
         return heatmap;
     }
-
 
     /**
      * Image of a single spot needed for generating the heatmap
      *
      * @param heatmapValues Class with relevant data (position, energy consumption) of the consumers
      * @param spot          Position and value of a single heatmap spot
-     * @param runnings      parameter how often the heat spreads
+     * @param spreadingIteration      parameter how often the heat spreads
      *
      * @return Image of a single spot
      */
-    public Image createEventImage(HeatmapValues heatmapValues, SpotsPosition spot, int runnings) {
-        Double radius = (double) runnings * radiusSpots;
-        double[][] u = heatmapValues.getU();
+    public Image createEventImage(final HeatmapValues heatmapValues, final HeatmapSpot spot, final int spreadingIteration) {
+        final Double radius = (double) spreadingIteration * radiusSpots;
+        final double[][] u = heatmapValues.getU();
+        final Stop[] stops = new Stop[spreadingIteration + 1];
 
-        Stop[] stops = new Stop[runnings + 1];
-        for (int i = 0; i < runnings + 1; i++) {
+        for (int i = 0; i < spreadingIteration + 1; i++) {
             double[] opacity = new double[4];
-            if (i != runnings) {
-                if (spot.spotsPositionx + i < u.length)
-                    opacity[0] = u[spot.spotsPositionx + i][spot.spotsPositiony];
+            if (i != spreadingIteration) {
+                if (spot.x + i < u.length)
+                    opacity[0] = u[spot.x + i][spot.y];
                 else
                     opacity[0] = 1;
 
-                if (spot.spotsPositiony + i < u[spot.spotsPositiony].length)
-                    opacity[1] = u[spot.spotsPositionx][spot.spotsPositiony + i];
+                if (spot.y + i < u[spot.y].length)
+                    opacity[1] = u[spot.x][spot.y + i];
                 else
                     opacity[1] = 1;
 
-                if (spot.spotsPositionx - i > 0)
-                    opacity[2] = u[spot.spotsPositionx - i][spot.spotsPositiony];
+                if (spot.x - i > 0)
+                    opacity[2] = u[spot.x - i][spot.y];
                 else
                     opacity[2] = 1;
 
-                if (spot.spotsPositiony - i > 0)
-                    opacity[3] = u[spot.spotsPositionx][spot.spotsPositiony - i];
+                if (spot.y - i > 0)
+                    opacity[3] = u[spot.x][spot.y - i];
                 else
                     opacity[3] = 1;
             }
 
             Arrays.sort(opacity);
+            // todo: please define used colors as well as the interpolation step as constants in the Constants.class
             stops[i] = new Stop(i * 0.1, Color.rgb(255, 255, 255, opacity[0]));
         }
 
@@ -272,19 +279,23 @@ public class Heatmap extends Pane {
         PixelWriter pixelWriter = raster.getPixelWriter();
         double maxDistFactor = 1 / radius;
         Color pixelColor;
+
+        // todo: please explain what this iteration is good for.
         for (int y = 0; y < size; y++) {
             for (int x = 0; x < size; x++) {
                 double deltaX = radius - x;
                 double deltaY = radius - y;
                 double distance = Math.sqrt((deltaX * deltaX) + (deltaY * deltaY));
                 double fraction = maxDistFactor * distance;
+
+                // todo: please explain what this iteration is good for.
                 for (int i = 0; i < stops.length - 1; i++) {
                     if (Double.compare(fraction, stops[i].getOffset()) >= 0 && Double.compare(fraction, stops[i + 1].getOffset()) <= 0) {
-                        int xGlobal = spot.spotsPositionx + (size / 2 - x);
-                        int yGlobal = spot.spotsPositiony + (size / 2 - y);
+                        int xGlobal = spot.x + (size / 2 - x);
+                        int yGlobal = spot.y + (size / 2 - y);
                         int xRotated = size - x;
                         int yRotated = size - y;
-                        if (!heatmapValues.isInsideRoom(xGlobal, yGlobal, spot.spotsPositionx, spot.spotsPositiony))
+                        if (!heatmapValues.isInsideRoom(xGlobal, yGlobal, spot.x, spot.y))
                             continue;
 
                         pixelColor = (Color) Interpolator.LINEAR.interpolate(stops[i].getColor(), stops[i + 1].getColor(), (fraction - stops[i].getOffset()) / 0.1);
@@ -299,18 +310,23 @@ public class Heatmap extends Pane {
 
     /**
      * Calculate the heatmap values given a formula
+     * // todo: can you offer any link to the used formula?
      *
      * @param heatmapValues Class with relevant data (position, energy consumption) of the consumers
-     * @param runnings      parameter how often the heat spreads
+     * @param spreadingIteration      parameter how often the heat spreads
      */
-    private void calculateHeatMap(HeatmapValues heatmapValues, int runnings) {
+    private void calculateHeatMap(HeatmapValues heatmapValues, int spreadingIteration) {
+        // todo please use intuitive variable names
         double[][] u = heatmapValues.getU();
-        List<SpotsPosition> spots = heatmapValues.getSpots();
+        List<HeatmapSpot> spots = heatmapValues.getSpots();
+        // todo please use intuitive variable names
         double h = 1;
         double delta_t = 0.1;
+        // todo please use intuitive variable names
         double[][] v = new double[u.length][u[0].length];
-        for (int runs = 0; runs < runnings; runs++) {
+        for (int runs = 0; runs < spreadingIteration; runs++) {
 
+            // todo: please explain what this iteration is good for.
             for (int col = 1; col < u.length - 1; col++) {
                 for (int row = 1; row < u[col].length - 1; row++) {
                     v[col][row] = (u[col - 1][row] + u[col + 1][row] + u[col][row - 1] + u[col][row + 1]
@@ -318,14 +334,16 @@ public class Heatmap extends Pane {
                 }
             }
 
+            // todo: please explain what this iterration is good for.
             for (int col = 0; col < u.length; col++) {
                 for (int row = 0; row < u[col].length; row++) {
                     u[col][row] = u[col][row] + delta_t * v[col][row];
                 }
             }
 
-            for (SpotsPosition spot : spots) {
-                u[spot.spotsPositionx][spot.spotsPositiony] = spot.value;
+            // todo: please explain what this iteration is good for.
+            for (HeatmapSpot spot : spots) {
+                u[spot.x][spot.y] = spot.value;
             }
         }
         heatmapValues.setU(u);

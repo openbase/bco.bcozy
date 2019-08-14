@@ -1,20 +1,20 @@
 package org.openbase.bco.bcozy.controller.powerterminal.heatmapattributes;
 
-
-
-
-
 import javafx.geometry.Point2D;
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class HeatmapValues {
-    public List<Polygon> rooms;
-    public List<SpotsPosition> spots;
-    public double[][] u;
+    // todo: bco does not offer any representation of rooms, please refactor to location or tile instead.
+    private List<Polygon> rooms;
+    private List<HeatmapSpot> spots;
+    private double[][] u;
 
-    public HeatmapValues(List<List<Point2D>> roomPoints, List<SpotsPosition> spots, double[][] u, double xTranslation, double yTranslation) {
+    // todo: please add at least some javadoc
+
+    public HeatmapValues(List<List<Point2D>> roomPoints, List<HeatmapSpot> spots, double[][] u, double xTranslation, double yTranslation) {
         this.rooms = generatePolygons(roomPoints, xTranslation, yTranslation);
         this.spots = spots;
         this.u = u;
@@ -26,7 +26,7 @@ public class HeatmapValues {
         for (List<Point2D> roomPoint : roomPoints) {
             Polygon temp = new Polygon();
             for (Point2D point2D : roomPoint)
-                temp.addPoint((int) (point2D.getY()+yTranslation), (int)(point2D.getX()+xTranslation));
+                temp.addPoint((int) (point2D.getY() + yTranslation), (int) (point2D.getX() + xTranslation));
             roomTemp.add(temp);
         }
         return roomTemp;
@@ -36,21 +36,25 @@ public class HeatmapValues {
         return rooms;
     }
 
-    public List<SpotsPosition> getSpots () {
+    public List<HeatmapSpot> getSpots() {
         return spots;
     }
 
-    public double[][] getU () {
+    // todo: what is "U" please use selfExplainable method names.
+
+    public double[][] getU() {
         return u;
     }
 
-    public void setU (double[][] uNew) {
+    public void setU(double[][] uNew) {
         this.u = uNew;
     }
 
-    public void setSpots (List<SpotsPosition> spotsNew) {this.spots = spotsNew;}
+    public void setSpots(List<HeatmapSpot> spotsNew) {
+        this.spots = spotsNew;
+    }
 
-    public boolean isInsideRoom (double x, double y, double centerx, double centery) {
+    public boolean isInsideRoom(double x, double y, double centerx, double centery) {
         for (Polygon room : rooms) {
             if (room.contains(centerx, centery) && room.contains(x, y))
                 return true;
@@ -58,7 +62,7 @@ public class HeatmapValues {
         return false;
     }
 
-    public boolean isInsideRoom (double centerx, double centery) {
+    public boolean isInsideRoom(double centerx, double centery) {
         for (Polygon room : rooms) {
             if (room.contains(centerx, centery))
                 return true;
