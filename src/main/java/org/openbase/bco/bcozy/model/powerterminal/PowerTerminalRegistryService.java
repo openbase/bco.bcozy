@@ -14,6 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+/**
+ * Service wrapping the Registries, providing a high level interface, keeping MVC model tasks where they belong.
+ */
 public class PowerTerminalRegistryService {
 
     private static Logger LOGGER = LoggerFactory.getLogger(PowerTerminalSidebarPaneController.class);

@@ -130,16 +130,6 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
         globalConsumptionCheckBox.selectedProperty().set(true);
     }
 
-    private UnitConfig generateDummyUnitConfig(String id, String labelEn, String labelDe) {
-        return UnitConfig.newBuilder()
-                .setId(id)
-                .setLabel(LabelType.Label.newBuilder()
-                        .addEntry(0, LabelType.Label.MapFieldEntry.newBuilder().setKey("en").addValue(labelEn).build())
-                        .addEntry(1, LabelType.Label.MapFieldEntry.newBuilder().setKey("de").addValue(labelDe).build())
-                        .build())
-                .build();
-    }
-
     private void setupDateSelection() {
         selectStartDatePicker.setValue(LocalDate.now(TIME_ZONE_ID).minusDays(1));
         selectEndDatePicker.setValue(LocalDate.now(TIME_ZONE_ID));
@@ -223,14 +213,14 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
         comboBox.setButtonCell(cellFactory.call(null));
         comboBox.setCellFactory(cellFactory);
         comboBox.getItems().setAll(items);
-        if(index >= 0) {
+        if (index >= 0) {
             comboBox.getSelectionModel().select(index);
         }
     }
 
     private String getSelectedConsumerId() {
         String selectedLocationUnitId = ((UnitConfig) selectLocationBox.valueProperty().get()).getId();
-        if(globalConsumptionCheckBox.selectedProperty().get()) {
+        if (globalConsumptionCheckBox.selectedProperty().get()) {
             return PowerTerminalDBService.UNIT_ID_GLOBAL_CONSUMPTION;
         }
 
@@ -246,6 +236,15 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
         return selectedConsumerUnitId;
     }
 
+    private UnitConfig generateDummyUnitConfig(String id, String labelEn, String labelDe) {
+        return UnitConfig.newBuilder()
+                .setId(id)
+                .setLabel(LabelType.Label.newBuilder()
+                        .addEntry(0, LabelType.Label.MapFieldEntry.newBuilder().setKey("en").addValue(labelEn).build())
+                        .addEntry(1, LabelType.Label.MapFieldEntry.newBuilder().setKey("de").addValue(labelDe).build())
+                        .build())
+                .build();
+    }
 
     public ChartStateModel getChartStateModel() {
         return chartStateModel;

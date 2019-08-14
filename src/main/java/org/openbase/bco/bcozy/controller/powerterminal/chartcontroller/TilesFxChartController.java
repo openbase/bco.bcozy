@@ -55,6 +55,10 @@ public abstract class TilesFxChartController implements ChartController{
         });
     }
 
+    /**
+     * Updates the visualization
+     * @param data New Data to be displayed
+     */
     public void updateChart(List<ChartData> data) {
                 this.view.getChartData().clear();
                 this.view.getChartData().setAll(data);
