@@ -6,7 +6,6 @@ import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Screen;
-import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.Granularity;
 import org.openbase.bco.bcozy.model.LanguageSelection;
 import org.openbase.bco.bcozy.model.powerterminal.ChartStateModel;
 import org.openbase.bco.bcozy.model.powerterminal.PowerTerminalDBService;
