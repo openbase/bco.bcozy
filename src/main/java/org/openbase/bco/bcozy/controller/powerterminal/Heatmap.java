@@ -61,14 +61,6 @@ public class Heatmap extends Pane {
 
             HeatmapValues heatmapValues = initHeatmap(rootLocationConfig);
 
-            //thousands warnings, heatmap crashed
-           /* unitPool.addObserver(new Observer<ServiceStateProvider<Message>, Message>() {
-                @Override
-                public void update(ServiceStateProvider<Message> source, Message data) throws Exception {
-                    updateHeatmap(heatmapValues);
-                }
-            }); */
-
             ScheduledFuture refreshSchedule = GlobalScheduledExecutorService.scheduleAtFixedRate(() -> Platform.runLater(() ->  updateHeatmap(heatmapValues)),
                     10, 10, TimeUnit.SECONDS);
 
@@ -80,6 +72,12 @@ public class Heatmap extends Pane {
         }
     }
 
+
+    /**
+     * Initializes the heatmap
+     * @param rootLocationConfig rootLocation to get the position and energy consumption of the consumer
+     * @return HeatmapValues
+     */
     private HeatmapValues initHeatmap(UnitConfigType.UnitConfig rootLocationConfig) {
         List<List<Point2D>> rooms = makeRooms();
         double xTranslation = 0;
@@ -144,6 +142,10 @@ public class Heatmap extends Pane {
        return heatmapValues;
     }
 
+    /**
+     * Gets the rooms out of the UnitRegistry
+     * @return List<List<Point2D>> List of rooms with the vertices of the room
+     */
     private List<List<Point2D>> makeRooms() {
         List<UnitConfigType.UnitConfig> roomConfigs = null;
         List<List<Point2D>> rooms = new ArrayList<>();
@@ -171,6 +173,11 @@ public class Heatmap extends Pane {
         return rooms;
     }
 
+
+    /**
+     * Updates the energy consumption of the heatmap values
+     * @param heatmapValues Class with relevant data (position, energy consumption) of the consumers
+     */
      private void updateHeatmap(HeatmapValues heatmapValues) {
         int runnings = 3;
         List<SpotsPosition> spots = heatmapValues.getSpots();
@@ -193,6 +200,12 @@ public class Heatmap extends Pane {
      }
 
 
+    /**
+     * Generates the heatmap with the hansolo library
+     * @param heatmapValues Class with relevant data (position, energy consumption) of the consumers
+     * @param runnings parameter how often the heat spreads
+     * @return HeatMap from the library generated heatmap
+     */
     private HeatMap generateHeatmapWithLibrary(HeatmapValues heatmapValues, int runnings) {
         calculateHeatMap(heatmapValues, runnings);
 
@@ -205,6 +218,14 @@ public class Heatmap extends Pane {
         return heatmap;
     }
 
+
+    /**
+     * Image of a single spot needed for generating the heatmap
+     * @param heatmapValues Class with relevant data (position, energy consumption) of the consumers
+     * @param spot Position and value of a single heatmap spot
+     * @param runnings parameter how often the heat spreads
+     * @return Image of a single spot
+     */
     public Image createEventImage(HeatmapValues heatmapValues, SpotsPosition spot, int runnings) {
         Double radius = (double) runnings*radiusSpots;
         double[][] u = heatmapValues.getU();
@@ -268,6 +289,11 @@ public class Heatmap extends Pane {
         return raster;
     }
 
+    /**
+     * Calculate the heatmap values given a formula
+     * @param heatmapValues Class with relevant data (position, energy consumption) of the consumers
+     * @param runnings parameter how often the heat spreads
+     */
     private void calculateHeatMap (HeatmapValues heatmapValues, int runnings) {
         double[][] u = heatmapValues.getU();
         List<SpotsPosition> spots= heatmapValues.getSpots();
