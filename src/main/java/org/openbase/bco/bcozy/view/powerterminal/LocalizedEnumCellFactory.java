@@ -1,4 +1,4 @@
-package org.openbase.bco.bcozy.controller.powerterminal;
+package org.openbase.bco.bcozy.view.powerterminal;
 
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.scene.control.ListCell;

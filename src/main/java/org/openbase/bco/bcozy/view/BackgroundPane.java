@@ -148,7 +148,6 @@ public class BackgroundPane extends StackPane {
     }
 
     public void setChartStateModel(ChartStateModel chartStateModel) {
-
         PowerChartVisualizationController chartController = powerChartPaneAndController.getValue();
         chartController.initChartState(chartStateModel);
     }
