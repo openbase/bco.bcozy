@@ -1,4 +1,4 @@
-package org.openbase.bco.bcozy;
+package org.openbase.bco.bcozy.view.pane.service;
 
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.application.Application;
@@ -10,9 +10,11 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.openbase.bco.bcozy.view.generic.EmphasisControlTriangle;
+import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.processing.StringProcessor;
+import org.openbase.jul.visual.javafx.control.AbstractFXController;
 import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
-import org.openbase.jul.visual.javafx.launch.AbstractFXApplication;
 import org.openbase.type.domotic.action.ActionEmphasisType;
 import org.openbase.type.domotic.action.ActionEmphasisType.ActionEmphasis.Category;
 import org.openbase.type.domotic.state.EmphasisStateType.EmphasisState;
@@ -21,8 +23,10 @@ import javax.vecmath.Point2d;
 import java.text.DecimalFormat;
 
 import static org.openbase.bco.dal.lib.layer.service.provider.EmphasisStateProviderService.*;
+import static org.openbase.bco.dal.lib.layer.service.provider.EmphasisStateProviderService.EMPHASIS_TRIANGLE_HEIGHT;
 
-public class EmphasisControlPanePrototype extends AbstractFXApplication {
+public class EmphasisServicePane extends AbstractFXController {
+
 
     private double x = EMPHASIS_TRIANGLE_OUTER_LINE_HALF;
     private double y = EMPHASIS_TRIANGLE_HEIGHT_HALF;
@@ -64,8 +68,14 @@ public class EmphasisControlPanePrototype extends AbstractFXApplication {
     private final Label emphasisLabel = new Label("Economy");
     private ActionEmphasisType.ActionEmphasis.Category primaryEmphasisCategory;
 
-    public static void main(String[] args) {
-        launch(args);
+    @Override
+    public void updateDynamicContent() throws CouldNotPerformException {
+
+    }
+
+    @Override
+    public void initContent() throws InitializationException {
+
     }
 
     @Override
@@ -215,7 +225,6 @@ public class EmphasisControlPanePrototype extends AbstractFXApplication {
 //        System.out.println("x        " + x);
 //        System.out.println("x square " + x * Math.sqrt(3));
 //        System.out.println("y        " + (EMPHASIS_TRIANGLE_HEIGHT - y));
-
 
 
         //System.out.println("handle is and computed: " + Math.abs());
