@@ -16,6 +16,7 @@ import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.Unit;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.VisualizationType;
 import org.openbase.bco.bcozy.model.LanguageSelection;
 import org.openbase.bco.bcozy.model.powerterminal.ChartStateModel;
+import org.openbase.bco.bcozy.view.powerterminal.LocalizedEnumCellFactory;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.visual.javafx.control.AbstractFXController;
@@ -24,7 +25,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 
 /**
- * Controller that controls the right sidebar of the power terminal
+ * Controller for the power terminal sidebar pane, handling and creating various bindings for the chartStateModel.
  */
 public class PowerTerminalSidebarPaneController extends AbstractFXController {
 
@@ -59,9 +60,9 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
 
     @Override
     public void initContent() throws InitializationException {
-        setupComboBox(selectVisualizationTypeBox, VisualizationType.getSelectableTypes());
-        setupComboBox(selectGranularityBox, Granularity.values());
-        setupComboBox(selectUnitBox, Unit.values());
+        setupComboBox(selectVisualizationTypeBox, VisualizationType.getSelectableTypes(), 2);
+        setupComboBox(selectGranularityBox, Granularity.values(), 2);
+        setupComboBox(selectUnitBox, Unit.values(), 1);
 
         selectStartDatePicker.disableProperty().bind(dateNowCheckBox.selectedProperty());
         selectEndDatePicker.disableProperty().bind(dateNowCheckBox.selectedProperty());
@@ -82,20 +83,51 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
             if (dateRange.isValid())
                 this.dateRange.set(dateRange);
         });
-        BooleanBinding dateValid = Bindings.createBooleanBinding(() -> new DateRange(selectStartDatePicker.getValue(), selectEndDatePicker.getValue()).isValid(),
-                selectStartDatePicker.valueProperty(), selectEndDatePicker.valueProperty());
+
+        dateNowCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                dateRange.set(new DateRange());
+            } else {
+                DateRange dateRange = new DateRange(selectStartDatePicker.getValue(), selectEndDatePicker.getValue());
+                if (dateRange.isValid()) {
+                    this.dateRange.set(dateRange);
+                }
+            }
+        });
+
+        BooleanBinding dateValid = Bindings.createBooleanBinding(
+                () -> {DateRange dateRange = new DateRange(selectStartDatePicker.getValue(), selectEndDatePicker.getValue());
+                    return dateRange.isValid() && !dateRange.isEmpty(); }
+                , selectStartDatePicker.valueProperty(), selectEndDatePicker.valueProperty());
+        BooleanBinding multipleDataNotOk = Bindings.createBooleanBinding(
+                () -> !VisualizationType.canDisplayMultipleData(selectVisualizationTypeBox.getSelectionModel().getSelectedItem()),
+                selectVisualizationTypeBox.valueProperty());
+        BooleanBinding singleDataNotOk = Bindings.createBooleanBinding(
+                () -> !VisualizationType.canDisplaySingleton(selectVisualizationTypeBox.getSelectionModel().getSelectedItem()),
+                selectVisualizationTypeBox.valueProperty());
+
         dateErrorMessage.textProperty().bind(LanguageSelection.getProperty(DATE_ERROR_MESSAGE_IDENTIFIER));
         dateErrorMessage.visibleProperty().bind(dateValid.not());
-
         dateNowCheckboxDescription.textProperty().bind(LanguageSelection.getProperty(DATE_NOW_CHECKBOX_DESCRIPTION_IDENTIFIER));
+        dateNowCheckBox.disableProperty().bind(singleDataNotOk);
+        dateNowCheckBox.selectedProperty().bind(Bindings.createBooleanBinding(() -> multipleDataNotOk.get() && !singleDataNotOk.get(), selectVisualizationTypeBox.valueProperty()));
+        selectStartDatePicker.disableProperty().bind(multipleDataNotOk);
+        selectEndDatePicker.disableProperty().bind(multipleDataNotOk);
     }
 
-    private <T extends Enum> void setupComboBox(ComboBox<T> comboBox, T[] items) {
+    /**
+     * Fills a ComboBox with custom cells.
+     * @param comboBox ComboBox that will be set up
+     * @param items Items to fill the ComboBox with
+     * @param index Per Default selected cell index
+     * @param <T> Type contained by the custom cells
+     */
+    private <T extends Enum> void setupComboBox(ComboBox<T> comboBox, T[] items, int index) {
         LocalizedEnumCellFactory<T> cellFactory = new LocalizedEnumCellFactory<>(LanguageSelection::getProperty);
         comboBox.setButtonCell(cellFactory.call(null));
         comboBox.setCellFactory(cellFactory);
         comboBox.getItems().addAll(items);
-        comboBox.getSelectionModel().select(0);
+        comboBox.getSelectionModel().select(index);
     }
 
     public ChartStateModel getChartStateModel() {

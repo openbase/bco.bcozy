@@ -12,11 +12,6 @@ import static java.time.temporal.ChronoUnit.DAYS;
  */
 public class DateRange {
 
-    /**
-     * Timezone that is used to obtain the current time
-     */
-    public static final ZoneId TIME_ZONE_ID = ZoneId.of("GMT+2");
-
     private LocalDate from;
     private LocalDate to;
 
@@ -30,8 +25,13 @@ public class DateRange {
         this.to = to;
     }
 
+    public DateRange() {
+        this.from = LocalDate.now();
+        this.to = LocalDate.now();
+    }
+
     private Timestamp toTimeStamp(LocalDate localDate) {
-        return Timestamp.valueOf(localDate.atTime(LocalTime.now(TIME_ZONE_ID)));
+        return Timestamp.valueOf(localDate.atTime(LocalTime.now(ZoneId.systemDefault())));
     }
 
     public LocalDate getStartDate() {
@@ -70,12 +70,13 @@ public class DateRange {
 
     /**
      * Calculates if the given DateRange is valid
-     * A valid DateRange is non-negative and does not reach the future
+     * A valid DateRange is non-negative and does not reach into the future
      * @param dateRange DateRange to check
      * @return Boolean describing if the DateRange is Valid
      */
     public static boolean isValid(DateRange dateRange) {
-        return dateRange.getStartDate().isBefore(dateRange.getEndDate()) && dateRange.getEndDate().isBefore(LocalDate.now().plusDays(1));
+        return dateRange.getStartDate().isBefore(dateRange.getEndDate())
+                && dateRange.getEndDate().isBefore(LocalDate.now().plusDays(1));
     }
 
     /**
@@ -83,6 +84,23 @@ public class DateRange {
      * @return Boolean describing if the DateRange is Valid
      */
     public boolean isValid() {
-        return isValid(this);
+        return DateRange.isValid(this);
+    }
+
+    /**
+     * Calculates if the given DateRange has the same starting- and ending date, e.g. is empty
+     * @param dateRange DateRange to check
+     * @return Boolean describing if the DateRange is empty
+     */
+    public static boolean isEmpty(DateRange dateRange) {
+        return dateRange.getStartDate().isEqual(dateRange.getEndDate());
+    }
+
+    /**
+     * Calculates if this DateRange has the same starting- and ending date, e.g. is empty
+     * @return Boolean describing if the DateRange is empty
+     */
+    public boolean isEmpty() {
+        return DateRange.isEmpty(this);
     }
 }
