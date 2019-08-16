@@ -12,11 +12,6 @@ import static java.time.temporal.ChronoUnit.DAYS;
  */
 public class DateRange {
 
-    /**
-     * Timezone that is used to obtain the current time
-     */
-    public static final ZoneId TIME_ZONE_ID = ZoneId.of("GMT+2");
-
     private LocalDate from;
     private LocalDate to;
 
@@ -36,7 +31,7 @@ public class DateRange {
     }
 
     private Timestamp toTimeStamp(LocalDate localDate) {
-        return Timestamp.valueOf(localDate.atTime(LocalTime.now(TIME_ZONE_ID)));
+        return Timestamp.valueOf(localDate.atTime(LocalTime.now(ZoneId.systemDefault())));
     }
 
     public LocalDate getStartDate() {

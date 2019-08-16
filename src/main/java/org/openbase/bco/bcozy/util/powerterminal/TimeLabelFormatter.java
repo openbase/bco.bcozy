@@ -62,7 +62,7 @@ public class TimeLabelFormatter {
     }
 
     private static String createTimeLabelWeeks(LocalDateTime dateTime, int shift) {
-        TemporalField woy = WeekFields.of(Locale.GERMANY).weekOfWeekBasedYear();
+        TemporalField woy = WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear();
         int weeknumber = dateTime.plusWeeks(shift).get(woy);
         return "Week " + weeknumber;
     }
