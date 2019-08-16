@@ -13,6 +13,10 @@ import org.openbase.jul.processing.StringProcessor;
 import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 import org.openbase.type.domotic.action.ActionEmphasisType;
 import org.openbase.type.domotic.action.ActionEmphasisType.ActionEmphasis.Category;
+import org.openbase.type.domotic.state.EmphasisStateType.EmphasisState;
+
+import javax.vecmath.Point2d;
+import java.text.DecimalFormat;
 
 import static org.openbase.bco.dal.lib.layer.service.provider.EmphasisStateProviderService.*;
 
@@ -26,7 +30,6 @@ public class EmphasisControlPanePrototype extends Application {
 
     private final double securityHue = 222;
     private final double economyHue = 149;
-    //private final double comfortHue = 300;
     private final double comfortHue = 270;
     private final double errorHue = 0.7d;
 
@@ -143,7 +146,6 @@ public class EmphasisControlPanePrototype extends Application {
         emphasisIcon.setLayoutX((x * scale - emphasisIcon.getWidth() / 2));
         emphasisIcon.setLayoutY((y * scale - emphasisIcon.getHeight() / 2));
 
-
         emphasisLabel.setStyle("-fx-color-label-visible: WHITE");
         emphasisLabel.setLayoutX((scale * EMPHASIS_TRIANGLE_OUTER_LINE / 2) - 50);
         emphasisLabel.setLayoutY(scale * EMPHASIS_TRIANGLE_HEIGHT + 25);
@@ -170,13 +172,13 @@ public class EmphasisControlPanePrototype extends Application {
         // update coordinates
         x = posX;
         y = posY;
+
         comfortTriangleX[2] = x;
         comfortTriangleY[2] = y;
         economyTriangleX[0] = x;
         economyTriangleY[0] = y;
         securityTriangleX[1] = x;
         securityTriangleY[1] = y;
-
 
         //System.out.println("x:" + x);
         //System.out.println("y:" + (EMPHASIS_TRIANGLE_HEIGHT - y));
@@ -191,13 +193,31 @@ public class EmphasisControlPanePrototype extends Application {
         comfortBrightness = Math.max(0d, Math.min(brightness, comfortValue * 2));
 
         // print
-        //DecimalFormat df = new DecimalFormat("###");
-        //System.out.println("============================================");
-        //System.out.println("comfortValue:  " + df.format((int) ((comfortValue) * 100d)) + " %");
-        //System.out.println("economyValue:  " + df.format((int) ((economyValue) * 100d)) + " %");
-        //System.out.println("securityValue: " + df.format((int) ((securityValue) * 100d)) + " %");
+        DecimalFormat df = new DecimalFormat("###");
+//        System.out.println("============================================");
+//        System.out.println("comfortValue:  " + df.format((int) ((comfortValue) * 100d)) + " %");
+//        System.out.println("economyValue:  " + df.format((int) ((economyValue) * 100d)) + " %");
+//        System.out.println("securityValue: " + df.format((int) ((securityValue) * 100d)) + " %");
+
+        final Point2d handlePosition = computeTriangleHandlePosition(EmphasisState.newBuilder().setComfort(comfortValue).setEconomy(economyValue).setSecurity(securityValue).build());
+
+        if (Math.abs(x - handlePosition.x) > 0.0001) {
+            System.out.println("invalid x " + x + " = " + handlePosition.x);
+        }
+
+        if (Math.abs((EMPHASIS_TRIANGLE_HEIGHT - y) - handlePosition.y) > 0.0001) {
+            System.out.println("invalid y " + (EMPHASIS_TRIANGLE_HEIGHT - y) + " = " + handlePosition.y);
+        }
+
+//        System.out.println("===========================================");
+//        System.out.println("x        " + x);
+//        System.out.println("x square " + x * Math.sqrt(3));
+//        System.out.println("y        " + (EMPHASIS_TRIANGLE_HEIGHT - y));
 
 
+
+        //System.out.println("handle is and computed: " + Math.abs());
+        //System.out.println("handle is and computed: " + Math.abs((EMPHASIS_TRIANGLE_HEIGHT - y) - handlePosition.y));
 
         final Category lastEmphasisCategory = primaryEmphasisCategory;
         if (securityValue > economyValue && securityValue > comfortValue) {
@@ -286,7 +306,6 @@ public class EmphasisControlPanePrototype extends Application {
         gc.strokePolygon(comfortTriangleX, comfortTriangleY, 3);
         gc.strokePolygon(securityTriangleX, securityTriangleY, 3);
 
-
         // draw current value indicator
         gc.setStroke(Color.BLACK);
 
@@ -302,7 +321,6 @@ public class EmphasisControlPanePrototype extends Application {
         gc.fillOval(x - indicatorInnerSizeHalf, y - indicatorInnerSizeHalf, indicatorInnerSize, indicatorInnerSize);
         gc.strokeOval(x - indicatorInnerSizeHalf, y - indicatorInnerSizeHalf, indicatorInnerSize, indicatorInnerSize);
     }
-
 
     class Triangle {
 
@@ -336,7 +354,5 @@ public class EmphasisControlPanePrototype extends Application {
                 return false;
             return true;
         }
-
-
     }
 }

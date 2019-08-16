@@ -7,7 +7,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Screen;
 import org.openbase.bco.bcozy.controller.powerterminal.PowerChartVisualizationController;
-import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.Granularity;
 import org.openbase.bco.bcozy.model.powerterminal.ChartStateModel;
 import org.openbase.bco.bcozy.model.powerterminal.PowerTerminalDBService;
 import org.openbase.jul.exception.NotAvailableException;

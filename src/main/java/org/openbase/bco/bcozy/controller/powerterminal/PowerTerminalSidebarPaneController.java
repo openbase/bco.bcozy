@@ -104,9 +104,7 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
 
     private void setupGranularitySelection() {
         globalConsumptionCheckboxDescription.textProperty().bind(LanguageSelection.getProperty(GLOBAL_CONSUMPTION_CHECKBOX_DESCRIPTION_IDENTIFIER));
-
         globalConsumptionCheckBox.selectedProperty().addListener((source, old, newValue) -> selectedUnitId.set(getSelectedConsumerId()));
-        selectLocationBox.valueProperty().addListener((source, old, newValue) -> selectedUnitId.set(getSelectedConsumerId()));
         selectConsumerBox.valueProperty().addListener((source, old, newValue) -> selectedUnitId.set(getSelectedConsumerId()));
         selectLocationBox.valueProperty().addListener((source, old, newValue) -> {
             List<UnitConfig> consumers = PowerTerminalRegistryService.getConsumers(((UnitConfig) newValue).getId());
@@ -114,8 +112,8 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
                     = new LocalizedCellFactory<>(unit
                     -> LanguageSelection.getProperty(unit.getLabel(), translatable
                     -> LabelProcessor.getBestMatch(translatable, "Label not Found!")));
-            setupComboBox(consumerUnitCellFactory, selectConsumerBox, consumers, 0);
-            selectConsumerBox.getItems().add(0, generateDummyUnitConfig(PowerTerminalDBService.UNIT_ID_GLOBAL_CONSUMPTION,
+            setupComboBox(consumerUnitCellFactory, selectConsumerBox, consumers, -1);
+            selectConsumerBox.getItems().add(0, generateDummyUnitConfig(PowerTerminalDBService.UNIT_ID_LOCATION_CONSUMPTION,
                     "-No Selection-", "-Keine Auswahl-"));
             selectConsumerBox.getSelectionModel().select(0);
         });
@@ -130,16 +128,6 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
         setupComboBox(cellFactory, selectLocationBox, locations, 0);
 
         globalConsumptionCheckBox.selectedProperty().set(true);
-    }
-
-    private UnitConfig generateDummyUnitConfig(String id, String labelEn, String labelDe) {
-        return UnitConfig.newBuilder()
-                .setId(id)
-                .setLabel(LabelType.Label.newBuilder()
-                        .addEntry(0, LabelType.Label.MapFieldEntry.newBuilder().setKey("en").addValue(labelEn).build())
-                        .addEntry(1, LabelType.Label.MapFieldEntry.newBuilder().setKey("de").addValue(labelDe).build())
-                        .build())
-                .build();
     }
 
     private void setupDateSelection() {
@@ -225,12 +213,14 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
         comboBox.setButtonCell(cellFactory.call(null));
         comboBox.setCellFactory(cellFactory);
         comboBox.getItems().setAll(items);
-        comboBox.getSelectionModel().select(index);
+        if (index >= 0) {
+            comboBox.getSelectionModel().select(index);
+        }
     }
 
     private String getSelectedConsumerId() {
         String selectedLocationUnitId = ((UnitConfig) selectLocationBox.valueProperty().get()).getId();
-        if(globalConsumptionCheckBox.selectedProperty().get()) {
+        if (globalConsumptionCheckBox.selectedProperty().get()) {
             return PowerTerminalDBService.UNIT_ID_GLOBAL_CONSUMPTION;
         }
 
@@ -240,12 +230,21 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
         }
 
         String selectedConsumerUnitId = selectedConsumerUnitConfig.getId();
-        if (selectedConsumerUnitId.equals(PowerTerminalDBService.UNIT_ID_GLOBAL_CONSUMPTION)) {
-            return selectedLocationUnitId;
+        if (selectedConsumerUnitId.equals(PowerTerminalDBService.UNIT_ID_LOCATION_CONSUMPTION)) {
+            return PowerTerminalDBService.SUM_CHILDREN_CONSUMPTION_PREFIX + PowerTerminalDBService.PREFIX_DELIM + selectedLocationUnitId;
         }
         return selectedConsumerUnitId;
     }
 
+    private UnitConfig generateDummyUnitConfig(String id, String labelEn, String labelDe) {
+        return UnitConfig.newBuilder()
+                .setId(id)
+                .setLabel(LabelType.Label.newBuilder()
+                        .addEntry(0, LabelType.Label.MapFieldEntry.newBuilder().setKey("en").addValue(labelEn).build())
+                        .addEntry(1, LabelType.Label.MapFieldEntry.newBuilder().setKey("de").addValue(labelDe).build())
+                        .build())
+                .build();
+    }
 
     public ChartStateModel getChartStateModel() {
         return chartStateModel;
