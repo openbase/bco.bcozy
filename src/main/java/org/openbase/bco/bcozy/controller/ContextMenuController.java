@@ -188,7 +188,7 @@ public class ContextMenuController {
      */
     public void initTitledPaneMap() throws CouldNotPerformException, InterruptedException {
         try {
-            for (final UnitConfig locationUnitConfig : Registries.getUnitRegistry().getUnitConfigs(UnitType.LOCATION)) {
+            for (final UnitConfig locationUnitConfig : Registries.getUnitRegistry().getUnitConfigsByUnitType(UnitType.LOCATION)) {
                 fillTitledPaneContainer(new TitledUnitPaneContainer(), locationUnitConfig.getId());
             }
         } catch (CouldNotPerformException | NullPointerException ex) {
