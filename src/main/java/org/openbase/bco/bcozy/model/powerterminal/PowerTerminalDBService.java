@@ -7,6 +7,7 @@ import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.DateRange
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.Interval;
 import org.openbase.bco.bcozy.model.InfluxDBHandler;
 import org.openbase.bco.bcozy.util.powerterminal.TimeLabelFormatter;
+import org.openbase.bco.dal.remote.layer.unit.PowerConsumptionSensorRemote;
 import org.openbase.bco.dal.remote.layer.unit.Units;
 import org.openbase.bco.dal.remote.layer.unit.location.LocationRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
@@ -54,6 +55,18 @@ public class PowerTerminalDBService {
     private static List<ChartData> getChartData(Interval intervalSize, Timestamp startAndEndTime, String unitId) {
         long timeInSeconds = TimeUnit.MILLISECONDS.toSeconds(startAndEndTime.getTime());
         List<ChartData> data = new ArrayList<>();
+
+//        try {
+//            double value = 0;
+//            if (unitId.equals(UNIT_ID_GLOBAL_CONSUMPTION)) {
+//                unitId = Units.getUnitRegistry().getRootLocationConfig().getId();
+//            }
+//            PowerConsumptionSensorRemote consumer = Units.getUnit(unitId, false, Units.POWER_CONSUMPTION_SENSOR);
+//            value = consumer.getPowerConsumptionState().getConsumption();
+//            data.add(new ChartData(TimeLabelFormatter.createTimeLabel(startAndEndTime, 0, intervalSize), value));
+//        } catch (CouldNotPerformException | InterruptedException e) {
+//            ExceptionPrinter.printHistory("Could not load datum!", e, LOGGER);
+//        }
 
         try {
             double value = 0;
