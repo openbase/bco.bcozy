@@ -6,13 +6,16 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * Datatype containing the relevant heatmap values like a list of the locations, a list with the spots,
+ * the matrix for calulating the heatmap and the x and y Translation of the rooms
+ */
 public class HeatmapValues {
     // todo: bco does not offer any representation of rooms, please refactor to location or tile instead.
     private List<Polygon> rooms;
     private List<HeatmapSpot> spots;
     private double[][] u;
-
-    // todo: please add at least some javadoc
 
     public HeatmapValues(List<List<Point2D>> roomPoints, List<HeatmapSpot> spots, double[][] u, double xTranslation, double yTranslation) {
         this.rooms = generatePolygons(roomPoints, xTranslation, yTranslation);

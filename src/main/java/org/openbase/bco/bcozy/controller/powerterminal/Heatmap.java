@@ -22,6 +22,7 @@ import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.openbase.jul.exception.printer.LogLevel;
 import org.openbase.jul.schedule.GlobalScheduledExecutorService;
 import org.openbase.rct.Transform;
 import org.openbase.type.domotic.unit.UnitConfigType;
@@ -38,9 +39,6 @@ import java.util.concurrent.*;
 public class Heatmap extends Pane {
 
     private CustomUnitPool unitPool;
-
-    // todo declare as global constant in org.openbase.bco.bcozy.view.Constants and use it from there.
-    public final int radiusSpots = 100;
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(HeatMap.class);
 
@@ -84,8 +82,7 @@ public class Heatmap extends Pane {
 
         AxisAlignedBoundingBox3DFloat rootBoundingBox = rootLocationConfig.getPlacementConfig().getShape().getBoundingBox();
 
-        // todo: where is this "+1" coming from?
-        double[][] u = new double[(int) (rootBoundingBox.getDepth() * Constants.METER_TO_PIXEL + 1)][(int) (rootBoundingBox.getWidth() * Constants.METER_TO_PIXEL + 1)];
+        double[][] u = new double[(int) Math.ceil(rootBoundingBox.getDepth() * Constants.METER_TO_PIXEL)][(int) Math.ceil(rootBoundingBox.getWidth() * Constants.METER_TO_PIXEL)];
         List<HeatmapSpot> spots = new ArrayList<>();
 
         try {
@@ -95,11 +92,10 @@ public class Heatmap extends Pane {
             this.setTranslateY(-xTranslation);
             this.setTranslateX(-yTranslation);
         } catch (InterruptedException e) {
-            // todo: please recover
-            e.printStackTrace();
+            Thread.currentThread().interrupt();
+            ExceptionPrinter.printHistory("Could not get Vertices of the locations", e, logger);
         } catch (CouldNotPerformException e) {
-            // todo: print at least on debug channel
-            e.printStackTrace();
+            ExceptionPrinter.printHistory("Could not get Vertices of the locations", e, logger);
         }
 
         HeatmapValues heatmapValues = new HeatmapValues(rooms, spots, u, xTranslation, yTranslation);
@@ -133,15 +129,14 @@ public class Heatmap extends Pane {
                 else if (heatmapValues.isInsideRoom(unitPointGlobalY, unitPointGlobalX + 1))
                     spots.add(new HeatmapSpot(unitPointGlobalY, unitPointGlobalX + 1, 0, unitListPosition));
             } catch (CouldNotPerformException ex) {
-                //todo: always handle an exception or print it (at least on debug channel)
-                //ExceptionPrinter.printHistory("Could not get location units", ex, logger);
+                ExceptionPrinter.printHistory("Could not get location units", ex, logger, LogLevel.DEBUG);
             } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
-                // ExceptionPrinter.printHistory("Could not get location units", ex, logger);;
+                ExceptionPrinter.printHistory("Could not get location units", ex, logger, LogLevel.DEBUG);
             } catch (ExecutionException ex) {
-                // ExceptionPrinter.printHistory("Could not get location units", ex, logger);
+                ExceptionPrinter.printHistory("Could not get location units", ex, logger, LogLevel.DEBUG);
             } catch (TimeoutException ex) {
-                // ExceptionPrinter.printHistory("Could not get location units", ex, logger);
+                ExceptionPrinter.printHistory("Could not get location units", ex, logger, LogLevel.DEBUG);
             }
         }
         heatmapValues.setSpots(spots);
@@ -174,7 +169,7 @@ public class Heatmap extends Pane {
             try {
                 rooms.add(DynamicUnitPolygon.loadShapeVertices(roomConfig));
             } catch (InterruptedException ex) {
-                // todo: interruption not handled.
+                Thread.currentThread().interrupt();
                 ExceptionPrinter.printHistory("Could not get location units", ex, logger);
             } catch (CouldNotPerformException ex) {
                 ExceptionPrinter.printHistory("Could not get location units", ex, logger);
@@ -200,9 +195,8 @@ public class Heatmap extends Pane {
                 double current = powerConsumptionUnit.getPowerConsumptionState().getCurrent() / 16;
                 u[spot.x][spot.y] = current;
                 spot.value = current;
-            } catch (NotAvailableException e) {
-                // todo: please use exception printer.
-                e.printStackTrace();
+            } catch (NotAvailableException ex) {
+                ExceptionPrinter.printHistory("Could not get power consumption", ex, logger);
             }
         }
         heatmapValues.setSpots(spots);
@@ -226,7 +220,7 @@ public class Heatmap extends Pane {
         heatmap.setOpacity(0.8);
 
         for (HeatmapSpot spot : heatmapValues.getSpots()) {
-            heatmap.addSpot(spot.x, spot.y, createEventImage(heatmapValues, spot, spreadingIteration), radiusSpots * spreadingIteration, radiusSpots * spreadingIteration);
+            heatmap.addSpot(spot.x, spot.y, createEventImage(heatmapValues, spot, spreadingIteration), Constants.RADIUS_SPOTS * spreadingIteration, Constants.RADIUS_SPOTS * spreadingIteration);
         }
         return heatmap;
     }
@@ -241,7 +235,7 @@ public class Heatmap extends Pane {
      * @return Image of a single spot
      */
     public Image createEventImage(final HeatmapValues heatmapValues, final HeatmapSpot spot, final int spreadingIteration) {
-        final Double radius = (double) spreadingIteration * radiusSpots;
+        final Double radius = (double) spreadingIteration * Constants.RADIUS_SPOTS;
         final double[][] u = heatmapValues.getU();
         final Stop[] stops = new Stop[spreadingIteration + 1];
 
