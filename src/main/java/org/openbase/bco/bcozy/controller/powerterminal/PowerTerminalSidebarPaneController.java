@@ -95,6 +95,12 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
         setupComboBox(cellFactory, selectVisualizationTypeBox, List.of(VisualizationType.getSelectableTypes()), 2);
         setupComboBox(cellFactory, selectUnitBox, List.of(Unit.values()), 1);
 
+        BooleanBinding canDisplayDifferentUnits = Bindings.createBooleanBinding(
+                () -> VisualizationType.canDisplayDifferentUnits(selectVisualizationTypeBox.getSelectionModel().getSelectedItem()),
+                selectVisualizationTypeBox.valueProperty());
+        hideNodeIf(canDisplayDifferentUnits, selectUnitBox);
+
+
         chartStateModel = new ChartStateModel(selectVisualizationTypeBox.valueProperty(), selectUnitBox.valueProperty(),
                 selectedUnitId.getReadOnlyProperty(), dateRange);
 
