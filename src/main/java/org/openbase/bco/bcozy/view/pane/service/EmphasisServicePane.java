@@ -1,7 +1,6 @@
 package org.openbase.bco.bcozy.view.pane.service;
 
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
-import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -9,7 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import org.openbase.bco.bcozy.view.generic.EmphasisControlTriangle;
+import org.openbase.bco.bcozy.view.generic.Triangle;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.processing.StringProcessor;
@@ -25,10 +24,9 @@ import java.text.DecimalFormat;
 import static org.openbase.bco.dal.lib.layer.service.provider.EmphasisStateProviderService.*;
 import static org.openbase.bco.dal.lib.layer.service.provider.EmphasisStateProviderService.EMPHASIS_TRIANGLE_HEIGHT;
 
-public class EmphasisServicePane extends AbstractFXController {
+public class EmphasisServicePane {
 
-
-    private double x = EMPHASIS_TRIANGLE_OUTER_LINE_HALF;
+    /*private double x = EMPHASIS_TRIANGLE_OUTER_LINE_HALF;
     private double y = EMPHASIS_TRIANGLE_HEIGHT_HALF;
 
     private final double brightness = 0.8d;
@@ -63,10 +61,12 @@ public class EmphasisServicePane extends AbstractFXController {
     private double economyBrightness = Math.max(0d, Math.min(brightness, economyValue * 2));
     private double comfortBrightness = Math.max(0d, Math.min(brightness, comfortValue * 2));
 
-    private final EmphasisControlTriangle emphasisTriangle = new EmphasisControlTriangle(0, 0, EMPHASIS_TRIANGLE_OUTER_LINE_HALF, EMPHASIS_TRIANGLE_HEIGHT, EMPHASIS_TRIANGLE_OUTER_LINE, 0);
+    private final Triangle emphasisTriangle = new Triangle(0, 0, EMPHASIS_TRIANGLE_OUTER_LINE_HALF, EMPHASIS_TRIANGLE_HEIGHT, EMPHASIS_TRIANGLE_OUTER_LINE, 0);
     private final SVGGlyphIcon emphasisIcon = new SVGGlyphIcon(MaterialDesignIcon.HELP, 45, false);
     private final Label emphasisLabel = new Label("Economy");
     private ActionEmphasisType.ActionEmphasis.Category primaryEmphasisCategory;
+
+
 
     @Override
     public void updateDynamicContent() throws CouldNotPerformException {
@@ -331,5 +331,5 @@ public class EmphasisServicePane extends AbstractFXController {
         gc.setFill(emphasisColor);
         gc.fillOval(x - indicatorInnerSizeHalf, y - indicatorInnerSizeHalf, indicatorInnerSize, indicatorInnerSize);
         gc.strokeOval(x - indicatorInnerSizeHalf, y - indicatorInnerSizeHalf, indicatorInnerSize, indicatorInnerSize);
-    }
+    }*/
 }

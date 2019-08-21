@@ -25,6 +25,7 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.openbase.bco.authentication.lib.jp.JPAuthentication;
+import org.openbase.bco.bcozy.view.generic.EmphasisControlTrianglePane;
 import org.openbase.jul.visual.javafx.JFXConstants;
 import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 import org.openbase.bco.bcozy.view.mainmenupanes.AvailableUsersPane;
@@ -60,6 +61,7 @@ public class MainMenu extends StackPane implements VoidInitializable {
     private boolean maximized;
     private TitledPane loginContainer;
     private final SVGGlyphIcon menuStateIcon;
+    private final EmphasisControlTrianglePane emphasisControlTrianglePane;
 
 
     /**
@@ -83,6 +85,7 @@ public class MainMenu extends StackPane implements VoidInitializable {
             this.verticalLayout.setAlignment(Pos.TOP_CENTER);
             this.verticalLayoutSmall = new VBox(Constants.INSETS * 2);
             this.verticalLayoutSmall.setAlignment(Pos.TOP_CENTER);
+            this.emphasisControlTrianglePane = new EmphasisControlTrianglePane();
             this.logoPane = new LogoPane();
             this.loginPane = new LoginPane();
             this.availableUsersPane = new AvailableUsersPane();
@@ -104,7 +107,7 @@ public class MainMenu extends StackPane implements VoidInitializable {
             // Adding components to their parents
             try {
                 if (JPService.getProperty(JPAuthentication.class).getValue()) {
-                    this.verticalLayout.getChildren().addAll(logoPane, loginContainer, availableUsersPane);
+                    this.verticalLayout.getChildren().addAll(logoPane, loginContainer, availableUsersPane, emphasisControlTrianglePane);
                 } else {
                     this.verticalLayout.getChildren().addAll(logoPane, availableUsersPane);
                 }
