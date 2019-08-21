@@ -47,7 +47,6 @@ public abstract class TilesFxChartController implements ChartController{
         return refreshSchedule;
     }
 
-
     @Override
     public void updateChart(ChartStateModel chartStateModel) {
         GlobalCachedExecutorService.submit(() -> {

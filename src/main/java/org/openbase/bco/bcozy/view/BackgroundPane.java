@@ -18,9 +18,12 @@
  */
 package org.openbase.bco.bcozy.view;
 
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.util.Pair;
+import org.openbase.bco.bcozy.controller.CenterPaneController;
 import org.openbase.bco.bcozy.controller.powerterminal.PowerChartVisualizationController;
 import org.openbase.bco.bcozy.model.powerterminal.ChartStateModel;
 import org.openbase.bco.bcozy.view.location.LocationMapPane;
@@ -41,6 +44,7 @@ public class BackgroundPane extends StackPane {
     private final SimpleUnitSymbolsPane editingLayerPane;
     private final SimpleUnitSymbolsPane maintenanceLayerPane;
     private Pair<Pane, PowerChartVisualizationController> powerChartPaneAndController;
+    private ObjectProperty<CenterPaneController.State> appState;
 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BackgroundPane.class);
@@ -82,6 +86,7 @@ public class BackgroundPane extends StackPane {
 
 
             // layer management
+            appState = foregroundPane.getAppState();
             foregroundPane.getAppState().addListener((observable, oldValue, newValue) -> {
                 switch (newValue) {
                     case SETTINGS:
@@ -147,8 +152,8 @@ public class BackgroundPane extends StackPane {
         return locationMapPane;
     }
 
-    public void setChartStateModel(ChartStateModel chartStateModel) {
+    public void initPowerTerminalPane(ChartStateModel chartStateModel) {
         PowerChartVisualizationController chartController = powerChartPaneAndController.getValue();
-        chartController.initChartState(chartStateModel);
+        chartController.initChartState(chartStateModel, appState);
     }
 }

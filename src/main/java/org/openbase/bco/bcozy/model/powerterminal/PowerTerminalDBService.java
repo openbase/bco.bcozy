@@ -7,7 +7,10 @@ import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.DateRange
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.Interval;
 import org.openbase.bco.bcozy.model.InfluxDBHandler;
 import org.openbase.bco.bcozy.util.powerterminal.TimeLabelFormatter;
+import org.openbase.bco.dal.remote.layer.unit.Units;
+import org.openbase.bco.dal.remote.layer.unit.location.LocationRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,9 +47,14 @@ public class PowerTerminalDBService {
         }
     }
 
+    //        LocationRemote location = Units.getUnit("bla", false, Units.LOCATION);
+    //        location.getPowerConsumptionState();
+    //        location.addDataObserver((source, data) -> {data.getPowerState()});
+
     private static List<ChartData> getChartData(Interval intervalSize, Timestamp startAndEndTime, String unitId) {
         long timeInSeconds = TimeUnit.MILLISECONDS.toSeconds(startAndEndTime.getTime());
         List<ChartData> data = new ArrayList<>();
+
         try {
             double value = 0;
             if (unitId.equals(UNIT_ID_GLOBAL_CONSUMPTION)) {
@@ -104,4 +112,9 @@ public class PowerTerminalDBService {
 
 
 }
+
+
+
+
+
 

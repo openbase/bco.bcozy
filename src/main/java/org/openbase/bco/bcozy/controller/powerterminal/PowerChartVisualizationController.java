@@ -1,9 +1,11 @@
 package org.openbase.bco.bcozy.controller.powerterminal;
 
 import eu.hansolo.tilesfx.tools.FlowGridPane;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.stage.Screen;
+import org.openbase.bco.bcozy.controller.CenterPaneController;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.DateRange;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.Unit;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.VisualizationType;
@@ -27,6 +29,7 @@ public class PowerChartVisualizationController extends AbstractFXController {
     public static final String INFLUXDB_FIELD_CONSUMPTION = "consumption";
 
     private ScheduledFuture refreshScheduler;
+    private ObjectProperty<CenterPaneController.State> appState;
 
     @FXML
     FlowGridPane pane;
@@ -51,9 +54,10 @@ public class PowerChartVisualizationController extends AbstractFXController {
      *
      * @param chartStateModel StateModel that describes the state of the chart as configured by other panes
      */
-    public void initChartState(ChartStateModel chartStateModel) {
+    public void initChartState(ChartStateModel chartStateModel, ObjectProperty<CenterPaneController.State> appState) {
 
         this.chartStateModel = chartStateModel;
+        this.appState = appState;
 
         chartStateModel.visualizationTypeProperty().addListener((source, old, newVisualizationType) ->
                 setUpChart(newVisualizationType)
@@ -67,6 +71,14 @@ public class PowerChartVisualizationController extends AbstractFXController {
         chartStateModel.unitProperty().addListener((source, oldValue, newValue) ->
                 chartController.updateChart(chartStateModel)
         );
+        appState.addListener((source, old, newValue) -> {
+            if(newValue == CenterPaneController.State.ENERGY) {
+                refreshScheduler = chartController.enableDataRefresh(30000, chartStateModel);
+            } else {
+                refreshScheduler.cancel(true);
+            }
+        });
+
         setUpChart(DEFAULT_VISUALISATION_TYPE);
     }
 
@@ -86,10 +98,8 @@ public class PowerChartVisualizationController extends AbstractFXController {
         chartController = ChartControllerFactory.getChartController(visualizationType);
         chartController.init(chartStateModel, this);
         pane.getChildren().add(chartController.getView());
-        refreshScheduler = chartController.enableDataRefresh(30000, chartStateModel);
+        if (appState.get() == CenterPaneController.State.ENERGY) {
+            refreshScheduler = chartController.enableDataRefresh(30000, chartStateModel);
+        }
     }
 }
-
-//        LocationRemote location = Units.getUnit("bla", false, Units.LOCATION);
-//        location.getPowerConsumptionState();
-//        location.addDataObserver((source, data) -> {data.getPowerState()});
