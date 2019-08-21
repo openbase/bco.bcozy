@@ -231,7 +231,7 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
 
         String selectedConsumerUnitId = selectedConsumerUnitConfig.getId();
         if (selectedConsumerUnitId.equals(PowerTerminalDBService.UNIT_ID_LOCATION_CONSUMPTION)) {
-            return PowerTerminalDBService.SUM_CHILDREN_CONSUMPTION_PREFIX + PowerTerminalDBService.PREFIX_DELIM + selectedLocationUnitId;
+            return selectedLocationUnitId;
         }
         return selectedConsumerUnitId;
     }
