@@ -78,6 +78,8 @@ public class RegionPolygon extends LocationPolygon {
                 try {
                     if (ForegroundPane.getInstance().getAppState().getValue() == State.MOVEMENT) {
                         setCustomColor(Color.GREEN.brighter());
+                    } else {
+                        setCustomColor(Color.TRANSPARENT);
                     }
                 } catch (NotAvailableException e) {
                     // no nothing if app state is not known
