@@ -103,7 +103,7 @@ public final class LocationMapPane extends MultiTouchPane implements LocationMap
         this.connectionMap = new HashMap<>();
         this.debugNodes = new ArrayList<>();
         this.editOverlay = new StackPane();
-        this.heatMap = new Heatmap();
+        this.heatMap = new Heatmap(backgroundPane);
         this.anchorPointList = new ArrayList<>();
 
         this.selectedUnit = new SimpleObjectProperty<>();

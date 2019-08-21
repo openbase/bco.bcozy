@@ -13,6 +13,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Stop;
 import org.openbase.bco.bcozy.controller.powerterminal.heatmapattributes.HeatmapValues;
 import org.openbase.bco.bcozy.controller.powerterminal.heatmapattributes.HeatmapSpot;
+import org.openbase.bco.bcozy.view.BackgroundPane;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.location.DynamicUnitPolygon;
 import org.openbase.bco.dal.lib.layer.unit.PowerConsumptionSensor;
@@ -40,9 +41,11 @@ public class Heatmap extends Pane {
 
     private CustomUnitPool unitPool;
 
+    private ScheduledFuture refreshSchedule;
+
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(HeatMap.class);
 
-    public Heatmap() {
+    public Heatmap(BackgroundPane backgroundPane) {
         try {
             unitPool = new CustomUnitPool();
 
@@ -55,9 +58,26 @@ public class Heatmap extends Pane {
 
             HeatmapValues heatmapValues = initHeatmap(rootLocationConfig);
 
-            // todo: make sure the heatmap is only updated when displayed. Otherwise this needs a lot of unused computation time.
-            ScheduledFuture refreshSchedule = GlobalScheduledExecutorService.scheduleAtFixedRate(() -> Platform.runLater(() -> updateHeatmap(heatmapValues)),
-                    10, 10, TimeUnit.SECONDS);
+            backgroundPane.getheatmapActiveProperty().addListener((observable, oldValue, newValue) -> {
+                if(newValue.booleanValue()) {
+                    try {
+                        if(refreshSchedule != null && !refreshSchedule.isDone()){
+                            return;
+                        }
+
+                        refreshSchedule = GlobalScheduledExecutorService.scheduleAtFixedRate(() -> Platform.runLater(() -> updateHeatmap(heatmapValues)),
+                                10, 10, TimeUnit.SECONDS);
+                    } catch (NotAvailableException e) {
+                        //TODO: Exception printer
+                        e.printStackTrace();
+                    }
+                } else {
+                    if (refreshSchedule != null && !refreshSchedule.isDone()) {
+                        refreshSchedule.cancel(false);
+                    }
+                }
+            });
+
 
         } catch (CouldNotPerformException ex) {
             ExceptionPrinter.printHistory("Could not instantiate CustomUnitPool", ex, logger);
