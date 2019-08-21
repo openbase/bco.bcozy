@@ -118,15 +118,15 @@ public class Heatmap extends Pane {
 
                 // todo: where is this "+1" and "-1" coming from? At least use a global const if there is a good reason for it.
 
-                if (heatmapValues.isInsideRoom(unitPointGlobalY, unitPointGlobalX))
+                if (heatmapValues.isInsideLocation(unitPointGlobalY, unitPointGlobalX))
                     spots.add(new HeatmapSpot(unitPointGlobalY, unitPointGlobalX, 0, unitListPosition));
-                else if (heatmapValues.isInsideRoom(unitPointGlobalY - 1, unitPointGlobalX))
+                else if (heatmapValues.isInsideLocation(unitPointGlobalY - 1, unitPointGlobalX))
                     spots.add(new HeatmapSpot(unitPointGlobalY - 1, unitPointGlobalX, 0, unitListPosition));
-                else if (heatmapValues.isInsideRoom(unitPointGlobalY + 1, unitPointGlobalX))
+                else if (heatmapValues.isInsideLocation(unitPointGlobalY + 1, unitPointGlobalX))
                     spots.add(new HeatmapSpot(unitPointGlobalY + 1, unitPointGlobalX, 0, unitListPosition));
-                else if (heatmapValues.isInsideRoom(unitPointGlobalY, unitPointGlobalX - 1))
+                else if (heatmapValues.isInsideLocation(unitPointGlobalY, unitPointGlobalX - 1))
                     spots.add(new HeatmapSpot(unitPointGlobalY, unitPointGlobalX - 1, 0, unitListPosition));
-                else if (heatmapValues.isInsideRoom(unitPointGlobalY, unitPointGlobalX + 1))
+                else if (heatmapValues.isInsideLocation(unitPointGlobalY, unitPointGlobalX + 1))
                     spots.add(new HeatmapSpot(unitPointGlobalY, unitPointGlobalX + 1, 0, unitListPosition));
             } catch (CouldNotPerformException ex) {
                 ExceptionPrinter.printHistory("Could not get location units", ex, logger, LogLevel.DEBUG);
@@ -289,7 +289,7 @@ public class Heatmap extends Pane {
                         int yGlobal = spot.y + (size / 2 - y);
                         int xRotated = size - x;
                         int yRotated = size - y;
-                        if (!heatmapValues.isInsideRoom(xGlobal, yGlobal, spot.x, spot.y))
+                        if (!heatmapValues.isInsideLocation(xGlobal, yGlobal, spot.x, spot.y))
                             continue;
 
                         pixelColor = (Color) Interpolator.LINEAR.interpolate(stops[i].getColor(), stops[i + 1].getColor(), (fraction - stops[i].getOffset()) / 0.1);

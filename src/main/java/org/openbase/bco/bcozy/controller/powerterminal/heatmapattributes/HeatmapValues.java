@@ -9,34 +9,33 @@ import java.util.List;
 
 /**
  * Datatype containing the relevant heatmap values like a list of the locations, a list with the spots,
- * the matrix for calulating the heatmap and the x and y Translation of the rooms
+ * the matrix for calulating the heatmap and the x and y Translation of the locations
  */
 public class HeatmapValues {
-    // todo: bco does not offer any representation of rooms, please refactor to location or tile instead.
-    private List<Polygon> rooms;
+    private List<Polygon> locations;
     private List<HeatmapSpot> spots;
     private double[][] u;
 
-    public HeatmapValues(List<List<Point2D>> roomPoints, List<HeatmapSpot> spots, double[][] u, double xTranslation, double yTranslation) {
-        this.rooms = generatePolygons(roomPoints, xTranslation, yTranslation);
+    public HeatmapValues(List<List<Point2D>> locationPoints, List<HeatmapSpot> spots, double[][] u, double xTranslation, double yTranslation) {
+        this.locations = generatePolygons(locationPoints, xTranslation, yTranslation);
         this.spots = spots;
         this.u = u;
     }
 
-    private List<Polygon> generatePolygons(List<List<Point2D>> roomPoints, double xTranslation, double yTranslation) {
-        List<Polygon> roomTemp = new ArrayList<>();
+    private List<Polygon> generatePolygons(List<List<Point2D>> locationPoints, double xTranslation, double yTranslation) {
+        List<Polygon> locationTemp = new ArrayList<>();
 
-        for (List<Point2D> roomPoint : roomPoints) {
+        for (List<Point2D> locationPoint : locationPoints) {
             Polygon temp = new Polygon();
-            for (Point2D point2D : roomPoint)
+            for (Point2D point2D : locationPoint)
                 temp.addPoint((int) (point2D.getY() + yTranslation), (int) (point2D.getX() + xTranslation));
-            roomTemp.add(temp);
+            locationTemp.add(temp);
         }
-        return roomTemp;
+        return locationTemp;
     }
 
-    public List<Polygon> getRooms() {
-        return rooms;
+    public List<Polygon> getLocations() {
+        return locations;
     }
 
     public List<HeatmapSpot> getSpots() {
@@ -57,17 +56,17 @@ public class HeatmapValues {
         this.spots = spotsNew;
     }
 
-    public boolean isInsideRoom(double x, double y, double centerx, double centery) {
-        for (Polygon room : rooms) {
-            if (room.contains(centerx, centery) && room.contains(x, y))
+    public boolean isInsideLocation(double x, double y, double centerx, double centery) {
+        for (Polygon location : locations) {
+            if (location.contains(centerx, centery) && location.contains(x, y))
                 return true;
         }
         return false;
     }
 
-    public boolean isInsideRoom(double centerx, double centery) {
-        for (Polygon room : rooms) {
-            if (room.contains(centerx, centery))
+    public boolean isInsideLocation(double centerx, double centery) {
+        for (Polygon location : locations) {
+            if (location.contains(centerx, centery))
                 return true;
         }
         return false;
