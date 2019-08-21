@@ -10,6 +10,8 @@ import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.Visualiza
 import org.openbase.bco.bcozy.controller.powerterminal.chartcontroller.ChartController;
 import org.openbase.bco.bcozy.controller.powerterminal.chartcontroller.ChartControllerFactory;
 import org.openbase.bco.bcozy.model.powerterminal.ChartStateModel;
+import org.openbase.bco.dal.remote.layer.unit.Units;
+import org.openbase.bco.dal.remote.layer.unit.location.LocationRemote;
 import org.openbase.jul.exception.*;
 import org.openbase.jul.visual.javafx.control.AbstractFXController;
 
@@ -87,3 +89,7 @@ public class PowerChartVisualizationController extends AbstractFXController {
         refreshScheduler = chartController.enableDataRefresh(30000, chartStateModel);
     }
 }
+
+//        LocationRemote location = Units.getUnit("bla", false, Units.LOCATION);
+//        location.getPowerConsumptionState();
+//        location.addDataObserver((source, data) -> {data.getPowerState()});
