@@ -187,20 +187,23 @@ public class Heatmap extends Pane {
     private void updateHeatmap(final HeatmapValues heatmapValues) {
         final int runnings = 3;
         final List<HeatmapSpot> spots = heatmapValues.getSpots();
-        final double[][] u = heatmapValues.getU();
+        final double[][] u = heatmapValues.getGrid();
 
         for (HeatmapSpot spot : spots) {
             PowerConsumptionSensor powerConsumptionUnit = (PowerConsumptionSensor) unitPool.getInternalUnitList().get(spot.unitListPosition);
             try {
-                double current = powerConsumptionUnit.getPowerConsumptionState().getCurrent() / 16;
+                double current = powerConsumptionUnit.getPowerConsumptionState().getCurrent() / 10;
+                current = Math.pow(current, 0.5);
+                current = Math.min(1,current);
                 u[spot.x][spot.y] = current;
                 spot.value = current;
+                System.out.println("current of spot at: " + spot.x + " y position " + spot.y + " currrent " + current);
             } catch (NotAvailableException ex) {
                 ExceptionPrinter.printHistory("Could not get power consumption", ex, logger);
             }
         }
         heatmapValues.setSpots(spots);
-        heatmapValues.setU(u);
+        heatmapValues.setGrid(u);
         this.getChildren().clear();
         this.getChildren().add(generateHeatmapWithLibrary(heatmapValues, runnings));
     }
@@ -216,7 +219,7 @@ public class Heatmap extends Pane {
     private HeatMap generateHeatmapWithLibrary(final HeatmapValues heatmapValues, final int spreadingIteration) {
         calculateHeatMap(heatmapValues, spreadingIteration);
 
-        final HeatMap heatmap = new eu.hansolo.fx.charts.heatmap.HeatMap(heatmapValues.getU().length, heatmapValues.getU()[0].length);
+        final HeatMap heatmap = new eu.hansolo.fx.charts.heatmap.HeatMap(heatmapValues.getGrid().length, heatmapValues.getGrid()[0].length);
         heatmap.setOpacity(0.8);
 
         for (HeatmapSpot spot : heatmapValues.getSpots()) {
@@ -236,7 +239,7 @@ public class Heatmap extends Pane {
      */
     public Image createEventImage(final HeatmapValues heatmapValues, final HeatmapSpot spot, final int spreadingIteration) {
         final Double radius = (double) spreadingIteration * Constants.RADIUS_SPOTS;
-        final double[][] u = heatmapValues.getU();
+        final double[][] u = heatmapValues.getGrid();
         final Stop[] stops = new Stop[spreadingIteration + 1];
 
         for (int i = 0; i < spreadingIteration + 1; i++) {
@@ -274,7 +277,7 @@ public class Heatmap extends Pane {
         double maxDistFactor = 1 / radius;
         Color pixelColor;
 
-        // todo: please explain what this iteration is good for.
+        //Goes through the squared Image of the heatmap spot
         for (int y = 0; y < size; y++) {
             for (int x = 0; x < size; x++) {
                 double deltaX = radius - x;
@@ -282,7 +285,7 @@ public class Heatmap extends Pane {
                 double distance = Math.sqrt((deltaX * deltaX) + (deltaY * deltaY));
                 double fraction = maxDistFactor * distance;
 
-                // todo: please explain what this iteration is good for.
+                //if the point in the image lies on a circle the correct color (depends on where the point lies in the circle - defined in stops) is set
                 for (int i = 0; i < stops.length - 1; i++) {
                     if (Double.compare(fraction, stops[i].getOffset()) >= 0 && Double.compare(fraction, stops[i + 1].getOffset()) <= 0) {
                         int xGlobal = spot.x + (size / 2 - x);
@@ -311,7 +314,7 @@ public class Heatmap extends Pane {
      */
     private void calculateHeatMap(HeatmapValues heatmapValues, int spreadingIteration) {
         // todo please use intuitive variable names
-        double[][] u = heatmapValues.getU();
+        double[][] u = heatmapValues.getGrid();
         List<HeatmapSpot> spots = heatmapValues.getSpots();
         // todo please use intuitive variable names
         double h = 1;
@@ -340,6 +343,6 @@ public class Heatmap extends Pane {
                 u[spot.x][spot.y] = spot.value;
             }
         }
-        heatmapValues.setU(u);
+        heatmapValues.setGrid(u);
     }
 }

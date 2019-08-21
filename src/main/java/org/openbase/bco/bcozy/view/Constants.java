@@ -209,7 +209,7 @@ public final class Constants {
     /**
      * Int for the size of the heatmap spots
      */
-    public static final int RADIUS_SPOTS = 100;
+    public static final int RADIUS_SPOTS = 200;
 
 
     /**

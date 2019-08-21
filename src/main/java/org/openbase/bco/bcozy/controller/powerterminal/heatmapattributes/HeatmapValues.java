@@ -14,12 +14,12 @@ import java.util.List;
 public class HeatmapValues {
     private List<Polygon> locations;
     private List<HeatmapSpot> spots;
-    private double[][] u;
+    private double[][] grid;
 
-    public HeatmapValues(List<List<Point2D>> locationPoints, List<HeatmapSpot> spots, double[][] u, double xTranslation, double yTranslation) {
+    public HeatmapValues(List<List<Point2D>> locationPoints, List<HeatmapSpot> spots, double[][] grid, double xTranslation, double yTranslation) {
         this.locations = generatePolygons(locationPoints, xTranslation, yTranslation);
         this.spots = spots;
-        this.u = u;
+        this.grid = grid;
     }
 
     private List<Polygon> generatePolygons(List<List<Point2D>> locationPoints, double xTranslation, double yTranslation) {
@@ -42,14 +42,12 @@ public class HeatmapValues {
         return spots;
     }
 
-    // todo: what is "U" please use selfExplainable method names.
-
-    public double[][] getU() {
-        return u;
+    public double[][] getGrid() {
+        return grid;
     }
 
-    public void setU(double[][] uNew) {
-        this.u = uNew;
+    public void setGrid(double[][] uNew) {
+        this.grid = uNew;
     }
 
     public void setSpots(List<HeatmapSpot> spotsNew) {
