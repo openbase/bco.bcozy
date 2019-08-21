@@ -11,6 +11,7 @@ import org.openbase.bco.bcozy.model.powerterminal.ChartStateModel;
 import org.openbase.bco.bcozy.model.powerterminal.PowerTerminalDBService;
 import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.openbase.jul.schedule.GlobalCachedExecutorService;
 import org.openbase.jul.schedule.GlobalScheduledExecutorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +57,7 @@ public class TreeChartController implements ChartController {
 
     @Override
     public void updateChart(ChartStateModel chartStateModel) {
-        GlobalScheduledExecutorService.submit(() -> {
+        GlobalCachedExecutorService.submit(() -> {
                 List<ChartData> data = PowerTerminalDBService.getAverageConsumption(chartStateModel.getDateRange(), chartStateModel.getSelectedConsumer());
                 Platform.runLater(() -> updateChart(data));
         });

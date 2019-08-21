@@ -87,7 +87,6 @@ public class PowerTerminalDBService {
                         interval, startTimeInSeconds, endTimeInSeconds, INFLUXDB_FIELD_CONSUMPTION);
             }  else if (unitId.split(PREFIX_DELIM)[0].equals(SUM_CHILDREN_CONSUMPTION_PREFIX)) {
                 List<String> subUnitIds = PowerTerminalRegistryService.getConsumers(unitId.split(PREFIX_DELIM)[1]).stream().map(UnitConfig::getId).collect(Collectors.toList());
-                System.out.println("\n\n=======================================> Subunits found: " + subUnitIds.size());
                 List<List<ChartData>> datas = new ArrayList<>();
                 for (String subUnitId : subUnitIds) {
                     fluxTables = InfluxDBHandler.getAveragePowerConsumptionTables(
