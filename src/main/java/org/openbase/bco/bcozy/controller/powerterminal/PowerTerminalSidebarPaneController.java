@@ -34,7 +34,9 @@ import org.openbase.type.language.LabelType;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Controller for the power terminal sidebar pane, handling and creating various bindings for the chartStateModel.
@@ -81,7 +83,8 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
     private ObjectProperty<DateRange> dateRange = new SimpleObjectProperty<>();
     private ReadOnlyStringWrapper selectedUnitId = new ReadOnlyStringWrapper();
     private ChartStateModel chartStateModel;
-
+    private Map<String, List<UnitConfig>> locationConsumerMap;
+    private UnitConfig noConsumerSelectedDummyConfig;
 
     @Override
     public void updateDynamicContent() throws CouldNotPerformException {
@@ -108,19 +111,24 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
     }
 
     private void setupGranularitySelection() {
+        locationConsumerMap = new HashMap<>();
+        noConsumerSelectedDummyConfig = generateDummyUnitConfig(PowerTerminalDBService.UNIT_ID_LOCATION_CONSUMPTION,
+                "-No Selection-", "-Keine Auswahl-");
         globalConsumptionCheckboxDescription.textProperty().bind(LanguageSelection.getProperty(GLOBAL_CONSUMPTION_CHECKBOX_DESCRIPTION_IDENTIFIER));
         globalConsumptionCheckBox.selectedProperty().addListener((source, old, newValue) -> selectedUnitId.set(getSelectedConsumerId()));
         selectConsumerBox.valueProperty().addListener((source, old, newValue) -> selectedUnitId.set(getSelectedConsumerId()));
         selectLocationBox.valueProperty().addListener((source, old, newValue) -> {
-            List<UnitConfig> consumers = PowerTerminalRegistryService.getConsumers(((UnitConfig) newValue).getId());
+            //Consumers per location could be saved in a map to reduce number of registry accesses
+            UnitConfig location = (UnitConfig) newValue;
+            if (!locationConsumerMap.containsKey(location.getId())) {
+                locationConsumerMap.put(location.getId(), PowerTerminalRegistryService.getConsumers(((UnitConfig) newValue).getId()));
+                locationConsumerMap.get(location.getId()).add(0, noConsumerSelectedDummyConfig);
+            }
             LocalizedCellFactory<UnitConfig> consumerUnitCellFactory
                     = new LocalizedCellFactory<>(unit
                     -> LanguageSelection.getProperty(unit.getLabel(), translatable
                     -> LabelProcessor.getBestMatch(translatable, "Label not Found!")));
-            setupComboBox(consumerUnitCellFactory, selectConsumerBox, consumers, -1);
-            selectConsumerBox.getItems().add(0, generateDummyUnitConfig(PowerTerminalDBService.UNIT_ID_LOCATION_CONSUMPTION,
-                    "-No Selection-", "-Keine Auswahl-"));
-            selectConsumerBox.getSelectionModel().select(0);
+            setupComboBox(consumerUnitCellFactory, selectConsumerBox, locationConsumerMap.get(location.getId()), 0);
         });
 
         granularSelectionGroupVbox.managedProperty().bind(granularSelectionGroupVbox.visibleProperty());

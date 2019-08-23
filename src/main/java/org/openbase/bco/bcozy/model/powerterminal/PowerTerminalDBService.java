@@ -48,10 +48,6 @@ public class PowerTerminalDBService {
         }
     }
 
-    //        LocationRemote location = Units.getUnit("bla", false, Units.LOCATION);
-    //        location.getPowerConsumptionState();
-    //        location.addDataObserver((source, data) -> {data.getPowerState()});
-
     private static List<ChartData> getChartData(Interval intervalSize, Timestamp startAndEndTime, String unitId) {
         long timeInSeconds = TimeUnit.MILLISECONDS.toSeconds(startAndEndTime.getTime());
         List<ChartData> data = new ArrayList<>();
