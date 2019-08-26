@@ -66,10 +66,9 @@ public class Heatmap extends Pane {
                         }
 
                         refreshSchedule = GlobalScheduledExecutorService.scheduleAtFixedRate(() -> Platform.runLater(() -> updateHeatmap(heatmapValues)),
-                                10, 10, TimeUnit.SECONDS);
-                    } catch (NotAvailableException e) {
-                        //TODO: Exception printer
-                        e.printStackTrace();
+                                0, 10, TimeUnit.SECONDS);
+                    } catch (NotAvailableException ex) {
+                        ExceptionPrinter.printHistory("Could not update Heatmap", ex, logger);
                     }
                 } else {
                     if (refreshSchedule != null && !refreshSchedule.isDone()) {
@@ -129,25 +128,14 @@ public class Heatmap extends Pane {
                 TranslationType.Translation unitPosition = unit.getUnitPosition();
                 Point3d unitPoint = new Point3d(unitPosition.getX(), unitPosition.getY(), unitPosition.getZ());
 
-                //Wait for transformation of unitPoint but use getUnitPositionGlobalPoint3D because Position of unitPoint is wrong
-                // todo: what do you mean with "wrong"? Could you please create a bug report for this issue?
+                //Wait for transformation of unitPoint but use getUnitPositionGlobalPoint3D because I need the Global unit point
                 transform.get(Constants.TRANSFORMATION_TIMEOUT, TimeUnit.MILLISECONDS).getTransform().transform(unitPoint);
 
-                int unitPointGlobalX = (int) (unit.getUnitPositionGlobalPoint3d().x * Constants.METER_TO_PIXEL + xTranslation);
-                int unitPointGlobalY = (int) (unit.getUnitPositionGlobalPoint3d().y * Constants.METER_TO_PIXEL + yTranslation);
-
-                // todo: where is this "+1" and "-1" coming from? At least use a global const if there is a good reason for it.
+                int unitPointGlobalX = (int) Math.floor(unit.getUnitPositionGlobalPoint3d().x * Constants.METER_TO_PIXEL + xTranslation);
+                int unitPointGlobalY = (int) Math.floor(unit.getUnitPositionGlobalPoint3d().y * Constants.METER_TO_PIXEL + yTranslation);
 
                 if (heatmapValues.isInsideLocation(unitPointGlobalY, unitPointGlobalX))
                     spots.add(new HeatmapSpot(unitPointGlobalY, unitPointGlobalX, 0, unitListPosition));
-                else if (heatmapValues.isInsideLocation(unitPointGlobalY - 1, unitPointGlobalX))
-                    spots.add(new HeatmapSpot(unitPointGlobalY - 1, unitPointGlobalX, 0, unitListPosition));
-                else if (heatmapValues.isInsideLocation(unitPointGlobalY + 1, unitPointGlobalX))
-                    spots.add(new HeatmapSpot(unitPointGlobalY + 1, unitPointGlobalX, 0, unitListPosition));
-                else if (heatmapValues.isInsideLocation(unitPointGlobalY, unitPointGlobalX - 1))
-                    spots.add(new HeatmapSpot(unitPointGlobalY, unitPointGlobalX - 1, 0, unitListPosition));
-                else if (heatmapValues.isInsideLocation(unitPointGlobalY, unitPointGlobalX + 1))
-                    spots.add(new HeatmapSpot(unitPointGlobalY, unitPointGlobalX + 1, 0, unitListPosition));
             } catch (CouldNotPerformException ex) {
                 ExceptionPrinter.printHistory("Could not get location units", ex, logger, LogLevel.DEBUG);
             } catch (InterruptedException ex) {
@@ -215,9 +203,9 @@ public class Heatmap extends Pane {
                 double current = powerConsumptionUnit.getPowerConsumptionState().getCurrent() / 10;
                 current = Math.pow(current, 0.5);
                 current = Math.min(1,current);
+                current = 1;
                 u[spot.x][spot.y] = current;
                 spot.value = current;
-                System.out.println("current of spot at: " + spot.x + " y position " + spot.y + " currrent " + current);
             } catch (NotAvailableException ex) {
                 ExceptionPrinter.printHistory("Could not get power consumption", ex, logger);
             }
@@ -288,6 +276,7 @@ public class Heatmap extends Pane {
 
             Arrays.sort(opacity);
             // todo: please define used colors as well as the interpolation step as constants in the Constants.class
+            //Don't know how do define the color in constants because the opacity is different for each stop
             stops[i] = new Stop(i * 0.1, Color.rgb(255, 255, 255, opacity[0]));
         }
 
@@ -327,42 +316,43 @@ public class Heatmap extends Pane {
 
     /**
      * Calculate the heatmap values given a formula
-     * // todo: can you offer any link to the used formula?
+     *
+     * Formula:
+     * Du[i,j,t] = u[i+1,j,t] + u[i-1,j,t] + u[i,j+1,t] + u[i,j-1,t] - 4*u[i,j,t]/h^2
+     * u[i,j,t+1] = u[i,j,t] + dt * Du[i,j,t]
+     * dt = timestep
      *
      * @param heatmapValues Class with relevant data (position, energy consumption) of the consumers
      * @param spreadingIteration      parameter how often the heat spreads
      */
     private void calculateHeatMap(HeatmapValues heatmapValues, int spreadingIteration) {
-        // todo please use intuitive variable names
-        double[][] u = heatmapValues.getGrid();
+        double[][] grid = heatmapValues.getGrid();
         List<HeatmapSpot> spots = heatmapValues.getSpots();
-        // todo please use intuitive variable names
-        double h = 1;
+        double grid_wide = 1;
         double delta_t = 0.1;
-        // todo please use intuitive variable names
-        double[][] v = new double[u.length][u[0].length];
+        double[][] grid_temp = new double[grid.length][grid[0].length];
         for (int runs = 0; runs < spreadingIteration; runs++) {
 
-            // todo: please explain what this iteration is good for.
-            for (int col = 1; col < u.length - 1; col++) {
-                for (int row = 1; row < u[col].length - 1; row++) {
-                    v[col][row] = (u[col - 1][row] + u[col + 1][row] + u[col][row - 1] + u[col][row + 1]
-                            - 4 * u[col][row]) / (h * h);
+            // Calculate speed of grid_temp
+            for (int col = 1; col < grid.length - 1; col++) {
+                for (int row = 1; row < grid[col].length - 1; row++) {
+                    grid_temp[col][row] = (grid[col - 1][row] + grid[col + 1][row] + grid[col][row - 1] + grid[col][row + 1]
+                            - 4 * grid[col][row]) / (grid_wide * grid_wide);
                 }
             }
 
-            // todo: please explain what this iterration is good for.
-            for (int col = 0; col < u.length; col++) {
-                for (int row = 0; row < u[col].length; row++) {
-                    u[col][row] = u[col][row] + delta_t * v[col][row];
+            // Calculate new values of the grid
+            for (int col = 0; col < grid.length; col++) {
+                for (int row = 0; row < grid[col].length; row++) {
+                    grid[col][row] = grid[col][row] + delta_t * grid_temp[col][row];
                 }
             }
 
-            // todo: please explain what this iteration is good for.
+            //Head should not flatten in the middle so I set the middle to the starting value.
             for (HeatmapSpot spot : spots) {
-                u[spot.x][spot.y] = spot.value;
+                grid[spot.x][spot.y] = spot.value;
             }
         }
-        heatmapValues.setGrid(u);
+        heatmapValues.setGrid(grid);
     }
 }
