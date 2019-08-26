@@ -53,4 +53,17 @@ public enum VisualizationType {
         }
     }
 
+    /**
+     * Describes if the VisualizationType can display multiple sets of values.
+     * @param visualizationType VisualizationType in question
+     * @return Boolean describing if the VisualizationType can do so
+     */
+    public static boolean canDisplayDifferentUnits(VisualizationType visualizationType) {
+        switch (visualizationType) {
+            case LINE_CHART: case BAR_CHART: case PIE_CHART:
+                return true;
+            default:
+                return false;
+        }
+    }
 }

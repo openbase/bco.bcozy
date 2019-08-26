@@ -1,17 +1,16 @@
 package org.openbase.bco.bcozy.controller.powerterminal;
 
 import eu.hansolo.tilesfx.tools.FlowGridPane;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.stage.Screen;
-import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.DateRange;
+import org.openbase.bco.bcozy.controller.CenterPaneController;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.VisualizationType;
 import org.openbase.bco.bcozy.controller.powerterminal.chartcontroller.ChartController;
 import org.openbase.bco.bcozy.controller.powerterminal.chartcontroller.ChartControllerFactory;
 import org.openbase.bco.bcozy.model.powerterminal.ChartStateModel;
-import org.openbase.bco.bcozy.view.BackgroundPane;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.visual.javafx.control.AbstractFXController;
@@ -28,6 +27,7 @@ public class PowerChartVisualizationController extends AbstractFXController {
     public static final String INFLUXDB_FIELD_CONSUMPTION = "consumption";
 
     private ScheduledFuture refreshScheduler;
+    private ObjectProperty<CenterPaneController.State> appState;
 
     private BooleanProperty heatmapSelectedProperty;
 
@@ -35,7 +35,6 @@ public class PowerChartVisualizationController extends AbstractFXController {
     FlowGridPane pane;
 
     private ChartStateModel chartStateModel;
-    private BackgroundPane backgroundPane;
     private ChartController chartController;
 
     @Override
@@ -57,9 +56,10 @@ public class PowerChartVisualizationController extends AbstractFXController {
      *
      * @param chartStateModel StateModel that describes the state of the chart as configured by other panes
      */
-    public void initChartState(ChartStateModel chartStateModel) {
+    public void initChartState(ChartStateModel chartStateModel, ObjectProperty<CenterPaneController.State> appState) {
 
         this.chartStateModel = chartStateModel;
+        this.appState = appState;
 
         chartStateModel.visualizationTypeProperty().addListener((source, old, newVisualizationType) ->
                 setUpChart(newVisualizationType)
@@ -73,11 +73,15 @@ public class PowerChartVisualizationController extends AbstractFXController {
         chartStateModel.unitProperty().addListener((source, oldValue, newValue) ->
                 chartController.updateChart(chartStateModel)
         );
-        setUpChart(DEFAULT_VISUALISATION_TYPE);
-    }
+        appState.addListener((source, old, newValue) -> {
+            if (newValue == CenterPaneController.State.ENERGY) {
+                refreshScheduler = chartController.enableDataRefresh(30000, chartStateModel);
+            } else {
+                refreshScheduler.cancel(true);
+            }
+        });
 
-    public void setBackgroundPane (BackgroundPane backgroundPane) {
-        this.backgroundPane = backgroundPane;
+        setUpChart(DEFAULT_VISUALISATION_TYPE);
     }
 
     public FlowGridPane getPane() {
@@ -92,8 +96,7 @@ public class PowerChartVisualizationController extends AbstractFXController {
         if (visualizationType == VisualizationType.HEATMAP) {
             pane.getChildren().clear();
             heatmapSelectedProperty.set(true);
-        }
-        else {
+        } else {
             heatmapSelectedProperty.set(false);
             if (refreshScheduler != null) {
                 refreshScheduler.cancel(true);
@@ -104,7 +107,17 @@ public class PowerChartVisualizationController extends AbstractFXController {
             pane.getChildren().add(chartController.getView());
             refreshScheduler = chartController.enableDataRefresh(30000, chartStateModel);
         }
+        pane.getChildren().clear();
+        chartController = ChartControllerFactory.getChartController(visualizationType);
+        chartController.init(chartStateModel, this);
+        pane.getChildren().add(chartController.getView());
+        if (appState.get() == CenterPaneController.State.ENERGY) {
+            refreshScheduler = chartController.enableDataRefresh(30000, chartStateModel);
+        }
     }
 
-    public BooleanProperty getHeatmapSelectedProperty () { return heatmapSelectedProperty; }
+    public BooleanProperty getHeatmapSelectedProperty() {
+        return heatmapSelectedProperty;
+    }
 }
+

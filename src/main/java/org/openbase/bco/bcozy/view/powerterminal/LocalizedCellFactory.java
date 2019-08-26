@@ -35,6 +35,7 @@ public class LocalizedCellFactory<T> implements Callback<ListView<T>, ListCell<T
             protected void updateItem(final T item, final boolean empty) {
                 super.updateItem(item, empty);
                 if (!empty && item != null) {
+                    System.out.println("Setting text value to: " + localization.apply(item));
                     this.textProperty().bind(localization.apply(item));
                 } else {
                     this.textProperty().unbind();

@@ -18,6 +18,7 @@
  */
 package org.openbase.bco.bcozy.view;
 
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.layout.Pane;
@@ -45,8 +46,8 @@ public class BackgroundPane extends StackPane {
     private final SimpleUnitSymbolsPane editingLayerPane;
     private final SimpleUnitSymbolsPane maintenanceLayerPane;
     private Pair<Pane, PowerChartVisualizationController> powerChartPaneAndController;
+    private ObjectProperty<CenterPaneController.State> appState;
     private final BooleanProperty heatmapActiveProperty;
-
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BackgroundPane.class);
 
@@ -90,6 +91,7 @@ public class BackgroundPane extends StackPane {
 
 
             // layer management
+            appState = foregroundPane.getAppState();
             foregroundPane.getAppState().addListener((observable, oldValue, newValue) -> {
                 switch (newValue) {
                     case SETTINGS:
@@ -166,10 +168,9 @@ public class BackgroundPane extends StackPane {
         return locationMapPane;
     }
 
-    public void setChartStateModelAndBackgroundPane(ChartStateModel chartStateModel, BackgroundPane backgroundPane) {
+    public void initPowerTerminalPane(ChartStateModel chartStateModel) {
         PowerChartVisualizationController chartController = powerChartPaneAndController.getValue();
-        chartController.setBackgroundPane(backgroundPane);
-        chartController.initChartState(chartStateModel);
+        chartController.initChartState(chartStateModel, appState);
     }
 
     /**
