@@ -206,6 +206,11 @@ public final class Constants {
      */
     public static final String SMALL_LABEL = "small-label";
 
+    /**
+     * Int for the size of the heatmap spots
+     */
+    public static final int RADIUS_SPOTS = 200;
+
 
     /**
      * Private Constructor.

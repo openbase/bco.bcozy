@@ -19,7 +19,10 @@
 package org.openbase.bco.bcozy.view.location;
 
 import javafx.scene.paint.Color;
+import org.openbase.bco.bcozy.controller.CenterPaneController;
+import org.openbase.bco.bcozy.controller.CenterPaneController.State;
 import org.openbase.bco.bcozy.view.Constants;
+import org.openbase.bco.bcozy.view.ForegroundPane;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.EnumNotSupportedException;
 import org.openbase.jul.exception.InstantiationException;
@@ -63,7 +66,15 @@ public class TilePolygon extends LocationPolygon {
     public void applyDataUpdate(LocationDataType.LocationData unitData) {
         switch (unitData.getPresenceState().getValue()) {
             case PRESENT:
-                setCustomColor(Color.GREEN.brighter());
+                try {
+                    if (ForegroundPane.getInstance().getAppState().getValue() == State.MOVEMENT) {
+                        setCustomColor(Color.GREEN.brighter());
+                    } else {
+                        setCustomColor(Color.TRANSPARENT);
+                    }
+                } catch (NotAvailableException e) {
+                    // no nothing if app state is not known
+                }
                 break;
             case ABSENT:
             case UNKNOWN:

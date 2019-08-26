@@ -19,11 +19,14 @@
 package org.openbase.bco.bcozy.view.location;
 
 import javafx.scene.paint.Color;
+import org.openbase.bco.bcozy.controller.CenterPaneController.State;
 import org.openbase.bco.bcozy.view.Constants;
+import org.openbase.bco.bcozy.view.ForegroundPane;
 import org.openbase.bco.bcozy.view.InfoPane;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.EnumNotSupportedException;
 import org.openbase.jul.exception.InstantiationException;
+import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.type.domotic.unit.location.LocationDataType.LocationData;
 
@@ -72,7 +75,15 @@ public class RegionPolygon extends LocationPolygon {
     public void applyDataUpdate(LocationData unitData) {
         switch (unitData.getPresenceState().getValue()) {
             case PRESENT:
-                setCustomColor(Color.GREEN.brighter());
+                try {
+                    if (ForegroundPane.getInstance().getAppState().getValue() == State.MOVEMENT) {
+                        setCustomColor(Color.GREEN.brighter());
+                    } else {
+                        setCustomColor(Color.TRANSPARENT);
+                    }
+                } catch (NotAvailableException e) {
+                    // no nothing if app state is not known
+                }
                 break;
             case ABSENT:
             case UNKNOWN:

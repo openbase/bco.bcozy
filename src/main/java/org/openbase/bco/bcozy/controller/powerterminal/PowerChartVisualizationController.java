@@ -2,19 +2,17 @@ package org.openbase.bco.bcozy.controller.powerterminal;
 
 import eu.hansolo.tilesfx.tools.FlowGridPane;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.value.ChangeListener;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.stage.Screen;
 import org.openbase.bco.bcozy.controller.CenterPaneController;
-import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.DateRange;
-import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.Unit;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.VisualizationType;
 import org.openbase.bco.bcozy.controller.powerterminal.chartcontroller.ChartController;
 import org.openbase.bco.bcozy.controller.powerterminal.chartcontroller.ChartControllerFactory;
 import org.openbase.bco.bcozy.model.powerterminal.ChartStateModel;
-import org.openbase.bco.dal.remote.layer.unit.Units;
-import org.openbase.bco.dal.remote.layer.unit.location.LocationRemote;
-import org.openbase.jul.exception.*;
+import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.visual.javafx.control.AbstractFXController;
 
 import java.util.concurrent.ScheduledFuture;
@@ -31,6 +29,8 @@ public class PowerChartVisualizationController extends AbstractFXController {
     private ScheduledFuture refreshScheduler;
     private ObjectProperty<CenterPaneController.State> appState;
 
+    private BooleanProperty heatmapSelectedProperty;
+
     @FXML
     FlowGridPane pane;
 
@@ -45,6 +45,8 @@ public class PowerChartVisualizationController extends AbstractFXController {
     @Override
     public void initContent() throws InitializationException {
         pane.setMinSize(Screen.getPrimary().getVisualBounds().getWidth(), Screen.getPrimary().getVisualBounds().getHeight() - 600);
+        heatmapSelectedProperty = new SimpleBooleanProperty();
+        heatmapSelectedProperty.set(false);
     }
 
 
@@ -72,7 +74,7 @@ public class PowerChartVisualizationController extends AbstractFXController {
                 chartController.updateChart(chartStateModel)
         );
         appState.addListener((source, old, newValue) -> {
-            if(newValue == CenterPaneController.State.ENERGY) {
+            if (newValue == CenterPaneController.State.ENERGY) {
                 refreshScheduler = chartController.enableDataRefresh(30000, chartStateModel);
             } else {
                 refreshScheduler.cancel(true);
@@ -91,8 +93,19 @@ public class PowerChartVisualizationController extends AbstractFXController {
     }
 
     private void setUpChart(VisualizationType visualizationType) {
-        if (refreshScheduler != null) {
-            refreshScheduler.cancel(true);
+        if (visualizationType == VisualizationType.HEATMAP) {
+            pane.getChildren().clear();
+            heatmapSelectedProperty.set(true);
+        } else {
+            heatmapSelectedProperty.set(false);
+            if (refreshScheduler != null) {
+                refreshScheduler.cancel(true);
+            }
+            pane.getChildren().clear();
+            chartController = ChartControllerFactory.getChartController(visualizationType);
+            chartController.init(chartStateModel, this);
+            pane.getChildren().add(chartController.getView());
+            refreshScheduler = chartController.enableDataRefresh(30000, chartStateModel);
         }
         pane.getChildren().clear();
         chartController = ChartControllerFactory.getChartController(visualizationType);
@@ -102,4 +115,9 @@ public class PowerChartVisualizationController extends AbstractFXController {
             refreshScheduler = chartController.enableDataRefresh(30000, chartStateModel);
         }
     }
+
+    public BooleanProperty getHeatmapSelectedProperty() {
+        return heatmapSelectedProperty;
+    }
 }
+

@@ -70,7 +70,7 @@ public class CenterPane extends StackPane {
 
         // Initializing view mode switch
         final FloatingPopUp viewModes = new FloatingPopUp(Pos.BOTTOM_RIGHT);
-        viewModes.addParentElement(MaterialIcon.WEEKEND, () -> {
+        viewModes.addParentElement(MaterialIcon.PERSON, () -> {
             appStateProperty.set(CenterPaneController.State.MOVEMENT);
         });
         viewModes.addElement(MaterialDesignIcon.THERMOMETER_LINES, () -> {

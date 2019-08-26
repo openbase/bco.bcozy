@@ -29,6 +29,8 @@ import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
+import org.openbase.bco.bcozy.controller.powerterminal.Heatmap;
+import org.openbase.bco.bcozy.view.BackgroundPane;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ForegroundPane;
 import org.openbase.bco.bcozy.view.InfoPane;
@@ -58,6 +60,7 @@ public final class LocationMapPane extends MultiTouchPane implements LocationMap
     private static boolean initialized;
     public final SimpleObjectProperty<DynamicUnitPolygon<?,?>> selectedUnit;
     private final ForegroundPane foregroundPane;
+    private final BackgroundPane backgroundPane;
     private final List<DynamicPolygon> locationHoverLevelList;
     private final Map<String, LocationPolygon> tileMap;
     private final Map<String, LocationPolygon> regionMap;
@@ -74,6 +77,7 @@ public final class LocationMapPane extends MultiTouchPane implements LocationMap
     private final List<AnchorPoint> anchorPointList;
 
     private final StackPane editOverlay;
+    private final Pane heatMap;
 
     private SelectionMode anchorManipulationMode;
 
@@ -87,10 +91,11 @@ public final class LocationMapPane extends MultiTouchPane implements LocationMap
      *
      * @param foregroundPane The foregroundPane
      */
-    public LocationMapPane(final ForegroundPane foregroundPane) {
+    public LocationMapPane(final ForegroundPane foregroundPane, final BackgroundPane backgroundPane) {
         super();
         this.anchorManipulationMode = SelectionMode.NON;
         this.foregroundPane = foregroundPane;
+        this.backgroundPane = backgroundPane;
         this.locationHoverLevelList = new ArrayList<>();
         this.tileMap = new HashMap<>();
         this.regionMap = new HashMap<>();
@@ -98,6 +103,7 @@ public final class LocationMapPane extends MultiTouchPane implements LocationMap
         this.connectionMap = new HashMap<>();
         this.debugNodes = new ArrayList<>();
         this.editOverlay = new StackPane();
+        this.heatMap = new Heatmap(backgroundPane);
         this.anchorPointList = new ArrayList<>();
 
         this.selectedUnit = new SimpleObjectProperty<>();
@@ -111,6 +117,13 @@ public final class LocationMapPane extends MultiTouchPane implements LocationMap
 
         this.foregroundPane.getMainMenuWidthProperty().addListener((observable, oldValue, newValue)
                 -> this.setTranslateX(this.getTranslateX() - ((oldValue.doubleValue() - newValue.doubleValue()) / 2)));
+
+        backgroundPane.getheatmapActiveProperty().addListener((observableValue, oldValue, newValue) -> {
+            if (newValue)
+                getChildren().add(heatMap);
+            else if (oldValue)
+                getChildren().remove(heatMap);
+        });
 
         this.editOverlay.setPickOnBounds(false);
 
