@@ -207,7 +207,6 @@ public class Heatmap extends Pane {
                 double current = powerConsumptionUnit.getPowerConsumptionState().getCurrent() / 10;
                 current = Math.pow(current, 0.5);
                 current = Math.min(1,current);
-                current = 1;
                 u[spot.x][spot.y] = current;
                 spot.value = current;
             } catch (NotAvailableException ex) {
