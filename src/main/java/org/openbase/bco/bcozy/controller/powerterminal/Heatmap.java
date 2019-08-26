@@ -243,7 +243,7 @@ public class Heatmap extends Pane {
      * Image of a single spot needed for generating the heatmap
      *
      * @param heatmapValues Class with relevant data (position, energy consumption) of the consumers
-     * @param spot          Position and value of a single heatmap spot
+     * @param spot Position and value of a single heatmap spot
      * @param spreadingIteration      parameter how often the heat spreads
      *
      * @return Image of a single spot
