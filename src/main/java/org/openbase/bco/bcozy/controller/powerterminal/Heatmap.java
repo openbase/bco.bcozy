@@ -95,7 +95,12 @@ public class Heatmap extends Pane {
      * @return HeatmapValues
      */
     private HeatmapValues initHeatmap(UnitConfigType.UnitConfig rootLocationConfig) {
-        List<List<Point2D>> rooms = loadTiles();
+        List<List<Point2D>> rooms = null;
+        try {
+            rooms = loadTiles();
+        } catch (CouldNotPerformException ex) {
+            ExceptionPrinter.printHistory("Could not get location units", ex, logger);
+        }
         double xTranslation = 0;
         double yTranslation = 0;
 
@@ -156,15 +161,14 @@ public class Heatmap extends Pane {
      *
      * @return List<List < Point2D>> List of tiles with the vertices of the tile
      */
-    private List<List<Point2D>> loadTiles() {
+    private List<List<Point2D>> loadTiles() throws CouldNotPerformException {
         List<UnitConfigType.UnitConfig> roomConfigs = null;
         List<List<Point2D>> rooms = new ArrayList<>();
 
         try {
             roomConfigs = Registries.getUnitRegistry().getUnitConfigsByUnitType(UnitType.LOCATION);
         } catch (CouldNotPerformException ex) {
-            ExceptionPrinter.printHistory("Could not get location units", ex, logger);
-            // todo: forward exception instead printing it, otherwise this causes a nullpointer in the next code line since roomConfigs is null.
+            throw new CouldNotPerformException("Could not get location units", ex);
         }
         for (UnitConfigType.UnitConfig roomConfig : roomConfigs) {
             LocationConfigType.LocationConfig.LocationType locationType = roomConfig.getLocationConfig().getLocationType();
@@ -248,7 +252,7 @@ public class Heatmap extends Pane {
     public Image createEventImage(final HeatmapValues heatmapValues, final HeatmapSpot spot, final int spreadingIteration) {
         final Double radius = (double) spreadingIteration * Constants.RADIUS_SPOTS;
         final double[][] u = heatmapValues.getGrid();
-        final Stop[] stops = new Stop[spreadingIteration + 1];
+        final double[] stops_opacity = new double[spreadingIteration+1];
 
         for (int i = 0; i < spreadingIteration + 1; i++) {
             double[] opacity = new double[4];
@@ -275,9 +279,7 @@ public class Heatmap extends Pane {
             }
 
             Arrays.sort(opacity);
-            // todo: please define used colors as well as the interpolation step as constants in the Constants.class
-            //Don't know how do define the color in constants because the opacity is different for each stop
-            stops[i] = new Stop(i * 0.1, Color.rgb(255, 255, 255, opacity[0]));
+            stops_opacity[i] = opacity[0];
         }
 
         int size = (int) (radius * 2);
@@ -295,8 +297,8 @@ public class Heatmap extends Pane {
                 double fraction = maxDistFactor * distance;
 
                 //if the point in the image lies on a circle the correct color (depends on where the point lies in the circle - defined in stops) is set
-                for (int i = 0; i < stops.length - 1; i++) {
-                    if (Double.compare(fraction, stops[i].getOffset()) >= 0 && Double.compare(fraction, stops[i + 1].getOffset()) <= 0) {
+                for (int i = 0; i < stops_opacity.length - 1; i++) {
+                    if (Double.compare(fraction, i*0.1) >= 0 && Double.compare(fraction, (i + 1)*0.1) <= 0) {
                         int xGlobal = spot.x + (size / 2 - x);
                         int yGlobal = spot.y + (size / 2 - y);
                         int xRotated = size - x;
@@ -304,7 +306,8 @@ public class Heatmap extends Pane {
                         if (!heatmapValues.isInsideLocation(xGlobal, yGlobal, spot.x, spot.y))
                             continue;
 
-                        pixelColor = (Color) Interpolator.LINEAR.interpolate(stops[i].getColor(), stops[i + 1].getColor(), (fraction - stops[i].getOffset()) / 0.1);
+                        pixelColor = (Color) Interpolator.LINEAR.interpolate(Color.rgb(Constants.HEATMAP_COLOR, Constants.HEATMAP_COLOR, Constants.HEATMAP_COLOR ,stops_opacity[i]),
+                                Color.rgb(Constants.HEATMAP_COLOR, Constants.HEATMAP_COLOR, Constants.HEATMAP_COLOR ,stops_opacity[i+1]), (fraction - i*0.1) / 0.1);
                         pixelWriter.setColor(xRotated, yRotated, pixelColor);
                         break;
                     }

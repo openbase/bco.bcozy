@@ -211,6 +211,11 @@ public final class Constants {
      */
     public static final int RADIUS_SPOTS = 200;
 
+    /**
+     * Int for all three color values (red, green, blue) of the heatmap
+     */
+    public static final int HEATMAP_COLOR = 255;
+
 
     /**
      * Private Constructor.
