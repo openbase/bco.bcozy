@@ -254,7 +254,7 @@ public class Heatmap extends Pane {
         final double[] stops_opacity = new double[spreadingIteration+1];
 
         for (int i = 0; i < spreadingIteration + 1; i++) {
-            double[] opacity = new double[4];
+            final double[] opacity = new double[4];
             if (i != spreadingIteration) {
                 if (spot.x + i < u.length)
                     opacity[0] = u[spot.x + i][spot.y];
@@ -290,20 +290,22 @@ public class Heatmap extends Pane {
         //Goes through the squared Image of the heatmap spot
         for (int y = 0; y < size; y++) {
             for (int x = 0; x < size; x++) {
-                double deltaX = radius - x;
-                double deltaY = radius - y;
-                double distance = Math.sqrt((deltaX * deltaX) + (deltaY * deltaY));
-                double fraction = maxDistFactor * distance;
+                final double deltaX = radius - x;
+                final double deltaY = radius - y;
+                final double distance = Math.sqrt((deltaX * deltaX) + (deltaY * deltaY));
+                final double fraction = maxDistFactor * distance;
 
                 //if the point in the image lies on a circle the correct color (depends on where the point lies in the circle - defined in stops) is set
                 for (int i = 0; i < stops_opacity.length - 1; i++) {
                     if (Double.compare(fraction, i*0.1) >= 0 && Double.compare(fraction, (i + 1)*0.1) <= 0) {
-                        int xGlobal = spot.x + (size / 2 - x);
-                        int yGlobal = spot.y + (size / 2 - y);
-                        int xRotated = size - x;
-                        int yRotated = size - y;
-                        if (!heatmapValues.isInsideLocation(xGlobal, yGlobal, spot.x, spot.y))
+                        final int xGlobal = spot.x + (size / 2 - x);
+                        final int yGlobal = spot.y + (size / 2 - y);
+                        final int xRotated = size - x;
+                        final int yRotated = size - y;
+
+                        if (!heatmapValues.isInsideLocation(xGlobal, yGlobal, spot.x, spot.y)) {
                             continue;
+                        }
 
                         pixelColor = (Color) Interpolator.LINEAR.interpolate(Color.rgb(Constants.HEATMAP_COLOR, Constants.HEATMAP_COLOR, Constants.HEATMAP_COLOR ,stops_opacity[i]),
                                 Color.rgb(Constants.HEATMAP_COLOR, Constants.HEATMAP_COLOR, Constants.HEATMAP_COLOR ,stops_opacity[i+1]), (fraction - i*0.1) / 0.1);

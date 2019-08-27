@@ -1,6 +1,5 @@
 package org.openbase.bco.bcozy.controller.powerterminal.chartcontroller;
 
-import org.openbase.bco.bcozy.controller.powerterminal.Heatmap;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.VisualizationType;
 
 import java.util.Map;

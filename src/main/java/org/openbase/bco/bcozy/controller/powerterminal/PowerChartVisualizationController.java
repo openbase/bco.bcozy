@@ -57,7 +57,6 @@ public class PowerChartVisualizationController extends AbstractFXController {
      * @param chartStateModel StateModel that describes the state of the chart as configured by other panes
      */
     public void initChartState(ChartStateModel chartStateModel, ObjectProperty<CenterPaneController.State> appState) {
-
         this.chartStateModel = chartStateModel;
         this.appState = appState;
 
@@ -77,7 +76,9 @@ public class PowerChartVisualizationController extends AbstractFXController {
             if (newValue == CenterPaneController.State.ENERGY) {
                 refreshScheduler = chartController.enableDataRefresh(30000, chartStateModel);
             } else {
-                refreshScheduler.cancel(true);
+                if (refreshScheduler != null) {
+                    refreshScheduler.cancel(true);
+                }
             }
         });
 

@@ -62,10 +62,11 @@ public class HeatmapValues {
         return false;
     }
 
-    public boolean isInsideLocation(double centerx, double centery) {
+    public boolean isInsideLocation(double centerX, double centerY) {
         for (Polygon location : locations) {
-            if (location.contains(centerx, centery))
+            if (location.contains(centerX, centerY)) {
                 return true;
+            }
         }
         return false;
     }

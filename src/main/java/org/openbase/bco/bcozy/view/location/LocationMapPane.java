@@ -60,7 +60,6 @@ public final class LocationMapPane extends MultiTouchPane implements LocationMap
     private static boolean initialized;
     public final SimpleObjectProperty<DynamicUnitPolygon<?,?>> selectedUnit;
     private final ForegroundPane foregroundPane;
-    private final BackgroundPane backgroundPane;
     private final List<DynamicPolygon> locationHoverLevelList;
     private final Map<String, LocationPolygon> tileMap;
     private final Map<String, LocationPolygon> regionMap;
@@ -95,7 +94,6 @@ public final class LocationMapPane extends MultiTouchPane implements LocationMap
         super();
         this.anchorManipulationMode = SelectionMode.NON;
         this.foregroundPane = foregroundPane;
-        this.backgroundPane = backgroundPane;
         this.locationHoverLevelList = new ArrayList<>();
         this.tileMap = new HashMap<>();
         this.regionMap = new HashMap<>();

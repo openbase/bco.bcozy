@@ -73,7 +73,7 @@ public class TilePolygon extends LocationPolygon {
                         setCustomColor(Color.TRANSPARENT);
                     }
                 } catch (NotAvailableException e) {
-                    // no nothing if app state is not known
+                    // do nothing if app state is not known
                 }
                 break;
             case ABSENT:
