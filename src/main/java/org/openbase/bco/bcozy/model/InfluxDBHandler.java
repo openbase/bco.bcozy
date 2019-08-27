@@ -111,7 +111,32 @@ public class InfluxDBHandler {
                 " |> filter(fn: (r) => r._field == \"" + field + "\")" +
                 " |> aggregateWindow(every:" + window + " , fn: mean)" +
                 " |> group(columns: [\"_time\"], mode:\"by\")" +
-                "|> mean(column: \"_value\")";
+                " |> mean(column: \"_value\")";
+
+        List<FluxTable> tables = sendQuery(query);
+        LOGGER.info(tables.toString());
+        return tables;
+    }
+
+    /**
+     * Returns the average value of specific field from the power_consumption_state_service in a time window.
+     *
+     * @param window    Time interval in which the measurement is carried out (e.g every 1m, 1s, 1d ...)
+     * @param field     Name of the field which should be checked (e.g consumption, current, voltage)
+     * @param timeStart Timestamp when the measurement should start
+     * @param timeStop  Timestamp when the measurement should stop
+     * @return average value
+     * @throws CouldNotPerformException
+     */
+    public static List<FluxTable> getAveragePowerConsumptionTables(String window, String unitId, Long timeStart, Long timeStop, String field) throws CouldNotPerformException {
+        String query = "from(bucket: \"" + INFLUXDB_BUCKET_DEFAULT + "\")" +
+                " |> range(start: " + timeStart + ", stop: " + timeStop + ")" +
+                " |> filter(fn: (r) => r._measurement == \"power_consumption_state_service\")" +
+                " |> filter(fn: (r) => r._field == \"" + field + "\")" +
+                " |> filter(fn: (r) => r.unit_id == \"" + unitId + "\")" +
+                " |> aggregateWindow(every:" + window + " , fn: mean)" +
+                " |> group(columns: [\"_time\"], mode:\"by\")" +
+                " |> mean(column: \"_value\")";
 
         List<FluxTable> tables = sendQuery(query);
         LOGGER.info(tables.toString());

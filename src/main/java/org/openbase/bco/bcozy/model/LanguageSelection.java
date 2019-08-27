@@ -20,8 +20,10 @@ import org.openbase.bco.bcozy.util.Language;
 import org.openbase.bco.bcozy.util.Languages;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.jps.core.JPService;
+import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
+import org.openbase.jul.pattern.ChangeListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.openbase.type.language.LabelType.Label;
@@ -30,6 +32,7 @@ import org.openbase.type.language.LabelType.Label.MapFieldEntry;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Created by hoestreich on 1/2/16.
@@ -39,6 +42,7 @@ import java.util.function.Consumer;
 public final class LanguageSelection extends Observable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LanguageSelection.class);
+    private static final Map<String, ReadOnlyStringProperty> properties = new HashMap<>();
 
     /**
      * Singleton instance.
@@ -115,6 +119,22 @@ public final class LanguageSelection extends Observable {
     }
 
     /**
+     * Adds an Listener to the Language property.
+     * The Listener is called, each time the language changed and on attach.
+     *
+     * @param changeListener the listener for this
+     */
+    public static void addObserver(final ChangeListener changeListener) {
+        getInstance().addObserver((o, arg) -> {
+            try {
+                changeListener.notifyChange();
+            } catch (CouldNotPerformException | InterruptedException e) {
+                ExceptionPrinter.printHistory(e, LOGGER);
+            }
+        });
+    }
+
+    /**
      * Adds an Listener to the given identifier.
      * The Listener is called, each time the language changed and on attach.
      *
@@ -147,11 +167,37 @@ public final class LanguageSelection extends Observable {
      * @return a property with the localized string
      */
     public static ReadOnlyStringProperty getProperty(final String identifier) {
-        ReadOnlyStringWrapper localizedProperty = new ReadOnlyStringWrapper();
+        if(properties.containsKey(identifier)) {
+            return properties.get(identifier);
+        } else {
+            ReadOnlyStringWrapper localizedProperty = new ReadOnlyStringWrapper();
+            properties.put(identifier, localizedProperty.getReadOnlyProperty());
+            addObserverFor(identifier, (locale, text) -> localizedProperty.set(text));
+            return localizedProperty.getReadOnlyProperty();
+        }
+    }
 
-        addObserverFor(identifier, (locale, text) -> localizedProperty.set(text));
-
-        return localizedProperty.getReadOnlyProperty();
+    /**
+     * Returns an Observable Property which contains the localized string for the given translatable.
+     *
+     * @param translatable Generic object to be translated
+     * @param translator Function that translates the translatable
+     *
+     * @return a property with the localized string
+     */
+    public static <T> ReadOnlyStringProperty getProperty(final T translatable, Function<T, String> translator) {
+        String identifier = translatable.toString();
+        if(properties.containsKey(identifier)) {
+            return properties.get(identifier);
+        } else {
+            ReadOnlyStringWrapper localizedProperty = new ReadOnlyStringWrapper();
+            properties.put(identifier, localizedProperty.getReadOnlyProperty());
+            addObserver(() -> {
+                localizedProperty.set(translator.apply(translatable));
+            });
+            localizedProperty.set(translator.apply(translatable));
+            return localizedProperty.getReadOnlyProperty();
+        }
     }
 
     /**

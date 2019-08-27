@@ -18,9 +18,13 @@
  */
 package org.openbase.bco.bcozy.view;
 
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.util.Pair;
+import org.openbase.bco.bcozy.controller.CenterPaneController;
 import org.openbase.bco.bcozy.controller.powerterminal.PowerChartVisualizationController;
 import org.openbase.bco.bcozy.model.powerterminal.ChartStateModel;
 import org.openbase.bco.bcozy.view.location.LocationMapPane;
@@ -38,10 +42,12 @@ public class BackgroundPane extends StackPane {
 
     private final LocationMapPane locationMapPane;
     private final UnitSymbolsPane unitSymbolsPane;
+    private final ForegroundPane foregroundPane;
     private final SimpleUnitSymbolsPane editingLayerPane;
     private final SimpleUnitSymbolsPane maintenanceLayerPane;
     private Pair<Pane, PowerChartVisualizationController> powerChartPaneAndController;
-
+    private ObjectProperty<CenterPaneController.State> appState;
+    private final BooleanProperty heatmapActiveProperty;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BackgroundPane.class);
 
@@ -54,8 +60,11 @@ public class BackgroundPane extends StackPane {
      * @throws java.lang.InterruptedException
      */
     public BackgroundPane(final ForegroundPane foregroundPane) throws InstantiationException, InterruptedException {
+        this.foregroundPane = foregroundPane;
+        heatmapActiveProperty = new SimpleBooleanProperty();
+        heatmapActiveProperty.set(false);
         try {
-            this.locationMapPane = new LocationMapPane(foregroundPane);
+            this.locationMapPane = new LocationMapPane(foregroundPane, this);
             this.getChildren().add(locationMapPane);
 
             // default layer: changing light states on the location map
@@ -82,19 +91,23 @@ public class BackgroundPane extends StackPane {
 
 
             // layer management
+            appState = foregroundPane.getAppState();
             foregroundPane.getAppState().addListener((observable, oldValue, newValue) -> {
                 switch (newValue) {
                     case SETTINGS:
+                        heatmapActiveProperty.set(false);
                         getChildren().clear();
                         getChildren().add(locationMapPane);
                         getChildren().add(editingLayerPane);
                         break;
                     case TEMPERATURE:
+                        heatmapActiveProperty.set(false);
                         getChildren().clear();
                         getChildren().add(locationMapPane);
                         getChildren().add(maintenanceLayerPane);
                         break;
                     case MOVEMENT:
+                        heatmapActiveProperty.set(false);
                         getChildren().clear();
                         getChildren().add(locationMapPane);
                         getChildren().add(unitSymbolsPane);
@@ -102,6 +115,14 @@ public class BackgroundPane extends StackPane {
                     case ENERGY:
                         getChildren().clear();
                         getChildren().add(powerChartPaneAndController.getKey());
+                        powerChartPaneAndController.getValue().getHeatmapSelectedProperty().addListener((observableBoolean, oldBoolean, newBoolean) -> {
+                            if (newBoolean)
+                                activateHeatmap();
+                            else if (oldBoolean)
+                                deactivateHeatmap();
+                        });
+                        if (powerChartPaneAndController.getValue().getHeatmapSelectedProperty().get())
+                            activateHeatmap();
                         break;
                 }
             });
@@ -147,8 +168,32 @@ public class BackgroundPane extends StackPane {
         return locationMapPane;
     }
 
-    public void setChartStateModel(ChartStateModel chartStateModel) {
+    public void initPowerTerminalPane(ChartStateModel chartStateModel) {
         PowerChartVisualizationController chartController = powerChartPaneAndController.getValue();
-        chartController.initChartState(chartStateModel);
+        chartController.initChartState(chartStateModel, appState);
+    }
+
+    /**
+     * Activates the heatmap, when the AppState is Energy and the heatmap is not activated yet
+     */
+    public void activateHeatmap() {
+        if (foregroundPane.getAppState().get() == CenterPaneController.State.ENERGY && !heatmapActiveProperty.get()) {
+            heatmapActiveProperty.set(true);
+            this.getChildren().add(locationMapPane);
+        }
+    }
+
+    /**
+     * Deactivates the heatmap, if it has not been deactivated yet
+     */
+    public void deactivateHeatmap() {
+        if (heatmapActiveProperty.get()) {
+            heatmapActiveProperty.set(false);
+            this.getChildren().remove(locationMapPane);
+        }
+    }
+
+    public BooleanProperty getheatmapActiveProperty() {
+        return heatmapActiveProperty;
     }
 }

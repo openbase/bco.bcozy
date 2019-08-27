@@ -1,6 +1,7 @@
 package org.openbase.bco.bcozy.controller.powerterminal.chartcontroller;
 
 import eu.hansolo.tilesfx.Tile;
+import eu.hansolo.tilesfx.chart.ChartData;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.scene.text.TextAlignment;
@@ -11,10 +12,12 @@ import org.openbase.bco.bcozy.model.powerterminal.PowerTerminalDBService;
 import org.openbase.bco.bcozy.util.powerterminal.UnitConverter;
 import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.openbase.jul.schedule.GlobalCachedExecutorService;
 import org.openbase.jul.schedule.GlobalScheduledExecutorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -34,20 +37,31 @@ public abstract class TilesFxChartController implements ChartController{
     public ScheduledFuture enableDataRefresh(long interval, ChartStateModel chartStateModel) {
         ScheduledFuture refreshSchedule = null;
         try {
-            refreshSchedule = GlobalScheduledExecutorService.scheduleAtFixedRate(() -> Platform.runLater(() -> updateChart(chartStateModel)),
-                    10, interval, TimeUnit.MILLISECONDS);
+            refreshSchedule = GlobalScheduledExecutorService.scheduleAtFixedRate(() -> {
+                List<ChartData> data = PowerTerminalDBService.getAverageConsumption(chartStateModel.getDateRange(), chartStateModel.getSelectedConsumer());
+                Platform.runLater(() -> updateChart(UnitConverter.convert(chartStateModel.getUnit(), data)));
+                    }, 50, interval, TimeUnit.MILLISECONDS);
         } catch (NotAvailableException ex) {
             ExceptionPrinter.printHistory("Could not refresh power chart data", ex, LOGGER);
         }
         return refreshSchedule;
     }
 
-
     @Override
     public void updateChart(ChartStateModel chartStateModel) {
-        //todo: Update charts from within a thread with GlobalSched,,.submit() and call update from within Platform.runLater() see #92
-        this.view.getChartData().clear();
-        this.view.getChartData().setAll(UnitConverter.convert(chartStateModel.getUnit(), PowerTerminalDBService.getAverageConsumptionForDateRange(chartStateModel.getDateRange())));
+        GlobalCachedExecutorService.submit(() -> {
+            List<ChartData> data = PowerTerminalDBService.getAverageConsumption(chartStateModel.getDateRange(), chartStateModel.getSelectedConsumer());
+            Platform.runLater(() -> updateChart(UnitConverter.convert(chartStateModel.getUnit(), data)));
+        });
+    }
+
+    /**
+     * Updates the visualization
+     * @param data New Data to be displayed
+     */
+    public void updateChart(List<ChartData> data) {
+                this.view.getChartData().clear();
+                this.view.getChartData().setAll(data);
     }
 
     @Override

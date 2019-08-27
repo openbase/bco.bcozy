@@ -392,6 +392,13 @@
             <version>11.1</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/eu.hansolo/charts -->
+        <dependency>
+            <groupId>eu.hansolo</groupId>
+            <artifactId>charts</artifactId>
+            <version>1.0.5</version>
+        </dependency>
+
     </dependencies>
 
     <reporting>

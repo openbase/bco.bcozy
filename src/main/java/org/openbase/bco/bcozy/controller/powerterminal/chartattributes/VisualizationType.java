@@ -4,10 +4,10 @@ package org.openbase.bco.bcozy.controller.powerterminal.chartattributes;
  * Different types to visualize the power draw.
  */
 public enum VisualizationType {
-    BAR_CHART, PIE_CHART, WEBVIEW, LINE_CHART, TREE_CHART;
+    BAR_CHART, PIE_CHART, WEBVIEW, LINE_CHART, TREE_CHART, HEATMAP;
 
     public static VisualizationType[] getSelectableTypes() {
-        return new VisualizationType[]{BAR_CHART, PIE_CHART, LINE_CHART, TREE_CHART};
+        return new VisualizationType[]{BAR_CHART, PIE_CHART, LINE_CHART, TREE_CHART, HEATMAP};
     }
 
     /**
@@ -39,4 +39,31 @@ public enum VisualizationType {
 
     }
 
+    /**
+     * Describes if the VisualizationType can display multiple sets of values.
+     * @param visualizationType VisualizationType in question
+     * @return Boolean describing if the VisualizationType can do so
+     */
+    public static boolean canDisplayMultipleGraphs(VisualizationType visualizationType) {
+        switch (visualizationType) {
+            case LINE_CHART: case BAR_CHART:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Describes if the VisualizationType can display multiple sets of values.
+     * @param visualizationType VisualizationType in question
+     * @return Boolean describing if the VisualizationType can do so
+     */
+    public static boolean canDisplayDifferentUnits(VisualizationType visualizationType) {
+        switch (visualizationType) {
+            case LINE_CHART: case BAR_CHART: case PIE_CHART:
+                return true;
+            default:
+                return false;
+        }
+    }
 }
