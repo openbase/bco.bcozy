@@ -4,10 +4,10 @@ package org.openbase.bco.bcozy.controller.powerterminal.chartattributes;
  * Different types to visualize the power draw.
  */
 public enum VisualizationType {
-    BAR_CHART, PIE_CHART, WEBVIEW, LINE_CHART, TREE_CHART, HEATMAP;
+    BAR_CHART, PIE_CHART, WEBVIEW, LINE_CHART, TREE_CHART;
 
     public static VisualizationType[] getSelectableTypes() {
-        return new VisualizationType[]{BAR_CHART, PIE_CHART, LINE_CHART, TREE_CHART, HEATMAP};
+        return new VisualizationType[]{BAR_CHART, PIE_CHART, LINE_CHART, TREE_CHART};
     }
 
     /**

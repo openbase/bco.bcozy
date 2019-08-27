@@ -29,7 +29,6 @@ import org.openbase.bco.bcozy.controller.CenterPaneController;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.exception.InstantiationException;
-import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.iface.DefaultInitializable;
 
 /**
@@ -37,8 +36,6 @@ import org.openbase.jul.iface.DefaultInitializable;
  * @author <a href="mailto:divine@openbase.org">Divine Threepwood</a>
  */
 public class ForegroundPane extends BorderPane implements DefaultInitializable {
-
-    private static ForegroundPane instance;
 
     private final MainMenu mainMenu;
     private final UnitMenu unitMenu;
@@ -73,18 +70,9 @@ public class ForegroundPane extends BorderPane implements DefaultInitializable {
 
             appState = new SimpleObjectProperty<>(CenterPaneController.State.MOVEMENT);
             this.appState.bind(centerPane.appStateProperty);
-
-            instance = this;
         } catch (CouldNotPerformException ex) {
             throw new InstantiationException(this, ex);
         }
-    }
-
-    public static ForegroundPane getInstance() throws NotAvailableException {
-        if(instance == null) {
-            throw new NotAvailableException("ForegroundPane");
-        }
-        return instance;
     }
 
     public ObjectProperty<CenterPaneController.State> getAppState() {
