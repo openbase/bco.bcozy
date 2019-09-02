@@ -322,7 +322,6 @@ public abstract class DynamicPolygon extends Polygon implements Colorable, Label
      * @param selected as a boolean value
      */
     public void setSelected(final boolean selected) {
-        System.out.println("selected " + getLabel("?") + " " + selected);
         this.selected = selected;
         this.changeStyleOnSelection(selected);
         updateOverlay();
