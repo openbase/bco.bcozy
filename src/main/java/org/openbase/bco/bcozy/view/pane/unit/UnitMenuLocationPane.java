@@ -45,7 +45,7 @@ public class UnitMenuLocationPane extends PaneElement {
 
     public UnitMenuLocationPane() {
         this.emphasisControlTrianglePane = new EmphasisControlTrianglePane();
-        this.emphasisControlTrianglePane.setAlignment(Pos.TOP_CENTER);
+        //this.emphasisControlTrianglePane.setAlignment(Pos.CENTER_LEFT);
 
         this.locationLabel = new Label("Select a Room");
         this.locationLabel.setAlignment(Pos.TOP_CENTER);
@@ -124,6 +124,13 @@ public class UnitMenuLocationPane extends PaneElement {
     private boolean dataUpdateInProgress = false;
 
     public void applyDataUpdate(final LocationData locationData) {
+
+        // ignore new incoming emphasis state events as long as there is currently a user moving the emphasis triangle handle.
+        // this makes sure the handle is not randomly moving around.
+        if(eventFilter.isFilterActive()) {
+            return;
+        }
+
         dataUpdateInProgress = true;
         emphasisControlTrianglePane.emphasisStateProperty().set(locationData.getEmphasisState());
         dataUpdateInProgress = false;

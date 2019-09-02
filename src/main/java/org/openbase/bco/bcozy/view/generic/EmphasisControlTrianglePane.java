@@ -20,7 +20,7 @@ import org.openbase.type.domotic.state.EmphasisStateType.EmphasisState;
 
 import static org.openbase.bco.dal.lib.layer.service.provider.EmphasisStateProviderService.*;
 
-public class EmphasisControlTrianglePane extends VBox implements DynamicPane {
+public class EmphasisControlTrianglePane extends BorderPane implements DynamicPane {
 
     private final SimpleObjectProperty<EmphasisState> emphasisStateProperty;
 
@@ -89,15 +89,37 @@ public class EmphasisControlTrianglePane extends VBox implements DynamicPane {
 
         this.trianglePane.setMinHeight(50);
         this.trianglePane.setMinWidth(50);
-        this.setFillWidth(true);
 
-        this.trianglePane.prefHeightProperty().bind(trianglePane.widthProperty().multiply(EmphasisControlTriangle.EMPHASIS_TRIANGLE_HEIGHT_RATIO));
+        this.trianglePane.setPrefSize(200, 185);
+
+        //this.trianglePane.prefHeightProperty().bind(trianglePane.widthProperty());
 
        // this.trianglePane.prefWidthProperty()/;
 
         this.canvas.setCache(true);
-        this.canvas.heightProperty().bind(trianglePane.heightProperty());
-        this.canvas.widthProperty().bind(trianglePane.heightProperty().multiply(EmphasisControlTriangle.EMPHASIS_TRIANGLE_WIDTH_RATIO));
+
+        canvas.widthProperty().bind(trianglePane.widthProperty());
+        canvas.heightProperty().bind(trianglePane.heightProperty());
+//        trianglePane.widthProperty().addListener((observable, oldValue, newWidth) -> {
+//            if(newWidth.doubleValue() < trianglePane.getHeight()) {
+//                this.canvas.widthProperty().unbind();
+//                this.canvas.heightProperty().unbind();
+//
+//                this.canvas.widthProperty().bind(trianglePane.widthProperty());
+//                this.canvas.heightProperty().bind(trianglePane.widthProperty().multiply(0.85d));
+//            }
+//        });
+//
+//        trianglePane.heightProperty().addListener((observable, oldValue, newHeight) -> {
+//            if(newHeight.doubleValue() <= trianglePane.getWidth()) {
+//
+//                this.canvas.widthProperty().unbind();
+//                this.canvas.heightProperty().unbind();
+//
+//                this.canvas.heightProperty().bind(trianglePane.heightProperty());
+//                this.canvas.widthProperty().bind(trianglePane.heightProperty().multiply(1.15d));
+//            }
+//        });
 
         this.trianglePane.heightProperty().addListener((observable, oldValue, newValue) -> {
             this.updateDynamicContent();
@@ -137,7 +159,8 @@ public class EmphasisControlTrianglePane extends VBox implements DynamicPane {
         final HBox labelBox = new HBox(emphasisLabel);
         labelBox.setAlignment(Pos.CENTER);
 
-        this.getChildren().addAll(triangleOuterPane, labelBox);
+        this.setCenter(triangleOuterPane);
+        this.setBottom(labelBox);
 
         updateIcon(false);
     }
@@ -181,8 +204,7 @@ public class EmphasisControlTrianglePane extends VBox implements DynamicPane {
         // initial triangle draw
         emphasisControlTriangle.drawShapes(false, gc);
 
-        gc.strokeRect(- EmphasisControlTriangle.PADDING, - EmphasisControlTriangle.PADDING, EMPHASIS_TRIANGLE_OUTER_LINE + EmphasisControlTriangle.PADDING * 2, EMPHASIS_TRIANGLE_OUTER_LINE + EmphasisControlTriangle.PADDING * 2);
-
+        //gc.strokeRect(- EmphasisControlTriangle.PADDING, - EmphasisControlTriangle.PADDING, EMPHASIS_TRIANGLE_OUTER_LINE + EmphasisControlTriangle.PADDING * 2, EMPHASIS_TRIANGLE_OUTER_LINE + EmphasisControlTriangle.PADDING * 2);
 
         // setup initial icon position
         emphasisIcon.setSize(EmphasisControlTriangle.HANDLE_INNER_SIZE * scale * 0.80);
