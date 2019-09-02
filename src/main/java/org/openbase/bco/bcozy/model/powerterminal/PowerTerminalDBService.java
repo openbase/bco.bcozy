@@ -72,8 +72,8 @@ public class PowerTerminalDBService {
                         timeInSeconds - FIVE_MINUTES_IN_MILLISECONDS, timeInSeconds, INFLUXDB_FIELD_CONSUMPTION).get().getRecord(0).getValue();
             }
             data.add(new ChartData(TimeLabelFormatter.createTimeLabel(startAndEndTime, 0, intervalSize), value));
-        } catch (InterruptedException | ExecutionException) {
-            ExceptionPrinter.printHistory("Could not load datum!", e, LOGGER);
+        } catch (InterruptedException | ExecutionException ex) {
+            ExceptionPrinter.printHistory("Could not load datum!", ex, LOGGER);
         }
         return data;
     }
