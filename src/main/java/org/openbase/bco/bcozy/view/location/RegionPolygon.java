@@ -19,11 +19,10 @@
 package org.openbase.bco.bcozy.view.location;
 
 import javafx.scene.paint.Color;
+import org.openbase.bco.bcozy.BCozy;
 import org.openbase.bco.bcozy.controller.CenterPaneController.State;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ForegroundPane;
-import org.openbase.bco.bcozy.view.InfoPane;
-import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.EnumNotSupportedException;
 import org.openbase.jul.exception.InstantiationException;
 import org.openbase.jul.exception.NotAvailableException;
@@ -75,14 +74,10 @@ public class RegionPolygon extends LocationPolygon {
     public void applyDataUpdate(LocationData unitData) {
         switch (unitData.getPresenceState().getValue()) {
             case PRESENT:
-                try {
-                    if (ForegroundPane.getInstance().getAppState().getValue() == State.MOVEMENT) {
-                        setCustomColor(Color.GREEN.brighter());
-                    } else {
-                        setCustomColor(Color.TRANSPARENT);
-                    }
-                } catch (NotAvailableException e) {
-                    // do nothing if app state is not known
+                if (BCozy.appModeProperty.getValue() == State.MOVEMENT) {
+                    setCustomColor(Color.GREEN.brighter());
+                } else {
+                    setCustomColor(Color.TRANSPARENT);
                 }
                 break;
             case ABSENT:
@@ -115,7 +110,7 @@ public class RegionPolygon extends LocationPolygon {
      * Will be called when either the main or the custom color changes.
      * The initial values for both colors are Color.TRANSPARENT.
      *
-     * @param mainColor The main color
+     * @param mainColor   The main color
      * @param customColor The custom color
      */
     @Override

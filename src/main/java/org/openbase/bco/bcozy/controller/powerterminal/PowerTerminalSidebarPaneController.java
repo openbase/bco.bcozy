@@ -26,11 +26,13 @@ import org.openbase.bco.bcozy.model.powerterminal.PowerTerminalRegistryService;
 import org.openbase.bco.bcozy.view.powerterminal.LocalizedCellFactory;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InitializationException;
+import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.extension.type.processing.LabelProcessor;
 import org.openbase.jul.visual.javafx.control.AbstractFXController;
 import org.openbase.type.domotic.unit.UnitConfigType.UnitConfig;
 import org.openbase.type.language.LabelType;
 
+import java.io.NotActiveException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Collection;
@@ -62,7 +64,7 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
     @FXML
     public VBox globalConsumptionGroupHbox;
     @FXML
-    public JFXComboBox selectLocationBox;
+    public JFXComboBox<UnitConfig> selectLocationBox;
     @FXML
     public JFXComboBox selectConsumerBox;
     @FXML
@@ -115,8 +117,20 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
         noConsumerSelectedDummyConfig = generateDummyUnitConfig(PowerTerminalDBService.UNIT_ID_LOCATION_CONSUMPTION,
                 "-No Selection-", "-Keine Auswahl-");
         globalConsumptionCheckboxDescription.textProperty().bind(LanguageSelection.getProperty(GLOBAL_CONSUMPTION_CHECKBOX_DESCRIPTION_IDENTIFIER));
-        globalConsumptionCheckBox.selectedProperty().addListener((source, old, newValue) -> selectedUnitId.set(getSelectedConsumerId()));
-        selectConsumerBox.valueProperty().addListener((source, old, newValue) -> selectedUnitId.set(getSelectedConsumerId()));
+        globalConsumptionCheckBox.selectedProperty().addListener((source, old, newValue) -> {
+            try {
+                selectedUnitId.set(getSelectedConsumerId());
+            } catch (NotAvailableException e) {
+                // do nothing if selection is not available
+            }
+        });
+        selectConsumerBox.valueProperty().addListener((source, old, newValue) -> {
+            try {
+                selectedUnitId.set(getSelectedConsumerId());
+            } catch (NotAvailableException e) {
+                // do nothing if selection is not available
+            }
+        });
         selectLocationBox.valueProperty().addListener((source, old, newValue) -> {
             //Consumers per location could be saved in a map to reduce number of registry accesses
             UnitConfig location = (UnitConfig) newValue;
@@ -231,8 +245,11 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
         }
     }
 
-    private String getSelectedConsumerId() {
-        String selectedLocationUnitId = ((UnitConfig) selectLocationBox.valueProperty().get()).getId();
+    private String getSelectedConsumerId() throws NotAvailableException {
+        if (selectConsumerBox.valueProperty().get() == null) {
+            throw new NotAvailableException("selection");
+        }
+        String selectedLocationUnitId = selectLocationBox.valueProperty().get().getId();
         if (globalConsumptionCheckBox.selectedProperty().get()) {
             return PowerTerminalDBService.UNIT_ID_GLOBAL_CONSUMPTION;
         }

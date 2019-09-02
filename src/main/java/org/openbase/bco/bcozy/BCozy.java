@@ -21,6 +21,7 @@ package org.openbase.bco.bcozy;
 import com.guigarage.responsive.ResponsiveHandler;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
@@ -33,6 +34,8 @@ import org.openbase.bco.bcozy.view.BackgroundPane;
 import org.openbase.bco.bcozy.view.ForegroundPane;
 import org.openbase.bco.bcozy.view.InfoPane;
 import org.openbase.bco.bcozy.view.LoadingPane;
+import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
+import org.openbase.bco.dal.remote.layer.unit.location.LocationRemote;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.bco.registry.remote.login.BCOLogin;
 import org.openbase.jps.core.JPService;
@@ -63,6 +66,9 @@ import java.util.concurrent.Future;
  * Main Class of the BCozy Program.
  */
 public class BCozy extends Application {
+
+    public static SimpleObjectProperty<LocationRemote> selectedLocationProperty = new SimpleObjectProperty<>();
+    public static SimpleObjectProperty<CenterPaneController.State> appModeProperty = new SimpleObjectProperty<>(CenterPaneController.State.MOVEMENT);
 
     /**
      * Application name.

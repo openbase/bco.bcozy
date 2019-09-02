@@ -1,27 +1,28 @@
 package org.openbase.bco.bcozy.view.generic;
 
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.transform.Affine;
+import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.processing.StringProcessor;
 import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
+import org.openbase.jul.visual.javafx.iface.DynamicPane;
 import org.openbase.type.domotic.action.ActionEmphasisType.ActionEmphasis.Category;
+import org.openbase.type.domotic.state.EmphasisStateType.EmphasisState;
 
-import java.awt.geom.AffineTransform;
+import static org.openbase.bco.dal.lib.layer.service.provider.EmphasisStateProviderService.*;
 
-import static org.openbase.bco.dal.lib.layer.service.provider.EmphasisStateProviderService.EMPHASIS_TRIANGLE_HEIGHT;
-import static org.openbase.bco.dal.lib.layer.service.provider.EmphasisStateProviderService.EMPHASIS_TRIANGLE_OUTER_LINE;
+public class EmphasisControlTrianglePane extends VBox implements DynamicPane {
 
-public class EmphasisControlTrianglePane extends VBox {
+    private final SimpleObjectProperty<EmphasisState> emphasisStateProperty;
 
     private final EmphasisControlTriangle emphasisControlTriangle;
     private final Canvas canvas;
@@ -30,11 +31,16 @@ public class EmphasisControlTrianglePane extends VBox {
     private GraphicsContext gc;
     private double scale;
     private final Pane trianglePane;
+    private transient boolean emphasisStateUpdate;
+
+    final double frame = 40;
 
     public EmphasisControlTrianglePane() {
 
+        this.emphasisStateProperty = new SimpleObjectProperty<>(EmphasisState.getDefaultInstance());
         this.emphasisControlTriangle = new EmphasisControlTriangle();
-        this.emphasisControlTriangle.primaryEmphasisCategoryPropertyProperty().addListener(new ChangeListener<Category>() {
+        this.emphasisStateUpdate = false;
+        this.emphasisControlTriangle.primaryEmphasisCategoryProperty().addListener(new ChangeListener<Category>() {
             @Override
             public void changed(ObservableValue<? extends Category> observable, Category oldValue, Category primaryEmphasisCategory) {
                 switch (primaryEmphasisCategory) {
@@ -55,6 +61,24 @@ public class EmphasisControlTrianglePane extends VBox {
             }
         });
 
+        this.emphasisControlTriangle.setEmphasisStateChangeListener(() -> {
+            computeEmphasisState();
+        });
+
+        this.emphasisControlTriangle.setHandlePositionChangeListener(() -> {
+            updateIcon(false);
+        });
+
+        this.emphasisStateProperty.addListener((observable, oldValue, newValue) -> {
+
+            // only update if update is not already in progress
+            if (emphasisStateUpdate) {
+                return;
+            }
+
+            emphasisControlTriangle.updateEmphasisState(newValue.getComfort(), newValue.getEconomy(), newValue.getSecurity(), false, gc);
+        });
+
         this.emphasisIcon = new SVGGlyphIcon(MaterialDesignIcon.HELP, 45, false);
         this.emphasisIcon.setMouseTransparent(true);
 
@@ -63,48 +87,83 @@ public class EmphasisControlTrianglePane extends VBox {
 
         this.gc = canvas.getGraphicsContext2D();
 
-        this.canvas.heightProperty().bind(heightProperty());
-        this.canvas.widthProperty().bind(widthProperty());
+        this.trianglePane.setMinHeight(50);
+        this.trianglePane.setMinWidth(50);
+        this.setFillWidth(true);
 
-        this.updateDynamicComponents();
+        this.trianglePane.prefHeightProperty().bind(trianglePane.widthProperty().multiply(EmphasisControlTriangle.EMPHASIS_TRIANGLE_HEIGHT_RATIO));
 
-        this.heightProperty().addListener((observable, oldValue, newValue) -> {
-            updateDynamicComponents();
+       // this.trianglePane.prefWidthProperty()/;
+
+        this.canvas.setCache(true);
+        this.canvas.heightProperty().bind(trianglePane.heightProperty());
+        this.canvas.widthProperty().bind(trianglePane.heightProperty().multiply(EmphasisControlTriangle.EMPHASIS_TRIANGLE_WIDTH_RATIO));
+
+        this.trianglePane.heightProperty().addListener((observable, oldValue, newValue) -> {
+            this.updateDynamicContent();
         });
 
-        this.widthProperty().addListener((observable, oldValue, newValue) -> {
-            updateDynamicComponents();
+        this.trianglePane.widthProperty().addListener((observable, oldValue, newValue) -> {
+            this.updateDynamicContent();
         });
+
+        this.updateDynamicContent();
 
         this.canvas.setOnMouseDragged(event -> {
-            updateHandle(event.getX(), event.getY(), scale, true, gc);
+            applyMousePositionUpdate(event.getX(), event.getY(), scale, true, gc);
         });
 
         this.canvas.setOnMouseDragReleased(event -> {
-            updateHandle(event.getX(), event.getY(), scale, false, gc);
+            applyMousePositionUpdate(event.getX(), event.getY(), scale, false, gc);
         });
 
         this.canvas.setOnMousePressed(event -> {
-            updateHandle(event.getX(), event.getY(), scale, true, gc);
+            applyMousePositionUpdate(event.getX(), event.getY(), scale, true, gc);
         });
 
         this.canvas.setOnMouseClicked(event -> {
-            updateHandle(event.getX(), event.getY(), scale, false, gc);
+            applyMousePositionUpdate(event.getX(), event.getY(), scale, false, gc);
         });
 
-        //trianglePane.setPadding(new Insets(50, 50,50, 50));
+        this.trianglePane.getChildren().addAll(canvas, emphasisIcon);
 
-        trianglePane.getChildren().addAll(canvas, emphasisIcon);
-        this.getChildren().add(trianglePane);
-        this.getChildren().add(new HBox(emphasisLabel));
+        final HBox triangleOuterPane = new HBox();
+        triangleOuterPane.setAlignment(Pos.CENTER);
+        triangleOuterPane.setFillHeight(true);
+        triangleOuterPane.getChildren().add(trianglePane);
+
+        //innerPane.getChildren().add(triangleOuterPane);
+
+        final HBox labelBox = new HBox(emphasisLabel);
+        labelBox.setAlignment(Pos.CENTER);
+
+        this.getChildren().addAll(triangleOuterPane, labelBox);
+
+        updateIcon(false);
     }
 
-    private void updateDynamicComponents() {
+    @Override
+    public void initContent() throws InitializationException {
 
-        System.out.println("update..");
+    }
 
-        scale = Math.min(getWidth(), getHeight()) / EMPHASIS_TRIANGLE_OUTER_LINE;
-//        System.out.println("canvas.getWidth(): " + canvas.getWidth());
+    private void computeEmphasisState() {
+
+        final EmphasisState.Builder emphasisState = EmphasisState.newBuilder();
+        emphasisState
+                .setComfort(emphasisControlTriangle.getComfort())
+                .setSecurity(emphasisControlTriangle.getSecurity())
+                .setEconomy(emphasisControlTriangle.getEconomy());
+        emphasisStateUpdate = true;
+        emphasisStateProperty.setValue(emphasisState.build());
+        emphasisStateUpdate = false;
+    }
+
+    @Override
+    public void updateDynamicContent() {
+
+        scale = Math.min(trianglePane.getWidth(), trianglePane.getHeight()) / (EMPHASIS_TRIANGLE_OUTER_LINE + EmphasisControlTriangle.PADDING * 2);
+//        System.out.println("canvas.getWidth(): " + canvas.getWidth());`
 //        System.out.println("canvas.getHeight(): " + canvas.getHeight());
 //        System.out.println("getHeight(): " + getHeight());
 //        System.out.println("getWidth: " + getWidth());
@@ -116,28 +175,26 @@ public class EmphasisControlTrianglePane extends VBox {
         // set new scale
         gc.scale(scale, scale);
 
+        // translate regarding frame
+        gc.translate(EmphasisControlTriangle.PADDING, EmphasisControlTriangle.PADDING);
+
         // initial triangle draw
         emphasisControlTriangle.drawShapes(false, gc);
 
+        gc.strokeRect(- EmphasisControlTriangle.PADDING, - EmphasisControlTriangle.PADDING, EMPHASIS_TRIANGLE_OUTER_LINE + EmphasisControlTriangle.PADDING * 2, EMPHASIS_TRIANGLE_OUTER_LINE + EmphasisControlTriangle.PADDING * 2);
+
+
         // setup initial icon position
-        emphasisIcon.setLayoutX((emphasisControlTriangle.getHandlePosX() * scale - emphasisIcon.getWidth() / 2));
-        emphasisIcon.setLayoutY((emphasisControlTriangle.getHandlePosY() * scale - emphasisIcon.getHeight() / 2));
-
-        emphasisLabel.setStyle("-fx-color-label-visible: WHITE");
-
-        // todo need to be optimized
-//        emphasisLabel.setLayoutX((scale * EMPHASIS_TRIANGLE_OUTER_LINE / 2) * 0.8);
-//        emphasisLabel.setLayoutY(scale * EMPHASIS_TRIANGLE_HEIGHT * 1.05);
-//
-        emphasisLabel.setScaleX(scale * 0.01);
-        emphasisLabel.setScaleY(scale * 0.01);
-
         emphasisIcon.setSize(EmphasisControlTriangle.HANDLE_INNER_SIZE * scale * 0.80);
+        updateIcon(false);
     }
 
-    public void updateHandle(final double sceneX, final double sceneY, final double scale, final boolean mouseClicked, final GraphicsContext gc) {
-        emphasisControlTriangle.updateHandle(sceneX, sceneY, scale, mouseClicked, gc);
+    private void applyMousePositionUpdate(final double sceneX, final double sceneY, final double scale, final boolean mouseClicked, final GraphicsContext gc) {
+        emphasisControlTriangle.updateHandlePosition(sceneX, sceneY, scale, mouseClicked, gc);
+    }
 
+
+    private void updateIcon(final boolean mouseClicked) {
         // setup icon animation
         if (!mouseClicked) {
             emphasisIcon.setForegroundIconColorAnimated(emphasisControlTriangle.getEmphasisColor(), 2);
@@ -145,5 +202,10 @@ public class EmphasisControlTrianglePane extends VBox {
 
         emphasisIcon.setLayoutX(emphasisControlTriangle.getHandlePosX() * scale - (emphasisIcon.getWidth() / 2));
         emphasisIcon.setLayoutY(emphasisControlTriangle.getHandlePosY() * scale - (emphasisIcon.getHeight() / 2));
+    }
+
+
+    public SimpleObjectProperty<EmphasisState> emphasisStateProperty() {
+        return emphasisStateProperty;
     }
 }

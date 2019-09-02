@@ -17,7 +17,7 @@ public interface LocationMap {
 
     DynamicPolygon getLastClickTarget();
 
-    void setSelectedUnit(DynamicPolygon newSelectedPolygon) throws CouldNotPerformException;
+    void setSelectedUnit(LocationPolygon newSelectedPolygon) throws CouldNotPerformException;
 
     /**
      * ZoomFits to the root if available. Otherwise to the first location in the

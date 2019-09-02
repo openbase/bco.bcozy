@@ -97,16 +97,16 @@ public abstract class DynamicPolygon extends Polygon implements Colorable, Label
             try {
                 if (event.isStillSincePress()) {
                     if (event.getClickCount() == 1) {
-                        locationMap.setSelectedUnit(this);
+                        locationMap.setSelectedUnit((LocationPolygon) this);
                     } else if (event.getClickCount() == 2) {
                         if (locationMap.getLastClickTarget().equals(this)) {
-                            if(event.isControlDown()) {
-                                if(event.isShiftDown()) {
+                            if (event.isControlDown()) {
+                                if (event.isShiftDown()) {
                                     saveChanges();
                                     setEditMode(false);
                                 } else {
                                     setEditMode(!editMode);
-                                    locationMap.setSelectedUnit(this);
+                                    locationMap.setSelectedUnit((LocationPolygon) this);
                                 }
                             } else {
                                 locationMap.autoFocusPolygonAnimated(this);

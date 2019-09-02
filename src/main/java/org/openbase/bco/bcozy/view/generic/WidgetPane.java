@@ -30,16 +30,14 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import org.openbase.bco.bcozy.util.LabelSynchronizer;
 import org.openbase.bco.bcozy.view.Constants;
 import org.openbase.bco.bcozy.view.ObserverText;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.ExceptionProcessor;
+import org.openbase.jul.exception.NotSupportedException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.visual.javafx.JFXConstants;
 import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
@@ -237,22 +235,33 @@ public class WidgetPane extends VBox implements DynamicPane {
     public void initHeadPane() {
         headPane.getStyleClass().clear();
         headPane.getStyleClass().add("head-pane");
-        iconPane.getStyleClass().add(JFXConstants.CSS_ICON);
-        iconPane.add(mainIcon, 0, 0);
-        iconPane.setAlignment(Pos.CENTER);
 
-        toggleSwitch.setBackground(Background.EMPTY);
+        try {
+            initCustomHeadPane(headPane);
+        } catch (NotSupportedException ex) {
 
-        headPane.setLeft(iconPane);
-        BorderPane.setAlignment(iconPane, Pos.CENTER);
+            // apply default arrangement
+            iconPane.getStyleClass().add(JFXConstants.CSS_ICON);
+            iconPane.add(mainIcon, 0, 0);
+            iconPane.setAlignment(Pos.CENTER);
 
-        headPane.setCenter(widgetLabel);
-        BorderPane.setAlignment(widgetLabel, Pos.CENTER_LEFT);
+            toggleSwitch.setBackground(Background.EMPTY);
 
-        if (activateable) {
-            headPane.setRight(toggleSwitch);
-            BorderPane.setAlignment(toggleSwitch, Pos.CENTER);
+            headPane.setLeft(iconPane);
+            BorderPane.setAlignment(iconPane, Pos.CENTER);
+
+            headPane.setCenter(widgetLabel);
+            BorderPane.setAlignment(widgetLabel, Pos.CENTER_LEFT);
+
+            if (activateable) {
+                headPane.setRight(toggleSwitch);
+                BorderPane.setAlignment(toggleSwitch, Pos.CENTER);
+            }
         }
+    }
+
+    protected void initCustomHeadPane(final Pane headPane) throws NotSupportedException {
+        throw new NotSupportedException(this, "Custom implementation not available!");
     }
 
     public void setIcon(final GlyphIcons foregroundIconProvider, final Color foregroundIconColor, final GlyphIcons backgroundIconProvider, final Color backgroundIconColor) {

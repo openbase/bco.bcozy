@@ -29,6 +29,7 @@ import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
+import org.openbase.bco.bcozy.BCozy;
 import org.openbase.bco.bcozy.controller.powerterminal.Heatmap;
 import org.openbase.bco.bcozy.view.BackgroundPane;
 import org.openbase.bco.bcozy.view.Constants;
@@ -66,9 +67,9 @@ public final class LocationMapPane extends MultiTouchPane implements LocationMap
     private final Map<String, LocationPolygon> zoneMap;
     private final Map<String, ConnectionPolygon> connectionMap;
     private final List<Node> debugNodes;
-    private DynamicPolygon selectedLocation;
+    private LocationPolygon selectedLocation;
     private LocationPolygon rootLocation;
-    private DynamicPolygon lastClickTarget;
+    private LocationPolygon lastClickTarget;
     private LocationPolygon lastSelectedTile;
 
     //private final EventHandler<MouseEvent> mouseEventHandler;
@@ -492,7 +493,7 @@ public final class LocationMapPane extends MultiTouchPane implements LocationMap
     }
 
     @Override
-    public void setSelectedUnit(final DynamicPolygon newSelectedLocation) throws CouldNotPerformException {
+    public void setSelectedUnit(final LocationPolygon newSelectedLocation) throws CouldNotPerformException {
         try {
             lastClickTarget = newSelectedLocation;
             if (selectedLocation != null && selectedLocation.equals(newSelectedLocation)) {
@@ -540,8 +541,8 @@ public final class LocationMapPane extends MultiTouchPane implements LocationMap
             }
             newSelectedLocation.setSelected(true);
             selectedLocation = newSelectedLocation;
-            selectedUnit.set((DynamicUnitPolygon) newSelectedLocation);
-            foregroundPane.getUnitMenu().getRoomInfo().setText(selectedLocation.getLabel());
+            selectedUnit.set(newSelectedLocation);
+            BCozy.selectedLocationProperty.set(selectedLocation.getUnitRemote());
 
         } catch (CouldNotPerformException ex) {
             throw new CouldNotPerformException("Could not select location polygon!", ex);

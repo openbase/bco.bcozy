@@ -45,7 +45,6 @@ public class ForegroundPane extends BorderPane implements DefaultInitializable {
     private final CenterPane centerPane;
     private final MenuHeader menuHeader;
     private final InfoPane infoFooter;
-    private final ObjectProperty<CenterPaneController.State> appState;
 
     /**
      * Constructor for the ForegroundPane.
@@ -71,9 +70,6 @@ public class ForegroundPane extends BorderPane implements DefaultInitializable {
             this.setTop(this.menuHeader);
             this.setPickOnBounds(false);
 
-            appState = new SimpleObjectProperty<>(CenterPaneController.State.MOVEMENT);
-            this.appState.bind(centerPane.appStateProperty);
-
             instance = this;
         } catch (CouldNotPerformException ex) {
             throw new InstantiationException(this, ex);
@@ -87,12 +83,8 @@ public class ForegroundPane extends BorderPane implements DefaultInitializable {
         return instance;
     }
 
-    public ObjectProperty<CenterPaneController.State> getAppState() {
-        return this.appState;
-    }
-
     @Override
-    public void init() throws InitializationException, InterruptedException {
+    public void init() throws InterruptedException {
         try {
             mainMenu.init();
         } catch (CouldNotPerformException ex) {

@@ -6,6 +6,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.stage.Screen;
+import org.openbase.bco.bcozy.BCozy;
 import org.openbase.bco.bcozy.controller.CenterPaneController;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.VisualizationType;
 import org.openbase.bco.bcozy.controller.powerterminal.chartcontroller.ChartController;
@@ -27,7 +28,6 @@ public class PowerChartVisualizationController extends AbstractFXController {
     public static final String INFLUXDB_FIELD_CONSUMPTION = "consumption";
 
     private ScheduledFuture refreshScheduler;
-    private ObjectProperty<CenterPaneController.State> appState;
 
     private BooleanProperty heatmapSelectedProperty;
 
@@ -56,9 +56,8 @@ public class PowerChartVisualizationController extends AbstractFXController {
      *
      * @param chartStateModel StateModel that describes the state of the chart as configured by other panes
      */
-    public void initChartState(ChartStateModel chartStateModel, ObjectProperty<CenterPaneController.State> appState) {
+    public void initChartState(ChartStateModel chartStateModel) {
         this.chartStateModel = chartStateModel;
-        this.appState = appState;
 
         chartStateModel.visualizationTypeProperty().addListener((source, old, newVisualizationType) ->
                 setUpChart(newVisualizationType)
@@ -72,7 +71,7 @@ public class PowerChartVisualizationController extends AbstractFXController {
         chartStateModel.unitProperty().addListener((source, oldValue, newValue) ->
                 chartController.updateChart(chartStateModel)
         );
-        appState.addListener((source, old, newValue) -> {
+        BCozy.appModeProperty.addListener((source, old, newValue) -> {
             if (newValue == CenterPaneController.State.ENERGY) {
                 refreshScheduler = chartController.enableDataRefresh(30000, chartStateModel);
             } else {
@@ -106,13 +105,6 @@ public class PowerChartVisualizationController extends AbstractFXController {
             chartController = ChartControllerFactory.getChartController(visualizationType);
             chartController.init(chartStateModel, this);
             pane.getChildren().add(chartController.getView());
-            refreshScheduler = chartController.enableDataRefresh(30000, chartStateModel);
-        }
-        pane.getChildren().clear();
-        chartController = ChartControllerFactory.getChartController(visualizationType);
-        chartController.init(chartStateModel, this);
-        pane.getChildren().add(chartController.getView());
-        if (appState.get() == CenterPaneController.State.ENERGY) {
             refreshScheduler = chartController.enableDataRefresh(30000, chartStateModel);
         }
     }
