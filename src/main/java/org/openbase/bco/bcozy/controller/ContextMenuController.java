@@ -1,17 +1,17 @@
 /**
  * ==================================================================
- *
+ * <p>
  * This file is part of org.openbase.bco.bcozy.
- *
+ * <p>
  * org.openbase.bco.bcozy is free software: you can redistribute it and modify
  * it under the terms of the GNU General Public License (Version 3)
  * as published by the Free Software Foundation.
- *
+ * <p>
  * org.openbase.bco.bcozy is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with org.openbase.bco.bcozy. If not, see <http://www.gnu.org/licenses/>.
  * ==================================================================
@@ -24,6 +24,7 @@ import java.util.Map;
 
 import javafx.scene.layout.Pane;
 import javafx.util.Pair;
+import org.openbase.bco.bcozy.BCozy;
 import org.openbase.bco.bcozy.controller.powerterminal.PowerTerminalSidebarPaneController;
 import org.openbase.bco.bcozy.view.ForegroundPane;
 import org.openbase.bco.bcozy.view.location.DynamicUnitPolygon;
@@ -53,7 +54,7 @@ public class ContextMenuController {
 
     private final ForegroundPane foregroundPane;
     private final Map<String, TitledUnitPaneContainer> titledPaneMap;
-    private Pair< Pane, AbstractFXController> powerTerminalSidebarPaneAndController;
+    private Pair<Pane, AbstractFXController> powerTerminalSidebarPaneAndController;
 
     /**
      * Constructor for the ContextMenuController.
@@ -77,18 +78,17 @@ public class ContextMenuController {
             }
         });
 
-
         final UnitMenu unitMenu = foregroundPane.getUnitMenu();
 
         try {
-             powerTerminalSidebarPaneAndController = FXMLProcessor.loadFxmlPaneAndControllerPair("PowerTerminalSidebarPane.fxml", PowerTerminalSidebarPaneController.class);
+            powerTerminalSidebarPaneAndController = FXMLProcessor.loadFxmlPaneAndControllerPair("PowerTerminalSidebarPane.fxml", PowerTerminalSidebarPaneController.class);
 //            ((PowerTerminalSidebarPaneController) powerTerminalSidebarPaneAndController.getValue()).init(unitMenu);
             unitMenu.setPowerTerminalSidebarPane(powerTerminalSidebarPaneAndController.getKey());
         } catch (final CouldNotPerformException ex) {
             ExceptionPrinter.printHistory("Content could not be loaded", ex, LOGGER);
         }
 
-        foregroundPane.getAppState().addListener((observable, oldValue, newValue) -> {
+        BCozy.appModeProperty.addListener((observable, oldValue, newValue) -> {
             switch (newValue) {
                 case ENERGY:
                     unitMenu.getCollapseIcon().setOnMouseClicked(event -> showHideContextMenu(unitMenu));
@@ -151,9 +151,9 @@ public class ContextMenuController {
                 if (nextEntry.getValue().isEmpty()) {
                     continue;
                 }
-                
+
                 // filter shadowned units
-                switch(nextEntry.getKey()) {
+                switch (nextEntry.getKey()) {
                     case BUTTON:
                     case DEVICE:
                     case UNKNOWN:
@@ -195,7 +195,6 @@ public class ContextMenuController {
             ExceptionPrinter.printHistory(new CouldNotPerformException("Could not init initTitledPaneMap!", ex), LOGGER);
         }
     }
-
 
     public PowerTerminalSidebarPaneController getPowerTerminalSidebarPaneController() {
         return (PowerTerminalSidebarPaneController) powerTerminalSidebarPaneAndController.getValue();

@@ -30,7 +30,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.HiddenSidesPane;
+import org.openbase.bco.bcozy.view.generic.EmphasisControlTrianglePane;
 import org.openbase.bco.bcozy.view.pane.unit.TitledUnitPaneContainer;
+import org.openbase.bco.bcozy.view.pane.unit.UnitMenuLocationPane;
 import org.openbase.jul.visual.javafx.JFXConstants;
 import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 
@@ -43,7 +45,7 @@ public class UnitMenu extends VBox {
 
     private final ContextSortingPane contextSortingPane;
     private Pane powerTerminalSidebarPane;
-    private final Label roomInfo;
+    private UnitMenuLocationPane unitMenuLocationPane;
     private final ScrollPane verticalScrollPane;
     private TitledUnitPaneContainer titledPaneContainer;
     private FloatingButton fullscreenBtn;
@@ -94,11 +96,11 @@ public class UnitMenu extends VBox {
         this.floatingButtons.translateYProperty().set(Constants.FLOATING_BUTTON_OFFSET_Y);
         this.floatingButtons.translateXProperty().set(Constants.FLOATING_BUTTON_OFFSET_X);
 
-
-        this.roomInfo = new Label("Select a Room");
-        this.roomInfo.setAlignment(Pos.TOP_CENTER);
-        this.roomInfo.getStyleClass().clear();
-        this.roomInfo.getStyleClass().add("headline");
+        this.unitMenuLocationPane = new UnitMenuLocationPane();
+//        this.locationLabel = new Label("Select a Room");
+//        this.locationLabel.setAlignment(Pos.TOP_CENTER);
+//        this.locationLabel.getStyleClass().clear();
+//        this.locationLabel.getStyleClass().add("headline");
 
         this.verticalScrollPane = new ScrollPane();
         this.verticalScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
@@ -128,19 +130,14 @@ public class UnitMenu extends VBox {
         //TODO: Find a nicer way to scale the size of the scroll bar thumb
         scrollBar.setVisibleAmount(0.25);
 
-        this.getChildren().addAll(floatingButtons, roomInfo, hiddenSidesPane);
+        this.getChildren().addAll(floatingButtons, unitMenuLocationPane, hiddenSidesPane);
         //VBox.setVgrow(contextSortingPane, Priority.ALWAYS);
 
         this.getStyleClass().addAll("detail-menu");
     }
 
-    /**
-     * Getter Method for the Label.
-     *
-     * @return label
-     */
-    public Label getRoomInfo() {
-        return roomInfo;
+    public UnitMenuLocationPane getUnitMenuLocationPane() {
+        return unitMenuLocationPane;
     }
 
     /**
@@ -182,7 +179,7 @@ public class UnitMenu extends VBox {
         setMinWidth(unitMenuMaxWidth);
         setPrefHeight(unitMenuMaxHeight);
         setPrefWidth(unitMenuMaxWidth);
-        this.getChildren().addAll(floatingButtons, roomInfo, hiddenSidesPane);
+        this.getChildren().addAll(floatingButtons, unitMenuLocationPane, hiddenSidesPane);
         this.getStyleClass().addAll("detail-menu");
     }
 
@@ -194,7 +191,7 @@ public class UnitMenu extends VBox {
         setPrefHeight(unitMenuMaxHeight);
         setPrefWidth(unitMenuMaxWidth);
         collapseIcon.setForegroundIcon(MaterialIcon.KEYBOARD_ARROW_RIGHT);
-        this.getChildren().addAll(floatingButtons, roomInfo, powerTerminalSidebarPane, collapseButtons);
+        this.getChildren().addAll(floatingButtons, unitMenuLocationPane, powerTerminalSidebarPane, collapseButtons);
         this.getStyleClass().addAll("detail-menu");
 
     }

@@ -25,6 +25,7 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.openbase.bco.authentication.lib.jp.JPAuthentication;
+import org.openbase.bco.bcozy.view.generic.EmphasisControlTrianglePane;
 import org.openbase.jul.visual.javafx.JFXConstants;
 import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 import org.openbase.bco.bcozy.view.mainmenupanes.AvailableUsersPane;

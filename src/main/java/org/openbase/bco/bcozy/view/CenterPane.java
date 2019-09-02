@@ -25,6 +25,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Pos;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import org.openbase.bco.bcozy.BCozy;
 import org.openbase.bco.bcozy.controller.CenterPaneController;
 import org.openbase.bco.bcozy.controller.SettingsController;
 import org.openbase.bco.bcozy.controller.UserSettingsController;
@@ -54,16 +55,11 @@ public class CenterPane extends StackPane {
 
     private final ForegroundPane foregroundPane;
 
-    // switched by floating button, is bound to the layer management of the location pane
-    public final ObjectProperty<CenterPaneController.State> appStateProperty;
-
     /**
      * Constructor for the center pane.
      */
     public CenterPane(final double height, final ForegroundPane foregroundPane) {
         this.foregroundPane = foregroundPane;
-
-        appStateProperty = new SimpleObjectProperty<>(CenterPaneController.State.MOVEMENT);
 
         // Initializing components
         this.settingsMenu = loadSettingsMenu(height);
@@ -71,16 +67,16 @@ public class CenterPane extends StackPane {
         // Initializing view mode switch
         final FloatingPopUp viewModes = new FloatingPopUp(Pos.BOTTOM_RIGHT);
         viewModes.addParentElement(MaterialIcon.PERSON, () -> {
-            appStateProperty.set(CenterPaneController.State.MOVEMENT);
+            BCozy.appModeProperty.set(CenterPaneController.State.MOVEMENT);
         });
         viewModes.addElement(MaterialDesignIcon.THERMOMETER_LINES, () -> {
-            appStateProperty.set(CenterPaneController.State.TEMPERATURE);
+            BCozy.appModeProperty.set(CenterPaneController.State.TEMPERATURE);
         });
         viewModes.addElement(MaterialIcon.VISIBILITY, () -> {
-            appStateProperty.set(CenterPaneController.State.SETTINGS);
+            BCozy.appModeProperty.set(CenterPaneController.State.SETTINGS);
         });
         viewModes.addElement(MaterialIcon.BATTERY_CHARGING_FULL, () -> {
-           appStateProperty.set(CenterPaneController.State.ENERGY);
+            BCozy.appModeProperty.set(CenterPaneController.State.ENERGY);
         });
 
         //final FloatingButton settingsBtn = new FloatinrgButton(new SVGIcon(MaterialDesignIcon.SETTINGS, JFXConstants.ICON_SIZE_MIDDLE, true));

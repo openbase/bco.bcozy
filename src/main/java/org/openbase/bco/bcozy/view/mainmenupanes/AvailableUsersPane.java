@@ -30,6 +30,7 @@ import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.HiddenSidesPane;
@@ -80,8 +81,8 @@ public class AvailableUsersPane extends PaneElement {
         statusIcon = new BorderPane(new SVGGlyphIcon(MaterialDesignIcon.ACCOUNT_CIRCLE, JFXConstants.ICON_SIZE_MIDDLE, true));
 
         final ScrollPane verticalScrollPane = new ScrollPane();
-        verticalScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        verticalScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        verticalScrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
+        verticalScrollPane.setVbarPolicy(ScrollBarPolicy.NEVER);
 
         final ScrollBar scrollBar = new ScrollBar();
         scrollBar.setOrientation(Orientation.VERTICAL);
@@ -126,7 +127,7 @@ public class AvailableUsersPane extends PaneElement {
         });
     }
 
-    boolean containsIgnoreCase(String text, String toFind) {
+    boolean containsIgnoreCase(final String text, final String toFind) {
         return text.toLowerCase().contains(toFind.toLowerCase());
     }
 
@@ -155,7 +156,7 @@ public class AvailableUsersPane extends PaneElement {
                 userPanes.getChildren().remove(userPane);
             });
 
-            for (final UnitConfig userUnitConfig : Registries.getUnitRegistry().getUnitConfigs(UnitType.USER)) {
+            for (final UnitConfig userUnitConfig : Registries.getUnitRegistry().getUnitConfigsByUnitType(UnitType.USER)) {
 
                 // filter users by predicate
                 if (!userPredicate.test(userUnitConfig.getUserConfig())) {

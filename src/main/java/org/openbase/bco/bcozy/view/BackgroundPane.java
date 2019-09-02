@@ -24,6 +24,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.util.Pair;
+import org.openbase.bco.bcozy.BCozy;
 import org.openbase.bco.bcozy.controller.CenterPaneController;
 import org.openbase.bco.bcozy.controller.powerterminal.PowerChartVisualizationController;
 import org.openbase.bco.bcozy.model.powerterminal.ChartStateModel;
@@ -46,7 +47,6 @@ public class BackgroundPane extends StackPane {
     private final SimpleUnitSymbolsPane editingLayerPane;
     private final SimpleUnitSymbolsPane maintenanceLayerPane;
     private Pair<Pane, PowerChartVisualizationController> powerChartPaneAndController;
-    private ObjectProperty<CenterPaneController.State> appState;
     private final BooleanProperty heatmapActiveProperty;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BackgroundPane.class);
@@ -91,8 +91,7 @@ public class BackgroundPane extends StackPane {
 
 
             // layer management
-            appState = foregroundPane.getAppState();
-            foregroundPane.getAppState().addListener((observable, oldValue, newValue) -> {
+            BCozy.appModeProperty.addListener((observable, oldValue, newValue) -> {
                 switch (newValue) {
                     case SETTINGS:
                         heatmapActiveProperty.set(false);
@@ -170,14 +169,14 @@ public class BackgroundPane extends StackPane {
 
     public void initPowerTerminalPane(ChartStateModel chartStateModel) {
         PowerChartVisualizationController chartController = powerChartPaneAndController.getValue();
-        chartController.initChartState(chartStateModel, appState);
+        chartController.initChartState(chartStateModel);
     }
 
     /**
-     * Activates the heatmap, when the AppState is Energy and the heatmap is not activated yet
+     * Activates the heatmap, when the app mode is Energy and the heatmap is not activated yet
      */
     public void activateHeatmap() {
-        if (foregroundPane.getAppState().get() == CenterPaneController.State.ENERGY && !heatmapActiveProperty.get()) {
+        if (BCozy.appModeProperty.get() == CenterPaneController.State.ENERGY && !heatmapActiveProperty.get()) {
             heatmapActiveProperty.set(true);
             this.getChildren().add(locationMapPane);
         }
