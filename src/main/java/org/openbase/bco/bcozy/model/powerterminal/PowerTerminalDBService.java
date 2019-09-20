@@ -4,7 +4,10 @@ import eu.hansolo.tilesfx.chart.ChartData;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.DateRange;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.Interval;
 import org.openbase.bco.bcozy.util.powerterminal.TimeLabelFormatter;
+import org.openbase.bco.dal.remote.layer.unit.Units;
 import org.openbase.bco.dal.remote.layer.unit.location.LocationRemote;
+import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.type.domotic.database.RecordCollectionType;
 import org.slf4j.Logger;
@@ -24,9 +27,21 @@ import static org.openbase.bco.bcozy.controller.powerterminal.PowerChartVisualiz
 public class PowerTerminalDBService {
     public static final long FIVE_MINUTES_IN_MILLISECONDS = 60000;
     private static final Logger LOGGER = LoggerFactory.getLogger(PowerTerminalDBService.class);
-    private static final LocationRemote locationRemote = new LocationRemote();
+    private static final String CITEC_LOCATION_ID = "1cd2120f-7171-4cbf-80b6-be52ad3a122b";
     public static final String UNIT_ID_GLOBAL_CONSUMPTION = "Global Consumption";
     public static final String UNIT_ID_LOCATION_CONSUMPTION = "Location Consumption";
+    private static LocationRemote locationRemote;
+
+    static {
+        try {
+            locationRemote = Units.getUnit(CITEC_LOCATION_ID, true, Units.LOCATION);
+        } catch (NotAvailableException ex) {
+            ExceptionPrinter.printHistory("Could not get locationRemote from citec location!", ex, LOGGER);
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            ExceptionPrinter.printHistory("Get location remote from citec was interrupted!", ex, LOGGER);
+        }
+    }
 
 
     /**
@@ -50,30 +65,21 @@ public class PowerTerminalDBService {
         long timeInSeconds = TimeUnit.MILLISECONDS.toSeconds(startAndEndTime.getTime());
         List<ChartData> data = new ArrayList<>();
 
-//        try {
-//            double value = 0;
-//            if (unitId.equals(UNIT_ID_GLOBAL_CONSUMPTION)) {
-//                unitId = Units.getUnitRegistry().getRootLocationConfig().getId();
-//            }
-//            PowerConsumptionSensorRemote consumer = Units.getUnit(unitId, false, Units.POWER_CONSUMPTION_SENSOR);
-//            value = consumer.getPowerConsumptionState().getConsumption();
-//            data.add(new ChartData(TimeLabelFormatter.createTimeLabel(startAndEndTime, 0, intervalSize), value));
-//        } catch (CouldNotPerformException | InterruptedException e) {
-//            ExceptionPrinter.printHistory("Could not load datum!", e, LOGGER);
-//        }
-
         try {
             double value = 0;
             if (unitId.equals(UNIT_ID_GLOBAL_CONSUMPTION)) {
                 value = locationRemote.getAveragePowerConsumption(intervalSize.getInfluxIntervalString(),
-                        timeInSeconds - FIVE_MINUTES_IN_MILLISECONDS, timeInSeconds, INFLUXDB_FIELD_CONSUMPTION).get().getRecord(0).getValue();
+                        timeInSeconds - FIVE_MINUTES_IN_MILLISECONDS, timeInSeconds, INFLUXDB_FIELD_CONSUMPTION).getRecord(0).getValue();
             } else {
                 value = locationRemote.getAveragePowerConsumption(intervalSize.getInfluxIntervalString(), unitId,
-                        timeInSeconds - FIVE_MINUTES_IN_MILLISECONDS, timeInSeconds, INFLUXDB_FIELD_CONSUMPTION).get().getRecord(0).getValue();
+                        timeInSeconds - FIVE_MINUTES_IN_MILLISECONDS, timeInSeconds, INFLUXDB_FIELD_CONSUMPTION).getRecord(0).getValue();
             }
             data.add(new ChartData(TimeLabelFormatter.createTimeLabel(startAndEndTime, 0, intervalSize), value));
-        } catch (InterruptedException | ExecutionException ex) {
+        } catch (ExecutionException ex) {
             ExceptionPrinter.printHistory("Could not load datum!", ex, LOGGER);
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            ExceptionPrinter.printHistory("Get average power consumption request was interrupted!", ex, LOGGER);
         }
         return data;
     }
@@ -87,15 +93,20 @@ public class PowerTerminalDBService {
             RecordCollectionType.RecordCollection fluxTablesCollection;
             if (unitId.equals(UNIT_ID_GLOBAL_CONSUMPTION)) {
                 fluxTablesCollection = locationRemote.getAveragePowerConsumptionTables(
-                        interval, startTimeInSeconds, endTimeInSeconds, INFLUXDB_FIELD_CONSUMPTION).get();
+                        interval, startTimeInSeconds, endTimeInSeconds, INFLUXDB_FIELD_CONSUMPTION);
             } else {
                 fluxTablesCollection = locationRemote.getAveragePowerConsumptionTables(
-                        interval, unitId, startTimeInSeconds, endTimeInSeconds, INFLUXDB_FIELD_CONSUMPTION).get();
+                        interval, unitId, startTimeInSeconds, endTimeInSeconds, INFLUXDB_FIELD_CONSUMPTION);
                 ;
             }
             data = convertToChartDataList(intervalSize, startTime, fluxTablesCollection);
-        } catch (InterruptedException | ExecutionException e) {
-            ExceptionPrinter.printHistory("Could not load chart data!", e, LOGGER);
+        } catch (ExecutionException ex) {
+            ExceptionPrinter.printHistory("Could not load chart data!", ex, LOGGER);
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            ExceptionPrinter.printHistory("Get chart data interrupted!", ex, LOGGER);
+
+
         }
         return data;
     }
