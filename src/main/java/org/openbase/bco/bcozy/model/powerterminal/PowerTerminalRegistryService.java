@@ -24,7 +24,7 @@ public class PowerTerminalRegistryService {
     public static List<UnitConfig> getConsumers(String LocationId) {
         List<UnitConfig> consumers = null;
         try {
-            consumers = Registries.getUnitRegistry().getUnitConfigsByLocation(UnitType.POWER_CONSUMPTION_SENSOR, LocationId);
+            consumers = Registries.getUnitRegistry().getUnitConfigsByLocationIdAndUnitType(LocationId, UnitType.POWER_CONSUMPTION_SENSOR);
         } catch (CouldNotPerformException e) {
             ExceptionPrinter.printHistory(e, LOGGER);
         }
@@ -34,9 +34,9 @@ public class PowerTerminalRegistryService {
     public static List<UnitConfig> getLocations(LocationType locationType) {
         List<UnitConfig> locations = new ArrayList<>();
         try {
-            locations = Registries.getUnitRegistry().getUnitConfigs(UnitType.LOCATION);
-        } catch (CouldNotPerformException e) {
-            ExceptionPrinter.printHistory(e, LOGGER);
+            locations = Registries.getUnitRegistry().getUnitConfigsByUnitType(UnitType.LOCATION);
+        } catch (CouldNotPerformException ex) {
+            ExceptionPrinter.printHistory(ex, LOGGER);
         }
         locations.removeIf(unit -> unit.getLocationConfig().getLocationType() != locationType);
         return locations;

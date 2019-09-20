@@ -24,6 +24,7 @@ import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
+import org.openbase.jul.schedule.GlobalCachedExecutorService;
 import org.openbase.jul.schedule.GlobalScheduledExecutorService;
 import org.openbase.rct.Transform;
 import org.openbase.type.domotic.unit.UnitConfigType;
@@ -54,29 +55,34 @@ public class Heatmap extends Pane {
 
             unitPool.activate();
 
-            UnitConfigType.UnitConfig rootLocationConfig = Registries.getUnitRegistry().getRootLocationConfig();
+            GlobalCachedExecutorService.submit(() -> {
+                try {
+                    UnitConfigType.UnitConfig rootLocationConfig = Registries.getUnitRegistry(true).getRootLocationConfig();
+                    HeatmapValues heatmapValues = initHeatmap(rootLocationConfig);
+                    backgroundPane.getheatmapActiveProperty().addListener((observable, oldValue, newValue) -> {
+                        if (newValue.booleanValue()) {
+                            try {
+                                if (refreshSchedule != null && !refreshSchedule.isDone()) {
+                                    return;
+                                }
 
-            HeatmapValues heatmapValues = initHeatmap(rootLocationConfig);
-
-            backgroundPane.getheatmapActiveProperty().addListener((observable, oldValue, newValue) -> {
-                if(newValue.booleanValue()) {
-                    try {
-                        if(refreshSchedule != null && !refreshSchedule.isDone()){
-                            return;
+                                refreshSchedule = GlobalScheduledExecutorService.scheduleAtFixedRate(() -> Platform.runLater(() -> updateHeatmap(heatmapValues)),
+                                        0, 10, TimeUnit.SECONDS);
+                            } catch (NotAvailableException ex) {
+                                ExceptionPrinter.printHistory("Could not update Heatmap", ex, logger);
+                            }
+                        } else {
+                            if (refreshSchedule != null && !refreshSchedule.isDone()) {
+                                refreshSchedule.cancel(false);
+                            }
                         }
-
-                        refreshSchedule = GlobalScheduledExecutorService.scheduleAtFixedRate(() -> Platform.runLater(() -> updateHeatmap(heatmapValues)),
-                                0, 10, TimeUnit.SECONDS);
-                    } catch (NotAvailableException ex) {
-                        ExceptionPrinter.printHistory("Could not update Heatmap", ex, logger);
-                    }
-                } else {
-                    if (refreshSchedule != null && !refreshSchedule.isDone()) {
-                        refreshSchedule.cancel(false);
-                    }
+                    });
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                } catch (CouldNotPerformException ex) {
+                    ExceptionPrinter.printHistory("Could not instantiate CustomUnitPool", ex, logger);
                 }
             });
-
 
         } catch (CouldNotPerformException ex) {
             ExceptionPrinter.printHistory("Could not instantiate CustomUnitPool", ex, logger);
@@ -206,7 +212,7 @@ public class Heatmap extends Pane {
             try {
                 double current = powerConsumptionUnit.getPowerConsumptionState().getCurrent() / 10;
                 current = Math.pow(current, 0.5);
-                current = Math.min(1,current);
+                current = Math.min(1, current);
                 u[spot.x][spot.y] = current;
                 spot.value = current;
             } catch (NotAvailableException ex) {
@@ -222,8 +228,8 @@ public class Heatmap extends Pane {
     /**
      * Generates the heatmap with the hansolo library
      *
-     * @param heatmapValues Class with relevant data (position, energy consumption) of the consumers
-     * @param spreadingIteration      parameter how often the heat spreads
+     * @param heatmapValues      Class with relevant data (position, energy consumption) of the consumers
+     * @param spreadingIteration parameter how often the heat spreads
      *
      * @return HeatMap from the library generated heatmap
      */
@@ -242,16 +248,16 @@ public class Heatmap extends Pane {
     /**
      * Image of a single spot needed for generating the heatmap
      *
-     * @param heatmapValues Class with relevant data (position, energy consumption) of the consumers
-     * @param spot Position and value of a single heatmap spot
-     * @param spreadingIteration      parameter how often the heat spreads
+     * @param heatmapValues      Class with relevant data (position, energy consumption) of the consumers
+     * @param spot               Position and value of a single heatmap spot
+     * @param spreadingIteration parameter how often the heat spreads
      *
      * @return Image of a single spot
      */
     public Image createEventImage(final HeatmapValues heatmapValues, final HeatmapSpot spot, final int spreadingIteration) {
         final Double radius = (double) spreadingIteration * Constants.RADIUS_SPOTS;
         final double[][] u = heatmapValues.getGrid();
-        final double[] stops_opacity = new double[spreadingIteration+1];
+        final double[] stops_opacity = new double[spreadingIteration + 1];
 
         for (int i = 0; i < spreadingIteration + 1; i++) {
             final double[] opacity = new double[4];
@@ -297,7 +303,7 @@ public class Heatmap extends Pane {
 
                 //if the point in the image lies on a circle the correct color (depends on where the point lies in the circle - defined in stops) is set
                 for (int i = 0; i < stops_opacity.length - 1; i++) {
-                    if (Double.compare(fraction, i*0.1) >= 0 && Double.compare(fraction, (i + 1)*0.1) <= 0) {
+                    if (Double.compare(fraction, i * 0.1) >= 0 && Double.compare(fraction, (i + 1) * 0.1) <= 0) {
                         final int xGlobal = spot.x + (size / 2 - x);
                         final int yGlobal = spot.y + (size / 2 - y);
                         final int xRotated = size - x;
@@ -307,8 +313,8 @@ public class Heatmap extends Pane {
                             continue;
                         }
 
-                        pixelColor = (Color) Interpolator.LINEAR.interpolate(Color.rgb(Constants.HEATMAP_COLOR, Constants.HEATMAP_COLOR, Constants.HEATMAP_COLOR ,stops_opacity[i]),
-                                Color.rgb(Constants.HEATMAP_COLOR, Constants.HEATMAP_COLOR, Constants.HEATMAP_COLOR ,stops_opacity[i+1]), (fraction - i*0.1) / 0.1);
+                        pixelColor = (Color) Interpolator.LINEAR.interpolate(Color.rgb(Constants.HEATMAP_COLOR, Constants.HEATMAP_COLOR, Constants.HEATMAP_COLOR, stops_opacity[i]),
+                                Color.rgb(Constants.HEATMAP_COLOR, Constants.HEATMAP_COLOR, Constants.HEATMAP_COLOR, stops_opacity[i + 1]), (fraction - i * 0.1) / 0.1);
                         pixelWriter.setColor(xRotated, yRotated, pixelColor);
                         break;
                     }
@@ -320,14 +326,14 @@ public class Heatmap extends Pane {
 
     /**
      * Calculate the heatmap values given a formula
-     *
+     * <p>
      * Formula:
      * Du[i,j,t] = u[i+1,j,t] + u[i-1,j,t] + u[i,j+1,t] + u[i,j-1,t] - 4*u[i,j,t]/h^2
      * u[i,j,t+1] = u[i,j,t] + dt * Du[i,j,t]
      * dt = timestep
      *
-     * @param heatmapValues Class with relevant data (position, energy consumption) of the consumers
-     * @param spreadingIteration      parameter how often the heat spreads
+     * @param heatmapValues      Class with relevant data (position, energy consumption) of the consumers
+     * @param spreadingIteration parameter how often the heat spreads
      */
     private void calculateHeatMap(HeatmapValues heatmapValues, int spreadingIteration) {
         double[][] grid = heatmapValues.getGrid();

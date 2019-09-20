@@ -3,6 +3,7 @@ package org.openbase.bco.bcozy.controller.powerterminal;
 import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXDatePicker;
+import eu.hansolo.fx.charts.heatmap.HeatMap;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.*;
@@ -24,13 +25,17 @@ import org.openbase.bco.bcozy.model.powerterminal.ChartStateModel;
 import org.openbase.bco.bcozy.model.powerterminal.PowerTerminalDBService;
 import org.openbase.bco.bcozy.model.powerterminal.PowerTerminalRegistryService;
 import org.openbase.bco.bcozy.view.powerterminal.LocalizedCellFactory;
+import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.exception.NotAvailableException;
+import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.extension.type.processing.LabelProcessor;
+import org.openbase.jul.schedule.GlobalCachedExecutorService;
 import org.openbase.jul.visual.javafx.control.AbstractFXController;
 import org.openbase.type.domotic.unit.UnitConfigType.UnitConfig;
 import org.openbase.type.language.LabelType;
+import org.slf4j.LoggerFactory;
 
 import java.io.NotActiveException;
 import java.time.LocalDate;
@@ -45,6 +50,7 @@ import java.util.Map;
  */
 public class PowerTerminalSidebarPaneController extends AbstractFXController {
 
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(PowerTerminalSidebarPaneController.class);
 
     public static final ZoneId TIME_ZONE_ID = ZoneId.of("GMT+2");
     public static final String DATE_ERROR_MESSAGE_IDENTIFIER = "powerterminal.dateErrorMessage";
@@ -82,7 +88,7 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
     @FXML
     private Text dateNowCheckboxDescription;
 
-    private ObjectProperty<DateRange> dateRange = new SimpleObjectProperty<>();
+    private ObjectProperty<DateRange> dateRange = new SimpleObjectProperty<>(new DateRange());
     private ReadOnlyStringWrapper selectedUnitId = new ReadOnlyStringWrapper();
     private ChartStateModel chartStateModel;
     private Map<String, List<UnitConfig>> locationConsumerMap;
@@ -107,9 +113,17 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
 
         chartStateModel = new ChartStateModel(selectVisualizationTypeBox.valueProperty(), selectUnitBox.valueProperty(),
                 selectedUnitId.getReadOnlyProperty(), dateRange);
-
-        setupGranularitySelection();
-        setupDateSelection();
+        GlobalCachedExecutorService.submit(() -> {
+            try {
+                Registries.waitForData();
+                setupGranularitySelection();
+                setupDateSelection();
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+            } catch (CouldNotPerformException ex) {
+                ExceptionPrinter.printHistory("Could not instantiate CustomUnitPool", ex, logger);
+            }
+        });
     }
 
     private void setupGranularitySelection() {
@@ -236,7 +250,9 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
      * @param items       Items to fill the ComboBox with
      * @param index       Per Default selected cell index
      */
-    private <T> void setupComboBox(Callback<ListView<T>, ListCell<T>> cellFactory, ComboBox<T> comboBox, Collection<T> items, int index) {
+    private <T> void setupComboBox
+    (Callback<ListView<T>, ListCell<T>> cellFactory, ComboBox<T> comboBox, Collection<T> items,
+     int index) {
         comboBox.setButtonCell(cellFactory.call(null));
         comboBox.setCellFactory(cellFactory);
         comboBox.getItems().setAll(items);
