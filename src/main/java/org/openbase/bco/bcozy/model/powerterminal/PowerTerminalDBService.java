@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import static org.openbase.bco.bcozy.controller.powerterminal.PowerChartVisualizationController.INFLUXDB_FIELD_CONSUMPTION;
 
@@ -25,11 +26,14 @@ import static org.openbase.bco.bcozy.controller.powerterminal.PowerChartVisualiz
  * Service wrapping the InfluxDBHandler, providing a high level interface, keeping MVC model tasks where they belong.
  */
 public class PowerTerminalDBService {
+
     public static final long FIVE_MINUTES_IN_MILLISECONDS = 60000;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(PowerTerminalDBService.class);
 
     public static final String UNIT_ID_GLOBAL_CONSUMPTION = "Global Consumption";
     public static final String UNIT_ID_LOCATION_CONSUMPTION = "Location Consumption";
+
     private static LocationRemote locationRemote;
 
     static {
@@ -41,7 +45,6 @@ public class PowerTerminalDBService {
             Thread.currentThread().interrupt();
         }
     }
-
 
     /**
      * Returns TilesFX Chartdata of the average power consumption during the given DateRange
@@ -70,20 +73,19 @@ public class PowerTerminalDBService {
         }
 
         try {
-            double value = 0;
+            double value;
             if (unitId.equals(UNIT_ID_GLOBAL_CONSUMPTION)) {
                 value = locationRemote.getAveragePowerConsumption(intervalSize.getInfluxIntervalString(),
-                        timeInSeconds - FIVE_MINUTES_IN_MILLISECONDS, timeInSeconds, INFLUXDB_FIELD_CONSUMPTION).getRecord(0).getValue();
+                        timeInSeconds - FIVE_MINUTES_IN_MILLISECONDS, timeInSeconds, INFLUXDB_FIELD_CONSUMPTION).get(5, TimeUnit.SECONDS).getRecord(0).getValue();
             } else {
                 value = locationRemote.getAveragePowerConsumption(intervalSize.getInfluxIntervalString(), unitId,
-                        timeInSeconds - FIVE_MINUTES_IN_MILLISECONDS, timeInSeconds, INFLUXDB_FIELD_CONSUMPTION).getRecord(0).getValue();
+                        timeInSeconds - FIVE_MINUTES_IN_MILLISECONDS, timeInSeconds, INFLUXDB_FIELD_CONSUMPTION).get(5, TimeUnit.SECONDS).getRecord(0).getValue();
             }
             data.add(new ChartData(TimeLabelFormatter.createTimeLabel(startAndEndTime, 0, intervalSize), value));
-        } catch (ExecutionException ex) {
+        } catch (ExecutionException | TimeoutException ex) {
             ExceptionPrinter.printHistory("Could not load datum!", ex, LOGGER);
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
-            ExceptionPrinter.printHistory("Get average power consumption request was interrupted!", ex, LOGGER);
         }
         return data;
     }
@@ -102,19 +104,15 @@ public class PowerTerminalDBService {
         try {
             RecordCollectionType.RecordCollection fluxTablesCollection;
             if (unitId.equals(UNIT_ID_GLOBAL_CONSUMPTION)) {
-                fluxTablesCollection = locationRemote.getAveragePowerConsumptionTables(
-                        interval, startTimeInSeconds, endTimeInSeconds, INFLUXDB_FIELD_CONSUMPTION);
+                fluxTablesCollection = locationRemote.getAveragePowerConsumptionTables(interval, startTimeInSeconds, endTimeInSeconds, INFLUXDB_FIELD_CONSUMPTION).get(5, TimeUnit.SECONDS);
             } else {
-                fluxTablesCollection = locationRemote.getAveragePowerConsumptionTables(
-                        interval, unitId, startTimeInSeconds, endTimeInSeconds, INFLUXDB_FIELD_CONSUMPTION);
-                ;
+                fluxTablesCollection = locationRemote.getAveragePowerConsumptionTables(interval, unitId, startTimeInSeconds, endTimeInSeconds, INFLUXDB_FIELD_CONSUMPTION).get(5, TimeUnit.SECONDS);
             }
             data = convertToChartDataList(intervalSize, startTime, fluxTablesCollection);
-        } catch (ExecutionException ex) {
+        } catch (ExecutionException | TimeoutException ex) {
             ExceptionPrinter.printHistory("Could not load chart data!", ex, LOGGER);
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
-            ExceptionPrinter.printHistory("Get chart data interrupted!", ex, LOGGER);
         }
         return data;
     }
@@ -130,10 +128,8 @@ public class PowerTerminalDBService {
             if (value == null) {
                 value = 0.0;
             }
-
             data.add(i, new ChartData(TimeLabelFormatter.createTimeLabel(startTime, i, intervalSize), value));
         }
-
         return data;
     }
 }
