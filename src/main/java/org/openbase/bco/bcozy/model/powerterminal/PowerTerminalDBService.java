@@ -27,19 +27,18 @@ import static org.openbase.bco.bcozy.controller.powerterminal.PowerChartVisualiz
 public class PowerTerminalDBService {
     public static final long FIVE_MINUTES_IN_MILLISECONDS = 60000;
     private static final Logger LOGGER = LoggerFactory.getLogger(PowerTerminalDBService.class);
-    private static final String CITEC_LOCATION_ID = "1cd2120f-7171-4cbf-80b6-be52ad3a122b";
+
     public static final String UNIT_ID_GLOBAL_CONSUMPTION = "Global Consumption";
     public static final String UNIT_ID_LOCATION_CONSUMPTION = "Location Consumption";
     private static LocationRemote locationRemote;
 
     static {
         try {
-            locationRemote = Units.getUnit(CITEC_LOCATION_ID, true, Units.LOCATION);
+            locationRemote = Units.getRootLocation(false);
         } catch (NotAvailableException ex) {
-            ExceptionPrinter.printHistory("Could not get locationRemote from citec location!", ex, LOGGER);
+            ExceptionPrinter.printHistory("Could not get root location!", ex, LOGGER);
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
-            ExceptionPrinter.printHistory("Get location remote from citec was interrupted!", ex, LOGGER);
         }
     }
 
@@ -65,6 +64,11 @@ public class PowerTerminalDBService {
         long timeInSeconds = TimeUnit.MILLISECONDS.toSeconds(startAndEndTime.getTime());
         List<ChartData> data = new ArrayList<>();
 
+        // if remote not connected we only can return an empty data object.
+        if (!locationRemote.isConnected()) {
+            return data;
+        }
+
         try {
             double value = 0;
             if (unitId.equals(UNIT_ID_GLOBAL_CONSUMPTION)) {
@@ -86,6 +90,12 @@ public class PowerTerminalDBService {
 
     private static List<ChartData> getChartData(Interval intervalSize, Timestamp startTime, Timestamp endTime, String unitId) {
         List<ChartData> data = new ArrayList<>();
+
+        // if remote not connected we only can return an empty data object.
+        if (!locationRemote.isConnected()) {
+            return data;
+        }
+
         String interval = intervalSize.getInfluxIntervalString();
         long startTimeInSeconds = TimeUnit.MILLISECONDS.toSeconds(startTime.getTime());
         long endTimeInSeconds = TimeUnit.MILLISECONDS.toSeconds(endTime.getTime());
@@ -105,8 +115,6 @@ public class PowerTerminalDBService {
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
             ExceptionPrinter.printHistory("Get chart data interrupted!", ex, LOGGER);
-
-
         }
         return data;
     }
@@ -128,8 +136,6 @@ public class PowerTerminalDBService {
 
         return data;
     }
-
-
 }
 
 
