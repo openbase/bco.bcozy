@@ -6,9 +6,11 @@ import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.Interval;
 import org.openbase.bco.bcozy.util.powerterminal.TimeLabelFormatter;
 import org.openbase.bco.dal.remote.layer.unit.Units;
 import org.openbase.bco.dal.remote.layer.unit.location.LocationRemote;
+import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.openbase.jul.schedule.GlobalCachedExecutorService;
 import org.openbase.type.domotic.database.RecordCollectionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,13 +39,16 @@ public class PowerTerminalDBService {
     private static LocationRemote locationRemote;
 
     static {
-        try {
-            locationRemote = Units.getRootLocation(false);
-        } catch (NotAvailableException ex) {
-            ExceptionPrinter.printHistory("Could not get root location!", ex, LOGGER);
-        } catch (InterruptedException ex) {
-            Thread.currentThread().interrupt();
-        }
+        GlobalCachedExecutorService.submit(() -> {
+            try {
+                Registries.waitForData();
+                locationRemote = Units.getRootLocation(false);
+            } catch (CouldNotPerformException ex) {
+                ExceptionPrinter.printHistory("Could not get root location!", ex, LOGGER);
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+            }
+        });
     }
 
     /**
@@ -51,6 +56,7 @@ public class PowerTerminalDBService {
      *
      * @param dateRange DateRange in about which the database will be queried
      * @param unitId
+     *
      * @return Data about the average power consumption
      */
     public static List<ChartData> getAverageConsumption(DateRange dateRange, String unitId) {
@@ -68,7 +74,7 @@ public class PowerTerminalDBService {
         List<ChartData> data = new ArrayList<>();
 
         // if remote not connected we only can return an empty data object.
-        if (!locationRemote.isConnected()) {
+        if (locationRemote == null || !locationRemote.isConnected()) {
             return data;
         }
 
@@ -94,7 +100,7 @@ public class PowerTerminalDBService {
         List<ChartData> data = new ArrayList<>();
 
         // if remote not connected we only can return an empty data object.
-        if (!locationRemote.isConnected()) {
+        if (locationRemote == null || !locationRemote.isConnected()) {
             return data;
         }
 
