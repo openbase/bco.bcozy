@@ -79,7 +79,7 @@ public class EmphasisControlTrianglePane extends BorderPane implements DynamicPa
             emphasisControlTriangle.updateEmphasisState(newValue.getComfort(), newValue.getEconomy(), newValue.getSecurity(), false, gc);
         });
 
-        this.emphasisIcon = new SVGGlyphIcon(MaterialDesignIcon.HELP, 45, false);
+        this.emphasisIcon = new SVGGlyphIcon(MaterialDesignIcon.HELP, 0, false);
         this.emphasisIcon.setMouseTransparent(true);
 
         this.canvas = new Canvas();
@@ -129,8 +129,6 @@ public class EmphasisControlTrianglePane extends BorderPane implements DynamicPa
             this.updateDynamicContent();
         });
 
-        this.updateDynamicContent();
-
         this.canvas.setOnMouseDragged(event -> {
             applyMousePositionUpdate(event.getX(), event.getY(), scale, true, gc);
         });
@@ -162,7 +160,7 @@ public class EmphasisControlTrianglePane extends BorderPane implements DynamicPa
         this.setCenter(triangleOuterPane);
         this.setBottom(labelBox);
 
-        updateIcon(false);
+        this.updateDynamicContent();
     }
 
     @Override
@@ -208,7 +206,11 @@ public class EmphasisControlTrianglePane extends BorderPane implements DynamicPa
 
         // setup initial icon position
         emphasisIcon.setSize(EmphasisControlTriangle.HANDLE_INNER_SIZE * scale * 0.80);
+
+        // update icon pos
         updateIcon(false);
+
+        requestLayout();
     }
 
     private void applyMousePositionUpdate(final double sceneX, final double sceneY, final double scale, final boolean mouseClicked, final GraphicsContext gc) {
@@ -222,8 +224,8 @@ public class EmphasisControlTrianglePane extends BorderPane implements DynamicPa
             emphasisIcon.setForegroundIconColorAnimated(emphasisControlTriangle.getEmphasisColor(), 2);
         }
 
-        emphasisIcon.setLayoutX(emphasisControlTriangle.getHandlePosX() * scale - (emphasisIcon.getWidth() / 2));
-        emphasisIcon.setLayoutY(emphasisControlTriangle.getHandlePosY() * scale - (emphasisIcon.getHeight() / 2));
+        emphasisIcon.setLayoutX(emphasisControlTriangle.getHandlePosX() * scale - (emphasisIcon.getSize() / 2));
+        emphasisIcon.setLayoutY(emphasisControlTriangle.getHandlePosY() * scale - (emphasisIcon.getSize() / 2));
     }
 
 
