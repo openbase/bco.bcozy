@@ -103,11 +103,6 @@ public class LocationPane extends AbstractUnitPane<LocationRemote, LocationData>
             ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.DEBUG);
         }
 
-//
-//        if (colorChooser != null) {
-//            System.out.println("set color");
-//            colorChooser.setSelectedColor(color);
-//        }
         switch (state) {
             case OFF:
                 getIcon().setBackgroundIconColor(Color.TRANSPARENT);
