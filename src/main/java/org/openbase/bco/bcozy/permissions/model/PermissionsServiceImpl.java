@@ -68,7 +68,7 @@ public final class PermissionsServiceImpl implements PermissionsService {
 
         String currentOwnerId = unit.getPermissionConfig().getOwnerId();
 
-        List<UnitConfigType.UnitConfig> users = Registries.getUnitRegistry().getUnitConfigs(UnitType.USER);
+        List<UnitConfigType.UnitConfig> users = Registries.getUnitRegistry().getUnitConfigsByUnitType(UnitType.USER);
 
 
         OwnerPermissions.Owner currentOwner = OwnerPermissions.NULL_OWNER;

@@ -79,7 +79,7 @@ public class LocationMapPaneController {
     }
 
     private void fetchLocations() throws CouldNotPerformException, InterruptedException {
-        final List<UnitConfig> locationUnitConfigList = Registries.getUnitRegistry().getUnitConfigs(UnitType.LOCATION);
+        final List<UnitConfig> locationUnitConfigList = Registries.getUnitRegistry().getUnitConfigsByUnitType(UnitType.LOCATION);
 
         locationMapPane.clearLocations();
 
@@ -99,7 +99,7 @@ public class LocationMapPaneController {
     }
 
     private void fetchConnections() throws CouldNotPerformException, InterruptedException {
-        final List<UnitConfig> connectionUnitConfigList = Registries.getUnitRegistry().getUnitConfigs(UnitType.CONNECTION);
+        final List<UnitConfig> connectionUnitConfigList = Registries.getUnitRegistry().getUnitConfigsByUnitType(UnitType.CONNECTION);
 
         locationMapPane.clearConnections();
 

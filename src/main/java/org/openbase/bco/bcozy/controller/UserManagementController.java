@@ -176,7 +176,7 @@ public class UserManagementController extends AbstractFXController {
         chooseUserBox.getItems().add(new UserData());//new User
         try {
             if (Registries.getUnitRegistry().isDataAvailable()) {
-                List<UnitConfig> users = Registries.getUnitRegistry().getUnitConfigs(UnitType.USER);
+                List<UnitConfig> users = Registries.getUnitRegistry().getUnitConfigsByUnitType(UnitType.USER);
 
                 for (UnitConfig user : users) {
                     chooseUserBox.getItems().add(new UserData(user));

@@ -96,7 +96,7 @@ public class SessionManagerFacadeImpl implements SessionManagerFacade {
             verifyNotEmpty(username, "Username");
 
             // ##### reimplemented because not included in current master api.
-            for (final UnitConfig userUnitConfig : Registries.getUnitRegistry().getUnitConfigs(UnitType.USER)) {
+            for (final UnitConfig userUnitConfig : Registries.getUnitRegistry().getUnitConfigsByUnitType(UnitType.USER)) {
                 if (userUnitConfig.getUserConfig().getUserName().equals(username)) {
                     throw new VerificationFailedException("Username[" + username + "] already in use!");
                 }

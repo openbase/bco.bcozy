@@ -124,7 +124,7 @@ public class EditingLayerController {
 
         final double halfButtonSize = (JFXConstants.ICON_SIZE_SMALL + (2 * Constants.INSETS)) / 2;
 
-        final List<UnitConfig> locationUnitConfigList = Registries.getUnitRegistry().getUnitConfigs(UnitType.LOCATION);
+        final List<UnitConfig> locationUnitConfigList = Registries.getUnitRegistry().getUnitConfigsByUnitType(UnitType.LOCATION);
 
         for (final UnitConfig locationConfig : locationUnitConfigList) {
 

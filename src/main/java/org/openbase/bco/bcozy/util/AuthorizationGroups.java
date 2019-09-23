@@ -75,7 +75,7 @@ public final class AuthorizationGroups {
 
             // force update if data is available
             if (Registries.getUnitRegistry().isDataAvailable()) {
-                updateAuthorizationGroups(Registries.getUnitRegistry().getUnitConfigs(UnitType.AUTHORIZATION_GROUP));
+                updateAuthorizationGroups(Registries.getUnitRegistry().getUnitConfigsByUnitType(UnitType.AUTHORIZATION_GROUP));
             }
             initialized = true;
         } catch (CouldNotPerformException ex) {
