@@ -27,6 +27,7 @@ import org.openbase.bco.bcozy.model.powerterminal.PowerTerminalRegistryService;
 import org.openbase.bco.bcozy.view.powerterminal.LocalizedCellFactory;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.ExceptionProcessor;
 import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
@@ -121,7 +122,9 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
             } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
             } catch (CouldNotPerformException ex) {
-                ExceptionPrinter.printHistory("Could not instantiate CustomUnitPool", ex, logger);
+                if(!ExceptionProcessor.isCausedBySystemShutdown(ex)) {
+                    ExceptionPrinter.printHistory("Could not instantiate CustomUnitPool", ex, logger);
+                }
             }
         });
     }

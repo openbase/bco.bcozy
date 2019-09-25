@@ -8,6 +8,7 @@ import org.openbase.bco.dal.remote.layer.unit.Units;
 import org.openbase.bco.dal.remote.layer.unit.location.LocationRemote;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jul.exception.CouldNotPerformException;
+import org.openbase.jul.exception.ExceptionProcessor;
 import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.schedule.GlobalCachedExecutorService;
@@ -44,7 +45,9 @@ public class PowerTerminalDBService {
                 Registries.waitForData();
                 locationRemote = Units.getRootLocation(false);
             } catch (CouldNotPerformException ex) {
-                ExceptionPrinter.printHistory("Could not get root location!", ex, LOGGER);
+                if (!ExceptionProcessor.isCausedBySystemShutdown(ex)) {
+                    ExceptionPrinter.printHistory("Could not get root location!", ex, LOGGER);
+                }
             } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
             }
