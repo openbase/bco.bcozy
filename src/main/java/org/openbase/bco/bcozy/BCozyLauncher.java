@@ -36,6 +36,8 @@ import org.openbase.jul.extension.rsb.com.jp.JPRSBTransport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
+
 import static org.openbase.bco.bcozy.BCozy.APP_NAME;
 
 /**
@@ -56,6 +58,11 @@ public class BCozyLauncher {
     public static void main(final String... args) {
         LOGGER.info("Start " + APP_NAME + "...");
 
+        //todo: this is a workaround for issue https://github.com/openbase/bco.bcozy/issues/99
+        // to force fx to use gtk-2 which solves the touch handling issue. Please move it after issue has been solved.
+        String[] args_extended = Arrays.copyOf(args, args.length+1);
+        args_extended[args.length] = "-Djdk.gtk.version=2";
+
         /* Setup JPService */
         JPService.setApplicationName(APP_NAME);
         JPService.registerProperty(JPDebugMode.class);
@@ -67,9 +74,9 @@ public class BCozyLauncher {
         JPService.registerProperty(JPRSBTransport.class);
         JPService.registerProperty(JPAuthentication.class);
         try {
-            JPService.parseAndExitOnError(args);
+            JPService.parseAndExitOnError(args_extended);
             Thread.setDefaultUncaughtExceptionHandler(BCozyLauncher::showError);
-            BCozy.launch(BCozy.class, args);
+            BCozy.launch(BCozy.class, args_extended);
         } catch (IllegalStateException ex) {
             ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.ERROR);
             LOGGER.info(APP_NAME + " finished unexpected.");
