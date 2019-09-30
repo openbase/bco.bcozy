@@ -22,17 +22,16 @@ public class EmphasisControlTriangle extends Triangle {
 
     private Logger LOGGER = LoggerFactory.getLogger(EmphasisControlTriangle.class);
 
-
     private double handlePosX = EMPHASIS_TRIANGLE_OUTER_LINE_HALF;
     private double handlePosY = EMPHASIS_TRIANGLE_HEIGHT_HALF;
 
-    private final double brightness = 0.8d;
-    private final double saturation = 0.7d;
+    public static double BRIGHTNESS = 0.8d;
+    public static double SATURATION = 0.7d;
 
-    private final double securityHue = 222;
-    private final double economyHue = 149;
-    private final double comfortHue = 270;
-    private final double errorHue = 0.7d;
+    public static final double SECURITY_HUE = 222;
+    public static final double ECONOMY_HUE = 149;
+    public static final double COMFORT_HUE = 270;
+    public static final double ERROR_HUE = 0.7d;
 
     private Color emphasisColor;
 
@@ -65,9 +64,9 @@ public class EmphasisControlTriangle extends Triangle {
     private SimpleDoubleProperty securityProperty = new SimpleDoubleProperty(computeSecurityTriangleArea(handlePosX, (EMPHASIS_TRIANGLE_HEIGHT - handlePosY)));
     private SimpleObjectProperty<Category> primaryEmphasisCategoryProperty = new SimpleObjectProperty<>(Category.UNKNOWN);
 
-    private double securityBrightness = Math.max(0d, Math.min(brightness, securityProperty.get() * 2));
-    private double economyBrightness = Math.max(0d, Math.min(brightness, economyProperty.get() * 2));
-    private double comfortBrightness = Math.max(0d, Math.min(brightness, comfortProperty.get() * 2));
+    private double securityBrightness = Math.max(0d, Math.min(BRIGHTNESS, securityProperty.get() * 2));
+    private double economyBrightness = Math.max(0d, Math.min(BRIGHTNESS, economyProperty.get() * 2));
+    private double comfortBrightness = Math.max(0d, Math.min(BRIGHTNESS, comfortProperty.get() * 2));
 
     private ChangeListener emphasisStateChangeListener;
     private ChangeListener handlePositionChangeListener;
@@ -234,9 +233,9 @@ public class EmphasisControlTriangle extends Triangle {
         economyProperty.set(economy);
         securityProperty.set(security);
 
-        securityBrightness = Math.max(0d, Math.min(brightness, securityProperty.get() * 2));
-        economyBrightness = Math.max(0d, Math.min(brightness, economyProperty.get() * 2));
-        comfortBrightness = Math.max(0d, Math.min(brightness, comfortProperty.get() * 2));
+        securityBrightness = Math.max(0d, Math.min(BRIGHTNESS, securityProperty.get() * 2));
+        economyBrightness = Math.max(0d, Math.min(BRIGHTNESS, economyProperty.get() * 2));
+        comfortBrightness = Math.max(0d, Math.min(BRIGHTNESS, comfortProperty.get() * 2));
 
         // update handle pos if required
         if (updateHandlePos) {
@@ -249,17 +248,17 @@ public class EmphasisControlTriangle extends Triangle {
         // update emphasis category and triangle color.
         if (securityProperty.get() > economyProperty.get() && securityProperty.get() > comfortProperty.get()) {
             primaryEmphasisCategoryProperty.set(Category.SECURITY);
-            emphasisColor = Color.hsb(securityHue, saturation, brightness);
+            emphasisColor = Color.hsb(SECURITY_HUE, SATURATION, BRIGHTNESS);
         } else if (comfortProperty.get() > economyProperty.get() && comfortProperty.get() > securityProperty.get()) {
             primaryEmphasisCategoryProperty.set(Category.COMFORT);
-            emphasisColor = Color.hsb(comfortHue, saturation, brightness);
+            emphasisColor = Color.hsb(COMFORT_HUE, SATURATION, BRIGHTNESS);
         } else if (economyProperty.get() > comfortProperty.get() && economyProperty.get() > securityProperty.get()) {
             primaryEmphasisCategoryProperty.set(Category.ECONOMY);
-            emphasisColor = Color.hsb(economyHue, saturation, brightness);
+            emphasisColor = Color.hsb(ECONOMY_HUE, SATURATION, BRIGHTNESS);
         } else {
             primaryEmphasisCategoryProperty.set(Category.UNKNOWN);
             // error
-            emphasisColor = Color.hsb(errorHue, saturation, brightness);
+            emphasisColor = Color.hsb(ERROR_HUE, SATURATION, BRIGHTNESS);
         }
 
         // draw final shape
@@ -285,21 +284,21 @@ public class EmphasisControlTriangle extends Triangle {
 
         // =============
         // format
-        gc.setFill(Color.hsb(economyHue, saturation, economyBrightness));
+        gc.setFill(Color.hsb(ECONOMY_HUE, SATURATION, economyBrightness));
         // paint
         gc.fillPolygon(economyTriangleX, economyTriangleY, 3);
 
         // comfort triangle
         // =============
         // format
-        gc.setFill(Color.hsb(comfortHue, saturation, comfortBrightness));
+        gc.setFill(Color.hsb(COMFORT_HUE, SATURATION, comfortBrightness));
         // paint
         gc.fillPolygon(comfortTriangleX, comfortTriangleY, 3);
 
         // security triangle
         // =============
         // format
-        gc.setFill(Color.hsb(securityHue, saturation, securityBrightness));
+        gc.setFill(Color.hsb(SECURITY_HUE, SATURATION, securityBrightness));
         // paint
         gc.fillPolygon(securityTriangleX, securityTriangleY, 3);
 
@@ -401,24 +400,24 @@ public class EmphasisControlTriangle extends Triangle {
         return comfortProperty.get();
     }
 
-    public SimpleDoubleProperty comfortProperty() {
-        return comfortProperty;
-    }
-
     public double getEconomy() {
         return economyProperty.get();
-    }
-
-    public SimpleDoubleProperty economyProperty() {
-        return economyProperty;
     }
 
     public double getSecurity() {
         return securityProperty.get();
     }
 
+    public SimpleDoubleProperty economyProperty() {
+        return economyProperty;
+    }
+
     public SimpleDoubleProperty securityProperty() {
         return securityProperty;
+    }
+
+    public SimpleDoubleProperty comfortProperty() {
+        return comfortProperty;
     }
 
     public Category getPrimaryEmphasisCategory() {

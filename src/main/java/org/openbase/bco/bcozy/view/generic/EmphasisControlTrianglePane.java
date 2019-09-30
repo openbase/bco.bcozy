@@ -1,6 +1,7 @@
 package org.openbase.bco.bcozy.view.generic;
 
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -94,7 +95,7 @@ public class EmphasisControlTrianglePane extends BorderPane implements DynamicPa
 
         //this.trianglePane.prefHeightProperty().bind(trianglePane.widthProperty());
 
-       // this.trianglePane.prefWidthProperty()/;
+        // this.trianglePane.prefWidthProperty()/;
 
         this.canvas.setCache(true);
 
@@ -231,5 +232,17 @@ public class EmphasisControlTrianglePane extends BorderPane implements DynamicPa
 
     public SimpleObjectProperty<EmphasisState> emphasisStateProperty() {
         return emphasisStateProperty;
+    }
+
+    public SimpleDoubleProperty economyProperty() {
+        return emphasisControlTriangle.economyProperty();
+    }
+
+    public SimpleDoubleProperty securityProperty() {
+        return emphasisControlTriangle.securityProperty();
+    }
+
+    public SimpleDoubleProperty comfortProperty() {
+        return emphasisControlTriangle.comfortProperty();
     }
 }

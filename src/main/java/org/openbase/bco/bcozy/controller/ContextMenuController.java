@@ -81,7 +81,7 @@ public class ContextMenuController {
         final UnitMenu unitMenu = foregroundPane.getUnitMenu();
 
         try {
-            powerTerminalSidebarPaneAndController = FXMLProcessor.loadFxmlPaneAndControllerPair("PowerTerminalSidebarPane.fxml", PowerTerminalSidebarPaneController.class);
+            powerTerminalSidebarPaneAndController = FXMLProcessor.loadFxmlPaneAndControllerPair(PowerTerminalSidebarPaneController.class);
 //            ((PowerTerminalSidebarPaneController) powerTerminalSidebarPaneAndController.getValue()).init(unitMenu);
             unitMenu.setPowerTerminalSidebarPane(powerTerminalSidebarPaneAndController.getKey());
         } catch (final CouldNotPerformException ex) {
