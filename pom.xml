@@ -380,11 +380,7 @@
             <version>11.0.2</version>
             <classifier>linux</classifier>
         </dependency>
-        <dependency>
-            <groupId>org.influxdata</groupId>
-            <artifactId>influxdb-client-java</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
+        
         <!-- https://mvnrepository.com/artifact/eu.hansolo/tilesfx -->
         <dependency>
             <groupId>eu.hansolo</groupId>
