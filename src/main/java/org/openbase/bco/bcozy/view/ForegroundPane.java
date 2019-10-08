@@ -19,13 +19,12 @@
 package org.openbase.bco.bcozy.view;
 
 import de.jensd.fx.glyphs.materialicons.MaterialIcon;
-import javafx.beans.property.ObjectProperty;
+import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyDoubleProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.BoundingBox;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import org.openbase.bco.bcozy.controller.CenterPaneController;
+import org.openbase.bco.bcozy.BCozy;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.exception.InstantiationException;
@@ -56,7 +55,7 @@ public class ForegroundPane extends BorderPane implements DefaultInitializable {
         try {
             this.mainMenu = new MainMenu(height - 150, 300);
             this.unitMenu = new UnitMenu(height - 150, 300);
-            this.unitMenu.getFullscreen().setOnAction(event -> setMaximizeAction());
+            this.unitMenu.getFullscreenButton().setOnAction(event -> toggleFullscreenMode());
             this.unitMenu.getSettingsBtn().setOnAction(event -> toggleSettings());
             this.menuHeader = new MenuHeader(30, width);
             this.infoFooter = new InfoPane(20, width);
@@ -87,6 +86,9 @@ public class ForegroundPane extends BorderPane implements DefaultInitializable {
     public void init() throws InterruptedException {
         try {
             mainMenu.init();
+            Platform.runLater(() -> {
+                updateFullscreenButton();
+            });
         } catch (CouldNotPerformException ex) {
             new InitializationException(this, ex);
         }
@@ -150,14 +152,16 @@ public class ForegroundPane extends BorderPane implements DefaultInitializable {
     }
 
 
-    private void setMaximizeAction() {
-        final Stage stage = (Stage) unitMenu.getScene().getWindow();
-        if (stage.isFullScreen()) {
-            unitMenu.getFullscreen().changeIcon(MaterialIcon.FULLSCREEN);
-            stage.setFullScreen(false);
+    private void toggleFullscreenMode() {
+        BCozy.primaryStage.setFullScreen(!BCozy.primaryStage.isFullScreen());
+        updateFullscreenButton();
+    }
+
+    private void updateFullscreenButton() {
+        if (BCozy.primaryStage.isFullScreen()) {
+            unitMenu.getFullscreenButton().changeIcon(MaterialIcon.FULLSCREEN_EXIT);
         } else {
-            unitMenu.getFullscreen().changeIcon(MaterialIcon.FULLSCREEN_EXIT);
-            stage.setFullScreen(true);
+            unitMenu.getFullscreenButton().changeIcon(MaterialIcon.FULLSCREEN);
         }
     }
 

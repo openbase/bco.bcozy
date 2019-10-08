@@ -112,8 +112,10 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
         hideNodeIf(canDisplayDifferentUnits, selectUnitBox);
 
 
-        chartStateModel = new ChartStateModel(selectVisualizationTypeBox.valueProperty(), selectUnitBox.valueProperty(),
-                selectedUnitId.getReadOnlyProperty(), dateRange);
+        chartStateModel = new ChartStateModel(selectUnitBox.valueProperty(), selectedUnitId.getReadOnlyProperty(), dateRange);
+
+        selectVisualizationTypeBox.valueProperty().bindBidirectional(chartStateModel.visualizationTypeProperty());
+
         GlobalCachedExecutorService.submit(() -> {
             try {
                 Registries.waitForData();

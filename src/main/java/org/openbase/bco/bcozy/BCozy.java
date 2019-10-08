@@ -29,6 +29,7 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.openbase.bco.bcozy.controller.*;
 import org.openbase.bco.bcozy.controller.powerterminal.PowerTerminalSidebarPaneController;
+import org.openbase.bco.bcozy.jp.JPFullscreenMode;
 import org.openbase.bco.bcozy.util.ThemeManager;
 import org.openbase.bco.bcozy.view.BackgroundPane;
 import org.openbase.bco.bcozy.view.ForegroundPane;
@@ -160,6 +161,9 @@ public class BCozy extends Application {
         try {
             BCozy.primaryStage = primaryStage;
             registerResponsiveHandler();
+
+            // set initial fullscreen if required
+            primaryStage.setFullScreen(JPService.getValue(JPFullscreenMode.class, true));
 
             final double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
             final double screenHeight = Screen.getPrimary().getVisualBounds().getHeight();

@@ -21,10 +21,12 @@ package org.openbase.bco.bcozy;
 import javafx.application.Platform;
 import org.openbase.bco.authentication.lib.jp.JPAuthentication;
 import org.openbase.bco.authentication.lib.jp.JPCredentialsDirectory;
+import org.openbase.bco.bcozy.jp.JPFullscreenMode;
 import org.openbase.bco.bcozy.jp.JPLanguage;
 import org.openbase.bco.bcozy.view.LoadingPane;
 import org.openbase.jps.core.JPService;
 import org.openbase.jps.preset.JPDebugMode;
+import org.openbase.jps.preset.JPVerbose;
 import org.openbase.jul.exception.FatalImplementationErrorException;
 import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
@@ -66,6 +68,8 @@ public class BCozyLauncher {
         /* Setup JPService */
         JPService.setApplicationName(APP_NAME);
         JPService.registerProperty(JPDebugMode.class);
+        JPService.registerProperty(JPVerbose.class);
+        JPService.registerProperty(JPFullscreenMode.class);
         JPService.registerProperty(JPLanguage.class);
         JPService.registerProperty(JPCredentialsDirectory.class);
         JPService.registerProperty(JPRSBThreadPooling.class);

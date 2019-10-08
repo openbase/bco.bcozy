@@ -27,6 +27,7 @@ import javafx.util.Pair;
 import org.openbase.bco.bcozy.BCozy;
 import org.openbase.bco.bcozy.controller.CenterPaneController;
 import org.openbase.bco.bcozy.controller.powerterminal.PowerChartVisualizationController;
+import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.VisualizationType;
 import org.openbase.bco.bcozy.model.powerterminal.ChartStateModel;
 import org.openbase.bco.bcozy.view.location.LocationMapPane;
 import org.openbase.jul.exception.CouldNotPerformException;
@@ -114,14 +115,17 @@ public class BackgroundPane extends StackPane {
                     case ENERGY:
                         getChildren().clear();
                         getChildren().add(powerChartPaneAndController.getKey());
-                        powerChartPaneAndController.getValue().getHeatmapSelectedProperty().addListener((observableBoolean, oldBoolean, newBoolean) -> {
-                            if (newBoolean)
+                        powerChartPaneAndController.getValue().getChartStateModel().visualizationTypeProperty().addListener((observableBoolean, oldVisualizationType, newVisualizationType) -> {
+                            if (newVisualizationType == VisualizationType.HEATMAP) {
                                 activateHeatmap();
-                            else if (oldBoolean)
+                            } else if (oldVisualizationType == VisualizationType.HEATMAP) {
                                 deactivateHeatmap();
+                            }
                         });
-                        if (powerChartPaneAndController.getValue().getHeatmapSelectedProperty().get())
+
+                        if (powerChartPaneAndController.getValue().getChartStateModel().visualizationTypeProperty().get() == VisualizationType.HEATMAP) {
                             activateHeatmap();
+                        }
                         break;
                 }
             });

@@ -2,20 +2,19 @@ package org.openbase.bco.bcozy.model.powerterminal;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.*;
 
 /**
  * Stores the state of the displayed power draw chart.
  */
 public class ChartStateModel {
-    private ObjectProperty<VisualizationType> visualizationTypeProperty;
+    private ObjectProperty<VisualizationType> visualizationTypeProperty = new SimpleObjectProperty<>(VisualizationType.LINE_CHART);
     private ObjectProperty<Unit> unitProperty;
     private ReadOnlyStringProperty selectedConsumerProperty;
     private ObjectProperty<DateRange> dateRangeProperty;
 
-    public ChartStateModel(ObjectProperty<VisualizationType> visualizationTypeProperty, ObjectProperty<Unit> unitProperty,
-                           ReadOnlyStringProperty selectedConsumerProperty, ObjectProperty<DateRange> dateRangeProperty) {
-        this.visualizationTypeProperty = visualizationTypeProperty;
+    public ChartStateModel(ObjectProperty<Unit> unitProperty, ReadOnlyStringProperty selectedConsumerProperty, ObjectProperty<DateRange> dateRangeProperty) {
         this.unitProperty = unitProperty;
         this.selectedConsumerProperty = selectedConsumerProperty;
         this.dateRangeProperty = dateRangeProperty;

@@ -30,7 +30,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.HiddenSidesPane;
-import org.openbase.bco.bcozy.view.generic.EmphasisControlTrianglePane;
 import org.openbase.bco.bcozy.view.pane.unit.TitledUnitPaneContainer;
 import org.openbase.bco.bcozy.view.pane.unit.UnitMenuLocationPane;
 import org.openbase.jul.visual.javafx.JFXConstants;
@@ -48,7 +47,7 @@ public class UnitMenu extends VBox {
     private UnitMenuLocationPane unitMenuLocationPane;
     private final ScrollPane verticalScrollPane;
     private TitledUnitPaneContainer titledPaneContainer;
-    private FloatingButton fullscreenBtn;
+    private FloatingButton fullscreenButton;
     private final FloatingButton settingsBtn;
     private final SVGGlyphIcon collapseIcon;
     private FloatingButton collapseBtn;
@@ -76,7 +75,7 @@ public class UnitMenu extends VBox {
         this.maximizeProperty = new SimpleBooleanProperty();
         this.maximizeProperty.set(true);
 
-        this.fullscreenBtn = new FloatingButton(new SVGGlyphIcon(MaterialIcon.FULLSCREEN, JFXConstants.ICON_SIZE_MIDDLE, true));
+        this.fullscreenButton = new FloatingButton(new SVGGlyphIcon(MaterialIcon.FULLSCREEN, JFXConstants.ICON_SIZE_MIDDLE, true));
 
         this.settingsBtn = new FloatingButton(new SVGGlyphIcon(MaterialDesignIcon.SETTINGS, JFXConstants.ICON_SIZE_MIDDLE, true));
 
@@ -91,7 +90,7 @@ public class UnitMenu extends VBox {
         this.setVgrow(collapseButtons, Priority.ALWAYS);
 
 
-        this.floatingButtons = new HBox(20.0, settingsBtn, fullscreenBtn);
+        this.floatingButtons = new HBox(20.0, settingsBtn, fullscreenButton);
         this.floatingButtons.setAlignment(Pos.TOP_LEFT);
         this.floatingButtons.translateYProperty().set(Constants.FLOATING_BUTTON_OFFSET_Y);
         this.floatingButtons.translateXProperty().set(Constants.FLOATING_BUTTON_OFFSET_X);
@@ -203,8 +202,8 @@ public class UnitMenu extends VBox {
         verticalScrollPane.setContent(null);
     }
 
-    public FloatingButton getFullscreen() {
-        return fullscreenBtn;
+    public FloatingButton getFullscreenButton() {
+        return fullscreenButton;
     }
 
     public FloatingButton getSettingsBtn() {

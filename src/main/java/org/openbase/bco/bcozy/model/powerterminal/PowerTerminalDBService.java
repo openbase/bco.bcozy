@@ -11,6 +11,7 @@ import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.ExceptionProcessor;
 import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
+import org.openbase.jul.exception.printer.LogLevel;
 import org.openbase.jul.schedule.GlobalCachedExecutorService;
 import org.openbase.type.domotic.database.RecordCollectionType;
 import org.slf4j.Logger;
@@ -92,7 +93,7 @@ public class PowerTerminalDBService {
             }
             data.add(new ChartData(TimeLabelFormatter.createTimeLabel(startAndEndTime, 0, intervalSize), value));
         } catch (ExecutionException | TimeoutException ex) {
-            ExceptionPrinter.printHistory("Could not load datum!", ex, LOGGER);
+            ExceptionPrinter.printHistory("Could not load data!", ex, LOGGER);
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
         }
@@ -119,7 +120,7 @@ public class PowerTerminalDBService {
             }
             data = convertToChartDataList(intervalSize, startTime, fluxTablesCollection);
         } catch (ExecutionException | TimeoutException ex) {
-            ExceptionPrinter.printHistory("Could not load chart data!", ex, LOGGER);
+            ExceptionPrinter.printHistory("Could not load chart data!", ex, LOGGER, LogLevel.WARN);
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
         }
