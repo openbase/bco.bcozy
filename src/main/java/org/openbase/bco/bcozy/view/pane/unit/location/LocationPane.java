@@ -25,6 +25,8 @@ import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
 import org.openbase.jul.schedule.RecurrenceEventFilter;
+import org.openbase.jul.visual.javafx.JFXConstants;
+import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.concurrent.Future;
@@ -97,15 +99,19 @@ public class LocationPane extends AbstractUnitPane<LocationRemote, LocationData>
         // detect color
         Color color;
         try {
-            color = JFXColorToHSBColorTransformer.transform(getData().getColorState().getColor().getHsbColor());
+            color = JFXColorToHSBColorTransformer.transform(getData().getColorState().getColor().getHsbColor(), getData().getColorState().getColor().getHsbColor().getBrightness());
         } catch (CouldNotPerformException ex) {
-            color = Color.TRANSPARENT;
+            color = Constants.LIGHTBULB_OFF_COLOR;
             ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.DEBUG);
+        }
+
+        if (colorChooser != null && expansionProperty().get()) {
+            colorChooser.setSelectedColor(color);
         }
 
         switch (state) {
             case OFF:
-                getIcon().setBackgroundIconColor(Color.TRANSPARENT);
+                getIcon().setBackgroundIconColor(Constants.LIGHTBULB_OFF_COLOR);
                 setInfoText("lightOff");
                 setPrimaryActivationWithoutNotification(Boolean.FALSE);
                 break;
@@ -125,5 +131,10 @@ public class LocationPane extends AbstractUnitPane<LocationRemote, LocationData>
 
         return (activation) ? getUnitRemote().setPowerState(PowerState.State.ON, UnitType.LIGHT)
             : getUnitRemote().setPowerState(PowerState.State.OFF, UnitType.LIGHT);
+    }
+
+    @Override
+    public SVGGlyphIcon getIconSymbol() {
+        return new SVGGlyphIcon(MaterialDesignIcon.LIGHTBULB, JFXConstants.ICON_SIZE_SMALL, false);
     }
 }

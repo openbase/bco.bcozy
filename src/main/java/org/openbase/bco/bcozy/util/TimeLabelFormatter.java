@@ -1,12 +1,10 @@
-package org.openbase.bco.bcozy.util.powerterminal;
+package org.openbase.bco.bcozy.util;
 
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.Interval;
 import org.openbase.bco.bcozy.model.LanguageSelection;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.time.temporal.ChronoUnit;

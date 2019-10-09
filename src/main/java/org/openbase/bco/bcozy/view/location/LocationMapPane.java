@@ -40,6 +40,7 @@ import org.openbase.bco.registry.remote.Registries;
 import org.openbase.jps.core.JPService;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.EnumNotSupportedException;
+import org.openbase.jul.exception.InvalidStateException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.extension.type.processing.LabelProcessor;
 import org.slf4j.Logger;
@@ -526,12 +527,16 @@ public final class LocationMapPane extends MultiTouchPane implements LocationMap
 
             // allow selection of sub regions.
             if (newSelectedLocation.getClass().equals(TilePolygon.class)) {
-                lastSelectedTile = (TilePolygon) newSelectedLocation;
+                lastSelectedTile = newSelectedLocation;
                 lastSelectedTile.getChildIds().forEach(childId -> {
                     try {
                         regionMap.get(childId).setSelectable(true);
                     } catch (Exception ex) {
-                        ExceptionPrinter.printHistory(ex, LOGGER);
+                        if(regionMap.containsKey(childId)) {
+                            ExceptionPrinter.printHistory(new InvalidStateException("There is something stange because last selectet tile "+lastSelectedTile.getLabel()+" seems to offer a region "+childId+" which is not in the region list!"), LOGGER);
+                        } else {
+                            ExceptionPrinter.printHistory(ex, LOGGER);
+                        }
                     }
                 });
             }

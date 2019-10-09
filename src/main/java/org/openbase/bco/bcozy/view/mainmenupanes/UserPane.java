@@ -109,6 +109,8 @@ public class UserPane extends BorderPane implements Shutdownable {
         try {
             // filter if no data is available
             if (user == null || !user.isDataAvailable()) {
+                setManaged(false);
+                setVisible(false);
                 return;
             }
 

@@ -16,6 +16,7 @@ import org.openbase.bco.bcozy.controller.ButtonTableCellFactory;
 import org.openbase.bco.bcozy.controller.Dialog;
 import org.openbase.bco.bcozy.model.LanguageSelection;
 import org.openbase.bco.bcozy.util.AuthorizationGroups;
+import org.openbase.bco.bcozy.util.LabelWrapper;
 import org.openbase.bco.bcozy.view.InfoPane;
 import org.openbase.bco.bcozy.view.ObserverButton;
 import org.openbase.jul.exception.CouldNotPerformException;
@@ -48,7 +49,7 @@ public class AuthorizationGroupController  extends AbstractFXController {
     @FXML
     private TableColumn<UnitConfigType.UnitConfig, String> removeColumn;
     @FXML
-    private TableColumn<UnitConfigType.UnitConfig, Label> nameColumn;
+    private TableColumn<UnitConfigType.UnitConfig, LabelWrapper> nameColumn;
     @FXML
     private TableView<UnitConfigType.UnitConfig> groupsTable;
 
@@ -69,7 +70,7 @@ public class AuthorizationGroupController  extends AbstractFXController {
     public void initContent() {
         saveButton.setApplyOnNewText(String::toUpperCase);
 
-        nameColumn.setCellValueFactory(param -> new SimpleObjectProperty<>(param.getValue().getLabel()));
+        nameColumn.setCellValueFactory(param -> new SimpleObjectProperty<>(new LabelWrapper(param.getValue().getLabel())));
         LanguageSelection.addObserverFor("groupLabel", (locale, text) -> nameColumn.setText(text));
 
         removeColumn.setCellFactory(new ButtonTableCellFactory<>(

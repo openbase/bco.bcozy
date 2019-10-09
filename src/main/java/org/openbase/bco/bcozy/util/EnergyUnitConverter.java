@@ -1,4 +1,4 @@
-package org.openbase.bco.bcozy.util.powerterminal;
+package org.openbase.bco.bcozy.util;
 
 import eu.hansolo.tilesfx.chart.ChartData;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.Unit;
@@ -8,12 +8,12 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class UnitConverter {
+public class EnergyUnitConverter {
 
     private final static Map<Unit, Function<List<ChartData>, List<ChartData>>> converterMap = Map.of(
-            Unit.LIGHTBULB, UnitConverter::convertToLightBulbs,
-            Unit.ENERGY, UnitConverter::convertToEnergy,
-            Unit.MONEY, UnitConverter::convertToCosts);
+            Unit.LIGHTBULB, EnergyUnitConverter::convertToLightBulbs,
+            Unit.ENERGY, EnergyUnitConverter::convertToEnergy,
+            Unit.MONEY, EnergyUnitConverter::convertToCosts);
     public static final double EURO_PER_KILOWATTHOUR = 0.3;
     public static final double LIGHTBULB_POWER_DRAW_IN_WATT = 9.5;
     public static final double WATT_HOURS_PER_KILOWATTHOUR = 1000.0;

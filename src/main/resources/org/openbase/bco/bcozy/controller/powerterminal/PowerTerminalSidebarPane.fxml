@@ -20,7 +20,7 @@
     <VBox fx:id="globalConsumptionGroupHbox" spacing="5" prefWidth="200">
         <HBox spacing="5">
             <JFXCheckBox fx:id="globalConsumptionCheckBox"/>
-            <Text fx:id="globalConsumptionCheckboxDescription"/>
+            <Text fx:id="globalConsumptionCheckboxDescription" styleClass="text"/>
         </HBox>
         <VBox fx:id="granularSelectionGroupVbox" spacing="5" prefWidth="200">
             <JFXComboBox fx:id="selectLocationBox" prefWidth="200"/>

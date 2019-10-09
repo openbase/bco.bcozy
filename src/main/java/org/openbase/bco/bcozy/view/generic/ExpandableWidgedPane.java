@@ -57,7 +57,7 @@ public class ExpandableWidgedPane extends WidgetPane {
             }
         };
         this.timeline = new Timeline();
-        this.expansionProperty = new SimpleBooleanProperty(false);
+        this.expansionProperty = new SimpleBooleanProperty(initialExpanded);
     }
 
     @Override

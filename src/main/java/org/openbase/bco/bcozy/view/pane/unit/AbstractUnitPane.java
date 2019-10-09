@@ -63,7 +63,7 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Messa
     private UR unitRemote;
 
     private final Observer<ConfigurableRemote<String, D, UnitConfig>, UnitConfig> unitConfigObserver;
-    private final Observer<DataProvider<D>,D> unitDataObserver;
+    private final Observer<DataProvider<D>, D> unitDataObserver;
     private final Observer<Remote, ConnectionState.State> unitConnectionObserver;
     private final Observer<SessionManager, UserClientPair> loginObserver;
 
@@ -71,13 +71,12 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Messa
      * Constructor for the UnitPane.
      *
      * @param unitRemoteClass
-     * @param activateable
+     * @param activatable
      */
-    public AbstractUnitPane(final Class<UR> unitRemoteClass, final boolean activateable) {
-        super(false, activateable);
+    public AbstractUnitPane(final Class<UR> unitRemoteClass, final boolean activatable) {
+        super(false, activatable);
         this.unitRemoteClass = unitRemoteClass;
-        //TODO: Set css styling for unitlabel
-        this.unitConfigObserver = new Observer<ConfigurableRemote<String, D, UnitConfig>, UnitConfig>() {
+        this.unitConfigObserver = new Observer<>() {
             @Override
             public void update(ConfigurableRemote<String, D, UnitConfig> source, UnitConfig config) {
                 Platform.runLater(() -> {
@@ -94,15 +93,7 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Messa
             @Override
             public void update(Remote source, ConnectionState.State connectionState) {
                 Platform.runLater(() -> {
-                    try {
-                        applyConnectionStateUpdate(connectionState);
-                    } catch (CouldNotPerformException ex) {
-                        if (ExceptionProcessor.getInitialCause(ex) instanceof ShutdownInProgressException) {
-                            // update canceled because of an application shutdown.
-                            return;
-                        }
-                        ExceptionPrinter.printHistory("Could not apply data update on " + this, ex, LOGGER);
-                    }
+                    applyConnectionStateUpdate(connectionState);
                 });
             }
         };
@@ -176,15 +167,7 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Messa
         unitRemote.addConnectionStateObserver(unitConnectionObserver);
         SessionManager.getInstance().addLoginObserver(loginObserver);
 
-        if (!unitRemote.isConnected()) {
-            setDisable(false);
-        }
-
-        try {
-            applyConnectionStateUpdate(unitRemote.getConnectionState());
-        } catch (CouldNotPerformException ex) {
-            // skip update, config observer will handle the update later on. 
-        }
+        applyConnectionStateUpdate(unitRemote.getConnectionState());
 
         try {
             applyConfigUpdate(unitRemote.getConfig());
@@ -284,7 +267,6 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Messa
      * Notifies about unit data changes.
      *
      * @param data
-     *
      */
     protected void applyDataUpdate(final D data) {
         update();
@@ -297,16 +279,18 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Messa
      *
      * @throws CouldNotPerformException
      */
-    protected void applyConnectionStateUpdate(final ConnectionState.State connectionState) throws CouldNotPerformException {
+    protected void applyConnectionStateUpdate(final ConnectionState.State connectionState) {
         switch (connectionState) {
             case CONNECTED:
-                setDisable(false);
+                setManaged(true);
+                setVisible(true);
                 break;
             case CONNECTING:
             case DISCONNECTED:
             case UNKNOWN:
             default:
-                setDisable(true);
+                setManaged(false);
+                setVisible(false);
                 break;
         }
     }
@@ -327,7 +311,10 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Messa
             groups = Registries.getUnitRegistry().getAuthorizationGroupUnitConfigRemoteRegistry().getEntryMap();
         }
 
-        disableProperty().set(!AuthorizationHelper.canAccess(AbstractUnitPane.this.unitRemote.getConfig(), userClientPair, groups, locations));
+        //disableProperty().set(!AuthorizationHelper.canAccess(AbstractUnitPane.this.unitRemote.getConfig(), userClientPair, groups, locations));
+        // todo implement proper disabled visualisation by adding a grey overlay or somthing like that. Until then, we just make it invisible.
+        setManaged(AuthorizationHelper.canAccess(AbstractUnitPane.this.unitRemote.getConfig(), userClientPair, groups, locations));
+        setVisible(AuthorizationHelper.canAccess(AbstractUnitPane.this.unitRemote.getConfig(), userClientPair, groups, locations));
     }
 
     /**

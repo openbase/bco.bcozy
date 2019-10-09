@@ -104,7 +104,7 @@ public class ColorableLightPane extends AbstractUnitPane<ColorableLightRemote, C
         // detect color
         Color color;
         try {
-            color = JFXColorToHSBColorTransformer.transform(getData().getColorState().getColor().getHsbColor());
+            color = JFXColorToHSBColorTransformer.transform(getData().getColorState().getColor().getHsbColor(), getData().getColorState().getColor().getHsbColor().getBrightness());
         } catch (CouldNotPerformException ex) {
             color = Constants.LIGHTBULB_OFF_COLOR;
             ExceptionPrinter.printHistory(ex, LOGGER, LogLevel.DEBUG);
@@ -126,7 +126,7 @@ public class ColorableLightPane extends AbstractUnitPane<ColorableLightRemote, C
                 setPrimaryActivationWithoutNotification(Boolean.TRUE);
                 break;
             default:
-                getIcon().setBackgroundIconColor(Color.TRANSPARENT);
+                getIcon().setBackgroundIconColor(Constants.LIGHTBULB_OFF_COLOR);
                 setInfoText("unknown");
                 break;
         }

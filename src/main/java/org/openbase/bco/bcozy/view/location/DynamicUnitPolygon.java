@@ -215,8 +215,6 @@ public abstract class DynamicUnitPolygon<M extends Message, UR extends UnitRemot
     @Override
     public void saveChanges() {
         try {
-
-            System.out.println("save" + getLabel("?") + "...");
             final UnitConfig.Builder configBuilder = getConfig().toBuilder();
 
             // Get the transformation for the current room
@@ -277,11 +275,7 @@ public abstract class DynamicUnitPolygon<M extends Message, UR extends UnitRemot
                     }
                 }
             }
-
             Registries.getUnitRegistry().updateUnitConfig(configBuilder.build()).get(30, TimeUnit.SECONDS);
-
-            System.out.println("saved" + getLabel("?"));
-
         } catch (CouldNotPerformException | ExecutionException | TimeoutException | InterruptedException ex) {
             ExceptionPrinter.printHistory("Could not save placement changes!", ex, LOGGER);
         }
