@@ -277,7 +277,6 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Messa
      *
      * @param connectionState
      *
-     * @throws CouldNotPerformException
      */
     protected void applyConnectionStateUpdate(final ConnectionState.State connectionState) {
         switch (connectionState) {
