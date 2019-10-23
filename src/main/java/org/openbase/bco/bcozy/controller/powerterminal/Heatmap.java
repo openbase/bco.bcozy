@@ -10,7 +10,6 @@ import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Stop;
 import org.openbase.bco.bcozy.controller.powerterminal.heatmapattributes.HeatmapValues;
 import org.openbase.bco.bcozy.controller.powerterminal.heatmapattributes.HeatmapSpot;
 import org.openbase.bco.bcozy.view.BackgroundPane;
@@ -20,6 +19,7 @@ import org.openbase.bco.dal.lib.layer.unit.PowerConsumptionSensor;
 import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
 import org.openbase.bco.dal.remote.layer.unit.CustomUnitPool;
 import org.openbase.bco.registry.remote.Registries;
+import org.openbase.bco.registry.unit.lib.UnitRegistry;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
@@ -135,27 +135,24 @@ public class Heatmap extends Pane {
             unitListPosition++;
             try {
                 unit.waitForData(Constants.TRANSFORMATION_TIMEOUT, TimeUnit.MILLISECONDS);
-                Future<Transform> transform = Registries.getUnitRegistry().getUnitTransformationFuture(unit.getConfig(), rootLocationConfig);
+                Future<Transform> transform = Registries.getUnitRegistry().getUnitTransformation(unit.getConfig(), rootLocationConfig);
                 TranslationType.Translation unitPosition = unit.getUnitPosition();
                 Point3d unitPoint = new Point3d(unitPosition.getX(), unitPosition.getY(), unitPosition.getZ());
 
                 //Wait for transformation of unitPoint but use getUnitPositionGlobalPoint3D because I need the Global unit point
                 transform.get(Constants.TRANSFORMATION_TIMEOUT, TimeUnit.MILLISECONDS).getTransform().transform(unitPoint);
 
-                int unitPointGlobalX = (int) Math.floor(unit.getUnitPositionGlobalPoint3d().x * Constants.METER_TO_PIXEL + xTranslation);
-                int unitPointGlobalY = (int) Math.floor(unit.getUnitPositionGlobalPoint3d().y * Constants.METER_TO_PIXEL + yTranslation);
+                final Point3d globalUnitPosition = unit.getUnitPositionGlobalPoint3d().get(UnitRegistry.RCT_TIMEOUT, TimeUnit.MILLISECONDS);
+
+                int unitPointGlobalX = (int) Math.floor(globalUnitPosition.x * Constants.METER_TO_PIXEL + xTranslation);
+                int unitPointGlobalY = (int) Math.floor(globalUnitPosition.y * Constants.METER_TO_PIXEL + yTranslation);
 
                 if (heatmapValues.isInsideLocation(unitPointGlobalY, unitPointGlobalX))
                     spots.add(new HeatmapSpot(unitPointGlobalY, unitPointGlobalX, 0, unitListPosition));
-            } catch (CouldNotPerformException ex) {
+            } catch (CouldNotPerformException | TimeoutException | ExecutionException | CancellationException ex) {
                 ExceptionPrinter.printHistory("Could not get location units", ex, logger, LogLevel.DEBUG);
             } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
-                ExceptionPrinter.printHistory("Could not get location units", ex, logger, LogLevel.DEBUG);
-            } catch (ExecutionException ex) {
-                ExceptionPrinter.printHistory("Could not get location units", ex, logger, LogLevel.DEBUG);
-            } catch (TimeoutException ex) {
-                ExceptionPrinter.printHistory("Could not get location units", ex, logger, LogLevel.DEBUG);
             }
         }
         heatmapValues.setSpots(spots);

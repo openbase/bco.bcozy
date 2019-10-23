@@ -150,7 +150,7 @@ public class EditingLayerController {
 
                     PoseType.Pose pose = config.getPlacementConfig().getPose();
                     try {
-                        final Future<Transform> transform = Registries.getUnitRegistry().getUnitTransformationFuture(config,
+                        final Future<Transform> transform = Registries.getUnitRegistry().getUnitTransformation(config,
                             Registries.getUnitRegistry().getRootLocationConfig());
 
                         // transformation already in unit's coordinate space, therefore the zeros

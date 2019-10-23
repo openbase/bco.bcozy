@@ -144,7 +144,7 @@ public class UnitsPaneController {
             Point3d vertex = calculateCoordinates(locationConfig);
 
             try {
-                final Future<Transform> transform = Registries.getUnitRegistry().getUnitTransformationFuture(locationConfig, Registries.getUnitRegistry().getRootLocationConfig());
+                final Future<Transform> transform = Registries.getUnitRegistry().getUnitTransformation(locationConfig, Registries.getUnitRegistry().getRootLocationConfig());
                 transform.get(Constants.TRANSFORMATION_TIMEOUT / 10, TimeUnit.MILLISECONDS).getTransform().transform(vertex);
                 Point2D coord = new Point2D(vertex.x * Constants.METER_TO_PIXEL, vertex.y * Constants.METER_TO_PIXEL);
                 // Abstract Pane not working with a config object, only with a remote one!
@@ -178,7 +178,7 @@ public class UnitsPaneController {
 
                     PoseType.Pose pose = config.getPlacementConfig().getPose();
                     try {
-                        final Future<Transform> transform = Registries.getUnitRegistry().getUnitTransformationFuture(config,
+                        final Future<Transform> transform = Registries.getUnitRegistry().getUnitTransformation(config,
                                 Registries.getUnitRegistry().getRootLocationConfig());
                         // transformation already in unit's coordinate space, therefore the zeros
                         final Point3d unitVertex = new Point3d(0.0, 0.0, 1.0);

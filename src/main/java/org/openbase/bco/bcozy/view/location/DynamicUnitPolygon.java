@@ -192,7 +192,7 @@ public abstract class DynamicUnitPolygon<M extends Message, UR extends UnitRemot
             final List<Point2D> vertices = new LinkedList<>();
 
             // Get the transformation for the current room
-            final Future<Transform> transform = Registries.getUnitRegistry().getUnitTransformationFuture(unitConfig, Registries.getUnitRegistry().getRootLocationConfig());
+            final Future<Transform> transform = Registries.getUnitRegistry().getUnitTransformation(unitConfig, Registries.getUnitRegistry().getRootLocationConfig());
 
             // Get the shape of the room
             final List<Vec3DDoubleType.Vec3DDouble> shape = unitConfig.getPlacementConfig().getShape().getFloorList();
@@ -218,7 +218,7 @@ public abstract class DynamicUnitPolygon<M extends Message, UR extends UnitRemot
             final UnitConfig.Builder configBuilder = getConfig().toBuilder();
 
             // Get the transformation for the current room
-            final Future<Transform> transform = Registries.getUnitRegistry().getUnitTransformationFuture(Registries.getUnitRegistry().getRootLocationConfig(), configBuilder.build());
+            final Future<Transform> transform = Registries.getUnitRegistry().getUnitTransformation(Registries.getUnitRegistry().getRootLocationConfig(), configBuilder.build());
 
 
             final Builder shapeBuilder = configBuilder.getPlacementConfigBuilder().getShapeBuilder();
