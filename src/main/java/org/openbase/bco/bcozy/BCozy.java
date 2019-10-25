@@ -40,10 +40,8 @@ import org.openbase.bco.dal.remote.layer.unit.location.LocationRemote;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.bco.registry.remote.login.BCOLogin;
 import org.openbase.jps.core.JPService;
-import org.openbase.jul.exception.FatalImplementationErrorException;
-import org.openbase.jul.exception.InitializationException;
+import org.openbase.jul.exception.*;
 import org.openbase.jul.exception.InstantiationException;
-import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
 import org.openbase.jul.pattern.Observer;
@@ -204,8 +202,13 @@ public class BCozy extends Application {
             unitsPaneController = new UnitsPaneController(backgroundPane.getUnitsPane(), backgroundPane.getLocationMapPane());
             maintenanceLayerController = new MaintenanceLayerController(backgroundPane.getMaintenancePane(), backgroundPane.getLocationMapPane());
             editingLayerController = new EditingLayerController(backgroundPane.getEditingPane(), backgroundPane.getLocationMapPane());
-            sidebarPaneController = contextMenuController.getPowerTerminalSidebarPaneController();
-            backgroundPane.initPowerTerminalPane(sidebarPaneController.getChartStateModel());
+
+            try {
+                sidebarPaneController = contextMenuController.getPowerTerminalSidebarPaneController();
+                backgroundPane.initPowerTerminalPane(sidebarPaneController.getChartStateModel());
+            } catch (CouldNotPerformException ex) {
+                ExceptionPrinter.printHistory("Power terminal initialization failed!", ex, LOGGER, LogLevel.WARN);
+            }
 
             ResponsiveHandler.addResponsiveToWindow(primaryStage);
             primaryStage.show();
