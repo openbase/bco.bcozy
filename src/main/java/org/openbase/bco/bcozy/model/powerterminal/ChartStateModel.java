@@ -10,11 +10,11 @@ import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.*;
  */
 public class ChartStateModel {
     private ObjectProperty<VisualizationType> visualizationTypeProperty = new SimpleObjectProperty<>(VisualizationType.LINE_CHART);
-    private ObjectProperty<Unit> unitProperty;
+    private ObjectProperty<SymbolUnit> unitProperty;
     private ReadOnlyStringProperty selectedConsumerProperty;
     private ObjectProperty<DateRange> dateRangeProperty;
 
-    public ChartStateModel(ObjectProperty<Unit> unitProperty, ReadOnlyStringProperty selectedConsumerProperty, ObjectProperty<DateRange> dateRangeProperty) {
+    public ChartStateModel(ObjectProperty<SymbolUnit> unitProperty, ReadOnlyStringProperty selectedConsumerProperty, ObjectProperty<DateRange> dateRangeProperty) {
         this.unitProperty = unitProperty;
         this.selectedConsumerProperty = selectedConsumerProperty;
         this.dateRangeProperty = dateRangeProperty;
@@ -28,11 +28,11 @@ public class ChartStateModel {
         return visualizationTypeProperty;
     }
 
-    public Unit getUnit() {
+    public SymbolUnit getUnit() {
         return unitProperty.get();
     }
 
-    public ObjectProperty<Unit> unitProperty() {
+    public ObjectProperty<SymbolUnit> unitProperty() {
         return unitProperty;
     }
 

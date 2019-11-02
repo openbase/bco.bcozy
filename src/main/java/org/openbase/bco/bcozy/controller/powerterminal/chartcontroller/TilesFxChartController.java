@@ -9,7 +9,7 @@ import javafx.stage.Screen;
 import org.openbase.bco.bcozy.model.LanguageSelection;
 import org.openbase.bco.bcozy.model.powerterminal.ChartStateModel;
 import org.openbase.bco.bcozy.model.powerterminal.PowerTerminalDBService;
-import org.openbase.bco.bcozy.util.EnergyUnitConverter;
+import org.openbase.bco.bcozy.util.EnergySymbolConverter;
 import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.schedule.GlobalCachedExecutorService;
@@ -39,7 +39,7 @@ public abstract class TilesFxChartController implements ChartController{
         try {
             refreshSchedule = GlobalScheduledExecutorService.scheduleAtFixedRate(() -> {
                 List<ChartData> data = PowerTerminalDBService.getAverageConsumption(chartStateModel.getDateRange(), chartStateModel.getSelectedConsumer());
-                Platform.runLater(() -> updateChart(EnergyUnitConverter.convert(chartStateModel.getUnit(), data)));
+                Platform.runLater(() -> updateChart(EnergySymbolConverter.convert(chartStateModel.getUnit(), data)));
                     }, 50, interval, TimeUnit.MILLISECONDS);
         } catch (NotAvailableException ex) {
             ExceptionPrinter.printHistory("Could not refresh power chart data", ex, LOGGER);
@@ -51,7 +51,7 @@ public abstract class TilesFxChartController implements ChartController{
     public void updateChart(ChartStateModel chartStateModel) {
         GlobalCachedExecutorService.submit(() -> {
             List<ChartData> data = PowerTerminalDBService.getAverageConsumption(chartStateModel.getDateRange(), chartStateModel.getSelectedConsumer());
-            Platform.runLater(() -> updateChart(EnergyUnitConverter.convert(chartStateModel.getUnit(), data)));
+            Platform.runLater(() -> updateChart(EnergySymbolConverter.convert(chartStateModel.getUnit(), data)));
         });
     }
 

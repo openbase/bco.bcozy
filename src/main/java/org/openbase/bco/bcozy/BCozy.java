@@ -89,7 +89,7 @@ public class BCozy extends Application {
     private MaintenanceLayerController maintenanceLayerController;
     private EditingLayerController editingLayerController;
     private PowerTerminalSidebarPaneController sidebarPaneController;
-    private Future initTask;
+    private Future<Void> initTask;
     private Scene mainScene;
 
     public BCozy() {

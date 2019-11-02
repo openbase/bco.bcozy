@@ -3,7 +3,6 @@ package org.openbase.bco.bcozy.controller.powerterminal;
 import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXDatePicker;
-import eu.hansolo.fx.charts.heatmap.HeatMap;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.*;
@@ -18,7 +17,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.DateRange;
-import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.Unit;
+import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.SymbolUnit;
 import org.openbase.bco.bcozy.controller.powerterminal.chartattributes.VisualizationType;
 import org.openbase.bco.bcozy.model.LanguageSelection;
 import org.openbase.bco.bcozy.model.powerterminal.ChartStateModel;
@@ -38,7 +37,6 @@ import org.openbase.type.domotic.unit.UnitConfigType.UnitConfig;
 import org.openbase.type.language.LabelType;
 import org.slf4j.LoggerFactory;
 
-import java.io.NotActiveException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Collection;
@@ -61,7 +59,7 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
     @FXML
     private JFXComboBox<VisualizationType> selectVisualizationTypeBox;
     @FXML
-    private JFXComboBox<Unit> selectUnitBox;
+    private JFXComboBox<SymbolUnit> selectUnitBox;
     @FXML
     public JFXCheckBox globalConsumptionCheckBox;
     @FXML
@@ -104,7 +102,7 @@ public class PowerTerminalSidebarPaneController extends AbstractFXController {
     public void initContent() throws InitializationException {
         LocalizedCellFactory cellFactory = new LocalizedCellFactory<>(item -> LanguageSelection.getProperty(item.toString()));
         setupComboBox(cellFactory, selectVisualizationTypeBox, List.of(VisualizationType.getSelectableTypes()), 2);
-        setupComboBox(cellFactory, selectUnitBox, List.of(Unit.values()), 1);
+        setupComboBox(cellFactory, selectUnitBox, List.of(SymbolUnit.values()), 1);
 
         BooleanBinding canDisplayDifferentUnits = Bindings.createBooleanBinding(
                 () -> VisualizationType.canDisplayDifferentUnits(selectVisualizationTypeBox.getSelectionModel().getSelectedItem()),

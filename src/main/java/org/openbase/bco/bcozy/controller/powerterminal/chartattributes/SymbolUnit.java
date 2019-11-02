@@ -3,7 +3,7 @@ package org.openbase.bco.bcozy.controller.powerterminal.chartattributes;
 /**
  * Different non-physical units to display the power draw in.
  */
-public enum Unit {
+public enum SymbolUnit {
     ENERGY, LIGHTBULB, MONEY;
 
 }
