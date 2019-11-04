@@ -42,7 +42,7 @@ public class TemperatureControllerPane extends AbstractUnitPane<TemperatureContr
 //    private double actualTemperature;
 //    private double targetTemperature;
 //
-//    private RecurrenceEventFilter recurrenceEventFilter = new RecurrenceEventFilter(Constants.RECURRENCE_EVENT_FILTER_MILLI_TIMEOUT) {
+//    private RecurrenceEventFilter recurrenceEventFilter = new RecurrenceEventFilter<>(Constants.RECURRENCE_EVENT_FILTER_MILLI_TIMEOUT) {
 //        @Override
 //        public void relay() {
 //            sendTemperatureStateToRemote();
