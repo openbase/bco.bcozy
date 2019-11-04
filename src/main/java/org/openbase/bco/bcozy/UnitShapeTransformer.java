@@ -141,9 +141,9 @@ public class UnitShapeTransformer extends Application {
                         return;
                     }
                     double scale = slider.getValue() ;
-                    System.out.println("scale: "+ scale);
+                    //System.out.println("scale: "+ scale);
                     double offset = 0.01d + scale /100;
-                    System.out.println("offset: "+ offset);
+                    //System.out.println("offset: "+ offset);
 
                     switch (event.getCode()) {
                         case UP:
