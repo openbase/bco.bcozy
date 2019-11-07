@@ -56,7 +56,7 @@ public class UnitMenuLocationPane extends PaneElement {
 
         this.getChildren().addAll(locationLabel, emphasisControlTrianglePane);
 
-        this.eventFilter = new RecurrenceEventFilter<EmphasisState>() {
+        this.eventFilter = new RecurrenceEventFilter<>() {
             @Override
             public void relay() throws Exception {
                 locationRemote.setEmphasisState(eventFilter.getLatestValue());
