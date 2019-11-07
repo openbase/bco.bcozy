@@ -193,7 +193,7 @@ public class UserSettingsController extends AbstractFXController {
 
         try {
 
-            UnitConfigType.UnitConfig.Builder newUserConfig = Registries.getUnitRegistry().getUnitConfigById(SessionManager.getInstance().getUserClientPair().getUserId(), UnitType.USER).toBuilder();
+            UnitConfigType.UnitConfig.Builder newUserConfig = Registries.getUnitRegistry().getUnitConfigByIdAndUnitType(SessionManager.getInstance().getUserClientPair().getUserId(), UnitType.USER).toBuilder();
 
             newUserConfig.getUserConfigBuilder()
                     .setUserName(changeUsername.getText())
