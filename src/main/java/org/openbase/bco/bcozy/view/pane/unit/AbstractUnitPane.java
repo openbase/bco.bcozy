@@ -303,11 +303,11 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Messa
     protected void applyLoginUpdate() throws CouldNotPerformException {
         UserClientPair userClientPair = UserClientPair.getDefaultInstance();
         Map<String, IdentifiableMessage<String, UnitConfig, UnitConfig.Builder>> groups = null;
-        Map<String, IdentifiableMessage<String, UnitConfig, UnitConfig.Builder>> locations = Registries.getUnitRegistry().getLocationUnitConfigRemoteRegistry().getEntryMap();
+        Map<String, IdentifiableMessage<String, UnitConfig, UnitConfig.Builder>> locations = Registries.getUnitRegistry().getLocationUnitConfigRemoteRegistry(true).getEntryMap();
 
         if (SessionManager.getInstance().isLoggedIn()) {
             userClientPair = SessionManager.getInstance().getUserClientPair();
-            groups = Registries.getUnitRegistry().getAuthorizationGroupUnitConfigRemoteRegistry().getEntryMap();
+            groups = Registries.getUnitRegistry().getAuthorizationGroupUnitConfigRemoteRegistry(true).getEntryMap();
         }
 
         //disableProperty().set(!AuthorizationHelper.canAccess(AbstractUnitPane.this.unitRemote.getConfig(), userClientPair, groups, locations));
