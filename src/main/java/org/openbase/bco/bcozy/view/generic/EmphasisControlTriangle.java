@@ -408,6 +408,23 @@ public class EmphasisControlTriangle extends Triangle {
         return securityProperty.get();
     }
 
+    public double getCategoryValue(final Category category) {
+        switch (category) {
+            case ECONOMY:
+                return getEconomy();
+            case COMFORT:
+                return getComfort();
+            case SECURITY:
+                return getSecurity();
+            case SAFETY:
+                return 1d;
+            case UNKNOWN:
+            default:
+                return 0d;
+
+        }
+    }
+
     public SimpleDoubleProperty economyProperty() {
         return economyProperty;
     }

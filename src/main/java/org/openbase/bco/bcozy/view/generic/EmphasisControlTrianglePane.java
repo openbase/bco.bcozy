@@ -169,6 +169,10 @@ public class EmphasisControlTrianglePane extends BorderPane implements DynamicPa
 
     }
 
+    public EmphasisControlTriangle getEmphasisControlTriangle() {
+        return emphasisControlTriangle;
+    }
+
     private void computeEmphasisState() {
 
         final EmphasisState.Builder emphasisState = EmphasisState.newBuilder();
