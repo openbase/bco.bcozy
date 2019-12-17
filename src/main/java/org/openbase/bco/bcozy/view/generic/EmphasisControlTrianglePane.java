@@ -34,32 +34,13 @@ public class EmphasisControlTrianglePane extends BorderPane implements DynamicPa
     private final Pane trianglePane;
     private transient boolean emphasisStateUpdate;
 
-    final double frame = 40;
-
     public EmphasisControlTrianglePane() {
 
         this.emphasisStateProperty = new SimpleObjectProperty<>(EmphasisState.getDefaultInstance());
         this.emphasisControlTriangle = new EmphasisControlTriangle();
         this.emphasisStateUpdate = false;
-        this.emphasisControlTriangle.primaryEmphasisCategoryProperty().addListener(new ChangeListener<Category>() {
-            @Override
-            public void changed(ObservableValue<? extends Category> observable, Category oldValue, Category primaryEmphasisCategory) {
-                switch (primaryEmphasisCategory) {
-                    case ECONOMY:
-                        emphasisIcon.setForegroundIcon(MaterialDesignIcon.LEAF);
-                        break;
-                    case COMFORT:
-                        emphasisIcon.setForegroundIcon(MaterialDesignIcon.EMOTICON);
-                        break;
-                    case SECURITY:
-                        emphasisIcon.setForegroundIcon(MaterialDesignIcon.SECURITY);
-                        break;
-                    case UNKNOWN:
-                        emphasisIcon.setForegroundIcon(MaterialDesignIcon.FLASH);
-                        break;
-                }
-                emphasisLabel.setText("Optimize " + StringProcessor.transformFirstCharToUpperCase(primaryEmphasisCategory.name().toLowerCase()));
-            }
+        this.emphasisControlTriangle.primaryEmphasisCategoryProperty().addListener((observable, oldValue, primaryEmphasisCategory) -> {
+            updateEmphasisCategory(primaryEmphasisCategory);
         });
 
         this.emphasisControlTriangle.setEmphasisStateChangeListener(() -> {
@@ -132,18 +113,27 @@ public class EmphasisControlTrianglePane extends BorderPane implements DynamicPa
 
         this.canvas.setOnMouseDragged(event -> {
             applyMousePositionUpdate(event.getX(), event.getY(), scale, true, gc);
+            event.consume();
         });
 
         this.canvas.setOnMouseDragReleased(event -> {
             applyMousePositionUpdate(event.getX(), event.getY(), scale, false, gc);
+            event.consume();
         });
 
         this.canvas.setOnMousePressed(event -> {
             applyMousePositionUpdate(event.getX(), event.getY(), scale, true, gc);
+            event.consume();
         });
 
         this.canvas.setOnMouseClicked(event -> {
             applyMousePositionUpdate(event.getX(), event.getY(), scale, false, gc);
+            event.consume();
+        });
+
+        this.canvas.setOnMouseReleased(event -> {
+            applyMousePositionUpdate(event.getX(), event.getY(), scale, false, gc);
+            event.consume();
         });
 
         this.trianglePane.getChildren().addAll(canvas, emphasisIcon);
@@ -161,12 +151,31 @@ public class EmphasisControlTrianglePane extends BorderPane implements DynamicPa
         this.setCenter(triangleOuterPane);
         this.setBottom(labelBox);
 
+        this.initContent();
         this.updateDynamicContent();
     }
 
     @Override
-    public void initContent() throws InitializationException {
+    public void initContent() {
+        updateEmphasisCategory(emphasisControlTriangle.primaryEmphasisCategoryProperty().getValue());
+    }
 
+    private void updateEmphasisCategory(Category primaryEmphasisCategory) {
+        switch (primaryEmphasisCategory) {
+            case ECONOMY:
+                emphasisIcon.setForegroundIcon(MaterialDesignIcon.LEAF);
+                break;
+            case COMFORT:
+                emphasisIcon.setForegroundIcon(MaterialDesignIcon.EMOTICON);
+                break;
+            case SECURITY:
+                emphasisIcon.setForegroundIcon(MaterialDesignIcon.SECURITY);
+                break;
+            case UNKNOWN:
+                emphasisIcon.setForegroundIcon(MaterialDesignIcon.FLASH);
+                break;
+        }
+        emphasisLabel.setText("Optimize " + StringProcessor.transformFirstCharToUpperCase(primaryEmphasisCategory.name().toLowerCase()));
     }
 
     public EmphasisControlTriangle getEmphasisControlTriangle() {
@@ -215,6 +224,9 @@ public class EmphasisControlTrianglePane extends BorderPane implements DynamicPa
         // update icon pos
         updateIcon(false);
 
+        // required to update icon position
+        updateEmphasisCategory(emphasisControlTriangle.getPrimaryEmphasisCategory());
+
         requestLayout();
     }
 
@@ -248,5 +260,9 @@ public class EmphasisControlTrianglePane extends BorderPane implements DynamicPa
 
     public SimpleDoubleProperty comfortProperty() {
         return emphasisControlTriangle.comfortProperty();
+    }
+
+    public void setTrianglePrefSize(double prefWidth, double prefHeight) {
+        trianglePane.setPrefSize(prefWidth, prefHeight);
     }
 }

@@ -105,6 +105,8 @@ public class EmphasisControlTriangle extends Triangle {
         this.securityTriangleY[1] = handlePosY;
         this.securityTriangleX[2] = EMPHASIS_TRIANGLE_OUTER_LINE;
         this.securityTriangleY[2] = EMPHASIS_TRIANGLE_HEIGHT;
+
+        this.updateEmphasisCategory();
     }
 
     double mousePosX;
@@ -222,10 +224,12 @@ public class EmphasisControlTriangle extends Triangle {
 
     public void updateEmphasisState(final double comfort, final double economy, final double security, final boolean mouseClicked, final boolean updateHandlePos, final GraphicsContext gc) {
 
-        // filter non changing updates
-        if (comfort == comfortProperty.get() && economy == economyProperty.get() && security == securityProperty.get()) {
-            //System.out.println("skip non changing update: c:"+ comfort + " e:" + economy + " s:"+security);
-            return;
+        // filter non changing updates when mouse is clicked
+        if(mouseClicked) {
+            if (comfort == comfortProperty.get() && economy == economyProperty.get() && security == securityProperty.get()) {
+                //System.out.println("skip non changing update: c:"+ comfort + " e:" + economy + " s:"+security);
+                return;
+            }
         }
 
         //System.out.println("update emphasis: c:"+ comfort + " e:" + economy + " s:"+security);
@@ -246,6 +250,13 @@ public class EmphasisControlTriangle extends Triangle {
         }
 
         // update emphasis category and triangle color.
+        updateEmphasisCategory();
+
+        // draw final shape
+        drawShapes(mouseClicked, gc);
+    }
+
+    private void updateEmphasisCategory() {
         if (securityProperty.get() > economyProperty.get() && securityProperty.get() > comfortProperty.get()) {
             primaryEmphasisCategoryProperty.set(Category.SECURITY);
             emphasisColor = Color.hsb(SECURITY_HUE, SATURATION, BRIGHTNESS);
@@ -260,9 +271,6 @@ public class EmphasisControlTriangle extends Triangle {
             // error
             emphasisColor = Color.hsb(ERROR_HUE, SATURATION, BRIGHTNESS);
         }
-
-        // draw final shape
-        drawShapes(mouseClicked, gc);
     }
 
     public Color getEmphasisColor() {
