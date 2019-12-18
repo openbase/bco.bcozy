@@ -172,7 +172,7 @@ public final class Constants {
     /**
      * Timeout value in milliseconds for fetching transformations.
      */
-    public static final long TRANSFORMATION_TIMEOUT = 10000;
+    public static final long TRANSFORMATION_TIMEOUT = 30000;
 
     /**
      * The minimal temperatur for fading.
