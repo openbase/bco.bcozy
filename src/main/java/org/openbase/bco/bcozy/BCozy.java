@@ -80,7 +80,7 @@ public class BCozy extends Application {
     private static final Logger LOGGER = LoggerFactory.getLogger(BCozy.class);
 
     public static Stage primaryStage;
-    private static Observer<Remote, ConnectionState.State> connectionObserver;
+    private static Observer<Remote<?>, ConnectionState.State> connectionObserver;
     private LoadingPane loadingPane;
     private ContextMenuController contextMenuController;
     private LocationMapPaneController locationMapPaneController;

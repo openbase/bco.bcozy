@@ -64,7 +64,7 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Messa
 
     private final Observer<ConfigurableRemote<String, D, UnitConfig>, UnitConfig> unitConfigObserver;
     private final Observer<DataProvider<D>, D> unitDataObserver;
-    private final Observer<Remote, ConnectionState.State> unitConnectionObserver;
+    private final Observer<Remote<?>, ConnectionState.State> unitConnectionObserver;
     private final Observer<SessionManager, UserClientPair> loginObserver;
 
     /**
@@ -89,14 +89,9 @@ public abstract class AbstractUnitPane<UR extends UnitRemote<D>, D extends Messa
             }
         };
         this.unitDataObserver = (source, data) -> applyDataUpdate(data);
-        this.unitConnectionObserver = new Observer<>() {
-            @Override
-            public void update(Remote source, ConnectionState.State connectionState) {
-                Platform.runLater(() -> {
-                    applyConnectionStateUpdate(connectionState);
-                });
-            }
-        };
+        this.unitConnectionObserver = (source, connectionState) -> Platform.runLater(() -> {
+            applyConnectionStateUpdate(connectionState);
+        });
         this.loginObserver = new Observer<>() {
             @Override
             public void update(SessionManager source, UserClientPair authority) throws Exception {

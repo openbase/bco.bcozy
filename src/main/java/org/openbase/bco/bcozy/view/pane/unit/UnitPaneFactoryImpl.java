@@ -18,6 +18,7 @@
  */
 package org.openbase.bco.bcozy.view.pane.unit;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.TimeUnit;
 import org.openbase.bco.registry.lib.util.UnitConfigProcessor;
 import org.openbase.bco.registry.unit.remote.CachedUnitRegistryRemote;
@@ -112,8 +113,8 @@ public class UnitPaneFactoryImpl implements UnitPaneFactory {
     @Override
     public <R extends AbstractUnitPane> R newInstance(final Class<R> unitPaneClass) throws InstantiationException {
         try {
-            return unitPaneClass.newInstance();
-        } catch (java.lang.InstantiationException | IllegalAccessException ex) {
+            return unitPaneClass.getConstructor().newInstance();
+        } catch (java.lang.InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException ex) {
             throw new org.openbase.jul.exception.InstantiationException("Could not instantiate unit pane out of Class[" + unitPaneClass.getName() + "]", ex);
         }
     }
