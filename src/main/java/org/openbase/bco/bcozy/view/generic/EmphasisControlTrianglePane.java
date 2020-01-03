@@ -1,18 +1,16 @@
 package org.openbase.bco.bcozy.view.generic;
 
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.transform.Affine;
-import org.openbase.jul.exception.InitializationException;
 import org.openbase.jul.processing.StringProcessor;
 import org.openbase.jul.visual.javafx.geometry.svg.SVGGlyphIcon;
 import org.openbase.jul.visual.javafx.iface.DynamicPane;
@@ -24,6 +22,7 @@ import static org.openbase.bco.dal.lib.layer.service.provider.EmphasisStateProvi
 public class EmphasisControlTrianglePane extends BorderPane implements DynamicPane {
 
     private final SimpleObjectProperty<EmphasisState> emphasisStateProperty;
+    private final SimpleObjectProperty<MouseEvent> interactionProperty = new SimpleObjectProperty<>();
 
     private final EmphasisControlTriangle emphasisControlTriangle;
     private final Canvas canvas;
@@ -134,6 +133,7 @@ public class EmphasisControlTrianglePane extends BorderPane implements DynamicPa
         this.canvas.setOnMouseReleased(event -> {
             applyMousePositionUpdate(event.getX(), event.getY(), scale, false, gc);
             event.consume();
+            interactionProperty.set(event);
         });
 
         this.trianglePane.getChildren().addAll(canvas, emphasisIcon);
@@ -155,27 +155,49 @@ public class EmphasisControlTrianglePane extends BorderPane implements DynamicPa
         this.updateDynamicContent();
     }
 
+
     @Override
     public void initContent() {
         updateEmphasisCategory(emphasisControlTriangle.primaryEmphasisCategoryProperty().getValue());
     }
 
     private void updateEmphasisCategory(Category primaryEmphasisCategory) {
-        switch (primaryEmphasisCategory) {
-            case ECONOMY:
-                emphasisIcon.setForegroundIcon(MaterialDesignIcon.LEAF);
-                break;
-            case COMFORT:
-                emphasisIcon.setForegroundIcon(MaterialDesignIcon.EMOTICON);
-                break;
-            case SECURITY:
-                emphasisIcon.setForegroundIcon(MaterialDesignIcon.SECURITY);
-                break;
-            case UNKNOWN:
-                emphasisIcon.setForegroundIcon(MaterialDesignIcon.FLASH);
-                break;
+
+        if(Platform.isFxApplicationThread()) {
+            switch (primaryEmphasisCategory) {
+                case ECONOMY:
+                    emphasisIcon.setForegroundIcon(MaterialDesignIcon.LEAF);
+                    break;
+                case COMFORT:
+                    emphasisIcon.setForegroundIcon(MaterialDesignIcon.EMOTICON);
+                    break;
+                case SECURITY:
+                    emphasisIcon.setForegroundIcon(MaterialDesignIcon.SECURITY);
+                    break;
+                case UNKNOWN:
+                    emphasisIcon.setForegroundIcon(MaterialDesignIcon.FLASH);
+                    break;
+            }
+            emphasisLabel.setText("Optimize " + StringProcessor.transformFirstCharToUpperCase(primaryEmphasisCategory.name().toLowerCase()));
+        } else {
+            Platform.runLater(() -> {
+                switch (primaryEmphasisCategory) {
+                    case ECONOMY:
+                        emphasisIcon.setForegroundIcon(MaterialDesignIcon.LEAF);
+                        break;
+                    case COMFORT:
+                        emphasisIcon.setForegroundIcon(MaterialDesignIcon.EMOTICON);
+                        break;
+                    case SECURITY:
+                        emphasisIcon.setForegroundIcon(MaterialDesignIcon.SECURITY);
+                        break;
+                    case UNKNOWN:
+                        emphasisIcon.setForegroundIcon(MaterialDesignIcon.FLASH);
+                        break;
+                }
+                emphasisLabel.setText("Optimize " + StringProcessor.transformFirstCharToUpperCase(primaryEmphasisCategory.name().toLowerCase()));
+            });
         }
-        emphasisLabel.setText("Optimize " + StringProcessor.transformFirstCharToUpperCase(primaryEmphasisCategory.name().toLowerCase()));
     }
 
     public EmphasisControlTriangle getEmphasisControlTriangle() {
@@ -260,6 +282,10 @@ public class EmphasisControlTrianglePane extends BorderPane implements DynamicPa
 
     public SimpleDoubleProperty comfortProperty() {
         return emphasisControlTriangle.comfortProperty();
+    }
+
+    public SimpleObjectProperty<MouseEvent> interactionProperty() {
+        return interactionProperty;
     }
 
     public void setTrianglePrefSize(double prefWidth, double prefHeight) {
