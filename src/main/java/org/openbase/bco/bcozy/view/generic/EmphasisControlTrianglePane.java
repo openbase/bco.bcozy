@@ -31,7 +31,7 @@ public class EmphasisControlTrianglePane extends BorderPane implements DynamicPa
     private GraphicsContext gc;
     private double scale;
     private final Pane trianglePane;
-    private transient boolean emphasisStateUpdate;
+    private volatile boolean emphasisStateUpdate;
 
     public EmphasisControlTrianglePane() {
 
