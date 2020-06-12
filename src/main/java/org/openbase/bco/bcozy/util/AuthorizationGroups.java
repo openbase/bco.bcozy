@@ -147,7 +147,7 @@ public final class AuthorizationGroups {
 
             return Registries.getUnitRegistry().registerUnitConfig(newGroup);
         } catch (NotAvailableException ex) {
-            return FutureProcessor.canceledFuture(ex);
+            return FutureProcessor.canceledFuture(UnitConfig.class, ex);
         }
     }
 

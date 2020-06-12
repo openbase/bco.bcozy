@@ -22,12 +22,14 @@ import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import java.util.concurrent.Future;
 import javafx.scene.paint.Color;
 import org.openbase.bco.bcozy.view.pane.unit.AbstractUnitPane;
+import org.openbase.bco.dal.lib.state.States.Activation;
 import org.openbase.bco.dal.remote.layer.unit.unitgroup.UnitGroupRemote;
 import org.openbase.jul.exception.CouldNotPerformException;
 import org.openbase.jul.exception.NotAvailableException;
 import org.openbase.jul.exception.printer.ExceptionPrinter;
 import org.openbase.jul.exception.printer.LogLevel;
 import org.openbase.jul.schedule.FutureProcessor;
+import org.openbase.type.domotic.action.ActionDescriptionType.ActionDescription;
 import org.openbase.type.domotic.state.PowerStateType.PowerState;
 import org.openbase.type.domotic.unit.unitgroup.UnitGroupDataType.UnitGroupData;
 
@@ -71,11 +73,11 @@ public class UnitGroupPane extends AbstractUnitPane<UnitGroupRemote, UnitGroupDa
     }
 
     @Override
-    protected Future applyPrimaryActivationUpdate(final boolean activation) {
+    protected Future<ActionDescription> applyPrimaryActivationUpdate(final boolean activation) {
         try {
             return (activation) ? getUnitRemote().setPowerState(PowerState.State.ON) : getUnitRemote().setPowerState(PowerState.State.OFF);
         } catch (NotAvailableException ex) {
-            return FutureProcessor.canceledFuture(ex);
+            return FutureProcessor.canceledFuture(ActionDescription.class, ex);
         }
     }
 }
