@@ -101,7 +101,7 @@ public class AgentPane extends AbstractUnitPane<AgentRemote, AgentData> {
                 getIcon().setForegroundIconColor(Color.GREEN);
                 setPrimaryActivationWithoutNotification(Boolean.TRUE);
                 break;
-            case DEACTIVE:
+            case INACTIVE:
                 getIcon().setForegroundIconColor(Color.BLACK);
                 setPrimaryActivationWithoutNotification(Boolean.FALSE);
             default:

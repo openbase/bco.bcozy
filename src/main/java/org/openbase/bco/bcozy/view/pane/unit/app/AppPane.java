@@ -60,7 +60,7 @@ public class AppPane extends AbstractUnitPane<AppRemote, AppData> {
                 getIcon().setForegroundIconColor(Color.GREEN);
                 setPrimaryActivationWithoutNotification(Boolean.TRUE);
                 break;
-            case DEACTIVE:
+            case INACTIVE:
                 getIcon().setForegroundIconColor(Color.BLACK);
                 setPrimaryActivationWithoutNotification(Boolean.FALSE);
             default:
