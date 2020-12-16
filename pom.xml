@@ -105,10 +105,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.0</version>
+                <version>3.8.1</version>
                 <configuration>
-                    <source>${maven.compiler.source}</source>
-                    <target>${maven.compiler.target}</target>
+                    <source>${java.source.version}</source>
+                    <target>${java.target.version}</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -200,7 +200,7 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.2.0</version>
                 <configuration>
-                    <source>8</source>
+                    <source>${java.source.version}</source>
                 </configuration>
                 <executions>
                     <execution>
@@ -290,8 +290,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <test.configs>${project.basedir}/target/generated-test-config</test.configs>
-        <maven.compiler.target>11</maven.compiler.target>
-        <maven.compiler.source>11</maven.compiler.source>
+        <java.target.version>11</java.target.version>
+        <java.source.version>11</java.source.version>
         <plugin.checkstyle.version>2.15</plugin.checkstyle.version>
         <plugin.javadoc.version>2.10.3</plugin.javadoc.version>
         <logback.version>[1.2,1.3-alpha)</logback.version>
@@ -299,7 +299,6 @@
         <dependency.jul.version>${dependency.bco.version}</dependency.jul.version>
         <dependency.bco.dal.version>${dependency.bco.version}</dependency.bco.dal.version>
         <dependency.bco.authentication.version>${dependency.bco.version}</dependency.bco.authentication.version>
-        <jproVersion>2018.1.11</jproVersion>
     </properties>
 
     <pluginRepositories>
@@ -307,17 +306,9 @@
             <id>onejar-maven-plugin.googlecode.com</id>
             <url>http://onejar-maven-plugin.googlecode.com/svn/mavenrepo</url>
         </pluginRepository>
-        <pluginRepository>
-            <id>jpro - sandec repository</id>
-            <url>http://sandec.bintray.com/repo</url>
-        </pluginRepository>
     </pluginRepositories>
 
     <repositories>
-        <repository>
-            <id>jpro - sandec repository</id>
-            <url>http://sandec.bintray.com/repo</url>
-        </repository>
         <repository>
             <id>bonitoo-snapshot</id>
             <name>Bonitoo.io snapshot repository</name>
@@ -387,13 +378,6 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>${logback.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.sandec.jpro</groupId>
-            <artifactId>jpro-webapi</artifactId>
-            <version>${jproVersion}</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <!-- required for scenic view debugging -->
