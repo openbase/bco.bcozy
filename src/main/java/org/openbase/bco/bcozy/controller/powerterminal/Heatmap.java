@@ -51,7 +51,7 @@ public class Heatmap extends Pane {
             unitPool = new CustomUnitPool();
 
             unitPool.init(unitConfig ->
-                    unitConfig.getUnitType() != UnitType.POWER_CONSUMPTION_SENSOR);
+                    unitConfig.getUnitType() == UnitType.POWER_CONSUMPTION_SENSOR);
 
             unitPool.activate();
 
