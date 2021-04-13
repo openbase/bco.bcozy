@@ -45,7 +45,6 @@ public class TilePolygon extends LocationPolygon {
 //        setOnMouseClicked(event -> {
 //            try {
 //                if (event.isStillSincePress()) {
-//                    System.out.println("tile me: "+ event.isConsumed());
 //                    if (event.getClickCount() == 1) {
 //                        locationMap.setSelectedUnit(this);
 //                    } else if (event.getClickCount() == 2) {
