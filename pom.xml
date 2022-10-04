@@ -290,8 +290,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <test.configs>${project.basedir}/target/generated-test-config</test.configs>
-        <java.target.version>11</java.target.version>
-        <java.source.version>11</java.source.version>
+        <java.target.version>17</java.target.version>
+        <java.source.version>17</java.source.version>
         <plugin.checkstyle.version>2.15</plugin.checkstyle.version>
         <plugin.javadoc.version>2.10.3</plugin.javadoc.version>
         <logback.version>[1.2,1.3-alpha)</logback.version>
