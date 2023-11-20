@@ -1,7 +1,6 @@
 package org.openbase.bco.bcozy.controller;
 
 import com.jfoenix.controls.JFXCheckBox;
-import com.sun.javafx.tk.Toolkit;
 import javafx.application.Platform;
 import javafx.beans.property.StringProperty;
 import javafx.collections.ListChangeListener;
@@ -167,8 +166,6 @@ public class UserManagementController extends AbstractFXController {
     }
 
     private void fillUserListInternal() {
-        Toolkit.getToolkit().checkFxUserThread();
-
         UserData userData = selectedUser;
 
         chooseUserBox.getItems().clear();
@@ -209,8 +206,6 @@ public class UserManagementController extends AbstractFXController {
     }
 
     private void userSelectedInternal(UserData selectedUser) {
-        Toolkit.getToolkit().checkFxUserThread();
-
         unbindFields();
         resetFields();
         resetHints();

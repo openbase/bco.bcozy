@@ -18,7 +18,6 @@
  */
 package org.openbase.bco.bcozy.view;
 
-import com.sun.javafx.application.PlatformImpl;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
@@ -167,7 +166,7 @@ public class InfoPane extends BorderPane {
          * @param duration the duration
          */
         public InfoPaneConfigurer hideAfter(Duration duration) {
-            PlatformImpl.runLater(() -> {
+            Platform.runLater(() -> {
                 try {
                     InfoPane.getInstance().resetTimeline();
                     InfoPane.getInstance().timeline = new Timeline(new KeyFrame(duration, e -> InfoPane.hide()));
@@ -180,7 +179,7 @@ public class InfoPane extends BorderPane {
         }
 
         public InfoPaneConfigurer backgroundColor(Color color) {
-            PlatformImpl.runLater(() -> {
+            Platform.runLater(() -> {
                 try {
                     InfoPane.getInstance().setBackground(new Background(new BackgroundFill(color, CornerRadii.EMPTY, Insets.EMPTY)));
                 } catch (NotAvailableException ex) {

@@ -9,8 +9,5 @@
         <module name="bco.bcozy" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="bco.bcozy" target="11" />
-    </bytecodeTargetLevel>
   </component>
 </project>

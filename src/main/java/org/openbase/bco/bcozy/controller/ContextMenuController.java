@@ -81,13 +81,14 @@ public class ContextMenuController {
 
         final UnitMenu unitMenu = foregroundPane.getUnitMenu();
 
-        try {
-            powerTerminalSidebarPaneAndController = FXMLProcessor.loadFxmlPaneAndControllerPair(PowerTerminalSidebarPaneController.class);
+// This part is disabled since the power terminal uses some outdated libs that are no longer supported by java 17
+//        try {
+//            powerTerminalSidebarPaneAndController = FXMLProcessor.loadFxmlPaneAndControllerPair(PowerTerminalSidebarPaneController.class);
 //            ((PowerTerminalSidebarPaneController) powerTerminalSidebarPaneAndController.getValue()).init(unitMenu);
-            unitMenu.setPowerTerminalSidebarPane(powerTerminalSidebarPaneAndController.getKey());
-        } catch (final CouldNotPerformException ex) {
-            ExceptionPrinter.printHistory("Content could not be loaded", ex, LOGGER);
-        }
+//            unitMenu.setPowerTerminalSidebarPane(powerTerminalSidebarPaneAndController.getKey());
+//        } catch (final CouldNotPerformException ex) {
+//            ExceptionPrinter.printHistory("Content could not be loaded", ex, LOGGER);
+//        }
 
         BCozy.appModeProperty.addListener((observable, oldValue, newValue) -> {
             switch (newValue) {
