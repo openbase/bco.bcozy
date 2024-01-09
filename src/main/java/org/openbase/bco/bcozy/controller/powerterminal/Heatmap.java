@@ -18,6 +18,7 @@ import org.openbase.bco.bcozy.view.location.DynamicUnitPolygon;
 import org.openbase.bco.dal.lib.layer.unit.PowerConsumptionSensor;
 import org.openbase.bco.dal.lib.layer.unit.UnitRemote;
 import org.openbase.bco.dal.remote.layer.unit.CustomUnitPool;
+import org.openbase.bco.dal.remote.layer.unit.PowerConsumptionSensorRemote;
 import org.openbase.bco.registry.remote.Registries;
 import org.openbase.bco.registry.unit.lib.UnitRegistry;
 import org.openbase.jul.exception.CouldNotPerformException;
@@ -40,15 +41,15 @@ import java.util.concurrent.*;
 
 public class Heatmap extends Pane {
 
-    private CustomUnitPool unitPool;
+    private CustomUnitPool<? extends Message, ? extends UnitRemote<? extends Message>> unitPool;
 
-    private ScheduledFuture refreshSchedule;
+    private ScheduledFuture<?> refreshSchedule;
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(HeatMap.class);
 
     public Heatmap(BackgroundPane backgroundPane) {
         try {
-            unitPool = new CustomUnitPool();
+            unitPool = new CustomUnitPool<>();
 
             unitPool.init(unitConfig ->
                     unitConfig.getUnitType() == UnitType.POWER_CONSUMPTION_SENSOR);
